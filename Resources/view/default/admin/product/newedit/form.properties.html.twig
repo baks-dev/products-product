@@ -1,0 +1,23 @@
+<div class="d-flex gap-2">
+
+	<div class="d-flex flex-column gap-2 w-100 mb-2">
+		{# Настройки локали #}
+
+		<div class="card card-flush p-4">
+
+			<div class="card-header">
+				<div class="card-title">
+					<h2>
+						{# Секции профиля #}
+						Свойства продукта
+					</h2>
+				</div>
+			</div>
+
+
+			{{ include(_self|replace({ "form.properties.html.twig": "_property.html.twig" })) }}
+
+
+		</div>
+	</div>
+</div>

@@ -1,0 +1,137 @@
+<?php
+/*
+ *  Copyright 2022.  Baks.dev <admin@baks.dev>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ */
+
+namespace App\Module\Products\Product\Tests\UseCase\Admin;
+
+
+use App\Module\Products\Category\Type\Id\CategoryUid;
+use App\Module\Products\Product\Entity;
+use App\Module\Products\Product\Type\Event\ProductEventUid;
+use App\Module\Products\Product\UseCase\Admin\NewEdit;
+use App\Module\Products\Product\UseCase\Admin\NewEdit\Category\CategoryCollectionDTO;
+use App\Module\Products\Product\UseCase\Admin\NewEdit\Info\InfoDTO;
+use App\System\Type\Locale\Locale;
+use App\System\Type\Locale\LocaleEnum;
+use Doctrine\Common\Collections\ArrayCollection;
+use PHPUnit\Util\Reflection;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+
+class NewEditTest extends KernelTestCase
+{
+    /**
+     * @var \Doctrine\ORM\EntityManager
+     */
+    private $entityManager;
+    
+    private Locale $locale;
+    
+    protected function setUp(): void
+    {
+        $kernel = self::bootKernel();
+    
+        $this->locale = new Locale(LocaleEnum::DEFAULT_LOCALE);
+        
+        $this->entityManager = $kernel->getContainer()
+          ->get('doctrine')
+          ->getManager();
+    }
+    
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+
+        $this->entityManager->close();
+        $this->entityManager = null;
+    }
+    
+    public function testSomething() : void
+    {
+        //$this->assertEquals('test', $this->kernel->getEnvironment());
+        
+        $dto = $this->getDTO();
+        
+        //dd($dto->getInfo());
+        
+//        $Event = new Entity\Event\Event();
+//        $Event->setCategory(new CategoryUid());
+//        $Event->setEntity($dto);
+//
+//        $Event->getDto($new = new NewEdit\ProductDTO());
+//        $this->equailsDTO($dto, $new); /* сверяем DTO */
+//
+//
+//        /* Сохраняем объект в бд */
+//        $this->entityManager->persist($Event);
+//        $this->entityManager->flush();
+//        /* Получаем объект */
+//        $Event = $this->entityManager->getRepository(Entity\Event\Event::class)->find($Event->getId());
+//        /* Удаляем объект */
+//        $this->entityManager->remove($Event);
+//        $this->entityManager->flush();
+//
+//
+//        $Event->getDto($new = new NewEdit\ProductDTO());
+//        $this->equailsDTO($dto, $new); /* сверяем DTO */
+        
+    }
+    
+    public function equailsDTO(NewEdit\ProductDTO $dto, NewEdit\ProductDTO $new)
+    {
+    
+        
+    }
+    
+    public function getDTO() : NewEdit\ProductDTO
+    {
+        
+        $dto = new NewEdit\ProductDTO();
+    
+        $this->assertNull($dto->getEvent()); /* Default NULL */
+        $dto->setId($CategoryEvent = new ProductEventUid());
+        $this->assertNotNull($dto->getEvent());
+        $this->assertEquals($CategoryEvent, $dto->getEvent());
+        
+        
+        /* INFO */
+        $dtoInfo = new InfoDTO();
+        
+        $infoUrl = uniqid();
+        $dtoInfo->setUrl($infoUrl);
+        $this->assertEquals($dtoInfo->getUrl(), $infoUrl);
+    
+        $dto->setInfo($dtoInfo);
+        
+        /* Category Collection */
+        $this->assertNotEmpty($dto->getCategories());
+     
+        $dtoCategoryCollectionDTO = new CategoryCollectionDTO();
+        $dtoCategoryCollectionDTO->setCategory($CategoryUid = new CategoryUid());
+    
+        $this->assertNotNull($dtoCategoryCollectionDTO->getCategory());
+        $this->assertEquals($CategoryUid, $dtoCategoryCollectionDTO->getCategory());
+        
+        $dto->addCategorie($dtoCategoryCollectionDTO);
+    
+        $this->assertContains($dtoCategoryCollectionDTO, $dto->getCategories());
+        $this->assertInstanceOf($dtoCategoryCollectionDTO::class, $dto->getCategorieClass());
+        
+        
+        return $dto;
+    }
+    
+}

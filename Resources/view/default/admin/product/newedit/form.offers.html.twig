@@ -1,0 +1,245 @@
+{% trans_default_domain 'products.product' %}
+
+
+
+{# Скрытое поле тогового предложения каталога #}
+{% set hiddenOfferPrototype = form_widget(form.offers.vars.prototype.offer.vars.prototype.offer, { attr:
+	{ 'data-variant' : form.offers.vars.prototype.offer.vars.prototype.offer.vars.id|replace({'__offers__' : 0, '__variation__' : '__loop__'}) } }) %}
+
+	{% set valuePrototype = form_widget(form.offers.vars.prototype.offer.vars.prototype.value, { label: false, attr:
+		{ 'data-reference' : form.offers.vars.prototype.offer.vars.prototype.value.vars.id|replace({'__offers__' : 0}) } }) %}
+
+
+
+{% if form.offers.vars.prototype.offer.vars.prototype.article is defined %}
+	{% set articlePrototype = form_row(form.offers.vars.prototype.offer.vars.prototype.article, { label: 'Артикул торгового предложения'  }) %}
+{% else %}
+	{% set articlePrototype = null %}
+{% endif %}
+
+
+{% if form.offers.vars.prototype.offer.vars.prototype.price.price is defined %}
+	{% set pricePrototype = form_widget(form.offers.vars.prototype.offer.vars.prototype.price.price, { attr: { 'placeholder' : 'Стоимость' } }) %}
+{% else %}
+	{% set pricePrototype = null %}
+{% endif %}
+
+{% if form.offers.vars.prototype.offer.vars.prototype.price.currency is defined %}
+	{% set currencyPrototype = form_widget(form.offers.vars.prototype.offer.vars.prototype.price.currency) %}
+{% else %}
+	{% set currencyPrototype = null %}
+{% endif %}
+
+
+
+{% if form.offers.vars.prototype.offer.vars.prototype.quantity.quantity is defined %}
+	{% set quantityPrototype = form_row(form.offers.vars.prototype.offer.vars.prototype.quantity.quantity, { attr: { placeholder: 'Наличие'|trans } }) %}
+{% else %}
+	{% set quantityPrototype = null %}
+{% endif %}
+
+
+
+{% if form.offers.vars.prototype.offer.vars.prototype.quantity.reserve is defined %}
+	{% set reservePrototype = form_row(form.offers.vars.prototype.offer.vars.prototype.quantity.reserve, { attr: { placeholder: 'Зарезервированно'|trans } }) %}
+{% else %}
+	{% set reservePrototype = null %}
+{% endif %}
+
+
+
+{% if form.offers.vars.prototype.offer.vars.prototype.addMultipleOffer is defined %}
+	{# Добавить множественное поле #}
+	{% set prototypeAddMultipleOffer = form_row(form.offers.vars.prototype.offer.vars.prototype.addMultipleOffer,
+		{
+			label: '<span class="svg-icon svg-icon-2">
+											<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+												<rect opacity="0.5" x="11" y="18" width="12" height="2" rx="1" transform="rotate(-90 11 18)" fill="black"></rect>
+												<rect x="6" y="11" width="12" height="2" rx="1" fill="black"></rect>
+											</svg>
+										</span>'~'Добавить __LABEL_VALUE__'
+			,
+
+			attr:
+			{
+				'class' : 'btn btn-sm btn-light-primary offer_multiple_addCollection',
+				'data-collection' : form.offers.vars.prototype.offer.vars.id~'___variation__',
+				'data-offers' : '__offers__',
+				'data-replace' : form.offers.vars.prototype.offer.vars.prototype.value.vars.id|replace({'__offers__' : 0}),
+				'data-prototype' : '__offer_prototype__',
+
+			}
+		}
+	) %}
+{% else %}
+{% set prototypeAddMultipleOffer = null %}
+{% endif %}
+
+
+{% if form.offers.vars.prototype.offer.vars.prototype.deleteMultipleOffer is defined %}
+	{% set prototypeDeleteMultipleOffer = form_row(form.offers.vars.prototype.offer.vars.prototype.deleteMultipleOffer,
+		{
+			label: '<span class="svg-icon svg-icon-2">
+									<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25" fill="none">
+										<rect opacity="0.5" x="7.05025" y="15.5356" width="12" height="2" rx="1" transform="rotate(-45 7.05025 15.5356)" fill="black"></rect>
+										<rect x="8.46447" y="7.05029" width="12" height="2" rx="1" transform="rotate(45 8.46447 7.05029)" fill="black"></rect>
+									</svg>
+								</span>'
+		} ) %}
+{% else %}
+	{% set prototypeDeleteMultipleOffer = null %}
+		{% endif %}
+
+
+
+{#
+
+'data-collection' : form.offers.vars.prototype.offer.vars.id,
+				'data-reference' : form.offers.vars.prototype.offer.value.vars.id,
+				'data-offers' : form.offers.vars.vars.name,
+				'data-prototype' : include(_self|replace({ "_offer.html.twig": "prototype.offer.html.twig" }))
+
+#}
+
+
+
+{% if form.offers.vars.prototype.offer.vars.prototype.images.vars.prototype.file is defined %}
+	{# Общие фото торгового предложения #}
+	{% set imagePrototype = form_row(form.offers.vars.prototype.offer.vars.prototype.images.vars.prototype.file, { 'attr'  : { 'class' : 'd-none' } }) %}
+
+{% else %}
+	{# Общие фото торгового предложения #}
+	{% set imagePrototype = null %}
+{% endif %}
+
+
+{% if form.offers.vars.prototype.offer.vars.prototype.images.vars.prototype.root is defined %}
+	{#{{ form_row(image.root, { label: 'Главное фото',  attr  : { 'class' : 'change-root' } }) }}#}
+	{% set imageRootPrototype = form_row(form.offers.vars.prototype.offer.vars.prototype.images.vars.prototype.root, { label: 'Главное фото',  attr  : { 'class' : 'change-root' } }) %}
+
+{% else %}
+{% set imageRootPrototype = null %}
+{% endif %}
+
+
+
+
+{% set deleteOfferPrototype = form_row(form.offers.vars.prototype.DeleteOffer,
+	{
+		label: '<span class="svg-icon svg-icon-2">
+									<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25" fill="none">
+										<rect opacity="0.5" x="7.05025" y="15.5356" width="12" height="2" rx="1" transform="rotate(-45 7.05025 15.5356)" fill="black"></rect>
+										<rect x="8.46447" y="7.05029" width="12" height="2" rx="1" transform="rotate(45 8.46447 7.05029)" fill="black"></rect>
+									</svg>
+								</span>'
+	}) %}
+
+
+
+
+<div id="collection-offer">
+
+
+
+	{% for offers in form.offers %}
+
+		<div class="card mb-3 item-collection-offer" id="item-collection-offers-{{ offers.vars.name }}" data-index="{{ offers.count }}">
+			<div class="card-body pt-0">
+
+				<div class="card-header mb-3">
+					<div class="card-title">
+
+						{# Удалить торговое предложение #}
+						<div class="mt-3">
+							{{ form_row(offers.DeleteOffer,
+								{
+									label: '<span class="svg-icon svg-icon-2">
+									<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25" fill="none">
+										<rect opacity="0.5" x="7.05025" y="15.5356" width="12" height="2" rx="1" transform="rotate(-45 7.05025 15.5356)" fill="black"></rect>
+										<rect x="8.46447" y="7.05029" width="12" height="2" rx="1" transform="rotate(45 8.46447 7.05029)" fill="black"></rect>
+									</svg>
+								</span>'
+								} ) }}
+						</div>
+
+						<h2 class="ms-3">
+							{# Торговое предложение #}
+							Торговое предложение
+						</h2>
+					</div>
+				</div>
+
+				{% set section = null  %}
+				{% set addMultiple = false %}
+				{% set addPrice = false %}
+
+
+
+				{% for offer in offers.offer %}
+
+					{% if section is null or section != offer.vars.data.offer.value  %}
+						{% set idMultiple = offer.vars.id %}
+						{% set idMultipleReplace = offer.value.vars.id %}
+					{% endif %}
+
+
+					{% if loop.last and offer.addMultipleOffer is defined %}
+						{% set addMultiple = true %}
+					{% endif %}
+
+
+
+
+					{# Поля торгового предложения #}
+					{{ include(_self|replace({ "form.offers.html.twig": "_offer.html.twig" })) }}
+
+
+					{#{% if section != offer.vars.data.offer.value and offer.addMultipleOffer is defined %}
+						{% set addMultiple = true %}
+					{% else %}
+						{% set addMultiple = false %}
+					{% endif %}
+
+					{% if section != offer.vars.data.offer.value and offer.price is defined %}
+						{% set addPrice = true %}
+					{% else %}
+						{% set addPrice = false %}
+					{% endif %}#}
+
+					{% set section = offer.vars.data.offer.value  %}
+
+
+				{% endfor %}
+
+			{#</div>#}
+		</div>
+
+			</div>
+			</div>
+
+
+
+	{% endfor %}
+
+</div>
+
+
+
+<div class="card-footer pt-5">
+	<button type="button" id="offer_addCollection"
+			class="btn btn-sm btn-light-primary"
+			data-index="{{ form.offers.count }}"
+			data-offer="{{ form.offers[0].offer.count }}"
+			data-prototype="{{ include(_self|replace({ "form.offers.html.twig" : "prototype.offers.html.twig" }))|e('html_attr') }}"
+	>
+
+		<span class="svg-icon svg-icon-2">
+			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+				<rect opacity="0.5" x="11" y="18" width="12" height="2" rx="1" transform="rotate(-90 11 18)"
+					  fill="black"></rect>
+				<rect x="6" y="11" width="12" height="2" rx="1" fill="black"></rect>
+			</svg>
+		</span>
+		Добавить торговое предложение
+	</button>
+</div>

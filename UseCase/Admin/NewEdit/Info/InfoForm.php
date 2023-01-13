@@ -1,0 +1,79 @@
+<?php
+/*
+ *  Copyright 2022.  Baks.dev <admin@baks.dev>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ */
+
+namespace App\Module\Products\Product\UseCase\Admin\NewEdit\Info;
+
+use App\Module\Products\Product\Repository\ProductUserProfileChoice\ProductUserProfileChoiceInterface;
+use App\Module\User\Profile\UserProfile\Type\Id\UserProfileUid;
+use App\Module\Wildberries\Settings\Repository\UserProfileChoiceForm\UserProfileChoiceRepository;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\Translation\TranslatorInterface;
+
+final class InfoForm extends AbstractType
+{
+    
+    private ProductUserProfileChoiceInterface $profileChoice;
+    
+    public function __construct(ProductUserProfileChoiceInterface $profileChoice) {
+        $this->profileChoice = $profileChoice;
+    }
+  
+    public function buildForm(FormBuilderInterface $builder, array $options) : void
+    {
+    
+        $builder
+          ->add('profile', ChoiceType::class, [
+            'choices' => $this->profileChoice->get(),
+            'choice_value' => function (?UserProfileUid $status)
+            {
+                return $status?->getValue();
+            },
+            'choice_label' => function (UserProfileUid $status)
+            {
+                return $status->getName();
+            },
+            'label' => false,
+            'expanded' => false,
+            'multiple' => false,
+            'required' => true,
+            'attr' => ['data-select' => 'select2',]
+          ]);
+        
+        
+        /* TextType */
+        $builder->add('url', TextType::class);
+        
+        $builder->add('article', TextType::class);
+
+    }
+    
+    public function configureOptions(OptionsResolver $resolver) : void
+    {
+        $resolver->setDefaults
+        (
+          [
+            'data_class' => InfoDTO::class,
+          ]);
+    }
+    
+}

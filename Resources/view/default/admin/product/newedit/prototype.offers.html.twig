@@ -1,0 +1,122 @@
+{% trans_default_domain 'products.product' %}
+
+
+	{% for offers in form.offers|slice(0,1) %}
+
+			<div class="card-body pt-0">
+
+				<div class="card-header mb-3">
+					<div class="card-title">
+
+						{# Удалить торговое предложение #}
+						<div class="mt-3">
+							{{ deleteOfferPrototype|raw }}
+						</div>
+
+
+						<h2 class="ms-3">
+							{# Торговое предложение #}
+							Торговое предложение
+						</h2>
+					</div>
+				</div>
+
+				{% set offerItem = null %}
+
+				{% for offer in offers.offer %}
+					{# Поля торгового предложения #}
+
+
+					{% if offerItem is null or offerItem != offer.offer.vars.data.value %}
+
+
+
+
+				<div class="card mb-3 item-collection-offer-fields">
+
+					<div class="card-header min-h-10px">
+						<div class="card-title">
+							<h4>
+								{{ offer.value.vars.label }}
+							</h4>
+						</div>
+					</div>
+
+					<div class="card-body pb-2 {{ offer.addMultipleOffer is defined ? 'multiple-collection' }}" {{ offer.addMultipleOffer is defined ? 'id=multiple_'~form.offers.vars.prototype.offer.vars.id~'_'~loop.index0 }} data-index="{{ offers.count }}">
+
+						<div id="prototype_{{ offer.vars.id }}">
+							{{ include(_self|replace({ "prototype.offers.html.twig": "prototype.offer.html.twig" }), { hiddenDelete : true })|replace({'__variation__' : loop.index0, '__loop__' : loop.index0 })|raw }}
+						</div>
+					</div>
+
+					{# 			|replace({"___offer___" : '_00000000_' })
+							|replace({"__offer__" : loop.index0 }) #}
+
+					{% if offer.price is defined or offer.addMultipleOffer is defined %}
+
+
+						<div class="card-footer px-3 pb-0 pt-3">
+
+							<div class="d-flex w-100 justify-content-between">
+								{% if offer.addMultipleOffer is defined %}
+
+									{# Добавить вариацию #}
+									{{ prototypeAddMultipleOffer
+									|replace({
+										'__LABEL_VALUE__' : offer.value.vars.label,
+										'__variation__' : loop.index0,
+										'__offer_prototype__' : include(_self|replace({ "prototype.offers.html.twig": "prototype.offer.html.twig" }))|replace({ '__loop__' : loop.index0 })|e('html_attr')
+									})
+									|raw }}
+
+									{# Кнопка Добавить множественное поле торгового предложеия #}
+									{#{{ form_row(offer.addMultipleOffer,
+										{
+											label: '<span class="svg-icon svg-icon-2">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+							<rect opacity="0.5" x="11" y="18" width="12" height="2" rx="1" transform="rotate(-90 11 18)" fill="black"></rect>
+							<rect x="6" y="11" width="12" height="2" rx="1" fill="black"></rect>
+						</svg>
+					</span>'~'Добавить '~ offer.value.vars.label,
+											attr:
+											{
+												'class' : 'btn btn-sm btn-light-primary offer_multiple_addCollection',
+												'data-collection' : offer.vars.id,
+												'data-reference' : offer.value.vars.id,
+												'data-offers' : offers.vars.name,
+												'data-prototype' : include(_self|replace({ "_offer.html.twig": "prototype.offer.html.twig" }))
+											}
+										} ) }}#}
+
+									{# 'data-prototype' : include(_self|replace({ "_offer.html.twig": "prototype.offer.html.twig" }), { prototype : form.offer.vars.prototype, field : offer.offer_id.vars.data }) #}
+
+								{% endif %}
+
+
+								{% if offer.price is defined %}
+									<div class="ms-5 my-3 text-muted">
+										<small>Цена торгового предложения имеет приоритет над базовой ценой. Если поле не заполнено,
+											присваивается базовое значение.</small>
+									</div>
+								{% endif %}
+
+							</div>
+						</div>
+
+					{% endif %}
+
+
+				</div>
+
+					{% set offerItem = offer.offer.vars.data.value %}
+
+					{% endif %}
+
+				{% endfor %}
+
+
+			</div>
+
+
+
+	{% endfor %}

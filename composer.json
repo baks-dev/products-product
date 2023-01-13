@@ -1,0 +1,18 @@
+{
+  "name": "baks-dev/products-product",
+  "description": "Модуль категорий продукции",
+  "homepage": "https://github.com/baks-dev/products-product",
+  "license": "MIT",
+  "type": "library",
+  "authors": [
+    {
+      "name": "Baks Development",
+      "email": "admin@baks.dev"
+    }
+  ],
+
+  "require": {
+    "php": ">=8.1",
+    "oomphinc/composer-installers-extender": "*"
+  }
+}

@@ -1,0 +1,85 @@
+{% trans_default_domain 'product.category' %}
+
+
+
+<div class="d-flex flex-wrap gap-3">
+	{% set section = null %}
+
+
+	{% for property in form.property  %}
+
+		{% if section != property.section.vars.data %}
+
+			{% if section %}
+				</div>
+				</div>
+			{% endif %}
+
+
+				<div class="card card-flush w-50-gap-3">
+
+					<div class="card-header">
+						<div class="card-title">
+							<h2>
+								{# Секция #}
+								{{ property.section.vars.label }}
+							</h2>
+						</div>
+					</div>
+					<div class="card-body pt-0">
+
+
+			{% set section = property.section.vars.data %}
+
+		{% endif %}
+
+		{{ form_row(property.section) }}
+		{{ form_row(property.value) }}
+
+
+
+	{% endfor %}
+
+
+
+	</div>
+
+</div>
+</div>
+
+
+
+{# <select class="form-select form-select-lg" data-control="select2" data-placeholder="Select an option">
+	<option></option>
+	<option value="1">Option 1</option>
+	<option value="2">Option 2</option>
+</select> #}
+
+{# Родительский раздел #}
+{# {{ form_row(form.parent, {
+	label : 'admin.form.parent.label'|trans,
+	placeholder: 'admin.form.select.parent.placeholder'|trans,
+	attr: { 'data-control' : 'select2', 'class' : 'form-select-lg select2-hidden-accessible' }
+}) }} #}
+
+
+{# Сортировка #}
+{# {{ form_row(form.sort, {  label : 'sort.label'|trans({}, 'messages') }) }} #}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
