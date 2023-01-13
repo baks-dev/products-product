@@ -1,6 +1,6 @@
 {
   "name": "baks-dev/products-product",
-  "description": "Модуль категорий продукции",
+  "description": "Модуль продукции",
   "homepage": "https://github.com/baks-dev/products-product",
   "license": "MIT",
   "type": "library",
