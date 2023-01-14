@@ -19,8 +19,8 @@
 namespace App\Module\Products\Product\UseCase\Admin\NewEdit\Info;
 
 use App\Module\Products\Product\Entity\Info\InfoInterface;
-use App\Module\User\Profile\TypeProfile\Type\Id\ProfileUid;
-use App\Module\User\Profile\UserProfile\Type\Id\UserProfileUid;
+use App\Module\Users\Profile\TypeProfile\Type\Id\ProfileUid;
+use App\Module\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 final class InfoDTO implements InfoInterface

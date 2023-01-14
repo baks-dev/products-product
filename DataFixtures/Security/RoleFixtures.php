@@ -18,12 +18,12 @@
 
 namespace App\Module\Products\Product\DataFixtures\Security;
 
-use App\Module\User\Groups\Group\DataFixtures\Security\Group\GroupFixtures;
-use App\Module\User\Groups\Group\Entity\Event\GroupEvent;
-use App\Module\User\Groups\Group\UseCase\CheckRoleAggregate;
+use App\Module\Users\Groups\Group\DataFixtures\Security\Group\GroupFixtures;
+use App\Module\Users\Groups\Group\Entity\Event\GroupEvent;
+use App\Module\Users\Groups\Group\UseCase\CheckRoleAggregate;
 use App\Module\Products\Product\DataFixtures\Security\Role\RoleDTO;
-use App\Module\User\Groups\Role\Entity\Role;
-use App\Module\User\Groups\Role\UseCase\RoleAggregate;
+use App\Module\Users\Groups\Role\Entity\Role;
+use App\Module\Users\Groups\Role\UseCase\RoleAggregate;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;

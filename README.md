@@ -17,11 +17,12 @@
 {
     "require": {
         "oomphinc/composer-installers-extender": "*"
-    }
-    ,
+    },
+    
     "require-dev": {
         "roave/security-advisories": "dev-latest"
     },
+    
     "config": {
         "allow-plugins": {
             "oomphinc/composer-installers-extender": true,
@@ -46,8 +47,7 @@ $ composer require baks-dev/products-product
 
 ## Журнал изменений ![Changelog](https://img.shields.io/badge/changelog-yellow)
 
-Посмотри пожалуйста [CHANGELOG](CHANGELOG.md) для получения дополнительной информации о том, что изменилось за последнее
-время.
+О том, что изменилось за последнее время, обратитесь к [CHANGELOG](CHANGELOG.md) за дополнительной информацией.
 
 ## Лицензия ![License](https://img.shields.io/badge/MIT-green)
 

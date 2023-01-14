@@ -21,7 +21,7 @@ use App\Module\Products\Product\Type\Settings\ProductSettingsType;
 use App\Module\Products\Product\Type\Video\VideoUid;
 use App\Module\Products\Product\Type\Video\VideoUidType;
 
-use App\Module\User\Auth\Email\Type\Event\AccountEventUid;
+use App\Module\Users\Auth\Email\Type\Event\AccountEventUid;
 use Symfony\Config\DoctrineConfig;
 
 return static function (ContainerConfigurator $container, DoctrineConfig $doctrine)

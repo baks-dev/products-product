@@ -18,9 +18,9 @@
 
 namespace App\Module\Products\Product\Tests\Controller;
 
-use App\Module\User\AuthEmail\Account\Repository\UserByEmail\UserByEmailInterface;
-use App\Module\User\AuthEmail\Account\Type\Email\AccountEmail;
-use App\Module\User\User\Entity\User;
+use App\Module\Users\AuthEmail\Account\Repository\UserByEmail\UserByEmailInterface;
+use App\Module\Users\AuthEmail\Account\Type\Email\AccountEmail;
+use App\Module\Users\User\Entity\User;
 use App\System\Tests\UserRoleControllerTest;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 

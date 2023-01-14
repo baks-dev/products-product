@@ -19,7 +19,7 @@
 namespace App\Module\Products\Product\Forms\ProductFilter;
 
 use App\Module\Products\Category\Type\Id\CategoryUid;
-use App\Module\User\Profile\UserProfile\Type\Id\UserProfileUid;
+use App\Module\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 
 interface ProductFilterInterface
 {

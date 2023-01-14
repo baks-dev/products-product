@@ -18,7 +18,7 @@
 
 namespace App\Module\Products\Product\DataFixtures\Security\Role\Trans;
 
-use App\Module\User\Groups\Role\Entity\Trans\RoleTransInterface;
+use App\Module\Users\Groups\Role\Entity\Trans\RoleTransInterface;
 use App\System\Type\Locale\Locale;
 use Symfony\Component\Validator\Constraints as Assert;
 

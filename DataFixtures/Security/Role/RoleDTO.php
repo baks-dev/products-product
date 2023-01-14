@@ -19,10 +19,10 @@
 namespace App\Module\Products\Product\DataFixtures\Security\Role;
 
 use App\Module\Products\Product\DataFixtures\Security\Role;
-use App\Module\User\Groups\Role\Entity\Event\RoleEventInterface;
-use App\Module\User\Groups\Role\Type\Event\RoleEventUid;
-use App\Module\User\Groups\Role\Type\RolePrefix\RolePrefix;
-use App\Module\User\Groups\Role\Type\VoterPrefix\VoterPrefix;
+use App\Module\Users\Groups\Role\Entity\Event\RoleEventInterface;
+use App\Module\Users\Groups\Role\Type\Event\RoleEventUid;
+use App\Module\Users\Groups\Role\Type\RolePrefix\RolePrefix;
+use App\Module\Users\Groups\Role\Type\VoterPrefix\VoterPrefix;
 use App\System\Type\Locale\Locale;
 use Doctrine\Common\Collections\ArrayCollection;
 

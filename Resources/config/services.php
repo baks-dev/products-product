@@ -3,7 +3,7 @@
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 //use App\Module\Product\Type\Category\Id\CategoryUidConverter;
-//use App\Module\User\Entity\User;
+//use App\Module\Users\Entity\User;
 //use App\Module\Product\Entity;
 //use App\Module\Product\EntityListeners;
 

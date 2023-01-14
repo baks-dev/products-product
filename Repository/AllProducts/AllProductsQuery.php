@@ -23,7 +23,7 @@ use App\Module\Products\Category\Entity as CategoryEntity;
 use App\Module\Products\Category\Type\Id\CategoryUid;
 use App\Module\Products\Product\Entity;
 use App\Module\Products\Product\Forms\ProductFilter\ProductFilterInterface;
-use App\Module\User\Profile\UserProfile\Type\Id\UserProfileUid;
+use App\Module\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use App\System\Handler\Search\SearchDTO;
 use App\System\Helper\Switcher\Switcher;
 use App\System\Type\Locale\Locale;

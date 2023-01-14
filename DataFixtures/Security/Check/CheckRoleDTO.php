@@ -18,10 +18,10 @@
 
 namespace App\Module\Products\Product\DataFixtures\Security\Check;
 
-use App\Module\User\Groups\Group\Entity\CheckRole\CheckRoleInterface;
-use App\Module\User\Groups\Group\Entity\Event\GroupEvent;
-use App\Module\User\Groups\Role\Entity\Event\RoleEventInterface;
-use App\Module\User\Groups\Role\Type\RolePrefix\RolePrefix;
+use App\Module\Users\Groups\Group\Entity\CheckRole\CheckRoleInterface;
+use App\Module\Users\Groups\Group\Entity\Event\GroupEvent;
+use App\Module\Users\Groups\Role\Entity\Event\RoleEventInterface;
+use App\Module\Users\Groups\Role\Type\RolePrefix\RolePrefix;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 

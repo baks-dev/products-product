@@ -21,7 +21,7 @@ namespace App\Module\Products\Product\Forms\ProductFilter\Admin;
 use App\Module\Products\Category\Repository\CategoryChoice\CategoryChoiceInterface;
 use App\Module\Products\Category\Type\Id\CategoryUid;
 use App\Module\Products\Product\Repository\ProductUserProfileChoice\ProductUserProfileChoiceInterface;
-use App\Module\User\Profile\UserProfile\Type\Id\UserProfileUid;
+use App\Module\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;

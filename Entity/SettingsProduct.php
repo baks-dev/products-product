@@ -20,7 +20,8 @@ namespace App\Module\Products\Product\Entity;
 
 
 use App\Module\Products\Product\Type\Settings\ProductSettings;
-use App\Module\User\Profile\TypeProfile\Type\Id\ProfileUid;
+use App\Module\Users\Profile\TypeProfile\Type\Id\ProfileUid;
+use App\Module\Users\Profile\TypeProfile\Type\Id\TypeProfileUid;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
 
@@ -47,8 +48,8 @@ class SettingsProduct
     private int $settingsHistory = 365;
     
     /** Тип профиля, доступный к озданию карточек */
-    #[ORM\Column(type: ProfileUid::TYPE, nullable: true)]
-    private ?ProfileUid $profile = null;
+    #[ORM\Column(type: TypeProfileUid::TYPE, nullable: true)]
+    private ?TypeProfileUid $profile = null;
 
     public function __construct() { $this->id = new ProductSettings(); }
 
