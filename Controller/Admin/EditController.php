@@ -18,7 +18,6 @@
 
 namespace App\Module\Products\Product\Controller\Admin;
 
-
 use App\Module\Products\Category\Repository\CategoryPropertyById\CategoryPropertyByIdInterface;
 use App\Module\Products\Product\Entity;
 use App\Module\Products\Product\UseCase\Admin\NewEdit\ProductDTO;
