@@ -13,7 +13,7 @@
 		{# Редактировать #}
 		{% if is_granted('ROLE_PRODUCT_EDIT') %}
 			<li>
-				<a href="{{ path('Product:admin.product.newedit.edit', {id: item.event }) }}"
+				<a href="{{ path('Product:admin.newedit.edit', {id: item.event }) }}"
 				   class="dropdown-item">
 					{{ 'btn.edit'|trans({}, 'messages') }}
 				</a>
@@ -25,7 +25,7 @@
 		{% if is_granted('ROLE_PRODUCT_DELETE') %}
 			<li>
 			<a
-					data-href="{{ path('Product:admin.product.delete', { id: item.event }) }}"
+					data-href="{{ path('Product:admin.delete', { id: item.event }) }}"
 					class="dropdown-item modal-link"
 					data-bs-toggle="modal"
 					data-bs-target="#modal"

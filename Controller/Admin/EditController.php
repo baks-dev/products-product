@@ -39,7 +39,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[IsGranted(new Expression('"ROLE_ADMIN" in role_names or "ROLE_PRODUCT_EDIT" in role_names'))]
 final class EditController extends AbstractController
 {
-    #[Route('/admin/product/edit/{id}', name: 'admin.product.newedit.edit', methods: ['GET', 'POST'])]
+    #[Route('/admin/product/edit/{id}', name: 'admin.newedit.edit', methods: ['GET', 'POST'])]
     public function edit(
       Request $request,
       ProductAggregate $handler,
@@ -68,8 +68,8 @@ final class EditController extends AbstractController
     
             if($handle)
             {
-                $this->addFlash('success', 'admin.product.update.success', 'products.product');
-                return $this->redirectToRoute('Product:admin.product.index');
+                $this->addFlash('success', 'admin.update.success', 'products.product');
+                return $this->redirectToRoute('Product:admin.index');
             }
         }
         
@@ -77,7 +77,7 @@ final class EditController extends AbstractController
         
     }
 
-//    #[Route('/zcnimskdzz/style', name: 'admin.product.newedit.new.css', methods: ['GET'], format: "css")]
+//    #[Route('/zcnimskdzz/style', name: 'admin.newedit.new.css', methods: ['GET'], format: "css")]
 //    public function css() : Response
 //    {
 //        return $this->assets(
@@ -89,7 +89,7 @@ final class EditController extends AbstractController
 //          ]);
 //    }
 //
-//    #[Route('/zcnimskdzz/app', name: 'admin.product.newedit.new.js', methods: ['GET'], format: "js")]
+//    #[Route('/zcnimskdzz/app', name: 'admin.newedit.new.js', methods: ['GET'], format: "js")]
 //    public function js() : Response
 //    {
 //        return $this->assets

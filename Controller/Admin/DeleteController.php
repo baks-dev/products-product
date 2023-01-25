@@ -37,7 +37,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 final class DeleteController extends AbstractController
 {
 	
-	#[Route('/admin/product/delete/{id}', name: 'admin.product.delete', methods: ['POST', 'GET'])]
+	#[Route('/admin/product/delete/{id}', name: 'admin.delete', methods: ['POST', 'GET'])]
 	public function delete(
 		Request $request,
 		ProductAggregate $handler,
@@ -53,7 +53,7 @@ final class DeleteController extends AbstractController
 		$Info->getDto($product->getInfo());
 		
 		$form = $this->createForm(DeleteForm::class, $product, [
-			'action' => $this->generateUrl('Product:admin.product.delete', ['id' => $product->getEvent()]),
+			'action' => $this->generateUrl('Product:admin.delete', ['id' => $product->getEvent()]),
 		]);
 		$form->handleRequest($request);
 		
@@ -66,13 +66,13 @@ final class DeleteController extends AbstractController
 				
 				if($handle)
 				{
-					$this->addFlash('success', 'admin.product.delete.success', 'products.product');
-					return $this->redirectToRoute('Product:admin.product.index');
+					$this->addFlash('success', 'admin.delete.success', 'products.product');
+					return $this->redirectToRoute('Product:admin.index');
 				}
 			}
 			
-			$this->addFlash('danger', 'admin.product.delete.danger', 'products.product');
-			return $this->redirectToRoute('Product:admin.product.index');
+			$this->addFlash('danger', 'admin.delete.danger', 'products.product');
+			return $this->redirectToRoute('Product:admin.index');
 			
 			//return $this->redirectToReferer();
 		}

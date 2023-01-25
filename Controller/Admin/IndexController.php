@@ -45,7 +45,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted(new Expression('"ROLE_ADMIN" in role_names or "ROLE_PRODUCT" in role_names'))]
 final class IndexController extends AbstractController
 {
-    #[Route('/admin/products/{page<\d+>}', name: 'admin.product.index',  methods: [
+    #[Route('/admin/products/{page<\d+>}', name: 'admin.index',  methods: [
       'GET',
       'POST'
     ])]

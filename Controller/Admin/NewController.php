@@ -39,7 +39,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted(new Expression('"ROLE_ADMIN" in role_names or "ROLE_PRODUCT_NEW" in role_names'))]
 final class NewController extends AbstractController
 {
-    #[Route('/admin/product/new/{id}', name: 'admin.product.newedit.new', defaults: ["id" => null], methods: ['GET', 'POST'])]
+    #[Route('/admin/product/new/{id}', name: 'admin.newedit.new', defaults: ["id" => null], methods: ['GET', 'POST'])]
     //#[ParamConverter('id', class: ProductEventUid::class, converter: ProductEventUid::TYPE)]
     public function new(
       Request $request,
@@ -102,8 +102,8 @@ final class NewController extends AbstractController
     
             if($handle)
             {
-                $this->addFlash('success', 'admin.product.new.success', 'products.product');
-                return $this->redirectToRoute('Product:admin.product.index');
+                $this->addFlash('success', 'admin.new.success', 'products.product');
+                return $this->redirectToRoute('Product:admin.index');
             }
         }
         

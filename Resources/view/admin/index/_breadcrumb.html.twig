@@ -6,7 +6,7 @@
 
 		<h1 class="d-flex text-dark fw-bolder my-1 fs-3">
 			{# Название раздела #}
-			{{ 'admin.product.title'|trans }}
+			{{ 'admin.title'|trans }}
 
 			<span class="w-bold text-muted ps-3 cursor-default" title="общее количество"
 				  data-countup="true"
@@ -39,7 +39,7 @@
 	<div class="d-flex align-items-center py-2 py-md-1">
 
 		{% if is_granted('ROLE_PRODUCT_NEW') %}
-			<a href="{{ path('Product:admin.product.newedit.new') }}" class="btn btn-primary" title="Добавить продукт">
+			<a href="{{ path('Product:admin.newedit.new') }}" class="btn btn-primary" title="Добавить продукт">
 				{{ 'btn.new'|trans({}, 'messages') }}
 			</a>
 		{% endif %}
