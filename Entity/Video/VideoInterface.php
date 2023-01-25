@@ -16,7 +16,7 @@
  *
  */
 
-namespace App\Module\Products\Product\Entity\Video;
+namespace BaksDev\Products\Product\Entity\Video;
 
 interface VideoInterface
 {

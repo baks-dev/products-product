@@ -16,9 +16,9 @@
  *
  */
 
-namespace App\Module\Products\Product\Repository\ProductUserProfileChoice;
+namespace BaksDev\Products\Product\Repository\ProductUserProfileChoice;
 
-use App\Module\Products\Product\Entity\SettingsProduct;
+use BaksDev\Products\Product\Entity\SettingsProduct;
 use App\Module\Users\Auth\Email\Type\Status\AccountStatus;
 use App\Module\Users\Auth\Email\Type\Status\AccountStatusEnum;
 use App\Module\Users\Profile\UserProfile\Entity as UserProfileEntity;

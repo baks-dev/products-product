@@ -16,7 +16,7 @@
  *
  */
 
-namespace App\Module\Products\Product\Entity\Modify;
+namespace BaksDev\Products\Product\Entity\Modify;
 
 interface ModifyInterface
 {

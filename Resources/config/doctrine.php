@@ -2,24 +2,24 @@
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use App\Module\Products\Product\Type\Event\ProductEventUid;
-use App\Module\Products\Product\Type\Event\ProductEventType;
-use App\Module\Products\Product\Type\File\FileUid;
-use App\Module\Products\Product\Type\File\FileUidType;
-use App\Module\Products\Product\Type\Id\ProductUid;
-use App\Module\Products\Product\Type\Id\ProductUidType;
-use App\Module\Products\Product\Type\Offers\ConstId\ProductOfferConst;
-use App\Module\Products\Product\Type\Offers\ConstId\ProductOfferConstType;
-use App\Module\Products\Product\Type\Offers\Id\ProductOfferUid;
-use App\Module\Products\Product\Type\Offers\Id\ProductOfferType;
-use App\Module\Products\Product\Type\Offers\Image\ImageUid;
-use App\Module\Products\Product\Type\Offers\Image\ImageUidType;
-use App\Module\Products\Product\Type\Photo\PhotoUid;
-use App\Module\Products\Product\Type\Photo\PhotoUidType;
-use App\Module\Products\Product\Type\Settings\ProductSettings;
-use App\Module\Products\Product\Type\Settings\ProductSettingsType;
-use App\Module\Products\Product\Type\Video\VideoUid;
-use App\Module\Products\Product\Type\Video\VideoUidType;
+use BaksDev\Products\Product\Type\Event\ProductEventUid;
+use BaksDev\Products\Product\Type\Event\ProductEventType;
+use BaksDev\Products\Product\Type\File\FileUid;
+use BaksDev\Products\Product\Type\File\FileUidType;
+use BaksDev\Products\Product\Type\Id\ProductUid;
+use BaksDev\Products\Product\Type\Id\ProductUidType;
+use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
+use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConstType;
+use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
+use BaksDev\Products\Product\Type\Offers\Id\ProductOfferType;
+use BaksDev\Products\Product\Type\Offers\Image\ImageUid;
+use BaksDev\Products\Product\Type\Offers\Image\ImageUidType;
+use BaksDev\Products\Product\Type\Photo\PhotoUid;
+use BaksDev\Products\Product\Type\Photo\PhotoUidType;
+use BaksDev\Products\Product\Type\Settings\ProductSettings;
+use BaksDev\Products\Product\Type\Settings\ProductSettingsType;
+use BaksDev\Products\Product\Type\Video\VideoUid;
+use BaksDev\Products\Product\Type\Video\VideoUidType;
 
 use App\Module\Users\Auth\Email\Type\Event\AccountEventUid;
 use Symfony\Config\DoctrineConfig;
@@ -64,7 +64,7 @@ return static function (ContainerConfigurator $container, DoctrineConfig $doctri
       ->type('attribute')
       ->dir('%kernel.project_dir%/src/Module/Products/Product/Entity')
       ->isBundle(false)
-      ->prefix('App\Module\Products\Product\Entity')
+      ->prefix('BaksDev\Products\Product\Entity')
       ->alias('Product')
     ;
 };

@@ -16,10 +16,10 @@
  *
  */
 
-namespace App\Module\Products\Product\Entity\Offers\Offer\Quantity;
+namespace BaksDev\Products\Product\Entity\Offers\Offer\Quantity;
 
 
-use App\Module\Products\Product\Entity\Offers\Offer\Offer;
+use BaksDev\Products\Product\Entity\Offers\Offer\Offer;
 use App\System\Entity\EntityEvent;
 use App\System\Type\Currency\Currency;
 use App\System\Type\Currency\CurrencyEnum;

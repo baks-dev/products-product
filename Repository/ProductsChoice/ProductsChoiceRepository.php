@@ -16,11 +16,11 @@
  *
  */
 
-namespace App\Module\Products\Product\Repository\ProductsChoice;
+namespace BaksDev\Products\Product\Repository\ProductsChoice;
 
-use App\Module\Products\Product\Entity;
-use App\Module\Products\Product\Type\Id\ProductUid;
-use App\System\Type\Locale\Locale;
+use BaksDev\Products\Product\Entity;
+use BaksDev\Products\Product\Type\Id\ProductUid;
+use BaksDev\Core\Type\Locale\Locale;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;

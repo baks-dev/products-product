@@ -16,11 +16,11 @@
  *
  */
 
-namespace App\Module\Products\Product\Entity\Info;
+namespace BaksDev\Products\Product\Entity\Info;
 
-use App\Module\Products\Product\Entity\Event\ProductEvent;
-use App\Module\Products\Product\Entity\Product;
-use App\Module\Products\Product\Type\Id\ProductUid;
+use BaksDev\Products\Product\Entity\Event\ProductEvent;
+use BaksDev\Products\Product\Entity\Product;
+use BaksDev\Products\Product\Type\Id\ProductUid;
 use App\Module\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use App\System\Entity\EntityEvent;
 use Doctrine\DBAL\Types\Types;

@@ -16,10 +16,10 @@
  *
  */
 
-namespace App\Module\Products\Product\Entity\Category;
+namespace BaksDev\Products\Product\Entity\Category;
 
 use App\Module\Products\Category\Type\Id\CategoryUid;
-use App\Module\Products\Product\Entity\Event\ProductEvent;
+use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use App\System\Entity\EntityEvent;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;

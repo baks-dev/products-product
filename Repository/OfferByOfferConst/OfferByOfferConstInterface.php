@@ -16,7 +16,7 @@
  *
  */
 
-namespace App\Module\Products\Product\Repository\OfferByOfferConst;
+namespace BaksDev\Products\Product\Repository\OfferByOfferConst;
 
 interface OfferByOfferConstInterface
 {

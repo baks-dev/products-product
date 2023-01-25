@@ -16,16 +16,16 @@
  *
  */
 
-namespace App\Module\Products\Product\UseCase\Admin\NewEdit\Offers\Offer;
+namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Offer;
 
 use App\Module\Products\Category\Type\Offers\Id\OffersUid;
-use App\Module\Products\Product\Entity\Offers\Offer\OfferInterface;
-use App\Module\Products\Product\Entity\Offers\Offer\Quantity\ProductQuantityInterface;
-use App\Module\Products\Product\Type\Offers\ConstId\ProductOfferConst;
-use App\Module\Products\Product\Type\Offers\Id\ProductOfferUid;
-use App\Module\Products\Product\UseCase\Admin\NewEdit\Offers\Offer\Image\ImageCollectionDTO;
-use App\Module\Products\Product\UseCase\Admin\NewEdit\Offers\Offer\Price\PriceDTO;
-use App\Module\Products\Product\UseCase\Admin\NewEdit\Offers\Offer\Quantity\QuantityDTO;
+use BaksDev\Products\Product\Entity\Offers\Offer\OfferInterface;
+use BaksDev\Products\Product\Entity\Offers\Offer\Quantity\ProductQuantityInterface;
+use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
+use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Offer\Image\ImageCollectionDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Offer\Price\PriceDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Offer\Quantity\QuantityDTO;
 use Doctrine\Common\Annotations\Annotation\Enum;
 use Doctrine\Common\Collections\ArrayCollection;
 use ReflectionException;

@@ -16,27 +16,25 @@
  *
  */
 
-namespace App\Module\Products\Product\Controller\Admin;
+namespace BaksDev\Products\Product\Controller\Admin;
 
 use App\Module\Products\Category\Type\Id\CategoryUid;
-use App\Module\Products\Product\Type\Event\ProductEventUid;
-use App\Module\Products\Product\Type\Event\ProductEventUidConverter;
-use App\Module\Products\Product\UseCase\Admin\NewEdit\Category\CategoryCollectionDTO;
-use App\Module\Products\Product\UseCase\Admin\NewEdit\ProductDTO;
-use App\Module\Products\Product\UseCase\Admin\NewEdit\ProductForm;
-use App\Module\Products\Product\UseCase\ProductAggregate;
-use App\System\Controller\AbstractController;
+use BaksDev\Products\Product\Type\Event\ProductEventUid;
+use BaksDev\Products\Product\Type\Event\ProductEventUidConverter;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Category\CategoryCollectionDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\ProductDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\ProductForm;
+use BaksDev\Products\Product\UseCase\ProductAggregate;
+use BaksDev\Core\Controller\AbstractController;
 use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Module\Products\Product\Entity;
+use BaksDev\Products\Product\Entity;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[IsGranted(new Expression('"ROLE_ADMIN" in role_names or "ROLE_PRODUCT_NEW" in role_names'))]
+#[ReleSecurity(['ROLE_ADMIN', 'ROLE_PRODUCT_NEW'])]
 final class NewController extends AbstractController
 {
     #[Route('/admin/product/new/{id}', name: 'admin.newedit.new', defaults: ["id" => null], methods: ['GET', 'POST'])]

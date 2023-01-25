@@ -16,18 +16,18 @@
  *
  */
 
-namespace App\Module\Products\Product\UseCase;
+namespace BaksDev\Products\Product\UseCase;
 
 use App\Module\Files\Res\Upload\File\FileUploadInterface;
 use App\Module\Files\Res\Upload\Image\ImageUploadInterface;
 
 //use App\Module\Products\Category\Entity\Category;
-use App\Module\Products\Product\Entity\Event\ProductEventInterface;
-use App\Module\Products\Product\Repository\UniqProductUrl\UniqProductUrlInterface;
+use BaksDev\Products\Product\Entity\Event\ProductEventInterface;
+use BaksDev\Products\Product\Repository\UniqProductUrl\UniqProductUrlInterface;
 use App\System\Type\Modify\ModifyActionEnum;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use App\Module\Products\Product\Entity;
+use BaksDev\Products\Product\Entity;
 use Symfony\Component\Validator\Exception\ValidatorException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -101,7 +101,7 @@ final class ProductAggregate
         /* Загрузка базового фото галлереи */
         if(method_exists($command, 'getPhotos') && !$command->getPhotos()->isEmpty())
         {
-            /** @var \App\Module\Products\Product\UseCase\Admin\NewEdit\Photo\PhotoCollectionDTO $getPhotos */
+            /** @var \BaksDev\Products\Product\UseCase\Admin\NewEdit\Photo\PhotoCollectionDTO $getPhotos */
             foreach($command->getPhotos() as $key => $getPhotos)
             {
                 if(!empty($getPhotos->file))
@@ -127,7 +127,7 @@ final class ProductAggregate
         /* Загрузка файлов PDF галлереи */
         if(method_exists($command, 'getFiles') && !$command->getFiles()->isEmpty())
         {
-            /** @var \App\Module\Products\Product\UseCase\Admin\NewEdit\Files\FilesCollectionDTO $getFiles */
+            /** @var \BaksDev\Products\Product\UseCase\Admin\NewEdit\Files\FilesCollectionDTO $getFiles */
             foreach($command->getFiles() as $getFiles)
             {
                 if(!empty($getFiles->file) && empty($getFiles->getName()))
@@ -145,7 +145,7 @@ final class ProductAggregate
         /* Загрузка файлов Видео галлереи */
         if(method_exists($command, 'getVideos') && !$command->getVideos()->isEmpty())
         {
-            /** @var \App\Module\Products\Product\UseCase\Admin\NewEdit\Video\VideoCollectionDTO $getVideos */
+            /** @var \BaksDev\Products\Product\UseCase\Admin\NewEdit\Video\VideoCollectionDTO $getVideos */
             foreach($command->getVideos() as $getVideos)
             {
                 if(!empty($getVideos->file) && empty($getVideos->getName()))
@@ -171,7 +171,7 @@ final class ProductAggregate
                     {
                         if(method_exists($getOffer, 'getImages')  && !$getOffer->getImages()->isEmpty())
                         {
-                            /** @var \App\Module\Products\Product\UseCase\Admin\NewEdit\Offers\Offer\Image\ImageCollectionDTO $getImages */
+                            /** @var \BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Offer\Image\ImageCollectionDTO $getImages */
                             foreach($getOffer->getImages() as $getImages)
                             {
                                 if(!empty($getImages->file) && empty($getImages->getName()))

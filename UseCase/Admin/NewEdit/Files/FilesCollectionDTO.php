@@ -16,11 +16,11 @@
  *
  */
 
-namespace App\Module\Products\Product\UseCase\Admin\NewEdit\Files;
+namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Files;
 
 use App\Module\Products\Category\Entity\Cover\CoverInterface;
-use App\Module\Products\Product\Entity\Files\FilesInterface;
-use App\Module\Products\Product\Type\Event\ProductEventUid;
+use BaksDev\Products\Product\Entity\Files\FilesInterface;
+use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
 

@@ -16,9 +16,9 @@
  *
  */
 
-namespace App\Module\Products\Product\Entity\Event;
+namespace BaksDev\Products\Product\Entity\Event;
 
-use App\Module\Products\Product\Type\Event\ProductEventUid;
+use BaksDev\Products\Product\Type\Event\ProductEventUid;
 
 interface ProductEventInterface
 {

@@ -16,7 +16,7 @@
  *
  */
 
-namespace App\Module\Products\Product\Repository\ProductByOffer;
+namespace BaksDev\Products\Product\Repository\ProductByOffer;
 
 interface ProductByOfferInterface
 {

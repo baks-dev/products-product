@@ -16,14 +16,14 @@
  *
  */
 
-namespace App\Module\Products\Product\Entity\Offers\Offer\Image;
+namespace BaksDev\Products\Product\Entity\Offers\Offer\Image;
 
 
 use App\Module\Files\Res\Upload\UploadEntityInterface;
 use App\Module\Products\Category\Type\Offers\Id\OffersUid;
-use App\Module\Products\Product\Entity\Offers\Offer\Offer;
-use App\Module\Products\Product\Type\Offers\Id\ProductOfferUid;
-use App\Module\Products\Product\Type\Offers\Image\ImageUid;
+use BaksDev\Products\Product\Entity\Offers\Offer\Offer;
+use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
+use BaksDev\Products\Product\Type\Offers\Image\ImageUid;
 use App\System\Entity\EntityEvent;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;

@@ -16,9 +16,9 @@
  *
  */
 
-namespace App\Module\Products\Product\UseCase\Admin\NewEdit\Offers\Offer\Quantity;
+namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Offer\Quantity;
 
-use App\Module\Products\Product\Entity\Offers\Offer\Quantity\ProductQuantityInterface;
+use BaksDev\Products\Product\Entity\Offers\Offer\Quantity\ProductQuantityInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 final class QuantityDTO implements ProductQuantityInterface

@@ -16,10 +16,10 @@
  *
  */
 
-namespace App\Module\Products\Product\UseCase\Admin\NewEdit\Trans;
+namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Trans;
 
-use App\Module\Products\Product\Entity\Trans\TransInterface;
-use App\System\Type\Locale\Locale;
+use BaksDev\Products\Product\Entity\Trans\TransInterface;
+use BaksDev\Core\Type\Locale\Locale;
 use Symfony\Component\Validator\Constraints as Assert;
 
 final class ProductTransDTO implements TransInterface

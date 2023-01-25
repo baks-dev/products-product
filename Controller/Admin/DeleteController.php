@@ -16,16 +16,15 @@
  *
  */
 
-namespace App\Module\Products\Product\Controller\Admin;
+namespace BaksDev\Products\Product\Controller\Admin;
 
-use App\Module\Products\Product\Entity;
-use App\Module\Products\Product\UseCase\Admin\Delete\DeleteForm;
-use App\Module\Products\Product\UseCase\Admin\Delete\ProductDTO;
-use App\Module\Products\Product\UseCase\ProductAggregate;
-use App\System\Controller\AbstractController;
+use BaksDev\Products\Product\Entity;
+use BaksDev\Products\Product\UseCase\Admin\Delete\DeleteForm;
+use BaksDev\Products\Product\UseCase\Admin\Delete\ProductDTO;
+use BaksDev\Products\Product\UseCase\ProductAggregate;
+use BaksDev\Core\Controller\AbstractController;
 use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
@@ -33,7 +32,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[IsGranted(new Expression('"ROLE_ADMIN" in role_names or "ROLE_PRODUCT_DELETE" in role_names'))]
+
+#[ReleSecurity(['ROLE_ADMIN', 'ROLE_PRODUCT_DELETE'])]
 final class DeleteController extends AbstractController
 {
 	

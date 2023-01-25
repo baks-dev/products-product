@@ -16,10 +16,10 @@
  *
  */
 
-namespace App\Module\Products\Product\UseCase\Admin\NewEdit\Video;
+namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Video;
 
-use App\Module\Products\Product\Entity\Video\VideoInterface;
-use App\Module\Products\Product\Type\Event\ProductEventUid;
+use BaksDev\Products\Product\Entity\Video\VideoInterface;
+use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
 

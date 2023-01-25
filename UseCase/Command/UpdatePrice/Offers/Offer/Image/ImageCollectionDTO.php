@@ -16,11 +16,11 @@
  *
  */
 
-namespace App\Module\Products\Product\UseCase\Command\UpdatePrice\Offers\Offer\Image;
+namespace BaksDev\Products\Product\UseCase\Command\UpdatePrice\Offers\Offer\Image;
 
-use App\Module\Products\Product\Entity\Offers\Offer\Image\ImageInterface;
-use App\Module\Products\Product\Entity\Offers\Offer\Offer;
-use App\Module\Products\Product\Type\Offers\Id\ProductOfferUid;
+use BaksDev\Products\Product\Entity\Offers\Offer\Image\ImageInterface;
+use BaksDev\Products\Product\Entity\Offers\Offer\Offer;
+use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Validator\Constraints as Assert;

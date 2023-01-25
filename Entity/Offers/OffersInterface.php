@@ -16,7 +16,7 @@
  *
  */
 
-namespace App\Module\Products\Product\Entity\Offers;
+namespace BaksDev\Products\Product\Entity\Offers;
 
 interface OffersInterface
 {

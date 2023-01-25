@@ -16,10 +16,10 @@
  *
  */
 
-namespace App\Module\Products\Product\UseCase\Admin\NewEdit\Category;
+namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Category;
 
 use App\Module\Products\Category\Type\Id\CategoryUid;
-use App\Module\Products\Product\Entity\Category\CategoryInterface;
+use BaksDev\Products\Product\Entity\Category\CategoryInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 final class CategoryCollectionDTO implements CategoryInterface

@@ -16,7 +16,7 @@
  *
  */
 
-namespace App\Module\Products\Product\Entity\Seo;
+namespace BaksDev\Products\Product\Entity\Seo;
 
 interface SeoInterface
 {

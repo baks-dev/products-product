@@ -16,7 +16,7 @@
  *
  */
 
-namespace App\Module\Products\Product\UseCase\Admin\NewEdit\Price;
+namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Price;
 
 
 use App\System\Type\Currency\Currency;

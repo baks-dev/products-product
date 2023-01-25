@@ -16,7 +16,7 @@
  *
  */
 
-namespace App\Module\Products\Product\Entity\Property;
+namespace BaksDev\Products\Product\Entity\Property;
 
 interface PropertyInterface
 {

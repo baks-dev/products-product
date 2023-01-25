@@ -16,12 +16,12 @@
  *
  */
 
-namespace App\Module\Products\Product\Repository\ProductByOfferConst;
+namespace BaksDev\Products\Product\Repository\ProductByOfferConst;
 
-use App\Module\Products\Product\Entity;
-use App\Module\Products\Product\Type\Id\ProductUid;
-use App\Module\Products\Product\Type\Offers\ConstId\ProductOfferConst;
-use App\Module\Products\Product\Type\Offers\Id\ProductOfferUid;
+use BaksDev\Products\Product\Entity;
+use BaksDev\Products\Product\Type\Id\ProductUid;
+use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
+use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;

@@ -16,9 +16,9 @@
  *
  */
 
-namespace App\Module\Products\Product\UseCase\Command\UpdatePrice\Offers\Offer\Price;
+namespace BaksDev\Products\Product\UseCase\Command\UpdatePrice\Offers\Offer\Price;
 
-use App\Module\Products\Product\Entity\Offers\Offer\Price\PriceInterface;
+use BaksDev\Products\Product\Entity\Offers\Offer\Price\PriceInterface;
 use App\System\Type\Currency\Currency;
 use App\System\Type\Currency\CurrencyEnum;
 use App\System\Type\Money\Money;

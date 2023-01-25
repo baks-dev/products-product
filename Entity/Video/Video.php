@@ -16,14 +16,14 @@
  *
  */
 
-namespace App\Module\Products\Product\Entity\Video;
+namespace BaksDev\Products\Product\Entity\Video;
 
 
 use App\Module\Files\Res\Upload\File\FileUploadInterface;
 use App\Module\Files\Res\Upload\UploadEntityInterface;
-use App\Module\Products\Product\Entity\Event\ProductEvent;
-use App\Module\Products\Product\Type\Event\ProductEventUid;
-use App\Module\Products\Product\Type\Video\VideoUid;
+use BaksDev\Products\Product\Entity\Event\ProductEvent;
+use BaksDev\Products\Product\Type\Event\ProductEventUid;
+use BaksDev\Products\Product\Type\Video\VideoUid;
 use App\System\Entity\EntityEvent;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;

@@ -16,12 +16,12 @@
  *
  */
 
-namespace App\Module\Products\Product\Entity\Photo;
+namespace BaksDev\Products\Product\Entity\Photo;
 
 use App\Module\Files\Res\Upload\UploadEntityInterface;
-use App\Module\Products\Product\Entity\Event\ProductEvent;
-use App\Module\Products\Product\Type\Event\ProductEventUid;
-use App\Module\Products\Product\Type\Photo\PhotoUid;
+use BaksDev\Products\Product\Entity\Event\ProductEvent;
+use BaksDev\Products\Product\Type\Event\ProductEventUid;
+use BaksDev\Products\Product\Type\Photo\PhotoUid;
 use App\System\Entity\EntityEvent;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;

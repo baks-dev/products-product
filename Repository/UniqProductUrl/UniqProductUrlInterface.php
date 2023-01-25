@@ -16,7 +16,7 @@
  *
  */
 
-namespace App\Module\Products\Product\Repository\UniqProductUrl;
+namespace BaksDev\Products\Product\Repository\UniqProductUrl;
 
 interface UniqProductUrlInterface
 {

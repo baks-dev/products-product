@@ -16,11 +16,11 @@
  *
  */
 
-namespace App\Module\Products\Product\DataFixtures\Security\Role\Voter;
+namespace BaksDev\Products\Product\DataFixtures\Security\Role\Voter;
 
 use App\Module\Users\Groups\Role\Entity\Voters\RoleVoterInterface;
 use App\Module\Users\Groups\Role\Type\VoterPrefix\VoterPrefix;
-use App\System\Type\Locale\Locale;
+use BaksDev\Core\Type\Locale\Locale;
 use Doctrine\Common\Collections\ArrayCollection;
 
 final class RoleVoterDTO implements RoleVoterInterface

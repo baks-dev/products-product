@@ -16,10 +16,10 @@
  *
  */
 
-namespace App\Module\Products\Product\UseCase\Admin\Delete;
+namespace BaksDev\Products\Product\UseCase\Admin\Delete;
 
-use App\Module\Products\Product\Entity\Event\ProductEventInterface;
-use App\Module\Products\Product\Type\Event\ProductEventUid;
+use BaksDev\Products\Product\Entity\Event\ProductEventInterface;
+use BaksDev\Products\Product\Type\Event\ProductEventUid;
 
 use Symfony\Component\Validator\Constraints as Assert;
 

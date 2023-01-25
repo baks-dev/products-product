@@ -16,7 +16,7 @@
  *
  */
 
-namespace App\Module\Products\Product\Entity\Offers\Offer\Price;
+namespace BaksDev\Products\Product\Entity\Offers\Offer\Price;
 
 interface PriceInterface
 {

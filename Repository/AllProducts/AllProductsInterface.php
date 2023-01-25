@@ -16,7 +16,7 @@
  *
  */
 
-namespace App\Module\Products\Product\Repository\AllProducts;
+namespace BaksDev\Products\Product\Repository\AllProducts;
 
 interface AllProductsInterface
 {

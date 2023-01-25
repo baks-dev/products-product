@@ -16,17 +16,17 @@
  *
  */
 
-namespace App\Module\Products\Product\Tests\UseCase\Admin;
+namespace BaksDev\Products\Product\Tests\UseCase\Admin;
 
 
 use App\Module\Products\Category\Type\Id\CategoryUid;
-use App\Module\Products\Product\Entity;
-use App\Module\Products\Product\Type\Event\ProductEventUid;
-use App\Module\Products\Product\UseCase\Admin\NewEdit;
-use App\Module\Products\Product\UseCase\Admin\NewEdit\Category\CategoryCollectionDTO;
-use App\Module\Products\Product\UseCase\Admin\NewEdit\Info\InfoDTO;
-use App\System\Type\Locale\Locale;
-use App\System\Type\Locale\LocaleEnum;
+use BaksDev\Products\Product\Entity;
+use BaksDev\Products\Product\Type\Event\ProductEventUid;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Category\CategoryCollectionDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Info\InfoDTO;
+use BaksDev\Core\Type\Locale\Locale;
+use BaksDev\Core\Type\Locale\LocaleEnum;
 use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Util\Reflection;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;

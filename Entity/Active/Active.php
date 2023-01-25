@@ -16,9 +16,9 @@
  *
  */
 
-namespace App\Module\Products\Product\Entity\Active;
+namespace BaksDev\Products\Product\Entity\Active;
 
-use App\Module\Products\Product\Entity\Event\ProductEvent;
+use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use App\System\Entity\EntityEvent;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;

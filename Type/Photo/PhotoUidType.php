@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Module\Products\Product\Type\Photo;
+namespace BaksDev\Products\Product\Type\Photo;
 
 use App\System\Type\UidType\UidType;
 

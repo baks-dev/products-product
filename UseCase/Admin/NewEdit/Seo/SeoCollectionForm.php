@@ -16,7 +16,7 @@
  *
  */
 
-namespace App\Module\Products\Product\UseCase\Admin\NewEdit\Seo;
+namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Seo;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;

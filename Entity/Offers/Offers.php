@@ -16,14 +16,14 @@
  *
  */
 
-namespace App\Module\Products\Product\Entity\Offers;
+namespace BaksDev\Products\Product\Entity\Offers;
 
 
 
-use App\Module\Products\Product\Entity\Event\ProductEvent;
+use BaksDev\Products\Product\Entity\Event\ProductEvent;
 
-use App\Module\Products\Product\Type\File\FileUid;
-use App\Module\Products\Product\Type\Offers\Id\ProductOfferUid;
+use BaksDev\Products\Product\Type\File\FileUid;
+use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use App\System\Entity\EntityEvent;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;

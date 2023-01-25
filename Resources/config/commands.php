@@ -10,7 +10,7 @@ return static function (ContainerConfigurator $configurator) {
     ;
     
     //$services->set('app:wb:products:update', ProductsUpdateCommand::class);
-    $services->load('App\Module\Products\Product\Command\\', '../../Command');
+    $services->load('BaksDev\Products\Product\Command\\', '../../Command');
 
     
 };

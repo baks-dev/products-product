@@ -16,7 +16,7 @@
  *
  */
 
-namespace App\Module\Products\Product\UseCase\Admin\NewEdit\Property;
+namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Property;
 
 //use App\Module\Product\Entity\Product\Property;
 //use App\Module\Product\Repository\Product\Event\Property\PropertyFormByCategory\PropertyFormByCategoryRepository;

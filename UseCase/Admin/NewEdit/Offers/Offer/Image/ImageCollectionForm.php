@@ -16,7 +16,7 @@
  *
  */
 
-namespace App\Module\Products\Product\UseCase\Admin\NewEdit\Offers\Offer\Image;
+namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Offer\Image;
 
 use App\Module\Product\Entity\Product\Offers\Offer\Image;
 use App\Module\Product\Entity\Product\Photo;

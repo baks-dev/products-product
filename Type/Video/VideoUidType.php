@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Module\Products\Product\Type\Video;
+namespace BaksDev\Products\Product\Type\Video;
 
 use App\System\Type\UidType\UidType;
 use Doctrine\DBAL\Platforms\AbstractPlatform;

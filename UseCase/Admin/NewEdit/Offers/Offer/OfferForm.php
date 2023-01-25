@@ -16,12 +16,12 @@
  *
  */
 
-namespace App\Module\Products\Product\UseCase\Admin\NewEdit\Offers\Offer;
+namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Offer;
 
 //use App\Module\Product\Entity\Product\Offers\Offer;
 use App\Module\Products\Category\Repository\CategoryOffersForm\CategoryOffersFormDTO;
-use App\Module\Products\Product\UseCase\Admin\NewEdit\Offers\Offer\Image\ImageCollectionForm;
-use App\Module\Products\Product\UseCase\Admin\NewEdit\Offers\Offer\Price\PriceForm;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Offer\Image\ImageCollectionForm;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Offer\Price\PriceForm;
 use App\System\Type\Reference\ReferenceType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;

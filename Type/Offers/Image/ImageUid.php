@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Module\Products\Product\Type\Offers\Image;
+namespace BaksDev\Products\Product\Type\Offers\Image;
 
 use App\System\Type\UidType\Uid;
 use Symfony\Component\Uid\AbstractUid;

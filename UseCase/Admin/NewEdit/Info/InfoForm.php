@@ -16,9 +16,9 @@
  *
  */
 
-namespace App\Module\Products\Product\UseCase\Admin\NewEdit\Info;
+namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Info;
 
-use App\Module\Products\Product\Repository\ProductUserProfileChoice\ProductUserProfileChoiceInterface;
+use BaksDev\Products\Product\Repository\ProductUserProfileChoice\ProductUserProfileChoiceInterface;
 use App\Module\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use App\Module\Wildberries\Settings\Repository\UserProfileChoiceForm\UserProfileChoiceRepository;
 use Symfony\Component\Form\AbstractType;

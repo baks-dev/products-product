@@ -16,7 +16,7 @@
  *
  */
 
-namespace App\Module\Products\Product\Forms\ProductFilter;
+namespace BaksDev\Products\Product\Forms\ProductFilter;
 
 use App\Module\Products\Category\Type\Id\CategoryUid;
 use App\Module\Users\Profile\UserProfile\Type\Id\UserProfileUid;

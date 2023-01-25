@@ -16,11 +16,11 @@
  *
  */
 
-namespace App\Module\Products\Product\Entity\Property;
+namespace BaksDev\Products\Product\Entity\Property;
 
 
 use App\Module\Products\Category\Type\Section\Field\Id\FieldUid;
-use App\Module\Products\Product\Entity\Event\ProductEvent;
+use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use App\System\Entity\EntityEvent;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;

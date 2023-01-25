@@ -16,7 +16,7 @@
  *
  */
 
-namespace App\Module\Products\Product\Entity\Category;
+namespace BaksDev\Products\Product\Entity\Category;
 
 interface CategoryInterface
 {

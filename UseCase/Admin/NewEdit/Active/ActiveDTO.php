@@ -16,9 +16,9 @@
  *
  */
 
-namespace App\Module\Products\Product\UseCase\Admin\NewEdit\Active;
+namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Active;
 
-use App\Module\Products\Product\Entity\Active\ActiveInterface;
+use BaksDev\Products\Product\Entity\Active\ActiveInterface;
 use DateTimeImmutable;
 use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Validator\Constraints as Assert;

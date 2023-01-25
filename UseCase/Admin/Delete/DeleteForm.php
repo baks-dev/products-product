@@ -17,7 +17,7 @@
  *
  */
 
-namespace App\Module\Products\Product\UseCase\Admin\Delete;
+namespace BaksDev\Products\Product\UseCase\Admin\Delete;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;

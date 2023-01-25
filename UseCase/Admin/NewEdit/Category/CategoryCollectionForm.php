@@ -16,7 +16,7 @@
  *
  */
 
-namespace App\Module\Products\Product\UseCase\Admin\NewEdit\Category;
+namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Category;
 
 use App\Module\Products\Category\Repository\CategoryChoice\CategoryChoiceInterface;
 use App\Module\Products\Category\Type\Id\CategoryUid;

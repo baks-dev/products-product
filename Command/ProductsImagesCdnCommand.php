@@ -16,11 +16,11 @@
  *
  */
 
-namespace App\Module\Products\Product\Command;
+namespace BaksDev\Products\Product\Command;
 
 use App\Module\Files\Res\Upload\Image\ImageUploadInterface;
-use App\Module\Products\Product\Entity\Offers\Offer\Image\Image;
-use App\Module\Products\Product\Entity\Trans\Trans;
+use BaksDev\Products\Product\Entity\Offers\Offer\Image\Image;
+use BaksDev\Products\Product\Entity\Trans\Trans;
 use App\Module\Wildberries\Products\Product\Repository\ProductBarcode\ProductBarcodeInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;

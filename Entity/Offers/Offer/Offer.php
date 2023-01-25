@@ -16,13 +16,13 @@
  *
  */
 
-namespace App\Module\Products\Product\Entity\Offers\Offer;
+namespace BaksDev\Products\Product\Entity\Offers\Offer;
 
 use App\Module\Products\Category\Type\Offers\Id\OffersUid;
-use App\Module\Products\Product\Entity\Offers\Offers;
+use BaksDev\Products\Product\Entity\Offers\Offers;
 
-use App\Module\Products\Product\Type\Offers\ConstId\ProductOfferConst;
-use App\Module\Products\Product\Type\Offers\Id\ProductOfferUid;
+use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
+use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use App\System\Entity\EntityEvent;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;

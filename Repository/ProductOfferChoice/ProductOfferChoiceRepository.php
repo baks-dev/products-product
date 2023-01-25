@@ -16,15 +16,15 @@
  *
  */
 
-namespace App\Module\Products\Product\Repository\ProductOfferChoice;
+namespace BaksDev\Products\Product\Repository\ProductOfferChoice;
 
-use App\Module\Products\Product\Type\Id\ProductUid;
-use App\Module\Products\Product\Type\Offers\Id\ProductOfferUid;
+use BaksDev\Products\Product\Type\Id\ProductUid;
+use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use App\Module\Wildberries\Products\Product\Entity\WbProductCardVariation;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Cache\DefaultCache;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Module\Products\Product\Entity;
+use BaksDev\Products\Product\Entity;
 
 
 final class ProductOfferChoiceRepository implements ProductOfferChoiceInterface

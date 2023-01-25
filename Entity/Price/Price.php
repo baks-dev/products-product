@@ -16,9 +16,9 @@
  *
  */
 
-namespace App\Module\Products\Product\Entity\Price;
+namespace BaksDev\Products\Product\Entity\Price;
 
-use App\Module\Products\Product\Entity\Event\ProductEvent;
+use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use App\System\Entity\EntityEvent;
 use App\System\Type\Currency\Currency;
 use App\System\Type\Currency\CurrencyEnum;

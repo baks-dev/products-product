@@ -16,10 +16,10 @@
  *
  */
 
-namespace App\Module\Products\Product\UseCase\Admin\NewEdit\Property;
+namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Property;
 
 use App\Module\Products\Category\Type\Section\Field\Id\FieldUid;
-use App\Module\Products\Product\Entity\Property\PropertyInterface;
+use BaksDev\Products\Product\Entity\Property\PropertyInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 final class PropertyCollectionDTO implements PropertyInterface

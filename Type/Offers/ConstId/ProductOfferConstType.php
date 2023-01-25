@@ -16,7 +16,7 @@
  *
  */
 
-namespace App\Module\Products\Product\Type\Offers\ConstId;
+namespace BaksDev\Products\Product\Type\Offers\ConstId;
 
 use App\System\Type\UidType\UidType;
 

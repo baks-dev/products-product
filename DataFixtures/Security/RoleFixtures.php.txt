@@ -16,7 +16,7 @@
  *
  */
 
-namespace App\Module\Products\Product\DataFixtures\Security;
+namespace BaksDev\Products\Product\DataFixtures\Security;
 
 use App\Module\Users\Groups\Group\Entity\Group;
 use App\Module\Users\Groups\Handler\Role\RoleHandler;
@@ -25,7 +25,7 @@ use App\Module\Users\Groups\Repository\Role\GetExistRole\GetExistRoleInterface;
 use App\Module\Users\Groups\Role\DataFixtures\Security\RoleFixturesDTO;
 use App\Module\Users\Groups\Role\DataFixtures\Security\RoleTransFixturesDTO;
 use App\Module\Users\Groups\Roles\Role\Type\Prefix\RolePrefix;
-use App\System\Type\Locale\Locale;
+use BaksDev\Core\Type\Locale\Locale;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;

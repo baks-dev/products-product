@@ -17,10 +17,10 @@
 *
 */
 
-namespace App\Module\Products\Product\Entity;
+namespace BaksDev\Products\Product\Entity;
 
-use App\Module\Products\Product\Type\Event\ProductEventUid;
-use App\Module\Products\Product\Type\Id\ProductUid;
+use BaksDev\Products\Product\Type\Event\ProductEventUid;
+use BaksDev\Products\Product\Type\Id\ProductUid;
 use Doctrine\ORM\Mapping as ORM;
 //use Symfony\Contracts\EventDispatcher\Event;
 

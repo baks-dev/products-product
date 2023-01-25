@@ -16,33 +16,29 @@
  *
  */
 
-namespace App\Module\Products\Product\Controller\Admin;
+namespace BaksDev\Products\Product\Controller\Admin;
 
 //use App\Module\Product\Repository\Product\AllProduct;
-use App\Module\Products\Product\Forms\ProductFilter\Admin\ProductFilterDTO;
-use App\Module\Products\Product\Forms\ProductFilter\Admin\ProductFilterForm;
-use App\Module\Products\Product\Repository\AllProducts\AllProductsInterface;
-use App\Module\Products\Product\Type\Offers\Id\ProductOfferUid;
-use App\System\Controller\AbstractController;
-<<<<<<< HEAD
-//use App\System\Handler\Search\Command;
-use App\System\Handler\Search\SearchDTO;
-use App\System\Handler\Search\SearchForm;
-=======
-//use App\System\Form\Search\Command;
-use App\System\Form\Search\SearchDTO;
-use App\System\Form\Search\SearchForm;
->>>>>>> 8d75f0b (Baks Development)
+use BaksDev\Products\Product\Forms\ProductFilter\Admin\ProductFilterDTO;
+use BaksDev\Products\Product\Forms\ProductFilter\Admin\ProductFilterForm;
+use BaksDev\Products\Product\Repository\AllProducts\AllProductsInterface;
+use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
+use BaksDev\Core\Controller\AbstractController;
+
+//use BaksDev\Core\Form\Search\Command;
+use BaksDev\Core\Form\Search\SearchDTO;
+use BaksDev\Core\Form\Search\SearchForm;
+
+
 use App\System\Helper\Paginator;
-use App\System\Type\Locale\Locale;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use BaksDev\Core\Type\Locale\Locale;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[IsGranted(new Expression('"ROLE_ADMIN" in role_names or "ROLE_PRODUCT" in role_names'))]
+#[ReleSecurity(['ROLE_ADMIN', 'ROLE_PRODUCT'])]
 final class IndexController extends AbstractController
 {
     #[Route('/admin/products/{page<\d+>}', name: 'admin.index',  methods: [

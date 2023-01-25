@@ -16,7 +16,7 @@
  *
  */
 
-namespace App\Module\Products\Product\Tests\Controller;
+namespace BaksDev\Products\Product\Tests\Controller;
 
 use App\Module\Users\AuthEmail\Account\Repository\UserByEmail\UserByEmailInterface;
 use App\Module\Users\AuthEmail\Account\Type\Email\AccountEmail;

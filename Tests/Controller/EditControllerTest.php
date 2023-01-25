@@ -16,10 +16,10 @@
  *
  */
 
-namespace App\Module\Products\Product\Tests\Controller;
+namespace BaksDev\Products\Product\Tests\Controller;
 
-use App\Module\Products\Product\Entity\Event\ProductEvent;
-use App\Module\Products\Product\Type\Event\ProductEventUid;
+use BaksDev\Products\Product\Entity\Event\ProductEvent;
+use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use App\Module\Users\AuthEmail\Account\Repository\UserByEmail\UserByEmailInterface;
 use App\Module\Users\AuthEmail\Account\Type\Email\AccountEmail;
 use App\System\Tests\UserRoleControllerTest;

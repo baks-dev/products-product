@@ -16,9 +16,9 @@
 *
 */
 
-namespace App\Module\Products\Product\EntityListeners;
+namespace BaksDev\Products\Product\EntityListeners;
 
-use App\Module\Products\Product\Entity\Modify\Modify;
+use BaksDev\Products\Product\Entity\Modify\Modify;
 use App\System\Type\Ip\IpAddress;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Symfony\Component\HttpFoundation\RequestStack;

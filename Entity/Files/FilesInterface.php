@@ -16,7 +16,7 @@
  *
  */
 
-namespace App\Module\Products\Product\Entity\Files;
+namespace BaksDev\Products\Product\Entity\Files;
 
 interface FilesInterface
 {

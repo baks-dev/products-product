@@ -16,11 +16,11 @@
  *
  */
 
-namespace App\Module\Products\Product\UseCase\Command\UpdatePrice\Offers;
+namespace BaksDev\Products\Product\UseCase\Command\UpdatePrice\Offers;
 
-use App\Module\Products\Product\Entity\Offers\OffersInterface;
-use App\Module\Products\Product\Type\Offers\Id\ProductOfferUid;
-use App\Module\Products\Product\UseCase\Command\UpdatePrice\Offers\Offer\OfferDTO;
+use BaksDev\Products\Product\Entity\Offers\OffersInterface;
+use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
+use BaksDev\Products\Product\UseCase\Command\UpdatePrice\Offers\Offer\OfferDTO;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Validator\Constraints as Assert;

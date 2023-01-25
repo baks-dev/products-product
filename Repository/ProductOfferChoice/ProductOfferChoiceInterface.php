@@ -16,7 +16,7 @@
  *
  */
 
-namespace App\Module\Products\Product\Repository\ProductOfferChoice;
+namespace BaksDev\Products\Product\Repository\ProductOfferChoice;
 
 interface ProductOfferChoiceInterface
 {

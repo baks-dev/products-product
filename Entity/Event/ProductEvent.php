@@ -16,26 +16,26 @@
  *
  */
 
-namespace App\Module\Products\Product\Entity\Event;
+namespace BaksDev\Products\Product\Entity\Event;
 
 
-use App\Module\Products\Product\Entity\Active\Active;
-use App\Module\Products\Product\Entity\Category\Category;
-use App\Module\Products\Product\Entity\Files\Files;
-use App\Module\Products\Product\Entity\Info\Info;
-use App\Module\Products\Product\Entity\Modify\Modify;
-use App\Module\Products\Product\Entity\Offers\Offers;
-use App\Module\Products\Product\Entity\Photo\Photo;
-use App\Module\Products\Product\Entity\Price\Price;
-use App\Module\Products\Product\Entity\Product;
-use App\Module\Products\Product\Entity\Property\Property;
-use App\Module\Products\Product\Entity\Seo\Seo;
-use App\Module\Products\Product\Entity\Trans\Trans;
-use App\Module\Products\Product\Entity\Video\Video;
-use App\Module\Products\Product\Type\Event\ProductEventUid;
-use App\Module\Products\Product\Type\Id\ProductUid;
+use BaksDev\Products\Product\Entity\Active\Active;
+use BaksDev\Products\Product\Entity\Category\Category;
+use BaksDev\Products\Product\Entity\Files\Files;
+use BaksDev\Products\Product\Entity\Info\Info;
+use BaksDev\Products\Product\Entity\Modify\Modify;
+use BaksDev\Products\Product\Entity\Offers\Offers;
+use BaksDev\Products\Product\Entity\Photo\Photo;
+use BaksDev\Products\Product\Entity\Price\Price;
+use BaksDev\Products\Product\Entity\Product;
+use BaksDev\Products\Product\Entity\Property\Property;
+use BaksDev\Products\Product\Entity\Seo\Seo;
+use BaksDev\Products\Product\Entity\Trans\Trans;
+use BaksDev\Products\Product\Entity\Video\Video;
+use BaksDev\Products\Product\Type\Event\ProductEventUid;
+use BaksDev\Products\Product\Type\Id\ProductUid;
 use App\System\Entity\EntityEvent;
-use App\System\Type\Locale\Locale;
+use BaksDev\Core\Type\Locale\Locale;
 use App\System\Type\Modify\ModifyAction;
 use App\System\Type\Modify\ModifyActionEnum;
 use Doctrine\Common\Collections\ArrayCollection;

@@ -16,7 +16,7 @@
  *
  */
 
-namespace App\Module\Products\Product\Repository\ProductUserProfileChoice;
+namespace BaksDev\Products\Product\Repository\ProductUserProfileChoice;
 
 interface ProductUserProfileChoiceInterface
 {

@@ -16,10 +16,10 @@
 *
 */
 
-namespace App\Module\Products\Product\Entity;
+namespace BaksDev\Products\Product\Entity;
 
 
-use App\Module\Products\Product\Type\Settings\ProductSettings;
+use BaksDev\Products\Product\Type\Settings\ProductSettings;
 use App\Module\Users\Profile\TypeProfile\Type\Id\TypeProfileUid;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;

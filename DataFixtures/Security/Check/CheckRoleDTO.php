@@ -16,7 +16,7 @@
  *
  */
 
-namespace App\Module\Products\Product\DataFixtures\Security\Check;
+namespace BaksDev\Products\Product\DataFixtures\Security\Check;
 
 use App\Module\Users\Groups\Group\Entity\CheckRole\CheckRoleInterface;
 use App\Module\Users\Groups\Group\Entity\Event\GroupEvent;

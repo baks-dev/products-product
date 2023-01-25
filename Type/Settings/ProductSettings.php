@@ -16,7 +16,7 @@
 *
 */
 
-namespace App\Module\Products\Product\Type\Settings;
+namespace BaksDev\Products\Product\Type\Settings;
 
 final class ProductSettings
 {

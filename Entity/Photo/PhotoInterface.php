@@ -16,7 +16,7 @@
  *
  */
 
-namespace App\Module\Products\Product\Entity\Photo;
+namespace BaksDev\Products\Product\Entity\Photo;
 
 interface PhotoInterface
 {

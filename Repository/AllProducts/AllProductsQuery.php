@@ -16,22 +16,19 @@
  *
  */
 
-namespace App\Module\Products\Product\Repository\AllProducts;
+namespace BaksDev\Products\Product\Repository\AllProducts;
 
 use App\Module\Materials\Stock\Forms\StockFilter\StockFilterInterface;
 use App\Module\Products\Category\Entity as CategoryEntity;
 use App\Module\Products\Category\Type\Id\CategoryUid;
-use App\Module\Products\Product\Entity;
-use App\Module\Products\Product\Forms\ProductFilter\ProductFilterInterface;
+use BaksDev\Products\Product\Entity;
+use BaksDev\Products\Product\Forms\ProductFilter\ProductFilterInterface;
 use App\Module\Users\Profile\UserProfile\Type\Id\UserProfileUid;
-<<<<<<< HEAD
-use App\System\Handler\Search\SearchDTO;
+
+use BaksDev\Core\Form\Search\SearchDTO;
 use App\System\Helper\Switcher\Switcher;
-=======
-use App\System\Form\Search\SearchDTO;
-use App\System\Services\Switcher\SwitcherInterface;
->>>>>>> 8d75f0b (Baks Development)
-use App\System\Type\Locale\Locale;
+
+use BaksDev\Core\Type\Locale\Locale;
 use Doctrine\DBAL\Cache\QueryCacheProfile;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
@@ -43,18 +40,10 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 final class AllProductsQuery implements AllProductsInterface
 {
     private Connection $connection;
-    
-<<<<<<< HEAD
     private Switcher $switcher;
     private Locale $locale;
     
     public function __construct(Connection $connection, TranslatorInterface $translator, Switcher $switcher)
-=======
-    private SwitcherInterface $switcher;
-    private Locale $locale;
-    
-    public function __construct(Connection $connection, TranslatorInterface $translator, SwitcherInterface $switcher)
->>>>>>> 8d75f0b (Baks Development)
     {
         $this->connection = $connection;
         $this->locale = new Locale($translator->getLocale());

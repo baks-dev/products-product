@@ -16,11 +16,11 @@
  *
  */
 
-namespace App\Module\Products\Product\Entity\Seo;
+namespace BaksDev\Products\Product\Entity\Seo;
 
-use App\Module\Products\Product\Entity\Event\ProductEvent;
+use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use App\System\Entity\EntityEvent;
-use App\System\Type\Locale\Locale;
+use BaksDev\Core\Type\Locale\Locale;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use InvalidArgumentException;

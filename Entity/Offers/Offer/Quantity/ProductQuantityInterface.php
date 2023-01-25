@@ -16,7 +16,7 @@
  *
  */
 
-namespace App\Module\Products\Product\Entity\Offers\Offer\Quantity;
+namespace BaksDev\Products\Product\Entity\Offers\Offer\Quantity;
 
 interface ProductQuantityInterface
 {

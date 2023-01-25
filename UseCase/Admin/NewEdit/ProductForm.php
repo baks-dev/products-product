@@ -16,13 +16,13 @@
  *
  */
 
-namespace App\Module\Products\Product\UseCase\Admin\NewEdit;
+namespace BaksDev\Products\Product\UseCase\Admin\NewEdit;
 
 use App\Module\Products\Category\Repository\CategoryOffersForm\CategoryOffersFormInterface;
 use App\Module\Products\Category\Repository\CategoryPropertyById\CategoryPropertyByIdInterface;
-use App\Module\Products\Product\UseCase\Admin\NewEdit;
-use App\Module\Products\Product\UseCase\Admin\NewEdit\Category\CategoryCollectionDTO;
-use App\Module\Products\Product\UseCase\Admin\NewEdit\Property\PropertyCollectionDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Category\CategoryCollectionDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Property\PropertyCollectionDTO;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;

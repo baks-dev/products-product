@@ -16,7 +16,7 @@
  *
  */
 
-namespace App\Module\Products\Product\Entity\Offers\Offer\Image;
+namespace BaksDev\Products\Product\Entity\Offers\Offer\Image;
 
 interface ImageInterface
 {

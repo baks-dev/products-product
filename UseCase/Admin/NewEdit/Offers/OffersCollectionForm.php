@@ -16,12 +16,12 @@
  *
  */
 
-namespace App\Module\Products\Product\UseCase\Admin\NewEdit\Offers;
+namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers;
 
 //use App\Module\Product\Entity\Product\Offers;
 //use App\Module\Product\Handler\Admin\Product\NewEdit\Offers\OfferForm;
 //use App\Module\Product\Repository\Category\Offers\CategoryOffersFormRepository;
-use App\Module\Products\Product\UseCase\Admin\NewEdit\Offers\Offer\OfferForm;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Offer\OfferForm;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;

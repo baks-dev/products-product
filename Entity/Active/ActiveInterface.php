@@ -16,7 +16,7 @@
  *
  */
 
-namespace App\Module\Products\Product\Entity\Active;
+namespace BaksDev\Products\Product\Entity\Active;
 
 interface ActiveInterface
 {

@@ -16,7 +16,7 @@
  *
  */
 
-namespace App\Module\Products\Product\UseCase\Admin\NewEdit\Active;
+namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Active;
 
 
 use Symfony\Component\Form\AbstractType;

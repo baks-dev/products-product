@@ -16,14 +16,14 @@
  *
  */
 
-namespace App\Module\Products\Product\DataFixtures\Security\Role;
+namespace BaksDev\Products\Product\DataFixtures\Security\Role;
 
-use App\Module\Products\Product\DataFixtures\Security\Role;
+use BaksDev\Products\Product\DataFixtures\Security\Role;
 use App\Module\Users\Groups\Role\Entity\Event\RoleEventInterface;
 use App\Module\Users\Groups\Role\Type\Event\RoleEventUid;
 use App\Module\Users\Groups\Role\Type\RolePrefix\RolePrefix;
 use App\Module\Users\Groups\Role\Type\VoterPrefix\VoterPrefix;
-use App\System\Type\Locale\Locale;
+use BaksDev\Core\Type\Locale\Locale;
 use Doctrine\Common\Collections\ArrayCollection;
 
 final class RoleDTO implements RoleEventInterface

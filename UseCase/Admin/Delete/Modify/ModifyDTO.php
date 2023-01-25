@@ -16,9 +16,9 @@
  *
  */
 
-namespace App\Module\Products\Product\UseCase\Admin\Delete\Modify;
+namespace BaksDev\Products\Product\UseCase\Admin\Delete\Modify;
 
-use App\Module\Products\Product\Entity\Modify\ModifyInterface;
+use BaksDev\Products\Product\Entity\Modify\ModifyInterface;
 use App\System\Type\Modify\ModifyAction;
 use App\System\Type\Modify\ModifyActionEnum;
 

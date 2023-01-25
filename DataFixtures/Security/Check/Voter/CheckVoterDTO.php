@@ -16,7 +16,7 @@
  *
  */
 
-namespace App\Module\Products\Product\DataFixtures\Security\Check\Voter;
+namespace BaksDev\Products\Product\DataFixtures\Security\Check\Voter;
 
 use App\Module\Users\Groups\Group\Entity\CheckRole\CheckVoter\CheckVoterInterface;
 use App\Module\Users\Groups\Role\Type\VoterPrefix\VoterPrefix;

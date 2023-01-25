@@ -16,7 +16,7 @@
  *
  */
 
-namespace App\Module\Products\Product\Type\Offers\Id;
+namespace BaksDev\Products\Product\Type\Offers\Id;
 
 use App\System\Type\UidType\Uid;
 use Symfony\Component\Uid\AbstractUid;

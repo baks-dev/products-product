@@ -18,21 +18,21 @@ return static function (ContainerConfigurator $configurator)
 
     /** Services */
     
-    $services->load('App\Module\Products\Product\Controller\\', '../../Controller')
+    $services->load('BaksDev\Products\Product\Controller\\', '../../Controller')
       ->tag('controller.service_arguments');
     
-    $services->load('App\Module\Products\Product\Repository\\', '../../Repository')
+    $services->load('BaksDev\Products\Product\Repository\\', '../../Repository')
       ->exclude('../../Repository/**/*DTO.php');
       //->tag('controller.service_arguments');
     
-    $services->load('App\Module\Products\Product\UseCase\\', '../../UseCase')
+    $services->load('BaksDev\Products\Product\UseCase\\', '../../UseCase')
       ->exclude('../../UseCase/**/*DTO.php');
      // ->tag('controller.service_arguments');
     
-    $services->load('App\Module\Products\Product\DataFixtures\\', '../../DataFixtures')
+    $services->load('BaksDev\Products\Product\DataFixtures\\', '../../DataFixtures')
       ->exclude('../../DataFixtures/**/*DTO.php');
     
-    $services->load('App\Module\Products\Product\Forms\\', '../../Forms');
+    $services->load('BaksDev\Products\Product\Forms\\', '../../Forms');
     
 };
 

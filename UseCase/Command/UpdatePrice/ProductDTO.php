@@ -16,15 +16,15 @@
  *
  */
 
-namespace App\Module\Products\Product\UseCase\Command\UpdatePrice;
+namespace BaksDev\Products\Product\UseCase\Command\UpdatePrice;
 
 
-use App\Module\Products\Product\Entity\Event\ProductEventInterface;
-use App\Module\Products\Product\Entity\Offers\OffersInterface;
-use App\Module\Products\Product\Entity\Price\PriceInterface;
-use App\Module\Products\Product\Type\Event\ProductEventUid;
-use App\Module\Products\Product\UseCase\Command\UpdatePrice\Offers\OffersCollectionDTO;
-use App\Module\Products\Product\UseCase\Command\UpdatePrice\Price\PriceDTO;
+use BaksDev\Products\Product\Entity\Event\ProductEventInterface;
+use BaksDev\Products\Product\Entity\Offers\OffersInterface;
+use BaksDev\Products\Product\Entity\Price\PriceInterface;
+use BaksDev\Products\Product\Type\Event\ProductEventUid;
+use BaksDev\Products\Product\UseCase\Command\UpdatePrice\Offers\OffersCollectionDTO;
+use BaksDev\Products\Product\UseCase\Command\UpdatePrice\Price\PriceDTO;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 

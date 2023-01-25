@@ -16,9 +16,9 @@
  *
  */
 
-namespace App\Module\Products\Product\UseCase\Admin\Delete\Info;
+namespace BaksDev\Products\Product\UseCase\Admin\Delete\Info;
 
-use App\Module\Products\Product\Entity\Info\InfoInterface;
+use BaksDev\Products\Product\Entity\Info\InfoInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 final class InfoDTO implements InfoInterface

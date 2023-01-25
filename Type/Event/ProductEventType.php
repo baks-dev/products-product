@@ -16,7 +16,7 @@
  *
  */
 
-namespace App\Module\Products\Product\Type\Event;
+namespace BaksDev\Products\Product\Type\Event;
 
 use App\System\Type\UidType\UidType;
 

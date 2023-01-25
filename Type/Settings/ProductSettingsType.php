@@ -16,7 +16,7 @@
 *
 */
 
-namespace App\Module\Products\Product\Type\Settings;
+namespace BaksDev\Products\Product\Type\Settings;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\StringType;

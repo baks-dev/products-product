@@ -16,31 +16,31 @@
  *
  */
 
-namespace App\Module\Products\Product\UseCase\Admin\NewEdit;
+namespace BaksDev\Products\Product\UseCase\Admin\NewEdit;
 
-use App\Module\Products\Product\Entity\Active\ActiveInterface;
-use App\Module\Products\Product\Entity\Category\CategoryInterface;
-use App\Module\Products\Product\Entity\Event\ProductEventInterface;
-use App\Module\Products\Product\Entity\Files\FilesInterface;
-use App\Module\Products\Product\Entity\Offers\OffersInterface;
-use App\Module\Products\Product\Entity\Photo\PhotoInterface;
-use App\Module\Products\Product\Entity\Price\PriceInterface;
-use App\Module\Products\Product\Entity\Property\PropertyInterface;
-use App\Module\Products\Product\Entity\Seo\SeoInterface;
-use App\Module\Products\Product\Entity\Trans\TransInterface;
-use App\Module\Products\Product\Entity\Video\VideoInterface;
-use App\Module\Products\Product\Type\Event\ProductEventUid;
-use App\Module\Products\Product\UseCase\Admin\NewEdit\Active\ActiveDTO;
-use App\Module\Products\Product\UseCase\Admin\NewEdit\Category\CategoryCollectionDTO;
-use App\Module\Products\Product\UseCase\Admin\NewEdit\Files\FilesCollectionDTO;
-use App\Module\Products\Product\UseCase\Admin\NewEdit\Info\InfoDTO;
-use App\Module\Products\Product\UseCase\Admin\NewEdit\Offers\OffersCollectionDTO;
-use App\Module\Products\Product\UseCase\Admin\NewEdit\Photo\PhotoCollectionDTO;
-use App\Module\Products\Product\UseCase\Admin\NewEdit\Price\PriceDTO;
-use App\Module\Products\Product\UseCase\Admin\NewEdit\Property\PropertyCollectionDTO;
-use App\Module\Products\Product\UseCase\Admin\NewEdit\Seo\SeoCollectionDTO;
-use App\Module\Products\Product\UseCase\Admin\NewEdit\Video\VideoCollectionDTO;
-use App\System\Type\Locale\Locale;
+use BaksDev\Products\Product\Entity\Active\ActiveInterface;
+use BaksDev\Products\Product\Entity\Category\CategoryInterface;
+use BaksDev\Products\Product\Entity\Event\ProductEventInterface;
+use BaksDev\Products\Product\Entity\Files\FilesInterface;
+use BaksDev\Products\Product\Entity\Offers\OffersInterface;
+use BaksDev\Products\Product\Entity\Photo\PhotoInterface;
+use BaksDev\Products\Product\Entity\Price\PriceInterface;
+use BaksDev\Products\Product\Entity\Property\PropertyInterface;
+use BaksDev\Products\Product\Entity\Seo\SeoInterface;
+use BaksDev\Products\Product\Entity\Trans\TransInterface;
+use BaksDev\Products\Product\Entity\Video\VideoInterface;
+use BaksDev\Products\Product\Type\Event\ProductEventUid;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Active\ActiveDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Category\CategoryCollectionDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Files\FilesCollectionDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Info\InfoDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\OffersCollectionDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Photo\PhotoCollectionDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Price\PriceDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Property\PropertyCollectionDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Seo\SeoCollectionDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Video\VideoCollectionDTO;
+use BaksDev\Core\Type\Locale\Locale;
 use ArrayIterator;
 use Doctrine\Common\Collections\ArrayCollection;
 use Exception;

@@ -16,7 +16,7 @@
  *
  */
 
-namespace App\Module\Products\Product\UseCase\Admin\NewEdit\Photo;
+namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Photo;
 
 
 use Symfony\Component\Form\AbstractType;

@@ -16,7 +16,7 @@
  *
  */
 
-namespace App\Module\Products\Product\DataFixtures\Security;
+namespace BaksDev\Products\Product\DataFixtures\Security;
 
 use App\Module\Users\Groups\Group\DataFixtures\Security\Group\GroupFixtures;
 use App\Module\Users\Groups\Group\Entity\Group;
@@ -26,7 +26,7 @@ use App\Module\Users\Groups\Roles\Role\Type\Prefix\RolePrefix;
 use App\Module\Users\Groups\Voter\DataFixtures\Security\VoterFixturesDTO;
 use App\Module\Users\Groups\Voter\DataFixtures\Security\VoterTransFixturesDTO;
 use App\Module\Users\Groups\Voter\Type\Prefix\VoterPrefix;
-use App\System\Type\Locale\Locale;
+use BaksDev\Core\Type\Locale\Locale;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;

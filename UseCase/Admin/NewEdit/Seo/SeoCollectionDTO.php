@@ -16,11 +16,11 @@
  *
  */
 
-namespace App\Module\Products\Product\UseCase\Admin\NewEdit\Seo;
+namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Seo;
 
 
-use App\Module\Products\Product\Entity\Seo\SeoInterface;
-use App\System\Type\Locale\Locale;
+use BaksDev\Products\Product\Entity\Seo\SeoInterface;
+use BaksDev\Core\Type\Locale\Locale;
 use Symfony\Component\Validator\Constraints as Assert;
 
 final class SeoCollectionDTO implements SeoInterface

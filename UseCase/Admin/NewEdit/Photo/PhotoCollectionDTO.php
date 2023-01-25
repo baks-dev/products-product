@@ -16,10 +16,10 @@
  *
  */
 
-namespace App\Module\Products\Product\UseCase\Admin\NewEdit\Photo;
+namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Photo;
 
-use App\Module\Products\Product\Entity\Photo\PhotoInterface;
-use App\Module\Products\Product\Type\Event\ProductEventUid;
+use BaksDev\Products\Product\Entity\Photo\PhotoInterface;
+use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Validator\Constraints as Assert;

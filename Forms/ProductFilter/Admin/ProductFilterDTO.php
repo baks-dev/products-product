@@ -16,10 +16,10 @@
  *
  */
 
-namespace App\Module\Products\Product\Forms\ProductFilter\Admin;
+namespace BaksDev\Products\Product\Forms\ProductFilter\Admin;
 
 use App\Module\Products\Category\Type\Id\CategoryUid;
-use App\Module\Products\Product\Forms\ProductFilter\ProductFilterInterface;
+use BaksDev\Products\Product\Forms\ProductFilter\ProductFilterInterface;
 use App\Module\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints as Assert;

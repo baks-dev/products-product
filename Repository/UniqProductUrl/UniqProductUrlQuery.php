@@ -16,10 +16,10 @@
  *
  */
 
-namespace App\Module\Products\Product\Repository\UniqProductUrl;
+namespace BaksDev\Products\Product\Repository\UniqProductUrl;
 
-use App\Module\Products\Product\Entity\Info\Info;
-use App\Module\Products\Product\Type\Id\ProductUid;
+use BaksDev\Products\Product\Entity\Info\Info;
+use BaksDev\Products\Product\Type\Id\ProductUid;
 use Doctrine\DBAL\Connection;
 
 final class UniqProductUrlQuery implements UniqProductUrlInterface

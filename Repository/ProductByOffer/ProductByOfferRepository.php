@@ -16,13 +16,13 @@
  *
  */
 
-namespace App\Module\Products\Product\Repository\ProductByOffer;
+namespace BaksDev\Products\Product\Repository\ProductByOffer;
 
-use App\Module\Products\Product\Entity as EntityProduct;
-use App\Module\Products\Product\Type\Id\ProductUid;
-use App\Module\Products\Product\Type\Offers\ConstId\ProductOfferConst;
-use App\Module\Products\Product\Type\Offers\Id\ProductOfferUid;
-use App\System\Type\Locale\Locale;
+use BaksDev\Products\Product\Entity as EntityProduct;
+use BaksDev\Products\Product\Type\Id\ProductUid;
+use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
+use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
+use BaksDev\Core\Type\Locale\Locale;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use App\Module\Products\Category\Entity as EntityCategory;

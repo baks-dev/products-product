@@ -16,9 +16,9 @@
  *
  */
 
-namespace App\Module\Products\Product\Entity\Trans;
+namespace BaksDev\Products\Product\Entity\Trans;
 
-use App\System\Type\Locale\Locale;
+use BaksDev\Core\Type\Locale\Locale;
 
 interface TransInterface
 {

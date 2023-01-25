@@ -16,7 +16,7 @@
  *
  */
 
-namespace App\Module\Products\Product\UseCase\Admin\NewEdit\Offers\Offer\Quantity;
+namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Offer\Quantity;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;

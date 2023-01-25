@@ -16,7 +16,7 @@
  *
  */
 
-namespace App\Module\Products\Product\Entity\Info;
+namespace BaksDev\Products\Product\Entity\Info;
 
 interface InfoInterface
 {
