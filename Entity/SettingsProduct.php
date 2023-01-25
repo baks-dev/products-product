@@ -20,7 +20,6 @@ namespace App\Module\Products\Product\Entity;
 
 
 use App\Module\Products\Product\Type\Settings\ProductSettings;
-use App\Module\Users\Profile\TypeProfile\Type\Id\ProfileUid;
 use App\Module\Users\Profile\TypeProfile\Type\Id\TypeProfileUid;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;

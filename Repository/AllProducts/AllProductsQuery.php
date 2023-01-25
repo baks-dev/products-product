@@ -24,8 +24,13 @@ use App\Module\Products\Category\Type\Id\CategoryUid;
 use App\Module\Products\Product\Entity;
 use App\Module\Products\Product\Forms\ProductFilter\ProductFilterInterface;
 use App\Module\Users\Profile\UserProfile\Type\Id\UserProfileUid;
+<<<<<<< HEAD
 use App\System\Handler\Search\SearchDTO;
 use App\System\Helper\Switcher\Switcher;
+=======
+use App\System\Form\Search\SearchDTO;
+use App\System\Services\Switcher\SwitcherInterface;
+>>>>>>> 8d75f0b (Baks Development)
 use App\System\Type\Locale\Locale;
 use Doctrine\DBAL\Cache\QueryCacheProfile;
 use Doctrine\DBAL\Connection;
@@ -39,10 +44,17 @@ final class AllProductsQuery implements AllProductsInterface
 {
     private Connection $connection;
     
+<<<<<<< HEAD
     private Switcher $switcher;
     private Locale $locale;
     
     public function __construct(Connection $connection, TranslatorInterface $translator, Switcher $switcher)
+=======
+    private SwitcherInterface $switcher;
+    private Locale $locale;
+    
+    public function __construct(Connection $connection, TranslatorInterface $translator, SwitcherInterface $switcher)
+>>>>>>> 8d75f0b (Baks Development)
     {
         $this->connection = $connection;
         $this->locale = new Locale($translator->getLocale());

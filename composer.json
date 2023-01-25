@@ -3,7 +3,11 @@
   "description": "Модуль продукции",
   "homepage": "https://github.com/baks-dev/products-product",
   "license": "MIT",
+<<<<<<< HEAD
   "type": "library",
+=======
+  "type": "drupal-library",
+>>>>>>> 8d75f0b (Baks Development)
   "authors": [
     {
       "name": "Baks Development",
@@ -12,7 +16,11 @@
   ],
 
   "require": {
+<<<<<<< HEAD
     "php": ">=8.1",
     "oomphinc/composer-installers-extender": "*"
+=======
+    "php": ">=8.1"
+>>>>>>> 8d75f0b (Baks Development)
   }
 }

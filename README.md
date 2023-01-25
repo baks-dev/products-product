@@ -15,21 +15,7 @@
 
 ``` json
 {
-    "require": {
-        "oomphinc/composer-installers-extender": "*"
-    },
-    
-    "require-dev": {
-        "roave/security-advisories": "dev-latest"
-    },
-    
-    "config": {
-        "allow-plugins": {
-            "oomphinc/composer-installers-extender": true,
-            "composer/installers": true
-        }
-    },
-
+   
     "extra": {
         "installer-types": ["library"],
         "installer-paths": {

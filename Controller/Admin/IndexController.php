@@ -24,9 +24,15 @@ use App\Module\Products\Product\Forms\ProductFilter\Admin\ProductFilterForm;
 use App\Module\Products\Product\Repository\AllProducts\AllProductsInterface;
 use App\Module\Products\Product\Type\Offers\Id\ProductOfferUid;
 use App\System\Controller\AbstractController;
+<<<<<<< HEAD
 //use App\System\Handler\Search\Command;
 use App\System\Handler\Search\SearchDTO;
 use App\System\Handler\Search\SearchForm;
+=======
+//use App\System\Form\Search\Command;
+use App\System\Form\Search\SearchDTO;
+use App\System\Form\Search\SearchForm;
+>>>>>>> 8d75f0b (Baks Development)
 use App\System\Helper\Paginator;
 use App\System\Type\Locale\Locale;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;

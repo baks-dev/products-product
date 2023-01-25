@@ -19,7 +19,11 @@
 namespace App\Module\Products\Product\UseCase\Admin\NewEdit\Info;
 
 use App\Module\Products\Product\Entity\Info\InfoInterface;
+<<<<<<< HEAD
 use App\Module\Users\Profile\TypeProfile\Type\Id\ProfileUid;
+=======
+use App\Module\Users\Profile\TypeProfile\Type\Id\TypeProfileUid;
+>>>>>>> 8d75f0b (Baks Development)
 use App\Module\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Symfony\Component\Validator\Constraints as Assert;
 
