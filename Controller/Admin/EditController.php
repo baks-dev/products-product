@@ -35,6 +35,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+
 #[IsGranted(new Expression('"ROLE_ADMIN" in role_names or "ROLE_PRODUCT_EDIT" in role_names'))]
 final class EditController extends AbstractController
 {
