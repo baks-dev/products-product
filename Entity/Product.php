@@ -22,11 +22,10 @@ namespace BaksDev\Products\Product\Entity;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use Doctrine\ORM\Mapping as ORM;
-//use Symfony\Contracts\EventDispatcher\Event;
 
 /* Product */
 
-#[ORM\Entity()]
+#[ORM\Entity]
 #[ORM\Table(name: 'product')]
 class Product //extends Event
 {
@@ -45,25 +44,19 @@ class Product //extends Event
     
     public function __construct() { $this->id = new ProductUid(); }
     
-    /**
-    * @return ProductUid
-    */
+
     public function getId() : ProductUid
     {
         return $this->id;
     }
     
-    /**
-    * @param ProductUid $id
-    */
-    public function setId(ProductUid $id) : void
+
+    public function restore(ProductUid $id) : void
     {
         $this->id = $id;
     }
     
-    /**
-    * @return ProductEventUid
-    */
+
     public function getEvent() : ProductEventUid
     {
         return $this->event;

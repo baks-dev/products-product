@@ -18,12 +18,12 @@
 
 namespace BaksDev\Products\Product\DataFixtures\Security;
 
-use App\Module\Users\Groups\Group\DataFixtures\Security\Group\GroupFixtures;
-use App\Module\Users\Groups\Group\Entity\Event\GroupEvent;
-use App\Module\Users\Groups\Group\UseCase\CheckRoleAggregate;
+use BaksDev\Users\Groups\Group\DataFixtures\Security\Group\GroupFixtures;
+use BaksDev\Users\Groups\Group\Entity\Event\GroupEvent;
+use BaksDev\Users\Groups\Group\UseCase\CheckRoleAggregate;
 use BaksDev\Products\Product\DataFixtures\Security\Role\RoleDTO;
-use App\Module\Users\Groups\Role\Entity\Role;
-use App\Module\Users\Groups\Role\UseCase\RoleAggregate;
+use BaksDev\Users\Groups\Role\Entity\Role;
+use BaksDev\Users\Groups\Role\UseCase\RoleAggregate;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;

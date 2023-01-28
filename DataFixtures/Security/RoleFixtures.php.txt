@@ -18,13 +18,13 @@
 
 namespace BaksDev\Products\Product\DataFixtures\Security;
 
-use App\Module\Users\Groups\Group\Entity\Group;
-use App\Module\Users\Groups\Handler\Role\RoleHandler;
-use App\Module\Users\Groups\Repository\Group\CheckRole\GetExistCheckRole\GetExistCheckRoleInterface;
-use App\Module\Users\Groups\Repository\Role\GetExistRole\GetExistRoleInterface;
-use App\Module\Users\Groups\Role\DataFixtures\Security\RoleFixturesDTO;
-use App\Module\Users\Groups\Role\DataFixtures\Security\RoleTransFixturesDTO;
-use App\Module\Users\Groups\Roles\Role\Type\Prefix\RolePrefix;
+use BaksDev\Users\Groups\Group\Entity\Group;
+use BaksDev\Users\Groups\Handler\Role\RoleHandler;
+use BaksDev\Users\Groups\Repository\Group\CheckRole\GetExistCheckRole\GetExistCheckRoleInterface;
+use BaksDev\Users\Groups\Repository\Role\GetExistRole\GetExistRoleInterface;
+use BaksDev\Users\Groups\Role\DataFixtures\Security\RoleFixturesDTO;
+use BaksDev\Users\Groups\Role\DataFixtures\Security\RoleTransFixturesDTO;
+use BaksDev\Users\Groups\Roles\Role\Type\Prefix\RolePrefix;
 use BaksDev\Core\Type\Locale\Locale;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -85,7 +85,7 @@ final class RoleFixtures extends Fixture implements DependentFixtureInterface
         
         
         /* Добавляем роль к группе администраторов */
-        $GROUP_PREFIX = \App\Module\Users\Groups\Group\DataFixtures\Security\Group\GroupFixtures::GROUP_PREFIX;
+        $GROUP_PREFIX = \BaksDev\Users\Groups\Group\DataFixtures\Security\Group\GroupFixtures::GROUP_PREFIX;
         $Group = $manager->getRepository(Group::class)->find($GROUP_PREFIX);
         
         if($Group && !$this->existCheckRole->get($ROLE_PREFIX, $Group->getEvent()))
@@ -100,7 +100,7 @@ final class RoleFixtures extends Fixture implements DependentFixtureInterface
     public function getDependencies() : array
     {
         return [
-          \App\Module\Users\Groups\Role\DataFixtures\Security\RoleFixtures::class,
+          \BaksDev\Users\Groups\Role\DataFixtures\Security\RoleFixtures::class,
         ];
     }
     

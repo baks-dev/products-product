@@ -18,7 +18,7 @@
 
 namespace BaksDev\Products\Product\Type\Event;
 
-use App\System\Type\UidType\UidType;
+use BaksDev\Core\Type\UidType\UidType;
 
 final class ProductEventType extends UidType
 {

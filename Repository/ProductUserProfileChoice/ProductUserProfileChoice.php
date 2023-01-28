@@ -19,15 +19,15 @@
 namespace BaksDev\Products\Product\Repository\ProductUserProfileChoice;
 
 use BaksDev\Products\Product\Entity\SettingsProduct;
-use App\Module\Users\Auth\Email\Type\Status\AccountStatus;
-use App\Module\Users\Auth\Email\Type\Status\AccountStatusEnum;
-use App\Module\Users\Profile\UserProfile\Entity as UserProfileEntity;
-use App\Module\Users\Profile\UserProfile\Type\Id\UserProfileUid;
-use App\Module\Users\Profile\UserProfile\Type\Status\UserProfileStatus;
-use App\Module\Users\Profile\UserProfile\Type\Status\UserProfileStatusEnum;
+use BaksDev\Users\Auth\Email\Type\Status\AccountStatus;
+use BaksDev\Users\Auth\Email\Type\Status\AccountStatusEnum;
+use BaksDev\Users\Profile\UserProfile\Entity as UserProfileEntity;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
+use BaksDev\Users\Profile\UserProfile\Type\Status\UserProfileStatus;
+use BaksDev\Users\Profile\UserProfile\Type\Status\UserProfileStatusEnum;
 
 use Doctrine\ORM\EntityManagerInterface;
-use App\Module\Users\Auth\Email\Entity as AccountEntity;
+use BaksDev\Users\Auth\Email\Entity as AccountEntity;
 
 
 final class ProductUserProfileChoice implements ProductUserProfileChoiceInterface

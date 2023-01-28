@@ -47,7 +47,7 @@ final class OfferByOfferConstRepository implements OfferByOfferConstInterface
     
         $qb->from(Entity\Product::class, 'product');
         $qb->join(Entity\Event\ProductEvent::class, 'event', 'WITH', 'event.id = product.event');
-        $qb->join(Entity\Offers\Offers::class, 'offers', 'WITH', 'offers.event = event.id');
+        $qb->join(Entity\Offers\ProductOffers::class, 'offers', 'WITH', 'offers.event = event.id');
         $qb->join(Entity\Offers\Offer\Offer::class, 'offer', 'WITH', 'offer.productOffer = offers.id AND offer.const = :const');
         
         $qb->where('product.id = :product');

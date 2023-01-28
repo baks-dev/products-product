@@ -18,14 +18,14 @@
 
 namespace BaksDev\Products\Product\DataFixtures\Security;
 
-use App\Module\Users\Groups\Group\DataFixtures\Security\Group\GroupFixtures;
-use App\Module\Users\Groups\Group\Entity\Group;
-use App\Module\Users\Groups\Handler\Voter\VoterHandler;
-use App\Module\Users\Groups\Repository\Group\CheckVoter\GetExistCheckVoter\GetExistCheckVoterInterface;
-use App\Module\Users\Groups\Roles\Role\Type\Prefix\RolePrefix;
-use App\Module\Users\Groups\Voter\DataFixtures\Security\VoterFixturesDTO;
-use App\Module\Users\Groups\Voter\DataFixtures\Security\VoterTransFixturesDTO;
-use App\Module\Users\Groups\Voter\Type\Prefix\VoterPrefix;
+use BaksDev\Users\Groups\Group\DataFixtures\Security\Group\GroupFixtures;
+use BaksDev\Users\Groups\Group\Entity\Group;
+use BaksDev\Users\Groups\Handler\Voter\VoterHandler;
+use BaksDev\Users\Groups\Repository\Group\CheckVoter\GetExistCheckVoter\GetExistCheckVoterInterface;
+use BaksDev\Users\Groups\Roles\Role\Type\Prefix\RolePrefix;
+use BaksDev\Users\Groups\Voter\DataFixtures\Security\VoterFixturesDTO;
+use BaksDev\Users\Groups\Voter\DataFixtures\Security\VoterTransFixturesDTO;
+use BaksDev\Users\Groups\Voter\Type\Prefix\VoterPrefix;
 use BaksDev\Core\Type\Locale\Locale;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -139,7 +139,7 @@ final class VoterFixtures extends Fixture implements DependentFixtureInterface
     public function getDependencies() : array
     {
         return [
-          \App\Module\Users\Groups\Voter\DataFixtures\Security\VoterFixtures::class,
+          \BaksDev\Users\Groups\Voter\DataFixtures\Security\VoterFixtures::class,
         ];
     }
 }

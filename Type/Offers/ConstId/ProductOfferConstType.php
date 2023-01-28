@@ -18,7 +18,7 @@
 
 namespace BaksDev\Products\Product\Type\Offers\ConstId;
 
-use App\System\Type\UidType\UidType;
+use BaksDev\Core\Type\UidType\UidType;
 
 final class ProductOfferConstType extends UidType
 {

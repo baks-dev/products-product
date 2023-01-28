@@ -18,8 +18,8 @@
 
 namespace BaksDev\Products\Product\DataFixtures\Security\Check\Voter;
 
-use App\Module\Users\Groups\Group\Entity\CheckRole\CheckVoter\CheckVoterInterface;
-use App\Module\Users\Groups\Role\Type\VoterPrefix\VoterPrefix;
+use BaksDev\Users\Groups\Group\Entity\CheckRole\CheckVoter\CheckVoterInterface;
+use BaksDev\Users\Groups\Role\Type\VoterPrefix\VoterPrefix;
 use Symfony\Component\Validator\Constraints as Assert;
 
 final class CheckVoterDTO implements CheckVoterInterface

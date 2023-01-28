@@ -19,10 +19,10 @@
 namespace BaksDev\Products\Product\UseCase\Command\UpdatePrice\Price;
 
 use BaksDev\Products\Product\Entity\Price\PriceInterface;
-use App\System\Type\Currency\Currency;
-use App\System\Type\Currency\CurrencyEnum;
+use BaksDev\Reference\Currency\Type\Currency;
+use BaksDev\Reference\Currency\Type\CurrencyEnum;
 use App\System\Type\Measurement\Measurement;
-use App\System\Type\Money\Money;
+use BaksDev\Reference\Money\Type\Money;
 use Symfony\Component\Validator\Constraints as Assert;
 
 final class PriceDTO implements PriceInterface

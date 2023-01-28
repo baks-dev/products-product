@@ -18,15 +18,16 @@
 
 namespace BaksDev\Products\Product\Repository\AllProducts;
 
-use App\Module\Materials\Stock\Forms\StockFilter\StockFilterInterface;
-use App\Module\Products\Category\Entity as CategoryEntity;
-use App\Module\Products\Category\Type\Id\CategoryUid;
+
+use BaksDev\Products\Category\Entity as CategoryEntity;
+
+use BaksDev\Core\Services\Switcher\Switcher;
+use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
 use BaksDev\Products\Product\Entity;
 use BaksDev\Products\Product\Forms\ProductFilter\ProductFilterInterface;
-use App\Module\Users\Profile\UserProfile\Type\Id\UserProfileUid;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 
 use BaksDev\Core\Form\Search\SearchDTO;
-use App\System\Helper\Switcher\Switcher;
 
 use BaksDev\Core\Type\Locale\Locale;
 use Doctrine\DBAL\Cache\QueryCacheProfile;
@@ -68,9 +69,9 @@ final class AllProductsQuery implements AllProductsInterface
         $qb->addSelect('product_trans.preview');
         $qb->join(
           'product_event',
-          Entity\Trans\Trans::TABLE,
+          Entity\Trans\ProductTrans::TABLE,
           'product_trans',
-          'product_trans.event_id = product_event.id AND product_trans.local = :local');
+          'product_trans.event = product_event.id AND product_trans.local = :local');
         
         /* Общее фото */
         $qb->addSelect('product_photo.name AS photo_name');
@@ -80,9 +81,9 @@ final class AllProductsQuery implements AllProductsInterface
         
         $qb->leftJoin(
           'product_event',
-          Entity\Photo\Photo::TABLE,
+          Entity\Photo\ProductPhoto::TABLE,
           'product_photo',
-          'product_photo.event_id = product_event.id AND product_photo.root = true'
+          'product_photo.event = product_event.id AND product_photo.root = true'
         );
     
 		
@@ -98,7 +99,7 @@ final class AllProductsQuery implements AllProductsInterface
         $qb->addSelect('product_info.article');
         $qb->join(
           'product_event',
-          Entity\Info\Info::TABLE,
+          Entity\Info\ProductInfo::TABLE,
           'product_info',
           'product_info.product = product.id'
         );
@@ -107,16 +108,16 @@ final class AllProductsQuery implements AllProductsInterface
         $qb->addSelect('product_modify.mod_date');
         $qb->leftJoin(
           'product_event',
-          Entity\Modify\Modify::TABLE,
+          Entity\Modify\ProductModify::TABLE,
           'product_modify',
-          'product_modify.event_id = product_event.id'
+          'product_modify.event = product_event.id'
         );
         
         $qb->leftJoin(
           'product_event',
-          Entity\Offers\Offers::TABLE,
+          Entity\Offers\ProductOffers::TABLE,
           'product_offers',
-          'product_offers.event_id = product_event.id'
+          'product_offers.event = product_event.id'
         );
         
         //        $qb->where("product_event.id = 'fd52dc37-533f-42cf-b8d2-cd7c8d688d17' ");
@@ -166,9 +167,9 @@ final class AllProductsQuery implements AllProductsInterface
         /* Категория */
         $qb->join(
           'product_event',
-          Entity\Category\Category::TABLE,
+          Entity\Category\ProductCategory::TABLE,
           'product_event_category',
-          'product_event_category.event_id = product_event.id AND product_event_category.root = true'
+          'product_event_category.event = product_event.id AND product_event_category.root = true'
         );
     
 		
@@ -177,13 +178,13 @@ final class AllProductsQuery implements AllProductsInterface
         if($filter->getCategory())
         {
             $qb->andWhere('product_event_category.category = :category');
-            $qb->setParameter('category', $filter->getCategory(), CategoryUid::TYPE);
+            $qb->setParameter('category', $filter->getCategory(), ProductCategoryUid::TYPE);
         }
         
         
         $qb->join(
           'product_event_category',
-          CategoryEntity\Category::TABLE,
+          CategoryEntity\ProductCategory::TABLE,
           'category',
           'category.id = product_event_category.category'
         );
@@ -192,9 +193,9 @@ final class AllProductsQuery implements AllProductsInterface
         
         $qb->join(
           'category',
-          CategoryEntity\Trans\Trans::TABLE,
+          CategoryEntity\Trans\ProductCategoryTrans::TABLE,
           'category_trans',
-          'category_trans.event_id = category.event AND category_trans.local = :local');
+          'category_trans.event = category.event AND category_trans.local = :local');
     
     
 
@@ -203,8 +204,7 @@ final class AllProductsQuery implements AllProductsInterface
             $search->query = mb_strtolower(trim($search->query));
         
             $searcher = $this->connection->createQueryBuilder();
-            
-        
+			
             /* name */
             $searcher->orWhere('LOWER(product_trans.name) LIKE :query');
             $searcher->orWhere('LOWER(product_trans.name) LIKE :switcher');

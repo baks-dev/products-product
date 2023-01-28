@@ -49,14 +49,16 @@ final class SeoCollectionDTO implements SeoInterface
     {
         return $this->local;
     }
-    
-    /**
-     * @param string|Locale $local
-     */
-    public function setLocal(string|Locale $local) : void
-    {
-        $this->local = $local instanceof Locale ? $local : new Locale($local) ;
-    }
+	
+	/** Локаль */
+	
+	public function setLocal(string $local) : void
+	{
+		if(!(new \ReflectionProperty($this::class, 'local'))->isInitialized($this))
+		{
+			$this->local = new Locale($local) ;
+		}
+	}
     
     /**
      * @return string|null

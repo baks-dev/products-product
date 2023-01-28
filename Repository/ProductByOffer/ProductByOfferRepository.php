@@ -116,7 +116,7 @@ final class ProductByOfferRepository implements ProductByOfferInterface
           'product_offers',
           EntityProduct\Trans\Trans::TABLE,
           'product_trans',
-          'product_trans.event_id = product_offers.event_id AND product_trans.local = :local');
+          'product_trans.event = product_offers.event AND product_trans.local = :local');
         
         
         /* Категория продукта */
@@ -124,7 +124,7 @@ final class ProductByOfferRepository implements ProductByOfferInterface
           'product_offers',
           EntityProduct\Category\Category::TABLE,
           'product_event_category',
-          'product_event_category.event_id = product_offers.event_id AND product_event_category.root = true'
+          'product_event_category.event = product_offers.event AND product_event_category.root = true'
         );
     
         /* Категория */
@@ -142,7 +142,7 @@ final class ProductByOfferRepository implements ProductByOfferInterface
           'category',
           EntityCategory\Trans\Trans::TABLE,
           'category_trans',
-          'category_trans.event_id = category.event AND category_trans.local = :local');
+          'category_trans.event = category.event AND category_trans.local = :local');
         $qb->addSelect('product_trans.name');
     
         $qb->setParameter('local', $this->local, Locale::TYPE);

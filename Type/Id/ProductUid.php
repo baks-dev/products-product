@@ -18,19 +18,9 @@
 
 namespace BaksDev\Products\Product\Type\Id;
 
-use App\System\Type\UidType\Uid;
-use Symfony\Component\Uid\AbstractUid;
+use BaksDev\Core\Type\UidType\Uid;
 
 final class ProductUid extends Uid
 {
-	
-	/*
-	$doctrine->dbal()->type(ProductUid::TYPE)->class(ProductUidType::class);
-	$container->services()->set(ProductUid::class)
-		->tag('controller.argument_value_resolver', ['priority' => 100])
-	;
-	*/
-	
     public const TYPE = 'product_id';
-
 }

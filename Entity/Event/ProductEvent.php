@@ -19,25 +19,24 @@
 namespace BaksDev\Products\Product\Entity\Event;
 
 
-use BaksDev\Products\Product\Entity\Active\Active;
-use BaksDev\Products\Product\Entity\Category\Category;
-use BaksDev\Products\Product\Entity\Files\Files;
-use BaksDev\Products\Product\Entity\Info\Info;
-use BaksDev\Products\Product\Entity\Modify\Modify;
-use BaksDev\Products\Product\Entity\Offers\Offers;
-use BaksDev\Products\Product\Entity\Photo\Photo;
-use BaksDev\Products\Product\Entity\Price\Price;
+use BaksDev\Core\Type\Modify\ModifyAction;
+use BaksDev\Products\Product\Entity\Active\ProductActive;
+use BaksDev\Products\Product\Entity\Category\ProductCategory;
+use BaksDev\Products\Product\Entity\Files\ProductFiles;
+use BaksDev\Products\Product\Entity\Modify\ProductModify;
+use BaksDev\Products\Product\Entity\Offers\ProductOffers;
+use BaksDev\Products\Product\Entity\Photo\ProductPhoto;
+use BaksDev\Products\Product\Entity\Price\ProductPrice;
 use BaksDev\Products\Product\Entity\Product;
-use BaksDev\Products\Product\Entity\Property\Property;
-use BaksDev\Products\Product\Entity\Seo\Seo;
-use BaksDev\Products\Product\Entity\Trans\Trans;
-use BaksDev\Products\Product\Entity\Video\Video;
+use BaksDev\Products\Product\Entity\Property\ProductProperty;
+use BaksDev\Products\Product\Entity\Seo\ProductSeo;
+use BaksDev\Products\Product\Entity\Trans\ProductTrans;
+use BaksDev\Products\Product\Entity\Video\ProductVideo;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
-use App\System\Entity\EntityEvent;
+use BaksDev\Core\Entity\EntityEvent;
 use BaksDev\Core\Type\Locale\Locale;
-use App\System\Type\Modify\ModifyAction;
-use App\System\Type\Modify\ModifyActionEnum;
+
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -56,63 +55,62 @@ class ProductEvent extends EntityEvent
     /** ID */
     #[ORM\Id]
     #[ORM\Column(type: ProductEventUid::TYPE)]
-    protected ProductEventUid $id;
+    private ProductEventUid $id;
     
     /** ID Product */
     #[ORM\Column(type: ProductUid::TYPE, nullable: false)]
-    protected ?ProductUid $product = null;
+    private ?ProductUid $product = null;
     
     /** Категории */
-    #[ORM\OneToMany(mappedBy: 'event', targetEntity: Category::class, cascade: ['all'])]
-    protected Collection $category;
+    #[ORM\OneToMany(mappedBy: 'event', targetEntity: ProductCategory::class, cascade: ['all'])]
+    private Collection $category;
 
     /** Статусы активности продукта */
-    #[ORM\OneToOne(mappedBy: 'event', targetEntity: Active::class, cascade: ['all'])]
-    protected Active $active;
+    #[ORM\OneToOne(mappedBy: 'event', targetEntity: ProductActive::class, cascade: ['all'])]
+    private ProductActive $active;
     
     /** Базовые Стоимость и наличие */
-    #[ORM\OneToOne(mappedBy: 'event', targetEntity: Price::class, cascade: ['all'])]
-    protected Price $price;
+    #[ORM\OneToOne(mappedBy: 'event', targetEntity: ProductPrice::class, cascade: ['all'])]
+    private ProductPrice $price;
     
     /** Модификатор */
-    #[ORM\OneToOne(mappedBy: 'event', targetEntity: Modify::class, cascade: ['all'])]
-    protected Modify $modify;
+    #[ORM\OneToOne(mappedBy: 'event', targetEntity: ProductModify::class, cascade: ['all'])]
+    private ProductModify $modify;
 
     /** Перевод */
-    #[ORM\OneToMany(mappedBy: 'event', targetEntity: Trans::class, cascade: ['all'])]
-    protected Collection $trans;
+    #[ORM\OneToMany(mappedBy: 'event', targetEntity: ProductTrans::class, cascade: ['all'])]
+    private Collection $translate;
     
     /** Фото продукта */
-    #[ORM\OneToMany(mappedBy: 'event', targetEntity: Photo::class, cascade: ['all'])]
-    protected Collection $photos;
+    #[ORM\OneToMany(mappedBy: 'event', targetEntity: ProductPhoto::class, cascade: ['all'])]
+    private Collection $photo;
     
     /** Файлы (документы) продукта */
-    #[ORM\OneToMany(mappedBy: 'event', targetEntity: Files::class, cascade: ['all'])]
-    protected Collection $files;
+    #[ORM\OneToMany(mappedBy: 'event', targetEntity: ProductFiles::class, cascade: ['all'])]
+    private Collection $file;
     
     /** Видео */
-    #[ORM\OneToMany(mappedBy: 'event', targetEntity: Video::class, cascade: ['all'])]
-    protected Collection $videos;
+    #[ORM\OneToMany(mappedBy: 'event', targetEntity: ProductVideo::class, cascade: ['all'])]
+    private Collection $video;
     
     /**  Настройки SEO информации */
-    #[ORM\OneToMany(mappedBy: 'event', targetEntity: Seo::class, cascade: ['all'])]
-    protected Collection $seo;
+    #[ORM\OneToMany(mappedBy: 'event', targetEntity: ProductSeo::class, cascade: ['all'])]
+    private Collection $seo;
     
     /** Тоговые предложения */
-    #[ORM\OneToMany(mappedBy: 'event', targetEntity: Offers::class, cascade: ['all'])]
-    protected Collection $offers;
+    #[ORM\OneToMany(mappedBy: 'event', targetEntity: ProductOffers::class, cascade: ['all'])]
+    private Collection $offer;
     
     /** Свойства продукта */
-    #[ORM\OneToMany(mappedBy: 'event', targetEntity: Property::class, cascade: ['all'])]
-    protected Collection $property;
+    #[ORM\OneToMany(mappedBy: 'event', targetEntity: ProductProperty::class, cascade: ['all'])]
+    private Collection $property;
 
     public function __construct() {
         
         $this->id = new ProductEventUid();
-        $this->active = new Active($this);
-        $this->price = new Price($this);
-        $this->modify = new Modify($this, new ModifyAction(ModifyActionEnum::NEW));
-		
+        //$this->active = new Active($this);
+        //$this->price = new Price($this);
+        $this->modify = new ProductModify($this);
     }
     
     public function __clone()
@@ -142,10 +140,10 @@ class ProductEvent extends EntityEvent
     }
     
     
-    public function isModifyActionEquals(ModifyActionEnum $action) : bool
-    {
-        return $this->modify->equals($action);
-    }
+//    public function isModifyActionEquals(ModifyActionEnum $action) : bool
+//    {
+//        return $this->modify->equals($action);
+//    }
     
     /**
      * @throws Exception
@@ -178,10 +176,10 @@ class ProductEvent extends EntityEvent
     {
         $name = null;
         
-        /** @var Trans $trans */
-        foreach($this->trans as $trans)
+        /** @var ProductTrans $trans */
+        foreach($this->translate as $trans)
         {
-            if($name = $trans->name($locale))
+            if($name = $trans->getNameByLocal($locale))
             {
                 break;
             }

@@ -19,9 +19,9 @@
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Price;
 
 
-use App\System\Type\Currency\Currency;
+use BaksDev\Reference\Currency\Type\Currency;
 use App\System\Type\Measurement\Measurement;
-use App\System\Type\Money\Money;
+use BaksDev\Reference\Money\Type\Money;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;

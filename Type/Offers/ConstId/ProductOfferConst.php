@@ -18,76 +18,31 @@
 
 namespace BaksDev\Products\Product\Type\Offers\ConstId;
 
-use App\System\Type\UidType\Uid;
+use BaksDev\Core\Type\UidType\Uid;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 use Symfony\Component\Uid\AbstractUid;
 use Symfony\Component\Uid\Uuid;
 
-final class ProductOfferConst extends Uid //  implements ValueResolverInterface
+final class ProductOfferConst extends Uid
 {
     public const TYPE = 'product_offer_const';
-    
-//    private Uuid $value;
-//
-//    private ?string $name;
-//
-//    public function __construct(AbstractUid|string|null $value = null, $name = null)
-//    {
-//        if($value === null)
-//        {
-//            $value = Uuid::v7();
-//        }
-//
-//        else if(is_string($value))
-//        {
-//            $value = new Uuid($value);
-//        }
-//
-//        $this->value = $value;
-//        $this->name = $name;
-//    }
-//
-//    public function __toString() : string
-//    {
-//        return $this->value;
-//    }
-//
-//    public function getValue() : AbstractUid
-//    {
-//        return $this->value;
-//    }
-//
-//    public function getName() : ?string
-//    {
-//        return $this->name;
-//    }
-//
-//    public function equals(self $value) : bool
-//    {
-//
-//        return $this->value === $value->value;
-//    }
-//
-//	public function resolve(Request $request, ArgumentMetadata $argument) : iterable
-//	{
-//		$argumentType = $argument->getType();
-//
-//		if($argumentType !== self::class)
-//		{
-//			return [];
-//		}
-//
-//		$value = $request->attributes->get($argument->getName()) ?:
-//			$request->attributes->get('id') ?:
-//				$request->get('id');
-//
-//		if(empty($value))
-//		{
-//			return [];
-//		}
-//
-//		return [new self($value)];
-//	}
+	
+	private ?string $option;
+	
+	public function __construct(AbstractUid|string|null $value = null, string $option = null)
+	{
+		parent::__construct($value);
+		$this->option = $option;
+	}
+	
+	/**
+	 * @return string|null
+	 */
+	public function getOption() : ?string
+	{
+		return $this->option;
+	}
+	
 }

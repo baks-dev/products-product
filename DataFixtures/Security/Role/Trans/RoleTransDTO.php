@@ -18,7 +18,7 @@
 
 namespace BaksDev\Products\Product\DataFixtures\Security\Role\Trans;
 
-use App\Module\Users\Groups\Role\Entity\Trans\RoleTransInterface;
+use BaksDev\Users\Groups\Role\Entity\Trans\RoleTransInterface;
 use BaksDev\Core\Type\Locale\Locale;
 use Symfony\Component\Validator\Constraints as Assert;
 

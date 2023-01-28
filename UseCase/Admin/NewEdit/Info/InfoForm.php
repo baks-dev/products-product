@@ -19,7 +19,7 @@
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Info;
 
 use BaksDev\Products\Product\Repository\ProductUserProfileChoice\ProductUserProfileChoiceInterface;
-use App\Module\Users\Profile\UserProfile\Type\Id\UserProfileUid;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use App\Module\Wildberries\Settings\Repository\UserProfileChoiceForm\UserProfileChoiceRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;

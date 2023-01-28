@@ -34,7 +34,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /** ProductsRenameCommand */
 #[AsCommand(
-  name: 'app:products:product:cdn',
+  name: 'baks:products:product:cdn',
   description: 'Передает файлы изображений продукта на CDN')
 ]
 class ProductsImagesCdnCommand extends Command

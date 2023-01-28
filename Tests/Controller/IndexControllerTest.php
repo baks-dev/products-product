@@ -18,9 +18,9 @@
 
 namespace BaksDev\Products\Product\Tests\Controller;
 
-use App\Module\Users\AuthEmail\Account\Repository\UserByEmail\UserByEmailInterface;
-use App\Module\Users\AuthEmail\Account\Type\Email\AccountEmail;
-use App\Module\Users\User\Entity\User;
+use BaksDev\Users\AuthEmail\Account\Repository\UserByEmail\UserByEmailInterface;
+use BaksDev\Users\AuthEmail\Account\Type\Email\AccountEmail;
+use BaksDev\Users\User\Entity\User;
 use App\System\Tests\UserRoleControllerTest;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 

@@ -29,11 +29,11 @@ return static function (ContainerConfigurator $configurator)
       ->autoconfigure();
     
     /** EntityListeners */
-    $services->set(EntityListeners\ModifyListener::class)
-      ->class(EntityListeners\ModifyListener::class)
+    $services->set(EntityListeners\ProductModifyListener::class)
+      ->class(EntityListeners\ProductModifyListener::class)
       ->tag(
         'doctrine.orm.entity_listener',
-        ['event' => 'prePersist', 'lazy' => true, 'entity' => Entity\Modify\Modify::class]);
+        ['event' => 'prePersist', 'lazy' => true, 'entity' => Entity\Modify\ProductModify::class]);
     
 
 };

@@ -23,21 +23,20 @@ use Doctrine\DBAL\Types\StringType;
 
 final class ProductSettingsType extends StringType
 {
-    public const NAME = 'product_settings';
-    
+
     public function convertToDatabaseValue($value, AbstractPlatform $platform) : mixed
     {
-        return $value instanceof ProductSettings ? $value->getValue() : $value;
+        return $value instanceof ProductSettingsIdentifier ? $value->getValue() : $value;
     }
     
     public function convertToPHPValue($value, AbstractPlatform $platform) : mixed
     {
-        return !empty($value) ? new ProductSettings() : $value;
+        return !empty($value) ? new ProductSettingsIdentifier() : $value;
     }
     
     public function getName() : string
     {
-        return self::NAME;
+        return ProductSettingsIdentifier::TYPE;
     }
     
     public function requiresSQLCommentHint(AbstractPlatform $platform) : bool

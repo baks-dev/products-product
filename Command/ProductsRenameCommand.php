@@ -32,7 +32,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 
 #[AsCommand(
-  name       : 'app:products:product:rename',
+  name       : 'baks:products:product:rename',
   description: 'Обновление названий карточек товаров')
 ]
 class ProductsRenameCommand extends Command

@@ -18,9 +18,9 @@
 
 namespace BaksDev\Products\Product\Forms\ProductFilter\Admin;
 
-use App\Module\Products\Category\Type\Id\CategoryUid;
+use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
 use BaksDev\Products\Product\Forms\ProductFilter\ProductFilterInterface;
-use App\Module\Users\Profile\UserProfile\Type\Id\UserProfileUid;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -37,41 +37,32 @@ final class ProductFilterDTO implements ProductFilterInterface
     
     
     /** Категория */
-    private ?CategoryUid $category = null;
+    private ?ProductCategoryUid $category = null;
     
     /** Профиль */
     private ?UserProfileUid $profile = null;
     
-    
-    /**
-     * @param UserProfileUid|null $profile
-     */
+
     public function setProfile(?UserProfileUid $profile) : void
     {
         if($profile === null) { $this->request->getSession()->remove(self::profile); }
         $this->profile = $profile;
     }
     
-    /**
-     * @param CategoryUid|null $category
-     */
-    public function setCategory(?CategoryUid $category) : void
+
+    public function setCategory(?ProductCategoryUid $category) : void
     {
         if($category === null) { $this->request->getSession()->remove(self::category); }
         $this->category = $category;
     }
     
-    /**
-     * @return CategoryUid|null
-     */
-    public function getCategory() : ?CategoryUid
+
+    public function getCategory() : ?ProductCategoryUid
     {
         return $this->category ?: $this->request->getSession()->get(self::category);
     }
     
-    /**
-     * @return UserProfileUid|null
-     */
+
     public function getProfile() : ?UserProfileUid
     {
         return $this->profile ?: $this->request->getSession()->get(self::profile);

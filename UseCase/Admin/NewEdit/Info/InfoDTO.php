@@ -20,8 +20,8 @@ namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Info;
 
 use BaksDev\Products\Product\Entity\Info\InfoInterface;
 
-use App\Module\Users\Profile\TypeProfile\Type\Id\ProfileUid;
-use App\Module\Users\Profile\UserProfile\Type\Id\UserProfileUid;
+use BaksDev\Users\Profile\TypeProfile\Type\Id\ProfileUid;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 final class InfoDTO implements InfoInterface

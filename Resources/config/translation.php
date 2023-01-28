@@ -6,7 +6,7 @@ use Symfony\Config\FrameworkConfig;
 
 return static function (FrameworkConfig $config)
 {
-    $config->translator()->paths(['%kernel.project_dir%/src/Module/Products/Product/Resources/translations/']);
+	$config->translator()->paths([__DIR__.'/../translations']);
 };
 
 

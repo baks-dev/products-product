@@ -18,7 +18,7 @@
 
 namespace BaksDev\Products\Product\Type\Offers\Id;
 
-use App\System\Type\UidType\UidType;
+use BaksDev\Core\Type\UidType\UidType;
 
 final class ProductOfferType extends UidType
 {

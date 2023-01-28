@@ -18,8 +18,8 @@
 
 namespace BaksDev\Products\Product\DataFixtures\Security\Role\Voter;
 
-use App\Module\Users\Groups\Role\Entity\Voters\RoleVoterInterface;
-use App\Module\Users\Groups\Role\Type\VoterPrefix\VoterPrefix;
+use BaksDev\Users\Groups\Role\Entity\Voters\RoleVoterInterface;
+use BaksDev\Users\Groups\Role\Type\VoterPrefix\VoterPrefix;
 use BaksDev\Core\Type\Locale\Locale;
 use Doctrine\Common\Collections\ArrayCollection;
 

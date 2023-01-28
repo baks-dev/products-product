@@ -18,81 +18,38 @@
 
 namespace BaksDev\Products\Product\Type\Offers\Id;
 
-use App\System\Type\UidType\Uid;
+use BaksDev\Core\Type\UidType\Uid;
 use Symfony\Component\Uid\AbstractUid;
 use Symfony\Component\Uid\Uuid;
 
 final class ProductOfferUid extends Uid
 {
-	public const TYPE = 'product_offer_id';
+	public const TYPE = 'product_offer_uid';
 	
-	private Uuid $value;
-	private ?string $name;
-	/**
-	 * @var null
-	 */
-	private $offers;
+	private readonly ?string $option;
 	
-	public function __construct(AbstractUid|string|null $value = null, string $option = null, $offers = null)
+	private readonly ?string $offers;
+	
+	
+	public function __construct(AbstractUid|string|null $value = null, string $option = null, string $offers = null)
 	{
-		parent::__construct($value, $option);
+		parent::__construct($value);
+		
+		$this->option = $option;
+		
 		$this->offers = $offers;
 	}
 	
-//	public function __construct(AbstractUid|string|null $value = null, string $name = null, $offers = null)
-//	{
-//
-//
-//		if($value === null)
-//		{
-//			$value = Uuid::v7();
-//		}
-//
-//		else if(is_string($value))
-//		{
-//			$value = new Uuid($value);
-//		}
-//
-//		$this->value = $value;
-//		$this->name = $name;
-//		$this->offers = $offers;
-//	}
+
+	public function getOption() : ?string
+	{
+		return $this->option;
+	}
 	
-	
-//	public function __toString() : string
-//	{
-//		return $this->value;
-//	}
-//
-//	public function getValue() : AbstractUid
-//	{
-//		return $this->value;
-//	}
-	
-//	/**
-//	 * @return string|null
-//	 */
-//	public function getName() : ?string
-//	{
-//		return $this->name;
-//	}
-	
-	/**
-	 * @return mixed|null
-	 */
-	public function getOffers() : mixed
+
+	public function getOffers() : ?string
 	{
 		return $this->offers;
 	}
-	
-//	public function equals(ProductOfferUid $value) : bool
-//	{
-//
-//		//dump($this->value);
-//		//dd($value);
-//
-//
-//		return $this->value === $value->value;
-//	}
 	
 }

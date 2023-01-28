@@ -18,7 +18,7 @@
 
 namespace BaksDev\Products\Product\DataFixtures\Security\Role\Voter\Trans;
 
-use App\Module\Users\Groups\Role\Entity\Voters\Trans\VoterTransInterface;
+use BaksDev\Users\Groups\Role\Entity\Voters\Trans\VoterTransInterface;
 use BaksDev\Core\Type\Locale\Locale;
 
 final class VoterTransDTO implements VoterTransInterface

@@ -71,7 +71,7 @@ final class ProductDTO implements ProductEventInterface
     private ArrayCollection $videos;
     
     #[Assert\Valid]
-    private ArrayCollection $offers;
+    //private ArrayCollection $offers;
     
     #[Assert\Valid]
     private ArrayCollection $photos;
@@ -95,7 +95,7 @@ final class ProductDTO implements ProductEventInterface
         
         $this->category = new ArrayCollection();
         $this->files = new ArrayCollection();
-        $this->offers = new ArrayCollection();
+        //$this->offers = new ArrayCollection();
         $this->photos = new ArrayCollection();
         $this->property = new ArrayCollection();
         $this->seo = new ArrayCollection();

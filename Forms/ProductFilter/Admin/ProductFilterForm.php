@@ -18,10 +18,10 @@
 
 namespace BaksDev\Products\Product\Forms\ProductFilter\Admin;
 
-use App\Module\Products\Category\Repository\CategoryChoice\CategoryChoiceInterface;
-use App\Module\Products\Category\Type\Id\CategoryUid;
+use BaksDev\Products\Category\Repository\CategoryChoice\CategoryChoiceInterface;
+use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
 use BaksDev\Products\Product\Repository\ProductUserProfileChoice\ProductUserProfileChoiceInterface;
-use App\Module\Users\Profile\UserProfile\Type\Id\UserProfileUid;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -70,13 +70,13 @@ final class ProductFilterForm extends AbstractType
     
         $builder->add('category', ChoiceType::class, [
           'choices' => $this->categoryChoice->get(),
-          'choice_value' => function (?CategoryUid $category)
+          'choice_value' => function (?ProductCategoryUid $category)
           {
               return $category?->getValue();
           },
-          'choice_label' => function (CategoryUid $category)
+          'choice_label' => function (ProductCategoryUid $category)
           {
-              return $category->getOption();
+              return $category->getOptions();
           },
           'label' => false,
           'attr' => ['onchange' => 'this.form.submit()'],

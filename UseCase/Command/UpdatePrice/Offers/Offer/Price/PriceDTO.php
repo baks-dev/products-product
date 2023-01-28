@@ -19,9 +19,9 @@
 namespace BaksDev\Products\Product\UseCase\Command\UpdatePrice\Offers\Offer\Price;
 
 use BaksDev\Products\Product\Entity\Offers\Offer\Price\PriceInterface;
-use App\System\Type\Currency\Currency;
-use App\System\Type\Currency\CurrencyEnum;
-use App\System\Type\Money\Money;
+use BaksDev\Reference\Currency\Type\Currency;
+use BaksDev\Reference\Currency\Type\CurrencyEnum;
+use BaksDev\Reference\Money\Type\Money;
 use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Validator\Constraints as Assert;
 

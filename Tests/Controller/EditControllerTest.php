@@ -20,8 +20,8 @@ namespace BaksDev\Products\Product\Tests\Controller;
 
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
-use App\Module\Users\AuthEmail\Account\Repository\UserByEmail\UserByEmailInterface;
-use App\Module\Users\AuthEmail\Account\Type\Email\AccountEmail;
+use BaksDev\Users\AuthEmail\Account\Repository\UserByEmail\UserByEmailInterface;
+use BaksDev\Users\AuthEmail\Account\Type\Email\AccountEmail;
 use App\System\Tests\UserRoleControllerTest;
 use Doctrine\ORM\EntityManagerInterface;
 

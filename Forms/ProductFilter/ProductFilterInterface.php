@@ -18,20 +18,15 @@
 
 namespace BaksDev\Products\Product\Forms\ProductFilter;
 
-use App\Module\Products\Category\Type\Id\CategoryUid;
-use App\Module\Users\Profile\UserProfile\Type\Id\UserProfileUid;
+
+use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 
 interface ProductFilterInterface
 {
-    /**
-     * @return CategoryUid|null
-     */
-    public function getCategory() : ?CategoryUid;
-    
-    
-    /**
-     * @return UserProfileUid|null
-     */
+
+    public function getCategory() : ?ProductCategoryUid;
+	
     public function getProfile() : ?UserProfileUid;
     
 }
