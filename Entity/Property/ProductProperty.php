@@ -27,50 +27,51 @@ use InvalidArgumentException;
 
 /* Свойства продукта */
 
+
 #[ORM\Entity()]
 #[ORM\Table(name: 'product_property')]
-
 class ProductProperty extends EntityEvent
 {
-    public const TABLE = 'product_property';
-    
-    /** ID события */
-    #[ORM\Id]
-    #[ORM\ManyToOne(targetEntity: ProductEvent::class, inversedBy: 'property')]
-    #[ORM\JoinColumn(name: 'event', referencedColumnName: 'id', nullable: false)]
-    private ProductEvent $event;
-    
-    /** Связь на поле в категории */
-    #[ORM\Id]
-    #[ORM\Column(type: ProductCategorySectionFieldUid::TYPE)]
-    private ProductCategorySectionFieldUid $field;
-    
-    /** Заполненное значение */
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $value = null;
-    
-
-    public function __construct(ProductEvent $event) { $this->event = $event; }
-
-    public function getDto($dto) : mixed
-    {
-        if($dto instanceof ProductPropertyInterface)
-        {
-            return parent::getDto($dto);
-        }
-        
-        throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
-    }
-    
-    public function setEntity($dto) : mixed
-    {
-        if($dto instanceof ProductPropertyInterface)
-        {
-            return parent::setEntity($dto);
-        }
-        
-        throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
-    }
-    
-    
+	public const TABLE = 'product_property';
+	
+	/** ID события */
+	#[ORM\Id]
+	#[ORM\ManyToOne(targetEntity: ProductEvent::class, inversedBy: 'property')]
+	#[ORM\JoinColumn(name: 'event', referencedColumnName: 'id', nullable: false)]
+	private ProductEvent $event;
+	
+	/** Связь на поле в категории */
+	#[ORM\Id]
+	#[ORM\Column(type: ProductCategorySectionFieldUid::TYPE)]
+	private ProductCategorySectionFieldUid $field;
+	
+	/** Заполненное значение */
+	#[ORM\Column(type: Types::TEXT, nullable: true)]
+	private ?string $value = null;
+	
+	
+	public function __construct(ProductEvent $event) { $this->event = $event; }
+	
+	
+	public function getDto($dto) : mixed
+	{
+		if($dto instanceof ProductPropertyInterface)
+		{
+			return parent::getDto($dto);
+		}
+		
+		throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
+	}
+	
+	
+	public function setEntity($dto) : mixed
+	{
+		if($dto instanceof ProductPropertyInterface)
+		{
+			return parent::setEntity($dto);
+		}
+		
+		throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
+	}
+	
 }

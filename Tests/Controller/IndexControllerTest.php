@@ -26,51 +26,51 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 final class IndexControllerTest extends UserRoleControllerTest
 {
-    private const URL = '/admin/products';
-    private const ROLE = 'ROLE_PRODUCT';
-    
-    
-    /** Доступ по роли ROLE_PRODUCT */
-    public function testRoleProductSuccessful(): void
-    {
-        $client = static::createClient();
-    
-        $user = $this->getUserRole(self::ROLE);
-        
-        $client->loginUser($user, 'user');
-        $client->request('GET', self::URL);
-        
-        self::assertResponseIsSuccessful();
-        
-    }
-    
-    /** Доступ по роли ROLE_ADMIN */
-    public function testRoleAdminSuccessful(): void
-    {
-        $client = static::createClient();
-    
-        $user = $this->getUserRole('ROLE_ADMIN');
-        
-        $client->loginUser($user, 'user');
-        $client->request('GET', self::URL);
-        
-        self::assertResponseIsSuccessful();
-    }
-    
-    
-    
-    /** Доступ по роли ROLE_USER */
-    public function testRoleUserFiled(): void
-    {
-        $client = static::createClient();
-        
-        $user = $this->getUserRole('ROLE_USER');
-        
-        $client->loginUser($user, 'user');
-        $client->request('GET', self::URL);
-    
-        self::assertResponseStatusCodeSame(403);
-        
-    }
-    
+	private const URL = '/admin/products';
+	private const ROLE = 'ROLE_PRODUCT';
+	
+	
+	/** Доступ по роли ROLE_PRODUCT */
+	public function testRoleProductSuccessful() : void
+	{
+		$client = static::createClient();
+		
+		$user = $this->getUserRole(self::ROLE);
+		
+		$client->loginUser($user, 'user');
+		$client->request('GET', self::URL);
+		
+		self::assertResponseIsSuccessful();
+		
+	}
+	
+	
+	/** Доступ по роли ROLE_ADMIN */
+	public function testRoleAdminSuccessful() : void
+	{
+		$client = static::createClient();
+		
+		$user = $this->getUserRole('ROLE_ADMIN');
+		
+		$client->loginUser($user, 'user');
+		$client->request('GET', self::URL);
+		
+		self::assertResponseIsSuccessful();
+	}
+	
+	
+	/** Доступ по роли ROLE_USER */
+	public function testRoleUserFiled() : void
+	{
+		$client = static::createClient();
+		
+		$user = $this->getUserRole('ROLE_USER');
+		
+		$client->loginUser($user, 'user');
+		$client->request('GET', self::URL);
+		
+		self::assertResponseStatusCodeSame(403);
+		
+	}
+	
 }

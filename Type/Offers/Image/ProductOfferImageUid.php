@@ -8,6 +8,6 @@ use Symfony\Component\Uid\Uuid;
 
 final class ProductOfferImageUid extends Uid
 {
-    public const TYPE = 'product_offer_image_uid';
-    
+	public const TYPE = 'product_offer_image_uid';
+	
 }

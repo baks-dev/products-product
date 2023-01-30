@@ -18,54 +18,53 @@
 
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Category;
 
-use App\Module\Products\Category\Type\Id\CategoryUid;
-use BaksDev\Products\Product\Entity\Category\CategoryInterface;
+use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
+use BaksDev\Products\Product\Entity\Category\ProductCategoryInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class CategoryCollectionDTO implements CategoryInterface
+final class CategoryCollectionDTO implements ProductCategoryInterface
 {
-    
-    /** ID категории продукта */
-    #[Assert\Uuid]
-    private ?CategoryUid $category = null;
-    
-    private bool $root = false;
-    
-    /**
-     * @return ?CategoryUid
-     */
-    public function getCategory() : ?CategoryUid
-    {
-        return $this->category;
-    }
-    
-    /**
-     * @param CategoryUid $category
-     */
-    public function setCategory(CategoryUid $category) : void
-    {
-        $this->category = $category;
-    }
-    
-    /**
-     * @return bool
-     */
-    public function isRoot() : bool
-    {
-        return $this->root;
-    }
-    
-    /**
-     * @param bool $root
-     */
-    public function setRoot(bool $root) : void
-    {
-        $this->root = $root;
-    }
-    
-    public function rootCategory() : void
-    {
-        $this->root = true;
-    }
-
+	
+	/** ID категории продукта */
+	#[Assert\Uuid]
+	private ?ProductCategoryUid $category = null;
+	
+	private bool $root = false;
+	
+	
+	public function getCategory() : ?ProductCategoryUid
+	{
+		return $this->category;
+	}
+	
+	
+	public function setCategory(ProductCategoryUid $category) : void
+	{
+		$this->category = $category;
+	}
+	
+	
+	/**
+	 * @return bool
+	 */
+	public function getRoot() : bool
+	{
+		return $this->root;
+	}
+	
+	
+	/**
+	 * @param bool $root
+	 */
+	public function setRoot(bool $root) : void
+	{
+		$this->root = $root;
+	}
+	
+	
+	public function rootCategory() : void
+	{
+		$this->root = true;
+	}
+	
 }

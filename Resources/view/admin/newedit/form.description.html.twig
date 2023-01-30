@@ -1,14 +1,13 @@
 {% trans_default_domain 'products.product' %}
 
 
-
 <div class="d-flex gap-2">
-
+	
 	<div class="d-flex flex-column gap-2 w-100 mb-2">
 		{# Настройки локали #}
-
+		
 		<div class="card card-flush p-4">
-
+			
 			<div class="card-header">
 				<div class="card-title">
 					<h2>
@@ -17,59 +16,61 @@
 					</h2>
 				</div>
 			</div>
-
+			
 			<div class="card-body pt-0">
 				<nav>
 					<div class="nav nav-tabs" id="nav-description-{{ form.trans.vars.id }}" role="tablist">
 						{% for trans in form.trans %}
 							<button class="nav-link{{ app.request.locale == trans.vars.value.local? ' active' : '' }}"
-									id="nav-description-{{ trans.vars.id }}-tab" data-bs-toggle="tab"
+									id="nav-description-{{ trans.vars.id }}-tab"
+									data-bs-toggle="tab"
 									data-bs-target="#nav-description-{{ trans.vars.id }}"
-									type="button" role="tab" aria-controls="nav-description-{{ trans.vars.id }}" aria-selected="true">
+									type="button"
+									role="tab"
+									aria-controls="nav-description-{{ trans.vars.id }}"
+									aria-selected="true">
 								{{ trans.vars.value.local|trans({}, 'messages') }}
 							</button>
 						{% endfor %}
 					</div>
 				</nav>
-
+				
 				<div class="tab-content mt-5 h-100" id="nav-description-{{ form.trans.vars.id }}Content">
 					{% for trans in form.trans %}
 						<div class="tab-pane fade{{ app.request.locale == trans.vars.value.local ? ' show active' : '' }}"
-							 id="nav-description-{{ trans.vars.id }}" role="tabpanel"
-							 aria-labelledby="nav-description-{{ trans.vars.id }}-tab">
-
+								id="nav-description-{{ trans.vars.id }}" role="tabpanel"
+								aria-labelledby="nav-description-{{ trans.vars.id }}-tab">
+							
 							{# Краткое опсиание #}
 							{{ form_row(trans.preview, {
 								label : 'Краткое описание'|trans
 							}) }}
-
+							
 							{{ form_row(trans.description, {
 								label : 'Детальное описание'|trans
 							}) }}
-
+						
 						</div>
-
+						
 						<script>
                             window.addEventListener('load', function () {
 
-                                if(!CKEDITOR.instances['{{ trans.preview.vars.id }}'])
-                                {
+                                if (!CKEDITOR.instances['{{ trans.preview.vars.id }}']) {
                                     CKEDITOR.replace('{{ trans.preview.vars.id }}');
                                 }
 
-                                if(!CKEDITOR.instances['{{ trans.description.vars.id }}'])
-                                {
+                                if (!CKEDITOR.instances['{{ trans.description.vars.id }}']) {
                                     CKEDITOR.replace('{{ trans.description.vars.id }}');
                                 }
                             });
 						</script>
 					{% endfor %}
-
+					
 					{# Символьный код #}
-					{#{{ form_row(form.info.url, { label : 'Символьный код продукта'|trans } ) }}#}
-
+					{# {{ form_row(form.info.url, { label : 'Символьный код продукта'|trans } ) }} #}
+				
 				</div>
-
+			
 			</div>
 		</div>
 	</div>

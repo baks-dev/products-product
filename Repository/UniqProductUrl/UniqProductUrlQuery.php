@@ -24,30 +24,30 @@ use Doctrine\DBAL\Connection;
 
 final class UniqProductUrlQuery implements UniqProductUrlInterface
 {
-    
-    private Connection $connection;
-
-    
-    public function __construct(Connection $connection)
-    {
-        $this->connection = $connection;
-    }
-
-    public function get(string $url, ProductUid $product) : mixed
-    {
-        $qbSub = $this->connection->createQueryBuilder();
-        $qbSub->select('1');
-        $qbSub->from(Info::TABLE, 'info');
-        $qbSub->where('info.url = :url');
-        $qbSub->andWhere('info.product != :product');
-        
-        
-        $qb = $this->connection->createQueryBuilder();
-        $qb->select('EXISTS(' . $qbSub->getSQL() . ')');
-        $qb->setParameter('url', $url);
-        $qb->setParameter('product', $product);
-
-        return $qb->executeQuery()->fetchOne();
-    }
-    
+	
+	private Connection $connection;
+	
+	
+	public function __construct(Connection $connection)
+	{
+		$this->connection = $connection;
+	}
+	
+	
+	public function get(string $url, ProductUid $product) : mixed
+	{
+		$qbSub = $this->connection->createQueryBuilder();
+		$qbSub->select('1');
+		$qbSub->from(Info::TABLE, 'info');
+		$qbSub->where('info.url = :url');
+		$qbSub->andWhere('info.product != :product');
+		
+		$qb = $this->connection->createQueryBuilder();
+		$qb->select('EXISTS('.$qbSub->getSQL().')');
+		$qb->setParameter('url', $url);
+		$qb->setParameter('product', $product);
+		
+		return $qb->executeQuery()->fetchOne();
+	}
+	
 }

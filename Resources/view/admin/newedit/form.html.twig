@@ -9,63 +9,62 @@
 	<li class="nav-item">
 		<a class="nav-link" data-bs-toggle="tab" href="#tab_description">Описание</a>
 	</li>
-
+	
 	<li class="nav-item">
 		<a class="nav-link" data-bs-toggle="tab" href="#tab_gallery">Галерея</a>
 	</li>
-
+	
 	{% if form.property.vars.data.count %}
 		<li class="nav-item">
 			<a class="nav-link" data-bs-toggle="tab" href="#tab_properties">Свойства продукта</a>
 		</li>
 	{% endif %}
-
+	
 	{% if form.offers.vars.value.count %}
 		<li class="nav-item">
 			<a class="nav-link" data-bs-toggle="tab" href="#tab_offers">Торговые предложения</a>
 		</li>
 	{% endif %}
-
+	
 	{# <li class="nav-item">
 		<a class="nav-link" data-bs-toggle="tab" href="#tab_landing">Посадочные блоки</a>
 	</li> #}
 </ul>
 
 <div class="tab-content" id="myTabContent">
-
+	
 	{# ОСНОВНЫЕ НАСТРОЙКИ #}
 	<div class="tab-pane fade show active" id="tab_main" role="tabpanel">
 		{{ include(_self|replace({ "form.html.twig": "form.main.html.twig" })) }}
 	</div>
-
+	
 	<div class="tab-pane fade" id="tab_description" role="tabpanel">
 		{{ include(_self|replace({ "form.html.twig": "form.description.html.twig" })) }}
 	</div>
-
+	
 	{# ГАЛЕРЕЯ #}
 	<div class="tab-pane fade" id="tab_gallery" role="tabpanel">
 		{{ include(_self|replace({ "form.html.twig": "form.gallery.html.twig" })) }}
 	</div>
-
+	
 	{% if form.property.vars.data.count %}
 		{# СВОЙСТВА ПРОДУКТА #}
 		<div class="tab-pane fade" id="tab_properties" role="tabpanel">
 			{{ include(_self|replace({ "form.html.twig": "form.properties.html.twig" })) }}
 		</div>
 	{% endif %}
-
+	
 	{% if form.offers.vars.value.count %}
 		{# ТОРГОВЫЕ ПРЕДЛОЖЕНИЯ #}
 		<div class="tab-pane fade" id="tab_offers" role="tabpanel">
-			{#{{ include(_self|replace({ "form.html.twig": "form.offers.html.twig" })) }}#}
+			{# {{ include(_self|replace({ "form.html.twig": "form.offers.html.twig" })) }} #}
 		</div>
 	{% endif %}
-
+	
 	{# ПОСАДОЧНЫЕ БЛОКИ #}
 	{#    <div class="tab-pane fade" id="tab_landing" role="tabpanel">
 	#}{# {{ include(_self|replace({ "form.html.twig": "form.landing.html.twig" })) }} #}{#
 	</div> #}
-
 
 
 </div>

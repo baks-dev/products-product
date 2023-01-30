@@ -18,12 +18,10 @@
 
 namespace BaksDev\Products\Product\Type\Event;
 
-
-
 use BaksDev\Core\Type\UidType\Uid;
 
 final class ProductEventUid extends Uid
 {
-    public const TYPE = 'product_event';
-    
+	public const TYPE = 'product_event';
+	
 }

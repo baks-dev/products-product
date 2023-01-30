@@ -27,19 +27,20 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 final class PriceDTO implements PriceInterface
 {
-    /** Стоимость */
-    #[Assert\NotBlank]
-    private ?Money $price;
-    
-
-    public function getPrice() : ?Money
-    {
-        return $this->price;
-    }
-    
-
-    public function setPrice(Money|float $price) : void
-    {
-        $this->price = $price instanceof Money ? $price : new Money($price);
-    }
+	/** Стоимость */
+	#[Assert\NotBlank]
+	private ?Money $price;
+	
+	
+	public function getPrice() : ?Money
+	{
+		return $this->price;
+	}
+	
+	
+	public function setPrice(Money|float $price) : void
+	{
+		$this->price = $price instanceof Money ? $price : new Money($price);
+	}
+	
 }

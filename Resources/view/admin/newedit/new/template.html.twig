@@ -1,45 +1,48 @@
+{% trans_default_domain 'admin.products.product' %}
+
 {# ---- ШАБЛОН ------------------------------------------------------------ #}
-{% extends '@Template/default/admin/base.html.twig' %}
+{% extends '@Core/admin/base.html.twig' %}
+
+{% block title %}
+	{# Добавить продукция #}
+	{{ 'admin.page.new'|trans }}
+{% endblock %}
+
 
 {# ---- CSS ------------------------------------------------------------ #}
 {% block stylesheets %}
 	{# <link href="{{ path(app.request.attributes.get('_route')~'.css') }}" rel="stylesheet"> #}
-	 <link href="/plugins/datepicker/datepicker.min.css" rel="stylesheet">
-	 <link href="/plugins/nice-select2/nice-select2.min.css" rel="stylesheet">
+	<link href="/assets/plugins/datepicker/datepicker.min.css" rel="stylesheet">
+	<link href="/assets/plugins/nice-select2/nice-select2.min.css" rel="stylesheet">
 {% endblock %}
-
-{# ---- HEADER-БЛОК ------------------------------------------------------------ #}
-{# {% block header %}
-    {{ include(_self|replace({ "template.html.twig": "header.html.twig" })) }}
-{% endblock %} #}
-
-
-{# ---- LEFT-БЛОК ------------------------------------------------------------ #}
-{# {% block left %} #}
-{#   {% include '@Template/flowers/left.html.twig' %} #}
-{# {% endblock %} #}
 
 
 {# ---- КОНТЕНТ-БЛОК ------------------------------------------------------------ #}
 {% block content %}
-	{{ include(_self|replace({ "template.html.twig": "content.html.twig" })) }}
+	
+	{{ include(_self|replace({ "template.html.twig": settings.device~"/content.html.twig" })) }}
 {% endblock %}
 
-
-{# ---- FOOTER-БЛОК ------------------------------------------------------------ #}
-{#
-{% block footer %}
-    {{ include(_self|replace({ "template.html.twig": "footer.html.twig" })) }}
-{% endblock %}
-#}
 
 {% block javascript %}
-<script async src="/plugins/fosckeditor/ckeditor.js"></script>
-<script async src="/js/util.min.js"></script>
-<script async src="/plugins/nice-select2/nice-select2.min.js"></script>
-<script src="/plugins/datepicker/datepicker.min.js"></script>
-<script src="/plugins/datepicker/datepicker.lang.min.js"></script>
+<script async data-src="/assets/plugins/ckeditor/classic.min.js" class='lazy'></script>
 
+<script async data-src='/assets/plugins/semantic/semantic.min.js' class='lazy'></script>
+<script async data-src='/assets/plugins/nice-select2/nice-select2.min.js' class='lazy'></script>
+<script async data-src='/assets/plugins/datepicker/datepicker.min.js' class='lazy'></script>
+<script async data-src='/assets/js/radio.input.min.js' class='lazy'></script>
+<script async data-src='/assets/js/image.input.min.js' class='lazy'></script>
+<script async data-src="/assets/products_product/product.category.min.js" class='lazy'></script>
+<script async data-src="/assets/products_product/product.photo.min.js" class='lazy'></script>
+<script async data-src="/assets/products_product/product.files.min.js" class='lazy'></script>
+<script async data-src="/assets/products_product/product.video.min.js" class='lazy'></script>
+
+
+
+{% endblock %}
+
+
+{#
 <script>
     window.addEventListener('load', function () {
 
@@ -62,5 +65,4 @@
 });
 
 </script>
-
-{% endblock %}
+#}

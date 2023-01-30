@@ -27,34 +27,37 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 final class OffersCollectionDTO implements OffersInterface
 {
-    
-    /**
-     * Коллекция торговых предложений
-     * @var ArrayCollection
-     */
-    private ArrayCollection $offer;
-    
-    public function __construct() { $this->offer = new ArrayCollection(); }
-    
-    
-    /**
-     * @return ArrayCollection
-     */
-    public function getOffer() : ArrayCollection
-    {
-        return $this->offer;
-    }
-    
-
-    public function addOffer(OfferDTO $offer) : void
-    {
-        $this->offer->add($offer);
-    }
-    
-    public function getOfferClass() : OfferDTO
-    {
-        return new OfferDTO();
-    }
-    
+	
+	/**
+	 * Коллекция торговых предложений
+	 *
+	 * @var ArrayCollection
+	 */
+	private ArrayCollection $offer;
+	
+	
+	public function __construct() { $this->offer = new ArrayCollection(); }
+	
+	
+	/**
+	 * @return ArrayCollection
+	 */
+	public function getOffer() : ArrayCollection
+	{
+		return $this->offer;
+	}
+	
+	
+	public function addOffer(OfferDTO $offer) : void
+	{
+		$this->offer->add($offer);
+	}
+	
+	
+	public function getOfferClass() : OfferDTO
+	{
+		return new OfferDTO();
+	}
+	
 }
 

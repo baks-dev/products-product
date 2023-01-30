@@ -24,25 +24,27 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 final class CheckVoterDTO implements CheckVoterInterface
 {
-    /** Префикс правила */
-    #[Assert\NotBlank]
-    private VoterPrefix $voter;
-    
-    /**
-     * @return VoterPrefix
-     */
-    public function getVoter() : VoterPrefix
-    {
-        return $this->voter;
-    }
-    
-    /**
-     * @param VoterPrefix $voter
-     */
-    public function setVoter(VoterPrefix $voter) : void
-    {
-        $this->voter = $voter;
-    }
-
+	/** Префикс правила */
+	#[Assert\NotBlank]
+	private VoterPrefix $voter;
+	
+	
+	/**
+	 * @return VoterPrefix
+	 */
+	public function getVoter() : VoterPrefix
+	{
+		return $this->voter;
+	}
+	
+	
+	/**
+	 * @param VoterPrefix $voter
+	 */
+	public function setVoter(VoterPrefix $voter) : void
+	{
+		$this->voter = $voter;
+	}
+	
 }
 

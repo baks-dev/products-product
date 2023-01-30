@@ -24,21 +24,23 @@ use App\System\Type\Modify\ModifyActionEnum;
 
 final class ModifyDTO implements ModifyInterface
 {
-    /** Модификатор */
-    private ModifyAction $action;
-    
-    public function __construct() {
-        $this->action = new ModifyAction(ModifyActionEnum::DELETE);
-    }
-    
-    /**
-     * @return ModifyAction
-     */
-    public function getAction() : ModifyAction
-    {
-        return $this->action;
-    }
-    
-    
+	/** Модификатор */
+	private ModifyAction $action;
+	
+	
+	public function __construct()
+	{
+		$this->action = new ModifyAction(ModifyActionEnum::DELETE);
+	}
+	
+	
+	/**
+	 * @return ModifyAction
+	 */
+	public function getAction() : ModifyAction
+	{
+		return $this->action;
+	}
+	
 }
 

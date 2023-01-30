@@ -27,144 +27,156 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 final class ImageCollectionDTO implements ImageInterface
 {
-    /** Обложка категории */
-    #[Assert\File(
-      maxSize         : '2048k',
-      mimeTypes       : [
-        'image/png',
-        'image/gif',
-        'image/jpeg',
-        'image/pjpeg',
-        'image/webp',
-      ],
-      mimeTypesMessage: 'Please upload a valid file'
-    )]
-    public ?File $file = null;
-    
-    private ?Offer $imgOffer = null;
-    
-    private readonly string $name;
-    
-    private readonly string $ext;
-    
-    private readonly bool $cdn;
-    
-    private readonly bool $root;
-    
-    private readonly int $size;
-    
-    private readonly ProductOfferUid $dir;
-    
-    
-    /**
-     * @return string|null
-     */
-    public function getName() : ?string
-    {
-        return $this->name;
-    }
-    
-    /**
-     * @param string|null $name
-     */
-    public function setName(?string $name) : void
-    {
-        $this->name = $name;
-    }
-    
-    /**
-     * @return string|null
-     */
-    public function getExt() : ?string
-    {
-        return $this->ext;
-    }
-    
-    /**
-     * @param string|null $ext
-     */
-    public function setExt(?string $ext) : void
-    {
-        $this->ext = $ext;
-    }
-    
-    /**
-     * @return bool
-     */
-    public function isCdn() : bool
-    {
-        return $this->cdn;
-    }
-    
-    /**
-     * @param bool $cdn
-     */
-    public function setCdn(bool $cdn) : void
-    {
-        $this->cdn = $cdn;
-    }
-    
-    /**
-     * @return ProductOfferUid|null
-     */
-    public function getDir() : ?ProductOfferUid
-    {
-        return $this->dir;
-    }
-
-    public function setDir(ProductOfferUid $dir) : void
-    {
-        $this->dir = $dir;
-    }
-    
-    /**
-     * @return Offer|null
-     */
-    public function getImgOffer() : ?Offer
-    {
-        return $this->imgOffer;
-    }
-    
-    /**
-     * @param Offer|null $imgOffer
-     */
-    public function setImgOffer(?Offer $imgOffer) : void
-    {
-        $this->imgOffer = $imgOffer;
-    }
-    
-    /**
-     * @return bool
-     */
-    public function isRoot() : bool
-    {
-        return $this->root;
-    }
-    
-    /**
-     * @param bool $root
-     */
-    public function setRoot(bool $root) : void
-    {
-        $this->root = $root;
-    }
-    
-    /**
-     * @return int|null
-     */
-    public function getSize() : ?int
-    {
-        return $this->size;
-    }
-    
-    /**
-     * @param int|null $size
-     */
-    public function setSize(?int $size) : void
-    {
-        $this->size = $size;
-    }
-    
-    
+	/** Обложка категории */
+	#[Assert\File(
+		maxSize: '2048k',
+		mimeTypes: [
+			'image/png',
+			'image/gif',
+			'image/jpeg',
+			'image/pjpeg',
+			'image/webp',
+		],
+		mimeTypesMessage: 'Please upload a valid file'
+	)]
+	public ?File $file = null;
+	
+	private ?Offer $imgOffer = null;
+	
+	private readonly string $name;
+	
+	private readonly string $ext;
+	
+	private readonly bool $cdn;
+	
+	private readonly bool $root;
+	
+	private readonly int $size;
+	
+	private readonly ProductOfferUid $dir;
+	
+	
+	/**
+	 * @return string|null
+	 */
+	public function getName() : ?string
+	{
+		return $this->name;
+	}
+	
+	
+	/**
+	 * @param string|null $name
+	 */
+	public function setName(?string $name) : void
+	{
+		$this->name = $name;
+	}
+	
+	
+	/**
+	 * @return string|null
+	 */
+	public function getExt() : ?string
+	{
+		return $this->ext;
+	}
+	
+	
+	/**
+	 * @param string|null $ext
+	 */
+	public function setExt(?string $ext) : void
+	{
+		$this->ext = $ext;
+	}
+	
+	
+	/**
+	 * @return bool
+	 */
+	public function getCdn() : bool
+	{
+		return $this->cdn;
+	}
+	
+	
+	/**
+	 * @param bool $cdn
+	 */
+	public function setCdn(bool $cdn) : void
+	{
+		$this->cdn = $cdn;
+	}
+	
+	
+	/**
+	 * @return ProductOfferUid|null
+	 */
+	public function getDir() : ?ProductOfferUid
+	{
+		return $this->dir;
+	}
+	
+	
+	public function setDir(ProductOfferUid $dir) : void
+	{
+		$this->dir = $dir;
+	}
+	
+	
+	/**
+	 * @return Offer|null
+	 */
+	public function getImgOffer() : ?Offer
+	{
+		return $this->imgOffer;
+	}
+	
+	
+	/**
+	 * @param Offer|null $imgOffer
+	 */
+	public function setImgOffer(?Offer $imgOffer) : void
+	{
+		$this->imgOffer = $imgOffer;
+	}
+	
+	
+	/**
+	 * @return bool
+	 */
+	public function getRoot() : bool
+	{
+		return $this->root;
+	}
+	
+	
+	/**
+	 * @param bool $root
+	 */
+	public function setRoot(bool $root) : void
+	{
+		$this->root = $root;
+	}
+	
+	
+	/**
+	 * @return int|null
+	 */
+	public function getSize() : ?int
+	{
+		return $this->size;
+	}
+	
+	
+	/**
+	 * @param int|null $size
+	 */
+	public function setSize(?int $size) : void
+	{
+		$this->size = $size;
+	}
+	
 }
 

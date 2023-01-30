@@ -27,80 +27,82 @@ use Doctrine\ORM\EntityManagerInterface;
 
 final class EditControllerTest extends UserRoleControllerTest
 {
-    private const URL = '/admin/product/edit/%s';
-    private const ROLE = 'ROLE_PRODUCT_EDIT';
-    private ?ProductEventUid $event;
-    
-    /** Доступ по роли */
-    public function testRoleProductSuccessful() : void
-    {
-        $client = static::createClient();
-        
-        /* Получаем одно из событий Продукта */
-        $Event = $this->getProductEvent();
-        
-        if($Event)
-        {
-            $user = $this->getUserRole(self::ROLE);
-            
-            $client->loginUser($user, 'user');
-            $client->request('GET', sprintf(self::URL, $Event->getValue()));
-            
-            self::assertResponseIsSuccessful();
-        }
-    }
-    
-    
-    /* доступ по роли ROLE_ADMIN */
-    public function testRoleAdminSuccessful() : void
-    {
-        $client = static::createClient();
-        
-        /* Получаем одно из событий Продукта */
-        $Event = $this->getProductEvent();
-        
-        if($Event)
-        {
-            $user = $this->getUserRole('ROLE_ADMIN');
-            
-            $client->loginUser($user, 'user');
-            $client->request('GET', sprintf(self::URL, $Event->getValue()));
-            
-            self::assertResponseIsSuccessful();
-        }
-    }
-    
-
-    
-    /* доступ по роли ROLE_USER */
-    public function testRoleUserDeny() : void
-    {
-        $client = static::createClient();
-        
-        /* Получаем одно из событий Продукта */
-        $Event = $this->getProductEvent();
-        
-        if($Event)
-        {
-            $user = $this->getUserRole('ROLE_USER');
-            
-            $client->loginUser($user, 'user');
-            $client->request('GET', sprintf(self::URL, $Event->getValue()));
-            
-            self::assertResponseStatusCodeSame(403);
-        }
-    }
-    
-    public function getProductEvent() : ?ProductEventUid
-    {
-        if(empty($this->event))
-        {
-            /* Получаем одно из событий Продукта */
-            $em = static::getContainer()->get(EntityManagerInterface::class);
-            $this->event = $em->getRepository(ProductEvent::class)->findOneBy([])->getId();
-        }
-        
-        return $this->event;
-    }
-    
+	private const URL = '/admin/product/edit/%s';
+	private const ROLE = 'ROLE_PRODUCT_EDIT';
+	
+	private ?ProductEventUid $event;
+	
+	
+	/** Доступ по роли */
+	public function testRoleProductSuccessful() : void
+	{
+		$client = static::createClient();
+		
+		/* Получаем одно из событий Продукта */
+		$Event = $this->getProductEvent();
+		
+		if($Event)
+		{
+			$user = $this->getUserRole(self::ROLE);
+			
+			$client->loginUser($user, 'user');
+			$client->request('GET', sprintf(self::URL, $Event->getValue()));
+			
+			self::assertResponseIsSuccessful();
+		}
+	}
+	
+	
+	/* доступ по роли ROLE_ADMIN */
+	public function testRoleAdminSuccessful() : void
+	{
+		$client = static::createClient();
+		
+		/* Получаем одно из событий Продукта */
+		$Event = $this->getProductEvent();
+		
+		if($Event)
+		{
+			$user = $this->getUserRole('ROLE_ADMIN');
+			
+			$client->loginUser($user, 'user');
+			$client->request('GET', sprintf(self::URL, $Event->getValue()));
+			
+			self::assertResponseIsSuccessful();
+		}
+	}
+	
+	
+	/* доступ по роли ROLE_USER */
+	public function testRoleUserDeny() : void
+	{
+		$client = static::createClient();
+		
+		/* Получаем одно из событий Продукта */
+		$Event = $this->getProductEvent();
+		
+		if($Event)
+		{
+			$user = $this->getUserRole('ROLE_USER');
+			
+			$client->loginUser($user, 'user');
+			$client->request('GET', sprintf(self::URL, $Event->getValue()));
+			
+			self::assertResponseStatusCodeSame(403);
+		}
+	}
+	
+	
+	public function getProductEvent() : ?ProductEventUid
+	{
+		if(empty($this->event))
+		{
+			/* Получаем одно из событий Продукта */
+			$em = static::getContainer()->get(EntityManagerInterface::class);
+			$this->event = $em->getRepository(ProductEvent::class)->findOneBy([])->getId();
+		}
+		
+		return $this->event;
+	}
+	
 }

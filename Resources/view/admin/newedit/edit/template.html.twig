@@ -1,10 +1,10 @@
 {# ---- ШАБЛОН ------------------------------------------------------------ #}
-{% extends '@Template/default/admin/base.html.twig' %}
+{% extends '@Core/admin/base.html.twig' %}
 
 {# ---- CSS ------------------------------------------------------------ #}
 {% block stylesheets %}
-    <link href="/plugins/datepicker/datepicker.min.css" rel="stylesheet">
-    <link href="/plugins/nice-select2/nice-select2.min.css" rel="stylesheet">
+	<link href="/plugins/datepicker/datepicker.min.css" rel="stylesheet">
+	<link href="/plugins/nice-select2/nice-select2.min.css" rel="stylesheet">
 {% endblock %}
 
 {# ---- HEADER-БЛОК ------------------------------------------------------------ #}
@@ -21,7 +21,7 @@
 
 {# ---- КОНТЕНТ-БЛОК ------------------------------------------------------------ #}
 {% block content %}
-    {{ include(_self|replace({ "template.html.twig": "content.html.twig" })) }}
+	{{ include(_self|replace({ "template.html.twig": "content.html.twig" })) }}
 {% endblock %}
 
 

@@ -23,45 +23,48 @@ use BaksDev\Core\Type\Locale\Locale;
 
 final class VoterTransDTO implements VoterTransInterface
 {
-    
-    /** Локаль */
-    private Locale $local;
-    
-    /** Название */
-    private string $name;
-    
-    /**
-     * @return Locale
-     */
-    public function getLocal() : Locale
-    {
-        return $this->local;
-    }
-    
-    /**
-     * @param Locale $local
-     */
-    public function setLocal(Locale $local) : void
-    {
-        $this->local = $local;
-    }
-    
-    /**
-     * @return string
-     */
-    public function getName() : string
-    {
-        return $this->name;
-    }
-    
-    /**
-     * @param string $name
-     */
-    public function setName(string $name) : void
-    {
-        $this->name = $name;
-    }
-    
-    
+	
+	/** Локаль */
+	private Locale $local;
+	
+	/** Название */
+	private string $name;
+	
+	
+	/**
+	 * @return Locale
+	 */
+	public function getLocal() : Locale
+	{
+		return $this->local;
+	}
+	
+	
+	/**
+	 * @param Locale $local
+	 */
+	public function setLocal(Locale $local) : void
+	{
+		$this->local = $local;
+	}
+	
+	
+	/**
+	 * @return string
+	 */
+	public function getName() : string
+	{
+		return $this->name;
+	}
+	
+	
+	/**
+	 * @param string $name
+	 */
+	public function setName(string $name) : void
+	{
+		$this->name = $name;
+	}
+	
 }
 

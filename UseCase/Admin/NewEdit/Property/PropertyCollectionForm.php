@@ -18,10 +18,7 @@
 
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Property;
 
-//use App\Module\Product\Entity\Product\Property;
-//use App\Module\Product\Repository\Product\Event\Property\PropertyFormByCategory\PropertyFormByCategoryRepository;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -35,145 +32,146 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /* Форма свойств продукта */
 
+
 final class PropertyCollectionForm extends AbstractType
 {
-    
-    //    private PropertyFormByCategoryRepository $propertyCategory;
-    //
-    //    public function __construct(PropertyFormByCategoryRepository $propertyCategory)
-    //    {
-    //
-    //        $this->propertyCategory = $propertyCategory;
-    //    }
-    
-    public function buildForm(FormBuilderInterface $builder, array $options) : void
-    {
-        
-        //        $builder->add(
-        //          'section',
-        //          TextType::class,
-        //          ['mapped' => false]
-        //        );
-        
-        $builder->add(
-          'value',
-          TextType::class,
-        
-        );
-        
-        $builder->addEventListener(
-          FormEvents::PRE_SET_DATA,
-          function (FormEvent $event) use ($options)
-          {
-              $data = $event->getData();
-              $form = $event->getForm();
-
-              if($data)
-              {
-                  $propertyCategory = $options['properties'];
-                  $id = (string) $data->getField();
-                  
-                  if(empty($id) || !isset($propertyCategory[$id])) { return; }
-                  
-                  $propCat = $propertyCategory[$id];
-                  
-                  /* СЕКЦИЯ */
-                  $form->add(
-                    'section',
-                    HiddenType::class,
-                    [
-                      //'mapped' => false,
-                      //'data' => (string) $propCat->sectionUid,
-                      'label' => $propCat->sectionTrans
-                    ]
-                  );
-                  
-                  
-                  match ($propCat->fieldType)
-                  {
-                      /* INTEGER */
-                      'integer' => $form->add
-                      (
-                        'value',
-                        IntegerType::class,
-                        [
-                          'label' => $propCat->fieldTrans,
-                          'required' => $propCat->fieldRequired,
-                        ]
-                      )
-                  ,
-                      
-                      /* MAIL */
-                      'mail' => $form->add
-                      (
-                        'value',
-                        EmailType::class,
-                        [
-                          'label' => $propCat->fieldTrans,
-                          'required' => $propCat->fieldRequired,
-                          'help' => $propCat->fieldDesc,
-                        ]),
-                      
-                      /* PHONE */
-                      'phone' => $form->add
-                      (
-                        'value',
-                        TextType::class,
-                        [
-                          'label' => $propCat->fieldTrans,
-                          'required' => $propCat->fieldRequired,
-                          'attr' =>
-                            [
-                              'placeholder' => $propCat->fieldDesc,
-                            ]
-                        ]),
-                      
-                      /* SELECT */
-                      'select' => $form->add
-                      (
-                        'value',
-                        ChoiceType::class,
-                        [
-                          'label' => $propCat->fieldTrans,
-                          'required' => $propCat->fieldRequired,
-                          'placeholder' => $propCat->fieldDesc,
-                        ]),
-                      
-                      /* TEXTAREA */
-                      'textarea' => $form->add(
-                        'value',
-                        TextareaType::class,
-                        [
-                          'label' => $propCat->fieldTrans,
-                          'required' => $propCat->fieldRequired,
-                          'help' => $propCat->fieldDesc,
-                        ]),
-                      
-                      default => $form->add
-                      (
-                        'value',
-                        TextType::class,
-                        [
-                          'label' => $propCat->fieldTrans,
-                          'required' => $propCat->fieldRequired,
-                        ])
-                      
-                  };
-                  
-                  
-              }
-          });
-        
-    }
-    
-    public function configureOptions(OptionsResolver $resolver) : void
-    {
-        $resolver->setDefaults
-        (
-          [
-            'data_class' => PropertyCollectionDTO::class,
-            'properties' => null,
-          ]);
-    }
-    
+	
+	public function buildForm(FormBuilderInterface $builder, array $options) : void
+	{
+		
+		//        $builder->add(
+		//          'section',
+		//          TextType::class,
+		//          ['mapped' => false]
+		//        );
+		
+		$builder->add(
+			'value',
+			TextType::class,
+		
+		);
+		
+		$builder->addEventListener(
+			FormEvents::PRE_SET_DATA,
+			function(FormEvent $event) use ($options) {
+				$data = $event->getData();
+				$form = $event->getForm();
+				
+				if($data)
+				{
+					$propertyCategory = $options['properties'];
+					$id = (string) $data->getField();
+					
+					if(empty($id) || !isset($propertyCategory[$id]))
+					{
+						return;
+					}
+					
+					$propCat = $propertyCategory[$id];
+					
+					/* СЕКЦИЯ */
+					$form->add(
+						'section',
+						HiddenType::class,
+						[
+							//'mapped' => false,
+							//'data' => (string) $propCat->sectionUid,
+							'label' => $propCat->sectionTrans,
+						]
+					);
+					
+					match ($propCat->fieldType)
+					{
+						/* INTEGER */
+						'integer' => $form->add
+						(
+							'value',
+							IntegerType::class,
+							[
+								'label' => $propCat->fieldTrans,
+								'required' => $propCat->fieldRequired,
+							]
+						)
+					,
+						
+						/* MAIL */
+						'mail' => $form->add
+						(
+							'value',
+							EmailType::class,
+							[
+								'label' => $propCat->fieldTrans,
+								'required' => $propCat->fieldRequired,
+								'help' => $propCat->fieldDesc,
+							]
+						),
+						
+						/* PHONE */
+						'phone' => $form->add
+						(
+							'value',
+							TextType::class,
+							[
+								'label' => $propCat->fieldTrans,
+								'required' => $propCat->fieldRequired,
+								'attr' =>
+									[
+										'placeholder' => $propCat->fieldDesc,
+									],
+							]
+						),
+						
+						/* SELECT */
+						'select' => $form->add
+						(
+							'value',
+							ChoiceType::class,
+							[
+								'label' => $propCat->fieldTrans,
+								'required' => $propCat->fieldRequired,
+								'placeholder' => $propCat->fieldDesc,
+							]
+						),
+						
+						/* TEXTAREA */
+						'textarea' => $form->add(
+							'value',
+							TextareaType::class,
+							[
+								'label' => $propCat->fieldTrans,
+								'required' => $propCat->fieldRequired,
+								'help' => $propCat->fieldDesc,
+							]
+						),
+						
+						default => $form->add
+						(
+							'value',
+							TextType::class,
+							[
+								'label' => $propCat->fieldTrans,
+								'required' => $propCat->fieldRequired,
+							]
+						)
+						
+					};
+					
+				}
+			}
+		);
+		
+	}
+	
+	
+	public function configureOptions(OptionsResolver $resolver) : void
+	{
+		$resolver->setDefaults
+		(
+			[
+				'data_class' => PropertyCollectionDTO::class,
+				'properties' => null,
+			]
+		);
+	}
+	
 }

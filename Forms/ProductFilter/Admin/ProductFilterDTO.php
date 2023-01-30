@@ -26,47 +26,55 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 final class ProductFilterDTO implements ProductFilterInterface
 {
-    public const profile = 'qwouuufslq';
-    public const category = 'abaxvfsuto';
-    
-    private Request $request;
-    
-    public function __construct(Request $request) {
-        $this->request = $request;
-    }
-    
-    
-    /** Категория */
-    private ?ProductCategoryUid $category = null;
-    
-    /** Профиль */
-    private ?UserProfileUid $profile = null;
-    
-
-    public function setProfile(?UserProfileUid $profile) : void
-    {
-        if($profile === null) { $this->request->getSession()->remove(self::profile); }
-        $this->profile = $profile;
-    }
-    
-
-    public function setCategory(?ProductCategoryUid $category) : void
-    {
-        if($category === null) { $this->request->getSession()->remove(self::category); }
-        $this->category = $category;
-    }
-    
-
-    public function getCategory() : ?ProductCategoryUid
-    {
-        return $this->category ?: $this->request->getSession()->get(self::category);
-    }
-    
-
-    public function getProfile() : ?UserProfileUid
-    {
-        return $this->profile ?: $this->request->getSession()->get(self::profile);
-    }
-    
+	public const profile = 'qwouuufslq';
+	public const category = 'abaxvfsuto';
+	
+	private Request $request;
+	
+	
+	public function __construct(Request $request)
+	{
+		$this->request = $request;
+	}
+	
+	
+	/** Категория */
+	private ?ProductCategoryUid $category = null;
+	
+	/** Профиль */
+	private ?UserProfileUid $profile = null;
+	
+	
+	public function setProfile(?UserProfileUid $profile) : void
+	{
+		if($profile === null)
+		{
+			$this->request->getSession()->remove(self::profile);
+		}
+		$this->profile = $profile;
+	}
+	
+	
+	public function setCategory(?ProductCategoryUid $category) : void
+	{
+		if($category === null)
+		{
+			$this->request->getSession()->remove(self::category);
+		}
+		$this->category = $category;
+	}
+	
+	
+	public function getCategory() : ?ProductCategoryUid
+	{
+		return $this->category ?: $this->request->getSession()->get(self::category);
+	}
+	
+	
+	public function getProfile() : ?UserProfileUid
+	{
+		return $this->profile ?: $this->request->getSession()->get(self::profile);
+	}
+	
 }
 

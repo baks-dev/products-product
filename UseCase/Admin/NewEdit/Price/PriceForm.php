@@ -18,9 +18,8 @@
 
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Price;
 
-
 use BaksDev\Reference\Currency\Type\Currency;
-use App\System\Type\Measurement\Measurement;
+use BaksDev\Reference\Measurement\Type\Measurement;
 use BaksDev\Reference\Money\Type\Money;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
@@ -31,79 +30,84 @@ use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-
 final class PriceForm extends AbstractType
 {
-
-    public function buildForm(FormBuilderInterface $builder, array $options) : void
-    {
-        
-        $builder->add
-        ('price', MoneyType::class, ['currency' => false,'required' => false]);
-          
-          
-          $builder->get('price')->addModelTransformer(
-          new CallbackTransformer(
-            function ($price)
-            {
-                return $price instanceof Money ? $price->getValue() : $price;
-            },
-            function ($price) {
-                
-                return new Money($price);
-            }
-          ));
-          
-
-        $builder->add
-        ('currency', ChoiceType::class, [
-          'choices' => Currency::cases(),
-          'choice_value' => function (?Currency $currency) { return $currency?->getValue(); },
-          'choice_label' => function (?Currency $currency) {  return $currency?->getName(); },
-          'translation_domain' => 'currency',
-          'label' => false,
-        ]);
-
-        /* Цена по запросу */
-        $builder->add('request', CheckboxType::class, [ 'label' => false, 'required' => false ]);
-        
-        /* Количество В наличие */
-        $builder->add('quantity', IntegerType::class, ['required' => false]);
-        
-        /* Зарезервирован */
-        $builder->add('reserve', IntegerType::class, ['required' => false]);
-        
-        /* Единица измерения */
-        $builder
-          ->add('measurement', ChoiceType::class, [
-            'choices' => Measurement::cases(),
-            'choice_value' => function (?Measurement $measurement)
-            {
-                return $measurement?->getValue();
-            },
-            'choice_label' => function (?Measurement $measurement)
-            {
-                return $measurement?->getName();
-            },
-            'choice_translation_domain' => 'measurement',
-            
-            'label' => false,
-            'expanded' => false,
-            'multiple' => false,
-            'required' => true,
-          ]);
-
-    }
-    
-    
-    
-    public function configureOptions(OptionsResolver $resolver) : void
-    {
-        $resolver->setDefaults
-        (
-          [
-            'data_class' => PriceDTO::class,
-          ]);
-    }
-    
+	
+	public function buildForm(FormBuilderInterface $builder, array $options) : void
+	{
+		
+		$builder->add
+		(
+			'price',
+			MoneyType::class,
+			['currency' => false, 'required' => false]
+		);
+		
+		$builder->get('price')->addModelTransformer(
+			new CallbackTransformer(
+				function($price) {
+					return $price instanceof Money ? $price->getValue() : $price;
+				},
+				function($price) {
+					
+					return new Money($price);
+				}
+			)
+		);
+		
+		$builder->add
+		(
+			'currency',
+			ChoiceType::class,
+			[
+				'choices' => Currency::cases(),
+				'choice_value' => function(?Currency $currency) {
+					return $currency?->getValue();
+				},
+				'choice_label' => function(?Currency $currency) {
+					return $currency?->getValue();
+				},
+				'translation_domain' => 'reference.currency',
+				'label' => false,
+			]
+		);
+		
+		/* Цена по запросу */
+		$builder->add('request', CheckboxType::class, ['label' => false, 'required' => false]);
+		
+		/* Количество В наличие */
+		$builder->add('quantity', IntegerType::class, ['required' => false]);
+		
+		/* Зарезервирован */
+		$builder->add('reserve', IntegerType::class, ['required' => false]);
+		
+		/* Единица измерения */
+		$builder
+			->add('measurement', ChoiceType::class, [
+				'choices' => Measurement::cases(),
+				'choice_value' => function(?Measurement $measurement) {
+					return $measurement?->getValue();
+				},
+				'choice_label' => function(?Measurement $measurement) {
+					return $measurement?->getName();
+				},
+				'choice_translation_domain' => 'reference.measurement',
+				
+				'label' => false,
+				'expanded' => false,
+				'multiple' => false,
+				'required' => true,
+			])
+		;
+		
+	}
+	
+	
+	public function configureOptions(OptionsResolver $resolver) : void
+	{
+		$resolver->setDefaults([
+			'data_class' => PriceDTO::class,
+		]);
+	}
+	
 }

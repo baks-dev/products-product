@@ -20,7 +20,8 @@ namespace BaksDev\Products\Product\Entity\Trans;
 
 use BaksDev\Core\Type\Locale\Locale;
 
-interface TransInterface
+interface ProductTransInterface
 {
-    public function setLocal(Locale $local) : void;
+	public function setLocal(Locale $local) : void;
+	
 }

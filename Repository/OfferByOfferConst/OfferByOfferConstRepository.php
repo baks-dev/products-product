@@ -26,63 +26,69 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
-
 final class OfferByOfferConstRepository implements OfferByOfferConstInterface
 {
-    
-    private EntityManagerInterface $entityManager;
-    
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
-    }
-    
-    /** Получаем продукт с активным событием по постоянному уникальному идентификатор ТП */
-    
-    public function get(ProductUid $product, ProductOfferConst $const) : ?Entity\Offers\Offer\Offer
-    {
-        $qb = $this->entityManager->createQueryBuilder();
-        
-        $qb->select('offer');
-    
-        $qb->from(Entity\Product::class, 'product');
-        $qb->join(Entity\Event\ProductEvent::class, 'event', 'WITH', 'event.id = product.event');
-        $qb->join(Entity\Offers\ProductOffers::class, 'offers', 'WITH', 'offers.event = event.id');
-        $qb->join(Entity\Offers\Offer\Offer::class, 'offer', 'WITH', 'offer.productOffer = offers.id AND offer.const = :const');
-        
-        $qb->where('product.id = :product');
-        
-        $qb->setParameter('product', $product, ProductUid::TYPE);
-        $qb->setParameter('const', $const, ProductOfferConst::TYPE);
-
-        return $qb->getQuery()->getOneOrNullResult();
-    }
-    
-    
-    /** Получаем продукт с активным событием по постоянному уникальному идентификатор ТП */
-    
-    public function getProductOfferUid(ProductUid $product, ProductOfferConst $const) : ?ProductOfferUid
-    {
-        $qb = $this->entityManager->createQueryBuilder();
-        
-        $select = sprintf('new %s(offer.id)', ProductOfferUid::class);
-        
-        $qb->select($select);
-        
-        $qb->from(Entity\Product::class, 'product');
-        $qb->join(Entity\Event\ProductEvent::class, 'event', 'WITH', 'event.id = product.event');
-        $qb->join(Entity\Offers\Offers::class, 'offers', 'WITH', 'offers.event = event.id');
-        $qb->join(Entity\Offers\Offer\Offer::class, 'offer', 'WITH', 'offer.productOffer = offers.id AND offer.const = :const');
-        
-        $qb->where('product.id = :product');
-        
-        $qb->setParameter('product', $product, ProductUid::TYPE);
-        $qb->setParameter('const', $const, ProductOfferConst::TYPE);
-        
-
-        return $qb->getQuery()->getOneOrNullResult();
-    }
-    
-    
-    
+	
+	private EntityManagerInterface $entityManager;
+	
+	
+	public function __construct(EntityManagerInterface $entityManager)
+	{
+		$this->entityManager = $entityManager;
+	}
+	
+	
+	/** Получаем продукт с активным событием по постоянному уникальному идентификатор ТП */
+	
+	public function get(ProductUid $product, ProductOfferConst $const) : ?Entity\Offers\Offer\Offer
+	{
+		$qb = $this->entityManager->createQueryBuilder();
+		
+		$qb->select('offer');
+		
+		$qb->from(Entity\Product::class, 'product');
+		$qb->join(Entity\Event\ProductEvent::class, 'event', 'WITH', 'event.id = product.event');
+		$qb->join(Entity\Offers\ProductOffers::class, 'offers', 'WITH', 'offers.event = event.id');
+		$qb->join(Entity\Offers\Offer\Offer::class,
+			'offer',
+			'WITH',
+			'offer.productOffer = offers.id AND offer.const = :const'
+		);
+		
+		$qb->where('product.id = :product');
+		
+		$qb->setParameter('product', $product, ProductUid::TYPE);
+		$qb->setParameter('const', $const, ProductOfferConst::TYPE);
+		
+		return $qb->getQuery()->getOneOrNullResult();
+	}
+	
+	
+	/** Получаем продукт с активным событием по постоянному уникальному идентификатор ТП */
+	
+	public function getProductOfferUid(ProductUid $product, ProductOfferConst $const) : ?ProductOfferUid
+	{
+		$qb = $this->entityManager->createQueryBuilder();
+		
+		$select = sprintf('new %s(offer.id)', ProductOfferUid::class);
+		
+		$qb->select($select);
+		
+		$qb->from(Entity\Product::class, 'product');
+		$qb->join(Entity\Event\ProductEvent::class, 'event', 'WITH', 'event.id = product.event');
+		$qb->join(Entity\Offers\Offers::class, 'offers', 'WITH', 'offers.event = event.id');
+		$qb->join(Entity\Offers\Offer\Offer::class,
+			'offer',
+			'WITH',
+			'offer.productOffer = offers.id AND offer.const = :const'
+		);
+		
+		$qb->where('product.id = :product');
+		
+		$qb->setParameter('product', $product, ProductUid::TYPE);
+		$qb->setParameter('const', $const, ProductOfferConst::TYPE);
+		
+		return $qb->getQuery()->getOneOrNullResult();
+	}
+	
 }

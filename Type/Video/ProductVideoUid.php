@@ -6,6 +6,6 @@ use BaksDev\Core\Type\UidType\Uid;
 
 final class ProductVideoUid extends Uid
 {
-    public const TYPE = 'product_video_uid';
-    
+	public const TYPE = 'product_video_uid';
+	
 }

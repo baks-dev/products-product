@@ -25,45 +25,48 @@ use Doctrine\ORM\Mapping as ORM;
 
 /* Product */
 
+
 #[ORM\Entity]
 #[ORM\Table(name: 'product')]
 class Product //extends Event
 {
-    
-    public const TABLE = 'product';
-    
-    /** ID */
-    #[ORM\Id]
-    #[ORM\Column(type: ProductUid::TYPE)]
-    private ProductUid $id;
-    
-    /** ID События */
-    #[ORM\Column(type: ProductEventUid::TYPE, unique: true, nullable: false)]
-    private ProductEventUid $event;
-    
-    
-    public function __construct() { $this->id = new ProductUid(); }
-    
-
-    public function getId() : ProductUid
-    {
-        return $this->id;
-    }
-    
-
-    public function restore(ProductUid $id) : void
-    {
-        $this->id = $id;
-    }
-    
-
-    public function getEvent() : ProductEventUid
-    {
-        return $this->event;
-    }
-
-    public function setEvent(ProductEventUid|Event\ProductEvent $event) : void
-    {
-        $this->event = $event instanceof Event\ProductEvent ? $event->getId() : $event;
-    }
+	
+	public const TABLE = 'product';
+	
+	/** ID */
+	#[ORM\Id]
+	#[ORM\Column(type: ProductUid::TYPE)]
+	private ProductUid $id;
+	
+	/** ID События */
+	#[ORM\Column(type: ProductEventUid::TYPE, unique: true, nullable: false)]
+	private ProductEventUid $event;
+	
+	
+	public function __construct() { $this->id = new ProductUid(); }
+	
+	
+	public function getId() : ProductUid
+	{
+		return $this->id;
+	}
+	
+	
+	public function restore(ProductUid $id) : void
+	{
+		$this->id = $id;
+	}
+	
+	
+	public function getEvent() : ProductEventUid
+	{
+		return $this->event;
+	}
+	
+	
+	public function setEvent(ProductEventUid|Event\ProductEvent $event) : void
+	{
+		$this->event = $event instanceof Event\ProductEvent ? $event->getId() : $event;
+	}
+	
 }

@@ -18,61 +18,65 @@
 
 namespace BaksDev\Products\Product\DataFixtures\Security;
 
+use BaksDev\Products\Product\DataFixtures\Security\Role\RoleDTO;
 use BaksDev\Users\Groups\Group\DataFixtures\Security\Group\GroupFixtures;
 use BaksDev\Users\Groups\Group\Entity\Event\GroupEvent;
-use BaksDev\Users\Groups\Group\UseCase\CheckRoleAggregate;
-use BaksDev\Products\Product\DataFixtures\Security\Role\RoleDTO;
+use BaksDev\Users\Groups\Group\UseCase\Admin\NewEdit\CheckRoleHandler;
 use BaksDev\Users\Groups\Role\Entity\Role;
-use BaksDev\Users\Groups\Role\UseCase\RoleAggregate;
+use BaksDev\Users\Groups\Role\UseCase\Admin\NewEdit\RoleHandler;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
 final class RoleFixtures extends Fixture implements DependentFixtureInterface
 {
-
-    private RoleAggregate $roleAggregate;
-    private CheckRoleAggregate $checkRoleAggregate;
-    
-    public function __construct(
-      RoleAggregate $roleAggregate,
-      CheckRoleAggregate $checkRoleAggregate
-    ) {
-        $this->roleAggregate = $roleAggregate;
-        $this->checkRoleAggregate = $checkRoleAggregate;
-    }
-    
-    public function load(ObjectManager $manager) : void
-    {
-        # php bin/console doctrine:fixtures:load --append
-        
-        /* Role */
-        
-        $RoleDTO = new RoleDTO();
-        $RoleEvent = $manager->getRepository(Role::class)->find($RoleDTO->getRole());
-        
-        if(empty($RoleEvent))
-        {
-            //if($RoleEvent) { $RoleDTO->setId($RoleEvent->getEvent()); }
-            $this->roleAggregate->handle($RoleDTO);
-        }
-        
-
-        /* CheckRole */
-        
-        /** @var GroupEvent $GroupEvent */
-        $GroupEvent = $this->getReference(GroupFixtures::class);
-        
-        $CheckRoleDTO = new Check\CheckRoleDTO($GroupEvent, $RoleDTO);
-        $this->checkRoleAggregate->handle($CheckRoleDTO);
-
-    }
-    
-    public function getDependencies() : array
-    {
-        return [
-          GroupFixtures::class,
-        ];
-    }
-    
+	
+	private RoleHandler $roleAggregate;
+	
+	private CheckRoleHandler $checkRoleAggregate;
+	
+	
+	public function __construct(
+		RoleHandler $roleAggregate,
+		CheckRoleHandler $checkRoleAggregate,
+	)
+	{
+		$this->roleAggregate = $roleAggregate;
+		$this->checkRoleAggregate = $checkRoleAggregate;
+	}
+	
+	
+	public function load(ObjectManager $manager) : void
+	{
+		# php bin/console doctrine:fixtures:load --append
+		
+		/* Role */
+		
+		$RoleDTO = new RoleDTO();
+		$RoleEvent = $manager->getRepository(Role::class)->find($RoleDTO->getRole());
+		
+		if(empty($RoleEvent))
+		{
+			//if($RoleEvent) { $RoleDTO->setId($RoleEvent->getEvent()); }
+			$this->roleAggregate->handle($RoleDTO);
+		}
+		
+		/* CheckRole */
+		
+		/** @var GroupEvent $GroupEvent */
+		$GroupEvent = $this->getReference(GroupFixtures::class);
+		
+		$CheckRoleDTO = new Check\CheckRoleDTO($GroupEvent, $RoleDTO);
+		$this->checkRoleAggregate->handle($CheckRoleDTO);
+		
+	}
+	
+	
+	public function getDependencies() : array
+	{
+		return [
+			GroupFixtures::class,
+		];
+	}
+	
 }

@@ -18,13 +18,13 @@
 
 namespace BaksDev\Products\Product\Controller\Admin;
 
+use BaksDev\Core\Controller\AbstractController;
+use BaksDev\Core\Services\Security\RoleSecurity;
 use BaksDev\Products\Product\Entity;
 use BaksDev\Products\Product\UseCase\Admin\Delete\DeleteForm;
 use BaksDev\Products\Product\UseCase\Admin\Delete\ProductDTO;
 use BaksDev\Products\Product\UseCase\ProductAggregate;
-use BaksDev\Core\Controller\AbstractController;
 use Doctrine\ORM\EntityManagerInterface;
-
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,8 +32,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-
-#[ReleSecurity(['ROLE_ADMIN', 'ROLE_PRODUCT_DELETE'])]
+#[RoleSecurity(['ROLE_ADMIN', 'ROLE_PRODUCT_DELETE'])]
 final class DeleteController extends AbstractController
 {
 	
@@ -42,7 +41,7 @@ final class DeleteController extends AbstractController
 		Request $request,
 		ProductAggregate $handler,
 		#[MapEntity] Entity\Event\ProductEvent $Event,
-		EntityManagerInterface $entityManager
+		EntityManagerInterface $entityManager,
 	) : Response
 	{
 		
@@ -57,7 +56,6 @@ final class DeleteController extends AbstractController
 		]);
 		$form->handleRequest($request);
 		
-		
 		if($form->isSubmitted() && $form->isValid())
 		{
 			if($form->has('delete'))
@@ -67,11 +65,13 @@ final class DeleteController extends AbstractController
 				if($handle)
 				{
 					$this->addFlash('success', 'admin.delete.success', 'products.product');
+					
 					return $this->redirectToRoute('Product:admin.index');
 				}
 			}
 			
 			$this->addFlash('danger', 'admin.delete.danger', 'products.product');
+			
 			return $this->redirectToRoute('Product:admin.index');
 			
 			//return $this->redirectToReferer();

@@ -57,7 +57,11 @@ if ($addButtonCategory) {
 
         /* Вставляем новую коллекцию */
         let div = document.createElement('div');
-        div.classList.add('item-collection-category')
+        div.classList.add('item-collection-category');
+        div.classList.add('d-flex');
+        div.classList.add('justify-content-between');
+        div.classList.add('align-items-center');
+        div.classList.add('gap-3');
         div.innerHTML = newForm;
         $blockCollectionCategory.append(div);
 

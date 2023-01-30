@@ -40,13 +40,13 @@ final class ProductOfferUid extends Uid
 		$this->offers = $offers;
 	}
 	
-
+	
 	public function getOption() : ?string
 	{
 		return $this->option;
 	}
 	
-
+	
 	public function getOffers() : ?string
 	{
 		return $this->offers;

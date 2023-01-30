@@ -22,14 +22,15 @@ use BaksDev\Core\Type\UidType\UidType;
 
 final class ProductEventType extends UidType
 {
-    public function getClassType() : string
-    {
-        return ProductEventUid::class;
-    }
-    
-    public function getName() : string
-    {
-        return ProductEventUid::TYPE;
-    }
-    
+	public function getClassType() : string
+	{
+		return ProductEventUid::class;
+	}
+	
+	
+	public function getName() : string
+	{
+		return ProductEventUid::TYPE;
+	}
+	
 }

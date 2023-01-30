@@ -20,60 +20,60 @@ namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Info;
 
 use BaksDev\Products\Product\Repository\ProductUserProfileChoice\ProductUserProfileChoiceInterface;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
-use App\Module\Wildberries\Settings\Repository\UserProfileChoiceForm\UserProfileChoiceRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class InfoForm extends AbstractType
 {
-    
-    private ProductUserProfileChoiceInterface $profileChoice;
-    
-    public function __construct(ProductUserProfileChoiceInterface $profileChoice) {
-        $this->profileChoice = $profileChoice;
-    }
-  
-    public function buildForm(FormBuilderInterface $builder, array $options) : void
-    {
-    
-        $builder
-          ->add('profile', ChoiceType::class, [
-            'choices' => $this->profileChoice->get(),
-            'choice_value' => function (?UserProfileUid $status)
-            {
-                return $status?->getValue();
-            },
-            'choice_label' => function (UserProfileUid $status)
-            {
-                return $status->getName();
-            },
-            'label' => false,
-            'expanded' => false,
-            'multiple' => false,
-            'required' => true,
-            'attr' => ['data-select' => 'select2',]
-          ]);
-        
-        
-        /* TextType */
-        $builder->add('url', TextType::class);
-        
-        $builder->add('article', TextType::class);
-
-    }
-    
-    public function configureOptions(OptionsResolver $resolver) : void
-    {
-        $resolver->setDefaults
-        (
-          [
-            'data_class' => InfoDTO::class,
-          ]);
-    }
-    
+	
+	private ProductUserProfileChoiceInterface $profileChoice;
+	
+	
+	public function __construct(ProductUserProfileChoiceInterface $profileChoice)
+	{
+		$this->profileChoice = $profileChoice;
+	}
+	
+	
+	public function buildForm(FormBuilderInterface $builder, array $options) : void
+	{
+		
+		$builder
+			->add('profile', ChoiceType::class, [
+				'choices' => $this->profileChoice->get(),
+				'choice_value' => function(?UserProfileUid $status) {
+					return $status?->getValue();
+				},
+				'choice_label' => function(UserProfileUid $status) {
+					return $status->getName();
+				},
+				'label' => false,
+				'expanded' => false,
+				'multiple' => false,
+				'required' => true,
+				'attr' => ['data-select' => 'select2',],
+			])
+		;
+		
+		/* TextType */
+		$builder->add('url', TextType::class);
+		
+		$builder->add('article', TextType::class);
+		
+	}
+	
+	
+	public function configureOptions(OptionsResolver $resolver) : void
+	{
+		$resolver->setDefaults
+		(
+			[
+				'data_class' => InfoDTO::class,
+			]
+		);
+	}
+	
 }

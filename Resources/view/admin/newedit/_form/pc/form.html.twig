@@ -1,0 +1,145 @@
+{% trans_default_domain 'admin.products.product' %}
+
+
+<ul class="nav nav-pills gap-3 mb-3" id="nav-product">
+	<li class="nav-item" role="presentation">
+		<button class="btn fw-bolder nav-link active"
+				data-bs-toggle="tab"
+				type="button"
+				role="tab"
+				aria-selected="true"
+				
+				id="tab_main-tab"
+				data-bs-target="#tab_main"
+				aria-controls="nav-product"
+		>
+			<small class="text-uppercase px-3">
+				{# Продукт #}
+				Продукт
+			</small>
+		</button>
+	</li>
+	
+	<li class="nav-item">
+		<button class="btn fw-bolder nav-link"
+				data-bs-toggle="tab"
+				type="button"
+				role="tab"
+				aria-selected="true"
+				
+				id="tab_description-tab"
+				data-bs-target="#tab_description"
+				aria-controls="nav-product"
+		>
+			<small class="text-uppercase px-3">
+				{# Описание #}
+				Описание
+			</small>
+		</button>
+	</li>
+	
+	<li class="nav-item">
+		<button class="btn fw-bolder nav-link"
+				data-bs-toggle="tab"
+				type="button"
+				role="tab"
+				aria-selected="true"
+				
+				id="tab_gallery-tab"
+				data-bs-target="#tab_gallery"
+				aria-controls="nav-product"
+		>
+			<small class="text-uppercase px-3">
+				{# Галерея #}
+				Галерея
+			</small>
+		</button>
+	</li>
+	
+	{% if form.property.vars.data.count != 0 %}
+		<li class="nav-item">
+			<button class="btn fw-bolder nav-link"
+					data-bs-toggle="tab"
+					type="button"
+					role="tab"
+					aria-selected="true"
+					
+					id="tab_property-tab"
+					data-bs-target="#tab_property"
+					aria-controls="nav-product"
+			>
+				<small class="text-uppercase px-3">
+					{# Свойства продукта  #}
+					Свойства продукта
+				</small>
+			</button>
+		</li>
+	
+	{% endif %}
+	
+	<li class="nav-item">
+		<button class="btn fw-bolder nav-link"
+				data-bs-toggle="tab"
+				type="button"
+				role="tab"
+				aria-selected="true"
+				
+				id="tab_offers-tab"
+				data-bs-target="#tab_offers"
+				aria-controls="nav-tab_offers"
+		>
+			<small class="text-uppercase px-3">
+				{# Торговые предложения #}
+				Торговые предложения
+			</small>
+		</button>
+	</li>
+</ul>
+
+<div class="tab-content" id="product_tab_content">
+	
+	{# ОСНОВНЫЕ НАСТРОЙКИ #}
+	<div class="tab-pane fade show active" id="tab_main" role="tabpanel">
+		{{ include(_self|replace({ "form.html.twig": "main/form.main.html.twig" })) }}
+	</div>
+	
+	<div class="tab-pane fade" id="tab_description" role="tabpanel">
+		{{ include(_self|replace({ "form.html.twig": "description/form.description.html.twig" })) }}
+	</div>
+	
+	{# ГАЛЕРЕЯ #}
+	<div class="tab-pane fade" id="tab_gallery" role="tabpanel">
+		{{ include(_self|replace({ "form.html.twig": "gallery/form.gallery.html.twig" })) }}
+	</div>
+	
+	{# {{ dump(form.property.vars.data.count) }} #}
+	
+	{% if form.property.vars.data.count != 0 %}
+		{# СВОЙСТВА ПРОДУКТА #}
+		<div class="tab-pane fade" id="tab_property" role="tabpanel">
+			{{ include(_self|replace({ "form.html.twig": "properties/form.properties.html.twig" })) }}
+		</div>
+	{% endif %}
+	
+	{# {% if form.offers.vars.value.count %}
+	#}{# ТОРГОВЫЕ ПРЕДЛОЖЕНИЯ #}{#
+	<div class="tab-pane fade" id="tab_offers" role="tabpanel">
+	#}{# {{ include(_self|replace({ "form.html.twig": "form.offers.html.twig" })) }} #}{#
+	</div>
+{% endif %} #}
+	
+	{# ПОСАДОЧНЫЕ БЛОКИ #}
+	{#    <div class="tab-pane fade" id="tab_landing" role="tabpanel">
+	#}{# {{ include(_self|replace({ "form.html.twig": "form.landing.html.twig" })) }} #}{#
+	</div> #}
+
+</div>
+
+
+
+
+
+
+
+
+

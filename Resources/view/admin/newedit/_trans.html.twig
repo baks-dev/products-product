@@ -14,24 +14,24 @@
 </nav>
 
 <div class="tab-content mt-5" id="nav-{{ form.trans.vars.id }}Content">
-
+	
 	{% for trans in form.trans %}
 		<div class="tab-pane fade{{ app.request.locale == trans.vars.value.local ? ' show active' : '' }}"
-			 id="nav-{{ trans.vars.id }}" role="tabpanel"
-			 aria-labelledby="nav-{{ trans.vars.id }}-tab">
-
+				id="nav-{{ trans.vars.id }}" role="tabpanel"
+				aria-labelledby="nav-{{ trans.vars.id }}-tab">
+			
 			{# Локаль #}
 			{{ form_row(trans.local) }}
-
+			
 			{# Название #}
 			{{ form_row(trans.name, {
 				label : 'Название товара'|trans, attr: { 'data-lang' : "product_form_trans_"~trans.vars.value.local  }
 			}) }}
 		</div>
 	{% endfor %}
-
-
-
+	
+	
+	
 	{# Символьный код #}
 	{{ form_row(form.info.url, { label : 'Символьный код продукта'|trans } ) }}
 

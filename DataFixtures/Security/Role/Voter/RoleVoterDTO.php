@@ -25,132 +25,130 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 final class RoleVoterDTO implements RoleVoterInterface
 {
-    
-    public const VOTERS = [
-      
-      'NEW' => [
-        'ru' => 'Добавить',
-        'en' => 'New'
-      ],
-      
-      'EDIT' => [
-        'ru' => 'Редактировать',
-        'en' => 'Edit'
-      ],
-      
-      'DELETE' => [
-        'ru' => 'Удалить',
-        'en' => 'Delete'
-      ],
-      
-      'RECYCLEBIN' => [
-        'ru' => 'Корзина',
-        'en' => 'Recyclebin'
-      ],
-      
-      'SETTINGS' => [
-        'ru' => 'Настройки',
-        'en' => 'Settings'
-      ],
-      
-      'REMOVE' => [
-        'ru' => 'Очистить',
-        'en' => 'Remove'
-      ],
-      
-      'RESTORE' => [
-        'ru' => 'Восстановить',
-        'en' => 'Restore'
-      ],
-      
-      'HISTORY' => [
-        'ru' => 'История',
-        'en' => 'History'
-      ],
-      
-      'ROLLBACK' => [
-        'ru' => 'Откатить',
-        'en' => 'Rollback'
-      ],
-    
-    ];
-    
-    /** Вспомогательное свойство  */
-    private string $key;
-    
-    /** Префикс правила */
-    private VoterPrefix $voter;
-    
-    /** Настройки локали */
-    private ArrayCollection $translate;
-    
-  
-    public function __construct() { $this->translate = new ArrayCollection(); }
-    
-    
-    /* VOTER */
-
-
-    /**
-     * @return VoterPrefix
-     */
-    public function getVoter() : VoterPrefix
-    {
-        return $this->voter;
-    }
-    
-    /**
-     * @param VoterPrefix $voter
-     */
-    public function setVoter(VoterPrefix $voter) : void
-    {
-        $this->voter = $voter;
-    }
-    
-    /* TRANSLATE */
-    
-    /**
-     * @return ArrayCollection
-     */
-    public function getTranslate() : ArrayCollection
-    {
-        /* Вычисляем расхождение и добавляем неопределенные локали */
-        foreach(Locale::diffLocale($this->translate) as $locale)
-        {
-            $TransFormDTO = new Trans\VoterTransDTO();
-            $TransFormDTO->setLocal($locale);
-            $TransFormDTO->setName(self::VOTERS[$this->key][$locale->getValue()]);
-
-            $this->addTranslate($TransFormDTO);
-        }
-        
-        return $this->translate;
-    }
-
-    public function addTranslate(Trans\VoterTransDTO $translate) : void
-    {
-        $this->translate->add($translate);
-    }
-    
-    /** Метод для инициализации и маппинга сущности на DTO в коллекции  */
-    public function getTranslateClass() : Trans\VoterTransDTO
-    {
-        return new Trans\VoterTransDTO();
-    }
-    
-    /* KEY */
-    
-    
-    /**
-     * @param string $key
-     */
-    public function setKey(string $key) : void
-    {
-        $this->key = $key;
-    }
-    
-
-    
-
+	
+	public const VOTERS = [
+		
+		'NEW' => [
+			'ru' => 'Добавить',
+			'en' => 'New',
+		],
+		
+		'EDIT' => [
+			'ru' => 'Редактировать',
+			'en' => 'Edit',
+		],
+		
+		'DELETE' => [
+			'ru' => 'Удалить',
+			'en' => 'Delete',
+		],
+		
+		'RECYCLEBIN' => [
+			'ru' => 'Корзина',
+			'en' => 'Recyclebin',
+		],
+		
+		'SETTINGS' => [
+			'ru' => 'Настройки',
+			'en' => 'Settings',
+		],
+		
+		'REMOVE' => [
+			'ru' => 'Очистить',
+			'en' => 'Remove',
+		],
+		
+		'RESTORE' => [
+			'ru' => 'Восстановить',
+			'en' => 'Restore',
+		],
+		
+		'HISTORY' => [
+			'ru' => 'История',
+			'en' => 'History',
+		],
+		
+		'ROLLBACK' => [
+			'ru' => 'Откатить',
+			'en' => 'Rollback',
+		],
+	
+	];
+	
+	/** Вспомогательное свойство  */
+	private string $key;
+	
+	/** Префикс правила */
+	private VoterPrefix $voter;
+	
+	/** Настройки локали */
+	private ArrayCollection $translate;
+	
+	
+	public function __construct() { $this->translate = new ArrayCollection(); }
+	
+	
+	/* VOTER */
+	
+	/**
+	 * @return VoterPrefix
+	 */
+	public function getVoter() : VoterPrefix
+	{
+		return $this->voter;
+	}
+	
+	
+	/**
+	 * @param VoterPrefix $voter
+	 */
+	public function setVoter(VoterPrefix $voter) : void
+	{
+		$this->voter = $voter;
+	}
+	
+	/* TRANSLATE */
+	
+	/**
+	 * @return ArrayCollection
+	 */
+	public function getTranslate() : ArrayCollection
+	{
+		/* Вычисляем расхождение и добавляем неопределенные локали */
+		foreach(Locale::diffLocale($this->translate) as $locale)
+		{
+			$TransFormDTO = new Trans\VoterTransDTO();
+			$TransFormDTO->setLocal($locale);
+			$TransFormDTO->setName(self::VOTERS[$this->key][$locale->getValue()]);
+			
+			$this->addTranslate($TransFormDTO);
+		}
+		
+		return $this->translate;
+	}
+	
+	
+	public function addTranslate(Trans\VoterTransDTO $translate) : void
+	{
+		$this->translate->add($translate);
+	}
+	
+	
+	/** Метод для инициализации и маппинга сущности на DTO в коллекции  */
+	public function getTranslateClass() : Trans\VoterTransDTO
+	{
+		return new Trans\VoterTransDTO();
+	}
+	
+	/* KEY */
+	
+	/**
+	 * @param string $key
+	 */
+	public function setKey(string $key) : void
+	{
+		$this->key = $key;
+	}
+	
 }
 

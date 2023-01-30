@@ -26,56 +26,55 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
-
 final class ProductByOfferConstRepository implements ProductByOfferConstInterface
 {
-    
-    private EntityManagerInterface $entityManager;
-    
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
-    }
-    
-    /** Получаем продукт с активным событием по постоянному уникальному идентификатор ТП */
-    
-    public function get(ProductOfferConst $const) : ?Entity\Product
-    {
-        $qb = $this->entityManager->createQueryBuilder();
-        
-        $qb->select('product');
-        
-        $qb->from(Entity\Offers\Offer\Offer::class, 'offer');
-        $qb->join(Entity\Offers\Offers::class, 'offers', 'WITH', 'offers.id = offer.productOffer');
-        $qb->join(Entity\Event\ProductEvent::class, 'event', 'WITH', 'event.id = offers.event');
-        $qb->join(Entity\Product::class, 'product', 'WITH', 'product.id = event.product');
-      
-        $qb->where('offer.const = :const');
-        $qb->setParameter('const', $const, ProductOfferConst::TYPE);
-        
-        return $qb->getQuery()->getOneOrNullResult();
-    }
-    
-    
-    public function getProductUid(ProductOfferConst $const) : ?ProductUid
-    {
-        $qb = $this->entityManager->createQueryBuilder();
-        
-        
-        $select = sprintf('new %s(product.id)', ProductUid::class);
-        
-        $qb->select($select);
-        
-        $qb->from(Entity\Offers\Offer\Offer::class, 'offer');
-        $qb->join(Entity\Offers\Offers::class, 'offers', 'WITH', 'offers.id = offer.productOffer');
-        $qb->join(Entity\Event\ProductEvent::class, 'event', 'WITH', 'event.id = offers.event');
-        $qb->join(Entity\Product::class, 'product', 'WITH', 'product.id = event.product');
-        
-        $qb->where('offer.const = :const');
-        $qb->setParameter('const', $const, ProductOfferConst::TYPE);
-        
-        
-        
-        return $qb->getQuery()->getOneOrNullResult();
-    }
+	
+	private EntityManagerInterface $entityManager;
+	
+	
+	public function __construct(EntityManagerInterface $entityManager)
+	{
+		$this->entityManager = $entityManager;
+	}
+	
+	
+	/** Получаем продукт с активным событием по постоянному уникальному идентификатор ТП */
+	
+	public function get(ProductOfferConst $const) : ?Entity\Product
+	{
+		$qb = $this->entityManager->createQueryBuilder();
+		
+		$qb->select('product');
+		
+		$qb->from(Entity\Offers\Offer\Offer::class, 'offer');
+		$qb->join(Entity\Offers\Offers::class, 'offers', 'WITH', 'offers.id = offer.productOffer');
+		$qb->join(Entity\Event\ProductEvent::class, 'event', 'WITH', 'event.id = offers.event');
+		$qb->join(Entity\Product::class, 'product', 'WITH', 'product.id = event.product');
+		
+		$qb->where('offer.const = :const');
+		$qb->setParameter('const', $const, ProductOfferConst::TYPE);
+		
+		return $qb->getQuery()->getOneOrNullResult();
+	}
+	
+	
+	public function getProductUid(ProductOfferConst $const) : ?ProductUid
+	{
+		$qb = $this->entityManager->createQueryBuilder();
+		
+		$select = sprintf('new %s(product.id)', ProductUid::class);
+		
+		$qb->select($select);
+		
+		$qb->from(Entity\Offers\Offer\Offer::class, 'offer');
+		$qb->join(Entity\Offers\Offers::class, 'offers', 'WITH', 'offers.id = offer.productOffer');
+		$qb->join(Entity\Event\ProductEvent::class, 'event', 'WITH', 'event.id = offers.event');
+		$qb->join(Entity\Product::class, 'product', 'WITH', 'product.id = event.product');
+		
+		$qb->where('offer.const = :const');
+		$qb->setParameter('const', $const, ProductOfferConst::TYPE);
+		
+		return $qb->getQuery()->getOneOrNullResult();
+	}
+	
 }

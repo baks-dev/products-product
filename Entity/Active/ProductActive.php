@@ -28,83 +28,80 @@ use InvalidArgumentException;
 
 /* Статусы активности Продукта */
 
+
 #[ORM\Entity()]
 #[ORM\Table(name: 'product_active')]
 #[ORM\Index(columns: ['active'])]
 class ProductActive extends EntityEvent
 {
-    public const TABLE = 'product_active';
-    
-    /** ID события */
-    #[ORM\Id]
-    #[ORM\OneToOne(inversedBy: 'active', targetEntity: ProductEvent::class, cascade: ['persist'])]
-    #[ORM\JoinColumn(name: 'event', referencedColumnName: 'id')]
-    private ProductEvent $event;
-
-    /** Статус активности товара */
-    #[ORM\Column(name: 'active', type: Types::BOOLEAN, nullable: false)]
-    private bool $active = true;
-    
-    /** Начало активности */
-    #[ORM\Column(name: 'active_from', type: Types::DATETIME_IMMUTABLE, nullable: false)]
-    private DateTimeImmutable $activeFrom;
-    
-    /** Окончание активности */
-    #[ORM\Column(name: 'active_to', type: Types::DATETIME_IMMUTABLE, nullable: true)]
-    private ?DateTimeImmutable $activeTo = null;
-    
-    
-
-    public function __construct(ProductEvent $event)
-    {
-        $this->event = $event;
-        $this->activeFrom = new DateTimeImmutable();
-    }
-    
-    
-    /**
-     * @throws Exception
-     */
-    public function getDto($dto) : mixed
-    {
-        if($dto instanceof ProductActiveInterface)
-        {
-            return parent::getDto($dto);
-        }
-        
-        throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
-    }
-    
-    /**
-     * @throws Exception
-     */
-    public function setEntity($dto) : mixed
-    {
-        $format = "H:i";
-        
-        if($dto->activeFromTime())
-        {
-            $time = date_parse_from_format($format, $dto->activeFromTime()->format($format)); /* парсим время */
-            $getActiveFrom = $dto->getActiveFrom()->setTime($time['hour'], $time['minute']);
-            $dto->setActiveFrom($getActiveFrom);
-        }
+	public const TABLE = 'product_active';
+	
+	/** ID события */
+	#[ORM\Id]
+	#[ORM\OneToOne(inversedBy: 'active', targetEntity: ProductEvent::class, cascade: ['persist'])]
+	#[ORM\JoinColumn(name: 'event', referencedColumnName: 'id')]
+	private ProductEvent $event;
+	
+	/** Статус активности товара */
+	#[ORM\Column(name: 'active', type: Types::BOOLEAN, nullable: false)]
+	private bool $active = true;
+	
+	/** Начало активности */
+	#[ORM\Column(name: 'active_from', type: Types::DATETIME_IMMUTABLE, nullable: false)]
+	private DateTimeImmutable $activeFrom;
+	
+	/** Окончание активности */
+	#[ORM\Column(name: 'active_to', type: Types::DATETIME_IMMUTABLE, nullable: true)]
+	private ?DateTimeImmutable $activeTo = null;
+	
+	
+	public function __construct(ProductEvent $event)
+	{
+		$this->event = $event;
+		$this->activeFrom = new DateTimeImmutable();
+	}
+	
+	
+	/**
+	 * @throws Exception
+	 */
+	public function getDto($dto) : mixed
+	{
+		if($dto instanceof ProductActiveInterface)
+		{
+			return parent::getDto($dto);
+		}
+		throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
+	}
+	
+	
+	/**
+	 * @throws Exception
+	 */
+	public function setEntity($dto) : mixed
+	{
+		$format = "H:i";
 		
-        if($dto->getActiveTo() && $dto->activeToTime())
-        {
-            $time = date_parse_from_format($format, $dto->activeToTime()->format($format)); /* парсим время */
-            $getActiveTo = $dto->getActiveTo()->setTime($time['hour'], $time['minute']);
-            $dto->setActiveTo($getActiveTo);
-        }
-        
-        
-        if($dto instanceof ProductActiveInterface)
-        {
-            return parent::setEntity($dto);
-        }
-        
-        throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
-    }
-    
-    
-
+		if($dto->activeFromTime())
+		{
+			$time = date_parse_from_format($format, $dto->activeFromTime()->format($format)); /* парсим время */
+			$getActiveFrom = $dto->getActiveFrom()->setTime($time['hour'], $time['minute']);
+			$dto->setActiveFrom($getActiveFrom);
+		}
+		
+		if($dto->getActiveTo() && $dto->activeToTime())
+		{
+			$time = date_parse_from_format($format, $dto->activeToTime()->format($format)); /* парсим время */
+			$getActiveTo = $dto->getActiveTo()->setTime($time['hour'], $time['minute']);
+			$dto->setActiveTo($getActiveTo);
+		}
+		
+		if($dto instanceof ProductActiveInterface)
+		{
+			return parent::setEntity($dto);
+		}
+		
+		throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
+	}
+	
 }

@@ -16,21 +16,12 @@
  */
 
 
-
-
-
-
-
 // if (initDatepick != undefined)
 // {
 //     /** Инициируем календарь */
 //     //initDatepick('product_form_active_activeFrom');
 //     //initDatepick('product_form_active_activeTo');
 // }
-
-
-
-
 
 
 /** Символьный код */
@@ -49,7 +40,6 @@ if ($name) {
 // document.querySelectorAll('[data-select="select2"]').forEach(function (item) {
 //     new NiceSelect(item, {searchable: true});
 // });
-
 
 
 /** коллекция ТОРГОВЫХ ПРЕДЛОЖЕНИЙ} ***********************************************************/
@@ -80,7 +70,6 @@ if ($addButtonOffer) {
         let offer = $addButtonOffer.dataset.offer * 1;
 
 
-
         /* Замена '__name__' в HTML-коде прототипа
         вместо этого будет число, основанное на том, сколько коллекций */
         newForm = newForm.replace(/__offers__/g, index);
@@ -94,7 +83,7 @@ if ($addButtonOffer) {
         div.classList.add('item-collection-offer');
         div.dataset.index = offer.toString();
         //div.classList.add('item-collection-offer');
-        div.id = 'item-collection-offers-'+index;
+        div.id = 'item-collection-offers-' + index;
         div.innerHTML = newForm;
 
 
@@ -104,7 +93,6 @@ if ($addButtonOffer) {
         //     item.innerHTML = item.innerHTML.replace(/__count__/g, count)
         //     //item.innerHTML = item.innerHTML.replace(/__counter__/g, count)
         // });
-
 
 
         $blockCollectionOffers.append(div);
@@ -146,13 +134,11 @@ if ($addButtonOffer) {
 
         /* Добавляем фото торгового предложения */
         let offer_photo_addCollection = div.querySelector('.offer_photo_addCollection');
-        if(offer_photo_addCollection)
-        {
+        if (offer_photo_addCollection) {
             offer_photo_addCollection.addEventListener('click', function () {
                 addOfferPhoto(this)
             });
         }
-
 
 
         /* Инициируем предзагрузку фото */
@@ -160,8 +146,6 @@ if ($addButtonOffer) {
 
     });
 }
-
-
 
 
 /* Удаляем при клике торговое предложение */
@@ -178,9 +162,7 @@ document.querySelectorAll('.offer_multiple_addCollection').forEach(function (mul
 });
 
 
-
 /* Меняем позицию ROOT для фото ТП */
-
 
 
 document.querySelectorAll('.item-collection-photo').forEach(function (div) {
@@ -199,14 +181,6 @@ document.querySelectorAll('.item-collection-photo').forEach(function (div) {
 
 
 });
-
-
-
-
-
-
-
-
 
 
 /* Добавляем ФОТО торгового предложения */
@@ -236,13 +210,11 @@ document.querySelectorAll('.del-item-offer-image').forEach(function (deletePhoto
 /* Удаляем мульти-торговое предложение */
 document.querySelectorAll('.del-item-collection').forEach(function (deleteMulti) {
     deleteMulti.addEventListener('click', function () {
-        if(this.closest('.multiple-collection').querySelectorAll('.del-item-collection').length > 1)
-        {
+        if (this.closest('.multiple-collection').querySelectorAll('.del-item-collection').length > 1) {
             this.closest('.item-collection').remove();
         }
     });
 });
-
 
 
 function addMultipleOffer($addButtonMultipleOffer) {
@@ -286,7 +258,7 @@ function addMultipleOffer($addButtonMultipleOffer) {
         div.classList.add('pt-3');
         div.classList.add('border-top');
         div.classList.add('item-collection');
-        div.id = 'prototype_product_form_offers_'+offers+'_offer_'+index;
+        div.id = 'prototype_product_form_offers_' + offers + '_offer_' + index;
 
         $multipleBlock.append(div);
 
@@ -302,8 +274,7 @@ function addMultipleOffer($addButtonMultipleOffer) {
         /* Удаляем мульти-торговое предложение */
         div.querySelectorAll('.del-item-collection').forEach(function (deleteMulti) {
             deleteMulti.addEventListener('click', function () {
-                if(this.closest('.multiple-collection').querySelectorAll('.del-item-collection').length > 1)
-                {
+                if (this.closest('.multiple-collection').querySelectorAll('.del-item-collection').length > 1) {
                     this.closest('.item-collection').remove();
                 }
             });
@@ -311,7 +282,7 @@ function addMultipleOffer($addButtonMultipleOffer) {
 
 
         /* Если в предложении есть фото - добавляем событие на клик */
-        let newOffer =  document.getElementById(div.id);
+        let newOffer = document.getElementById(div.id);
         let $offer_photo_addCollection = newOffer.querySelector('.offer_photo_addCollection');
         if ($offer_photo_addCollection) {
             $offer_photo_addCollection.addEventListener('click', function () {
@@ -326,11 +297,9 @@ function addMultipleOffer($addButtonMultipleOffer) {
 function replaceHidden($multipleBlock) {
 
 
-
     $multipleBlock.querySelectorAll('[data-variant]').forEach(function (item) {
         let $variant = document.getElementById(item.dataset.variant);
-        if ($variant)
-        {
+        if ($variant) {
             item.value = $variant.value;
             item.removeAttribute('data-variant')
         }
@@ -344,9 +313,6 @@ function replaceReference($searchBlock, $id) {
     let dupNode = document.getElementById($id);
 
 
-
-
-
     if (dupNode) {
 
         $searchBlock.querySelectorAll('[data-reference]').forEach(function (item) {
@@ -357,8 +323,7 @@ function replaceReference($searchBlock, $id) {
             cloneNode.value = "";
 
 
-            if(cloneNode.options !== undefined)
-            {
+            if (cloneNode.options !== undefined) {
                 cloneNode.options[0].selected = true;
                 cloneNode.options[0].selected = 'selected';
                 cloneNode.selectedIndex = 0;
@@ -371,14 +336,11 @@ function replaceReference($searchBlock, $id) {
             }
 
 
-
-
-
             item.replaceWith(cloneNode);
 
             /* применяем select2 */
             if (cloneNode.dataset.select === "select2") {
-                new NiceSelect(cloneNode, { searchable: true });
+                new NiceSelect(cloneNode, {searchable: true});
             }
 
 
@@ -386,7 +348,7 @@ function replaceReference($searchBlock, $id) {
     }
 
 
-   // return;
+    // return;
 
 
     /* Перебираем список справочников */
@@ -415,7 +377,6 @@ function replaceReference($searchBlock, $id) {
 function addOfferPhoto($addBtn) {
 
 
-
     /* получаем индекс вариации торгового предложения */
 
     //let field = $addBtn.closest('.item-collection-offer-fields').dataset.field;
@@ -426,7 +387,6 @@ function addOfferPhoto($addBtn) {
 
     /* Получаем количество фото в колеекции */
     //let counter = $offerImageBlock.getElementsByClassName('item-collection-photo').length;
-
 
 
     // if (counter > 5) {
@@ -479,7 +439,6 @@ function addOfferPhoto($addBtn) {
     });
 
 
-
     div.querySelector('.change-root').addEventListener('change', function () {
 
         //let photo_collection = document.getElementById('photo_collection');
@@ -491,7 +450,6 @@ function addOfferPhoto($addBtn) {
 
         this.checked = true;
     });
-
 
 
 }

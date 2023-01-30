@@ -18,73 +18,66 @@
 
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Category;
 
-use App\Module\Products\Category\Repository\CategoryChoice\CategoryChoiceInterface;
-use App\Module\Products\Category\Type\Id\CategoryUid;
+use BaksDev\Products\Category\Repository\CategoryChoice\CategoryChoiceInterface;
+use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class CategoryCollectionForm extends AbstractType
 {
-//    private $locale;
-//
-//    public function __construct(TranslatorInterface $translator)
-//    {
-//        $this->locale = $translator->getLocale();
-//    }
-    
-    private CategoryChoiceInterface $category;
-    
-    public function __construct(CategoryChoiceInterface $category) {
-        $this->category = $category;
-    }
-    
-    public function buildForm(FormBuilderInterface $builder, array $options) : void
-    {
-
-        $builder
-          ->add('category', ChoiceType::class, [
-            'choices' => $this->category->get(),
-            'choice_value' => function (?CategoryUid $type)
-            {
-                return $type?->getValue();
-            },
-            'choice_label' => function (?CategoryUid $type)
-            {
-                return $type?->getOption();
-            },
-        
-            'label' => false,
-            'expanded' => false,
-            'multiple' => false,
-            'required' => true,
-          ]);
-        
-    
-        $builder->add
-        (
-          'DeleteCategory',
-          ButtonType::class,
-          [
-            'label_html' => true,
-            'attr' =>
-              ['class' => 'btn btn-light-danger del-item-category'],
-          ]);
-        
-    }
-    
-    public function configureOptions(OptionsResolver $resolver) : void
-    {
-        $resolver->setDefaults
-        (
-          [
-            'data_class' => CategoryCollectionDTO::class,
-          ]);
-    }
-    
+	
+	private CategoryChoiceInterface $category;
+	
+	
+	public function __construct(CategoryChoiceInterface $category)
+	{
+		$this->category = $category;
+	}
+	
+	
+	public function buildForm(FormBuilderInterface $builder, array $options) : void
+	{
+		
+		$builder
+			->add('category', ChoiceType::class, [
+				'choices' => $this->category->get(),
+				'choice_value' => function(?ProductCategoryUid $type) {
+					return $type?->getValue();
+				},
+				'choice_label' => function(?ProductCategoryUid $type) {
+					return $type?->getOptions();
+				},
+				
+				'label' => false,
+				'expanded' => false,
+				'multiple' => false,
+				'required' => true,
+			])
+		;
+		
+		$builder->add
+		(
+			'DeleteCategory',
+			ButtonType::class,
+			[
+				'label_html' => true,
+			]
+		);
+		
+	}
+	
+	
+	public function configureOptions(OptionsResolver $resolver) : void
+	{
+		$resolver->setDefaults
+		(
+			[
+				'data_class' => CategoryCollectionDTO::class,
+			]
+		);
+	}
+	
 }

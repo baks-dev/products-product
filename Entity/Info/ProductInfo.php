@@ -28,53 +28,56 @@ use InvalidArgumentException;
 
 /* Неизменяемые данные Продукта */
 
+
 #[ORM\Entity]
 #[ORM\Table(name: 'product_info')]
 class ProductInfo extends EntityEvent
 {
-    public const TABLE = 'product_info';
-    
-    /** ID Product */
-    #[ORM\Id]
-    #[ORM\Column(type: ProductUid::TYPE)]
-    private ProductUid $product;
-    
-    /** Семантическая ссылка на товар */
-    #[ORM\Column(type: Types::STRING, unique: true)]
-    private string $url;
-    
-    /** Артикул товара */
-    #[ORM\Column(type: Types::STRING)]
-    private string $article;
-    
-    /** Профиль пользователя, которому принадлежит товар */
-    #[ORM\Column(type: UserProfileUid::TYPE, nullable: true)]
-    private UserProfileUid $profile;
-
-    public function __construct(Product|ProductUid $product)
-    {
-        $this->product = $product instanceof Product ? $product->getId() : $product;
-    }
-    
-
-    public function getDto($dto) : mixed
-    {
-        if($dto instanceof ProductInfoInterface)
-        {
-            return parent::getDto($dto);
-        }
-        
-        throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
-    }
-
-    public function setEntity($dto) : mixed
-    {
-        if($dto instanceof ProductInfoInterface)
-        {
-            return parent::setEntity($dto);
-        }
-        
-        throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
-    }
-    
+	public const TABLE = 'product_info';
+	
+	/** ID Product */
+	#[ORM\Id]
+	#[ORM\Column(type: ProductUid::TYPE)]
+	private ProductUid $product;
+	
+	/** Семантическая ссылка на товар */
+	#[ORM\Column(type: Types::STRING, unique: true)]
+	private string $url;
+	
+	/** Артикул товара */
+	#[ORM\Column(type: Types::STRING)]
+	private string $article;
+	
+	/** Профиль пользователя, которому принадлежит товар */
+	#[ORM\Column(type: UserProfileUid::TYPE, nullable: true)]
+	private UserProfileUid $profile;
+	
+	
+	public function __construct(Product|ProductUid $product)
+	{
+		$this->product = $product instanceof Product ? $product->getId() : $product;
+	}
+	
+	
+	public function getDto($dto) : mixed
+	{
+		if($dto instanceof ProductInfoInterface)
+		{
+			return parent::getDto($dto);
+		}
+		
+		throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
+	}
+	
+	
+	public function setEntity($dto) : mixed
+	{
+		if($dto instanceof ProductInfoInterface)
+		{
+			return parent::setEntity($dto);
+		}
+		
+		throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
+	}
+	
 }

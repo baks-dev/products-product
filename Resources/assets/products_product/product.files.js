@@ -52,7 +52,12 @@ if ($addButtonFile) {
 
         /* Вставляем новую коллекцию */
         let div = document.createElement('div');
-        div.classList.add('item-collection-file')
+        div.classList.add('d-flex');
+        div.classList.add('justify-content-between');
+        div.classList.add('align-items-center');
+        div.classList.add('gap-3');
+        div.classList.add('item-collection-file');
+
         div.innerHTML = newForm;
         $blockCollectionFile.append(div);
 

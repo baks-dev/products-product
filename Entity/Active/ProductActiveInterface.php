@@ -20,5 +20,5 @@ namespace BaksDev\Products\Product\Entity\Active;
 
 interface ProductActiveInterface
 {
-    
+	
 }

@@ -18,111 +18,121 @@
 
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Video;
 
-use BaksDev\Products\Product\Entity\Video\VideoInterface;
+use BaksDev\Products\Product\Entity\Video\ProductVideoInterface;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class VideoCollectionDTO implements VideoInterface
+final class VideoCollectionDTO implements ProductVideoInterface
 {
-    #[Assert\File(
-      maxSize         : '4096k',
-      mimeTypes       : [
-        'application/avi',
-        'application/mp4',
-      ],
-      mimeTypesMessage: 'Please upload a valid file'
-    )]
-    public ?File $file = null;
-    
-    private ?string $name = null;
-    
-    private ?string $ext = null;
-    
-    private bool $cdn = false;
-    
-    private ?int $size = null;
-    
-    private ProductEventUid|null $dir = null;
-    
-    /**
-     * @return string|null
-     */
-    public function getName() : ?string
-    {
-        return $this->name;
-    }
-    
-    /**
-     * @param string|null $name
-     */
-    public function setName(?string $name) : void
-    {
-        $this->name = $name;
-    }
-    
-    /**
-     * @return string|null
-     */
-    public function getExt() : ?string
-    {
-        return $this->ext;
-    }
-    
-    /**
-     * @param string|null $ext
-     */
-    public function setExt(?string $ext) : void
-    {
-        $this->ext = $ext;
-    }
-    
-    /**
-     * @return bool
-     */
-    public function isCdn() : bool
-    {
-        return $this->cdn;
-    }
-    
-    /**
-     * @param bool $cdn
-     */
-    public function setCdn(bool $cdn) : void
-    {
-        $this->cdn = $cdn;
-    }
-    
-    /**
-     * @return ProductEventUid|null
-     */
-    public function getDir() : ?ProductEventUid
-    {
-        return $this->dir;
-    }
-    
-    /**
-     * @param ProductEventUid|null $dir
-     */
-    public function setDir(?ProductEventUid $dir) : void
-    {
-        $this->dir = $dir;
-    }
-    
-    /**
-     * @return int|null
-     */
-    public function getSize() : ?int
-    {
-        return $this->size;
-    }
-    
-    /**
-     * @param int|null $size
-     */
-    public function setSize(?int $size) : void
-    {
-        $this->size = $size;
-    }
-
+	#[Assert\File(
+		maxSize: '4096k',
+		mimeTypes: [
+			'application/avi',
+			'application/mp4',
+		],
+		mimeTypesMessage: 'Please upload a valid file'
+	)]
+	public ?File $file = null;
+	
+	private ?string $name = null;
+	
+	private ?string $ext = null;
+	
+	private bool $cdn = false;
+	
+	private ?int $size = null;
+	
+	private ProductEventUid|null $dir = null;
+	
+	
+	/**
+	 * @return string|null
+	 */
+	public function getName() : ?string
+	{
+		return $this->name;
+	}
+	
+	
+	/**
+	 * @param string|null $name
+	 */
+	public function setName(?string $name) : void
+	{
+		$this->name = $name;
+	}
+	
+	
+	/**
+	 * @return string|null
+	 */
+	public function getExt() : ?string
+	{
+		return $this->ext;
+	}
+	
+	
+	/**
+	 * @param string|null $ext
+	 */
+	public function setExt(?string $ext) : void
+	{
+		$this->ext = $ext;
+	}
+	
+	
+	/**
+	 * @return bool
+	 */
+	public function getCdn() : bool
+	{
+		return $this->cdn;
+	}
+	
+	
+	/**
+	 * @param bool $cdn
+	 */
+	public function setCdn(bool $cdn) : void
+	{
+		$this->cdn = $cdn;
+	}
+	
+	
+	/**
+	 * @return ProductEventUid|null
+	 */
+	public function getDir() : ?ProductEventUid
+	{
+		return $this->dir;
+	}
+	
+	
+	/**
+	 * @param ProductEventUid|null $dir
+	 */
+	public function setDir(?ProductEventUid $dir) : void
+	{
+		$this->dir = $dir;
+	}
+	
+	
+	/**
+	 * @return int|null
+	 */
+	public function getSize() : ?int
+	{
+		return $this->size;
+	}
+	
+	
+	/**
+	 * @param int|null $size
+	 */
+	public function setSize(?int $size) : void
+	{
+		$this->size = $size;
+	}
+	
 }

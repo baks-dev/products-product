@@ -27,23 +27,22 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class SeoCollectionForm extends AbstractType
 {
-
-    public function buildForm(FormBuilderInterface $builder, array $options) : void
-    {
-        /* TextType */
-        $builder->add('local', HiddenType::class);
-        $builder->add('title', TextType::class, ['required' => false]);
-        $builder->add('description', TextareaType::class, ['required' => false]);
-        $builder->add('keywords', TextareaType::class, ['required' => false]);
-    }
-    
-    public function configureOptions(OptionsResolver $resolver) : void
-    {
-        $resolver->setDefaults
-        (
-          [
-            'data_class' => SeoCollectionDTO::class,
-          ]);
-    }
-    
+	
+	public function buildForm(FormBuilderInterface $builder, array $options) : void
+	{
+		/* TextType */
+		$builder->add('local', HiddenType::class);
+		$builder->add('title', TextType::class, ['required' => false]);
+		$builder->add('description', TextareaType::class, ['required' => false]);
+		$builder->add('keywords', TextareaType::class, ['required' => false]);
+	}
+	
+	
+	public function configureOptions(OptionsResolver $resolver) : void
+	{
+		$resolver->setDefaults([
+			'data_class' => SeoCollectionDTO::class,
+		]);
+	}
+	
 }

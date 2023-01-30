@@ -18,78 +18,74 @@
 
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Info;
 
-use BaksDev\Products\Product\Entity\Info\InfoInterface;
-
-use BaksDev\Users\Profile\TypeProfile\Type\Id\ProfileUid;
+use BaksDev\Products\Product\Entity\Info\ProductInfoInterface;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class InfoDTO implements InfoInterface
+final class InfoDTO implements ProductInfoInterface
 {
-    /** Семантическая ссылка на товар (строка с тире и нижним подчеркиванием) */
-    #[Assert\NotBlank]
-    #[Assert\Regex(
-      pattern: '/^[a-z0-9\_\-]+$/i'
-    )]
-    private string $url;
-    
-    /** Артикул товара */
-    private ?string $article = null;
-    
-    #[Assert\Uuid]
-    #[Assert\NotBlank]
-    private ?UserProfileUid $profile = null;
-    
-    
-    /**
-     * @return string
-     */
-    public function getUrl() : string
-    {
-        return $this->url;
-    }
-    
-    /**
-     * @param string $url
-     */
-    public function setUrl(string $url) : void
-    {
-        $this->url = $url;
-    }
-    
-
-    public function updateUrlUniq() : void
-    {
-        $this->url = uniqid($this->url.'_', false);
-    }
-    
-    /* ARTICLE */
-    
-    /**
-     * @return ?string
-     */
-    public function getArticle() : ?string
-    {
-        return $this->article;
-    }
-
-    public function setArticle(?string $article) : void
-    {
-        $this->article = $article;
-    }
-
-    public function getProfile() : ?UserProfileUid
-    {
-        return $this->profile;
-    }
-    
-    /**
-     * @param UserProfileUid $profile
-     */
-    public function setProfile(UserProfileUid $profile) : void
-    {
-        $this->profile = $profile;
-    }
-
+	/** Семантическая ссылка на товар (строка с тире и нижним подчеркиванием) */
+	#[Assert\NotBlank]
+	#[Assert\Regex(
+		pattern: '/^[a-z0-9\_\-]+$/i'
+	)]
+	private string $url;
+	
+	/** Артикул товара */
+	private ?string $article = null;
+	
+	/** Профиль пользователя */
+	#[Assert\Uuid]
+	#[Assert\NotBlank]
+	private ?UserProfileUid $profile = null;
+	
+	
+	/** Семантическая ссылка на товар */
+	
+	public function getUrl() : string
+	{
+		return $this->url;
+	}
+	
+	
+	public function setUrl(string $url) : void
+	{
+		$this->url = $url;
+	}
+	
+	
+	public function updateUrlUniq() : void
+	{
+		$this->url = uniqid($this->url.'_', false);
+	}
+	
+	
+	/** Артикул товара */
+	
+	public function getArticle() : ?string
+	{
+		return $this->article;
+	}
+	
+	
+	public function setArticle(?string $article) : void
+	{
+		$this->article = $article;
+	}
+	
+	
+	/** Профиль пользователя */
+	
+	public function getProfile() : ?UserProfileUid
+	{
+		return $this->profile;
+	}
+	
+	
+	public function setProfile(UserProfileUid $profile) : void
+	{
+		$this->profile = $profile;
+	}
+	
 }
 

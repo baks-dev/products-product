@@ -25,85 +25,87 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 final class ProductDTO implements ProductEventInterface
 {
-    /**
-     * Идентификатор события
-     * @var ProductEventUid|null
-     */
-    #[Assert\Uuid]
-    private ?ProductEventUid $id = null;
-    
-//    private ?ParentCategoryUid $parent;
-    
-    #[Assert\Valid]
-    private Modify\ModifyDTO $modify;
-    
-    #[Assert\Valid]
-    private Info\InfoDTO $info;
-    
-
-    public function __construct() {
-        $this->modify = new Modify\ModifyDTO();
-        $this->info = new Info\InfoDTO();
-    }
-    
-    
-
-    /**
-     * @return ProductEventUid|null
-     */
-    public function getEvent() : ?ProductEventUid
-    {
-        return $this->id;
-    }
-    
-    /**
-     * @param ProductEventUid $id
-     */
-    public function setId(ProductEventUid $id) : void
-    {
-        $this->id = $id;
-    }
-    
-    
-    /* Modify  */
-    
-    
-    /**
-     * @return Modify\ModifyDTO
-     */
-    public function getModify() : Modify\ModifyDTO
-    {
-        return $this->modify;
-    }
-    
-    /** Метод для инициализации и маппинга сущности на DTO в коллекции  */
-    public function getModifyClass() : Modify\ModifyDTO
-    {
-        return new Modify\ModifyDTO();
-    }
-    
-    
-    
-    /**
-     * @return Info\InfoDTO
-     */
-    public function getInfo() : Info\InfoDTO
-    {
-        return $this->info;
-    }
-    
-    public function setInfo(Info\InfoDTO $info) : void
-    {
-        $this->info = $info;
-    }
-    
-    //    /**
-    //     * @param ModifyDTO $Modify
-    //     */
-    //    public function setModify(ModifyDTO $Modify) : void
-    //    {
-    //        $this->modify = $Modify;
-    //    }
-    
+	/**
+	 * Идентификатор события
+	 *
+	 * @var ProductEventUid|null
+	 */
+	#[Assert\Uuid]
+	private ?ProductEventUid $id = null;
+	
+	//    private ?ParentCategoryUid $parent;
+	
+	#[Assert\Valid]
+	private Modify\ModifyDTO $modify;
+	
+	#[Assert\Valid]
+	private Info\InfoDTO $info;
+	
+	
+	public function __construct()
+	{
+		$this->modify = new Modify\ModifyDTO();
+		$this->info = new Info\InfoDTO();
+	}
+	
+	
+	/**
+	 * @return ProductEventUid|null
+	 */
+	public function getEvent() : ?ProductEventUid
+	{
+		return $this->id;
+	}
+	
+	
+	/**
+	 * @param ProductEventUid $id
+	 */
+	public function setId(ProductEventUid $id) : void
+	{
+		$this->id = $id;
+	}
+	
+	
+	/* Modify  */
+	
+	/**
+	 * @return Modify\ModifyDTO
+	 */
+	public function getModify() : Modify\ModifyDTO
+	{
+		return $this->modify;
+	}
+	
+	
+	/** Метод для инициализации и маппинга сущности на DTO в коллекции  */
+	public function getModifyClass() : Modify\ModifyDTO
+	{
+		return new Modify\ModifyDTO();
+	}
+	
+	
+	/**
+	 * @return Info\InfoDTO
+	 */
+	public function getInfo() : Info\InfoDTO
+	{
+		return $this->info;
+	}
+	
+	
+	public function setInfo(Info\InfoDTO $info) : void
+	{
+		$this->info = $info;
+	}
+	
+	//    /**
+	//     * @param ModifyDTO $Modify
+	//     */
+	//    public function setModify(ModifyDTO $Modify) : void
+	//    {
+	//        $this->modify = $Modify;
+	//    }
+	
 }
 

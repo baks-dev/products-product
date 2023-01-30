@@ -19,62 +19,58 @@
 namespace BaksDev\Products\Product\Controller\Admin;
 
 //use App\Module\Product\Repository\Product\AllProduct;
+use App\System\Helper\Paginator;
+use BaksDev\Core\Controller\AbstractController;
+use BaksDev\Core\Form\Search\SearchDTO;
+use BaksDev\Core\Form\Search\SearchForm;
+use BaksDev\Core\Services\Security\RoleSecurity;
+use BaksDev\Core\Type\Locale\Locale;
 use BaksDev\Products\Product\Forms\ProductFilter\Admin\ProductFilterDTO;
 use BaksDev\Products\Product\Forms\ProductFilter\Admin\ProductFilterForm;
 use BaksDev\Products\Product\Repository\AllProducts\AllProductsInterface;
-use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
-use BaksDev\Core\Controller\AbstractController;
-
-//use BaksDev\Core\Form\Search\Command;
-use BaksDev\Core\Form\Search\SearchDTO;
-use BaksDev\Core\Form\Search\SearchForm;
-
-
-use App\System\Helper\Paginator;
-use BaksDev\Core\Type\Locale\Locale;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[ReleSecurity(['ROLE_ADMIN', 'ROLE_PRODUCT'])]
+//use BaksDev\Core\Form\Search\Command;
+#[RoleSecurity(['ROLE_ADMIN', 'ROLE_PRODUCT'])]
 final class IndexController extends AbstractController
 {
-    #[Route('/admin/products/{page<\d+>}', name: 'admin.index',  methods: [
-      'GET',
-      'POST'
-    ])]
-    public function index(
-      Request $request,
-      AllProductsInterface $getAllProduct,
-      int $page = 0,
-    ) : Response
-    {
-    
-
-        /* Поиск */
-        $search = new SearchDTO();
-        $searchForm = $this->createForm(SearchForm::class, $search);
-        $searchForm->handleRequest($request);
-    
-    
-        /* Фильтр */
-        $filter = new ProductFilterDTO($request);
-        $filterForm = $this->createForm(ProductFilterForm::class, $filter);
-        $filterForm->handleRequest($request);
-
-        /* Получаем список */
-        $stmt = $getAllProduct->get($search, $filter);
-        $query = new Paginator($page, $stmt, $request);
-        
-        return $this->render(
-          [
-            'query' => $query,
-            'counter' => $getAllProduct->count(),
-            'search' => $searchForm->createView(),
-            'filter' => $filterForm->createView(),
-          ]);
-    }
-
+	#[Route('/admin/products/{page<\d+>}', name: 'admin.index', methods: [
+		'GET',
+		'POST',
+	])]
+	public function index(
+		Request $request,
+		AllProductsInterface $getAllProduct,
+		int $page = 0,
+	) : Response
+	{
+		
+		/* Поиск */
+		$search = new SearchDTO();
+		$searchForm = $this->createForm(SearchForm::class, $search);
+		$searchForm->handleRequest($request);
+		
+		/* Фильтр */
+		$filter = new ProductFilterDTO($request);
+		$filterForm = $this->createForm(ProductFilterForm::class, $filter);
+		$filterForm->handleRequest($request);
+		
+		/* Получаем список */
+		$stmt = $getAllProduct->get($search, $filter);
+		$query = new Paginator($page, $stmt, $request);
+		
+		return $this->render(
+			[
+				'query' => $query,
+				'counter' => $getAllProduct->count(),
+				'search' => $searchForm->createView(),
+				'filter' => $filterForm->createView(),
+			]
+		);
+	}
+	
 }

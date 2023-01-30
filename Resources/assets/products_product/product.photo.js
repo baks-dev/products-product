@@ -16,7 +16,6 @@
  */
 
 
-
 /** Коллекция ФОТО */
 
 /* кнопка Добавить ФОТО */
@@ -41,16 +40,15 @@ if ($addButtonPhoto) {
     });
 
 
-
-
-
     /* добавить событие на удаление ко всем существующим элементам формы в блок с классом .del-item */
     let $changeItemPhoto = $blockCollectionPhoto.querySelectorAll('.change-root');
 
     /* Удаляем при клике колекцию СЕКЦИЙ */
     $changeItemPhoto.forEach(function (item) {
 
-        if($changeItemPhoto.length === 1 && item.checked === false) { item.checked = true; }
+        if ($changeItemPhoto.length === 1 && item.checked === false) {
+            item.checked = true;
+        }
 
         item.addEventListener('change', function () {
 
@@ -66,27 +64,17 @@ if ($addButtonPhoto) {
     });
 
 
-
-
-
-/*    $blockCollectionPhoto.querySelector('.change-root').addEventListener('change', function (selector) {
-
-        let photo_collection = document.getElementById('photo_collection');
-
-        photo_collection.querySelectorAll('.change-root').forEach(function (rootChack, i, arr) {
-            rootChack.checked = false;
-        });
-
-
-        this.checked = true;
-    });*/
-
-
-
-
-
-
-
+    /*    $blockCollectionPhoto.querySelector('.change-root').addEventListener('change', function (selector) {
+    
+            let photo_collection = document.getElementById('photo_collection');
+    
+            photo_collection.querySelectorAll('.change-root').forEach(function (rootChack, i, arr) {
+                rootChack.checked = false;
+            });
+    
+    
+            this.checked = true;
+        });*/
 
 
     /* получаем количество коллекций и присваиваем data-index прототипу */
@@ -119,7 +107,7 @@ if ($addButtonPhoto) {
         $blockCollectionPhoto.append(div);
 
         /* Удаляем при клике колекцию СЕКЦИЙ */
-        div.querySelector('.del-item-offer-image').addEventListener('click', function () {
+        div.querySelector('.del-item-photo').addEventListener('click', function () {
             let $counter = $blockCollectionPhoto.getElementsByClassName('item-collection-photo').length;
             //if ($counter > 1) {
             this.closest('.item-collection-photo').remove();
@@ -143,14 +131,30 @@ if ($addButtonPhoto) {
         });
 
 
-
-
         /* Увеличиваем data-index на 1 после вставки новой коллекции */
         $addButtonPhoto.dataset.index = (index + 1).toString();
 
-        /* Инициируем предзагрузку фото */
-        new KTImageInput(div.querySelector("[data-kt-image-input]"));
 
+        let inputElement = div.querySelector('input[type="file"]');
+
+        inputElement.addEventListener('change', function (e) {
+
+            var file = inputElement.files[0];
+            var reader = new FileReader();
+            let image = div.querySelector('.image-input');
+
+            reader.onloadend = function () {
+
+                image.style.setProperty("background-image", "url(" + reader.result + ")", "important")
+            }
+
+            if (file) {
+                reader.readAsDataURL(file);
+            } else {
+                image.style.setProperty("background-image", "url(/img/blank.svg)", "important")
+
+            }
+        });
     });
 }
 

@@ -18,97 +18,101 @@
 
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Trans;
 
-use BaksDev\Products\Product\Entity\Trans\TransInterface;
 use BaksDev\Core\Type\Locale\Locale;
+use BaksDev\Products\Product\Entity\Trans\ProductTransInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class ProductTransDTO implements TransInterface
+final class ProductTransDTO implements ProductTransInterface
 {
-    /**
-     * @var Locale
-     */
-    private Locale $local;
-
-    /** Название раздела (строка с точкой, нижнее подчеркивание тире процент скобки) */
-    #[Assert\NotBlank]
-    #[Assert\Regex(pattern: '/^[\w \.\_\-\(\)\%]+$/iu')]
-    private ?string $name;
-    
-    /** Краткое описание */
-    //#[Assert\Regex(pattern: '/^[\w \.\_\-\(\)\%]+$/iu')]
-    private ?string $preview = null;
-    
-    /** Детальное описание */
-    //#[Assert\Regex(pattern: '/^[\w \.\_\-\(\)\%]+$/iu')]
-    private ?string $description = null;
-    
-    /**
-     * @return Locale
-     */
-    public function getLocal() : Locale
-    {
-        return $this->local;
-    }
-    
-    /**
-     * @param string|Locale $local
-     */
-    public function setLocal(string|Locale $local) : void
-    {
-        $this->local = $local instanceof Locale ? $local : new Locale($local) ;
-    }
-    
-    /**
-     * @return string|null
-     */
-    public function getName() : ?string
-    {
-        return $this->name;
-    }
-    
-    /**
-     * @param string|null $name
-     */
-    public function setName(?string $name) : void
-    {
-        $this->name = $name;
-    }
-    
-    /**
-     * @return string|null
-     */
-    public function getDescription() : ?string
-    {
-        return $this->description;
-    }
-    
-    /**
-     * @param string|null $description
-     */
-    public function setDescription(?string $description) : void
-    {
-        $this->description = $description;
-    }
-    
-    /**
-     * @return string|null
-     */
-    public function getPreview() : ?string
-    {
-        return $this->preview;
-    }
-    
-    /**
-     * @param string|null $preview
-     */
-    public function setPreview(?string $preview) : void
-    {
-        $this->preview = $preview;
-    }
-    
-
-    
-    
-    
+	/** Локаль */
+	#[Assert\NotBlank]
+	private readonly Locale $local;
+	
+	/** Название раздела (строка с точкой, нижнее подчеркивание тире процент скобки) */
+	#[Assert\NotBlank]
+	#[Assert\Regex(pattern: '/^[\w \.\_\-\(\)\%]+$/iu')]
+	private ?string $name;
+	
+	/** Краткое описание */
+	//#[Assert\Regex(pattern: '/^[\w \.\_\-\(\)\%]+$/iu')]
+	private ?string $preview = null;
+	
+	/** Детальное описание */
+	//#[Assert\Regex(pattern: '/^[\w \.\_\-\(\)\%]+$/iu')]
+	private ?string $description = null;
+	
+	
+	/**
+	 * @return Locale
+	 */
+	public function getLocal() : Locale
+	{
+		return $this->local;
+	}
+	
+	
+	/** Локаль */
+	public function setLocal(Locale $local) : void
+	{
+		if(!(new \ReflectionProperty($this::class, 'local'))->isInitialized($this))
+		{
+			$this->local = $local;
+		}
+	}
+	
+	
+	/**
+	 * @return string|null
+	 */
+	public function getName() : ?string
+	{
+		return $this->name;
+	}
+	
+	
+	/**
+	 * @param string|null $name
+	 */
+	public function setName(?string $name) : void
+	{
+		$this->name = $name;
+	}
+	
+	
+	/**
+	 * @return string|null
+	 */
+	public function getDescription() : ?string
+	{
+		return $this->description;
+	}
+	
+	
+	/**
+	 * @param string|null $description
+	 */
+	public function setDescription(?string $description) : void
+	{
+		$this->description = $description;
+	}
+	
+	
+	/**
+	 * @return string|null
+	 */
+	public function getPreview() : ?string
+	{
+		return $this->preview;
+	}
+	
+	
+	/**
+	 * @param string|null $preview
+	 */
+	public function setPreview(?string $preview) : void
+	{
+		$this->preview = $preview;
+	}
+	
 }
 

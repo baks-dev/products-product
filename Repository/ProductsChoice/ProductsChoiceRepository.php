@@ -28,41 +28,43 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class ProductsChoiceRepository implements ProductsChoiceInterface
 {
-    
-    private EntityManagerInterface $entityManager;
-    private Locale $local;
-    
-    public function __construct(EntityManagerInterface $entityManager, TranslatorInterface $translator)
-    {
-        $this->entityManager = $entityManager;
-        $this->local = new Locale( $translator->getLocale());
-    }
-    
-    public function get()
-    {
-        $qb = $this->entityManager->createQueryBuilder();
-        
-        $select = sprintf("new %s(product.id, CONCAT(trans.name, ', ', info.article))", ProductUid::class);
-        
-        $qb->select($select);
-        
-        $qb->from(Entity\Product::class, 'product');
-        //$qb->from(Entity\Event\Event::class, 'event');
-        $qb->join(Entity\Event\ProductEvent::class, 'event', 'WITH', 'event.id = product.event');
-        
-
-        $qb->join(
-          Entity\Trans\Trans::class,
-          'trans',
-          'WITH',
-          'trans.event = event.id AND trans.local = :local');
-        
-        $qb->setParameter('local', $this->local, Locale::TYPE);
-    
-    
-        $qb->join(Entity\Info\Info::class, 'info', 'WITH', 'info.product = product.id');
-        
-        return $qb->getQuery()->getResult();
-    }
-    
+	
+	private EntityManagerInterface $entityManager;
+	
+	private Locale $local;
+	
+	
+	public function __construct(EntityManagerInterface $entityManager, TranslatorInterface $translator)
+	{
+		$this->entityManager = $entityManager;
+		$this->local = new Locale($translator->getLocale());
+	}
+	
+	
+	public function get()
+	{
+		$qb = $this->entityManager->createQueryBuilder();
+		
+		$select = sprintf("new %s(product.id, CONCAT(trans.name, ', ', info.article))", ProductUid::class);
+		
+		$qb->select($select);
+		
+		$qb->from(Entity\Product::class, 'product');
+		//$qb->from(Entity\Event\Event::class, 'event');
+		$qb->join(Entity\Event\ProductEvent::class, 'event', 'WITH', 'event.id = product.event');
+		
+		$qb->join(
+			Entity\Trans\Trans::class,
+			'trans',
+			'WITH',
+			'trans.event = event.id AND trans.local = :local'
+		);
+		
+		$qb->setParameter('local', $this->local, Locale::TYPE);
+		
+		$qb->join(Entity\Info\Info::class, 'info', 'WITH', 'info.product = product.id');
+		
+		return $qb->getQuery()->getResult();
+	}
+	
 }

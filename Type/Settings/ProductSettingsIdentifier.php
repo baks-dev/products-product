@@ -20,24 +20,27 @@ namespace BaksDev\Products\Product\Type\Settings;
 
 final class ProductSettingsIdentifier
 {
-    
-    public const TYPE = 'product_settings_identifier';
-    
-    private string $value;
-    
-    public function __construct()
-    {
-        $this->value = self::TYPE;
-    }
-    
-    public function __toString() : string
-    {
-        return $this->value;
-    }
-    
-    public function getValue() : string
-    {
-        return $this->value;
-    }
-    
+	
+	public const TYPE = 'product_settings_identifier';
+	
+	private string $value;
+	
+	
+	public function __construct()
+	{
+		$this->value = self::TYPE;
+	}
+	
+	
+	public function __toString() : string
+	{
+		return $this->value;
+	}
+	
+	
+	public function getValue() : string
+	{
+		return $this->value;
+	}
+	
 }

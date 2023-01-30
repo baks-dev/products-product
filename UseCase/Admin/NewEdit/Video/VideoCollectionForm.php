@@ -26,37 +26,36 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class VideoCollectionForm extends AbstractType
 {
-    
-    public function buildForm(FormBuilderInterface $builder, array $options) : void
-    {
-        
-        $builder
-          ->add('file', FileType::class, [
-            'label' => false,
-            'mapped' => false,
-            'required' => false,
-            'attr' => ["accept" => ".avi, .mp4"],
-          ]);
-        
-        $builder->add
-        (
-          'DeleteVideo',
-          ButtonType::class,
-          [
-            'label_html' => true,
-            'attr' =>
-              ['class' => 'btn btn-sm btn-icon btn-light-danger del-item-video'],
-          ]);
-
-    }
-    
-    public function configureOptions(OptionsResolver $resolver) : void
-    {
-        $resolver->setDefaults
-        (
-          [
-            'data_class' => VideoCollectionDTO::class,
-          ]);
-    }
-    
+	
+	public function buildForm(FormBuilderInterface $builder, array $options) : void
+	{
+		
+		$builder
+			->add('file', FileType::class, [
+				'label' => false,
+				'mapped' => false,
+				'required' => false,
+				'attr' => ["accept" => ".avi, .mp4"],
+			])
+		;
+		
+		$builder->add
+		(
+			'DeleteVideo',
+			ButtonType::class,
+			[
+				'label_html' => true,
+			]
+		);
+		
+	}
+	
+	
+	public function configureOptions(OptionsResolver $resolver) : void
+	{
+		$resolver->setDefaults([
+			'data_class' => VideoCollectionDTO::class,
+		]);
+	}
+	
 }

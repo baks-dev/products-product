@@ -22,5 +22,6 @@ use BaksDev\Core\Type\UidType\Uid;
 
 final class ProductUid extends Uid
 {
-    public const TYPE = 'product_id';
+	public const TYPE = 'product_id';
+	
 }

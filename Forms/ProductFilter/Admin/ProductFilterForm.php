@@ -35,77 +35,75 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class ProductFilterForm extends AbstractType
 {
-    
-    private CategoryChoiceInterface $categoryChoice;
-    private ProductUserProfileChoiceInterface $profileChoice;
-    private RequestStack $request;
-    
-    public function __construct(
-      CategoryChoiceInterface $categoryChoice,
-      ProductUserProfileChoiceInterface $profileChoice,
-      RequestStack $request
-    )
-    {
-        $this->categoryChoice = $categoryChoice;
-        $this->profileChoice = $profileChoice;
-        $this->request = $request;
-    }
-    
-    public function buildForm(FormBuilderInterface $builder, array $options) : void
-    {
-        $builder->add('profile', ChoiceType::class, [
-          'choices' => $this->profileChoice->get(),
-          'choice_value' => function (?UserProfileUid $profile)
-          {
-              return $profile?->getValue();
-          },
-          'choice_label' => function (UserProfileUid $profile)
-          {
-              return $profile->getName();
-          },
-          'label' => false,
-          'attr' => ['onchange' => 'this.form.submit()'],
-        ]);
-        
-    
-        $builder->add('category', ChoiceType::class, [
-          'choices' => $this->categoryChoice->get(),
-          'choice_value' => function (?ProductCategoryUid $category)
-          {
-              return $category?->getValue();
-          },
-          'choice_label' => function (ProductCategoryUid $category)
-          {
-              return $category->getOptions();
-          },
-          'label' => false,
-          'attr' => ['onchange' => 'this.form.submit()'],
-        ]);
-        
-        
-        
-        $builder->addEventListener(
-          FormEvents::POST_SUBMIT,
-          function (FormEvent $event)
-          {
-              /** @var ProductFilterDTO $data */
-              $data = $event->getData();
-              
-              $this->request->getSession()->set(ProductFilterDTO::profile, $data->getProfile());
-              $this->request->getSession()->set(ProductFilterDTO::category, $data->getCategory());
-          }
-        );
-        
-    }
-    
-    public function configureOptions(OptionsResolver $resolver) : void
-    {
-        $resolver->setDefaults
-        (
-          [
-            'data_class' => ProductFilterDTO::class,
-            'method' => 'POST',
-          ]);
-    }
-    
+	
+	private CategoryChoiceInterface $categoryChoice;
+	
+	private ProductUserProfileChoiceInterface $profileChoice;
+	
+	private RequestStack $request;
+	
+	
+	public function __construct(
+		CategoryChoiceInterface $categoryChoice,
+		ProductUserProfileChoiceInterface $profileChoice,
+		RequestStack $request,
+	)
+	{
+		$this->categoryChoice = $categoryChoice;
+		$this->profileChoice = $profileChoice;
+		$this->request = $request;
+	}
+	
+	
+	public function buildForm(FormBuilderInterface $builder, array $options) : void
+	{
+		$builder->add('profile', ChoiceType::class, [
+			'choices' => $this->profileChoice->get(),
+			'choice_value' => function(?UserProfileUid $profile) {
+				return $profile?->getValue();
+			},
+			'choice_label' => function(UserProfileUid $profile) {
+				return $profile->getName();
+			},
+			'label' => false,
+			'attr' => ['onchange' => 'this.form.submit()'],
+		]);
+		
+		$builder->add('category', ChoiceType::class, [
+			'choices' => $this->categoryChoice->get(),
+			'choice_value' => function(?ProductCategoryUid $category) {
+				return $category?->getValue();
+			},
+			'choice_label' => function(ProductCategoryUid $category) {
+				return $category->getOptions();
+			},
+			'label' => false,
+			'attr' => ['onchange' => 'this.form.submit()'],
+		]);
+		
+		$builder->addEventListener(
+			FormEvents::POST_SUBMIT,
+			function(FormEvent $event) {
+				/** @var ProductFilterDTO $data */
+				$data = $event->getData();
+				
+				$this->request->getSession()->set(ProductFilterDTO::profile, $data->getProfile());
+				$this->request->getSession()->set(ProductFilterDTO::category, $data->getCategory());
+			}
+		);
+		
+	}
+	
+	
+	public function configureOptions(OptionsResolver $resolver) : void
+	{
+		$resolver->setDefaults
+		(
+			[
+				'data_class' => ProductFilterDTO::class,
+				'method' => 'POST',
+			]
+		);
+	}
+	
 }

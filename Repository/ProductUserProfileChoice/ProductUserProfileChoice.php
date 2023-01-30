@@ -18,86 +18,95 @@
 
 namespace BaksDev\Products\Product\Repository\ProductUserProfileChoice;
 
-use BaksDev\Products\Product\Entity\SettingsProduct;
-use BaksDev\Users\Auth\Email\Type\Status\AccountStatus;
-use BaksDev\Users\Auth\Email\Type\Status\AccountStatusEnum;
+use BaksDev\Auth\Email\Entity as AccountEntity;
+use BaksDev\Auth\Email\Type\Status\AccountStatus;
+use BaksDev\Auth\Email\Type\Status\AccountStatusEnum;
+use BaksDev\Products\Product\Entity\ProductSettings;
 use BaksDev\Users\Profile\UserProfile\Entity as UserProfileEntity;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use BaksDev\Users\Profile\UserProfile\Type\Status\UserProfileStatus;
 use BaksDev\Users\Profile\UserProfile\Type\Status\UserProfileStatusEnum;
-
 use Doctrine\ORM\EntityManagerInterface;
-use BaksDev\Users\Auth\Email\Entity as AccountEntity;
 
-
+//use BaksDev\Users\Auth\Email\Type\Status\AccountStatus;
+//use BaksDev\Users\Auth\Email\Type\Status\AccountStatusEnum;
 final class ProductUserProfileChoice implements ProductUserProfileChoiceInterface
 {
-    
-    private EntityManagerInterface $entityManager;
-    private AccountStatus $account_status;
-    private UserProfileStatus $status;
-    
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
-        $this->account_status = new AccountStatus(AccountStatusEnum::ACTIVE);
-        $this->status = new UserProfileStatus(UserProfileStatusEnum::ACTIVE);
-    }
-    
-    /** Получаем список профилей пользователей, доступных к созданию карточек */
-    public function get()
-    {
-        $select = sprintf('new %s(user_profile.id, personal.username)', UserProfileUid::class);
-        
-        $qb = $this->entityManager->createQueryBuilder();
-        $qb->select($select);
-        
-        $qb->from(UserProfileEntity\UserProfile::class, 'user_profile');
-        
-        $qb->join(
-          UserProfileEntity\Info\Info::class,
-          'info',
-          'WITH',
-          'info.profile = user_profile.id AND info.status = :status');
-        
-        $qb->setParameter('status', $this->status, UserProfileStatus::TYPE);
-        
-        $qb->join(
-          UserProfileEntity\Event\Event::class,
-          'event',
-          'WITH',
-          'event.id = user_profile.event AND event.profile = user_profile.id');
-        
-        $qb->join(
-          UserProfileEntity\Personal\Personal::class,
-          'personal',
-          'WITH',
-          'personal.event = event.id');
-        
-        /* Тип профиля, имеющий доступ к созданию карточек */
-        
-        $qb->join(
-          SettingsProduct::class,
-          'profile',
-          'WITH',
-          'profile.profile = event.type');
-        
-        
-        $qb->join(
-          AccountEntity\Account::class,
-          'account',
-          'WITH',
-          'account.id = info.user');
-        
-        $qb->join(
-          AccountEntity\Status\AccountStatus::class,
-          'status',
-          'WITH',
-          'status.event = account.event AND status.status = :account_status');
-        
-        $qb->setParameter('account_status', $this->account_status, AccountStatus::TYPE);
-        
-        return $qb->getQuery()->toIterable();
-    }
-    
+	
+	private EntityManagerInterface $entityManager;
+	
+	private AccountStatus $account_status;
+	
+	private UserProfileStatus $status;
+	
+	
+	public function __construct(EntityManagerInterface $entityManager)
+	{
+		$this->entityManager = $entityManager;
+		$this->account_status = new AccountStatus(AccountStatusEnum::ACTIVE);
+		$this->status = new UserProfileStatus(UserProfileStatusEnum::ACTIVE);
+	}
+	
+	
+	/** Получаем список профилей пользователей, доступных к созданию карточек */
+	public function get()
+	{
+		$select = sprintf('new %s(user_profile.id, personal.username)', UserProfileUid::class);
+		
+		$qb = $this->entityManager->createQueryBuilder();
+		$qb->select($select);
+		
+		$qb->from(UserProfileEntity\UserProfile::class, 'user_profile');
+		
+		$qb->join(
+			UserProfileEntity\Info\UserProfileInfo::class,
+			'info',
+			'WITH',
+			'info.profile = user_profile.id AND info.status = :status'
+		);
+		
+		$qb->setParameter('status', $this->status, UserProfileStatus::TYPE);
+		
+		$qb->join(
+			UserProfileEntity\Event\UserProfileEvent::class,
+			'event',
+			'WITH',
+			'event.id = user_profile.event AND event.profile = user_profile.id'
+		);
+		
+		$qb->join(
+			UserProfileEntity\Personal\UserProfilePersonal::class,
+			'personal',
+			'WITH',
+			'personal.event = event.id'
+		);
+		
+		/* Тип профиля, имеющий доступ к созданию карточек */
+		
+		$qb->join(
+			ProductSettings::class,
+			'profile',
+			'WITH',
+			'profile.profile = event.type'
+		);
+		
+		$qb->join(
+			AccountEntity\Account::class,
+			'account',
+			'WITH',
+			'account.id = info.user'
+		);
+		
+		$qb->join(
+			AccountEntity\Status\AccountStatus::class,
+			'status',
+			'WITH',
+			'status.event = account.event AND status.status = :account_status'
+		);
+		
+		$qb->setParameter('account_status', $this->account_status, AccountStatus::TYPE);
+		
+		return $qb->getQuery()->toIterable();
+	}
+	
 }

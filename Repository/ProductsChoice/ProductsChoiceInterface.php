@@ -20,5 +20,5 @@ namespace BaksDev\Products\Product\Repository\ProductsChoice;
 
 interface ProductsChoiceInterface
 {
-    
+	
 }

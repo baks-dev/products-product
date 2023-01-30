@@ -1,0 +1,29 @@
+{% trans_default_domain 'admin.products.product' %}
+
+<div class="d-flex gap-2">
+	
+	<div class="d-flex flex-column gap-2 w-100 mb-2">
+		{# Описание продукта #}
+		
+		<div class="card w-100 border-light">
+			
+			<div class="card-header border-light bg-body">
+				<div class="card-title">
+					<h4>
+						{# Секции профиля #}
+						Описание продукта
+					</h4>
+				</div>
+			</div>
+			
+			<div class="card-body pb-0">
+				
+				{{ include(_self|replace({ "form.description.html.twig": "_description.html.twig" })) }}
+			
+			
+			</div>
+		</div>
+	</div>
+</div>
+
+

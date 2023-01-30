@@ -23,43 +23,46 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 final class InfoDTO implements InfoInterface
 {
-    
-    /** Семантическая ссылка на товар (строка с тире и нижним подчеркиванием) */
-    #[Assert\NotBlank]
-    #[Assert\Regex(
-      pattern: '/^[a-z0-9\_\-]+$/i'
-    )]
-    private string $url;
-    
-    
-    /* URL */
-    
-    /**
-     * @return string
-     */
-    public function getUrl() : string
-    {
-        return $this->url;
-    }
-    
-    /**
-     * @param string $url
-     */
-    public function setUrl(string $url) : void
-    {
-        $this->url = $url;
-    }
-    
-    public function updateUrlUniq() : void
-    {
-        $this->url = uniqid($this->url.'_', false);
-    }
-    
-    /**
-     * @return bool
-     */
-    public function isActive() : bool
-    {
-        return $this->active;
-    }
+	
+	/** Семантическая ссылка на товар (строка с тире и нижним подчеркиванием) */
+	#[Assert\NotBlank]
+	#[Assert\Regex(
+		pattern: '/^[a-z0-9\_\-]+$/i'
+	)]
+	private string $url;
+	
+	/* URL */
+	
+	/**
+	 * @return string
+	 */
+	public function getUrl() : string
+	{
+		return $this->url;
+	}
+	
+	
+	/**
+	 * @param string $url
+	 */
+	public function setUrl(string $url) : void
+	{
+		$this->url = $url;
+	}
+	
+	
+	public function updateUrlUniq() : void
+	{
+		$this->url = uniqid($this->url.'_', false);
+	}
+	
+	
+	/**
+	 * @return bool
+	 */
+	public function getActive() : bool
+	{
+		return $this->active;
+	}
+	
 }

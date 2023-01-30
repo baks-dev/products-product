@@ -28,128 +28,135 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 final class RoleDTO implements RoleEventInterface
 {
-    public const ROLE_PREFIX = 'ROLE_PRODUCT';
-    
-    private const ROLE_NAME = [
-      'ru' => 'Продукция',
-      'en' => 'Product'
-    ];
-    
-    private const ROLE_DESC = [
-      'ru' => 'Продукция',
-      'en' => 'Products'
-    ];
-    
-    /** Идентификатор */
-    private ?RoleEventUid $id = null;
-    
-    /** Префикс Роли */
-    private RolePrefix $role;
-    
-    /** Настройки локали */
-    private ArrayCollection $translate;
-    
-    /** Правила роли */
-    private ArrayCollection $voter;
-    
-    public function __construct() {
-        
-        $this->translate = new ArrayCollection();
-        $this->voter = new ArrayCollection();
-        $this->role = new RolePrefix(self::ROLE_PREFIX);
-    }
-    
-    public function getEvent() : ?RoleEventUid
-    {
-        return $this->id;
-    }
-    
-    public function setId(RoleEventUid $id) : void
-    {
-        $this->id = $id;
-    }
-    
-    /**
-     * @return RolePrefix
-     */
-    public function getRole() : RolePrefix
-    {
-        return $this->role;
-    }
-    
-    
-    /* TRANSLATE */
-    
-    /**
-     * @return ArrayCollection
-     */
-    public function getTranslate() : ArrayCollection
-    {
-        /* Вычисляем расхождение и добавляем неопределенные локали */
-        foreach(Locale::diffLocale($this->translate) as $locale)
-        {
-
-            $TransFormDTO = new Role\Trans\RoleTransDTO();
-            $TransFormDTO->setLocal($locale);
-            $TransFormDTO->setName(self::ROLE_NAME[$locale->getValue()]);
-            $TransFormDTO->setDescription(self::ROLE_DESC[$locale->getValue()]);
-            $this->addTranslate($TransFormDTO);
-        }
-        
-        return $this->translate;
-    }
-    
-    /**
-     * @param Role\Trans\RoleTransDTO $translate
-     */
-    public function addTranslate(Role\Trans\RoleTransDTO $translate) : void
-    {
-        $this->translate->add($translate);
-    }
-    
-    /** Метод для инициализации и маппинга сущности на DTO в коллекции  */
-    public function getTranslateClass() : Role\Trans\RoleTransDTO
-    {
-        return new Role\Trans\RoleTransDTO();
-    }
-    
-    
-    /* VOTER */
-    
-    /**
-     * @return ArrayCollection
-     */
-    public function getVoter() : ArrayCollection
-    {
-        
-        /* TODO return array_diff(self::cases(), $search); */
-        
-        if($this->voter->isEmpty())
-        {
-            foreach(Role\Voter\RoleVoterDTO::VOTERS as $prefix => $voter)
-            {
-                $RoleVoterDTO = new Role\Voter\RoleVoterDTO();
-                $RoleVoterDTO->setVoter(new VoterPrefix(self::ROLE_PREFIX.'_'.$prefix));
-                $RoleVoterDTO->setKey($prefix);
-                $this->addVoter($RoleVoterDTO);
-            }
-        }
-
-        return $this->voter;
-    }
-
-    public function addVoter(Role\Voter\RoleVoterDTO $voter) : void
-    {
-        $this->voter->add($voter);
-    }
-    
-    
-    /** Метод для инициализации и маппинга сущности на DTO в коллекции  */
-    public function getVoterClass() : Role\Voter\RoleVoterDTO
-    {
-        return new Role\Voter\RoleVoterDTO();
-    }
-   
-    
+	public const ROLE_PREFIX = 'ROLE_PRODUCT';
+	
+	private const ROLE_NAME = [
+		'ru' => 'Продукция',
+		'en' => 'Product',
+	];
+	
+	private const ROLE_DESC = [
+		'ru' => 'Продукция',
+		'en' => 'Products',
+	];
+	
+	/** Идентификатор */
+	private ?RoleEventUid $id = null;
+	
+	/** Префикс Роли */
+	private RolePrefix $role;
+	
+	/** Настройки локали */
+	private ArrayCollection $translate;
+	
+	/** Правила роли */
+	private ArrayCollection $voter;
+	
+	
+	public function __construct()
+	{
+		
+		$this->translate = new ArrayCollection();
+		$this->voter = new ArrayCollection();
+		$this->role = new RolePrefix(self::ROLE_PREFIX);
+	}
+	
+	
+	public function getEvent() : ?RoleEventUid
+	{
+		return $this->id;
+	}
+	
+	
+	public function setId(RoleEventUid $id) : void
+	{
+		$this->id = $id;
+	}
+	
+	
+	/**
+	 * @return RolePrefix
+	 */
+	public function getRole() : RolePrefix
+	{
+		return $this->role;
+	}
+	
+	
+	/* TRANSLATE */
+	
+	/**
+	 * @return ArrayCollection
+	 */
+	public function getTranslate() : ArrayCollection
+	{
+		/* Вычисляем расхождение и добавляем неопределенные локали */
+		foreach(Locale::diffLocale($this->translate) as $locale)
+		{
+			
+			$TransFormDTO = new Role\Trans\RoleTransDTO();
+			$TransFormDTO->setLocal($locale);
+			$TransFormDTO->setName(self::ROLE_NAME[$locale->getValue()]);
+			$TransFormDTO->setDescription(self::ROLE_DESC[$locale->getValue()]);
+			$this->addTranslate($TransFormDTO);
+		}
+		
+		return $this->translate;
+	}
+	
+	
+	/**
+	 * @param Role\Trans\RoleTransDTO $translate
+	 */
+	public function addTranslate(Role\Trans\RoleTransDTO $translate) : void
+	{
+		$this->translate->add($translate);
+	}
+	
+	
+	/** Метод для инициализации и маппинга сущности на DTO в коллекции  */
+	public function getTranslateClass() : Role\Trans\RoleTransDTO
+	{
+		return new Role\Trans\RoleTransDTO();
+	}
+	
+	
+	/* VOTER */
+	
+	/**
+	 * @return ArrayCollection
+	 */
+	public function getVoter() : ArrayCollection
+	{
+		
+		/* TODO return array_diff(self::cases(), $search); */
+		
+		if($this->voter->isEmpty())
+		{
+			foreach(Role\Voter\RoleVoterDTO::VOTERS as $prefix => $voter)
+			{
+				$RoleVoterDTO = new Role\Voter\RoleVoterDTO();
+				$RoleVoterDTO->setVoter(new VoterPrefix(self::ROLE_PREFIX.'_'.$prefix));
+				$RoleVoterDTO->setKey($prefix);
+				$this->addVoter($RoleVoterDTO);
+			}
+		}
+		
+		return $this->voter;
+	}
+	
+	
+	public function addVoter(Role\Voter\RoleVoterDTO $voter) : void
+	{
+		$this->voter->add($voter);
+	}
+	
+	
+	/** Метод для инициализации и маппинга сущности на DTO в коллекции  */
+	public function getVoterClass() : Role\Voter\RoleVoterDTO
+	{
+		return new Role\Voter\RoleVoterDTO();
+	}
+	
 }
 

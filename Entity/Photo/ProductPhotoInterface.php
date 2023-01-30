@@ -20,5 +20,5 @@ namespace BaksDev\Products\Product\Entity\Photo;
 
 interface ProductPhotoInterface
 {
-    
+	
 }

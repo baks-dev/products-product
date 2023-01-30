@@ -18,67 +18,65 @@
 
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Property;
 
-use App\Module\Products\Category\Type\Section\Field\Id\FieldUid;
-use BaksDev\Products\Product\Entity\Property\PropertyInterface;
+use BaksDev\Products\Category\Type\Section\Field\Id\ProductCategorySectionFieldUid;
+use BaksDev\Products\Product\Entity\Property\ProductPropertyInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class PropertyCollectionDTO implements PropertyInterface
+final class PropertyCollectionDTO implements ProductPropertyInterface
 {
-    /** Связь на поле из категории */
-    #[Assert\Uuid]
-    private ?FieldUid $field = null;
-    
-    /** Заполненное значение */
-    private ?string $value = null;
-    
-    
-    /* Вспомогательные свойства */
-    private ?string $section = null;
-    
-    /**
-     * @return string|null
-     */
-    public function getValue() : ?string
-    {
-        return $this->value;
-    }
-    
-    /**
-     * @param string|null $value
-     */
-    public function setValue(?string $value) : void
-    {
-        $this->value = $value;
-    }
-    
-    /**
-     * @return FieldUid|null
-     */
-    public function getField() : ?FieldUid
-    {
-        return $this->field;
-    }
-    
-
-    public function setField(FieldUid $field) : void
-    {
-        $this->field = $field;
-    }
-    
-
-    public function setSection(string $section) : void
-    {
-        $this->section = $section;
-    }
-    
-    /**
-     * @return string|null
-     */
-    public function getSection() : ?string
-    {
-        return $this->section;
-    }
-    
-    
-
+	/** Связь на поле из категории */
+	#[Assert\Uuid]
+	private ?ProductCategorySectionFieldUid $field = null;
+	
+	/** Заполненное значение */
+	private ?string $value = null;
+	
+	/* Вспомогательные свойства */
+	private ?string $section = null;
+	
+	
+	/**
+	 * @return string|null
+	 */
+	public function getValue() : ?string
+	{
+		return $this->value;
+	}
+	
+	
+	/**
+	 * @param string|null $value
+	 */
+	public function setValue(?string $value) : void
+	{
+		$this->value = $value;
+	}
+	
+	
+	public function getField() : ?ProductCategorySectionFieldUid
+	{
+		return $this->field;
+	}
+	
+	
+	public function setField(ProductCategorySectionFieldUid $field) : void
+	{
+		$this->field = $field;
+	}
+	
+	
+	public function setSection(string $section) : void
+	{
+		$this->section = $section;
+	}
+	
+	
+	/**
+	 * @return string|null
+	 */
+	public function getSection() : ?string
+	{
+		return $this->section;
+	}
+	
 }

@@ -27,15 +27,17 @@ use Symfony\Component\Uid\Uuid;
 
 final class ProductOfferConst extends Uid
 {
-    public const TYPE = 'product_offer_const';
+	public const TYPE = 'product_offer_const';
 	
 	private ?string $option;
+	
 	
 	public function __construct(AbstractUid|string|null $value = null, string $option = null)
 	{
 		parent::__construct($value);
 		$this->option = $option;
 	}
+	
 	
 	/**
 	 * @return string|null

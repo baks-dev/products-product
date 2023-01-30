@@ -30,70 +30,70 @@ use InvalidArgumentException;
 
 /* Стоимость Продукта */
 
+
 #[ORM\Entity]
 #[ORM\Table(name: 'product_price')]
-
 class ProductPrice extends EntityEvent
 {
-    public const TABLE = 'product_price';
-    
-    /** ID события */
-    #[ORM\Id]
-    #[ORM\OneToOne(inversedBy: 'price', targetEntity: ProductEvent::class, cascade: ['persist'])]
-    #[ORM\JoinColumn(name: 'event', referencedColumnName: 'id')]
-    private ProductEvent $event;
-    
-    /** Стоимость */
-    #[ORM\Column(type: Money::TYPE, nullable: true)]
-    private ?Money $price;
-    
-    /** Валюта */
-    #[ORM\Column(type: Currency::TYPE, length: 3, nullable: false)]
-    private Currency $currency;
-    
-    /** Цена по запросу */
-    #[ORM\Column(type: Types::BOOLEAN, nullable: false)]
-    private bool $request = false;
-    
-    /** В наличие */
-    #[ORM\Column(type: Types::INTEGER, nullable: true)]
-    private ?int $quantity = null; // 0 - нет в наличие
-    
-    /** Резерв */
-    #[ORM\Column(type: Types::INTEGER, nullable: true)]
-    private ?int $reserve = null;
-    
-    /** Единица измерения: */
-    #[ORM\Column(type: Measurement::TYPE, length: 10, nullable: false)]
-    private Measurement $measurement;
-    
-
-    public function __construct(ProductEvent $event)
-    {
-        $this->event = $event;
-        $this->currency = new Currency();
-    }
-
-    public function getDto($dto) : mixed
-    {
-        if($dto instanceof ProductPriceInterface)
-        {
-            return parent::getDto($dto);
-        }
-        
-        throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
-    }
-    
-
-    public function setEntity($dto) : mixed
-    {
-        if($dto instanceof ProductPriceInterface)
-        {
-            return parent::setEntity($dto);
-        }
-        
-        throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
-    }
-    
-
+	public const TABLE = 'product_price';
+	
+	/** ID события */
+	#[ORM\Id]
+	#[ORM\OneToOne(inversedBy: 'price', targetEntity: ProductEvent::class, cascade: ['persist'])]
+	#[ORM\JoinColumn(name: 'event', referencedColumnName: 'id')]
+	private ProductEvent $event;
+	
+	/** Стоимость */
+	#[ORM\Column(type: Money::TYPE, nullable: true)]
+	private ?Money $price;
+	
+	/** Валюта */
+	#[ORM\Column(type: Currency::TYPE, length: 3, nullable: false)]
+	private Currency $currency;
+	
+	/** Цена по запросу */
+	#[ORM\Column(type: Types::BOOLEAN, nullable: false)]
+	private bool $request = false;
+	
+	/** В наличие */
+	#[ORM\Column(type: Types::INTEGER, nullable: true)]
+	private ?int $quantity = null; // 0 - нет в наличие
+	
+	/** Резерв */
+	#[ORM\Column(type: Types::INTEGER, nullable: true)]
+	private ?int $reserve = null;
+	
+	/** Единица измерения: */
+	#[ORM\Column(type: Measurement::TYPE, length: 10, nullable: false)]
+	private Measurement $measurement;
+	
+	
+	public function __construct(ProductEvent $event)
+	{
+		$this->event = $event;
+		$this->currency = new Currency();
+	}
+	
+	
+	public function getDto($dto) : mixed
+	{
+		if($dto instanceof ProductPriceInterface)
+		{
+			return parent::getDto($dto);
+		}
+		
+		throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
+	}
+	
+	
+	public function setEntity($dto) : mixed
+	{
+		if($dto instanceof ProductPriceInterface)
+		{
+			return parent::setEntity($dto);
+		}
+		
+		throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
+	}
+	
 }
