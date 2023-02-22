@@ -1,16 +1,17 @@
 {# ---- ШАБЛОН ------------------------------------------------------------ #}
-{% extends Template('/admin/base.html.twig') %}
+{% extends Template('/user/base.html.twig') %}
+
+{% block title %}Продукция{% endblock %}
 
 {# ---- CSS ------------------------------------------------------------ #}
-{% block stylesheets %}
-	{# <link href="{{ path(app.request.attributes.get('_route')~'.css') }}" rel="stylesheet"> #}
-{% endblock %}
+ {% block stylesheets %}
+     <link data-href="/plugins/nice-select2/nice-select2.min.css" class="lazy" rel="stylesheet">
+ {% endblock %}
 
 {# ---- HEADER-БЛОК ------------------------------------------------------------ #}
 {# {% block header %}
     {{ include(_self|replace({ "template.html.twig": "header.html.twig" })) }}
 {% endblock %} #}
-
 
 {# ---- LEFT-БЛОК ------------------------------------------------------------ #}
 {# {% block left %} #}
@@ -20,17 +21,21 @@
 
 {# ---- КОНТЕНТ-БЛОК ------------------------------------------------------------ #}
 {% block content %}
-	{{ include(_self|replace({ "template.html.twig": "content.html.twig" })) }}
+    
+    {{ include(_self|replace({ "template.html.twig": settings.device~"/content.html.twig" })) }}
+    
+
+    {# CSS #}
+    {#<div style="display: none !important;" class="nice-select"></div>#}
 {% endblock %}
 
 
 {# ---- FOOTER-БЛОК ------------------------------------------------------------ #}
-{#
-{% block footer %}
+{#{% block footer %}
     {{ include(_self|replace({ "template.html.twig": "footer.html.twig" })) }}
-{% endblock %}
-#}
+{% endblock %}#}
 
-{% block javascript %}
-{#<script defer src="{{ path(app.request.attributes.get('_route')~'.js') }}"></script>#}
-{% endblock %}
+ {% block javascript %}
+ <script data-src="/plugins/nice-select2/nice-select2.min.js" class="lazy"></script>
+ {% endblock %}
+

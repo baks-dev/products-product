@@ -51,7 +51,8 @@
 			
 			{# ПОИСК #}
 			<div class="col-3">
-				{{ include('@Core/_includes/search.html.twig') }}
+
+				{% include Template('/_includes/'~settings.device~'/search.html.twig') %}
 			</div>
 			
 			<table class="table table-striped table-borderless mt-3"
@@ -76,8 +77,8 @@
 				
 				</tbody>
 			</table>
-			
-			{{ include('@Core/_includes/pagination.html.twig') }}
+	
+			{% include Template('/_includes/'~settings.device~'/pagination.html.twig') %}
 		
 		</div>
 	
