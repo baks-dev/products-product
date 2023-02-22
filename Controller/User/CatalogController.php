@@ -33,7 +33,9 @@ final class CatalogController extends AbstractController
     #[Route('/catalog', name: 'user.catalog')]
     public function index() : Response
     {
-        
+	
+
+		
         // $mod = new ModifyAction('update');
         //        $mod = ModifyAction::UPDATE;
         //        dump($mod->value);
