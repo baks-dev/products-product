@@ -1,23 +1,29 @@
 <?php
 /*
- *  Copyright 2022.  Baks.dev <admin@baks.dev>
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *   limitations under the License.
- *
+ *  Copyright 2023.  Baks.dev <admin@baks.dev>
+ *  
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is furnished
+ *  to do so, subject to the following conditions:
+ *  
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
+ *  
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ *  THE SOFTWARE.
  */
 
 namespace BaksDev\Products\Product\Repository\AllProducts;
 
+use BaksDev\Core\Services\Paginator\PaginatorInterface;
 use BaksDev\Products\Category\Entity as CategoryEntity;
 
 use BaksDev\Core\Services\Switcher\Switcher;
@@ -45,17 +51,26 @@ final class AllProductsQuery implements AllProductsInterface
 	
 	private Locale $locale;
 	
+	private PaginatorInterface $paginator;
 	
-	public function __construct(Connection $connection, TranslatorInterface $translator, Switcher $switcher)
+	
+	public function __construct(
+		Connection $connection,
+		TranslatorInterface $translator,
+		Switcher $switcher,
+		PaginatorInterface $paginator,
+	)
 	{
 		$this->connection = $connection;
 		$this->locale = new Locale($translator->getLocale());
 		$this->switcher = $switcher;
+		$this->paginator = $paginator;
 	}
 	
 	
-	public function get(SearchDTO $search, ProductFilterInterface $filter) : QueryBuilder
+	public function get(SearchDTO $search, ProductFilterInterface $filter) : PaginatorInterface
 	{
+		
 		$qb = $this->connection->createQueryBuilder();
 		
 		$qb->setParameter('local', $this->locale, Locale::TYPE);
@@ -67,26 +82,13 @@ final class AllProductsQuery implements AllProductsInterface
 		
 		$qb->join('product', Entity\Event\ProductEvent::TABLE, 'product_event', 'product_event.id = product.event');
 		
-		$qb->addSelect('product_trans.name');
-		$qb->addSelect('product_trans.preview');
-		$qb->join(
+		$qb->addSelect('product_trans.name AS product_name');
+		$qb->addSelect('product_trans.preview AS product_preview');
+		$qb->leftJoin(
 			'product_event',
 			Entity\Trans\ProductTrans::TABLE,
 			'product_trans',
 			'product_trans.event = product_event.id AND product_trans.local = :local'
-		);
-		
-		/* Общее фото */
-		$qb->addSelect('product_photo.name AS photo_name');
-		$qb->addSelect('product_photo.dir AS photo_dir');
-		$qb->addSelect('product_photo.ext AS photo_ext');
-		$qb->addSelect('product_photo.cdn AS photo_cdn');
-		
-		$qb->leftJoin(
-			'product_event',
-			Entity\Photo\ProductPhoto::TABLE,
-			'product_photo',
-			'product_photo.event = product_event.id AND product_photo.root = true'
 		);
 		
 		if($filter->getProfile())
@@ -95,64 +97,134 @@ final class AllProductsQuery implements AllProductsInterface
 			$qb->setParameter('profile', $filter->getProfile(), UserProfileUid::TYPE);
 		}
 		
+		/* ProductInfo */
+		
 		$qb->addSelect('product_info.url');
-		$qb->addSelect('product_info.article');
-		$qb->join(
+		
+		$qb->leftJoin(
 			'product_event',
 			Entity\Info\ProductInfo::TABLE,
 			'product_info',
 			'product_info.product = product.id'
 		);
 		
-		$qb->addSelect('product_modify.mod_date');
+		/* ProductModify */
+		
+//		$qb->addSelect('product_modify.mod_date');
+//		$qb->leftJoin(
+//			'product_event',
+//			Entity\Modify\ProductModify::TABLE,
+//			'product_modify',
+//			'product_modify.event = product_event.id'
+//		);
+		
+		
+		/** Торговое предложение */
+		
+		$qb->addSelect('product_offer.value as product_offer_value');
 		$qb->leftJoin(
 			'product_event',
-			Entity\Modify\ProductModify::TABLE,
-			'product_modify',
-			'product_modify.event = product_event.id'
+			Entity\Offers\ProductOffer::TABLE,
+			'product_offer',
+			'product_offer.event = product_event.id'
 		);
+		
+		
+		/** Множественные варианты торгового предложения */
+		
+		$qb->addSelect('product_offer_variation.value as product_offer_variation_value');
+
+		$qb->leftJoin(
+			'product_offer',
+			Entity\Offers\Variation\ProductOfferVariation::TABLE,
+			'product_offer_variation',
+			'product_offer_variation.offer = product_offer.id'
+		);
+		
+		
+		
+		//$qb->addSelect("'".Entity\Offers\Variation\Image\ProductOfferVariationImage::TABLE."' AS upload_image_dir ");
+		
+		
+		
+		/** Артикул продукта */
+
+		$qb->addSelect("
+			CASE
+			   WHEN product_offer_variation.article IS NOT NULL THEN product_offer_variation.article
+			   WHEN product_offer.article IS NOT NULL THEN product_offer.article
+			   WHEN product_info.article IS NOT NULL THEN product_info.article
+			   ELSE NULL
+			END AS product_article
+		"
+		);
+		
+		
+		
+		/** Фото продукта */
 		
 		$qb->leftJoin(
 			'product_event',
-			Entity\Offers\ProductOffers::TABLE,
-			'product_offers',
-			'product_offers.event = product_event.id'
+			Entity\Photo\ProductPhoto::TABLE,
+			'product_photo',
+			'product_photo.event = product_event.id AND product_photo.root = true'
 		);
-		
-		//        $qb->where("product_event.id = 'fd52dc37-533f-42cf-b8d2-cd7c8d688d17' ");
-		//        dd($qb->fetchAllAssociative());
-		
-		/* Свойство торгового предложения в категории */
-		
-		$qb->addSelect('product_offers_offer.value as offer');
-		$qb->addSelect('product_offers_offer.const as offer_const');
-		$qb->leftJoin(
-			'product_offers',
-			Entity\Offers\Offer\Offer::TABLE,
-			'product_offers_offer',
-			'product_offers_offer.product_offers_id = product_offers.id AND product_offers_offer.article IS NULL'
-		);
-		
-		$qb->addSelect('product_offer.article AS offer_article');
-		$qb->addSelect('product_offer.const');
-		$qb->leftJoin(
-			'product_offers',
-			Entity\Offers\Offer\Offer::TABLE,
-			'product_offer',
-			'product_offer.product_offers_id = product_offers.id AND product_offer.article IS NOT NULL'
-		);
-		
-		$qb->addSelect('product_offer_images.name AS image_name');
-		$qb->addSelect('product_offer_images.dir AS image_dir');
-		$qb->addSelect('product_offer_images.ext AS image_ext');
-		$qb->addSelect('product_offer_images.cdn AS image_cdn');
 		
 		$qb->leftJoin(
 			'product_offer',
-			Entity\Offers\Offer\Image\Image::TABLE,
+			Entity\Offers\Variation\Image\ProductOfferVariationImage::TABLE,
+			'product_offer_variation_image',
+			'product_offer_variation_image.variation = product_offer_variation.id AND product_offer_variation_image.root = true'
+		);
+		
+		$qb->leftJoin(
+			'product_offer',
+			Entity\Offers\Image\ProductOfferImage::TABLE,
 			'product_offer_images',
-			'product_offer_images.offer_id = product_offer.id AND product_offer_images.root = true'
+			'product_offer_images.offer = product_offer.id AND product_offer_images.root = true'
 		);
+		
+		$qb->addSelect("
+			CASE
+			   WHEN product_offer_variation_image.name IS NOT NULL THEN
+					CONCAT ( '/upload/".Entity\Offers\Variation\Image\ProductOfferVariationImage::TABLE."' , '/', product_offer_variation_image.dir, '/', product_offer_variation_image.name, '.')
+			   WHEN product_offer_images.name IS NOT NULL THEN
+					CONCAT ( '/upload/".Entity\Offers\Image\ProductOfferImage::TABLE."' , '/', product_offer_images.dir, '/', product_offer_images.name, '.')
+			   WHEN product_photo.name IS NOT NULL THEN
+					CONCAT ( '/upload/".Entity\Photo\ProductPhoto::TABLE."' , '/', product_photo.dir, '/', product_photo.name, '.')
+			   ELSE NULL
+			END AS product_image
+		"
+		);
+		
+		/** Флаг загрузки файла CDN */
+		$qb->addSelect("
+			CASE
+			   WHEN product_offer_variation_image.name IS NOT NULL THEN
+					product_offer_variation_image.ext
+			   WHEN product_offer_images.name IS NOT NULL THEN
+					product_offer_images.ext
+			   WHEN product_photo.name IS NOT NULL THEN
+					product_photo.ext
+			   ELSE NULL
+			END AS product_image_ext
+		");
+		
+		/** Флаг загрузки файла CDN */
+		$qb->addSelect("
+			CASE
+			   WHEN product_offer_variation_image.name IS NOT NULL THEN
+					product_offer_variation_image.cdn
+			   WHEN product_offer_images.name IS NOT NULL THEN
+					product_offer_images.cdn
+			   WHEN product_photo.name IS NOT NULL THEN
+					product_photo.cdn
+			   ELSE NULL
+			END AS product_image_cdn
+		");
+		
+		
+		
 		
 		/* Категория */
 		$qb->join(
@@ -177,7 +249,7 @@ final class AllProductsQuery implements AllProductsInterface
 		
 		$qb->addSelect('category_trans.name AS category_name');
 		
-		$qb->join(
+		$qb->leftJoin(
 			'category',
 			CategoryEntity\Trans\ProductCategoryTrans::TABLE,
 			'category_trans',
@@ -194,9 +266,9 @@ final class AllProductsQuery implements AllProductsInterface
 			$searcher->orWhere('LOWER(product_trans.name) LIKE :query');
 			$searcher->orWhere('LOWER(product_trans.name) LIKE :switcher');
 			
-			//            /* preview */
-			//            $searcher->orWhere('LOWER(product_trans.preview) LIKE :query');
-			//            $searcher->orWhere('LOWER(product_trans.preview) LIKE :switcher');
+			/* preview */
+			$searcher->orWhere('LOWER(product_trans.preview) LIKE :query');
+			$searcher->orWhere('LOWER(product_trans.preview) LIKE :switcher');
 			
 			/* article */
 			$searcher->orWhere('LOWER(product_info.article) LIKE :query');
@@ -206,19 +278,22 @@ final class AllProductsQuery implements AllProductsInterface
 			$searcher->orWhere('LOWER(product_offer.article) LIKE :query');
 			$searcher->orWhere('LOWER(product_offer.article) LIKE :switcher');
 			
+			
 			$qb->andWhere('('.$searcher->getQueryPart('where').')');
 			$qb->setParameter('query', '%'.$this->switcher->toRus($search->query).'%');
 			$qb->setParameter('switcher', '%'.$this->switcher->toEng($search->query).'%');
 			
 		}
 		
-		$qb->orderBy('product_modify.mod_date', 'DESC');
+		$qb->orderBy('product.event', 'DESC');
 		
-		//dd($qb->fetchAllAssociative());
+		//dd($this->connection->prepare('EXPLAIN (ANALYZE)  '.$qb->getSQL())->executeQuery($qb->getParameters())->fetchAllAssociativeIndexed());
+		
+		//dd(current($qb->fetchAllAssociative()));
 		
 		//$qb->select('*');
 		
-		return $qb;
+		return $this->paginator->fetchAllAssociative($qb);
 		
 	}
 	

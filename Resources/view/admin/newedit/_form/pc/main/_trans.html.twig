@@ -43,7 +43,8 @@
 			
 			{#  Название товара  #}
 			{{ form_row(translate.name, {
-				label : 'admin.form.label.trans.name'|trans
+				label : 'admin.form.label.trans.name'|trans,
+				attr : { 'data-lang' : 'product_form_trans_'~translate.vars.value.local }
 			}) }}
 		
 		</div>

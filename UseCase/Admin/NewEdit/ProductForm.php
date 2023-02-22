@@ -1,30 +1,40 @@
 <?php
 /*
- *  Copyright 2022.  Baks.dev <admin@baks.dev>
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *   limitations under the License.
- *
+ *  Copyright 2023.  Baks.dev <admin@baks.dev>
+ *  
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is furnished
+ *  to do so, subject to the following conditions:
+ *  
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
+ *  
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ *  THE SOFTWARE.
  */
 
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit;
 
+use BaksDev\Core\Services\Reference\ReferenceChoice;
+use BaksDev\Products\Category\Repository\CategoryOffersForm\CategoryOffersFormInterface;
 use BaksDev\Products\Category\Repository\CategoryPropertyById\CategoryPropertyByIdInterface;
+use BaksDev\Products\Category\Repository\CategoryVariationForm\CategoryVariationFormInterface;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Category\CategoryCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Property\PropertyCollectionDTO;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -36,17 +46,24 @@ final class ProductForm extends AbstractType
 	
 	private CategoryPropertyByIdInterface $categoryProperty;
 	
+	private CategoryOffersFormInterface $categoryOffers;
 	
-	//private CategoryOffersFormInterface $categoryOffers;
+	private CategoryVariationFormInterface $categoryVariation;
+	
+	private ReferenceChoice $reference;
 	
 	public function __construct(
 		CategoryPropertyByIdInterface $categoryProperty,
-		//CategoryOffersFormInterface $categoryOffers
+		CategoryOffersFormInterface $categoryOffers,
+		CategoryVariationFormInterface $categoryVariation,
+		ReferenceChoice $reference
 	)
 	{
 		
 		$this->categoryProperty = $categoryProperty;
-		//$this->categoryOffers = $categoryOffers;
+		$this->categoryOffers = $categoryOffers;
+		$this->categoryVariation = $categoryVariation;
+		$this->reference = $reference;
 	}
 	
 	
@@ -161,6 +178,10 @@ final class ProductForm extends AbstractType
 			'prototype_name' => '__properties__',
 		]);
 		
+		
+		
+		
+		
 		$builder->addEventListener(
 			FormEvents::PRE_SET_DATA,
 			function(FormEvent $event) use ($propertyCategory) {
@@ -178,7 +199,9 @@ final class ProductForm extends AbstractType
 						
 						foreach($data->getProperty() as $fieldProperty)
 						{
-							if($propCat->fieldUid === $fieldProperty->getField())
+				
+							/* Если поле уже заполнено - не объявляем */
+							if($propCat->fieldUid->equals($fieldProperty->getField()))
 							{
 								$fieldProperty->setSection($propCat->sectionUid);
 								
@@ -219,49 +242,176 @@ final class ProductForm extends AbstractType
 		 * OFFERS
 		*/
 		
-		//$offers = $category ? $this->offers->get($category) : null; //  $this->getField->get($profileType);
+		//$offers = $category ? $this->categoryOffers->get($category->getCategory()) : null; //  $this->getField->get($profileType);
 		
-		//        $offersCategory = $category->getCategory() ? $this->categoryOffers->get($category->getCategory()) : null;
-		//
-		//        $builder->add('offer', CollectionType::class, [
-		//          'entry_type' => NewEdit\Offers\OffersCollectionForm::class,
-		//          'entry_options' => [
-		//            'label' => false,
-		//            //'category_id' => $category,
-		//            'offer_data' => $options['data'],
-		//            'offers' => $offersCategory,
-		//          ],
-		//          'label' => false,
-		//          'by_reference' => false,
-		//          'allow_delete' => true,
-		//          'allow_add' => true,
-		//          'prototype_name' => '__offers__'
-		//        ]);
-		//
-		//        $builder->addEventListener(
-		//          FormEvents::PRE_SET_DATA,
-		//          function (FormEvent $event) use ($offersCategory)
-		//          {
-		//
-		//              /* @var ProductDTO $data */
-		//              $data = $event->getData();
-		//              $form = $event->getForm();
-		//
-		//              if(!empty($offersCategory) && $data->getOffers()->isEmpty())
-		//              {
-		//                  $offers = new NewEdit\Offers\OffersCollectionDTO();
-		//
-		//                  foreach($offersCategory as $offer)
-		//                  {
-		//                      $offerDTO = new NewEdit\Offers\Offer\OfferDTO();
-		//                      $offerDTO->setOffer($offer->id);
-		//                      $offers->addOffer($offerDTO);
-		//                  }
-		//
-		//                  $data->addOffer($offers);
-		//              }
-		//
-		//          });
+		/** Создаем торговое предложение  */
+		$offersCategory = $category->getCategory() ? $this->categoryOffers->get($category->getCategory()) : null;
+		
+		/* Получаем множественные варианты ТП */
+		
+		$variationCategory = $offersCategory ? $this->categoryVariation->get($offersCategory->id) : null;
+		
+		$builder->add('offer', CollectionType::class, [
+			'entry_type' => NewEdit\Offers\ProductOffersCollectionForm::class,
+			'entry_options' => [
+				'label' => false,
+				//'category_id' => $category,
+				'variation' => $variationCategory,
+				'offers' => $offersCategory,
+			],
+			'label' => false,
+			'by_reference' => false,
+			'allow_delete' => true,
+			'allow_add' => true,
+			'prototype_name' => '__offers__',
+		]);
+		
+		
+		if($offersCategory)
+		{
+			$builder->addEventListener(
+				FormEvents::PRE_SET_DATA,
+				function(FormEvent $event) use ($offersCategory, $variationCategory)
+				{
+					
+					/* @var ProductDTO $data */
+					$data = $event->getData();
+					$form = $event->getForm();
+					
+					
+					if(!empty($offersCategory))
+					{
+						/* Создаем свойство с идентификатором ТП для прототипа */
+						$form->add('dataOffer', HiddenType::class,  ['data' => $offersCategory->id, 'mapped' => false]);
+						
+						if($offersCategory->reference)
+						{
+							$reference = $this->reference->getChoice($offersCategory->reference);
+							
+							if($reference)
+							{
+								$form
+									->add('data-offer-reference', ChoiceType::class, [
+										'choices' => $reference->choice(),
+										'choice_value' => function($choice) {
+											return $choice?->getType()->value;
+										},
+										'choice_label' => function($choice) {
+											return $choice?->getType()->value;
+										},
+										
+										//'choice_translation_domain' => 'reference.'.$offer->reference,
+										'required' => false,
+										'label' => false,
+										'expanded' => false,
+										'multiple' => false,
+										'mapped' => false,
+										'placeholder' => 'placeholder',
+										'translation_domain' => $reference->domain(),
+										'attr' => ['style' => 'display: none;' ]
+									])
+								;
+							}
+						}
+					}
+					
+					
+					if(!empty($variationCategory))
+					{
+						/* Создаем свойство с идентификатором множественного варианта для прототипа */
+						$form->add('dataVariation', HiddenType::class,  ['data' => $variationCategory->id, 'mapped' => false]);
+						
+						if($variationCategory->reference)
+						{
+							
+							//$form->add('data-offer-reference', HiddenType::class,  ['data' => $offersCategory->id, 'mapped' => false]);
+							
+							$reference = $this->reference->getChoice($variationCategory->reference);
+							
+							if($reference)
+							{
+								$form
+									->add('data-variation-reference', ChoiceType::class, [
+										'choices' => $reference->choice(),
+										'choice_value' => function($choice) {
+											return $choice?->getType()->value;
+										},
+										'choice_label' => function($choice) {
+											return $choice?->getType()->value;
+										},
+										
+										//'choice_translation_domain' => 'reference.'.$offer->reference,
+										
+										'required' => false,
+										'label' => false,
+										'expanded' => false,
+										'multiple' => false,
+										'mapped' => false,
+										'placeholder' => 'placeholder',
+										'translation_domain' => $reference->domain(),
+										'attr' => ['style' => 'display: none;' ]
+									])
+								;
+							}
+						}
+					}
+					
+					
+					if(!empty($offersCategory) && $data->getOffer()->isEmpty())
+					//if(!empty($offersCategory))
+					{
+						
+
+						
+						$ProductOffersCollectionDTO = new NewEdit\Offers\ProductOffersCollectionDTO();
+						$ProductOffersCollectionDTO->setCategoryOffer($offersCategory->id);
+						
+						if($offersCategory->image)
+						{
+							$ProductOfferImageCollectionDTO = new NewEdit\Offers\Image\ProductOfferImageCollectionDTO();
+							$ProductOfferImageCollectionDTO->setRoot(true);
+							$ProductOffersCollectionDTO->addImage($ProductOfferImageCollectionDTO);
+						}
+						
+						
+						//		                  foreach($offersCategory as $offer)
+						//		                  {
+						//		                      $offerDTO = new NewEdit\Offers\Offer\OfferDTO();
+						//		                      $offerDTO->setOffer($offer->id);
+						//		                      $offers->addOffer($offerDTO);
+						//		                  }
+						
+						
+						if($variationCategory)
+						{
+							
+	
+							$ProductOffersVariationCollectionDTO = new NewEdit\Offers\Variation\ProductOffersVariationCollectionDTO();
+							$ProductOffersVariationCollectionDTO->setCategoryVariation($variationCategory->id);
+							
+							if($variationCategory->image)
+							{
+								$ProductOfferVariationImageCollectionDTO = new NewEdit\Offers\Variation\Image\ProductOfferVariationImageCollectionDTO();
+								$ProductOfferVariationImageCollectionDTO->setRoot(true);
+								$ProductOffersVariationCollectionDTO->addImage($ProductOfferVariationImageCollectionDTO);
+							}
+							
+							
+							$ProductOffersCollectionDTO->addVariation($ProductOffersVariationCollectionDTO);
+						}
+						
+						$data->addOffer($ProductOffersCollectionDTO);
+					}
+					
+				}
+			);
+			
+			
+			
+		}
+		
+		
+
 		
 	}
 	

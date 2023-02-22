@@ -1,19 +1,24 @@
 <?php
 /*
- *  Copyright Baks.dev <admin@baks.dev>
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *   limitations under the License.
- *
+ *  Copyright 2023.  Baks.dev <admin@baks.dev>
+ *  
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is furnished
+ *  to do so, subject to the following conditions:
+ *  
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
+ *  
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ *  THE SOFTWARE.
  */
 
 namespace BaksDev\Products\Product\Controller\Admin;
@@ -24,6 +29,7 @@ use BaksDev\Core\Services\Security\RoleSecurity;
 use BaksDev\Products\Product\Entity;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\ProductDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\ProductForm;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\ProductHandler;
 use BaksDev\Products\Product\UseCase\ProductAggregate;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -39,72 +45,43 @@ final class EditController extends AbstractController
 {
 	#[Route('/admin/product/edit/{id}', name: 'admin.newedit.edit', methods: ['GET', 'POST'])]
 	public function edit(
-		Request $request,
-		ProductAggregate $handler,
 		#[MapEntity] Entity\Event\ProductEvent $Event,
-		CategoryPropertyByIdInterface $categoryProperty,
+		Request $request,
+		ProductHandler $handler,
 		EntityManagerInterface $entityManager,
 	) : Response
 	{
 		
-		$product = new ProductDTO();
-		$Event->getDto($product);
+		$ProductDTO = new ProductDTO();
+		$Event->getDto($ProductDTO);
 		
-		$Info = $entityManager->getRepository(Entity\Info\Info::class)->findOneBy(['product' => $Event->getProduct()]);
-		$Info->getDto($product->getInfo());
+		
+		$Info = $entityManager->getRepository(Entity\Info\ProductInfo::class)->findOneBy(['product' => $Event->getProduct()]);
+		$Info->getDto($ProductDTO->getInfo());
 		
 		/* Форма добавления */
-		$form = $this->createForm(ProductForm::class, $product);
+		$form = $this->createForm(ProductForm::class, $ProductDTO);
 		$form->handleRequest($request);
 		
 		//dd($product);
 		
 		if($form->isSubmitted() && $form->isValid())
 		{
-			$handle = $handler->handle($product);
+			$Product = $handler->handle($ProductDTO);
 			
-			if($handle)
+			if($Product instanceof Entity\Product)
 			{
-				$this->addFlash('success', 'admin.update.success', 'products.product');
+				$this->addFlash('success', 'admin.success.update', 'admin.products.product');
 				
 				return $this->redirectToRoute('Product:admin.index');
 			}
+			
+			$this->addFlash('danger', 'admin.danger.update', 'admin.products.product', $Product);
+			
+			return $this->redirectToReferer();
 		}
 		
 		return $this->render(['form' => $form->createView()]);
 		
 	}
-	
-	//    #[Route('/zcnimskdzz/style', name: 'admin.newedit.new.css', methods: ['GET'], format: "css")]
-	//    public function css() : Response
-	//    {
-	//        return $this->assets(
-	//          [
-	//            '/plugins/datepicker/datepicker.min.css', // Календарь
-	//            '/plugins/nice-select2/nice-select2.min.css', // Select2
-	//           // '/css/select2.min.css', // Select2
-	//           // '/css/select2.min.css', // Select2
-	//          ]);
-	//    }
-	//
-	//    #[Route('/zcnimskdzz/app', name: 'admin.newedit.new.js', methods: ['GET'], format: "js")]
-	//    public function js() : Response
-	//    {
-	//        return $this->assets
-	//        (
-	//          [
-	//
-	//            '/plugins/semantic/semantic.min.js',
-	//            '/plugins/nice-select2/nice-select2.min.js', // Select2
-	//
-	//            /* Календарь */
-	//            '/plugins/datepicker/datepicker.min.js',
-	//            '/plugins/datepicker/datepicker.lang.min.js',
-	//            '/plugins/datepicker/init.min.js',
-	//
-	//            '/product/product.min.js',
-	//
-	//          ]);
-	//    }
-	
 }

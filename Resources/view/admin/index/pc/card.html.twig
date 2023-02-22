@@ -1,0 +1,62 @@
+<tr class="vertical-middle">
+	
+	
+	<td class="text-nowrap">
+		{# Пользовательское меню #}
+		{{ include(_self|replace({ "card.html.twig": "_usecase.html.twig" })) }}
+	</td>
+	
+	<td class="text-center">
+		{{ item.category_name }}
+	</td>
+	
+	<td class="w-100">
+		
+		<div class="d-flex">
+			{# Превью  #}
+
+			{% set img_path = item.product_image_cdn == true ? cdn_host : '' %}
+			{% set product_image_ext = item.product_image_cdn == true ? 'small.'~item.product_image_ext : item.product_image_ext %}
+			
+			<a href="{{ path('Product:admin.newedit.edit', { id: item.event }) }}" class="pe-3">
+				<div class="rounded-circle bg-contain lazy p-1" style="width: 50px; height: 50px;"
+						data-bg="{{  item.product_image ? img_path ~ item.product_image ~ product_image_ext : '/assets/img/blank.svg' }}">
+				</div>
+			</a>
+			
+			<div class="ms-0">
+				
+				{# Название #}
+				<a href="{{ path('Product:admin.newedit.edit', { id: item.event }) }}">
+					{{ item.product_name }}
+				</a>
+				
+				{# Описание #}
+				<div class="text-muted">
+					{{ string_width(item.product_preview, 100)|raw  }}
+				</div>
+			
+			</div>
+		</div>
+		
+		{# Описание #}
+		<div class="text-muted small">
+			{# {{ string_width(item.description, 150)|raw }} #}
+		</div>
+	
+	</td>
+	
+	<td class="text-center">
+		{{ item.product_article }}
+	</td>
+	
+	
+	<td class="text-center">
+	
+	</td>
+	
+	<td class="text-center">
+	
+	</td>
+
+</tr>

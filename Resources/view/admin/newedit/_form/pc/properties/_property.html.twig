@@ -1,4 +1,4 @@
-{% trans_default_domain 'product.category' %}
+{% trans_default_domain 'admin.products.product' %}
 
 
 <div class="d-flex flex-wrap gap-3">
@@ -27,7 +27,6 @@
 	</div>
 	<div class="card-body pt-0">
 		
-		
 		{% set section = property.section.vars.data %}
 		
 		{% endif %}
@@ -35,11 +34,8 @@
 		{{ form_row(property.section) }}
 		{{ form_row(property.value) }}
 		
-		
-		
 		{% endfor %}
-	
-	
+		
 	</div>
 
 </div>

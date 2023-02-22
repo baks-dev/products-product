@@ -1,49 +1,42 @@
 <?php
 /*
- *  Copyright 2022.  Baks.dev <admin@baks.dev>
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *   limitations under the License.
- *
+ *  Copyright 2023.  Baks.dev <admin@baks.dev>
+ *  
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is furnished
+ *  to do so, subject to the following conditions:
+ *  
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
+ *  
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ *  THE SOFTWARE.
  */
 
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit;
 
 use ArrayIterator;
 use BaksDev\Core\Type\Locale\Locale;
-use BaksDev\Products\Product\Entity\Active\ActiveInterface;
-use BaksDev\Products\Product\Entity\Category\CategoryInterface;
 use BaksDev\Products\Product\Entity\Event\ProductEventInterface;
-use BaksDev\Products\Product\Entity\Files\FilesInterface;
-use BaksDev\Products\Product\Entity\Offers\OffersInterface;
-use BaksDev\Products\Product\Entity\Photo\PhotoInterface;
-use BaksDev\Products\Product\Entity\Price\PriceInterface;
-use BaksDev\Products\Product\Entity\Property\PropertyInterface;
-use BaksDev\Products\Product\Entity\Seo\SeoInterface;
-use BaksDev\Products\Product\Entity\Trans\TransInterface;
-use BaksDev\Products\Product\Entity\Video\VideoInterface;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Active\ActiveDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Category\CategoryCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Files\FilesCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Info\InfoDTO;
-use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\OffersCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Photo\PhotoCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Price\PriceDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Property\PropertyCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Seo\SeoCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Video\VideoCollectionDTO;
 use Doctrine\Common\Collections\ArrayCollection;
-use Exception;
 use Symfony\Component\Validator\Constraints as Assert;
 
 final class ProductDTO implements ProductEventInterface
@@ -71,7 +64,7 @@ final class ProductDTO implements ProductEventInterface
 	private ArrayCollection $video;
 	
 	#[Assert\Valid]
-	//private ArrayCollection $offer;
+	private ArrayCollection $offer;
 	
 	#[Assert\Valid]
 	private ArrayCollection $photo;
@@ -85,7 +78,7 @@ final class ProductDTO implements ProductEventInterface
 	#[Assert\Valid]
 	private ArrayCollection $translate;
 	
-	private ArrayCollection $collectionProperty;
+	//private ArrayCollection $collectionProperty;
 	
 	
 	public function __construct()
@@ -96,7 +89,7 @@ final class ProductDTO implements ProductEventInterface
 		
 		$this->category = new ArrayCollection();
 		$this->file = new ArrayCollection();
-		//$this->offers = new ArrayCollection();
+		$this->offer = new ArrayCollection();
 		$this->photo = new ArrayCollection();
 		$this->property = new ArrayCollection();
 		$this->seo = new ArrayCollection();
@@ -118,19 +111,12 @@ final class ProductDTO implements ProductEventInterface
 	
 	
 	/* INFO  */
-	
-	/**
-	 * @return InfoDTO
-	 */
+
 	public function getInfo() : InfoDTO
 	{
 		return $this->info;
 	}
 	
-	
-	/**
-	 * @param InfoDTO $info
-	 */
 	public function setInfo(InfoDTO $info) : void
 	{
 		$this->info = $info;
@@ -229,33 +215,25 @@ final class ProductDTO implements ProductEventInterface
 	
 	
 	/* OFFERS */
+
+	    public function getOffer() : ArrayCollection
+	    {
+	        return $this->offer;
+	    }
 	
-	//    /**
-	//     * @return ArrayCollection
-	//     */
-	//    public function getOffers() : ArrayCollection
-	//    {
-	////        if($this->offers->isEmpty())
-	////        {
-	////            $this->addOffer(new OffersCollectionDTO());
-	////        }
-	//
-	//        return $this->offer;
-	//    }
-	//
-	//    public function addOffer(OffersCollectionDTO $offer) : void
-	//    {
-	//        if(!$this->offer->contains($offer))
-	//        {
-	//            $this->offer[] = $offer;
-	//        }
-	//    }
-	//
-	//    public function removeOffer(OffersCollectionDTO $offer) : void
-	//    {
-	//        $this->offers->removeElement($offer);
-	//    }
-	//
+	    public function addOffer(Offers\ProductOffersCollectionDTO $offer) : void
+	    {
+	        if(!$this->offer->contains($offer))
+	        {
+	            $this->offer->add($offer);
+	        }
+	    }
+	
+	    public function removeOffer(Offers\ProductOffersCollectionDTO $offer) : void
+	    {
+	        $this->offer->removeElement($offer);
+	    }
+	
 	
 	/* PHOTOS */
 	
@@ -338,10 +316,7 @@ final class ProductDTO implements ProductEventInterface
 	
 	/* PROPERTIES */
 	
-	/**
-	 * @return ArrayIterator
-	 * @throws Exception
-	 */
+
 	public function getProperty() : ArrayIterator
 	{
 		
@@ -411,19 +386,20 @@ final class ProductDTO implements ProductEventInterface
 	
 	public function getTranslate() : ArrayCollection
 	{
+
 		/* Вычисляем расхождение и добавляем неопределенные локали */
 		foreach(Locale::diffLocale($this->translate) as $locale)
 		{
 			$ProductTransDTO = new Trans\ProductTransDTO();
 			$ProductTransDTO->setLocal($locale);
-			$this->addTran($ProductTransDTO);
+			$this->addTranslate($ProductTransDTO);
 		}
 		
 		return $this->translate;
 	}
 	
 	
-	public function addTran(Trans\ProductTransDTO $trans) : void
+	public function addTranslate(Trans\ProductTransDTO $trans) : void
 	{
 		if(!$this->translate->contains($trans))
 		{

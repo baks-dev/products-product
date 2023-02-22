@@ -32,10 +32,13 @@
 <script async data-src='/assets/plugins/datepicker/datepicker.min.js' class='lazy'></script>
 <script async data-src='/assets/js/radio.input.min.js' class='lazy'></script>
 <script async data-src='/assets/js/image.input.min.js' class='lazy'></script>
-<script async data-src="/assets/products_product/product.category.min.js" class='lazy'></script>
-<script async data-src="/assets/products_product/product.photo.min.js" class='lazy'></script>
-<script async data-src="/assets/products_product/product.files.min.js" class='lazy'></script>
-<script async data-src="/assets/products_product/product.video.min.js" class='lazy'></script>
+
+<script async data-src="/assets/products_product/product.main{{ app.environment != 'dev'?'.min' }}.js" class='lazy'></script>
+<script async data-src="/assets/products_product/product.category{{ app.environment != 'dev'?'.min' }}.js" class='lazy'></script>
+<script async data-src="/assets/products_product/product.photo{{ app.environment != 'dev'?'.min' }}.js" class='lazy'></script>
+<script async data-src="/assets/products_product/product.files{{ app.environment != 'dev'?'.min' }}.js" class='lazy'></script>
+<script async data-src="/assets/products_product/product.video{{ app.environment != 'dev'?'.min' }}.js" class='lazy'></script>
+<script async data-src="/assets/products_product/product.offer{{ app.environment != 'dev'?'.min' }}.js" class='lazy'></script>
 
 
 
@@ -54,7 +57,7 @@
     //jsRequire('/plugins/datepicker/datepicker.lang.min.js');
     jsRequire('/plugins/datepicker/init.min.js');
 
-    jsRequire('/products_product/product.min.js');
+    jsRequire('/products_product/_____product.min.js');
     jsRequire('/products_product/product.category.min.js');
 
     jsRequire('/products_product/product.photo.min.js');
