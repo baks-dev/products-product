@@ -55,9 +55,6 @@ return static function(ContainerConfigurator $configurator) {
 	;
 	
 	$services->load($namespace.'\Forms\\', __DIR__.'/../../Forms');
-	
-	
-	$services->load($namespace.'\Event\\', __DIR__.'/../../Event');
-	
+
 };
 
