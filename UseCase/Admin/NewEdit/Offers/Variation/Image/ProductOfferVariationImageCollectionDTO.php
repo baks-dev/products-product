@@ -27,6 +27,7 @@ namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Image;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\Variation\Image\ProductOfferVariationImageInterface;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
+use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductOfferVariationUid;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -64,7 +65,7 @@ final class ProductOfferVariationImageCollectionDTO implements ProductOfferVaria
 	private ?int $size = null;
 	
 	/** Диреткория загрузки файла */
-	private ?ProductOfferUid $dir = null;
+	private ?ProductOfferVariationUid $dir = null;
 	
 	/** Сущность для загрузки и обновления файла  */
 	private mixed $entityUpload = null;
@@ -115,31 +116,31 @@ final class ProductOfferVariationImageCollectionDTO implements ProductOfferVaria
 	
 	/** Диреткория загрузки файла */
 	
-	public function getDir() : ?ProductOfferUid
+	public function getDir() : ?ProductOfferVariationUid
 	{
 		return $this->dir;
 	}
 	
 	
-	public function setDir(ProductOfferUid $dir) : void
+	public function setDir(ProductOfferVariationUid $dir) : void
 	{
 		$this->dir = $dir;
 	}
 	
 	
-	/** Идентификатор торгового предложения */
-	
-	public function getOffer() : ?ProductOffer
-	{
-		return $this->offer;
-	}
-	
-	
-	public function setOffer(?ProductOffer $imgOffer) : void
-	{
-		$this->offer = $imgOffer;
-	}
-	
+//	/** Идентификатор торгового предложения */
+//
+//	public function getOffer() : ?ProductOffer
+//	{
+//		return $this->offer;
+//	}
+//
+//
+//	public function setOffer(?ProductOffer $imgOffer) : void
+//	{
+//		$this->offer = $imgOffer;
+//	}
+//
 	
 	/** Главное фото */
 	

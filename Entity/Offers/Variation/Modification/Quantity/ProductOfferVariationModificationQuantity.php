@@ -1,0 +1,119 @@
+<?php
+/*
+ *  Copyright 2023.  Baks.dev <admin@baks.dev>
+ *  
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is furnished
+ *  to do so, subject to the following conditions:
+ *  
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
+ *  
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ *  THE SOFTWARE.
+ */
+
+namespace BaksDev\Products\Product\Entity\Offers\Variation\Modification\Quantity;
+
+use BaksDev\Products\Product\Entity\Offers\Offer\Offer;
+use BaksDev\Core\Entity\EntityEvent;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductOfferVariationModification;
+use BaksDev\Products\Product\Entity\Offers\Variation\ProductOfferVariation;
+use BaksDev\Reference\Currency\Type\Currency;
+use BaksDev\Reference\Currency\Type\CurrencyEnum;
+use BaksDev\Reference\Money\Type\Money;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
+use Exception;
+use InvalidArgumentException;
+
+/* Стоимость варианта торгового предложения */
+
+#[ORM\Entity]
+#[ORM\Table(name: 'product_offer_variation_modification_quantity')]
+class ProductOfferVariationModificationQuantity extends EntityEvent
+{
+	public const TABLE = 'product_offer_variation_modification_quantity';
+	
+	/** ID события */
+	#[ORM\Id]
+	#[ORM\OneToOne(inversedBy: 'quantity', targetEntity: ProductOfferVariationModification::class)]
+	#[ORM\JoinColumn(name: 'modification', referencedColumnName: "id")]
+	private ProductOfferVariationModification $modification;
+	
+	/** В наличие */
+	#[ORM\Column(type: Types::INTEGER, options: ['default' => 0])]
+	private ?int $quantity = 0; // 0 - нет в наличие
+	
+	/** Резерв */
+	#[ORM\Column(type: Types::INTEGER, options: ['default' => 0])]
+	private ?int $reserve = 0;
+	
+	
+	public function __construct(ProductOfferVariationModification $modification)
+	{
+		$this->modification = $modification;
+	}
+	
+	
+	public function getDto($dto) : mixed
+	{
+		if($dto instanceof ProductOfferVariationModificationQuantityInterface)
+		{
+			return parent::getDto($dto);
+		}
+		
+		throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
+	}
+	
+	
+	public function setEntity($dto) : mixed
+	{
+		if($dto instanceof ProductOfferVariationModificationQuantityInterface)
+		{
+			if(empty($dto->getQuantity()) && empty($dto->getReserve()))
+			{
+				return false;
+			}
+			
+			return parent::setEntity($dto);
+		}
+		
+		throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
+	}
+	
+	
+	
+	/** Добавляем в резерв указанное количество */
+	public function addReserve(int $reserve) : void
+	{
+		$this->reserve += $reserve;
+	}
+	
+	/** Удаляем из резерва указанное количество */
+	public function subReserve(?int $reserve) : void
+	{
+		$this->reserve -= $reserve;
+	}
+	
+	
+	/** Удаляем из наличия указанное количество */
+	public function subQuantity(?int $quantity) : void
+	{
+		$this->quantity -= $quantity;
+	}
+	
+	/** Добавляем в наличие указанное количество */
+	public function addQuantity(?int $quantity) : void
+	{
+		$this->quantity += $quantity;
+	}
+}

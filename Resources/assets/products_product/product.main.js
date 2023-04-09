@@ -25,7 +25,18 @@
 let $name = document.querySelector("input[data-lang='product_form_trans_" + $lang + "']");
 
 if ($name) {
-    $name.addEventListener('input', catUrl.debounce(500));
+
+    setTimeout(function initCatUrl() {
+
+        if (typeof catUrl.debounce == 'function') {
+
+            $name.addEventListener('input', catUrl.debounce(500));
+            return;
+        }
+
+        setTimeout(initCatUrl, 100);
+
+    }, 100);
 
     function catUrl() {
         /* Заполняем транслитом URL */

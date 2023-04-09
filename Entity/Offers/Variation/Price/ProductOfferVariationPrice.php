@@ -46,6 +46,7 @@ class ProductOfferVariationPrice extends EntityEvent
     /** ID события */
     #[ORM\Id]
     #[ORM\OneToOne(inversedBy: 'price', targetEntity: ProductOfferVariation::class)]
+	#[ORM\JoinColumn(name: 'variation', referencedColumnName: "id")]
     private ProductOfferVariation $variation;
     
     /** Стоимость */
@@ -67,6 +68,7 @@ class ProductOfferVariationPrice extends EntityEvent
     {
         if($dto instanceof ProductOfferVariationPriceInterface)
         {
+			
             return parent::getDto($dto);
         }
         
@@ -77,7 +79,7 @@ class ProductOfferVariationPrice extends EntityEvent
     {
         if($dto instanceof ProductOfferVariationPriceInterface)
         {
-			if(empty($dto->getPrice()))
+			if(empty($dto->getPrice()?->getValue()))
 			{
 				return false;
 			}

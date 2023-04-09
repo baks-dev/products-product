@@ -26,6 +26,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 use BaksDev\Products\Product\Entity\Files\ProductFiles;
 use BaksDev\Products\Product\Entity\Offers\Image\ProductOfferImage;
 use BaksDev\Products\Product\Entity\Offers\Variation\Image\ProductOfferVariationImage;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Image\ProductOfferVariationModificationImage;
 use BaksDev\Products\Product\Entity\Photo\ProductPhoto;
 use BaksDev\Products\Product\Entity\Video\ProductVideo;
 use Symfony\Config\TwigConfig;
@@ -33,6 +34,9 @@ use Symfony\Config\TwigConfig;
 return static function(TwigConfig $config, ContainerConfigurator $configurator) {
 	
 	$config->path(__DIR__.'/../view', 'Product');
+	
+	
+	
 	
 	/** ОБЛОЖКИ товара галереи */
 	
@@ -44,6 +48,9 @@ return static function(TwigConfig $config, ContainerConfigurator $configurator) 
 	/* Относительный путь обложек товара галереи */
 	$config->global(ProductPhoto::TABLE)->value('/upload/'.ProductPhoto::TABLE.'/');
 	
+	
+	
+	
 	/** ФАЙЛЫ товара галереи */
 	
 	/* Абсолютный Путь для загрузки файлов галереи */
@@ -53,6 +60,9 @@ return static function(TwigConfig $config, ContainerConfigurator $configurator) 
 	
 	/* Относительный путь файлов галереи */
 	$config->global(ProductFiles::TABLE)->value('/upload/'.ProductFiles::TABLE.'/');
+	
+	
+	
 	
 	/** ВИДЕО товара галереи */
 	
@@ -64,6 +74,9 @@ return static function(TwigConfig $config, ContainerConfigurator $configurator) 
 	/* Относительный путь файлов галереи */
 	$config->global(ProductVideo::TABLE)->value('/upload/'.ProductVideo::TABLE.'/');
 	
+	
+	
+	
 	/** ОБЛОЖКИ торгового предложения */
 	
 	/* Абсолютный Путь для загрузки обложек торгового предложения */
@@ -73,6 +86,9 @@ return static function(TwigConfig $config, ContainerConfigurator $configurator) 
 	
 	/* Относительный путь обложек торгового предложения */
 	$config->global(ProductOfferImage::TABLE)->value('/upload/'.ProductOfferImage::TABLE.'/');
+	
+	
+	
 	
 	/** ОБЛОЖКИ множественных вариантов */
 	
@@ -84,6 +100,19 @@ return static function(TwigConfig $config, ContainerConfigurator $configurator) 
 	/* Относительный путь обложек множественных вариантов */
 	$config->global(ProductOfferVariationImage::TABLE)->value('/upload/'.ProductOfferVariationImage::TABLE.'/');
 	
+	
+	
+	
+	
+	/** ОБЛОЖКИ модификаций множественных вариантов */
+	
+	/* Абсолютный Путь для загрузки обложек множественных вариантов */
+	$configurator->parameters()->set(ProductOfferVariationModificationImage::TABLE,
+		'%kernel.project_dir%/public/upload/'.ProductOfferVariationModificationImage::TABLE.'/'
+	);
+	
+	/* Относительный путь обложек множественных вариантов */
+	$config->global(ProductOfferVariationModificationImage::TABLE)->value('/upload/'.ProductOfferVariationModificationImage::TABLE.'/');
 	
 	
 };

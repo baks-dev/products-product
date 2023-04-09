@@ -315,15 +315,14 @@ final class ProductDTO implements ProductEventInterface
 	
 	
 	/* PROPERTIES */
-	
-
 	public function getProperty() : ArrayIterator
 	{
 		
 		$iterator = $this->property->getIterator();
 		
 		$iterator->uasort(function($first, $second) {
-			return $first->getSection() > $second->getSection() ? -1 : 1;
+
+			return $first->getSort() > $second->getSort() ? 1 : -1;
 		});
 		
 		return $iterator;

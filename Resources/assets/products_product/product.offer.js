@@ -124,6 +124,48 @@ if ($btnAddOffer) {
 
 
 
+
+
+
+         /** МОДИФИКАЦИЯ */
+
+        /* Событие Добавить модификатор множественного варианта */
+        (div.querySelector('.variation-modification-add-collection'))?.addEventListener('click', addModification);
+
+        /* Удаляем при клике модификацию */
+        (div.querySelector('.del-item-modification'))?.addEventListener('click', deleteModification);
+
+
+        /* Делаем замену если модификация - справочник */
+        let $inputValueModification = div.querySelector('#product_form_offer_' + index + '_variation_0_modification_0_value');
+        replaceReference($inputValueModification, 'product_form_data-modification-reference');
+
+
+        /* Событие на добавить фото модификации */
+        (div.querySelector('.modification-image-add-collection'))?.addEventListener('click', addModificationImage);
+
+        /* Удаляем при клике фото модификации */
+        (div.querySelector('.del-item-modification-image'))?.addEventListener('click', deleteModificationImage);
+
+        /* События change-root image */
+        let changeRadioModification = div.querySelector('.change-modification-product_form_offer_' + index + '_variation_0_modification_0');
+        if (changeRadioModification)
+        {
+            changeRadioModification.checked = true;
+            changeRadioModification.addEventListener('change', chanheModificationImageRoot);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
         /* Вызываем предпросмотрт фото */
         offerPreloadPhoto(div);
 
@@ -326,6 +368,45 @@ function addVariation() {
     }
 
 
+    /** МОДИФИКАЦИЯ */
+
+    /* Событие Добавить модификатор множественного варианта */
+    (div.querySelector('.variation-modification-add-collection'))?.addEventListener('click', addModification);
+
+    /* Удаляем при клике модификацию */
+    (div.querySelector('.del-item-modification'))?.addEventListener('click', deleteModification);
+
+
+    /* Делаем замену если модификация - справочник */
+    let $inputValueModification = div.querySelector('#product_form_offer_' + offer + '_variation_'+index+'_modification_0_value');
+    replaceReference($inputValueModification, 'product_form_data-modification-reference');
+
+
+    /* Событие на добавить фото модификации */
+    (div.querySelector('.modification-image-add-collection'))?.addEventListener('click', addModificationImage);
+
+    /* Удаляем при клике фото модификации */
+    (div.querySelector('.del-item-modification-image'))?.addEventListener('click', deleteModificationImage);
+
+    /* События change-root image */
+    let changeRadioModification = div.querySelector('.change-modification-product_form_offer_' + offer + '_variation_'+index+'_modification_0');
+    if (changeRadioModification)
+    {
+        changeRadioModification.checked = true;
+        changeRadioModification.addEventListener('change', chanheModificationImageRoot);
+    }
+
+
+    /* Выделяем Root если элемент добавлен новый */
+    let $chanheModificationImageRoot = div.querySelectorAll('[class^="change-modification-"]');
+    if ($chanheModificationImageRoot.length === 1)
+    {
+        $chanheModificationImageRoot.forEach(function (item) {
+            item.checked = true;
+        });
+    }
+
+
 
     let $collection = document.getElementById(this.dataset.collection);
     $collection.append(div);
@@ -419,7 +500,7 @@ function addVariationImage() {
 }
 
 
-/** Удалить фото торгового предложения */
+/** Удалить фото множественного варианта */
 
 document.querySelectorAll('.del-item-variation-image').forEach(function (item) {
     item.addEventListener('click', deleteVariationImage);
@@ -470,6 +551,226 @@ function chanheVariationImageRoot() {
     this.checked = true;
 
 }
+
+
+
+/* MODIFICATION *********************************************************************************************************  **/
+
+
+
+document.querySelectorAll('.variation-modification-add-collection').forEach(function (item) {
+    item.addEventListener('click', addModification);
+});
+
+function addModification() {
+
+    /* Получаем прототип формы */
+    let newForm = this.dataset.prototype;
+    let index = this.dataset.index * 1;
+    let offer = this.dataset.offer * 1;
+    let variation = this.dataset.variation * 1;
+
+
+    // __offers__
+    // __offer_variation__
+
+    newForm = newForm.replace(/__offers__/g, offer)
+    newForm = newForm.replace(/__offer_variation__/g, variation)
+    newForm = newForm.replace(/__variation_modification__/g, index)
+
+
+    let div = document.createElement('div');
+    div.innerHTML = newForm;
+    div.id = 'item_product_form_offer_' + offer + '_variation_' + variation + '_modification_' + index;
+
+
+    /* Удаляем при клике модификацию */
+    div.querySelector('.del-item-modification').addEventListener('click', deleteModification);
+
+
+    /* Делаем замену если модификация - справочник */
+    let $inputValue = div.querySelector('#product_form_offer_' + offer + '_variation_' + variation + '_modification_' + index + '_value');
+    replaceReference($inputValue, 'product_form_data-modification-reference');
+
+
+    /* Событие на добавить фото модификации */
+    (div.querySelector('.modification-image-add-collection'))?.addEventListener('click', addModificationImage);
+
+    /* Удаляем при клике фото модификации */
+    (div.querySelector('.del-item-modification-image'))?.addEventListener('click', deleteModificationImage);
+
+    /* События change-root image */
+    let changeRadio = div.querySelector('.change-modification-product_form_offer_' + offer + '_variation_' + variation + '_modification_' + index);
+    if (changeRadio)
+    {
+        changeRadio.checked = true;
+        changeRadio.addEventListener('change', chanheModificationImageRoot);
+    }
+
+
+
+    let $collection = document.getElementById(this.dataset.collection);
+    $collection.append(div);
+
+    /* Вызываем предпросмотрт фото */
+    offerPreloadPhoto(div);
+
+
+    this.dataset.index = (index + 1).toString();
+
+
+}
+
+
+/** Удаляем  модификацию  */
+
+document.querySelectorAll('.del-item-modification').forEach(function (item) {
+    item.addEventListener('click', deleteModification);
+});
+
+function deleteModification() {
+    document.getElementById(this.dataset.index).remove();
+}
+
+/** Добавить фото модификацию */
+
+document.querySelectorAll('.modification-image-add-collection').forEach(function (item) {
+    item.addEventListener('click', addModificationImage);
+});
+
+function addModificationImage() {
+
+    /* Получаем прототип формы */
+    let newForm = this.dataset.prototype;
+    let index = this.dataset.index * 1;
+    let offer = this.dataset.offer * 1;
+    let variation = this.dataset.variation * 1;
+    let modification = this.dataset.modification * 1;
+
+    let id = this.dataset.id;
+
+
+    // newForm = newForm.replace(/__name__/g, name) /* меняем индекс торгового предложения */
+
+    newForm = newForm.replace(/__offers__/g, offer)
+    newForm = newForm.replace(/__offer_variation__/g, variation)
+    newForm = newForm.replace(/__variation_modification__/g, modification)
+    newForm = newForm.replace(/__modification_image__/g, index)
+
+    let div = document.createElement('div');
+    div.innerHTML = newForm;
+    div.id = 'item_product_form_offer_' + offer + '_variation_' + variation + '_modification_' + modification + '_image_' + index;
+
+    let $collection = document.getElementById('collection_' + id);
+    $collection.append(div);
+
+    /* Удаляем при клике фото множественного варианта предложения */
+    div.querySelector('.del-item-modification-image').addEventListener('click', deleteModificationImage);
+
+    /* События change-root image */
+    div.querySelector('.change-modification-' + id).addEventListener('change', chanheModificationImageRoot);
+
+
+    /* Выделяем Root если элемент добавлен новый */
+    $chanheModificationImageRoot = div.querySelectorAll('[class^="change-modification-"]');
+    if ($chanheModificationImageRoot.length === 1)
+    {
+        $chanheModificationImageRoot.forEach(function (item) {
+            item.checked = true;
+        });
+    }
+
+    //console.log(document.querySelectorAll('[class^="change-modification-"]').length);
+
+    /* Вызываем предпросмотрт фото */
+    offerPreloadPhoto(div);
+
+
+    this.dataset.index = (index + 1).toString();
+
+
+    /*let inputElement = div.querySelector('input[type="file"]');
+
+    inputElement.addEventListener('change', function (e) {
+
+        var file = inputElement.files[0];
+        var reader = new FileReader();
+        let image = div.querySelector('.image-input');
+
+        reader.onloadend = function () {
+
+            image.style.setProperty("background-image", "url(" + reader.result + ")", "important")
+        }
+
+        if (file) {
+            reader.readAsDataURL(file);
+        } else {
+            image.style.setProperty("background-image", "url(/img/blank.svg)", "important")
+
+        }
+    });*/
+
+}
+
+
+
+/** Удалить фото модификации */
+
+document.querySelectorAll('.del-item-modification-image').forEach(function (item) {
+    item.addEventListener('click', deleteModificationImage);
+});
+
+function deleteModificationImage() {
+
+    /* Если удаляется фото ROOT  - выделяем следующую кнопку */
+
+    let btnRootId = this.id.replace(/DeleteModificationPhoto/g, 'root');
+    let btnRoot = document.getElementById(btnRootId);
+    let photoBlock = document.getElementById(this.dataset.index);
+
+    let parentElement = photoBlock.parentElement;
+
+
+    photoBlock.remove();
+
+    if (btnRoot) {
+        if (btnRoot.checked == true) {
+
+            /* Выделяем первый элемент в родительском блоке */
+            let nextChaecked = parentElement.querySelector('[class^="change-modification-"]');
+            if (nextChaecked) {
+                nextChaecked.checked = true;
+            }
+        }
+    }
+}
+
+
+/** Меняем CHACKED изображений модификации радио-кнопок Root */
+
+document.querySelectorAll('[class^="change-modification-"]').forEach(function (item) {
+    item.addEventListener('change', chanheModificationImageRoot);
+});
+
+function chanheModificationImageRoot() {
+
+    let variation_photo_collection = document.getElementById('collection_' + this.dataset.index);
+
+    variation_photo_collection.querySelectorAll('.change-modification-' + this.dataset.index).forEach(function (rootChack, i, arr) {
+        rootChack.checked = false;
+    });
+
+    this.checked = true;
+
+}
+
+
+
+
+
+
+
+
 
 
 function offerPreloadPhoto(div) {

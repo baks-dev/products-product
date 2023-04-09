@@ -33,7 +33,8 @@ final class ProductOfferVariationQuantityDTO implements ProductOfferVariationQua
 	private ?int $quantity = null; // 0 - нет в наличие
 	
 	/** Резерв */
-	private ?int $reserve = null;
+	#[Assert\NotBlank]
+	private ?int $reserve = 0;
 	
 	
 	/** В наличие */
@@ -61,7 +62,7 @@ final class ProductOfferVariationQuantityDTO implements ProductOfferVariationQua
 	public function setReserve(?int $reserve) : void
 	{
 		
-		$this->reserve = $reserve;
+		$this->reserve = $reserve ?: 0;
 	}
 	
 }

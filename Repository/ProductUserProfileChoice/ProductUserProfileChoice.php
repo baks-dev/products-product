@@ -54,6 +54,7 @@ final class ProductUserProfileChoice implements ProductUserProfileChoiceInterfac
 	
 	
 	/** Получаем список профилей пользователей, доступных к созданию карточек */
+	
 	public function get()
 	{
 		$select = sprintf('new %s(user_profile.id, personal.username)', UserProfileUid::class);

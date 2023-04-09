@@ -25,11 +25,14 @@ namespace BaksDev\Products\Product\UseCase\Admin\NewEdit;
 
 use BaksDev\Files\Resources\Upload\File\FileUploadInterface;
 use BaksDev\Files\Resources\Upload\Image\ImageUploadInterface;
+use BaksDev\Products\Product\Messenger\ProductMessage;
 use BaksDev\Products\Product\Repository\UniqProductUrl\UniqProductUrlInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use BaksDev\Products\Product\Entity;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 final class ProductHandler
 {
@@ -46,6 +49,15 @@ final class ProductHandler
 	private LoggerInterface $logger;
 	
 	
+	/** Событие нового продукта */
+	private ?ProductPersistEvent $persist = null;
+	
+	/** Событие обновлеия продукта */
+	private ?ProductUpdateEvent $update = null;
+	
+	private MessageBusInterface $bus;
+	
+	
 	public function __construct(
 		EntityManagerInterface $entityManager,
 		ImageUploadInterface $imageUpload,
@@ -53,6 +65,7 @@ final class ProductHandler
 		UniqProductUrlInterface $uniqProductUrl,
 		ValidatorInterface $validator,
 		LoggerInterface $logger,
+		MessageBusInterface $bus
 	
 	)
 	{
@@ -62,6 +75,8 @@ final class ProductHandler
 		$this->uniqProductUrl = $uniqProductUrl;
 		$this->validator = $validator;
 		$this->logger = $logger;
+		
+		$this->bus = $bus;
 	}
 	
 	
@@ -110,8 +125,10 @@ final class ProductHandler
 			$Event = new Entity\Event\ProductEvent();
 			$this->entityManager->persist($Event);
 		}
-		
+
 		$this->entityManager->clear();
+		
+		
 		
 		$Event->setEntity($command);
 		
@@ -201,8 +218,37 @@ final class ProductHandler
 						$this->fileUpload->upload($variationImage->file, $ProductOfferVariationImage);
 					}
 				}
+				
+				
+				
+				
+				/** Загрузка фото модификации множественного варианта
+				 *
+				 * @var Offers\Variation\Modification\ProductOffersVariationModificationCollectionDTO $modification
+				 */
+				foreach($variation->getModification() as $modification)
+				{
+					/** Загрузка фото торгового предложения
+					 *
+					 * @var Offers\Variation\Modification\Image\ProductOfferVariationModificationImageCollectionDTO $modificationImage
+					 */
+					
+					foreach($modification->getImage() as $modificationImage)
+					{
+						if($modificationImage->file !== null)
+						{
+							/** TODO  **/
+							$ProductOfferVariationModificationImage = $modificationImage->getEntityUpload();
+							$this->fileUpload->upload($modificationImage->file, $ProductOfferVariationModificationImage);
+						}
+					}
+				}
+				
 			}
 		}
+		
+		
+		
 		
 		/** @var Entity\Product $Product */
 		if($Event->getProduct())
@@ -229,6 +275,7 @@ final class ProductHandler
 				
 				return $uniqid;
 			}
+			
 		}
 		else
 		{
@@ -239,7 +286,7 @@ final class ProductHandler
 			$this->entityManager->persist($ProductInfo);
 			
 			$Event->setProduct($Product);
-			
+
 		}
 		
 		/** Проверяем уникальность семантической ссылки продукта */
@@ -257,8 +304,10 @@ final class ProductHandler
 		//dump($this->entityManager->getUnitOfWork());
 		//dd($Event);
 		
-
 		$this->entityManager->flush();
+		
+		/* Отправляем сообщение в шину */
+		$this->bus->dispatch(new ProductMessage($Product->getId(), $Product->getEvent(), $command->getEvent()));
 		
 		return $Product;
 	}

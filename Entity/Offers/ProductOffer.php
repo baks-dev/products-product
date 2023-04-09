@@ -62,7 +62,7 @@ class ProductOffer extends EntityEvent
 	
 	/** Постоянный уникальный идентификатор ТП */
 	#[ORM\Column(type: ProductOfferConst::TYPE)]
-	private ProductOfferConst $const;
+	private readonly ProductOfferConst $const;
 	
 	/** Заполненное значение */
 	#[ORM\Column(type: Types::TEXT, nullable: true)]
@@ -93,7 +93,7 @@ class ProductOffer extends EntityEvent
 	{
 		$this->event = $event;
 		$this->id = new ProductOfferUid();
-		$this->const = new ProductOfferConst();
+		//$this->const = new ProductOfferConst();
 		//$this->variation = new ArrayCollection();
 		
 		$this->price = new Price\ProductOfferPrice($this);

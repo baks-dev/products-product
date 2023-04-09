@@ -28,8 +28,10 @@ use BaksDev\Products\Category\Type\Offers\Variation\ProductCategoryOffersVariati
 use BaksDev\Products\Product\Entity\Offers\OffersInterface;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductOfferVariationInterface;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
+use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductOfferVariationConst;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Offer\OfferDTO;
 use Doctrine\Common\Collections\ArrayCollection;
+use ReflectionProperty;
 use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -37,6 +39,10 @@ final class ProductOffersVariationCollectionDTO implements ProductOfferVariation
 {
 	/** ID множественного варианта торгового предложения категории */
 	private ProductCategoryOffersVariationUid $categoryVariation;
+	
+	/** Постоянный уникальный идентификатор варианта */
+	#[Assert\NotBlank]
+	private readonly ProductOfferVariationConst $const;
 	
 	/** Заполненное значение */
 	private ?string $value = null;
@@ -53,10 +59,32 @@ final class ProductOffersVariationCollectionDTO implements ProductOfferVariation
 	/** Дополнительные фото торгового предложения */
 	private ArrayCollection $image;
 	
-
+	
+	/** Модификации множественных вариантов */
+	private ArrayCollection $modification;
+	
+	
 	public function __construct()
 	{
 		$this->image = new ArrayCollection();
+		$this->modification = new ArrayCollection();
+	}
+	
+	
+	/** Постоянный уникальный идентификатор варианта */
+	public function getConst() : ProductOfferVariationConst
+	{
+		if(!(new ReflectionProperty($this::class, 'const'))->isInitialized($this))
+		{
+			$this->const = new ProductOfferVariationConst();
+		}
+		
+		return $this->const;
+	}
+	
+	public function setConst(ProductOfferVariationConst $const) : void
+	{
+		$this->const = $const;
 	}
 	
 	
@@ -139,18 +167,37 @@ final class ProductOffersVariationCollectionDTO implements ProductOfferVariation
 	}
 	
 	
-	/**
-	 * @return ProductCategoryOffersVariationUid
-	 */
+	
+	
+	/** Модификации множественных вариантов */
+
+	public function getModification() : ArrayCollection
+	{
+		return $this->modification;
+	}
+
+	public function addModification(Modification\ProductOffersVariationModificationCollectionDTO $modification) : void
+	{
+		if(!$this->modification->contains($modification))
+		{
+			$this->modification->add($modification);
+		}
+	}
+	
+	public function removeModification(Modification\ProductOffersVariationModificationCollectionDTO $modification) : void
+	{
+		$this->modification->removeElement($modification);
+	}
+	
+	
+	/** ID множественного варианта торгового предложения категории */
+
 	public function getCategoryVariation() : ProductCategoryOffersVariationUid
 	{
 		return $this->categoryVariation;
 	}
 	
 	
-	/**
-	 * @param ProductCategoryOffersVariationUid $categoryVariation
-	 */
 	public function setCategoryVariation(ProductCategoryOffersVariationUid $categoryVariation) : void
 	{
 		$this->categoryVariation = $categoryVariation;

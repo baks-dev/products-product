@@ -37,8 +37,16 @@ use BaksDev\Products\Product\Type\Offers\Image\ProductOfferImageType;
 use BaksDev\Products\Product\Type\Offers\Image\ProductOfferImageUid;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductOfferVariationConst;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductOfferVariationConstType;
+use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductOfferVariationType;
+use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductOfferVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Image\ProductOfferVariationImageType;
 use BaksDev\Products\Product\Type\Offers\Variation\Image\ProductOfferVariationImageUid;
+use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductOfferVariationModificationConst;
+use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductOfferVariationModificationConstType;
+use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductOfferVariationModificationType;
+use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductOfferVariationModificationUid;
+use BaksDev\Products\Product\Type\Offers\Variation\Modification\Image\ProductOfferVariationModificationImageType;
+use BaksDev\Products\Product\Type\Offers\Variation\Modification\Image\ProductOfferVariationModificationImageUid;
 use BaksDev\Products\Product\Type\Photo\ProductPhotoType;
 use BaksDev\Products\Product\Type\Photo\ProductPhotoUid;
 use BaksDev\Products\Product\Type\Settings\ProductSettingsIdentifier;
@@ -60,9 +68,28 @@ return static function(ContainerConfigurator $container, DoctrineConfig $doctrin
 	$doctrine->dbal()->type(ProductPhotoUid::TYPE)->class(ProductPhotoType::class);
 	$doctrine->dbal()->type(ProductVideoUid::TYPE)->class(ProductVideoType::class);
 	$doctrine->dbal()->type(ProductOfferImageUid::TYPE)->class(ProductOfferImageType::class);
+	
 	$doctrine->dbal()->type(ProductOfferVariationImageUid::TYPE)->class(ProductOfferVariationImageType::class);
 	$doctrine->dbal()->type(ProductOfferVariationConst::TYPE)->class(ProductOfferVariationConstType::class);
+	$doctrine->dbal()->type(ProductOfferVariationUid::TYPE)->class(ProductOfferVariationType::class);
 	
+	$doctrine->dbal()->type(ProductOfferVariationModificationImageUid::TYPE)->class(ProductOfferVariationModificationImageType::class);
+	$doctrine->dbal()->type(ProductOfferVariationModificationConst::TYPE)->class(ProductOfferVariationModificationConstType::class);
+	$doctrine->dbal()->type(ProductOfferVariationModificationUid::TYPE)->class(ProductOfferVariationModificationType::class);
+	
+	
+	$services = $container->services()
+		->defaults()
+		->autowire()
+		->autoconfigure()
+	;
+	
+	
+	$services->set(ProductUid::class)->class(ProductUid::class);
+	$services->set(ProductEventUid::class)->class(ProductEventUid::class);
+	$services->set(ProductOfferUid::class)->class(ProductOfferUid::class);
+	$services->set(ProductOfferVariationUid::class)->class(ProductOfferVariationUid::class);
+	$services->set(ProductOfferVariationModificationUid::class)->class(ProductOfferVariationModificationUid::class);
 	
 	$emDefault = $doctrine->orm()->entityManager('default');
 	

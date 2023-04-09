@@ -4,8 +4,8 @@
 {% extends Template('/admin/base.html.twig') %}
 
 {% block title %}
-	{# Добавить продукция #}
-	{{ 'admin.page.new'|trans }}
+	{# Редактировать продукцию #}
+	{{ 'admin.page.edit'|trans }}
 {% endblock %}
 
 
@@ -20,12 +20,12 @@
 {# ---- КОНТЕНТ-БЛОК ------------------------------------------------------------ #}
 {% block content %}
 	
-	{{ include(_self|replace({ "template.html.twig": settings.device~"/content.html.twig" })) }}
+	{{ include(_self|replace({ "template.html.twig": baks_settings.device~"/content.html.twig" })) }}
 {% endblock %}
 
 
 {% block javascript %}
-<script async data-src="/assets/plugins/ckeditor/classic.min.js" class='lazy'></script>
+<script async data-src="/assets/plugins/ckeditor/ckeditor.min.js" class='lazy'></script>
 
 <script async data-src='/assets/plugins/semantic/semantic.min.js' class='lazy'></script>
 <script async data-src='/assets/plugins/nice-select2/nice-select2.min.js' class='lazy'></script>

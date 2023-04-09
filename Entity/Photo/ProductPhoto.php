@@ -34,6 +34,7 @@ use InvalidArgumentException;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'product_photo')]
+#[ORM\Index(columns: ['root'])]
 class ProductPhoto extends EntityEvent implements UploadEntityInterface
 {
 	

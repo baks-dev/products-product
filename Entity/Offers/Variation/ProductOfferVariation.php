@@ -29,6 +29,7 @@ use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Core\Entity\EntityEvent;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductOfferVariationConst;
+use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductOfferVariationUid;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -47,17 +48,17 @@ class ProductOfferVariation extends EntityEvent
 {
 	public const TABLE = 'product_offer_variation';
 	
-	/** ID арианта торгового предложения */
+	/** ID варианта торгового предложения */
 	#[ORM\Id]
-	#[ORM\Column(type: ProductOfferUid::TYPE)]
-	private ProductOfferUid $id;
+	#[ORM\Column(type: ProductOfferVariationUid::TYPE)]
+	private ProductOfferVariationUid $id;
 	
 	/** ID торгового предложения  */
 	#[ORM\ManyToOne(targetEntity: ProductOffer::class, inversedBy: 'variation')]
 	#[ORM\JoinColumn(name: 'offer', referencedColumnName: 'id')]
 	private ProductOffer $offer;
 	
-	/** Постоянный уникальный идентификатор арианта */
+	/** Постоянный уникальный идентификатор варианта */
 	#[ORM\Column(type: ProductOfferVariationConst::TYPE)]
 	private readonly ProductOfferVariationConst $const;
 	
@@ -85,11 +86,15 @@ class ProductOfferVariation extends EntityEvent
 	#[ORM\OneToMany(mappedBy: 'variation', targetEntity: Image\ProductOfferVariationImage::class, cascade: ['all'])]
 	private Collection $image;
 	
+	/** Коллекция вариаций в торговом предложении  */
+	#[ORM\OneToMany(mappedBy: 'variation', targetEntity: Modification\ProductOfferVariationModification::class, cascade: ['all'])]
+	private Collection $modification;
+	
 	
 	public function __construct(ProductOffer $offer)
 	{
-		$this->id = new ProductOfferUid();
-		$this->const = new ProductOfferVariationConst();
+		$this->id = new ProductOfferVariationUid();
+		//$this->const = new ProductOfferVariationConst();
 		$this->offer = $offer;
 		
 		$this->price = new Price\ProductOfferVariationPrice($this);
@@ -101,11 +106,11 @@ class ProductOfferVariation extends EntityEvent
 	
 	public function __clone()
 	{
-		$this->id = new ProductOfferUid();
+		$this->id = new ProductOfferVariationUid();
 	}
 	
 	
-	public function getId() : ProductOfferUid
+	public function getId() : ProductOfferVariationUid
 	{
 		return $this->id;
 	}

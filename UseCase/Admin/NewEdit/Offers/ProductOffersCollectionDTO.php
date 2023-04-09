@@ -25,9 +25,12 @@ namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers;
 
 use BaksDev\Products\Category\Type\Offers\Id\ProductCategoryOffersUid;
 use BaksDev\Products\Product\Entity\Offers\ProductOffersInterface;
+use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
+use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductOfferVariationConst;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Offer\OfferDTO;
 use Doctrine\Common\Collections\ArrayCollection;
+use ReflectionProperty;
 use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -35,6 +38,10 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
 {
 	/** ID торгового предложения категории */
 	private ProductCategoryOffersUid $categoryOffer;
+	
+	/** Постоянный уникальный идентификатор ТП */
+	#[Assert\NotBlank]
+	private readonly ProductOfferConst $const;
 	
 	/** Заполненное значение */
 	private ?string $value = null;
@@ -57,8 +64,28 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
 	
 	public function __construct()
 	{
+
 		$this->image = new ArrayCollection();
 		$this->variation = new ArrayCollection();
+	}
+	
+
+	/** Постоянный уникальный идентификатор ТП */
+	
+	public function setConst(ProductOfferConst $const) : void
+	{
+		$this->const = $const;
+	}
+	
+	
+	public function getConst() : ProductOfferConst
+	{
+		if(!(new ReflectionProperty($this::class, 'const'))->isInitialized($this))
+		{
+			$this->const = new ProductOfferConst();
+		}
+		
+		return $this->const;
 	}
 	
 	

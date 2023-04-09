@@ -23,22 +23,22 @@
 
 namespace BaksDev\Products\Product\Controller\Admin;
 
-use App\Module\Products\Category\Repository\CategoryPropertyById\CategoryPropertyByIdInterface;
+
 use BaksDev\Core\Controller\AbstractController;
 use BaksDev\Core\Services\Security\RoleSecurity;
+use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
 use BaksDev\Products\Product\Entity;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Category\CategoryCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\ProductDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\ProductForm;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\ProductHandler;
-use BaksDev\Products\Product\UseCase\ProductAggregate;
+
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
-use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Contracts\Translation\TranslatorInterface;
+
 
 #[RoleSecurity(['ROLE_ADMIN', 'ROLE_PRODUCT_EDIT'])]
 final class EditController extends AbstractController
@@ -55,6 +55,23 @@ final class EditController extends AbstractController
 		$ProductDTO = new ProductDTO();
 		$Event->getDto($ProductDTO);
 		
+		//dump($Event);
+		
+		//dd($ProductDTO);
+		
+		/* Если передана категория - присваиваем для подгрузки настроект (свойства, ТП) */
+		if($request->get('category'))
+		{
+			/** @var CategoryCollectionDTO  $category */
+			foreach($ProductDTO->getCategory() as $category)
+			{
+				if($category->getRoot())
+				{
+					$category->setCategory(new ProductCategoryUid($request->get('category')));
+				}
+			}
+		}
+		
 		
 		$Info = $entityManager->getRepository(Entity\Info\ProductInfo::class)->findOneBy(['product' => $Event->getProduct()]);
 		$Info->getDto($ProductDTO->getInfo());
@@ -63,7 +80,7 @@ final class EditController extends AbstractController
 		$form = $this->createForm(ProductForm::class, $ProductDTO);
 		$form->handleRequest($request);
 		
-		//dd($product);
+		
 		
 		if($form->isSubmitted() && $form->isValid())
 		{
@@ -80,6 +97,8 @@ final class EditController extends AbstractController
 			
 			return $this->redirectToReferer();
 		}
+		
+		//dd($ProductDTO);
 		
 		return $this->render(['form' => $form->createView()]);
 		

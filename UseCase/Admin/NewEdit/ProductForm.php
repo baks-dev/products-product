@@ -24,6 +24,7 @@
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit;
 
 use BaksDev\Core\Services\Reference\ReferenceChoice;
+use BaksDev\Products\Category\Repository\CategoryModificationForm\CategoryModificationFormInterface;
 use BaksDev\Products\Category\Repository\CategoryOffersForm\CategoryOffersFormInterface;
 use BaksDev\Products\Category\Repository\CategoryPropertyById\CategoryPropertyByIdInterface;
 use BaksDev\Products\Category\Repository\CategoryVariationForm\CategoryVariationFormInterface;
@@ -50,20 +51,27 @@ final class ProductForm extends AbstractType
 	
 	private CategoryVariationFormInterface $categoryVariation;
 	
+	private CategoryModificationFormInterface $categoryModification;
+	
 	private ReferenceChoice $reference;
+	
 	
 	public function __construct(
 		CategoryPropertyByIdInterface $categoryProperty,
 		CategoryOffersFormInterface $categoryOffers,
 		CategoryVariationFormInterface $categoryVariation,
-		ReferenceChoice $reference
+		CategoryModificationFormInterface $categoryModification,
+		ReferenceChoice $reference,
 	)
 	{
 		
 		$this->categoryProperty = $categoryProperty;
 		$this->categoryOffers = $categoryOffers;
 		$this->categoryVariation = $categoryVariation;
+		$this->categoryModification = $categoryModification;
+		
 		$this->reference = $reference;
+		
 	}
 	
 	
@@ -178,10 +186,6 @@ final class ProductForm extends AbstractType
 			'prototype_name' => '__properties__',
 		]);
 		
-		
-		
-		
-		
 		$builder->addEventListener(
 			FormEvents::PRE_SET_DATA,
 			function(FormEvent $event) use ($propertyCategory) {
@@ -192,18 +196,20 @@ final class ProductForm extends AbstractType
 				
 				if($data && $propertyCategory)
 				{
+					$sort = 0;
 					
-					foreach($propertyCategory as $key => $propCat)
+					foreach($propertyCategory as $propCat)
 					{
 						$new = true;
 						
 						foreach($data->getProperty() as $fieldProperty)
 						{
-				
+							
 							/* Если поле уже заполнено - не объявляем */
 							if($propCat->fieldUid->equals($fieldProperty->getField()))
 							{
 								$fieldProperty->setSection($propCat->sectionUid);
+								$fieldProperty->setSort($sort);
 								
 								$new = false;
 								break;
@@ -223,9 +229,11 @@ final class ProductForm extends AbstractType
 							$Property = new PropertyCollectionDTO();
 							$Property->setField($propCat->fieldUid);
 							$Property->setSection($propCat->sectionUid);
+							$Property->setSort($sort);
 							$data->addProperty($Property);
 						}
 						
+						$sort++;
 					}
 				}
 			}
@@ -245,19 +253,24 @@ final class ProductForm extends AbstractType
 		//$offers = $category ? $this->categoryOffers->get($category->getCategory()) : null; //  $this->getField->get($profileType);
 		
 		/** Создаем торговое предложение  */
+		
+		/* Получаем Торговые предложения категории */
 		$offersCategory = $category->getCategory() ? $this->categoryOffers->get($category->getCategory()) : null;
 		
 		/* Получаем множественные варианты ТП */
-		
 		$variationCategory = $offersCategory ? $this->categoryVariation->get($offersCategory->id) : null;
 		
+		/* Получаем модификации мноественных вариантов */
+		$modificationCategory = $variationCategory ? $this->categoryModification->get($variationCategory->id) : null;
+
 		$builder->add('offer', CollectionType::class, [
 			'entry_type' => NewEdit\Offers\ProductOffersCollectionForm::class,
 			'entry_options' => [
 				'label' => false,
 				//'category_id' => $category,
-				'variation' => $variationCategory,
 				'offers' => $offersCategory,
+				'variation' => $variationCategory,
+				'modification' => $modificationCategory,
 			],
 			'label' => false,
 			'by_reference' => false,
@@ -266,23 +279,20 @@ final class ProductForm extends AbstractType
 			'prototype_name' => '__offers__',
 		]);
 		
-		
 		if($offersCategory)
 		{
 			$builder->addEventListener(
 				FormEvents::PRE_SET_DATA,
-				function(FormEvent $event) use ($offersCategory, $variationCategory)
-				{
+				function(FormEvent $event) use ($offersCategory, $variationCategory, $modificationCategory) {
 					
 					/* @var ProductDTO $data */
 					$data = $event->getData();
 					$form = $event->getForm();
 					
-					
 					if(!empty($offersCategory))
 					{
 						/* Создаем свойство с идентификатором ТП для прототипа */
-						$form->add('dataOffer', HiddenType::class,  ['data' => $offersCategory->id, 'mapped' => false]);
+						$form->add('dataOffer', HiddenType::class, ['data' => $offersCategory->id, 'mapped' => false]);
 						
 						if($offersCategory->reference)
 						{
@@ -290,36 +300,55 @@ final class ProductForm extends AbstractType
 							
 							if($reference)
 							{
-								$form
-									->add('data-offer-reference', ChoiceType::class, [
-										'choices' => $reference->choice(),
-										'choice_value' => function($choice) {
-											return $choice?->getType()->value;
-										},
-										'choice_label' => function($choice) {
-											return $choice?->getType()->value;
-										},
-										
-										//'choice_translation_domain' => 'reference.'.$offer->reference,
-										'required' => false,
+								
+								$form->add
+								(
+									'data-offer-reference',
+									$reference->form(),
+									[
 										'label' => false,
-										'expanded' => false,
-										'multiple' => false,
+										'required' => false,
 										'mapped' => false,
-										'placeholder' => 'placeholder',
-										'translation_domain' => $reference->domain(),
-										'attr' => ['style' => 'display: none;' ]
-									])
-								;
+										'attr' => ['style' => 'display: none;'],
+									]
+								);
+								
+							
+								//								$form
+//									->add('data-offer-reference', ChoiceType::class, [
+//										'choices' => $reference->choice(),
+//										'choice_value' => function($choice) {
+//											return $choice?->getType()->value;
+//										},
+//										'choice_label' => function($choice) {
+//											return $choice?->getType()->value;
+//										},
+//
+//										//'choice_translation_domain' => 'reference.'.$offer->reference,
+//										'required' => false,
+//										'label' => false,
+//										'expanded' => false,
+//										'multiple' => false,
+//										'mapped' => false,
+//										'placeholder' => 'placeholder',
+//										'translation_domain' => $reference->domain(),
+//										'attr' => ['style' => 'display: none;'],
+//									])
+//								;
+								
+								
+								
 							}
 						}
 					}
 					
-					
 					if(!empty($variationCategory))
 					{
 						/* Создаем свойство с идентификатором множественного варианта для прототипа */
-						$form->add('dataVariation', HiddenType::class,  ['data' => $variationCategory->id, 'mapped' => false]);
+						$form->add('dataVariation',
+							HiddenType::class,
+							['data' => $variationCategory->id, 'mapped' => false]
+						);
 						
 						if($variationCategory->reference)
 						{
@@ -330,38 +359,107 @@ final class ProductForm extends AbstractType
 							
 							if($reference)
 							{
-								$form
-									->add('data-variation-reference', ChoiceType::class, [
-										'choices' => $reference->choice(),
-										'choice_value' => function($choice) {
-											return $choice?->getType()->value;
-										},
-										'choice_label' => function($choice) {
-											return $choice?->getType()->value;
-										},
-										
-										//'choice_translation_domain' => 'reference.'.$offer->reference,
-										
-										'required' => false,
+								$form->add
+								(
+									'data-variation-reference',
+									$reference->form(),
+									[
 										'label' => false,
-										'expanded' => false,
-										'multiple' => false,
+										'required' => false,
 										'mapped' => false,
-										'placeholder' => 'placeholder',
-										'translation_domain' => $reference->domain(),
-										'attr' => ['style' => 'display: none;' ]
-									])
-								;
+										'attr' => ['style' => 'display: none;'],
+									]
+								);
+								
+								
+								
+								
+//								$form
+//									->add('data-variation-reference', ChoiceType::class, [
+//										'choices' => $reference->choice(),
+//										'choice_value' => function($choice) {
+//											return $choice?->getType()->value;
+//										},
+//										'choice_label' => function($choice) {
+//											return $choice?->getType()->value;
+//										},
+//
+//										//'choice_translation_domain' => 'reference.'.$offer->reference,
+//
+//										'required' => false,
+//										'label' => false,
+//										'expanded' => false,
+//										'multiple' => false,
+//										'mapped' => false,
+//										'placeholder' => 'placeholder',
+//										'translation_domain' => $reference->domain(),
+//										'attr' => ['style' => 'display: none;'],
+//									])
+//								;
 							}
 						}
 					}
 					
+					if(!empty($modificationCategory))
+					{
+						/* Создаем свойство с идентификатором модификации для прототипа */
+						$form->add('dataModification',
+							HiddenType::class,
+							['data' => $modificationCategory->id, 'mapped' => false]
+						);
+						
+						if($modificationCategory->reference)
+						{
+							
+							//$form->add('data-offer-reference', HiddenType::class,  ['data' => $offersCategory->id, 'mapped' => false]);
+							
+							$reference = $this->reference->getChoice($modificationCategory->reference);
+							
+							if($reference)
+							{
+								
+								$form->add
+								(
+									'data-modification-reference',
+									$reference->form(),
+									[
+										'label' => false,
+										'required' => false,
+										'mapped' => false,
+										'attr' => ['style' => 'display: none;'],
+									]
+								);
+								
+								//dd($reference->form());
+								
+//								$form
+//									->add('data-modification-reference', ChoiceType::class, [
+//										'choices' => $reference->choice(),
+//										'choice_value' => function($choice) {
+//											return $choice?->getType()->value;
+//										},
+//										'choice_label' => function($choice) {
+//											return $choice?->getType()->value;
+//										},
+//
+//										//'choice_translation_domain' => 'reference.'.$offer->reference,
+//
+//										'required' => false,
+//										'label' => false,
+//										'expanded' => false,
+//										'multiple' => false,
+//										'mapped' => false,
+//										'placeholder' => 'placeholder',
+//										'translation_domain' => $reference->domain(),
+//										'attr' => ['style' => 'display: none;'],
+//									])
+//								;
+							}
+						}
+					}
 					
 					if(!empty($offersCategory) && $data->getOffer()->isEmpty())
-					//if(!empty($offersCategory))
 					{
-						
-
 						
 						$ProductOffersCollectionDTO = new NewEdit\Offers\ProductOffersCollectionDTO();
 						$ProductOffersCollectionDTO->setCategoryOffer($offersCategory->id);
@@ -372,47 +470,56 @@ final class ProductForm extends AbstractType
 							$ProductOfferImageCollectionDTO->setRoot(true);
 							$ProductOffersCollectionDTO->addImage($ProductOfferImageCollectionDTO);
 						}
-						
-						
-						//		                  foreach($offersCategory as $offer)
-						//		                  {
-						//		                      $offerDTO = new NewEdit\Offers\Offer\OfferDTO();
-						//		                      $offerDTO->setOffer($offer->id);
-						//		                      $offers->addOffer($offerDTO);
-						//		                  }
-						
-						
+
 						if($variationCategory)
 						{
 							
-	
-							$ProductOffersVariationCollectionDTO = new NewEdit\Offers\Variation\ProductOffersVariationCollectionDTO();
+							$ProductOffersVariationCollectionDTO = new NewEdit\Offers\Variation\ProductOffersVariationCollectionDTO(
+							);
 							$ProductOffersVariationCollectionDTO->setCategoryVariation($variationCategory->id);
 							
 							if($variationCategory->image)
 							{
-								$ProductOfferVariationImageCollectionDTO = new NewEdit\Offers\Variation\Image\ProductOfferVariationImageCollectionDTO();
+								$ProductOfferVariationImageCollectionDTO =
+									new NewEdit\Offers\Variation\Image\ProductOfferVariationImageCollectionDTO();
 								$ProductOfferVariationImageCollectionDTO->setRoot(true);
-								$ProductOffersVariationCollectionDTO->addImage($ProductOfferVariationImageCollectionDTO);
+								$ProductOffersVariationCollectionDTO->addImage($ProductOfferVariationImageCollectionDTO
+								);
 							}
 							
-							
 							$ProductOffersCollectionDTO->addVariation($ProductOffersVariationCollectionDTO);
+							
+							
+							if($modificationCategory)
+							{
+								$ProductOffersVariationModificationCollectionDTO =
+									new NewEdit\Offers\Variation\Modification\ProductOffersVariationModificationCollectionDTO(
+									);
+								$ProductOffersVariationModificationCollectionDTO
+									->setCategoryModification($modificationCategory->id)
+								;
+								
+								if($modificationCategory->image)
+								{
+									$ProductOfferVariationModificationImageCollectionDTO =
+										new NewEdit\Offers\Variation\Modification\Image\ProductOfferVariationModificationImageCollectionDTO();
+									$ProductOfferVariationModificationImageCollectionDTO->setRoot(true);
+									$ProductOffersVariationModificationCollectionDTO->addImage($ProductOfferVariationModificationImageCollectionDTO);
+									
+									
+								}
+								
+								$ProductOffersVariationCollectionDTO->addModification($ProductOffersVariationModificationCollectionDTO);
+							}
+							
 						}
-						
+
 						$data->addOffer($ProductOffersCollectionDTO);
 					}
 					
 				}
 			);
-			
-			
-			
 		}
-		
-		
-
-		
 	}
 	
 	

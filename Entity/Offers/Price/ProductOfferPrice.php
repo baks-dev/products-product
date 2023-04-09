@@ -44,6 +44,7 @@ class ProductOfferPrice extends EntityEvent
 	/** ID торгового предложения */
 	#[ORM\Id]
 	#[ORM\OneToOne(inversedBy: 'price', targetEntity: ProductOffer::class)]
+	#[ORM\JoinColumn(name: 'offer', referencedColumnName: "id")]
 	private ProductOffer $offer;
 	
 	/** Стоимость */
@@ -77,7 +78,7 @@ class ProductOfferPrice extends EntityEvent
 	{
 		if($dto instanceof ProductOfferPriceInterface)
 		{
-			if(empty($dto->getPrice()))
+			if(empty($dto->getPrice()?->getValue()))
 			{
 				return false;
 			}

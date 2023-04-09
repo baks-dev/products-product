@@ -1,9 +1,10 @@
 
 {{ variation_prototype_category|raw }}
 
+{% set variation_first = (form.offer.children|first).variation.children|first %}
 
 {# Фото вариантов торгового предложения #}
-		{% if ((form.offer.children|first).variation.children|first).image is defined %}
+		{% if variation_first.image is defined %}
 			{{ include(_self|replace({ "prototype.variation.html.twig": "image/prototype.collection.html.twig" })) }}
 		{% endif %}
 
@@ -16,14 +17,14 @@
 		{{ variation_prototype_value|raw }}
 	</div>
 	
-	{% if ((form.offer.children|first).variation.children|first).article is defined %}
+	{% if variation_first.article is defined %}
 		<div class='w-75'>
 			{{ variation_prototype_article|raw }}
 		</div>
 	{% endif %}
 	
 
-	{% if ((form.offer.children|first).variation.children|first).price is defined %}
+	{% if variation_first.price is defined %}
 		<div class="input-group mb-3 w-75">
 
 						<span class="input-group-text"
@@ -48,7 +49,7 @@
 	{% endif %}
 	
 
-	{% if ((form.offer.children|first).variation.children|first).quantity is defined %}
+	{% if variation_first.quantity is defined %}
 		<div class="w-75">
 			{{ variation_prototype_quantity|raw }}
 		</div>
@@ -62,3 +63,77 @@
 </div>
 
 
+
+
+{# МОДИФИКАЦИИ #}
+
+{% if variation_first.modification is defined %}
+
+
+
+<div class="card w-100 border-light mb-3">
+	<div class="card-header border-light bg-body">
+		<div class="card-title">
+			<h6>
+				{{ variation_first.modification.vars.prototype.value.vars.label }}
+			</h6>
+		</div>
+	</div>
+	
+
+	<div class="card-body variation-modification-collection" id='collection_{{ form.offer.vars.prototype.variation.vars.prototype.vars.id }}'>
+		{% if variation_first.modification is defined %}
+			<div id='item_{{ form.offer.vars.prototype.variation.vars.prototype.modification.vars.prototype.vars.id|replace({ '__variation_modification__' : 0 }) }}'>
+				{{ include(_self|replace({ "prototype.variation.html.twig": "modification/prototype.modification.html.twig" }))|replace({ '__variation_modification__' : 0 })|raw }}
+			</div>
+		{% endif %}
+	</div>
+	
+	<div class="card-footer border-light bg-body d-flex justify-content-between align-items-center gap-5">
+		
+		 {% if (variation_first.modification.children|first).price is defined %}
+				
+				<small class='text-muted'>
+					Цена модификации множественного варианта торгового предложения имеет приоритет над базовой ценой. Если поле не заполнено,
+					присваивается базовое значение.
+				</small>
+			
+			{% endif %}
+		
+		
+		{# Добавить МОДИФИКАЦИЮ  #}
+		<button type="button"
+				class="btn btn-sm btn-outline-primary border-0 variation-modification-add-collection text-nowrap"
+				data-prototype="{{ include(_self|replace({ "prototype.variation.html.twig": "modification/prototype.modification.html.twig" }))|e('html_attr') }} "
+				{# data-variation="{{ variation.vars.name }}" #}
+				data-offer="{{ form.offer.vars.prototype.vars.name }}"
+				data-variation="{{ form.offer.vars.prototype.variation.vars.prototype.vars.name }}"
+				data-index="1"
+				data-collection='collection_{{ form.offer.vars.prototype.variation.vars.prototype.vars.id }}'
+		>
+						<span class="svg-icon svg-icon-2">
+							<svg xmlns="http://www.w3.org/2000/svg"
+									width="24"
+									height="24"
+									viewBox="0 0 24 24"
+									fill="none">
+								<rect opacity="0.5"
+										x="11"
+										y="18"
+										width="12"
+										height="2"
+										rx="1"
+										transform="rotate(-90 11 18)"
+										fill="currentColor">
+							</rect>
+								<rect x="6" y="11" width="12" height="2" rx="1" fill="currentColor"></rect>
+							</svg>
+						</span>
+			Добавить еще "{{ variation_first.modification.vars.prototype.value.vars.label }}"
+		</button>
+	
+	</div>
+
+</div>
+
+{% endif %}

@@ -29,6 +29,7 @@ use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 
 use BaksDev\Core\Entity\EntityEvent;
 use BaksDev\Products\Product\Type\Offers\Image\ProductOfferImageUid;
+use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductOfferVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Image\ProductOfferVariationImageUid;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -53,8 +54,8 @@ class ProductOfferVariationImage extends EntityEvent implements UploadEntityInte
 	private ProductOfferVariation $variation;
 	
 	/** Название директории */
-	#[ORM\Column(type: ProductOfferUid::TYPE, nullable: false)]
-	private ProductOfferUid $dir;
+	#[ORM\Column(type: ProductOfferVariationUid::TYPE, nullable: false)]
+	private ProductOfferVariationUid $dir;
 	
 	/** Название файла */
 	#[ORM\Column(type: Types::STRING, length: 100, nullable: false)]

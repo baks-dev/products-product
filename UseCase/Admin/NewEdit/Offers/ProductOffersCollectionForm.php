@@ -60,6 +60,7 @@ final class ProductOffersCollectionForm extends AbstractType
 	{
 		$offer = $options['offers'];
 		$variation = $options['variation'];
+		$modification = $options['modification'];
 		
 		$builder->add('categoryOffer', HiddenType::class);
 		
@@ -113,33 +114,48 @@ final class ProductOffersCollectionForm extends AbstractType
 					{
 						$reference = $this->reference->getChoice($offer->reference);
 						
+						
 						if($reference)
 						{
 							
 							//dd($reference->choice());
 							
-							$form
-								->add('value', ChoiceType::class, [
-									'choices' => $reference->choice(),
-									'choice_value' => function($choice) {
-										if(is_string($choice)) { return $choice; }
-										return $choice?->getType()->value;
-									},
-									'choice_label' => function($choice) {
-										return $choice?->getType()->value;
-									},
-									
-									//'choice_translation_domain' => 'reference.'.$offer->reference,
-									
-									'label' => $offer->name,
-									'expanded' => false,
-									'multiple' => false,
-									'required' => true,
-									'placeholder' => 'placeholder',
-									'translation_domain' => $reference->domain(),
-									'attr' => [ 'data-select' => 'select2' ]
-								])
-							;
+							$form->add
+							(
+								'value',
+								$reference->form(),
+								[
+									'label' => false,
+									'required' => false,
+									//'mapped' => false,
+									//'attr' => [ 'data-select' => 'select2' ],
+								]
+							);
+							
+							//dd($reference->form());
+							
+//							$form
+//								->add('value', ChoiceType::class, [
+//									'choices' => $reference->choice(),
+//									'choice_value' => function($choice) {
+//										if(is_string($choice)) { return $choice; }
+//										return $choice?->getType()->value;
+//									},
+//									'choice_label' => function($choice) {
+//										return $choice?->getType()->value;
+//									},
+//
+//									//'choice_translation_domain' => 'reference.'.$offer->reference,
+//
+//									'label' => $offer->name,
+//									'expanded' => false,
+//									'multiple' => false,
+//									'required' => true,
+//									'placeholder' => 'placeholder',
+//									'translation_domain' => $reference->domain(),
+//									'attr' => [ 'data-select' => 'select2' ]
+//								])
+//							;
 						}
 					}
 					
@@ -181,6 +197,7 @@ final class ProductOffersCollectionForm extends AbstractType
 				'entry_options' => [
 					'label' => false,
 					'variation' => $variation,
+					'modification' => $modification,
 				],
 				'label' => false,
 				'by_reference' => false,
@@ -203,6 +220,7 @@ final class ProductOffersCollectionForm extends AbstractType
 			//'offer_data' => null,
 			'offers' => null,
 			'variation' => null,
+			'modification' => null,
 		]);
 	}
 	

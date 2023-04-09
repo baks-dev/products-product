@@ -60,6 +60,7 @@ final class ProductOffersVariationCollectionForm extends AbstractType
 	{
 		
 		$variation = $options['variation'];
+		$modification = $options['modification'];
 		
 		$builder->add('categoryVariation', HiddenType::class);
 		
@@ -118,27 +119,40 @@ final class ProductOffersVariationCollectionForm extends AbstractType
 						
 						if($reference)
 						{
-							$form
-								->add('value', ChoiceType::class, [
-									'choices' => $reference->choice(),
-									'choice_value' => function($choice) {
-										if(is_string($choice)) { return $choice; }
-										return $choice?->getType()->value;
-									},
-									'choice_label' => function($choice) {
-										return $choice?->getType()->value;
-									},
-									
-									
-									'label' => $variation->name,
-									'expanded' => false,
-									'multiple' => false,
-									'required' => true,
-									'placeholder' => 'placeholder',
-									'translation_domain' => $reference->domain(),
-									'attr' => [ 'data-select' => 'select2' ]
-								])
-							;
+							
+							$form->add
+							(
+								'value',
+								$reference->form(),
+								[
+									'label' => false,
+									'required' => false,
+									//'mapped' => false,
+									//'attr' => [ 'data-select' => 'select2' ],
+								]
+							);
+							
+//							$form
+//								->add('value', ChoiceType::class, [
+//									'choices' => $reference->choice(),
+//									'choice_value' => function($choice) {
+//										if(is_string($choice)) { return $choice; }
+//										return $choice?->getType()->value;
+//									},
+//									'choice_label' => function($choice) {
+//										return $choice?->getType()->value;
+//									},
+//
+//
+//									'label' => $variation->name,
+//									'expanded' => false,
+//									'multiple' => false,
+//									'required' => true,
+//									'placeholder' => 'placeholder',
+//									'translation_domain' => $reference->domain(),
+//									'attr' => [ 'data-select' => 'select2' ]
+//								])
+//							;
 						}
 					}
 					
@@ -170,6 +184,24 @@ final class ProductOffersVariationCollectionForm extends AbstractType
 			}
 		);
 		
+
+		if($modification)
+		{
+			/** Множественные варианты торгового предложения */
+			$builder->add('modification', CollectionType::class, [
+				'entry_type' => Modification\ProductOffersVariationModificationCollectionForm::class,
+				'entry_options' => [
+					'label' => false,
+					'modification' => $modification,
+				],
+				'label' => false,
+				'by_reference' => false,
+				'allow_delete' => true,
+				'allow_add' => true,
+				'prototype_name' => '__variation_modification__',
+			]);
+		}
+		
 		$builder->add('DeleteVariation',
 			ButtonType::class,
 			[
@@ -187,6 +219,7 @@ final class ProductOffersVariationCollectionForm extends AbstractType
 		$resolver->setDefaults([
 			'data_class' => ProductOffersVariationCollectionDTO::class,
 			'variation' => null,
+			'modification' => null,
 			//'offers' => null,
 		]);
 	}

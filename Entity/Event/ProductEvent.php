@@ -75,7 +75,7 @@ class ProductEvent extends EntityEvent
 	
 	/** Базовые Стоимость и наличие */
 	#[ORM\OneToOne(mappedBy: 'event', targetEntity: ProductPrice::class, cascade: ['all'])]
-	private ProductPrice $price;
+	private ?ProductPrice $price = null;
 	
 	/** Модификатор */
 	#[ORM\OneToOne(mappedBy: 'event', targetEntity: ProductModify::class, cascade: ['all'])]
@@ -198,5 +198,16 @@ class ProductEvent extends EntityEvent
 		
 		return $name;
 	}
+	
+	
+	/**
+	 * @return Collection
+	 */
+	public function getCategory() : Collection
+	{
+		return $this->category;
+	}
 
+	
+	
 }

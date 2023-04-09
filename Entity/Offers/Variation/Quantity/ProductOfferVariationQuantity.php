@@ -45,15 +45,16 @@ class ProductOfferVariationQuantity extends EntityEvent
 	/** ID события */
 	#[ORM\Id]
 	#[ORM\OneToOne(inversedBy: 'quantity', targetEntity: ProductOfferVariation::class)]
+	#[ORM\JoinColumn(name: 'variation', referencedColumnName: "id")]
 	private ProductOfferVariation $variation;
 	
 	/** В наличие */
-	#[ORM\Column(name: 'quantity', type: Types::INTEGER, nullable: true)]
-	private ?int $quantity = null; // 0 - нет в наличие
+	#[ORM\Column(type: Types::INTEGER, options: ['default' => 0])]
+	private ?int $quantity = 0; // 0 - нет в наличие
 	
 	/** Резерв */
-	#[ORM\Column(name: 'reserve', type: Types::INTEGER, nullable: true)]
-	private ?int $reserve = null;
+	#[ORM\Column(type: Types::INTEGER, options: ['default' => 0])]
+	private ?int $reserve = 0;
 	
 	
 	public function __construct(ProductOfferVariation $variation)
@@ -88,4 +89,28 @@ class ProductOfferVariationQuantity extends EntityEvent
 		throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
 	}
 	
+	
+	/** Добавляем в резерв указанное количество */
+	public function addReserve(int $reserve) : void
+	{
+		$this->reserve += $reserve;
+	}
+	
+	/** Удаляем из резерва указанное количество */
+	public function subReserve(?int $reserve) : void
+	{
+		$this->reserve -= $reserve;
+	}
+	
+	/** Удаляем из наличия указанное количество */
+	public function subQuantity(?int $quantity) : void
+	{
+		$this->quantity -= $quantity;
+	}
+	
+	/** Добавляем в наличие указанное количество */
+	public function addQuantity(?int $quantity) : void
+	{
+		$this->quantity += $quantity;
+	}
 }
