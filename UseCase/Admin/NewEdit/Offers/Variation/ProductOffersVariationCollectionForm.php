@@ -29,6 +29,7 @@ namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation;
 use App\Module\Products\Category\Repository\CategoryOffersForm\CategoryOffersFormDTO;
 use BaksDev\Core\Services\Reference\ReferenceChoice;
 use BaksDev\Products\Category\Type\Offers\Variation\ProductCategoryOffersVariationUid;
+use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductOfferVariationConst;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Offer\Image\ImageCollectionForm;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Offer\Price\PriceForm;
 use App\System\Type\Reference\ReferenceType;
@@ -75,8 +76,19 @@ final class ProductOffersVariationCollectionForm extends AbstractType
 				}
 			)
 		);
-		
-		
+
+        $builder->add('const', HiddenType::class);
+
+        $builder->get('const')->addModelTransformer(
+            new CallbackTransformer(
+                function($const) {
+                    return $const instanceof ProductOfferVariationConst ? $const->getValue() : $const;
+                },
+                function($const) {
+                    return new ProductOfferVariationConst($const);
+                }
+            )
+        );
 		
 		
 		$builder->add('article', TextType::class);

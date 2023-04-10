@@ -28,6 +28,7 @@ namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers;
 //use App\Module\Product\Repository\Category\Offers\CategoryOffersFormRepository;
 use BaksDev\Core\Services\Reference\ReferenceChoice;
 use BaksDev\Products\Category\Type\Offers\Id\ProductCategoryOffersUid;
+use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Offer\OfferForm;
 use BaksDev\Reference\Color\Type\Color;
 use Symfony\Component\Form\AbstractType;
@@ -63,8 +64,7 @@ final class ProductOffersCollectionForm extends AbstractType
 		$modification = $options['modification'];
 		
 		$builder->add('categoryOffer', HiddenType::class);
-		
-		
+
 		$builder->get('categoryOffer')->addModelTransformer(
 			new CallbackTransformer(
 				function($categoryOffer) {
@@ -75,6 +75,22 @@ final class ProductOffersCollectionForm extends AbstractType
 				}
 			)
 		);
+
+
+        $builder->add('const', HiddenType::class);
+
+        $builder->get('const')->addModelTransformer(
+            new CallbackTransformer(
+                function($const) {
+                    return $const instanceof ProductOfferConst ? $const->getValue() : $const;
+                },
+                function($const) {
+                    return new ProductOfferConst($const);
+                }
+            )
+        );
+
+
 		
 		
 		$builder->add('article', TextType::class);
@@ -106,6 +122,8 @@ final class ProductOffersCollectionForm extends AbstractType
 
 				if($data)
 				{
+                    dump($data);
+
 					/* Получаем данные торговые предложения категории */
 					//$offerCat = $data->getOffer();
 			

@@ -40,7 +40,6 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
 	private ProductCategoryOffersUid $categoryOffer;
 	
 	/** Постоянный уникальный идентификатор ТП */
-	#[Assert\NotBlank]
 	private readonly ProductOfferConst $const;
 	
 	/** Заполненное значение */
@@ -71,13 +70,7 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
 	
 
 	/** Постоянный уникальный идентификатор ТП */
-	
-	public function setConst(ProductOfferConst $const) : void
-	{
-		$this->const = $const;
-	}
-	
-	
+
 	public function getConst() : ProductOfferConst
 	{
 		if(!(new ReflectionProperty($this::class, 'const'))->isInitialized($this))
@@ -87,6 +80,14 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
 		
 		return $this->const;
 	}
+
+    public function setConst(ProductOfferConst $const) : void
+    {
+        if(!(new ReflectionProperty($this::class, 'const'))->isInitialized($this))
+        {
+            $this->const = $const;
+        }
+    }
 	
 	
 	/** Заполненное значение */

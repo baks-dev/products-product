@@ -25,6 +25,7 @@ namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modifi
 
 use BaksDev\Core\Services\Reference\ReferenceChoice;
 use BaksDev\Products\Category\Type\Offers\Modification\ProductCategoryOffersVariationModificationUid;
+use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductOfferVariationModificationConst;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
@@ -67,8 +68,19 @@ final class ProductOffersVariationModificationCollectionForm extends AbstractTyp
 				}
 			)
 		);
-		
-		
+
+        $builder->add('const', HiddenType::class);
+
+        $builder->get('const')->addModelTransformer(
+            new CallbackTransformer(
+                function($const) {
+                    return $const instanceof ProductOfferVariationModificationConst ? $const->getValue() : $const;
+                },
+                function($const) {
+                    return new ProductOfferVariationModificationConst($const);
+                }
+            )
+        );
 		
 		
 		$builder->add('article', TextType::class);

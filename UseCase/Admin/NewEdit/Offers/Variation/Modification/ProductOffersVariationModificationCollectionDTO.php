@@ -39,7 +39,6 @@ final class ProductOffersVariationModificationCollectionDTO implements ProductOf
 	private ProductCategoryOffersVariationModificationUid $categoryModification;
 	
 	/** Постоянный уникальный идентификатор модификации */
-	#[Assert\NotBlank]
 	private readonly ProductOfferVariationModificationConst $const;
 	
 	/** Заполненное значение */
@@ -72,13 +71,16 @@ final class ProductOffersVariationModificationCollectionDTO implements ProductOf
 		{
 			$this->const = new ProductOfferVariationModificationConst();
 		}
-		
+
 		return $this->const;
 	}
 	
 	public function setConst(ProductOfferVariationModificationConst $const) : void
 	{
-		$this->const = $const;
+        if(!(new ReflectionProperty($this::class, 'const'))->isInitialized($this))
+        {
+            $this->const = $const;
+        }
 	}
 	
 	

@@ -41,7 +41,6 @@ final class ProductOffersVariationCollectionDTO implements ProductOfferVariation
 	private ProductCategoryOffersVariationUid $categoryVariation;
 	
 	/** Постоянный уникальный идентификатор варианта */
-	#[Assert\NotBlank]
 	private readonly ProductOfferVariationConst $const;
 	
 	/** Заполненное значение */
@@ -69,8 +68,8 @@ final class ProductOffersVariationCollectionDTO implements ProductOfferVariation
 		$this->image = new ArrayCollection();
 		$this->modification = new ArrayCollection();
 	}
-	
-	
+
+
 	/** Постоянный уникальный идентификатор варианта */
 	public function getConst() : ProductOfferVariationConst
 	{
@@ -84,7 +83,10 @@ final class ProductOffersVariationCollectionDTO implements ProductOfferVariation
 	
 	public function setConst(ProductOfferVariationConst $const) : void
 	{
-		$this->const = $const;
+        if(!(new ReflectionProperty($this::class, 'const'))->isInitialized($this))
+        {
+            $this->const = $const;
+        }
 	}
 	
 	

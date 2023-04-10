@@ -54,17 +54,12 @@ final class ProductOfferVariationModificationQuantityDTO implements ProductOffer
 	
 	public function getReserve() : ?int
 	{
-		
-		
 		return $this->reserve;
 	}
 	
 	
 	public function setReserve(?int $reserve) : void
 	{
-		
-		dump($reserve);
-		
 		$this->reserve = $reserve ?: 0;
 	}
 	
