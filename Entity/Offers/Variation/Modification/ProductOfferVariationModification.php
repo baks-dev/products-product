@@ -77,6 +77,10 @@ class ProductOfferVariationModification extends EntityEvent
 	/** Артикул */
 	#[ORM\Column(type: Types::STRING, nullable: true)]
 	private ?string $article = null;
+
+    /** Постфикс */
+    #[ORM\Column(type: Types::STRING, nullable: true)]
+    private ?string $postfix = null;
 	
 	/** Стоимость модификации */
 	#[ORM\OneToOne(mappedBy: 'modification', targetEntity: Price\ProductOfferVariationModificationPrice::class, cascade: ['all'])]
@@ -94,13 +98,10 @@ class ProductOfferVariationModification extends EntityEvent
 	public function __construct(ProductOfferVariation $variation)
 	{
 		$this->id = new ProductOfferVariationModificationUid();
-		//$this->const = new ProductOfferVariationModificationConst();
 		$this->variation = $variation;
 		
 		$this->price = new Price\ProductOfferVariationModificationPrice($this);
 		$this->quantity = new Quantity\ProductOfferVariationModificationQuantity($this);
-		//$this->images = new ArrayCollection();
-		
 	}
 	
 	

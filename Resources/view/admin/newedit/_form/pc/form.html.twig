@@ -1,6 +1,7 @@
 {% trans_default_domain 'admin.products.product' %}
 
 
+
 <ul class="nav nav-pills gap-3 mb-3" id="nav-product">
 	<li class="nav-item" role="presentation">
 		<button class="btn fw-bolder nav-link active"
@@ -116,7 +117,7 @@
 	<div class="tab-pane fade" id="tab_gallery" role="tabpanel">
 		{{ include(_self|replace({ "form.html.twig": "gallery/form.gallery.html.twig" })) }}
 	</div>
-	
+
 	{# {{ dump(form.property.vars.data.count) }} #}
 	
 	{% if form.property.vars.data.count != 0 %}
@@ -125,7 +126,7 @@
 			{{ include(_self|replace({ "form.html.twig": "properties/form.properties.html.twig" })) }}
 		</div>
 	{% endif %}
-	
+
 	{% if form.offer.vars.data.count %}
 	{# ТОРГОВЫЕ ПРЕДЛОЖЕНИЯ #}
 	<div class="tab-pane fade" id="tab_offers" role="tabpanel">

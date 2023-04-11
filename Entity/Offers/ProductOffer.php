@@ -71,6 +71,10 @@ class ProductOffer extends EntityEvent
 	/** Артикул */
 	#[ORM\Column(type: Types::STRING, nullable: true)]
 	private ?string $article = null;
+
+    /** Постфикс */
+    #[ORM\Column(type: Types::STRING, nullable: true)]
+    private ?string $postfix = null;
 	
 	/** Стоимость торгового предложения */
 	#[ORM\OneToOne(mappedBy: 'offer', targetEntity: Price\ProductOfferPrice::class, cascade: ['all'])]

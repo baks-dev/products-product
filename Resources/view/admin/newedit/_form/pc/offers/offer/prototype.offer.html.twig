@@ -52,15 +52,24 @@
 				<div class='d-flex justify-content-between align-items-end gap-3'>
 					
 					<div class='w-100'>
-					
 						{{ form_widget(offer.value, { attr:  { 'placeholder' : offer.value.vars.label } }) }}
 					</div>
+
+					{% if form.offer.postfix is defined %}
+						<div class='w-75'>
+							{{ form_row(offer.postfix, { label : false } ) }}
+						</div>
+					{% endif %}
 					
 					{% if form.offer.article is defined %}
 						<div class='w-75'>
 							{{ form_row(offer.article, { label : false, attr : { placeholder : 'Артикул' }} ) }}
 						</div>
 					{% endif %}
+
+
+
+
 					
 					{% if (form.offer.children|first).price is defined %}
 					{#{% if form.offer.price is defined %}#}

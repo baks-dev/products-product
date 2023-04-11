@@ -17,7 +17,13 @@
 	<div class='w-100'>
 		{{ modification_prototype_value|raw }}
 	</div>
-	
+
+	{% if modification_first.postfix is defined %}
+		<div class='w-75'>
+			{{ modification_prototype_postfix|raw }}
+		</div>
+	{% endif %}
+
 	{% if modification_first.article is defined %}
 		<div class='w-75'>
 			{{ modification_prototype_article|raw }}

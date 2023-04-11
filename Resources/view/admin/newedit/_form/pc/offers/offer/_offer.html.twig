@@ -32,8 +32,8 @@
 		{% if offer.image is defined %}
 			{{ include(_self|replace({ "_offer.html.twig": "image/_collection.html.twig" })) }}
 		{% endif %}
-		
-		
+
+
 		<div class="card w-100 border-light mb-3">
 			<div class="card-header border-light bg-body">
 				<div class="card-title">
@@ -51,6 +51,14 @@
 					<div class='w-100'>
 						{{ form_widget(offer.value, { attr:  { 'placeholder' : offer.value.vars.label } }) }}
 					</div>
+
+					{% if offer.postfix is defined %}
+						<div class='w-75'>
+							{{ form_row(offer.postfix, { label : offer.postfix.vars.data ? offer.postfix.vars.attr.placeholder : false }) }}
+						</div>
+					{% endif %}
+
+
 					
 					{% if offer.article is defined %}
 						<div class='w-75'>

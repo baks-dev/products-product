@@ -90,8 +90,7 @@ final class ProductOffersCollectionForm extends AbstractType
             )
         );
 
-
-		
+        $builder->add('postfix', TextType::class);
 		
 		$builder->add('article', TextType::class);
 		
@@ -122,17 +121,12 @@ final class ProductOffersCollectionForm extends AbstractType
 
 				if($data)
 				{
-                    dump($data);
 
-					/* Получаем данные торговые предложения категории */
-					//$offerCat = $data->getOffer();
-			
 					/* Если ТП - справочник - перобразуем поле ChoiceType   */
 					if($offer->reference)
 					{
 						$reference = $this->reference->getChoice($offer->reference);
-						
-						
+
 						if($reference)
 						{
 							
@@ -149,34 +143,19 @@ final class ProductOffersCollectionForm extends AbstractType
 									//'attr' => [ 'data-select' => 'select2' ],
 								]
 							);
-							
-							//dd($reference->form());
-							
-//							$form
-//								->add('value', ChoiceType::class, [
-//									'choices' => $reference->choice(),
-//									'choice_value' => function($choice) {
-//										if(is_string($choice)) { return $choice; }
-//										return $choice?->getType()->value;
-//									},
-//									'choice_label' => function($choice) {
-//										return $choice?->getType()->value;
-//									},
-//
-//									//'choice_translation_domain' => 'reference.'.$offer->reference,
-//
-//									'label' => $offer->name,
-//									'expanded' => false,
-//									'multiple' => false,
-//									'required' => true,
-//									'placeholder' => 'placeholder',
-//									'translation_domain' => $reference->domain(),
-//									'attr' => [ 'data-select' => 'select2' ]
-//								])
-//							;
 						}
 					}
-					
+
+
+                    if ($offer->postfix)
+                    {
+                        $form->add('postfix', TextType::class, ['attr' => ['placeholder' => $offer->postfixName]]);
+                    }
+                    else
+                    {
+                        $form->remove('postfix');
+                    }
+
 					/* Удаляем количественный учет */
 					if(!$offer->quantitative)
 					{
@@ -188,6 +167,8 @@ final class ProductOffersCollectionForm extends AbstractType
 					{
 						$form->remove('article');
 					}
+
+
 					
 					/* Удаляем пользовательское изображение если запрещено */
 					if(!$offer->image)

@@ -16,7 +16,13 @@
 	<div class='w-100'>
 		{{ variation_prototype_value|raw }}
 	</div>
-	
+
+	{% if variation_first.postfix is defined %}
+		<div class='w-75'>
+			{{ variation_prototype_postfix|raw }}
+		</div>
+	{% endif %}
+
 	{% if variation_first.article is defined %}
 		<div class='w-75'>
 			{{ variation_prototype_article|raw }}

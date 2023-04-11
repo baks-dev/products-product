@@ -84,7 +84,9 @@ final class ProductOffersVariationModificationCollectionForm extends AbstractTyp
 		
 		
 		$builder->add('article', TextType::class);
-		
+
+		$builder->add('postfix', TextType::class);
+
 		$builder->add('value', TextType::class, ['label' => $modification->name, 'attr' => [ 'class' => 'mb-3' ]]);
 		
 		$builder->add('price', Price\ProductOfferVariationModificationPriceForm::class, ['label' => false]);
@@ -134,32 +136,19 @@ final class ProductOffersVariationModificationCollectionForm extends AbstractTyp
 									//'attr' => [ 'data-select' => 'select2' ],
 								]
 							);
-							
-//							$form
-//								->add('value', ChoiceType::class, [
-//									'choices' => $reference->choice(),
-//									'choice_value' => function($choice) {
-//										if(is_string($choice)) { return $choice; }
-//										return $choice?->getType()->value;
-//									},
-//									'choice_label' => function($choice) {
-//										return $choice?->getType()->value;
-//									},
-//
-//
-//									'label' => $modification->name,
-//									'expanded' => false,
-//									'multiple' => false,
-//									'required' => true,
-//									'placeholder' => 'placeholder',
-//									'translation_domain' => $reference->domain(),
-//									'attr' => [ 'data-select' => 'select2' ]
-//								])
-//							;
 						}
 					}
-					
-					
+
+
+                    if ($modification->postfix)
+                    {
+                        $form->add('postfix', TextType::class, ['attr' => ['placeholder' => $modification->postfixName]]);
+                    }
+                    else
+                    {
+                        $form->remove('postfix');
+                    }
+
 					/* Удаляем количественный учет */
 					if(!$modification->quantitative)
 					{

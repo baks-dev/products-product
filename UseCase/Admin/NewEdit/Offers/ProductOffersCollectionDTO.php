@@ -47,8 +47,12 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
 	
 	/** Артикул */
 	private ?string $article = null;
-	
-	/** Стоимость торгового предложения */
+
+    /** Постфикс */
+    private ?string $postfix = null;
+
+
+    /** Стоимость торгового предложения */
 	private ?Price\ProductOfferPriceDTO $price = null;
 	
 	/** Количественный учет */
@@ -204,6 +208,18 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
 	{
 		$this->categoryOffer = $categoryOffer;
 	}
-	
+
+    /** Постфикс */
+
+    public function getPostfix(): ?string
+    {
+        return $this->postfix;
+    }
+
+    public function setPostfix(?string $postfix): void
+    {
+        $this->postfix = $postfix;
+    }
+
 }
 

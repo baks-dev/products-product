@@ -79,6 +79,7 @@
 	
 	{% set variation_prototype_value =  form_widget(form.offer.vars.prototype.variation.vars.prototype.value) %}
 	{% set variation_prototype_article =  form_row(form.offer.vars.prototype.variation.vars.prototype.article, { label : false, attr : { placeholder : 'Артикул' }}) %}
+	{% set variation_prototype_postfix =  form_row(form.offer.vars.prototype.variation.vars.prototype.postfix, { label : false}) %}
 	{% set variation_prototype_price =  form_widget(form.offer.vars.prototype.variation.vars.prototype.price.price, { attr: { 'placeholder' : 'Стоимость' } }) %}
 	{% set variation_prototype_price_currency =  form_row(form.offer.vars.prototype.variation.vars.prototype.price.currency) %}
 	{% set variation_prototype_quantity =  form_row(form.offer.vars.prototype.variation.vars.prototype.quantity.quantity, { attr: { placeholder: 'Наличие'|trans } }) %}
@@ -134,6 +135,7 @@
 		
 		{% set modification_prototype_value =  form_widget(form.offer.vars.prototype.variation.vars.prototype.modification.vars.prototype.value) %}
 		{% set modification_prototype_article =  form_row(form.offer.vars.prototype.variation.vars.prototype.modification.vars.prototype.article, { label : false, attr : { placeholder : 'Артикул' }}) %}
+		{% set modification_prototype_postfix =  form_row(form.offer.vars.prototype.variation.vars.prototype.modification.vars.prototype.postfix, { label : false}) %}
 		{% set modification_prototype_price =  form_widget(form.offer.vars.prototype.variation.vars.prototype.modification.vars.prototype.price.price, { attr: { 'placeholder' : 'Стоимость' } }) %}
 		{% set modification_prototype_price_currency =  form_row(form.offer.vars.prototype.variation.vars.prototype.modification.vars.prototype.price.currency) %}
 		{% set modification_prototype_quantity =  form_row(form.offer.vars.prototype.variation.vars.prototype.modification.vars.prototype.quantity.quantity, { attr: { placeholder: 'Наличие'|trans } }) %}
@@ -142,11 +144,11 @@
 	{% endif %}
 
 <div id="collection-offer">
-	
+
 	{% for offer in form.offer %}
 		{{ include(_self|replace({ "form.offers.html.twig": "offer/_offer.html.twig" })) }}
 	{% endfor %}
-	
+
 	{# {% for offer in form.offer %}
 	#}{# {{ include(_self|replace({ "form.offers.html.twig": "offer/_offer.html.twig" })) }} #}{#
 	{% endif %} #}

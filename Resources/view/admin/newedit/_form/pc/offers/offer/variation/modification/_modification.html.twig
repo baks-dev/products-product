@@ -22,13 +22,18 @@
 			'data-index': 'item_'~modification.vars.id
 		}
 	}) }}
-	
-	
+
+
 	<div class='w-100'>
 		{{ form_widget(modification.value, { attr:  { placeholder : modification.value.vars.label } }) }}
 	</div>
-	
-	
+
+	{% if modification.postfix is defined %}
+		<div class='w-75'>
+			{{ form_row(modification.postfix, { label : modification.postfix.vars.data ? modification.postfix.vars.attr.placeholder : false } ) }}
+		</div>
+	{% endif %}
+
 	{% if modification.article is defined %}
 		<div class='w-75'>
 			{{ form_row(modification.article, modification.article.vars.data ? { label : 'Артикул' } : { label : false, attr : { placeholder : 'Артикул' }} ) }}

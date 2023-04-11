@@ -92,6 +92,8 @@ final class ProductOffersVariationCollectionForm extends AbstractType
 		
 		
 		$builder->add('article', TextType::class);
+
+        $builder->add('postfix', TextType::class);
 		
 		$builder->add('value', TextType::class, ['label' => $variation->name, 'attr' => [ 'class' => 'mb-3' ]]);
 		
@@ -143,32 +145,19 @@ final class ProductOffersVariationCollectionForm extends AbstractType
 									//'attr' => [ 'data-select' => 'select2' ],
 								]
 							);
-							
-//							$form
-//								->add('value', ChoiceType::class, [
-//									'choices' => $reference->choice(),
-//									'choice_value' => function($choice) {
-//										if(is_string($choice)) { return $choice; }
-//										return $choice?->getType()->value;
-//									},
-//									'choice_label' => function($choice) {
-//										return $choice?->getType()->value;
-//									},
-//
-//
-//									'label' => $variation->name,
-//									'expanded' => false,
-//									'multiple' => false,
-//									'required' => true,
-//									'placeholder' => 'placeholder',
-//									'translation_domain' => $reference->domain(),
-//									'attr' => [ 'data-select' => 'select2' ]
-//								])
-//							;
+
 						}
 					}
-					
-					
+
+                    if ($variation->postfix)
+                    {
+                        $form->add('postfix', TextType::class, ['attr' => ['placeholder' => $variation->postfixName]]);
+                    }
+                    else
+                    {
+                        $form->remove('postfix');
+                    }
+
 					/* Удаляем количественный учет */
 					if(!$variation->quantitative)
 					{
@@ -180,6 +169,10 @@ final class ProductOffersVariationCollectionForm extends AbstractType
 					{
 						$form->remove('article');
 					}
+
+
+
+
 					
 					/* Удаляем пользовательское изображение если запрещено */
 					if(!$variation->image)

@@ -46,7 +46,10 @@ final class ProductOffersVariationModificationCollectionDTO implements ProductOf
 	
 	/** Артикул */
 	private ?string $article = null;
-	
+
+	/** Постфикс */
+	private ?string $postfix = null;
+
 	/** Стоимость торгового предложения */
 	private ?Price\ProductOfferVariationModificationPriceDTO $price = null;
 	
@@ -179,7 +182,21 @@ final class ProductOffersVariationModificationCollectionDTO implements ProductOf
 	{
 		$this->categoryModification = $categoryModification;
 	}
+
+    /** Постфикс */
+
+    public function getPostfix(): ?string
+    {
+        return $this->postfix;
+    }
+
+    public function setPostfix(?string $postfix): void
+    {
+        $this->postfix = $postfix;
+    }
 	
+
+
 
 }
 
