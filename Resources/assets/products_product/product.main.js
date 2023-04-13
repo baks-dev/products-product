@@ -43,3 +43,49 @@ if ($name) {
         document.getElementById('product_form_info_url').value = translitRuEn(this.value).toLowerCase();
     }
 }
+
+
+
+const searcOffer = document.getElementById('searcherOffer');
+let $ul = document.getElementById("searcher-offer");
+
+searcOffer.addEventListener('keyup', searcherOffer);
+searcOffer.addEventListener('focus', searcherOffer);
+
+$ul.querySelectorAll('li').forEach(function (item) {
+
+    searcOffer.classList.remove('d-none');
+
+    item.addEventListener('click', function () {
+        let inpt = document.getElementById(item.dataset.href);
+        inpt.scrollIntoView({block: "center", inline: "center", behavior: "smooth"});
+        $ul.classList.remove('show');
+        setTimeout(function () {
+            inpt.focus();
+        }, 200);
+    });
+});
+
+function searcherOffer() {
+
+    let $filter = this.value.toUpperCase();
+    let $counter = 0;
+
+    $ul.querySelectorAll('li').forEach(function (item) {
+
+        let txtValue = item.textContent || item.innerText;
+
+        if (txtValue.toUpperCase().indexOf($filter) > -1) {
+            item.style.display = "";
+            $counter++;
+        } else {
+            item.style.display = "none";
+        }
+
+        if ($filter.length < 2 || $counter === 0) {
+            $ul.classList.remove('show');
+        } else {
+            $ul.classList.add('show');
+        }
+    });
+}
