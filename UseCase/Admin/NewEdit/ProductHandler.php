@@ -302,7 +302,9 @@ final class ProductHandler
 		
 		$this->entityManager->persist($Event);
 		//dump($this->entityManager->getUnitOfWork());
-		//dd($Event);
+
+        dump($command);
+		dd($Event);
 		
 		$this->entityManager->flush();
 		

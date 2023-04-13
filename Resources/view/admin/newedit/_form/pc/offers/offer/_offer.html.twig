@@ -27,8 +27,9 @@
 	
 	<div class="card-body">
 		
-		{{ form_row(offer.categoryOffer) }}
-		
+		{{ form_widget(offer.categoryOffer) }}
+		{{ form_widget(offer.const) }}
+
 		{% if offer.image is defined %}
 			{{ include(_self|replace({ "_offer.html.twig": "image/_collection.html.twig" })) }}
 		{% endif %}
@@ -59,7 +60,6 @@
 					{% endif %}
 
 
-					
 					{% if offer.article is defined %}
 						<div class='w-75'>
 							{{ form_row(offer.article, offer.article.vars.data ? { label : 'Артикул' } : { label : false, attr : { placeholder : 'Артикул' }} ) }}

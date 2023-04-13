@@ -32,9 +32,14 @@
 					{{ item.product_name }}
 					
 					{{ item.product_offer_value|call_twig_func(item.product_offer_reference) }}
+					{{ item.product_offer_postfix }}
+
 					{{ item.product_variation_value|call_twig_func(item.product_variation_reference) }}
+					{{ item.product_variation_postfix }}
+
 					{{ item.product_modification_value|call_twig_func(item.product_modification_reference) }}
-					
+					{{ item.product_modification_postfix }}
+
 				</a>
 				
 				{# Описание #}
@@ -52,17 +57,17 @@
 	
 	</td>
 	
-	<td class="text-center">
+	<td class="text-center text-nowrap">
 		{{ item.product_article }}
 	</td>
-	
-	
+
+
 	<td class="text-center">
-	
+
 	</td>
-	
+
 	<td class="text-center">
-	
+
 	</td>
 
 </tr>

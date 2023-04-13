@@ -1,5 +1,6 @@
 {# ID множественного варианта торгового предложения категории  #}
-{{ form_row(modification.categoryModification) }}
+{{ form_widget(modification.categoryModification) }}
+{{ form_widget(modification.const) }}
 
 {# Фото вариантов торгового предложения #}
 		{% if modification.image is defined %}

@@ -126,6 +126,7 @@ final class AllProducts implements AllProductsInterface
 		/** Торговое предложение */
 		
 		$qb->addSelect('product_offer.value as product_offer_value');
+		$qb->addSelect('product_offer.postfix as product_offer_postfix');
 		$qb->leftJoin(
 			'product_event',
 			Entity\Offers\ProductOffer::TABLE,
@@ -158,6 +159,7 @@ final class AllProducts implements AllProductsInterface
 		/** Множественные варианты торгового предложения */
 		
 		$qb->addSelect('product_offer_variation.value as product_variation_value');
+		$qb->addSelect('product_offer_variation.postfix as product_variation_postfix');
 
 		$qb->leftJoin(
 			'product_offer',
@@ -189,7 +191,8 @@ final class AllProducts implements AllProductsInterface
 		
 		/** Модификация множественного варианта */
 		$qb->addSelect('product_offer_modification.value as product_modification_value');
-		
+		$qb->addSelect('product_offer_modification.postfix as product_modification_postfix');
+
 		$qb->leftJoin(
 			'product_offer_variation',
 			Entity\Offers\Variation\Modification\ProductOfferVariationModification::TABLE,
@@ -336,8 +339,7 @@ final class AllProducts implements AllProductsInterface
 			/* preview */
 			$searcher->orWhere('LOWER(product_trans.preview) LIKE :query');
 			$searcher->orWhere('LOWER(product_trans.preview) LIKE :switcher');
-			
-			
+
 			/* article */
 			$searcher->orWhere('LOWER(product_info.article) LIKE :query');
 			$searcher->orWhere('LOWER(product_info.article) LIKE :switcher');
