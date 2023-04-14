@@ -61,30 +61,13 @@ final class DetailController extends AbstractController
 			$variation,
 			$modification,
 		);
-		
+
+        
 		/** Другие ТП данного продукта */
 		$productOffer = $productDetailOffer->fetchProductOfferAssociative($info->getProduct());
 		
 		
-		//dd($productCard);
-		
-		//dump($info);
-		//dump($productCard);
-		
-		// $mod = new ModifyAction('update');
-		//        $mod = ModifyAction::UPDATE;
-		//        dump($mod->value);
-		//
-		//
-		//        $mod = ModifyAction::from($mod->value);
-		//        dump($mod);
-		
-		/* Статус страницы */
-		
-		/*		(offer is not null and card.product_offer_value is null) or
-				(variation is not null and card.product_variation_value is null) or
-				(modification is not null and card.product_modification_value is null)
-				*/
+
 		
 		/** Статус, если товара с ТП, вариантом или модификацией не существует */
 		
@@ -106,6 +89,7 @@ final class DetailController extends AbstractController
 			$status = 404;
 		}
 
+
 		if($status === 404)
 		{
 			return $this->render([
@@ -122,16 +106,20 @@ final class DetailController extends AbstractController
 		
 		/* Удаляем сессию фильтра каталога */
 		$request->getSession()->set('catalog_filter', null);
+
+
+
 		
 		/** Список альтернатив  */
 		
 		$alternativeProperty = json_decode($productCard['category_section_field'], false, 512, JSON_THROW_ON_ERROR);
-		/* получаем свойства, учавствующие в фильтре альтернатив*/
-		$alternativeField = array_filter($alternativeProperty, function($v, $k) {
+        /* получаем свойства, учавствующие в фильтре альтернатив */
+		$alternativeField = array_filter($alternativeProperty, function($v) {
 			return $v->field_alternative === true;
 		}, ARRAY_FILTER_USE_BOTH);
 		
-		
+
+
 		
 		//dump($alternativeField);
 		
@@ -145,9 +133,7 @@ final class DetailController extends AbstractController
 			);
 		}
 		
-		
-		
-		
+
 		/* Корзина */
 
 		$AddProductBasketDTO = new OrderProductDTO();
@@ -161,9 +147,8 @@ final class DetailController extends AbstractController
 				]
 			),
 		]);
-		
-		
-		
+
+
 		return $this->render([
 			'card' => $productCard,
 			'offers' => $productOffer,
@@ -174,9 +159,7 @@ final class DetailController extends AbstractController
 			'basket' => $form->createView(),
 		]);
 		
-		//        return $this->render('home/index.html.twig', [
-		//            'controller_name' => 'HomeController',
-		//        ]);
+
 	}
 	
 }

@@ -2,7 +2,12 @@
 
 Все заметные изменения в модуле будут задокументированы в этом файле.
 
-## 13.04.2023 ![Version](https://img.shields.io/badge/version-v6.2.3-blue)
+
+## 14.04.2023 ![Version](https://img.shields.io/badge/version-v6.2.4-blue)
+
+Добавлен постфикс и его название в запросы
+
+## 12.04.2023 ![Version](https://img.shields.io/badge/version-v6.2.3-blue)
 
 Исправлен баг с удалением торговых предложений 
 

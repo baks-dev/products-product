@@ -1,17 +1,17 @@
 <?php
 /*
  *  Copyright 2023.  Baks.dev <admin@baks.dev>
- *
+ *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *
+ *  
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *
+ *  
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -134,6 +134,7 @@ final class ProductDetail implements ProductDetailInterface
 		
 		$qb->addSelect('product_offer.id as product_offer_uid')->addGroupBy('product_offer.id');
 		$qb->addSelect('product_offer.value as product_offer_value')->addGroupBy('product_offer.value');
+		$qb->addSelect('product_offer.postfix as product_offer_postfix')->addGroupBy('product_offer.postfix');
 		$qb->leftJoin(
 			'product_event',
 			ProductEntity\Offers\ProductOffer::TABLE,
@@ -173,6 +174,7 @@ final class ProductDetail implements ProductDetailInterface
 		
 		/** Получаем название торгового предложения */
 		$qb->addSelect('category_offer_trans.name as product_offer_name')->addGroupBy('category_offer_trans.name');
+		$qb->addSelect('category_offer_trans.postfix as product_offer_name_postfix')->addGroupBy('category_offer_trans.postfix');
 		$qb->leftJoin(
 			'category_offer',
 			CategoryEntity\Offers\Trans\ProductCategoryOffersTrans::TABLE,
@@ -196,10 +198,9 @@ final class ProductDetail implements ProductDetailInterface
 		/** Множественные варианты торгового предложения */
 		
 		$qb->addSelect('product_offer_variation.id as product_variation_uid')->addGroupBy('product_offer_variation.id');
-		$qb->addSelect('product_offer_variation.value as product_variation_value')
-			->addGroupBy('product_offer_variation.value')
-		;
-		
+		$qb->addSelect('product_offer_variation.value as product_variation_value')->addGroupBy('product_offer_variation.value');
+		$qb->addSelect('product_offer_variation.postfix as product_variation_postfix')->addGroupBy('product_offer_variation.postfix');
+
 		$qb->leftJoin(
 			'product_offer',
 			ProductEntity\Offers\Variation\ProductOfferVariation::TABLE,
@@ -240,6 +241,10 @@ final class ProductDetail implements ProductDetailInterface
 		$qb->addSelect('category_offer_variation_trans.name as product_variation_name')
 			->addGroupBy('category_offer_variation_trans.name')
 		;
+
+        $qb->addSelect('category_offer_variation_trans.postfix as product_variation_name_postfix')
+			->addGroupBy('category_offer_variation_trans.postfix')
+		;
 		$qb->leftJoin(
 			'category_offer_variation',
 			CategoryEntity\Offers\Variation\Trans\ProductCategoryOffersVariationTrans::TABLE,
@@ -266,10 +271,9 @@ final class ProductDetail implements ProductDetailInterface
 		/** Модификация множественного варианта торгового предложения */
 		
 		$qb->addSelect('product_offer_modification.id as product_modification_uid')->addGroupBy('product_offer_modification.id');
-		$qb->addSelect('product_offer_modification.value as product_modification_value')
-			->addGroupBy('product_offer_modification.value')
-		;
-		
+		$qb->addSelect('product_offer_modification.value as product_modification_value')->addGroupBy('product_offer_modification.value');
+		$qb->addSelect('product_offer_modification.postfix as product_modification_postfix')->addGroupBy('product_offer_modification.postfix');
+
 		$qb->leftJoin(
 			'product_offer_variation',
 			ProductEntity\Offers\Variation\Modification\ProductOfferVariationModification::TABLE,
@@ -309,6 +313,10 @@ final class ProductDetail implements ProductDetailInterface
 		/** Получаем название типа модификации */
 		$qb->addSelect('category_offer_modification_trans.name as product_modification_name')
 			->addGroupBy('category_offer_modification_trans.name')
+		;
+
+        $qb->addSelect('category_offer_modification_trans.postfix as product_modification_name_postfix')
+			->addGroupBy('category_offer_modification_trans.postfix')
 		;
 		$qb->leftJoin(
 			'category_offer_modification',
