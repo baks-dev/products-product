@@ -67,9 +67,13 @@ final class ProductAlternative implements ProductAlternativeInterface
 			->addGroupBy('product_offer.value')
 			->addGroupBy('product_offer.article')
 		;
+
+        $qb->addSelect('product_offer.postfix as product_offer_postfix')
+            ->addGroupBy('product_offer.postfix')
+        ;
 		
 		$qb->addSelect('product_offer.id as product_offer_uid')
-			->addGroupBy('product_offer_uid')
+			->addGroupBy('product_offer.id')
 		;
 		
 		$qb->from(ProductEntity\Offers\ProductOffer::TABLE, 'product_offer');
@@ -152,6 +156,11 @@ final class ProductAlternative implements ProductAlternativeInterface
 			->addGroupBy('product_variation.article')
 			
 		;
+
+        $qb->addSelect('product_variation.postfix as product_variation_postfix')
+            ->addGroupBy('product_variation.postfix')
+        ;
+
 		
 		$qb->addSelect('product_variation.id as product_variation_uid')
 			->addGroupBy('product_variation.id')
@@ -236,6 +245,10 @@ final class ProductAlternative implements ProductAlternativeInterface
 			->addGroupBy('product_modification.value')
 			->addGroupBy('product_modification.article')
 		;
+
+        $qb->addSelect('product_modification.postfix as product_modification_postfix')
+            ->addGroupBy('product_modification.postfix')
+        ;
 		
 		$qb->addSelect('product_modification.id as product_modification_uid')
 			->addGroupBy('product_modification.id')

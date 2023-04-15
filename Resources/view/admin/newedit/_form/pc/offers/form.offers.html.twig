@@ -5,6 +5,13 @@
 
 {# {{ form_row(offer.categoryOffer, { attr : { value : form.dataOffer.vars.value } }) }} #}
 
+
+
+{% set offer_prototype_value_id = form.offer.vars.prototype.value.vars.id %}
+{% set offer_prototype_postfix_id = form.offer.vars.prototype.postfix.vars.id %}
+{% set offer_prototype_article_id = form.offer.vars.prototype.article.vars.id %}
+
+
 {% set offer_prototype_category =  form_row(form.offer.vars.prototype.categoryOffer, { attr : { value : form.dataOffer.vars.value } }) %}
 
 {% set offer_prototype_image =  form_row(form.offer.vars.prototype.image.vars.prototype.file, { 'attr'  : { 'class' : 'd-none' } }) %}
@@ -77,9 +84,16 @@
 
     }) %}
 
+    {% set variation_prototype_value_id = form.offer.vars.prototype.variation.vars.prototype.value.vars.id %}
     {% set variation_prototype_value =  form_widget(form.offer.vars.prototype.variation.vars.prototype.value) %}
-    {% set variation_prototype_article =  form_row(form.offer.vars.prototype.variation.vars.prototype.article, { label : false, attr : { placeholder : 'Артикул' }}) %}
+
+    {% set variation_prototype_postfix_id =  form.offer.vars.prototype.variation.vars.prototype.postfix.vars.id %}
     {% set variation_prototype_postfix =  form_row(form.offer.vars.prototype.variation.vars.prototype.postfix, { label : false}) %}
+
+    {% set variation_prototype_article =  form_row(form.offer.vars.prototype.variation.vars.prototype.article, { label : false, attr : { placeholder : 'Артикул' }}) %}
+    {% set variation_prototype_article_id =  form.offer.vars.prototype.variation.vars.prototype.article.vars.id %}
+
+
     {% set variation_prototype_price =  form_widget(form.offer.vars.prototype.variation.vars.prototype.price.price, { attr: { 'placeholder' : 'Стоимость' } }) %}
     {% set variation_prototype_price_currency =  form_row(form.offer.vars.prototype.variation.vars.prototype.price.currency) %}
     {% set variation_prototype_quantity =  form_row(form.offer.vars.prototype.variation.vars.prototype.quantity.quantity, { attr: { placeholder: 'Наличие'|trans } }) %}
@@ -132,10 +146,15 @@
         }
 
     }) %}
-
+    {% set modification_prototype_value_id = form.offer.vars.prototype.variation.vars.prototype.modification.vars.prototype.value.vars.id %}
     {% set modification_prototype_value =  form_widget(form.offer.vars.prototype.variation.vars.prototype.modification.vars.prototype.value) %}
-    {% set modification_prototype_article =  form_row(form.offer.vars.prototype.variation.vars.prototype.modification.vars.prototype.article, { label : false, attr : { placeholder : 'Артикул' }}) %}
+
+    {% set modification_prototype_postfix_id = form.offer.vars.prototype.variation.vars.prototype.modification.vars.prototype.postfix.vars.id %}
     {% set modification_prototype_postfix =  form_row(form.offer.vars.prototype.variation.vars.prototype.modification.vars.prototype.postfix, { label : false}) %}
+
+    {% set modification_prototype_article =  form_row(form.offer.vars.prototype.variation.vars.prototype.modification.vars.prototype.article, { label : false, attr : { placeholder : 'Артикул' }}) %}
+    {% set modification_prototype_article_id =  form.offer.vars.prototype.variation.vars.prototype.modification.vars.prototype.article.vars.id %}
+
     {% set modification_prototype_price =  form_widget(form.offer.vars.prototype.variation.vars.prototype.modification.vars.prototype.price.price, { attr: { 'placeholder' : 'Стоимость' } }) %}
     {% set modification_prototype_price_currency =  form_row(form.offer.vars.prototype.variation.vars.prototype.modification.vars.prototype.price.currency) %}
     {% set modification_prototype_quantity =  form_row(form.offer.vars.prototype.variation.vars.prototype.modification.vars.prototype.quantity.quantity, { attr: { placeholder: 'Наличие'|trans } }) %}

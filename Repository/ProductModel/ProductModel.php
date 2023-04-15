@@ -481,7 +481,7 @@ final class ProductModel implements ProductModelInterface
 		
 		
 		/** Стоимость продукта */
-		$qb->addSelect("
+		/*$qb->addSelect("
 			CASE
 			   WHEN MIN(product_modification_price.price) > 0 THEN MIN(product_modification_price.price)
 			   WHEN MIN(product_variation_price.price) > 0 THEN MIN(product_variation_price.price)
@@ -490,7 +490,77 @@ final class ProductModel implements ProductModelInterface
 			   ELSE NULL
 			END AS product_price
 		"
-		);
+		);*/
+
+
+        /** Минимальная стоиомсть продукта */
+        $qb->addSelect("CASE
+                          
+                   
+                   /* СТОИМОСТЬ МОДИФИКАЦИИ */       
+        WHEN (ARRAY_AGG(
+                            DISTINCT product_modification_price.price ORDER BY product_modification_price.price
+                         ) 
+                         FILTER 
+                         (
+                            WHERE  product_modification_price.price > 0
+                         )
+                     )[1] > 0 
+                     
+                     THEN (ARRAY_AGG(
+                            DISTINCT product_modification_price.price ORDER BY product_modification_price.price
+                         ) 
+                         FILTER 
+                         (
+                            WHERE  product_modification_price.price > 0
+                         )
+                     )[1]
+         
+         
+         /* СТОИМОСТЬ ВАРИАНТА */
+         WHEN (ARRAY_AGG(
+                            DISTINCT product_variation_price.price ORDER BY product_variation_price.price
+                         ) 
+                         FILTER 
+                         (
+                            WHERE  product_variation_price.price > 0
+                         )
+                     )[1] > 0 
+                     
+                     THEN (ARRAY_AGG(
+                            DISTINCT product_variation_price.price ORDER BY product_variation_price.price
+                         ) 
+                         FILTER 
+                         (
+                            WHERE  product_variation_price.price > 0
+                         )
+                     )[1]
+         
+         /* СТОИМОСТЬ ТП */
+            WHEN (ARRAY_AGG(
+                            DISTINCT product_offer_price.price ORDER BY product_offer_price.price
+                         ) 
+                         FILTER 
+                         (
+                            WHERE  product_offer_price.price > 0
+                         )
+                     )[1] > 0 
+                     
+                     THEN (ARRAY_AGG(
+                            DISTINCT product_offer_price.price ORDER BY product_offer_price.price
+                         ) 
+                         FILTER 
+                         (
+                            WHERE  product_offer_price.price > 0
+                         )
+                     )[1]
+         
+			  
+			   WHEN product_price.price IS NOT NULL THEN product_price.price
+			   ELSE NULL
+			END AS product_price
+		"
+        );
 		
 		/** Валюта продукта */
 		/*$qb->addSelect("

@@ -562,13 +562,71 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
 			END AS product_image_cdn
 		"
 		);
-		
+
+
 		/** Минимальная стоиомсть продукта */
-		$qb->addSelect("
-			CASE
-			   WHEN MIN(product_modification_price.price) IS NOT NULL AND MIN(product_modification_price.price) > 0 THEN MIN(product_modification_price.price)
-			   WHEN MIN(product_variation_price.price) IS NOT NULL AND MIN(product_variation_price.price) > 0 THEN MIN(product_variation_price.price)
-			   WHEN MIN(product_offer_price.price) IS NOT NULL AND MIN(product_offer_price.price) > 0 THEN MIN(product_offer_price.price)
+		$qb->addSelect("CASE
+                          
+                   
+                   /* СТОИМОСТЬ МОДИФИКАЦИИ */       
+        WHEN (ARRAY_AGG(
+                            DISTINCT product_modification_price.price ORDER BY product_modification_price.price
+                         ) 
+                         FILTER 
+                         (
+                            WHERE  product_modification_price.price > 0
+                         )
+                     )[1] > 0 
+                     
+                     THEN (ARRAY_AGG(
+                            DISTINCT product_modification_price.price ORDER BY product_modification_price.price
+                         ) 
+                         FILTER 
+                         (
+                            WHERE  product_modification_price.price > 0
+                         )
+                     )[1]
+         
+         
+         /* СТОИМОСТЬ ВАРИАНТА */
+         WHEN (ARRAY_AGG(
+                            DISTINCT product_variation_price.price ORDER BY product_variation_price.price
+                         ) 
+                         FILTER 
+                         (
+                            WHERE  product_variation_price.price > 0
+                         )
+                     )[1] > 0 
+                     
+                     THEN (ARRAY_AGG(
+                            DISTINCT product_variation_price.price ORDER BY product_variation_price.price
+                         ) 
+                         FILTER 
+                         (
+                            WHERE  product_variation_price.price > 0
+                         )
+                     )[1]
+         
+         /* СТОИМОСТЬ ТП */
+            WHEN (ARRAY_AGG(
+                            DISTINCT product_offer_price.price ORDER BY product_offer_price.price
+                         ) 
+                         FILTER 
+                         (
+                            WHERE  product_offer_price.price > 0
+                         )
+                     )[1] > 0 
+                     
+                     THEN (ARRAY_AGG(
+                            DISTINCT product_offer_price.price ORDER BY product_offer_price.price
+                         ) 
+                         FILTER 
+                         (
+                            WHERE  product_offer_price.price > 0
+                         )
+                     )[1]
+         
+			  
 			   WHEN product_price.price IS NOT NULL THEN product_price.price
 			   ELSE NULL
 			END AS product_price
@@ -586,22 +644,7 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
 			END AS product_currency
 		"
 		);
-		
-		/* Категория */
-//		$qb->join(
-//			'product_event',
-//			ProductEntity\Category\ProductCategory::TABLE,
-//			'product_event_category',
-//			'product_event_category.event = product_event.id AND product_event_category.root = true'
-//		);
-		
-		
-		
-		
-		
-		//dd($filters);
-		
-		//dd($filters);
+
 		
 		$qb->leftJoin(
 			'product',
@@ -610,9 +653,7 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
 			'product_property.event = product.event AND product_property.field = category_section_field.id'
 		);
 		
-		
-		
-		
+
 		$qb->addSelect("JSON_AGG
 		( DISTINCT
 			
@@ -625,17 +666,13 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
 					'field_type', category_section_field.type,
 					'field_trans', category_section_field_trans.name,
 					'field_value', product_property.value
-				
 				)
 			
 		)
 			AS category_section_field"
 		);
-		
-		//dump($qb->fetchAllAssociative());
-		
+
 		return $this->paginator->fetchAllAssociative($qb);
-		//return $qb->fetchAllAssociative();
 	}
 	
 }

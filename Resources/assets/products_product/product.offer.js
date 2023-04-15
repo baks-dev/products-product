@@ -75,12 +75,10 @@ if ($btnAddOffer) {
 
 
         let $changeRoot = div.querySelector('[class^="change-root-"]');
-        if ($changeRoot)
-        {
+        if ($changeRoot) {
             $changeRoot.checked = true;
             $changeRoot.addEventListener('change', chanheOfferImageRoot);
         }
-
 
 
         /* Удаляем при клике фото торгового предложения */
@@ -112,22 +110,16 @@ if ($btnAddOffer) {
         (div.querySelector('.del-item-variation-image'))?.addEventListener('click', deleteVariationImage);
 
         /* События change-root image */
-         let changeRadio = div.querySelector('.change-variation-product_form_offer_' + index + '_variation_0');
-         if (changeRadio)
-         {
-             changeRadio.checked = true;
-             changeRadio.addEventListener('change', chanheVariationImageRoot);
-         }
+        let changeRadio = div.querySelector('.change-variation-product_form_offer_' + index + '_variation_0');
+        if (changeRadio) {
+            changeRadio.checked = true;
+            changeRadio.addEventListener('change', chanheVariationImageRoot);
+        }
 
         div.querySelector('.offer-variation-add-collection').addEventListener('click', addVariation);
 
 
-
-
-
-
-
-         /** МОДИФИКАЦИЯ */
+        /** МОДИФИКАЦИЯ */
 
         /* Событие Добавить модификатор множественного варианта */
         (div.querySelector('.variation-modification-add-collection'))?.addEventListener('click', addModification);
@@ -149,22 +141,14 @@ if ($btnAddOffer) {
 
         /* События change-root image */
         let changeRadioModification = div.querySelector('.change-modification-product_form_offer_' + index + '_variation_0_modification_0');
-        if (changeRadioModification)
-        {
+        if (changeRadioModification) {
             changeRadioModification.checked = true;
             changeRadioModification.addEventListener('change', chanheModificationImageRoot);
         }
 
 
-
-
-
-
-
-
-
-
-
+        /* Генератор артикулов  */
+        (div.querySelector('.article-generate'))?.addEventListener('click', articleGenerate);
 
         /* Вызываем предпросмотрт фото */
         offerPreloadPhoto(div);
@@ -361,8 +345,7 @@ function addVariation() {
 
     /* События change-root image */
     let changeRadio = div.querySelector('.change-variation-product_form_offer_' + offer + '_variation_' + index);
-    if (changeRadio)
-    {
+    if (changeRadio) {
         changeRadio.checked = true;
         changeRadio.addEventListener('change', chanheVariationImageRoot);
     }
@@ -378,7 +361,7 @@ function addVariation() {
 
 
     /* Делаем замену если модификация - справочник */
-    let $inputValueModification = div.querySelector('#product_form_offer_' + offer + '_variation_'+index+'_modification_0_value');
+    let $inputValueModification = div.querySelector('#product_form_offer_' + offer + '_variation_' + index + '_modification_0_value');
     replaceReference($inputValueModification, 'product_form_data-modification-reference');
 
 
@@ -389,9 +372,8 @@ function addVariation() {
     (div.querySelector('.del-item-modification-image'))?.addEventListener('click', deleteModificationImage);
 
     /* События change-root image */
-    let changeRadioModification = div.querySelector('.change-modification-product_form_offer_' + offer + '_variation_'+index+'_modification_0');
-    if (changeRadioModification)
-    {
+    let changeRadioModification = div.querySelector('.change-modification-product_form_offer_' + offer + '_variation_' + index + '_modification_0');
+    if (changeRadioModification) {
         changeRadioModification.checked = true;
         changeRadioModification.addEventListener('change', chanheModificationImageRoot);
     }
@@ -399,17 +381,19 @@ function addVariation() {
 
     /* Выделяем Root если элемент добавлен новый */
     let $chanheModificationImageRoot = div.querySelectorAll('[class^="change-modification-"]');
-    if ($chanheModificationImageRoot.length === 1)
-    {
+    if ($chanheModificationImageRoot.length === 1) {
         $chanheModificationImageRoot.forEach(function (item) {
             item.checked = true;
         });
     }
 
 
-
     let $collection = document.getElementById(this.dataset.collection);
     $collection.append(div);
+
+
+    /* Генератор артикулов  */
+    (div.querySelector('.article-generate'))?.addEventListener('click', articleGenerate);
 
     /* Вызываем предпросмотрт фото */
     offerPreloadPhoto(div);
@@ -553,9 +537,7 @@ function chanheVariationImageRoot() {
 }
 
 
-
 /* MODIFICATION *********************************************************************************************************  **/
-
 
 
 document.querySelectorAll('.variation-modification-add-collection').forEach(function (item) {
@@ -601,16 +583,17 @@ function addModification() {
 
     /* События change-root image */
     let changeRadio = div.querySelector('.change-modification-product_form_offer_' + offer + '_variation_' + variation + '_modification_' + index);
-    if (changeRadio)
-    {
+    if (changeRadio) {
         changeRadio.checked = true;
         changeRadio.addEventListener('change', chanheModificationImageRoot);
     }
 
 
-
     let $collection = document.getElementById(this.dataset.collection);
     $collection.append(div);
+
+    /* Генератор артикулов  */
+    (div.querySelector('.article-generate'))?.addEventListener('click', articleGenerate);
 
     /* Вызываем предпросмотрт фото */
     offerPreloadPhoto(div);
@@ -673,8 +656,7 @@ function addModificationImage() {
 
     /* Выделяем Root если элемент добавлен новый */
     $chanheModificationImageRoot = div.querySelectorAll('[class^="change-modification-"]');
-    if ($chanheModificationImageRoot.length === 1)
-    {
+    if ($chanheModificationImageRoot.length === 1) {
         $chanheModificationImageRoot.forEach(function (item) {
             item.checked = true;
         });
@@ -711,7 +693,6 @@ function addModificationImage() {
     });*/
 
 }
-
 
 
 /** Удалить фото модификации */
@@ -765,14 +746,6 @@ function chanheModificationImageRoot() {
 }
 
 
-
-
-
-
-
-
-
-
 function offerPreloadPhoto(div) {
     //let inputElement = div.querySelector('input[type="file"]');
     let inputElements = div.querySelectorAll('input[type="file"]');
@@ -798,7 +771,6 @@ function offerPreloadPhoto(div) {
             }
         });
     });
-
 
 
 }
@@ -848,4 +820,81 @@ function replaceReference($replace, $id) {
         //}
 
     }
+}
+
+document.querySelectorAll('.article-generate').forEach(function (item) {
+    item.addEventListener('click', articleGenerate);
+});
+
+function articleGenerate() {
+
+    let generate = '';
+
+    /**Получаем артикул товара */
+    product = document.getElementById('product_form_info_article');
+    if (product) {
+        generate += product.value;
+    }
+
+    if (this.dataset.offer) {
+        let article = document.getElementById(this.dataset.offer);
+
+        if (article && article.value.length) {
+            generate += (generate.length ? '-' : '') + article.value;
+        }
+
+    }
+
+
+    if (this.dataset.offerpostfix) {
+        article = document.getElementById(this.dataset.offerpostfix);
+
+        if (article && article.value.length) {
+            generate += (generate.length ? '-' : '') + article.value;
+        }
+    }
+
+    if (this.dataset.variation) {
+        article = document.getElementById(this.dataset.variation);
+
+        if (article && article.value.length) {
+            generate += (generate.length ? '-' : '') + article.value;
+        }
+    }
+
+    if (this.dataset.variationpostfix) {
+        article = document.getElementById(this.dataset.variationpostfix);
+
+        if (article && article.value.length) {
+            generate += (generate.length ? '-' : '') + article.value;
+        }
+    }
+
+
+    if (this.dataset.modification) {
+        article = document.getElementById(this.dataset.modification);
+
+        if (article && article.value.length) {
+            generate += (generate.length ? '-' : '') + article.value;
+        }
+    }
+
+
+    if (this.dataset.modificationpostfix) {
+        article = document.getElementById(this.dataset.modificationpostfix);
+
+        if (article && article.value.length) {
+            generate += (generate.length ? '-' : '') + article.value;
+        }
+    }
+
+
+    result = document.getElementById(this.dataset.id);
+
+    if (result) {
+        result.value = generate;
+    }
+
+
+    console.log(this);
 }
