@@ -32,7 +32,9 @@ if ($btnAddOffer) {
     $btnAddOffer.addEventListener('click', function () {
 
         /* получаем прототип коллекции  */
-        let newForm = this.dataset.prototype;
+        /*let newForm = this.dataset.prototype;*/
+        let newForm =  document.getElementById(this.dataset.prototype).dataset.prototype;
+
         let index = this.dataset.index * 1;
 
         newForm = newForm.replace(/__offers__/g, index);
@@ -198,7 +200,9 @@ function addOfferImage() {
 
 
     /* Получаем прототип формы */
-    let newForm = this.dataset.prototype;
+    //let newForm = this.dataset.prototype;
+    let newForm = document.getElementById(this.dataset.prototype).dataset.prototype;
+
     let index = this.dataset.index * 1;
     let offer = this.dataset.offer * 1;
 
@@ -311,7 +315,8 @@ document.querySelectorAll('.offer-variation-add-collection').forEach(function (i
 function addVariation() {
 
     /* Получаем прототип формы */
-    let newForm = this.dataset.prototype;
+    //let newForm = this.dataset.prototype;
+    let newForm = document.getElementById(this.dataset.prototype).dataset.prototype;
     let index = this.dataset.index * 1;
     let offer = this.dataset.offer * 1;
 
@@ -426,7 +431,9 @@ function addVariationImage() {
 
 
     /* Получаем прототип формы */
-    let newForm = this.dataset.prototype;
+    //let newForm = this.dataset.prototype;
+    let newForm = document.getElementById(this.dataset.prototype).dataset.prototype;
+
     let index = this.dataset.index * 1;
     let offer = this.dataset.offer * 1;
     let variation = this.dataset.variation * 1;
@@ -547,7 +554,9 @@ document.querySelectorAll('.variation-modification-add-collection').forEach(func
 function addModification() {
 
     /* Получаем прототип формы */
-    let newForm = this.dataset.prototype;
+    //let newForm = this.dataset.prototype;
+    let newForm = document.getElementById(this.dataset.prototype).dataset.prototype;
+
     let index = this.dataset.index * 1;
     let offer = this.dataset.offer * 1;
     let variation = this.dataset.variation * 1;
@@ -624,7 +633,9 @@ document.querySelectorAll('.modification-image-add-collection').forEach(function
 function addModificationImage() {
 
     /* Получаем прототип формы */
-    let newForm = this.dataset.prototype;
+    //let newForm = this.dataset.prototype;
+    let newForm = document.getElementById(this.dataset.prototype).dataset.prototype;
+
     let index = this.dataset.index * 1;
     let offer = this.dataset.offer * 1;
     let variation = this.dataset.variation * 1;

@@ -130,7 +130,7 @@ final class ProductOffersVariationModificationCollectionForm extends AbstractTyp
 								'value',
 								$reference->form(),
 								[
-									'label' => false,
+									'label' => $modification->name,
 									'required' => false,
 									//'mapped' => false,
 									//'attr' => [ 'data-select' => 'select2' ],

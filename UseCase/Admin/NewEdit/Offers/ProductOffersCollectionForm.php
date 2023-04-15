@@ -129,15 +129,12 @@ final class ProductOffersCollectionForm extends AbstractType
 
 						if($reference)
 						{
-							
-							//dd($reference->choice());
-							
 							$form->add
 							(
 								'value',
 								$reference->form(),
 								[
-									'label' => false,
+									'label' => $offer?->name,
 									'required' => false,
 									//'mapped' => false,
 									//'attr' => [ 'data-select' => 'select2' ],

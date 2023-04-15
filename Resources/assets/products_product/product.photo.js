@@ -92,7 +92,8 @@ if ($addButtonPhoto) {
 
 
         /* получаем прототип коллекции  */
-        let newForm = $addButtonPhoto.dataset.prototype;
+        //let newForm = $addButtonPhoto.dataset.prototype;
+        let newForm =  document.getElementById($addButtonPhoto.dataset.prototype).dataset.prototype;
         let index = $addButtonPhoto.dataset.index * 1;
 
         if (index === 6) {
