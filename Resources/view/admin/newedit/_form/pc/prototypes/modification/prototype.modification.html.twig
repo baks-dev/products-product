@@ -5,7 +5,7 @@
 
 {# Фото вариантов торгового предложения #}
 		{% if modification_first.image is defined %}
-            {{ prototype_modification_image }}
+            {{ prototype_modification_collection }}
         {% endif %}
 
 <div class='d-flex justify-content-between align-items-end gap-3'>
@@ -32,7 +32,9 @@
 
     {% if modification_first.postfix is defined %}
         <div class='w-75'>
-            {{ form_row(form.offer.vars.prototype.variation.vars.prototype.modification.vars.prototype.postfix, { label : false}) }}
+            {{ form_row(form.offer.vars.prototype.variation.vars.prototype.modification.vars.prototype.postfix,
+                { label : false, attr : { placeholder :  modification_first.postfix.vars.attr.placeholder }
+                }) }}
         </div>
     {% endif %}
 

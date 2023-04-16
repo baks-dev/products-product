@@ -21,16 +21,7 @@
 {% if form.offer.children|first %}
 
 
-
     {% set modification_first = ((form.offer.children|first).variation.children|first).modification.children|first %}
-
-
-
-    {% set prototype_modification %}
-        {{ include(_self|replace({ "form.html.twig": "prototypes/modification/prototype.modification.html.twig" })) }}
-    {% endset %}
-
-    <div id="prototype.modification" data-prototype="{{ prototype_modification|e('html_attr') }}"></div>
 
     {% if modification_first.image is defined %}
 
@@ -46,16 +37,22 @@
 
     {% endif %}
 
+    {% set prototype_modification %}
+        {{ include(_self|replace({ "form.html.twig": "prototypes/modification/prototype.modification.html.twig" })) }}
+    {% endset %}
+
+
+    <div id="prototype.modification" data-prototype="{{ prototype_modification|e('html_attr') }}"></div>
+
+
+
+
+
+
 
     {# ПРОТОТИПЫ МНОЖЕСТВЕННЫХ ВАРИАНТОВ ТОРГОВЫХ ПРЕДЛОЖЕНИЙ #}
 
     {% set variation_first = (form.offer.children|first).variation.children|first %}
-
-    {% set prototype_variation %}
-        {{ include(_self|replace({ "form.html.twig": "prototypes/variation/prototype.variation.html.twig" })) }}
-    {% endset %}
-
-    <div id="prototype.variation" data-prototype="{{ prototype_variation|e('html_attr') }}"></div>
 
     {% if variation_first.image is defined %}
 
@@ -72,16 +69,19 @@
     {% endif %}
 
 
+    {% set prototype_variation %}
+        {{ include(_self|replace({ "form.html.twig": "prototypes/variation/prototype.variation.html.twig" })) }}
+    {% endset %}
+
+    <div id="prototype.variation" data-prototype="{{ prototype_variation|e('html_attr') }}"></div>
+
+
+
+
 
     {# ПРОТОТИПЫ ТОРГОВЫХ ПРЕДЛОЖЕНИЙ #}
 
     {% set offer_first = (form.offer.children|first) %}
-
-    {% set prototype_offer %}
-        {{ include(_self|replace({ "form.html.twig": "prototypes/offer/prototype.offer.html.twig" })) }}
-    {% endset %}
-
-    <div id="prototype.offer" data-prototype="{{ prototype_offer|e('html_attr') }}"></div>
 
     {% if offer_first.image is defined %}
 
@@ -96,6 +96,14 @@
         <div id="prototype.offer.image" data-prototype="{{ prototype_offer_image|e('html_attr') }}"></div>
 
     {% endif %}
+
+    {% set prototype_offer %}
+        {{ include(_self|replace({ "form.html.twig": "prototypes/offer/prototype.offer.html.twig" })) }}
+    {% endset %}
+
+    <div id="prototype.offer" data-prototype="{{ prototype_offer|e('html_attr') }}"></div>
+
+
 
 
 

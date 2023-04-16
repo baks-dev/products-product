@@ -8,12 +8,14 @@
 			</h6>
 		</div>
 	</div>
-	
+
+
 	<div class="card-body">
 		<div id="collection_{{ form.offer.vars.prototype.variation.vars.prototype.modification.vars.prototype.vars.id }}" class="d-flex gap-5 flex-wrap">
 			{#{% for image in modification.image %}#}
 			<div id='item_{{ form.offer.vars.prototype.variation.vars.prototype.modification.vars.prototype.image.vars.prototype.vars.id|replace({ '__modification_image__' : 0 }) }}'>
 				{#{{ include(_self|replace({ "prototype.collection.html.twig": "prototype.image.html.twig" }))|replace({ '__modification_image__' : 0 })|raw }}#}
+				{{ prototype_modification_image|replace({ '__modification_image__' : 0 })|raw }}
 			</div>
 			{#{% endfor %}#}
 		</div>

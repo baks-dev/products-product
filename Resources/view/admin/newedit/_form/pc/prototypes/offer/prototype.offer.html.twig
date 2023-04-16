@@ -30,7 +30,7 @@
 		
 		{% if (form.offer.children|first).image is defined %}
 			{#{{ include(_self|replace({ "prototype.offer.html.twig": "image/prototype.collection.html.twig"})) }}#}
-			{{ prototype_offer_image }}
+			{{ prototype_offer_collection }}
 		{% endif %}
 
 
@@ -51,16 +51,44 @@
 						{{ form_widget(form.offer.vars.prototype.value, { attr:  { 'placeholder' : form.offer.vars.prototype.value.vars.label } }) }}
 					</div>
 
-					{% if form.offer.postfix is defined %}
+
+					{% if (form.offer|first).postfix is defined %}
 						<div class='w-75'>
-							{{ form_row(form.offer.vars.prototype.postfix, { label : false } ) }}
+							{{ form_row(form.offer.vars.prototype.postfix, {
+								label : false,
+								attr : { placeholder: (form.offer|first).postfix.vars.attr.placeholder }
+							} ) }}
 						</div>
 					{% endif %}
-					
-					{% if form.offer.article is defined %}
-						<div class='w-75'>
+
+
+					{% if (form.offer|first).article is defined %}
+
+						<div class='w-100 d-flex align-items-end'>
+
+							<div class="mb-3">
+								{# Генератор артикула #}
+								<button type="button" class="btn btn-sm btn-link ps-0 article-generate" title="Генерировать артикул"
+
+										data-id="{{ form.offer.vars.prototype.article.vars.id }}"
+										data-offer="{{ form.offer.vars.prototype.value.vars.id }}"
+										data-offerpostfix="{{ form.offer.vars.prototype.postfix.vars.id }}"
+
+								>
+									<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
+										 class="bi bi-box-arrow-in-right" viewBox="0 0 16 16">
+										<path fill-rule="evenodd"
+											  d="M6 3.5a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 0-1 0v2A1.5 1.5 0 0 0 6.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-8A1.5 1.5 0 0 0 5 3.5v2a.5.5 0 0 0 1 0v-2z"/>
+										<path fill-rule="evenodd"
+											  d="M11.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H1.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/>
+									</svg>
+								</button>
+							</div>
+
 							{{ form_row(form.offer.vars.prototype.article, { label : false, attr : { placeholder : 'Артикул' }} ) }}
+
 						</div>
+
 					{% endif %}
 
 					

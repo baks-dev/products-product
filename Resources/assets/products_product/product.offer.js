@@ -111,7 +111,7 @@ if ($btnAddOffer) {
         /* Удаляем при клике фото множественного варианта предложения */
         (div.querySelector('.del-item-variation-image'))?.addEventListener('click', deleteVariationImage);
 
-        /* События change-root image */
+        /* События change-root image ВАРИАНТА */
         let changeRadio = div.querySelector('.change-variation-product_form_offer_' + index + '_variation_0');
         if (changeRadio) {
             changeRadio.checked = true;
@@ -544,6 +544,16 @@ function chanheVariationImageRoot() {
 }
 
 
+
+
+
+
+
+
+
+
+
+
 /* MODIFICATION *********************************************************************************************************  **/
 
 
@@ -666,12 +676,13 @@ function addModificationImage() {
 
 
     /* Выделяем Root если элемент добавлен новый */
-    $chanheModificationImageRoot = div.querySelectorAll('[class^="change-modification-"]');
+    /*$chanheModificationImageRoot = div.querySelectorAll('[class^="change-modification-"]');
+
     if ($chanheModificationImageRoot.length === 1) {
         $chanheModificationImageRoot.forEach(function (item) {
             item.checked = true;
         });
-    }
+    }*/
 
     //console.log(document.querySelectorAll('[class^="change-modification-"]').length);
 
@@ -746,9 +757,9 @@ document.querySelectorAll('[class^="change-modification-"]').forEach(function (i
 
 function chanheModificationImageRoot() {
 
-    let variation_photo_collection = document.getElementById('collection_' + this.dataset.index);
+    let modification_photo_collection = document.getElementById('collection_' + this.dataset.index);
 
-    variation_photo_collection.querySelectorAll('.change-modification-' + this.dataset.index).forEach(function (rootChack, i, arr) {
+    modification_photo_collection.querySelectorAll('.change-modification-' + this.dataset.index).forEach(function (rootChack, i, arr) {
         rootChack.checked = false;
     });
 
