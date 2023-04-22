@@ -21,33 +21,10 @@
  *  THE SOFTWARE.
  */
 
-namespace BaksDev\Products\Product\Type\Id;
+namespace BaksDev\Products\Product\Repository\ProductChoice;
 
-use BaksDev\Core\Type\UidType\Uid;
-use Symfony\Component\Uid\AbstractUid;
-
-final class ProductUid extends Uid
+interface ProductChoiceInterface
 {
-    public const TYPE = 'product_id';
-
-    private mixed $attr;
-
-    private mixed $option;
-
-    public function __construct(AbstractUid|string|null $value = null, mixed $attr = null, mixed $option = null)
-    {
-        parent::__construct($value);
-        $this->attr = $attr;
-        $this->option = $option;
-    }
-
-    public function getAttr(): mixed
-    {
-        return $this->attr;
-    }
-
-    public function getOption(): mixed
-    {
-        return $this->option;
-    }
+    /** Метод возвращает все идентификаторы продуктов с названием */
+    public function fetchAllProduct(): ?array;
 }

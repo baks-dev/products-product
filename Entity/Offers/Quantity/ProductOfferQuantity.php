@@ -28,6 +28,7 @@ use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use InvalidArgumentException;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /* Стоимость торгового предложения */
 
@@ -39,16 +40,20 @@ class ProductOfferQuantity extends EntityEvent
 	public const TABLE = 'product_offer_quantity';
 	
 	/** ID торгового предложения */
+    #[Assert\NotBlank]
+    #[Assert\Type(ProductOffer::class)]
 	#[ORM\Id]
 	#[ORM\OneToOne(inversedBy: 'quantity', targetEntity: ProductOffer::class)]
 	#[ORM\JoinColumn(name: 'offer', referencedColumnName: "id")]
 	private ProductOffer $offer;
 	
 	/** В наличие */
+    #[Assert\Type('integer')]
 	#[ORM\Column(type: Types::INTEGER, options: ['default' => 0])]
 	private ?int $quantity = 0; // 0 - нет в наличие
 	
 	/** Резерв */
+    #[Assert\Type('integer')]
 	#[ORM\Column(type: Types::INTEGER, options: ['default' => 0])]
 	private ?int $reserve = 0;
 	

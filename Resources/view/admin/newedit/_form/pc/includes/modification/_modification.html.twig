@@ -26,12 +26,18 @@
 
 
 	<div class='w-100'>
-		{{ form_widget(modification.value, { attr:  { placeholder : modification.value.vars.label } }) }}
+
+		{{ form_row(modification.value,
+			modification.value.vars.data and loop.first ? { label : modification.value.vars.label } : { label : false, attr:  { placeholder : modification.value.vars.label } }
+		) }}
 	</div>
+
 
 	{% if modification.postfix is defined %}
 		<div class='w-75'>
-			{{ form_row(modification.postfix, { label : modification.postfix.vars.data ? modification.postfix.vars.attr.placeholder : false } ) }}
+			{{ form_row(modification.postfix,
+				modification.postfix.vars.data and loop.first ? { label : modification.postfix.vars.attr.placeholder } : { label : false }
+			) }}
 		</div>
 	{% endif %}
 
@@ -66,7 +72,9 @@
 				</button>
 			</div>
 
-			{{ form_row(modification.article, modification.article.vars.data ? { label : 'Артикул' } : { label : false, attr : { placeholder : 'Артикул' }} ) }}
+			{{ form_row(modification.article,
+				modification.article.vars.data and loop.first ? { label : 'Артикул' } : { label : false, attr : { placeholder : 'Артикул' }}
+			) }}
 		</div>
 
 
@@ -89,7 +97,8 @@
 							</svg>
 						</span>
 
-			{{ form_widget(modification.price.price, { attr: { 'placeholder' : 'Стоимость' } }) }}
+			{{ form_widget(modification.price.price, { attr: { 'placeholder' : 'Стоимость' } }
+			) }}
 
 		</div>
 
@@ -99,11 +108,15 @@
 
 	{% if modification.quantity is defined %}
 		<div class="w-75">
-			{{ form_row(modification.quantity.quantity, { attr: { placeholder: 'Наличие'|trans } }) }}
+			{{ form_row(modification.quantity.quantity,
+				loop.first ? { label : 'Наличие' } : { label : false, attr : { placeholder : 'Наличие' }}
+			) }}
 		</div>
 
 		<div class="w-75">
-			{{ form_row(modification.quantity.reserve, { attr: { placeholder: 'Резерв'|trans } }) }}
+			{{ form_row(modification.quantity.reserve,
+				loop.first ? { label : 'Резерв' } : { label : false, attr : { placeholder : 'Резерв' }}
+			) }}
 		</div>
 
 	{% endif %}

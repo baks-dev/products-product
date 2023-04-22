@@ -29,6 +29,7 @@ use BaksDev\Core\Entity\EntityEvent;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use InvalidArgumentException;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'product_categories_product')]
@@ -37,17 +38,23 @@ class ProductCategory extends EntityEvent
 	public const TABLE = "product_categories_product";
 	
 	/** ID события */
+    #[Assert\NotBlank]
+    #[Assert\Type(ProductEvent::class)]
 	#[ORM\Id]
 	#[ORM\ManyToOne(targetEntity: ProductEvent::class, inversedBy: "category")]
 	#[ORM\JoinColumn(name: 'event', referencedColumnName: "id")]
 	private ProductEvent $event;
 	
 	/** ID Category */
+    #[Assert\NotBlank]
+    #[Assert\Uuid]
+    #[Assert\Type(ProductCategoryUid::class)]
 	#[ORM\Id]
 	#[ORM\Column(type: ProductCategoryUid::TYPE, nullable: false)]
 	private ProductCategoryUid $category;
 	
 	/** Корневая категория */
+    #[Assert\Type('bool')]
 	#[ORM\Column(type: Types::BOOLEAN, nullable: false)]
 	private bool $root = false;
 	

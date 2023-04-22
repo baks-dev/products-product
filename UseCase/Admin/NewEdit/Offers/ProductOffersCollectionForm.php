@@ -93,6 +93,8 @@ final class ProductOffersCollectionForm extends AbstractType
         $builder->add('postfix', TextType::class);
 		
 		$builder->add('article', TextType::class);
+
+
 		
 		$builder->add('value', TextType::class, ['label' => $offer?->name, 'attr' => [ 'class' => 'mb-3' ]]);
 		
@@ -143,7 +145,6 @@ final class ProductOffersCollectionForm extends AbstractType
 						}
 					}
 
-
                     if ($offer->postfix)
                     {
                         $form->add('postfix', TextType::class, ['attr' => ['placeholder' => $offer->postfixName]]);
@@ -186,7 +187,6 @@ final class ProductOffersCollectionForm extends AbstractType
 		
 		if($variation)
 		{
-			
 			/** Множественные варианты торгового предложения */
 			$builder->add('variation', CollectionType::class, [
 				'entry_type' => Variation\ProductOffersVariationCollectionForm::class,
@@ -202,7 +202,9 @@ final class ProductOffersCollectionForm extends AbstractType
 				'prototype_name' => '__offer_variation__',
 			]);
 		}
-		
+
+
+
 		$builder->add('DeleteOffer', ButtonType::class, ['label_html' => true,]);
 		
 	}

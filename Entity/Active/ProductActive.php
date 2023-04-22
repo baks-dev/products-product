@@ -30,6 +30,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Exception;
 use InvalidArgumentException;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /* Статусы активности Продукта */
 
@@ -43,16 +44,20 @@ class ProductActive extends EntityEvent
 	public const TABLE = 'product_active';
 	
 	/** ID события */
+    #[Assert\NotBlank]
+    #[Assert\Type(ProductEvent::class)]
 	#[ORM\Id]
 	#[ORM\OneToOne(inversedBy: 'active', targetEntity: ProductEvent::class, cascade: ['persist'])]
 	#[ORM\JoinColumn(name: 'event', referencedColumnName: 'id')]
 	private ProductEvent $event;
 	
 	/** Статус активности товара */
+    #[Assert\Type('bool')]
 	#[ORM\Column(name: 'active', type: Types::BOOLEAN, nullable: false)]
 	private bool $active = true;
 	
 	/** Начало активности */
+    #[Assert\NotBlank]
 	#[ORM\Column(name: 'active_from', type: Types::DATETIME_IMMUTABLE, nullable: false)]
 	private DateTimeImmutable $activeFrom;
 	

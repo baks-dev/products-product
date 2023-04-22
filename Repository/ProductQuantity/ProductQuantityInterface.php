@@ -21,33 +21,15 @@
  *  THE SOFTWARE.
  */
 
-namespace BaksDev\Products\Product\Type\Id;
+namespace BaksDev\Products\Product\Repository\ProductQuantity;
 
-use BaksDev\Core\Type\UidType\Uid;
-use Symfony\Component\Uid\AbstractUid;
+use BaksDev\Products\Product\Entity\Price\ProductPrice;
+use BaksDev\Products\Product\Type\Id\ProductUid;
 
-final class ProductUid extends Uid
+interface ProductQuantityInterface
 {
-    public const TYPE = 'product_id';
-
-    private mixed $attr;
-
-    private mixed $option;
-
-    public function __construct(AbstractUid|string|null $value = null, mixed $attr = null, mixed $option = null)
-    {
-        parent::__construct($value);
-        $this->attr = $attr;
-        $this->option = $option;
-    }
-
-    public function getAttr(): mixed
-    {
-        return $this->attr;
-    }
-
-    public function getOption(): mixed
-    {
-        return $this->option;
-    }
+    /** Метод возвращает количественный учет продукта */
+    public function getProductQuantity(
+        ProductUid $product
+    ): ?ProductPrice;
 }

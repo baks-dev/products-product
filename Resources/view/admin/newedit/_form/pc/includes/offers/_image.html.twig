@@ -2,8 +2,7 @@
 
 			{#{% for image in offer.image %}#}
 				
-				
-				
+		
 				<div id='item_{{ image.vars.id }}'>
 					
 					{% set img_path = image.vars.data.cdn is defined and image.vars.data.cdn == true ? cdn_host : '' %}

@@ -185,7 +185,9 @@ final class ProductForm extends AbstractType
 			'allow_add' => true,
 			'prototype_name' => '__properties__',
 		]);
-		
+
+
+
 		$builder->addEventListener(
 			FormEvents::PRE_SET_DATA,
 			function(FormEvent $event) use ($propertyCategory) {
@@ -288,6 +290,8 @@ final class ProductForm extends AbstractType
 					/* @var ProductDTO $data */
 					$data = $event->getData();
 					$form = $event->getForm();
+
+
 					
 					if(!empty($offersCategory))
 					{
@@ -312,35 +316,12 @@ final class ProductForm extends AbstractType
 										'attr' => ['style' => 'display: none;'],
 									]
 								);
-								
-							
-								//								$form
-//									->add('data-offer-reference', ChoiceType::class, [
-//										'choices' => $reference->choice(),
-//										'choice_value' => function($choice) {
-//											return $choice?->getType()->value;
-//										},
-//										'choice_label' => function($choice) {
-//											return $choice?->getType()->value;
-//										},
-//
-//										//'choice_translation_domain' => 'reference.'.$offer->reference,
-//										'required' => false,
-//										'label' => false,
-//										'expanded' => false,
-//										'multiple' => false,
-//										'mapped' => false,
-//										'placeholder' => 'placeholder',
-//										'translation_domain' => $reference->domain(),
-//										'attr' => ['style' => 'display: none;'],
-//									])
-//								;
-								
-								
-								
+
 							}
 						}
 					}
+
+
 					
 					if(!empty($variationCategory))
 					{
@@ -371,35 +352,11 @@ final class ProductForm extends AbstractType
 									]
 								);
 								
-								
-								
-								
-//								$form
-//									->add('data-variation-reference', ChoiceType::class, [
-//										'choices' => $reference->choice(),
-//										'choice_value' => function($choice) {
-//											return $choice?->getType()->value;
-//										},
-//										'choice_label' => function($choice) {
-//											return $choice?->getType()->value;
-//										},
-//
-//										//'choice_translation_domain' => 'reference.'.$offer->reference,
-//
-//										'required' => false,
-//										'label' => false,
-//										'expanded' => false,
-//										'multiple' => false,
-//										'mapped' => false,
-//										'placeholder' => 'placeholder',
-//										'translation_domain' => $reference->domain(),
-//										'attr' => ['style' => 'display: none;'],
-//									])
-//								;
+
 							}
 						}
 					}
-					
+
 					if(!empty($modificationCategory))
 					{
 						/* Создаем свойство с идентификатором модификации для прототипа */
@@ -429,41 +386,20 @@ final class ProductForm extends AbstractType
 										'attr' => ['style' => 'display: none;'],
 									]
 								);
-								
-								//dd($reference->form());
-								
-//								$form
-//									->add('data-modification-reference', ChoiceType::class, [
-//										'choices' => $reference->choice(),
-//										'choice_value' => function($choice) {
-//											return $choice?->getType()->value;
-//										},
-//										'choice_label' => function($choice) {
-//											return $choice?->getType()->value;
-//										},
-//
-//										//'choice_translation_domain' => 'reference.'.$offer->reference,
-//
-//										'required' => false,
-//										'label' => false,
-//										'expanded' => false,
-//										'multiple' => false,
-//										'mapped' => false,
-//										'placeholder' => 'placeholder',
-//										'translation_domain' => $reference->domain(),
-//										'attr' => ['style' => 'display: none;'],
-//									])
-//								;
+
+
 							}
 						}
 					}
+
+
 					
 					if(!empty($offersCategory) && $data->getOffer()->isEmpty())
 					{
 						
 						$ProductOffersCollectionDTO = new NewEdit\Offers\ProductOffersCollectionDTO();
 						$ProductOffersCollectionDTO->setCategoryOffer($offersCategory->id);
-						
+
 						if($offersCategory->image)
 						{
 							$ProductOfferImageCollectionDTO = new NewEdit\Offers\Image\ProductOfferImageCollectionDTO();
@@ -473,7 +409,7 @@ final class ProductForm extends AbstractType
 
 						if($variationCategory)
 						{
-							
+
 							$ProductOffersVariationCollectionDTO = new NewEdit\Offers\Variation\ProductOffersVariationCollectionDTO(
 							);
 							$ProductOffersVariationCollectionDTO->setCategoryVariation($variationCategory->id);
@@ -488,7 +424,7 @@ final class ProductForm extends AbstractType
 							}
 							
 							$ProductOffersCollectionDTO->addVariation($ProductOffersVariationCollectionDTO);
-							
+
 							
 							if($modificationCategory)
 							{
@@ -516,7 +452,6 @@ final class ProductForm extends AbstractType
 
 						$data->addOffer($ProductOffersCollectionDTO);
 					}
-					
 				}
 			);
 		}

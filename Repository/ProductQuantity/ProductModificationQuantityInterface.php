@@ -21,33 +21,22 @@
  *  THE SOFTWARE.
  */
 
-namespace BaksDev\Products\Product\Type\Id;
+namespace BaksDev\Products\Product\Repository\ProductQuantity;
 
-use BaksDev\Core\Type\UidType\Uid;
-use Symfony\Component\Uid\AbstractUid;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Quantity\ProductOfferVariationModificationQuantity;
+use BaksDev\Products\Product\Type\Id\ProductUid;
+use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
+use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductOfferVariationConst;
+use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductOfferVariationModificationConst;
 
-final class ProductUid extends Uid
+interface ProductModificationQuantityInterface
 {
-    public const TYPE = 'product_id';
+    /** Метод возвращает количественный учет модификации множественного варианта */
 
-    private mixed $attr;
-
-    private mixed $option;
-
-    public function __construct(AbstractUid|string|null $value = null, mixed $attr = null, mixed $option = null)
-    {
-        parent::__construct($value);
-        $this->attr = $attr;
-        $this->option = $option;
-    }
-
-    public function getAttr(): mixed
-    {
-        return $this->attr;
-    }
-
-    public function getOption(): mixed
-    {
-        return $this->option;
-    }
+    public function getProductModificationQuantity(
+        ProductUid $product,
+        ProductOfferConst $offer,
+        ProductOfferVariationConst $variation,
+        ProductOfferVariationModificationConst $modification
+    ): ?ProductOfferVariationModificationQuantity;
 }

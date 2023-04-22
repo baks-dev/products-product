@@ -31,7 +31,7 @@ use BaksDev\Products\Product\Type\File\ProductFileUid;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use InvalidArgumentException;
-use RuntimeException;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'product_files')]
@@ -40,6 +40,8 @@ class ProductFiles extends EntityEvent implements UploadEntityInterface
 	public const TABLE = 'product_files';
 	
 	/** ID */
+    #[Assert\NotBlank]
+    #[Assert\Uuid]
 	#[ORM\Id]
 	#[ORM\Column(type: ProductFileUid::TYPE)]
 	private ProductFileUid $id;
@@ -50,18 +52,22 @@ class ProductFiles extends EntityEvent implements UploadEntityInterface
 	private ProductEvent $event;
 	
 	/** Название директории */
+    #[Assert\NotBlank]
 	#[ORM\Column(type: ProductEventUid::TYPE, nullable: false)]
 	private ProductEventUid $dir;
 	
 	/** Название файла */
+    #[Assert\NotBlank]
 	#[ORM\Column(type: Types::STRING, length: 100)]
 	private string $name;
 	
 	/** Расширение файла */
+    #[Assert\NotBlank]
 	#[ORM\Column(type: Types::STRING, length: 64)]
 	private string $ext;
 	
 	/** Размер файла */
+    #[Assert\Range(min: 10)]
 	#[ORM\Column(type: Types::INTEGER)]
 	private int $size = 0;
 	

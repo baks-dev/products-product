@@ -84,19 +84,8 @@ final class ProductHandler
 		ProductDTO $command,
 	) : mixed
 	{
-		
-		/* Валидация */
-		$errors = $this->validator->validate($command);
-		
-		if(count($errors) > 0)
-		{
-			$uniqid = uniqid('', false);
-			$errorsString = (string) $errors;
-			$this->logger->error($uniqid.': '.$errorsString);
-			
-			return $uniqid;
-		}
-		
+
+
 		/* Объявялем событие */
 		if($command->getEvent())
 		{
@@ -301,7 +290,20 @@ final class ProductHandler
 		$Product->setEvent($Event); /* Обновляем событие */
 		
 		$this->entityManager->persist($Event);
-		//dump($this->entityManager->getUnitOfWork());
+
+
+        /* Валидация */
+		$errors = $this->validator->validate($Event);
+
+		if(count($errors) > 0)
+        {
+            $uniqid = uniqid('', false);
+            $errorsString = (string) $errors;
+            $this->logger->error($uniqid.': '.$errorsString);
+
+            return $uniqid;
+        }
+
 
 		$this->entityManager->flush();
 		

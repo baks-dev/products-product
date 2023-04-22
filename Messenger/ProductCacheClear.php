@@ -27,34 +27,30 @@ namespace BaksDev\Products\Product\Messenger;
 
 use Symfony\Component\Cache\Adapter\ApcuAdapter;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use Symfony\Component\Cache\Exception\CacheException;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
 final class ProductCacheClear
 {
+    public function __invoke(ProductMessage $message)
+    {
+        // Чистим кеш модуля
+        $cache = new FilesystemAdapter('CacheProduct');
+        $cache->clear();
 
-	public function __invoke(ProductMessage $message)
-	{
-		/* Чистим кеш модуля */
-		$cache = new FilesystemAdapter('CacheProduct');
-		$cache->clear();
-		
-		/* Сбрасываем индивидуальный кеш */
-		$cache = new ApcuAdapter('Product');
-		$cache->clear();
-		
-		$cache = new ApcuAdapter((string) $message->getId()->getValue());
-		$cache->clear();
-		
-		$cache = new ApcuAdapter((string) $message->getEvent()->getValue());
-		$cache->clear();
-		
-		if($message->getLast())
-		{
-			$cache = new ApcuAdapter((string) $message->getLast()->getValue());
-			$cache->clear();
-		}
-		
-	}
+        // Сбрасываем индивидуальный кеш
+        $cache = new ApcuAdapter('Product');
+        $cache->clear();
+
+        $cache = new ApcuAdapter((string) $message->getId()->getValue());
+        $cache->clear();
+
+        $cache = new ApcuAdapter((string) $message->getEvent()->getValue());
+        $cache->clear();
+
+        if ($message->getLast()) {
+            $cache = new ApcuAdapter((string) $message->getLast()->getValue());
+            $cache->clear();
+        }
+    }
 }

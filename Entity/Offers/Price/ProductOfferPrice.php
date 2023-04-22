@@ -31,6 +31,7 @@ use BaksDev\Reference\Money\Type\Money;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use InvalidArgumentException;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /* Стоимость торгового предложения */
 
@@ -42,16 +43,20 @@ class ProductOfferPrice extends EntityEvent
 	public const TABLE = 'product_offer_price';
 	
 	/** ID торгового предложения */
+    #[Assert\NotBlank]
+    #[Assert\Type(ProductOffer::class)]
 	#[ORM\Id]
 	#[ORM\OneToOne(inversedBy: 'price', targetEntity: ProductOffer::class)]
 	#[ORM\JoinColumn(name: 'offer', referencedColumnName: "id")]
 	private ProductOffer $offer;
 	
 	/** Стоимость */
+    #[Assert\Type(Money::class)]
 	#[ORM\Column(name: 'price', type: Money::TYPE, nullable: true)]
 	private ?Money $price;
 	
 	/** Валюта */
+    #[Assert\Type(Currency::class)]
 	#[ORM\Column(name: 'currency', type: Currency::TYPE, length: 3, nullable: false)]
 	private Currency $currency;
 	

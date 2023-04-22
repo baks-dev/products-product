@@ -97,7 +97,7 @@ if ($btnAddOffer) {
 
 
         /* Удаляем при клике множественный вариант */
-        div.querySelector('.del-item-variation').addEventListener('click', deleteVariation);
+        (div.querySelector('.del-item-variation'))?.addEventListener('click', deleteVariation);
 
 
         /* Делаем замену если множественный вариант - справочник */
@@ -118,7 +118,7 @@ if ($btnAddOffer) {
             changeRadio.addEventListener('change', chanheVariationImageRoot);
         }
 
-        div.querySelector('.offer-variation-add-collection').addEventListener('click', addVariation);
+        (div.querySelector('.offer-variation-add-collection'))?.addEventListener('click', addVariation);
 
 
         /** МОДИФИКАЦИЯ */

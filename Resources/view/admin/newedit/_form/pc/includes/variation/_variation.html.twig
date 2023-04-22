@@ -9,6 +9,8 @@
 {% endif %}
 
 
+
+
 <div class='d-flex justify-content-between align-items-end gap-3'>
 	
 	
@@ -27,7 +29,11 @@
 	
 	
 	<div class='w-100'>
-		{{ form_widget(variation.value, { attr:  { placeholder : variation.value.vars.label } }) }}
+
+		{{ form_row(variation.value,
+			variation.value.vars.data and loop.first ? { label : variation.value.vars.label } : { label : false, attr:  { placeholder : variation.value.vars.label } }
+		) }}
+
 	</div>
 
 	{% if variation.postfix is defined %}
@@ -139,16 +145,6 @@
 
 	<div class="card-footer border-light bg-body d-flex justify-content-between align-items-center gap-5">
 		
-	
-		 {% if (variation.modification.vars.value|first).price is defined %}
-				
-				<small class='text-muted'>
-					Цена модификации множественного варианта торгового предложения имеет приоритет над базовой ценой. Если поле не заполнено,
-					присваивается базовое значение.
-				</small>
-			
-			{% endif %}
-
 
 		{# Добавить МОДИФИКАЦИЮ  #}
 		<button type="button"
@@ -179,6 +175,15 @@
 						</span>
 			Добавить еще "{{ variation.modification.vars.prototype.value.vars.label }}"
 		</button>
+
+		{% if (variation.modification.vars.value|first).price is defined and loop.first%}
+
+			<small class='text-muted'>
+				Цена модификации множественного варианта торгового предложения имеет приоритет над базовой ценой. Если поле не заполнено,
+				присваивается базовое значение.
+			</small>
+
+		{% endif %}
 	
 	</div>
 

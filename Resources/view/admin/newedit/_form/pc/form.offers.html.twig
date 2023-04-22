@@ -1,4 +1,3 @@
-
 <div id="collection-offer">
     {% for offer in form.offer %}
         {{ include(_self|replace({ "form.offers.html.twig": "includes/offers/_offer.html.twig" })) }}
@@ -34,6 +33,7 @@
         <ul id="searcher-offer" class="dropdown-menu dropdown-menu-center small position-absolute p-2 mb-3 w-100"
             style="inset: auto auto 1.5rem 0;">
 
+
             {% for offer in form.offer %}
 
                 {% if offer.vars.data.article %}
@@ -44,27 +44,36 @@
                     </li>
                 {% endif %}
 
-                {% for variation in offer.variation %}
-                    {% if variation.vars.data.article %}
-                        <li data-href="{{ variation.article.vars.id }}">
+
+                {% if variation_first %}
+
+                    {% for variation in offer.variation %}
+
+                        {% if variation.vars.data.article %}
+                            <li data-href="{{ variation.article.vars.id }}">
                             <span class="nav-link rounded-3 px-2 small text-nowrap mb-1 pointer">
                                 {{ variation.vars.data.article }}
                             </span>
-                        </li>
-                    {% endif %}
-
-                    {% for modification in variation.modification %}
-                        {% if modification.vars.data.article %}
-                            <li data-href="{{ modification.article.vars.id }}">
-                                <span class="nav-link rounded-3 px-2 small text-nowrap mb-1 pointer">
-                                    {{ modification.vars.data.article }}
-                                </span>
                             </li>
                         {% endif %}
 
-                    {% endfor %}
+                        {% if modification_first %}
 
-                {% endfor %}
+                            {% for modification in variation.modification %}
+                                {% if modification.vars.data.article %}
+                                    <li data-href="{{ modification.article.vars.id }}">
+                                <span class="nav-link rounded-3 px-2 small text-nowrap mb-1 pointer">
+                                    {{ modification.vars.data.article }}
+                                </span>
+                                    </li>
+                                {% endif %}
+
+                            {% endfor %}
+                        {% endif %}
+
+
+                    {% endfor %}
+                {% endif %}
 
             {% endfor %}
         </ul>

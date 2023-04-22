@@ -21,33 +21,12 @@
  *  THE SOFTWARE.
  */
 
-namespace BaksDev\Products\Product\Type\Id;
+namespace BaksDev\Products\Product\Repository\ProductModificationChoice;
 
-use BaksDev\Core\Type\UidType\Uid;
-use Symfony\Component\Uid\AbstractUid;
+use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductOfferVariationConst;
 
-final class ProductUid extends Uid
+interface ProductModificationChoiceInterface
 {
-    public const TYPE = 'product_id';
-
-    private mixed $attr;
-
-    private mixed $option;
-
-    public function __construct(AbstractUid|string|null $value = null, mixed $attr = null, mixed $option = null)
-    {
-        parent::__construct($value);
-        $this->attr = $attr;
-        $this->option = $option;
-    }
-
-    public function getAttr(): mixed
-    {
-        return $this->attr;
-    }
-
-    public function getOption(): mixed
-    {
-        return $this->option;
-    }
+    /** Метод возвращает все постоянные идентификаторы CONST модификаций множественных вариантов торговых предложений продукта */
+    public function fetchProductModificationByVariation(ProductOfferVariationConst $const): ?array;
 }

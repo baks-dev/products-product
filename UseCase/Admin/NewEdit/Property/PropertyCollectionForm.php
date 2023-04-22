@@ -53,22 +53,7 @@ final class PropertyCollectionForm extends AbstractType
 	
 	public function buildForm(FormBuilderInterface $builder, array $options) : void
 	{
-		
-		//        $builder->add(
-		//          'section',
-		//          TextType::class,
-		//          ['mapped' => false]
-		//        );
-		
-		
-		//dump($builder);
-		
-		/*$builder->add(
-			'value',
-			TextType::class,
-		
-		);*/
-		
+
 		$builder->addEventListener(
 			FormEvents::PRE_SET_DATA,
 			function(FormEvent $event) use ($options)
@@ -111,87 +96,7 @@ final class PropertyCollectionForm extends AbstractType
 						]
 					);
 					
-					
-					//dump($form);
-					//dump($fieldType->form());
-					//dd($propCat);
-					
-					
-//					match ($propCat->fieldType)
-//					{
-//						/* INTEGER */
-//						'integer' => $form->add
-//						(
-//							'value',
-//							IntegerType::class,
-//							[
-//								'label' => $propCat->fieldTrans,
-//								'required' => $propCat->fieldRequired,
-//							]
-//						)
-//					,
-//
-//						/* MAIL */
-//						'mail' => $form->add
-//						(
-//							'value',
-//							EmailType::class,
-//							[
-//								'label' => $propCat->fieldTrans,
-//								'required' => $propCat->fieldRequired,
-//								'help' => $propCat->fieldDesc,
-//							]
-//						),
-//
-//						/* PHONE */
-//						'phone' => $form->add
-//						(
-//							'value',
-//							TextType::class,
-//							[
-//								'label' => $propCat->fieldTrans,
-//								'required' => $propCat->fieldRequired,
-//								'attr' =>
-//									[
-//										'placeholder' => $propCat->fieldDesc,
-//									],
-//							]
-//						),
-//
-//						/* SELECT */
-//						'select' => $form->add
-//						(
-//							'value',
-//							ChoiceType::class,
-//							[
-//								'label' => $propCat->fieldTrans,
-//								'required' => $propCat->fieldRequired,
-//								'placeholder' => $propCat->fieldDesc,
-//							]
-//						),
-//
-//						/* TEXTAREA */
-//						'textarea' => $form->add(
-//							'value',
-//							TextareaType::class,
-//							[
-//								'label' => $propCat->fieldTrans,
-//								'required' => $propCat->fieldRequired,
-//								'help' => $propCat->fieldDesc,
-//							]
-//						),
-//
-//						default => $form->add
-//						(
-//							'value',
-//							TextType::class,
-//							[
-//								'label' => $propCat->fieldTrans,
-//								'required' => $propCat->fieldRequired,
-//							]
-//						)
-//
-//					};
+
 					
 				}
 			}
