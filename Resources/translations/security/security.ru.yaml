@@ -1,0 +1,18 @@
+
+# Роль
+ROLE_PRODUCT:
+  name: 'Продукция'
+  desc: 'Список продукции'
+
+# Правила
+
+ROLE_PRODUCT_NEW:
+  name: 'Добавить'
+
+ROLE_PRODUCT_EDIT:
+  name: 'Редактировать'
+
+ROLE_PRODUCT_DELETE:
+  name: 'Удалить'
+
+

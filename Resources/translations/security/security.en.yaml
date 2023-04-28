@@ -1,0 +1,13 @@
+ROLE_PRODUCT:
+  name: 'Products'
+  desc: 'Product List'
+
+
+ROLE_PRODUCT_NEW:
+  name: 'Add'
+
+ROLE_PRODUCT_EDIT:
+  name: 'Edit'
+
+ROLE_PRODUCT_DELETE:
+  name: 'Delete'
