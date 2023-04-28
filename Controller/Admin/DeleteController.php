@@ -28,27 +28,27 @@ use BaksDev\Core\Services\Security\RoleSecurity;
 use BaksDev\Products\Product\Entity;
 use BaksDev\Products\Product\UseCase\Admin\Delete\DeleteForm;
 use BaksDev\Products\Product\UseCase\Admin\Delete\ProductDTO;
-use BaksDev\Products\Product\UseCase\ProductAggregate;
+use BaksDev\Products\Product\UseCase\Admin\Delete\ProductDeleteHandler;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[RoleSecurity(['ROLE_ADMIN', 'ROLE_PRODUCT_DELETE'])]
+#[RoleSecurity('ROLE_PRODUCT_DELETE')]
 final class DeleteController extends AbstractController
 {
     #[Route('/admin/product/delete/{id}', name: 'admin.delete', methods: ['POST', 'GET'])]
     public function delete(
-        Request                                $request,
-        ProductAggregate                       $handler,
+        Request $request,
+        ProductDeleteHandler $handler,
         #[MapEntity] Entity\Event\ProductEvent $Event,
-        EntityManagerInterface                 $entityManager,
+        EntityManagerInterface $entityManager,
     ): Response {
         $product = new ProductDTO();
         $Event->getDto($product);
 
-        $Info = $entityManager->getRepository(Entity\Info\Info::class)->findOneBy(['product' => $Event->getProduct()]);
+        $Info = $entityManager->getRepository(Entity\Info\ProductInfo::class)->findOneBy(['product' => $Event->getProduct()]);
         $Info->getDto($product->getInfo());
 
         $form = $this->createForm(DeleteForm::class, $product, [
@@ -70,14 +70,13 @@ final class DeleteController extends AbstractController
             $this->addFlash('danger', 'admin.delete.danger', 'products.product');
 
             return $this->redirectToRoute('Product:admin.index');
-
             // return $this->redirectToReferer();
         }
 
         return $this->render(
             [
                 'form' => $form->createView(),
-                'name' => $Event->getNameByLocale($this->getLocale()), /*  название согласно локали */
+                'name' => $Event->getNameByLocale($this->getLocale()), // название согласно локали
             ]
         );
     }

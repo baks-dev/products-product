@@ -25,84 +25,62 @@ namespace BaksDev\Products\Product\UseCase\Admin\Delete;
 
 use BaksDev\Products\Product\Entity\Event\ProductEventInterface;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
-
 use Symfony\Component\Validator\Constraints as Assert;
 
 final class ProductDTO implements ProductEventInterface
 {
-	/**
-	 * Идентификатор события
-	 *
-	 * @var ProductEventUid|null
-	 */
-	#[Assert\Uuid]
-	private ?ProductEventUid $id = null;
-	
-	//    private ?ParentCategoryUid $parent;
-	
-	#[Assert\Valid]
-	private Modify\ModifyDTO $modify;
-	
-	#[Assert\Valid]
-	private Info\InfoDTO $info;
-	
-	
-	public function __construct()
-	{
-		$this->modify = new Modify\ModifyDTO();
-		$this->info = new Info\InfoDTO();
-	}
-	
-	
-	/**
-	 * @return ProductEventUid|null
-	 */
-	public function getEvent() : ?ProductEventUid
-	{
-		return $this->id;
-	}
-	
-	
-	/**
-	 * @param ProductEventUid $id
-	 */
-	public function setId(ProductEventUid $id) : void
-	{
-		$this->id = $id;
-	}
-	
-	
-	/* Modify  */
-	
+    /**
+     * Идентификатор события.
+     */
+    #[Assert\Uuid]
+    private ?ProductEventUid $id = null;
 
-	public function getModify() : Modify\ModifyDTO
-	{
-		return $this->modify;
-	}
-	
-	
-	
-	/**
-	 * @return Info\InfoDTO
-	 */
-	public function getInfo() : Info\InfoDTO
-	{
-		return $this->info;
-	}
-	
-	
-	public function setInfo(Info\InfoDTO $info) : void
-	{
-		$this->info = $info;
-	}
-	
-	//    /**
-	//     * @param ModifyDTO $Modify
-	//     */
-	//    public function setModify(ModifyDTO $Modify) : void
-	//    {
-	//        $this->modify = $Modify;
-	//    }
-	
+    //    private ?ParentCategoryUid $parent;
+
+    #[Assert\Valid]
+    private Modify\ModifyDTO $modify;
+
+    #[Assert\Valid]
+    private Info\InfoDTO $info;
+
+    public function __construct()
+    {
+        $this->modify = new Modify\ModifyDTO();
+        $this->info = new Info\InfoDTO();
+    }
+
+    public function getEvent(): ?ProductEventUid
+    {
+        return $this->id;
+    }
+
+    public function setId(ProductEventUid $id): void
+    {
+        $this->id = $id;
+    }
+
+    // Modify
+
+    public function getModify(): Modify\ModifyDTO
+    {
+        return $this->modify;
+    }
+
+    public function getInfo(): Info\InfoDTO
+    {
+        return $this->info;
+    }
+
+    public function setInfo(Info\InfoDTO $info): void
+    {
+        $this->info = $info;
+    }
+
+    //    /**
+    //     * @param ModifyDTO $Modify
+    //     */
+    //    public function setModify(ModifyDTO $Modify) : void
+    //    {
+    //        $this->modify = $Modify;
+    //    }
 }
-

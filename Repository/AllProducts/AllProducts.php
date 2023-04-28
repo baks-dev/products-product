@@ -359,7 +359,7 @@ final class AllProducts implements AllProductsInterface
 			$qb->setParameter('query', '%'.$this->switcher->toRus($search->query).'%');
 			$qb->setParameter('switcher', '%'.$this->switcher->toEng($search->query).'%');
 			
-			dump($this->switcher->toEng($search->query));
+			//dump($this->switcher->toEng($search->query));
 			
 		}
 		
