@@ -1,6 +1,6 @@
 # BaksDev Product
 
-![Version](https://img.shields.io/badge/version-6.3.0-blue) ![php 8.1+](https://img.shields.io/badge/php-min%208.1-red.svg)
+![Version](https://img.shields.io/badge/version-6.3.1-blue) ![php 8.1+](https://img.shields.io/badge/php-min%208.1-red.svg)
 
 Модуль Продукции
 
@@ -30,6 +30,12 @@ $ php bin/console doctrine:fixtures:load --append
 $ php bin/console doctrine:migrations:diff
 
 $ php bin/console doctrine:migrations:migrate
+```
+
+Тесты
+
+``` bash
+$ php bin/phpunit --group=products-product
 ```
 
 ## Журнал изменений ![Changelog](https://img.shields.io/badge/changelog-yellow)
