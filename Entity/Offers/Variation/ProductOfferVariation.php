@@ -23,14 +23,14 @@
 
 namespace BaksDev\Products\Product\Entity\Offers\Variation;
 
+use BaksDev\Core\Entity\EntityEvent;
+use BaksDev\Products\Category\Type\Offers\Variation\ProductCategoryOffersVariationUid;
+use BaksDev\Products\Product\Entity\Offers\ProductOffer;
+use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
+use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use BaksDev\Core\Entity\EntityEvent;
-use Doctrine\Common\Collections\Collection;
-use BaksDev\Products\Product\Entity\Offers\ProductOffer;
-use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
-use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
-use BaksDev\Products\Category\Type\Offers\Variation\ProductCategoryOffersVariationUid;
 use InvalidArgumentException;
 
 // Вариант в торговом предложения
