@@ -77,9 +77,9 @@ final class ProductDTO implements ProductEventInterface
     }
 
     //    /**
-    //     * @param ModifyDTO $Modify
+    //     * @param DeliveryTransportModifyDTO $Modify
     //     */
-    //    public function setModify(ModifyDTO $Modify) : void
+    //    public function setModify(DeliveryTransportModifyDTO $Modify) : void
     //    {
     //        $this->modify = $Modify;
     //    }

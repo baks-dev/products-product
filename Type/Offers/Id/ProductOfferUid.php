@@ -20,10 +20,11 @@ namespace BaksDev\Products\Product\Type\Offers\Id;
 
 use BaksDev\Core\Type\UidType\Uid;
 use Symfony\Component\Uid\AbstractUid;
-use Symfony\Component\Uid\Uuid;
 
 final class ProductOfferUid extends Uid
 {
+    public const TEST = '0188a99f-3b80-73b7-afe9-e00ffa1b53f2';
+
 	public const TYPE = 'product_offer_uid';
 	
 	private readonly ?string $option;

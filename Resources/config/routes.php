@@ -6,7 +6,7 @@ return function(RoutingConfigurator $routes) {
 	
 	$routes->import(
         __DIR__.'/../../Controller',
-        'annotation',
+        'attribute',
         false,
         __DIR__.'/../../Controller/**/*Test.php'
     )

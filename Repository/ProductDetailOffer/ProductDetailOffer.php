@@ -1,17 +1,17 @@
 <?php
 /*
  *  Copyright 2023.  Baks.dev <admin@baks.dev>
- *  
+ *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *  
+ *
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *  
+ *
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,13 +26,10 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Repository\ProductDetailOffer;
 
 use BaksDev\Core\Type\Locale\Locale;
-use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
-use BaksDev\Products\Product\Entity as ProductEntity;
 use BaksDev\Products\Category\Entity as CategoryEntity;
-
+use BaksDev\Products\Product\Entity as ProductEntity;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\ParameterType;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class ProductDetailOffer implements ProductDetailOfferInterface
@@ -41,38 +38,35 @@ final class ProductDetailOffer implements ProductDetailOfferInterface
 
     private TranslatorInterface $translator;
 
-
     public function __construct(
-        Connection          $connection,
+        Connection $connection,
         TranslatorInterface $translator,
-    )
-    {
+    ) {
         $this->connection = $connection;
         $this->translator = $translator;
     }
 
-
+    /** Метод возвращает торговые предложения продукта */
     public function fetchProductOfferAssociative(
         ProductUid $product,
-                   $offer = null,
-                   $variation = null,
-                   $modification = null,
-    ): array|bool
-    {
+//        $offer = null,
+//        $variation = null,
+//        $modification = null,
+    ): array|bool {
         $qb = $this->connection->createQueryBuilder();
 
         $qb->select('product.id');
 
         $qb->from(ProductEntity\Product::TABLE, 'product');
 
-
-        $qb->join('product',
+        $qb->join(
+            'product',
             ProductEntity\Event\ProductEvent::TABLE,
             'product_event',
             'product_event.id = product.event'
         );
 
-        /** Цена товара */
+        /* Цена товара */
         $qb->leftJoin(
             'product_event',
             ProductEntity\Price\ProductPrice::TABLE,
@@ -80,7 +74,7 @@ final class ProductDetailOffer implements ProductDetailOfferInterface
             'product_price.event = product_event.id'
         );
 
-        /** Торговое предложение */
+        /* Торговое предложение */
 
         $qb->addSelect('product_offer.value as product_offer_value');
         $qb->addSelect('product_offer.postfix as product_offer_postfix');
@@ -92,7 +86,6 @@ final class ProductDetailOffer implements ProductDetailOfferInterface
             'product_offer.event = product_event.id'
         );
 
-
         /* Цена торгового предожения */
         $qb->leftJoin(
             'product_offer',
@@ -102,7 +95,7 @@ final class ProductDetailOffer implements ProductDetailOfferInterface
         )
             //->addGroupBy('product_offer_price.price')
             //->addGroupBy('product_offer_price.currency')
-        ;
+;
 
         /* Получаем тип торгового предложения */
         $qb->addSelect('category_offer.reference AS product_offer_reference');
@@ -113,7 +106,7 @@ final class ProductDetailOffer implements ProductDetailOfferInterface
             'category_offer.id = product_offer.category_offer'
         );
 
-        /** Получаем название торгового предложения */
+        /* Получаем название торгового предложения */
         $qb->addSelect('category_offer_trans.name as product_offer_name');
         $qb->addSelect('category_offer_trans.postfix as product_offer_name_postfix');
         $qb->leftJoin(
@@ -123,12 +116,10 @@ final class ProductDetailOffer implements ProductDetailOfferInterface
             'category_offer_trans.offer = category_offer.id AND category_offer_trans.local = :local'
         );
 
-
-        /** Множественные варианты торгового предложения */
+        /* Множественные варианты торгового предложения */
 
         $qb->addSelect('product_offer_variation.value as product_variation_value');
         $qb->addSelect('product_offer_variation.postfix as product_variation_postfix');
-
 
         $qb->leftJoin(
             'product_offer',
@@ -136,7 +127,6 @@ final class ProductDetailOffer implements ProductDetailOfferInterface
             'product_offer_variation',
             'product_offer_variation.offer = product_offer.id'
         );
-
 
         /* Цена множественного варианта */
         $qb->leftJoin(
@@ -167,9 +157,7 @@ final class ProductDetailOffer implements ProductDetailOfferInterface
             'category_offer_variation_trans.variation = category_offer_variation.id AND category_offer_variation_trans.local = :local'
         );
 
-
-
-        /** Модификация множественного варианта торгового предложения */
+        /* Модификация множественного варианта торгового предложения */
 
         $qb->addSelect('product_offer_modification.value as product_modification_value');
         $qb->addSelect('product_offer_modification.postfix as product_modification_postfix');
@@ -181,8 +169,7 @@ final class ProductDetailOffer implements ProductDetailOfferInterface
             'product_offer_modification.variation = product_offer_variation.id'
         );
 
-
-        /** Цена Модификации множественного варианта */
+        /* Цена Модификации множественного варианта */
         $qb->leftJoin(
             'product_offer_modification',
             ProductEntity\Offers\Variation\Modification\Price\ProductOfferVariationModificationPrice::TABLE,
@@ -190,7 +177,7 @@ final class ProductDetailOffer implements ProductDetailOfferInterface
             'product_modification_price.modification = product_offer_modification.id'
         );
 
-        /** Получаем тип множественного варианта */
+        /* Получаем тип множественного варианта */
         $qb->addSelect('category_offer_modification.reference as product_modification_reference');
         $qb->leftJoin(
             'product_offer_modification',
@@ -199,7 +186,7 @@ final class ProductDetailOffer implements ProductDetailOfferInterface
             'category_offer_modification.id = product_offer_modification.category_modification'
         );
 
-        /** Получаем название типа */
+        /* Получаем название типа */
         $qb->addSelect('category_offer_modification_trans.name as product_modification_name');
         $qb->addSelect('category_offer_modification_trans.postfix as product_modification_name_postfix');
         $qb->leftJoin(
@@ -211,11 +198,11 @@ final class ProductDetailOffer implements ProductDetailOfferInterface
 
         //$qb->addSelect("'".Entity\Offers\Variation\Image\ProductOfferVariationImage::TABLE."' AS upload_image_dir ");
 
-
         $qb->addSelect('product_variation_price.price');
 
-        /** Стоимость продукта */
-        $qb->addSelect("
+        /* Стоимость продукта */
+        $qb->addSelect(
+            '
 			CASE
 			   WHEN product_modification_price.price IS NOT NULL THEN product_modification_price.price
 			   WHEN product_variation_price.price IS NOT NULL THEN product_variation_price.price
@@ -223,11 +210,12 @@ final class ProductDetailOffer implements ProductDetailOfferInterface
 			   WHEN product_price.price IS NOT NULL THEN product_price.price
 			   ELSE NULL
 			END AS product_price
-		"
+		'
         );
 
-        /** Валюта продукта */
-        $qb->addSelect("
+        /* Валюта продукта */
+        $qb->addSelect(
+            '
 			CASE
 			   WHEN product_modification_price.price IS NOT NULL THEN product_modification_price.currency
 			   WHEN product_variation_price.price IS NOT NULL THEN product_variation_price.currency
@@ -235,9 +223,8 @@ final class ProductDetailOffer implements ProductDetailOfferInterface
 			   WHEN product_price.price IS NOT NULL THEN product_price.currency
 			   ELSE NULL
 			END AS product_currency
-		"
+		'
         );
-
 
         $qb->where('product.id = :product');
         $qb->setParameter('product', $product, ProductUid::TYPE);
@@ -247,6 +234,5 @@ final class ProductDetailOffer implements ProductDetailOfferInterface
         //$qb->from(ClasssName::TABLE, 'wb_order');
 
         return $qb->fetchAllAssociative();
-
     }
 }

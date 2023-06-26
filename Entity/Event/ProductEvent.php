@@ -25,7 +25,6 @@ namespace BaksDev\Products\Product\Entity\Event;
 
 use BaksDev\Core\Entity\EntityEvent;
 use BaksDev\Core\Type\Locale\Locale;
-use BaksDev\Core\Type\Modify\ModifyAction;
 use BaksDev\Products\Product\Entity\Active\ProductActive;
 use BaksDev\Products\Product\Entity\Category\ProductCategory;
 use BaksDev\Products\Product\Entity\Files\ProductFiles;
@@ -40,15 +39,13 @@ use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Entity\Video\ProductVideo;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Exception;
 use InvalidArgumentException;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/* События Product */
-
+// События Product
 
 #[ORM\Entity]
 #[ORM\Table(name: 'product_event')]
@@ -124,45 +121,33 @@ class ProductEvent extends EntityEvent
     #[ORM\OneToMany(mappedBy: 'event', targetEntity: ProductProperty::class, cascade: ['all'])]
     private Collection $property;
 
-
     public function __construct()
     {
         $this->id = new ProductEventUid();
-        //$this->active = new Active($this);
-        //$this->price = new Price($this);
+        // $this->active = new Active($this);
+        // $this->price = new Price($this);
         $this->modify = new ProductModify($this);
     }
-
 
     public function __clone()
     {
         $this->id = new ProductEventUid();
     }
 
-
-    /**
-     * @return ProductEventUid
-     */
     public function getId(): ProductEventUid
     {
         return $this->id;
     }
 
-
-    /**
-     * @return ProductUid|null
-     */
     public function getProduct(): ?ProductUid
     {
         return $this->product;
     }
 
-
     public function setProduct(ProductUid|Product $product): void
     {
         $this->product = $product instanceof Product ? $product->getId() : $product;
     }
-
 
     //    public function isModifyActionEquals(ModifyActionEnum $action) : bool
     //    {
@@ -170,6 +155,8 @@ class ProductEvent extends EntityEvent
     //    }
 
     /**
+     * @param mixed $dto
+     *
      * @throws Exception
      */
     public function getDto($dto): mixed
@@ -181,8 +168,9 @@ class ProductEvent extends EntityEvent
         throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
     }
 
-
     /**
+     * @param mixed $dto
+     *
      * @throws Exception
      */
     public function setEntity($dto): mixed
@@ -193,7 +181,6 @@ class ProductEvent extends EntityEvent
 
         throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
     }
-
 
     public function getNameByLocale(Locale $locale): ?string
     {
@@ -209,12 +196,13 @@ class ProductEvent extends EntityEvent
         return $name;
     }
 
-
-    /**
-     * @return Collection
-     */
     public function getCategory(): Collection
     {
         return $this->category;
+    }
+
+    public function getOffer(): Collection
+    {
+        return $this->offer;
     }
 }

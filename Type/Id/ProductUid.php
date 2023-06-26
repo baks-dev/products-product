@@ -28,15 +28,23 @@ use Symfony\Component\Uid\AbstractUid;
 
 final class ProductUid extends Uid
 {
+    public const TEST = '0188a99e-e18e-733d-9305-9e2bfaf96f09';
+
     public const TYPE = 'product_id';
 
     private mixed $attr;
 
     private mixed $option;
 
-    public function __construct(AbstractUid|string|null $value = null, mixed $attr = null, mixed $option = null)
-    {
+    public function __construct(
+        AbstractUid|string|null $value = null,
+        mixed $attr = null,
+        mixed $option = null
+    ) {
+
+
         parent::__construct($value);
+        
         $this->attr = $attr;
         $this->option = $option;
     }

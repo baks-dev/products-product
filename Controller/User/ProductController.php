@@ -24,21 +24,19 @@
 namespace BaksDev\Products\Product\Controller\User;
 
 use BaksDev\Core\Controller\AbstractController;
-use BaksDev\Core\Type\UidType\ParamConverter;
-use BaksDev\Products\Category\Type\Offers\Id\ProductCategoryOffersUid;
-use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailInterface;
+use BaksDev\Products\Product\Entity;
+use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailByValueInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use BaksDev\Products\Product\Entity;
 
 final class ProductController extends AbstractController
 {
     #[Route('/product/{url}', name: 'user.product')]
 	
     public function index(
-		#[MapEntity(mapping: ['url' => 'url'])] Entity\Info\ProductInfo $info,
-		ProductDetailInterface $productDetail,
+        #[MapEntity(mapping: ['url' => 'url'])] Entity\Info\ProductInfo $info,
+        ProductDetailByValueInterface                                   $productDetail,
 	) : Response
     {
 		

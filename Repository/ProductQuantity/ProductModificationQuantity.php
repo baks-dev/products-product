@@ -30,8 +30,8 @@ use BaksDev\Products\Product\Entity as ProductEntity;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Quantity\ProductOfferVariationModificationQuantity;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
-use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductOfferVariationConst;
-use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductOfferVariationModificationConst;
+use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
+use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
 use Doctrine\ORM\EntityManagerInterface;
 
 final class ProductModificationQuantity implements ProductModificationQuantityInterface
@@ -45,10 +45,10 @@ final class ProductModificationQuantity implements ProductModificationQuantityIn
 
     /** Метод возвращает количественный учет модификации множественного варианта */
     public function getProductModificationQuantity(
-        ProductUid $product,
-        ProductOfferConst $offer,
-        ProductOfferVariationConst $variation,
-        ProductOfferVariationModificationConst $modification
+        ProductUid               $product,
+        ProductOfferConst        $offer,
+        ProductVariationConst    $variation,
+        ProductModificationConst $modification
     ): ?ProductOfferVariationModificationQuantity {
         $qb = $this->entityManager->createQueryBuilder();
 
@@ -86,7 +86,7 @@ final class ProductModificationQuantity implements ProductModificationQuantityIn
             'variation.offer = offer.id AND variation.const = :variation_const'
         );
 
-        $qb->setParameter('variation_const', $variation, ProductOfferVariationConst::TYPE);
+        $qb->setParameter('variation_const', $variation, ProductVariationConst::TYPE);
 
         // Модификация множественного варианта
 
@@ -104,7 +104,7 @@ final class ProductModificationQuantity implements ProductModificationQuantityIn
             'quantity.modification = modification.id'
         );
 
-        $qb->setParameter('modification_const', $modification, ProductOfferVariationModificationConst::TYPE);
+        $qb->setParameter('modification_const', $modification, ProductModificationConst::TYPE);
 
         // Только если у модификации указан количественный учет
 

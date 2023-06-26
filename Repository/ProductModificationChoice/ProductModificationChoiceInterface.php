@@ -23,10 +23,10 @@
 
 namespace BaksDev\Products\Product\Repository\ProductModificationChoice;
 
-use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductOfferVariationConst;
+use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
 
 interface ProductModificationChoiceInterface
 {
     /** Метод возвращает все постоянные идентификаторы CONST модификаций множественных вариантов торговых предложений продукта */
-    public function fetchProductModificationByVariation(ProductOfferVariationConst $const): ?array;
+    public function fetchProductModificationByVariation(ProductVariationConst $const): ?array;
 }

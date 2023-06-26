@@ -23,23 +23,16 @@
 
 namespace BaksDev\Products\Product\Repository\AllProducts;
 
+use BaksDev\Core\Form\Search\SearchDTO;
 use BaksDev\Core\Services\Paginator\PaginatorInterface;
-
+use BaksDev\Core\Services\Switcher\SwitcherInterface;
+use BaksDev\Core\Type\Locale\Locale;
 use BaksDev\Products\Category\Entity as CategoryEntity;
-use BaksDev\Products\Product\Entity;
-use BaksDev\Core\Services\Switcher\Switcher;
 use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
-
+use BaksDev\Products\Product\Entity;
 use BaksDev\Products\Product\Forms\ProductFilter\ProductFilterInterface;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
-
-use BaksDev\Core\Form\Search\SearchDTO;
-
-use BaksDev\Core\Type\Locale\Locale;
-use Doctrine\DBAL\Cache\QueryCacheProfile;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Query\QueryBuilder;
-use Doctrine\ORM\Cache\DefaultQueryCache;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -48,7 +41,7 @@ final class AllProducts implements AllProductsInterface
 {
 	private Connection $connection;
 	
-	private Switcher $switcher;
+	private SwitcherInterface $switcher;
 	
 	private PaginatorInterface $paginator;
 	
@@ -58,7 +51,7 @@ final class AllProducts implements AllProductsInterface
 	public function __construct(
 		Connection $connection,
 		TranslatorInterface $translator,
-		Switcher $switcher,
+		SwitcherInterface $switcher,
 		PaginatorInterface $paginator,
 	)
 	{

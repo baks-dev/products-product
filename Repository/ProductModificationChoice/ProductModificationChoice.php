@@ -25,12 +25,11 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Repository\ProductModificationChoice;
 
+use BaksDev\Core\Type\Locale\Locale;
 use BaksDev\Products\Category\Entity as CategoryEntity;
 use BaksDev\Products\Product\Entity as ProductEntity;
-use BaksDev\Core\Type\Locale\Locale;
-use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
-use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductOfferVariationConst;
-use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductOfferVariationModificationConst;
+use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
+use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -49,11 +48,11 @@ final class ProductModificationChoice implements ProductModificationChoiceInterf
     }
 
     /** Метод возвращает все постоянные идентификаторы CONST модификаций множественных вариантов торговых предложений продукта */
-    public function fetchProductModificationByVariation(ProductOfferVariationConst $const): ?array
+    public function fetchProductModificationByVariation(ProductVariationConst $const): ?array
     {
         $qb = $this->entityManager->createQueryBuilder();
 
-        $select = sprintf('new %s(modification.const, modification.value, trans.name)', ProductOfferVariationModificationConst::class);
+        $select = sprintf('new %s(modification.const, modification.value, trans.name)', ProductModificationConst::class);
 
         $qb->select($select);
 
@@ -111,7 +110,7 @@ final class ProductModificationChoice implements ProductModificationChoiceInterf
 //        dd($qb->getQuery()->getResult());
 //
 
-        $cacheQueries = new FilesystemAdapter('CacheProduct');
+        $cacheQueries = new FilesystemAdapter('Product');
 
         $query = $this->entityManager->createQuery($qb->getDQL());
         $query->setQueryCache($cacheQueries);
@@ -119,7 +118,7 @@ final class ProductModificationChoice implements ProductModificationChoiceInterf
         $query->enableResultCache();
         $query->setLifetime(60 * 60 * 24);
 
-        $query->setParameter('const', $const, ProductOfferVariationConst::TYPE);
+        $query->setParameter('const', $const, ProductVariationConst::TYPE);
         $query->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
 
         return $query->getResult();

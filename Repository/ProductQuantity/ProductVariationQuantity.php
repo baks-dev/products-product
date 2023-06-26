@@ -30,7 +30,7 @@ use BaksDev\Products\Product\Entity as ProductEntity;
 use BaksDev\Products\Product\Entity\Offers\Variation\Quantity\ProductOfferVariationQuantity;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
-use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductOfferVariationConst;
+use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
 use Doctrine\ORM\EntityManagerInterface;
 
 final class ProductVariationQuantity implements ProductVariationQuantityInterface
@@ -46,7 +46,7 @@ final class ProductVariationQuantity implements ProductVariationQuantityInterfac
     public function getProductVariationQuantity(
         ProductUid $product,
         ProductOfferConst $offer,
-        ProductOfferVariationConst $variation
+        ProductVariationConst $variation
     ): ?ProductOfferVariationQuantity {
         $qb = $this->entityManager->createQueryBuilder();
 
@@ -83,7 +83,7 @@ final class ProductVariationQuantity implements ProductVariationQuantityInterfac
             'variation.offer = offer.id AND variation.const = :variation_const'
         );
 
-        $qb->setParameter('variation_const', $variation, ProductOfferVariationConst::TYPE);
+        $qb->setParameter('variation_const', $variation, ProductVariationConst::TYPE);
 
 
         $qb->leftJoin(

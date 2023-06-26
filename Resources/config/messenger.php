@@ -23,25 +23,35 @@
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use BaksDev\Orders\Order\Messenger\OrderMessage;
 use Symfony\Config\FrameworkConfig;
 
-return static function (ContainerConfigurator $configurator, FrameworkConfig $config)
-{
+return static function (ContainerConfigurator $configurator, FrameworkConfig $framework) {
     $services = $configurator->services()
-      ->defaults()
-      ->autowire()
-      ->autoconfigure()
+        ->defaults()
+        ->autowire()
+        ->autoconfigure()
     ;
-	
-	$namespace = 'BaksDev\Products\Product';
-	
-	/** Services */
-	
-	$services->load($namespace.'\Messenger\\', __DIR__.'/../../Messenger')
-		->exclude('../../Messenger/**/*Message.php')
-	;
-	
-	//$config->Messenger()->routing(OrderMessage::class)->senders(['async_priority_high']);
-	
+
+    $namespace = 'BaksDev\Products\Product';
+
+    // Services
+
+//    $services->load($namespace.'\Messenger\\', __DIR__.'/../../Messenger')
+//        ->exclude('../../Messenger/**/*Message.php')
+//    ;
+
+    /** Транспорт заказов */
+    $messenger = $framework->messenger();
+
+    $messenger
+        ->transport('products')
+        ->dsn('%env(MESSENGER_TRANSPORT_DSN)%')
+        ->options(['queue_name' => 'products'])
+        ->retryStrategy()
+        ->maxRetries(5)
+        ->delay(1000)
+        ->maxDelay(0)
+        ->multiplier(3) // увеличиваем задержку перед каждой повторной попыткой
+        ->service(null)
+    ;
 };

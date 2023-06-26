@@ -26,13 +26,9 @@ namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers;
 use BaksDev\Products\Category\Type\Offers\Id\ProductCategoryOffersUid;
 use BaksDev\Products\Product\Entity\Offers\ProductOffersInterface;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
-use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
-use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductOfferVariationConst;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Offer\OfferDTO;
 use Doctrine\Common\Collections\ArrayCollection;
 use ReflectionProperty;
-use Symfony\Component\Uid\Ulid;
-use Symfony\Component\Validator\Constraints as Assert;
 
 final class ProductOffersCollectionDTO implements ProductOffersInterface
 {

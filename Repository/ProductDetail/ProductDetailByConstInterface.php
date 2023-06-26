@@ -24,8 +24,23 @@
 namespace BaksDev\Products\Product\Repository\ProductDetail;
 
 use BaksDev\Products\Product\Type\Id\ProductUid;
+use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
+use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
+use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
 
-interface ProductDetailInterface
+interface ProductDetailByConstInterface
 {
-	public function fetchProductAssociative(ProductUid $product) : array|bool;
+    /**
+     * Метод возвращает детальную информацию о продукте по его неизменяемым идентификаторам Const ТП, вариантов и модификаций.
+     *
+     * @param ?ProductOfferConst        $offer        - значение торгового предложения
+     * @param ?ProductVariationConst    $variation    - значение множественного варианта ТП
+     * @param ?ProductModificationConst $modification - значение модификации множественного варианта ТП
+     */
+    public function fetchProductDetailByConstAssociative(
+        ProductUid $product,
+        ?ProductOfferConst $offer = null,
+        ?ProductVariationConst $variation = null,
+        ?ProductModificationConst $modification = null,
+    ): array|bool;
 }

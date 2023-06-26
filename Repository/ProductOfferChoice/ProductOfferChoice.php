@@ -100,7 +100,7 @@ final class ProductOfferChoice implements ProductOfferChoiceInterface
 
 
 
-        $cacheQueries = new FilesystemAdapter('CacheProduct');
+        $cacheQueries = new FilesystemAdapter('Product');
 
         $query = $this->entityManager->createQuery($qb->getDQL());
         $query->setQueryCache($cacheQueries);

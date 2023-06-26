@@ -29,7 +29,7 @@ use BaksDev\Products\Product\Entity as ProductEntity;
 use BaksDev\Products\Product\Entity\Offers\Variation\Quantity\ProductOfferVariationQuantity;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
-use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductOfferVariationUid;
+use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use Doctrine\ORM\EntityManagerInterface;
 
 final class CurrentQuantityByVariation implements CurrentQuantityByVariationInterface
@@ -44,9 +44,9 @@ final class CurrentQuantityByVariation implements CurrentQuantityByVariationInte
 	
 	
 	public function getVariationQuantity(
-		ProductEventUid $event,
-		ProductOfferUid $offer,
-		ProductOfferVariationUid $variation
+        ProductEventUid $event,
+        ProductOfferUid $offer,
+        ProductVariationUid $variation
 	
 	) : ?ProductOfferVariationQuantity
 	{
@@ -78,7 +78,7 @@ final class CurrentQuantityByVariation implements CurrentQuantityByVariationInte
 		$qb->join(ProductEntity\Offers\Variation\ProductOfferVariation::class,
 			'variation', 'WITH', 'variation.id = :variation AND variation.offer = offer.id'
 		);
-		$qb->setParameter('variation', $variation, ProductOfferVariationUid::TYPE);
+		$qb->setParameter('variation', $variation, ProductVariationUid::TYPE);
 		
 		$qb->leftJoin(ProductEntity\Offers\Variation\ProductOfferVariation::class,
 			'current_variation', 'WITH', 'current_variation.const = variation.const AND current_variation.offer = current_offer.id'

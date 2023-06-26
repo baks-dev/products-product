@@ -27,17 +27,17 @@ namespace BaksDev\Products\Product\Type\Offers\Variation\Id;
 
 use BaksDev\Core\Type\UidType\UidType;
 
-final class ProductOfferVariationType extends UidType
+final class ProductVariationType extends UidType
 {
 	public function getClassType() : string
 	{
-		return ProductOfferVariationUid::class;
+		return ProductVariationUid::class;
 	}
 	
 	
 	public function getName() : string
 	{
-		return ProductOfferVariationUid::TYPE;
+		return ProductVariationUid::TYPE;
 	}
 	
 }

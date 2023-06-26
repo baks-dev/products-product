@@ -29,7 +29,7 @@ use BaksDev\Core\Type\Locale\Locale;
 use BaksDev\Products\Category\Entity as CategoryEntity;
 use BaksDev\Products\Product\Entity as ProductEntity;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
-use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductOfferVariationConst;
+use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -52,7 +52,7 @@ final class ProductVariationChoice implements ProductVariationChoiceInterface
     {
         $qb = $this->entityManager->createQueryBuilder();
 
-        $select = sprintf('new %s(variation.const, variation.value, trans.name)', ProductOfferVariationConst::class);
+        $select = sprintf('new %s(variation.const, variation.value, trans.name)', ProductVariationConst::class);
 
         $qb->select($select);
 
@@ -99,7 +99,7 @@ final class ProductVariationChoice implements ProductVariationChoiceInterface
 //        dd($qb->getQuery()->getResult());
 //
 
-        $cacheQueries = new FilesystemAdapter('CacheProduct');
+        $cacheQueries = new FilesystemAdapter('Product');
 
         $query = $this->entityManager->createQuery($qb->getDQL());
         $query->setQueryCache($cacheQueries);

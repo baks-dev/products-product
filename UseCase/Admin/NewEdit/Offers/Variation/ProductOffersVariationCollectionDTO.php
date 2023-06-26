@@ -27,13 +27,10 @@ namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation;
 use BaksDev\Products\Category\Type\Offers\Variation\ProductCategoryOffersVariationUid;
 use BaksDev\Products\Product\Entity\Offers\OffersInterface;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductOfferVariationInterface;
-use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
-use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductOfferVariationConst;
+use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Offer\OfferDTO;
 use Doctrine\Common\Collections\ArrayCollection;
 use ReflectionProperty;
-use Symfony\Component\Uid\Ulid;
-use Symfony\Component\Validator\Constraints as Assert;
 
 final class ProductOffersVariationCollectionDTO implements ProductOfferVariationInterface
 {
@@ -41,7 +38,7 @@ final class ProductOffersVariationCollectionDTO implements ProductOfferVariation
 	private ProductCategoryOffersVariationUid $categoryVariation;
 	
 	/** Постоянный уникальный идентификатор варианта */
-	private readonly ProductOfferVariationConst $const;
+	private readonly ProductVariationConst $const;
 	
 	/** Заполненное значение */
 	private ?string $value = null;
@@ -75,17 +72,17 @@ final class ProductOffersVariationCollectionDTO implements ProductOfferVariation
 
 
 	/** Постоянный уникальный идентификатор варианта */
-	public function getConst() : ProductOfferVariationConst
+	public function getConst() : ProductVariationConst
 	{
 		if(!(new ReflectionProperty($this::class, 'const'))->isInitialized($this))
 		{
-			$this->const = new ProductOfferVariationConst();
+			$this->const = new ProductVariationConst();
 		}
 		
 		return $this->const;
 	}
 	
-	public function setConst(ProductOfferVariationConst $const) : void
+	public function setConst(ProductVariationConst $const) : void
 	{
         if(!(new ReflectionProperty($this::class, 'const'))->isInitialized($this))
         {

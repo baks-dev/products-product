@@ -47,24 +47,30 @@ if ($name) {
 
 
 const searcOffer = document.getElementById('searcherOffer');
-let $ul = document.getElementById("searcher-offer");
+if (searcOffer)
+{
+    let $ul = document.getElementById("searcher-offer");
 
-searcOffer.addEventListener('keyup', searcherOffer);
-searcOffer.addEventListener('focus', searcherOffer);
+    searcOffer.addEventListener('keyup', searcherOffer);
+    searcOffer.addEventListener('focus', searcherOffer);
 
-$ul.querySelectorAll('li').forEach(function (item) {
+    $ul.querySelectorAll('li').forEach(function (item) {
 
-    searcOffer.classList.remove('d-none');
+        searcOffer.classList.remove('d-none');
 
-    item.addEventListener('click', function () {
-        let inpt = document.getElementById(item.dataset.href);
-        inpt.scrollIntoView({block: "center", inline: "center", behavior: "smooth"});
-        $ul.classList.remove('show');
-        setTimeout(function () {
-            inpt.focus();
-        }, 200);
+        item.addEventListener('click', function () {
+            let inpt = document.getElementById(item.dataset.href);
+            inpt.scrollIntoView({block: "center", inline: "center", behavior: "smooth"});
+            $ul.classList.remove('show');
+            setTimeout(function () {
+                inpt.focus();
+            }, 200);
+        });
     });
-});
+}
+
+
+
 
 function searcherOffer() {
 

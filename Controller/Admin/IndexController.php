@@ -26,7 +26,7 @@ namespace BaksDev\Products\Product\Controller\Admin;
 use BaksDev\Core\Controller\AbstractController;
 use BaksDev\Core\Form\Search\SearchDTO;
 use BaksDev\Core\Form\Search\SearchForm;
-use BaksDev\Core\Services\Security\RoleSecurity;
+use BaksDev\Core\Listeners\Event\Security\RoleSecurity;
 use BaksDev\Products\Product\Forms\ProductFilter\Admin\ProductFilterDTO;
 use BaksDev\Products\Product\Forms\ProductFilter\Admin\ProductFilterForm;
 use BaksDev\Products\Product\Repository\AllProducts\AllProductsInterface;

@@ -83,7 +83,7 @@ final class ProductChoice implements ProductChoiceInterface
             'trans.event = product.event AND trans.local = :local'
         );
 
-        $cacheQueries = new FilesystemAdapter('CacheProduct');
+        $cacheQueries = new FilesystemAdapter('Product');
 
         $query = $this->entityManager->createQuery($qb->getDQL());
         $query->setQueryCache($cacheQueries);

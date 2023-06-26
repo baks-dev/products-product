@@ -23,26 +23,17 @@
 
 namespace BaksDev\Products\Product\Entity\Offers\Variation\Modification;
 
-use BaksDev\Products\Category\Type\Offers\Modification\ProductCategoryOffersVariationModificationUid;
-use BaksDev\Products\Category\Type\Offers\Variation\ProductCategoryOffersVariationUid;
-use BaksDev\Products\Product\Entity\Offers\ProductOffer;
-use BaksDev\Products\Product\Entity\Offers\Variation\ProductOfferVariation;
-use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
-use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
-use BaksDev\Core\Entity\EntityEvent;
-use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductOfferVariationConst;
-use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductOfferVariationUid;
-use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductOfferVariationModificationConst;
-use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductOfferVariationModificationUid;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use InvalidArgumentException;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Exception;
-use InvalidArgumentException;
+use BaksDev\Core\Entity\EntityEvent;
+use Doctrine\Common\Collections\Collection;
+use BaksDev\Products\Product\Entity\Offers\Variation\ProductOfferVariation;
+use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
+use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
+use BaksDev\Products\Category\Type\Offers\Modification\ProductCategoryOffersVariationModificationUid;
 
 /* Вариант в торговом предложения */
-
 
 #[ORM\Entity]
 #[ORM\Table(name: 'product_offer_variation_modification')]
@@ -54,8 +45,8 @@ class ProductOfferVariationModification extends EntityEvent
 
     /** ID модификации множественного варианта варианта */
     #[ORM\Id]
-    #[ORM\Column(type: ProductOfferVariationModificationUid::TYPE)]
-    private ProductOfferVariationModificationUid $id;
+    #[ORM\Column(type: ProductModificationUid::TYPE)]
+    private ProductModificationUid $id;
 
     /** ID множественного варианта  */
     #[ORM\ManyToOne(targetEntity: ProductOfferVariation::class, inversedBy: 'modification')]
@@ -63,8 +54,8 @@ class ProductOfferVariationModification extends EntityEvent
     private ProductOfferVariation $variation;
 
     /** Постоянный уникальный идентификатор модификации */
-    #[ORM\Column(type: ProductOfferVariationModificationConst::TYPE)]
-    private readonly ProductOfferVariationModificationConst $const;
+    #[ORM\Column(type: ProductModificationConst::TYPE)]
+    private readonly ProductModificationConst $const;
 
     /** ID одификации категории */
     #[ORM\Column(name: 'category_modification', type: ProductCategoryOffersVariationModificationUid::TYPE, nullable: true)]
@@ -94,54 +85,57 @@ class ProductOfferVariationModification extends EntityEvent
     #[ORM\OneToMany(mappedBy: 'modification', targetEntity: Image\ProductOfferVariationModificationImage::class, cascade: ['all'])]
     private Collection $image;
 
-
     public function __construct(ProductOfferVariation $variation)
     {
-        $this->id = new ProductOfferVariationModificationUid();
+        $this->id = new ProductModificationUid();
         $this->variation = $variation;
 
         $this->price = new Price\ProductOfferVariationModificationPrice($this);
         $this->quantity = new Quantity\ProductOfferVariationModificationQuantity($this);
     }
 
-
     public function __clone()
     {
-        $this->id = new ProductOfferVariationModificationUid();
+        $this->id = new ProductModificationUid();
     }
 
-
-    public function getId(): ProductOfferVariationModificationUid
+    public function getId(): ProductModificationUid
     {
         return $this->id;
     }
-
 
     public function getVariation(): ProductOfferVariation
     {
         return $this->variation;
     }
 
-
     public function getValue(): ?string
     {
         return $this->value;
     }
 
+    /**
+     * Const.
+     */
+    public function getConst(): ProductModificationConst
+    {
+        return $this->const;
+    }
 
     public function getDto($dto): mixed
     {
-        if ($dto instanceof ProductOfferVariationModificationInterface) {
+        if ($dto instanceof ProductOfferVariationModificationInterface)
+        {
             return parent::getDto($dto);
         }
 
         throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
     }
 
-
     public function setEntity($dto): mixed
     {
-        if ($dto instanceof ProductOfferVariationModificationInterface) {
+        if ($dto instanceof ProductOfferVariationModificationInterface)
+        {
             return parent::setEntity($dto);
         }
 

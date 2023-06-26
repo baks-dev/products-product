@@ -1,17 +1,17 @@
 <?php
 /*
  *  Copyright 2023.  Baks.dev <admin@baks.dev>
- *  
+ *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *  
+ *
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *  
+ *
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -23,12 +23,53 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\Type\Offers\Variation\Id;
+namespace BaksDev\Products\Product\Type\Offers\Variation\ConstId;
 
 use BaksDev\Core\Type\UidType\Uid;
+use Symfony\Component\Uid\AbstractUid;
 
-final class ProductOfferVariationUid extends Uid
+final class ProductVariationConst extends Uid
 {
-	public const TYPE = 'product_offer_variation_uid';
-	
+    public const TEST = '0188a99f-862a-7bb9-b656-90f5ec6f7655';
+    
+    public const TYPE = 'product_offer_variation_const_uid';
+
+    /**
+     * @var null|mixed
+     */
+    private mixed $attr;
+
+    /**
+     * @var null|mixed
+     */
+    private mixed $option;
+    private ?int $counter;
+
+    public function __construct(
+        AbstractUid|string|null $value = null,
+        mixed $attr = null,
+        mixed $option = null,
+        int $counter = null
+    ) {
+        parent::__construct($value);
+
+        $this->attr = $attr;
+        $this->option = $option;
+        $this->counter = $counter;
+    }
+
+    public function getAttr(): mixed
+    {
+        return $this->attr;
+    }
+
+    public function getOption(): mixed
+    {
+        return $this->option;
+    }
+
+    public function getCounter(): ?int
+    {
+        return $this->counter;
+    }
 }

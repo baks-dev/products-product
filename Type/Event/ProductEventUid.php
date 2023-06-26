@@ -24,11 +24,12 @@
 namespace BaksDev\Products\Product\Type\Event;
 
 use BaksDev\Core\Type\UidType\Uid;
-use BaksDev\Products\Product\Type\Id\ProductUid;
 use Symfony\Component\Uid\AbstractUid;
 
 final class ProductEventUid extends Uid
 {
+    public const TEST = '0188a99e-7e95-7385-a2d5-b6fb3d0ca89f';
+
 	public const TYPE = 'product_event';
 	
 	private mixed $option;

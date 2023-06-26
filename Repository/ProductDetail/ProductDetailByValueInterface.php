@@ -21,38 +21,23 @@
  *  THE SOFTWARE.
  */
 
-declare(strict_types=1);
+namespace BaksDev\Products\Product\Repository\ProductDetail;
 
-namespace BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId;
+use BaksDev\Products\Product\Type\Id\ProductUid;
 
-use BaksDev\Core\Type\UidType\Uid;
-use Symfony\Component\Uid\AbstractUid;
-
-final class ProductOfferVariationModificationConst extends Uid
+interface ProductDetailByValueInterface
 {
-    public const TYPE = 'product_offer_variation_modification_const';
-
-    private mixed $attr;
-
-    private mixed $option;
-
-    public function __construct(
-        AbstractUid|string|null $value = null,
-        mixed $attr = null,
-        mixed $option = null
-    ) {
-        parent::__construct($value);
-        $this->attr = $attr;
-        $this->option = $option;
-    }
-
-    public function getAttr(): mixed
-    {
-        return $this->attr;
-    }
-
-    public function getOption(): mixed
-    {
-        return $this->option;
-    }
+    /**
+     * Метод возвращает детальную информацию о продукте и его заполненному значению ТП, вариантов и модификаций.
+     *
+     * @param ?string $offer        - значение торгового предложения
+     * @param ?string $variation    - значение множественного варианта ТП
+     * @param ?string $modification - значение модификации множественного варианта ТП
+     */
+    public function fetchProductAssociative(
+        ProductUid $product,
+        string $offer = null,
+        string $variation = null,
+        string $modification = null,
+    ): array|bool;
 }

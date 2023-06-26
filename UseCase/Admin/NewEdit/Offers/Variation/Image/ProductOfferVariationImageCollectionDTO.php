@@ -24,12 +24,9 @@
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Image;
 
 
-use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\Variation\Image\ProductOfferVariationImageInterface;
-use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
-use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductOfferVariationUid;
+use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 final class ProductOfferVariationImageCollectionDTO implements ProductOfferVariationImageInterface
@@ -65,7 +62,7 @@ final class ProductOfferVariationImageCollectionDTO implements ProductOfferVaria
 	private ?int $size = null;
 	
 	/** Диреткория загрузки файла */
-	private ?ProductOfferVariationUid $dir = null;
+	private ?ProductVariationUid $dir = null;
 	
 	/** Сущность для загрузки и обновления файла  */
 	private mixed $entityUpload = null;
@@ -116,13 +113,13 @@ final class ProductOfferVariationImageCollectionDTO implements ProductOfferVaria
 	
 	/** Диреткория загрузки файла */
 	
-	public function getDir() : ?ProductOfferVariationUid
+	public function getDir() : ?ProductVariationUid
 	{
 		return $this->dir;
 	}
 	
 	
-	public function setDir(ProductOfferVariationUid $dir) : void
+	public function setDir(ProductVariationUid $dir) : void
 	{
 		$this->dir = $dir;
 	}

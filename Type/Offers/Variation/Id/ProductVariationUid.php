@@ -23,21 +23,14 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\Type\Offers\Variation\ConstId;
+namespace BaksDev\Products\Product\Type\Offers\Variation\Id;
 
-use BaksDev\Core\Type\UidType\UidType;
+use BaksDev\Core\Type\UidType\Uid;
 
-final class ProductOfferVariationConstType extends UidType
+final class ProductVariationUid extends Uid
 {
-	public function getClassType() : string
-	{
-		return ProductOfferVariationConst::class;
-	}
-	
-	
-	public function getName() : string
-	{
-		return ProductOfferVariationConst::TYPE;
-	}
+    public const TEST = '0188a99f-af93-7a08-bff6-c6012155def5';
+    
+	public const TYPE = 'product_offer_variation_uid';
 	
 }

@@ -26,12 +26,9 @@ namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modifi
 
 use BaksDev\Products\Category\Type\Offers\Modification\ProductCategoryOffersVariationModificationUid;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductOfferVariationModificationInterface;
-use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductOfferVariationConst;
-use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductOfferVariationModificationConst;
+use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
 use Doctrine\Common\Collections\ArrayCollection;
 use ReflectionProperty;
-use Symfony\Component\Uid\Ulid;
-use Symfony\Component\Validator\Constraints as Assert;
 
 final class ProductOffersVariationModificationCollectionDTO implements ProductOfferVariationModificationInterface
 {
@@ -39,7 +36,7 @@ final class ProductOffersVariationModificationCollectionDTO implements ProductOf
 	private ProductCategoryOffersVariationModificationUid $categoryModification;
 	
 	/** Постоянный уникальный идентификатор модификации */
-	private readonly ProductOfferVariationModificationConst $const;
+	private readonly ProductModificationConst $const;
 	
 	/** Заполненное значение */
 	private ?string $value = null;
@@ -68,17 +65,17 @@ final class ProductOffersVariationModificationCollectionDTO implements ProductOf
 	
 	/** Постоянный уникальный идентификатор модификации */
 	
-	public function getConst() : ProductOfferVariationModificationConst
+	public function getConst() : ProductModificationConst
 	{
 		if(!(new ReflectionProperty($this::class, 'const'))->isInitialized($this))
 		{
-			$this->const = new ProductOfferVariationModificationConst();
+			$this->const = new ProductModificationConst();
 		}
 
 		return $this->const;
 	}
 	
-	public function setConst(ProductOfferVariationModificationConst $const) : void
+	public function setConst(ProductModificationConst $const) : void
 	{
         if(!(new ReflectionProperty($this::class, 'const'))->isInitialized($this))
         {

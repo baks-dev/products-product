@@ -35,7 +35,7 @@ final class ProductCacheClear
     public function __invoke(ProductMessage $message)
     {
         // Чистим кеш модуля
-        $cache = new FilesystemAdapter('CacheProduct');
+        $cache = new FilesystemAdapter('Product');
         $cache->clear();
 
         // Сбрасываем индивидуальный кеш

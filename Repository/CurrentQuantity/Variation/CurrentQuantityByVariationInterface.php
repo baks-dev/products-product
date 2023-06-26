@@ -26,14 +26,14 @@ namespace BaksDev\Products\Product\Repository\CurrentQuantity\Variation;
 use BaksDev\Products\Product\Entity\Offers\Variation\Quantity\ProductOfferVariationQuantity;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
-use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductOfferVariationUid;
+use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 
 interface CurrentQuantityByVariationInterface
 {
 	public function getVariationQuantity(
-		ProductEventUid $event,
-		ProductOfferUid $offer,
-		ProductOfferVariationUid $variation,
+        ProductEventUid     $event,
+        ProductOfferUid     $offer,
+        ProductVariationUid $variation,
 	
 	) : ?ProductOfferVariationQuantity;
 	

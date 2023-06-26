@@ -1,6 +1,6 @@
 # BaksDev Product
 
-![Version](https://img.shields.io/badge/version-6.2.7-blue) ![php 8.1+](https://img.shields.io/badge/php-min%208.1-red.svg)
+![Version](https://img.shields.io/badge/version-6.3.0-blue) ![php 8.1+](https://img.shields.io/badge/php-min%208.1-red.svg)
 
 Модуль Продукции
 
@@ -18,7 +18,7 @@ $ composer require baks-dev/products-product
 $ php bin/console baks:assets:install
 ```
 
-Роли администартора с помощью Fixtures
+Роли администратора с помощью Fixtures
 
 ``` bash
 $ php bin/console doctrine:fixtures:load --append

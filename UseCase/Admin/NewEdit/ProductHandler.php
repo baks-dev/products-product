@@ -23,6 +23,7 @@
 
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit;
 
+use BaksDev\Core\Services\Messenger\MessageDispatchInterface;
 use BaksDev\Files\Resources\Upload\File\FileUploadInterface;
 use BaksDev\Files\Resources\Upload\Image\ImageUploadInterface;
 use BaksDev\Products\Product\Entity;
@@ -30,7 +31,6 @@ use BaksDev\Products\Product\Messenger\ProductMessage;
 use BaksDev\Products\Product\Repository\UniqProductUrl\UniqProductUrlInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 final class ProductHandler
@@ -52,8 +52,8 @@ final class ProductHandler
 
     // /** Событие обновлеия продукта */
     // private ?ProductUpdateEvent $update = null;
+    private MessageDispatchInterface $messageDispatch;
 
-    private MessageBusInterface $bus;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -62,7 +62,7 @@ final class ProductHandler
         UniqProductUrlInterface $uniqProductUrl,
         ValidatorInterface $validator,
         LoggerInterface $logger,
-        MessageBusInterface $bus
+MessageDispatchInterface $messageDispatch
     ) {
         $this->entityManager = $entityManager;
         $this->imageUpload = $imageUpload;
@@ -70,8 +70,7 @@ final class ProductHandler
         $this->uniqProductUrl = $uniqProductUrl;
         $this->validator = $validator;
         $this->logger = $logger;
-
-        $this->bus = $bus;
+        $this->messageDispatch = $messageDispatch;
     }
 
     public function handle(ProductDTO $command): Entity\Product|string
@@ -260,8 +259,13 @@ final class ProductHandler
 
         $this->entityManager->flush();
 
-        // Отправляем сообщение в шину
-        $this->bus->dispatch(new ProductMessage($Product->getId(), $Product->getEvent(), $command->getEvent()));
+
+        /* Отправляем событие в шину  */
+        $this->messageDispatch->dispatch(
+            message: new ProductMessage($Product->getId(), $Product->getEvent(), $command->getEvent()),
+            transport: 'products'
+        );
+
 
         return $Product;
     }

@@ -24,15 +24,11 @@
 namespace BaksDev\Products\Product\Controller\User;
 
 use BaksDev\Core\Controller\AbstractController;
-use BaksDev\Core\Type\UidType\ParamConverter;
-use BaksDev\Products\Category\Type\Offers\Id\ProductCategoryOffersUid;
-use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailInterface;
-use BaksDev\Products\Product\Repository\ProductDetailOffer\ProductDetailOfferInterface;
+use BaksDev\Products\Product\Entity;
 use BaksDev\Products\Product\Repository\ProductModel\ProductModelInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use BaksDev\Products\Product\Entity;
 
 final class ModelController extends AbstractController
 {

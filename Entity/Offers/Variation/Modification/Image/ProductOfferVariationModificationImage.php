@@ -23,16 +23,10 @@
 
 namespace BaksDev\Products\Product\Entity\Offers\Variation\Modification\Image;
 
+use BaksDev\Core\Entity\EntityEvent;
 use BaksDev\Files\Resources\Upload\UploadEntityInterface;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductOfferVariationModification;
-use BaksDev\Products\Product\Entity\Offers\Variation\ProductOfferVariation;
-use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
-
-use BaksDev\Core\Entity\EntityEvent;
-use BaksDev\Products\Product\Type\Offers\Image\ProductOfferImageUid;
-use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductOfferVariationUid;
-use BaksDev\Products\Product\Type\Offers\Variation\Image\ProductOfferVariationImageUid;
-use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductOfferVariationModificationUid;
+use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Image\ProductOfferVariationModificationImageUid;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -57,8 +51,8 @@ class ProductOfferVariationModificationImage extends EntityEvent implements Uplo
 	private ProductOfferVariationModification $modification;
 	
 	/** Название директории */
-	#[ORM\Column(type: ProductOfferVariationModificationUid::TYPE, nullable: false)]
-	private ProductOfferVariationModificationUid $dir;
+	#[ORM\Column(type: ProductModificationUid::TYPE, nullable: false)]
+	private ProductModificationUid $dir;
 	
 	/** Название файла */
 	#[ORM\Column(type: Types::STRING, length: 100, nullable: false)]
@@ -163,7 +157,7 @@ class ProductOfferVariationModificationImage extends EntityEvent implements Uplo
 	}
 	
 	
-	public function getDirName() : ProductOfferVariationModificationUid
+	public function getDirName() : ProductModificationUid
 	{
 		return $this->dir;
 	}

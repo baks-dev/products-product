@@ -24,19 +24,19 @@
 
 
 {% block javascript %}
-<script async data-src="/assets/plugins/ckeditor/ckeditor.min.js" class='lazy'></script>
+<script async data-src="/assets/plugins/ckeditor/ckeditor.min.js?v={{ version }}" class='lazy'></script>
 
-<script async data-src='/assets/plugins/semantic/semantic.min.js' class='lazy'></script>
-<script async data-src='/assets/plugins/nice-select2/nice-select2.min.js' class='lazy'></script>
-<script async data-src='/assets/plugins/datepicker/datepicker.min.js' class='lazy'></script>
-<script async data-src='/assets/js/radio.input.min.js' class='lazy'></script>
-<script async data-src='/assets/js/image.input.min.js' class='lazy'></script>
+<script async data-src='/assets/plugins/semantic/semantic.min.js?v={{ version }}' class='lazy'></script>
+<script async data-src='/assets/plugins/nice-select2/nice-select2.min.js?v={{ version }}' class='lazy'></script>
+<script async data-src='/assets/plugins/datepicker/datepicker.min.js?v={{ version }}' class='lazy'></script>
+<script async data-src='/assets/js/radio.input.min.js?v={{ version }}' class='lazy'></script>
+<script async data-src='/assets/js/image.input.min.js?v={{ version }}' class='lazy'></script>
 
-<script async data-src="/assets/products_product/product.main{{ app.environment != 'dev'?'.min' }}.js" class='lazy'></script>
-<script async data-src="/assets/products_product/product.category{{ app.environment != 'dev'?'.min' }}.js" class='lazy'></script>
-<script async data-src="/assets/products_product/product.photo{{ app.environment != 'dev'?'.min' }}.js" class='lazy'></script>
-<script async data-src="/assets/products_product/product.files{{ app.environment != 'dev'?'.min' }}.js" class='lazy'></script>
-<script async data-src="/assets/products_product/product.video{{ app.environment != 'dev'?'.min' }}.js" class='lazy'></script>
-<script async data-src="/assets/products_product/product.offer{{ app.environment != 'dev'?'.min' }}.js" class='lazy'></script>
+<script async data-src="/assets/products_product/product.main{{ app.environment != 'dev'?'.min' }}.js?v={{ version }}" class='lazy'></script>
+<script async data-src="/assets/products_product/product.category{{ app.environment != 'dev'?'.min' }}.js?v={{ version }}" class='lazy'></script>
+<script async data-src="/assets/products_product/product.photo{{ app.environment != 'dev'?'.min' }}.js?v={{ version }}" class='lazy'></script>
+<script async data-src="/assets/products_product/product.files{{ app.environment != 'dev'?'.min' }}.js?v={{ version }}" class='lazy'></script>
+<script async data-src="/assets/products_product/product.video{{ app.environment != 'dev'?'.min' }}.js?v={{ version }}" class='lazy'></script>
+<script async data-src="/assets/products_product/product.offer{{ app.environment != 'dev'?'.min' }}.js?v={{ version }}" class='lazy'></script>
 
 {% endblock %}

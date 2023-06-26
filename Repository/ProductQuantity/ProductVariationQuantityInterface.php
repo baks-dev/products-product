@@ -27,7 +27,7 @@ namespace BaksDev\Products\Product\Repository\ProductQuantity;
 use BaksDev\Products\Product\Entity\Offers\Variation\Quantity\ProductOfferVariationQuantity;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
-use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductOfferVariationConst;
+use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
 
 interface ProductVariationQuantityInterface
 {
@@ -35,6 +35,6 @@ interface ProductVariationQuantityInterface
     public function getProductVariationQuantity(
         ProductUid $product,
         ProductOfferConst $offer,
-        ProductOfferVariationConst $variation
+        ProductVariationConst $variation
     ): ?ProductOfferVariationQuantity;
 }

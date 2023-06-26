@@ -23,12 +23,56 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\Type\Offers\Variation\Modification\Id;
+namespace BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId;
 
 use BaksDev\Core\Type\UidType\Uid;
+use Symfony\Component\Uid\AbstractUid;
 
-final class ProductOfferVariationModificationUid extends Uid
+final class ProductModificationConst extends Uid
 {
-	public const TYPE = 'product_offer_variation_modification_uid';
-	
+    public const TEST = '0188a99f-f8f7-753f-a8f1-62ea0ad1d29a';
+    
+    public const TYPE = 'product_offer_variation_modification_const';
+    
+    private mixed $attr;
+    
+    private mixed $option;
+    
+    private ?int $counter;
+    
+    
+    public function __construct(
+        AbstractUid|string|null $value = null,
+        mixed $attr = null,
+        mixed $option = null,
+        int $counter = null,
+    )
+    {
+        parent::__construct($value);
+        
+        $this->attr = $attr;
+        $this->option = $option;
+        $this->counter = $counter;
+    }
+    
+    
+    public function getAttr()
+    : mixed
+    {
+        return $this->attr;
+    }
+    
+    
+    public function getOption()
+    : mixed
+    {
+        return $this->option;
+    }
+    
+    
+    public function getCounter()
+    : ?int
+    {
+        return $this->counter;
+    }
 }

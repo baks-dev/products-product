@@ -25,50 +25,42 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Messenger;
 
-
-use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
+use BaksDev\Products\Product\Type\Event\ProductEventUid;
 
 final class ProductMessage
 {
-	/** Идентификатор */
-	private ProductUid $id;
-	
-	/** Идентификатор события */
-	private ProductEventUid $event;
-	
-	/** Идентификатор предыдущего события */
-	private ?ProductEventUid $last;
-	
-	public function __construct(ProductUid $id, ProductEventUid $event, ?ProductEventUid $last = null)
-	{
-		$this->last = $last;
-		$this->id = $id;
-		$this->event = $event;
-	}
-	
-	
-	/** Идентификатор */
-	
-	public function getId() : ProductUid
-	{
-		return $this->id;
-	}
-	
-	
-	/** Идентификатор события */
-	
-	public function getEvent() : ProductEventUid
-	{
-		return $this->event;
-	}
-	
-	
-	/** Идентификатор предыдущего события */
-	
-	public function getLast() : ?ProductEventUid
-	{
-		return $this->last;
-	}
-	
+    /** Идентификатор */
+    private ProductUid $id;
+
+    /** Идентификатор события */
+    private ProductEventUid $event;
+
+    /** Идентификатор предыдущего события */
+    private ?ProductEventUid $last;
+
+    public function __construct(ProductUid $id, ProductEventUid $event, ?ProductEventUid $last = null)
+    {
+        $this->last = $last;
+        $this->id = $id;
+        $this->event = $event;
+    }
+
+    /** Идентификатор */
+    public function getId(): ProductUid
+    {
+        return $this->id;
+    }
+
+    /** Идентификатор события */
+    public function getEvent(): ProductEventUid
+    {
+        return $this->event;
+    }
+
+    /** Идентификатор предыдущего события */
+    public function getLast(): ?ProductEventUid
+    {
+        return $this->last;
+    }
 }

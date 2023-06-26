@@ -23,17 +23,16 @@
 
 namespace BaksDev\Products\Product\Entity\Offers;
 
-use BaksDev\Core\Entity\EntityEvent;
-use BaksDev\Products\Category\Type\Offers\Id\ProductCategoryOffersUid;
-use BaksDev\Products\Product\Entity\Event\ProductEvent;
-use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
-use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use InvalidArgumentException;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use InvalidArgumentException;
+use BaksDev\Core\Entity\EntityEvent;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Validator\Constraints as Assert;
+use BaksDev\Products\Product\Entity\Event\ProductEvent;
+use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
+use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
+use BaksDev\Products\Category\Type\Offers\Id\ProductCategoryOffersUid;
 
 // Торговые предложения
 
@@ -131,9 +130,18 @@ class ProductOffer extends EntityEvent
         return $this->id;
     }
 
+    /**
+     * Const.
+     */
+    public function getConst(): ProductOfferConst
+    {
+        return $this->const;
+    }
+
     public function getDto($dto): mixed
     {
-        if ($dto instanceof ProductOffersInterface) {
+        if ($dto instanceof ProductOffersInterface)
+        {
             return parent::getDto($dto);
         }
 
@@ -142,7 +150,8 @@ class ProductOffer extends EntityEvent
 
     public function setEntity($dto): mixed
     {
-        if ($dto instanceof ProductOffersInterface) {
+        if ($dto instanceof ProductOffersInterface)
+        {
             return parent::setEntity($dto);
         }
 

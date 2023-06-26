@@ -26,16 +26,16 @@ namespace BaksDev\Products\Product\Repository\CurrentQuantity\Modification;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Quantity\ProductOfferVariationModificationQuantity;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
-use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductOfferVariationUid;
-use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductOfferVariationModificationUid;
+use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
+use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
 
 interface CurrentQuantityByModificationInterface
 {
 	public function getModificationQuantity(
-		ProductEventUid $event,
-		ProductOfferUid $offer,
-		ProductOfferVariationUid $variation,
-		ProductOfferVariationModificationUid $modification,
+        ProductEventUid        $event,
+        ProductOfferUid        $offer,
+        ProductVariationUid    $variation,
+        ProductModificationUid $modification,
 	) : ?ProductOfferVariationModificationQuantity;
 	
 }

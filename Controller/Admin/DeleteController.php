@@ -24,7 +24,7 @@
 namespace BaksDev\Products\Product\Controller\Admin;
 
 use BaksDev\Core\Controller\AbstractController;
-use BaksDev\Core\Services\Security\RoleSecurity;
+use BaksDev\Core\Listeners\Event\Security\RoleSecurity;
 use BaksDev\Products\Product\Entity;
 use BaksDev\Products\Product\UseCase\Admin\Delete\DeleteForm;
 use BaksDev\Products\Product\UseCase\Admin\Delete\ProductDTO;

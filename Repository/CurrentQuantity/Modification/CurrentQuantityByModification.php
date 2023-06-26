@@ -29,8 +29,8 @@ use BaksDev\Products\Product\Entity as ProductEntity;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Quantity\ProductOfferVariationModificationQuantity;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
-use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductOfferVariationUid;
-use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductOfferVariationModificationUid;
+use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
+use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
 use Doctrine\ORM\EntityManagerInterface;
 
 final class CurrentQuantityByModification implements CurrentQuantityByModificationInterface
@@ -45,10 +45,10 @@ final class CurrentQuantityByModification implements CurrentQuantityByModificati
 	
 	
 	public function getModificationQuantity(
-		ProductEventUid $event,
-		ProductOfferUid $offer,
-		ProductOfferVariationUid $variation,
-		ProductOfferVariationModificationUid $modification,
+        ProductEventUid        $event,
+        ProductOfferUid        $offer,
+        ProductVariationUid    $variation,
+        ProductModificationUid $modification,
 	) : ?ProductOfferVariationModificationQuantity
 	{
 		$qb = $this->entityManager->createQueryBuilder();
@@ -86,7 +86,7 @@ final class CurrentQuantityByModification implements CurrentQuantityByModificati
 		$qb->join(ProductEntity\Offers\Variation\ProductOfferVariation::class,
 			'variation', 'WITH', 'variation.id = :variation AND variation.offer = offer.id'
 		);
-		$qb->setParameter('variation', $variation, ProductOfferVariationUid::TYPE);
+		$qb->setParameter('variation', $variation, ProductVariationUid::TYPE);
 		
 		$qb->leftJoin(ProductEntity\Offers\Variation\ProductOfferVariation::class,
 			'current_variation', 'WITH', 'current_variation.const = variation.const AND current_variation.offer = current_offer.id'
@@ -99,7 +99,7 @@ final class CurrentQuantityByModification implements CurrentQuantityByModificati
 		$qb->join(ProductEntity\Offers\Variation\Modification\ProductOfferVariationModification::class,
 			'modification', 'WITH', 'modification.id = :modification AND modification.variation = variation.id'
 		);
-		$qb->setParameter('modification', $modification, ProductOfferVariationModificationUid::TYPE);
+		$qb->setParameter('modification', $modification, ProductModificationUid::TYPE);
 		
 		$qb->leftJoin(ProductEntity\Offers\Variation\Modification\ProductOfferVariationModification::class,
 			'current_modification', 'WITH', 'current_modification.const = modification.const AND current_modification.variation = current_variation.id'

@@ -21,28 +21,16 @@
  *  THE SOFTWARE.
  */
 
-namespace Symfony\Component\DependencyInjection\Loader\Configurator;
+declare(strict_types=1);
 
-// use App\Module\Product\Type\Category\Id\CategoryUidConverter;
-// use BaksDev\Users\Entity\User;
-// use App\Module\Product\Entity;
-// use App\Module\Product\EntityListeners;
+namespace BaksDev\Products\Product\Type\Offers\Variation\Modification\Id;
 
-return static function (ContainerConfigurator $configurator) {
-    $services = $configurator->services()
-        ->defaults()
-        ->autowire()
-        ->autoconfigure()
-    ;
+use BaksDev\Core\Type\UidType\Uid;
 
-    $namespace = 'BaksDev\Products\Product';
-
-    $services->load($namespace.'\\', __DIR__.'/../../')
-        ->exclude(__DIR__.'/../../{Controller,Entity,Resources,Type,Tests,*DTO.php,*Message.php}');
-
-    $services->load($namespace.'\Controller\\', __DIR__.'/../../Controller')
-        ->tag('controller.service_arguments')
-        ->exclude(__DIR__.'/../../Controller/**/*Test.php')
-    ;
-
-};
+final class ProductModificationUid extends Uid
+{
+    public const TEST = '0188a9a0-24c4-79ad-9c9c-de02485b334f';
+    
+	public const TYPE = 'product_offer_variation_modification_uid';
+	
+}

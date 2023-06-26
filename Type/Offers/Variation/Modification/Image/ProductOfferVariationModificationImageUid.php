@@ -29,6 +29,8 @@ use BaksDev\Core\Type\UidType\Uid;
 
 final class ProductOfferVariationModificationImageUid extends Uid
 {
+    public const TEST = '0188a9a0-4ee4-76ab-a8aa-4a9d1b654964';
+    
 	public const TYPE = 'product_offer_variation_modification_image_uid';
 	
 }

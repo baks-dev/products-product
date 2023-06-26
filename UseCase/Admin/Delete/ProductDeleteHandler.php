@@ -23,6 +23,7 @@
 
 namespace BaksDev\Products\Product\UseCase\Admin\Delete;
 
+use BaksDev\Core\Services\Messenger\MessageDispatchInterface;
 use BaksDev\Files\Resources\Upload\File\FileUploadInterface;
 use BaksDev\Files\Resources\Upload\Image\ImageUploadInterface;
 use BaksDev\Products\Product\Entity;
@@ -30,7 +31,6 @@ use BaksDev\Products\Product\Messenger\ProductMessage;
 use BaksDev\Products\Product\Repository\UniqProductUrl\UniqProductUrlInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 final class ProductDeleteHandler
@@ -52,8 +52,8 @@ final class ProductDeleteHandler
 
     /** Событие обновлеия продукта */
     private ?ProductUpdateEvent $update = null;
+    private MessageDispatchInterface $messageDispatch;
 
-    private MessageBusInterface $bus;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -62,7 +62,8 @@ final class ProductDeleteHandler
         UniqProductUrlInterface $uniqProductUrl,
         ValidatorInterface $validator,
         LoggerInterface $logger,
-        MessageBusInterface $bus
+        MessageDispatchInterface $messageDispatch
+
     ) {
         $this->entityManager = $entityManager;
         $this->imageUpload = $imageUpload;
@@ -70,26 +71,23 @@ final class ProductDeleteHandler
         $this->uniqProductUrl = $uniqProductUrl;
         $this->validator = $validator;
         $this->logger = $logger;
-
-        $this->bus = $bus;
+        $this->messageDispatch = $messageDispatch;
     }
 
     public function handle(
         ProductDTO $command,
     ): Entity\Product|string {
-
-
         return '54654';
 
-
-
         // Объявялем событие
-        if ($command->getEvent()) {
+        if ($command->getEvent())
+        {
             $EventRepo = $this->entityManager->getRepository(Entity\Event\ProductEvent::class)->find(
                 $command->getEvent()
             );
 
-            if (null === $EventRepo) {
+            if ($EventRepo === null)
+            {
                 $uniqid = uniqid('', false);
                 $errorsString = sprintf(
                     'Not found %s by id: %s',
@@ -102,7 +100,8 @@ final class ProductDeleteHandler
             }
 
             $Event = $EventRepo->cloneEntity();
-        } else {
+        } else
+        {
             $Event = new Entity\Event\ProductEvent();
             $this->entityManager->persist($Event);
         }
@@ -112,12 +111,14 @@ final class ProductDeleteHandler
         $Event->setEntity($command);
 
         // Загрузка базового фото галлереи
-        foreach ($command->getPhoto() as $Photo) {
+        foreach ($command->getPhoto() as $Photo)
+        {
             /** Загружаем базового фото галлереи.
              *
              * @var Photo\PhotoCollectionDTO $Photo
              */
-            if (null !== $Photo->file) {
+            if ($Photo->file !== null)
+            {
                 /** TODO  */
                 $ProductPhoto = $Photo->getEntityUpload();
                 $this->imageUpload->upload($Photo->file, $ProductPhoto);
@@ -125,12 +126,14 @@ final class ProductDeleteHandler
         }
 
         // Загрузка файлов PDF галлереи
-        foreach ($command->getFile() as $File) {
+        foreach ($command->getFile() as $File)
+        {
             /** Загружаем базового фото галлереи.
              *
              * @var Files\FilesCollectionDTO $File
              */
-            if (null !== $File->file) {
+            if ($File->file !== null)
+            {
                 /** TODO  */
                 $ProductFile = $File->getEntityUpload();
                 $this->fileUpload->upload($File->file, $ProductFile);
@@ -138,12 +141,14 @@ final class ProductDeleteHandler
         }
 
         // Загрузка файлов Видео галлереи
-        foreach ($command->getVideo() as $Video) {
+        foreach ($command->getVideo() as $Video)
+        {
             /** Загружаем базового фото галлереи.
              *
              * @var Video\VideoCollectionDTO $Video
              */
-            if (null !== $Video->file) {
+            if ($Video->file !== null)
+            {
                 /** TODO  */
                 $ProductVideo = $Video->getEntityUpload();
                 $this->fileUpload->upload($Video->file, $ProductVideo);
@@ -154,13 +159,16 @@ final class ProductDeleteHandler
          *
          * @var Offers\ProductOffersCollectionDTO $offer
          */
-        foreach ($command->getOffer() as $offer) {
+        foreach ($command->getOffer() as $offer)
+        {
             /** Загрузка фото торгового предложения.
              *
              * @var Offers\Image\ProductOfferImageCollectionDTO $offerImage
              */
-            foreach ($offer->getImage() as $offerImage) {
-                if (null !== $offerImage->file) {
+            foreach ($offer->getImage() as $offerImage)
+            {
+                if ($offerImage->file !== null)
+                {
                     /** TODO  */
                     $ProductOfferImage = $offerImage->getEntityUpload();
                     $this->fileUpload->upload($offerImage->file, $ProductOfferImage);
@@ -171,13 +179,16 @@ final class ProductDeleteHandler
              *
              * @var Offers\Variation\ProductOffersVariationCollectionDTO $variation
              */
-            foreach ($offer->getVariation() as $variation) {
+            foreach ($offer->getVariation() as $variation)
+            {
                 /** Загрузка фото торгового предложения.
                  *
                  * @var Offers\Variation\Image\ProductOfferVariationImageCollectionDTO $variationImage
                  */
-                foreach ($variation->getImage() as $variationImage) {
-                    if (null !== $variationImage->file) {
+                foreach ($variation->getImage() as $variationImage)
+                {
+                    if ($variationImage->file !== null)
+                    {
                         /** TODO  */
                         $ProductOfferVariationImage = $variationImage->getEntityUpload();
                         $this->fileUpload->upload($variationImage->file, $ProductOfferVariationImage);
@@ -188,13 +199,16 @@ final class ProductDeleteHandler
                  *
                  * @var Offers\Variation\Modification\ProductOffersVariationModificationCollectionDTO $modification
                  */
-                foreach ($variation->getModification() as $modification) {
+                foreach ($variation->getModification() as $modification)
+                {
                     /** Загрузка фото торгового предложения.
                      *
                      * @var Offers\Variation\Modification\Image\ProductOfferVariationModificationImageCollectionDTO $modificationImage
                      */
-                    foreach ($modification->getImage() as $modificationImage) {
-                        if (null !== $modificationImage->file) {
+                    foreach ($modification->getImage() as $modificationImage)
+                    {
+                        if ($modificationImage->file !== null)
+                        {
                             /** TODO  */
                             $ProductOfferVariationModificationImage = $modificationImage->getEntityUpload();
                             $this->fileUpload->upload($modificationImage->file, $ProductOfferVariationModificationImage);
@@ -205,18 +219,18 @@ final class ProductDeleteHandler
         }
 
         // @var Entity\Product $Product
-        if ($Event->getProduct()) {
+        if ($Event->getProduct())
+        {
             // Получаем продукт
             $Product = $this->entityManager->getRepository(Entity\Product::class)
-                ->findOneBy(['event' => $command->getEvent()])
-            ;
+                ->findOneBy(['event' => $command->getEvent()]);
 
             // Получаем информацию о продукте
             $ProductInfo = $this->entityManager->getRepository(Entity\Info\ProductInfo::class)
-                ->find($Product->getId())
-            ;
+                ->find($Product->getId());
 
-            if (empty($Product)) {
+            if (empty($Product))
+            {
                 $uniqid = uniqid('', false);
                 $errorsString = sprintf(
                     'Not found %s by event: %s',
@@ -227,7 +241,8 @@ final class ProductDeleteHandler
 
                 return $uniqid;
             }
-        } else {
+        } else
+        {
             $Product = new Entity\Product();
             $this->entityManager->persist($Product);
 
@@ -240,7 +255,8 @@ final class ProductDeleteHandler
         /** Проверяем уникальность семантической ссылки продукта */
         $infoDTO = $command->getInfo();
         $uniqProductUrl = $this->uniqProductUrl->get($infoDTO->getUrl(), $Product->getId());
-        if ($uniqProductUrl) {
+        if ($uniqProductUrl)
+        {
             $infoDTO->updateUrlUniq(); // Обновляем URL на уникальный с префиксом
         }
 
@@ -252,7 +268,8 @@ final class ProductDeleteHandler
         // Валидация
         $errors = $this->validator->validate($Event);
 
-        if (count($errors) > 0) {
+        if (count($errors) > 0)
+        {
             $uniqid = uniqid('', false);
             $errorsString = (string) $errors;
             $this->logger->error($uniqid.': '.$errorsString);
@@ -262,8 +279,14 @@ final class ProductDeleteHandler
 
         $this->entityManager->flush();
 
-        // Отправляем сообщение в шину
-        $this->bus->dispatch(new ProductMessage($Product->getId(), $Product->getEvent(), $command->getEvent()));
+
+        /* Отправляем событие в шину  */
+        $this->messageDispatch->dispatch(
+            message: new ProductMessage($Product->getId(), $Product->getEvent(), $command->getEvent()),
+            transport: 'products'
+        );
+
+
 
         return $Product;
     }

@@ -34,7 +34,7 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 #[AutoconfigureTag('baks.menu.admin')]
 class Role implements RoleFixturesInterface, MenuAdminFixturesInterface
 {
-    public const ROLE = 'ROLE_PRODUCT_CATEGORY';
+    public const ROLE = 'ROLE_PRODUCT';
 
     public function getRole(): string
     {
@@ -65,5 +65,20 @@ class Role implements RoleFixturesInterface, MenuAdminFixturesInterface
     public function getSortMenu(): int
     {
         return 500;
+    }
+
+    /** Метод возвращает флаг "Показать в выпадающем меню"  */
+    public function getDropdownMenu(): bool
+    {
+        return true;
+    }
+
+
+    /**
+     * Метод возвращает флаг "Модальное окно".
+     */
+    public function getModal(): bool
+    {
+        return false;
     }
 }

@@ -27,16 +27,15 @@
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation;
 
 use App\Module\Products\Category\Repository\CategoryOffersForm\CategoryOffersFormDTO;
+use App\System\Type\Reference\ReferenceType;
 use BaksDev\Core\Services\Reference\ReferenceChoice;
 use BaksDev\Products\Category\Type\Offers\Variation\ProductCategoryOffersVariationUid;
-use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductOfferVariationConst;
+use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Offer\Image\ImageCollectionForm;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Offer\Price\PriceForm;
-use App\System\Type\Reference\ReferenceType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -44,7 +43,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class ProductOffersVariationCollectionForm extends AbstractType
 {
@@ -82,10 +80,10 @@ final class ProductOffersVariationCollectionForm extends AbstractType
         $builder->get('const')->addModelTransformer(
             new CallbackTransformer(
                 function($const) {
-                    return $const instanceof ProductOfferVariationConst ? $const->getValue() : $const;
+                    return $const instanceof ProductVariationConst ? $const->getValue() : $const;
                 },
                 function($const) {
-                    return new ProductOfferVariationConst($const);
+                    return new ProductVariationConst($const);
                 }
             )
         );
