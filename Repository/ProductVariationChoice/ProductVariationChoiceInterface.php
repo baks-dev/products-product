@@ -24,9 +24,12 @@
 namespace BaksDev\Products\Product\Repository\ProductVariationChoice;
 
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
+use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 
 interface ProductVariationChoiceInterface
 {
     /** Метод возвращает все постоянные идентификаторы CONST множественных вариантов торговых предложений продукта */
-    public function fetchProductVariationByOffer(ProductOfferConst $const): ?array;
+    public function fetchProductVariationByOfferConst(ProductOfferConst $const): ?array;
+
+    public function fetchProductVariationByOffer(ProductOfferUid $offer): ?array;
 }

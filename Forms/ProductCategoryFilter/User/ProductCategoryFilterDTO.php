@@ -31,33 +31,43 @@ use Symfony\Component\Validator\Constraints as Assert;
 final class ProductCategoryFilterDTO
 {
 	
-	/** Торговое предложение */
+	/**
+     * Торговое предложение
+     */
 	private ?string $offer = null;
 	
-	/** Множественный вариант торгового предложения */
+	/**
+     * Множественный вариант торгового предложения
+     */
 	private ?string $variation = null;
 	
-	/** Модификатор множественного варианта торгового предложения */
+	/**
+     * Модификатор множественного варианта торгового предложения
+     */
 	private ?string $modification = null;
 	
 	
-	/** Идентификатор категории */
+	/**
+     * Идентификатор категории
+     */
 	#[Assert\Uuid]
-	private ProductCategoryUid $category;
+	private ?ProductCategoryUid $category;
 	
 	
-	public function __construct(ProductCategoryUid $category) {
+	public function __construct(?ProductCategoryUid $category) {
 		$this->category = $category;
 	}
+
+    /**
+     * Идентификатор категории
+     */
 	
-	
-	/**
-	 * @return ProductCategoryUid
-	 */
-	public function getCategory() : ProductCategoryUid
+	public function getCategory() : ?ProductCategoryUid
 	{
 		return $this->category;
 	}
+
+
 	
 	
 	/** Торговое предложение */

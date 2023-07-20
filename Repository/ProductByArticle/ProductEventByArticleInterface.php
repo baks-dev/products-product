@@ -21,36 +21,14 @@
  *  THE SOFTWARE.
  */
 
-declare(strict_types=1);
+namespace BaksDev\Products\Product\Repository\ProductByArticle;
 
-namespace BaksDev\Products\Product\Messenger;
+use BaksDev\Products\Product\Entity\Event\ProductEvent;
 
-use Symfony\Component\Cache\Adapter\ApcuAdapter;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-
-#[AsMessageHandler(fromTransport: 'sync')]
-final class ProductCacheClear
+interface ProductEventByArticleInterface
 {
-    public function __invoke(ProductMessage $message)
-    {
-        // Чистим кеш модуля
-        $cache = new FilesystemAdapter('Product');
-        $cache->clear();
-
-        // Сбрасываем индивидуальный кеш
-        $cache = new ApcuAdapter('Product');
-        $cache->clear();
-
-        $cache = new ApcuAdapter((string) $message->getId()->getValue());
-        $cache->clear();
-
-        $cache = new ApcuAdapter((string) $message->getEvent()->getValue());
-        $cache->clear();
-
-        if ($message->getLast()) {
-            $cache = new ApcuAdapter((string) $message->getLast()->getValue());
-            $cache->clear();
-        }
-    }
+    /**
+     * Метод возвращает по артикулу событие продукта
+     */
+    public function findProductEventByArticle(string $article): ?ProductEvent;
 }

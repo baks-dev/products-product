@@ -23,10 +23,18 @@
 
 namespace BaksDev\Products\Product\Repository\ProductOfferChoice;
 
+use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 
 interface ProductOfferChoiceInterface
 {
-    /** Метод возвращает все постоянные идентификаторы CONST торговых предложений продукта */
+    /**
+     * Метод возвращает все постоянные идентификаторы CONST торговых предложений продукта
+     */
     public function fetchProductOfferByProduct(ProductUid $product): ?array;
+
+    /**
+     * Метод возвращает все идентификаторы торговых предложений продукта по событию
+     */
+    public function fetchProductOfferByProductEvent(ProductEventUid $product): ?array;
 }

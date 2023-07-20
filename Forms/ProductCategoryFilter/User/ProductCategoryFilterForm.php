@@ -31,11 +31,8 @@ use BaksDev\Products\Category\Repository\AllFilterFieldsByCategory\AllFilterFiel
 use BaksDev\Products\Category\Repository\ModificationFieldsCategoryChoice\ModificationFieldsCategoryChoiceInterface;
 use BaksDev\Products\Category\Repository\OfferFieldsCategoryChoice\OfferFieldsCategoryChoiceInterface;
 use BaksDev\Products\Category\Repository\VariationFieldsCategoryChoice\VariationFieldsCategoryChoiceInterface;
-use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
-use BaksDev\Products\Category\Type\Offers\Id\ProductCategoryOffersUid;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -88,7 +85,7 @@ final class ProductCategoryFilterForm extends AbstractType
 			
 			/** Торговое предложение раздела */
 			
-			$offerField = $this->offerChoice->getOfferFieldType($data->getCategory());
+			$offerField = $this->offerChoice->getOfferFieldCollection($data->getCategory());
 			
 			
 			
@@ -171,7 +168,7 @@ final class ProductCategoryFilterForm extends AbstractType
 			
 			
 			
-			/** Свойства, учавствующие в фильтре */
+			/** Свойства, участвующие в фильтре */
 			
 			$fields = $this->fields->fetchAllFilterCategoryFieldsAssociative($data->getCategory());
 			

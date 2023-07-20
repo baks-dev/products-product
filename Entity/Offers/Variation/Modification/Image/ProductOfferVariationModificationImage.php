@@ -31,6 +31,7 @@ use BaksDev\Products\Product\Type\Offers\Variation\Modification\Image\ProductOff
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use InvalidArgumentException;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'product_offer_variation_modification_images')]
@@ -41,37 +42,49 @@ class ProductOfferVariationModificationImage extends EntityEvent implements Uplo
 	public const TABLE = 'product_offer_variation_modification_images';
 	
 	/** ID */
+    #[Assert\NotBlank]
+    #[Assert\Uuid]
 	#[ORM\Id]
 	#[ORM\Column(type: ProductOfferVariationModificationImageUid::TYPE)]
 	private ProductOfferVariationModificationImageUid $id;
 	
 	/** ID торгового предложения */
+    #[Assert\NotBlank]
 	#[ORM\ManyToOne(targetEntity: ProductOfferVariationModification::class, inversedBy: 'image')]
 	#[ORM\JoinColumn(name: 'modification', referencedColumnName: 'id')]
 	private ProductOfferVariationModification $modification;
 	
 	/** Название директории */
-	#[ORM\Column(type: ProductModificationUid::TYPE, nullable: false)]
+    #[Assert\NotBlank]
+    #[Assert\Uuid]
+	#[ORM\Column(type: ProductModificationUid::TYPE)]
 	private ProductModificationUid $dir;
 	
 	/** Название файла */
-	#[ORM\Column(type: Types::STRING, length: 100, nullable: false)]
+    #[Assert\NotBlank]
+    #[Assert\Choice(['svg', 'png', 'jpg', 'jpeg', 'gif', 'webp'])]
+    #[Assert\Length(max: 5)]
+	#[ORM\Column(type: Types::STRING, length: 100)]
 	private string $name = 'img';
 	
 	/** Расширение файла */
-	#[ORM\Column(type: Types::STRING, length: 64, nullable: false)]
+    #[Assert\NotBlank]
+	#[ORM\Column(type: Types::STRING, length: 64)]
 	private string $ext = 'svg';
 	
 	/** Размер файла */
-	#[ORM\Column(type: Types::INTEGER, nullable: false)]
+    #[Assert\NotBlank]
+	#[ORM\Column(type: Types::INTEGER)]
 	private int $size = 0;
 	
 	/** Файл загружен на CDN */
-	#[ORM\Column(type: Types::BOOLEAN, nullable: false)]
+    #[Assert\NotBlank]
+	#[ORM\Column(type: Types::BOOLEAN)]
 	private bool $cdn = false;
 	
 	/** Заглавное фото */
-	#[ORM\Column(type: Types::BOOLEAN, nullable: false, options: ['default' => false])]
+    #[Assert\NotBlank]
+	#[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
 	private bool $root = false;
 	
 	
@@ -155,12 +168,12 @@ class ProductOfferVariationModificationImage extends EntityEvent implements Uplo
 	{
 		return $this->name.'.'.$this->ext;
 	}
-	
-	
-	public function getDirName() : ProductModificationUid
-	{
-		return $this->dir;
-	}
+
+
+    public static function getDirName(): string
+    {
+        return  ProductModificationUid::class;
+    }
 	
 	
 	public function root() : void

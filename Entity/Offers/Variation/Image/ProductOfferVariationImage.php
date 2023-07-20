@@ -26,12 +26,12 @@ namespace BaksDev\Products\Product\Entity\Offers\Variation\Image;
 use BaksDev\Core\Entity\EntityEvent;
 use BaksDev\Files\Resources\Upload\UploadEntityInterface;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductOfferVariation;
-use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Image\ProductOfferVariationImageUid;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use InvalidArgumentException;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'product_offer_variation_images')]
@@ -42,37 +42,49 @@ class ProductOfferVariationImage extends EntityEvent implements UploadEntityInte
 	public const TABLE = 'product_offer_variation_images';
 	
 	/** ID */
+    #[Assert\NotBlank]
+    #[Assert\Uuid]
 	#[ORM\Id]
 	#[ORM\Column(type: ProductOfferVariationImageUid::TYPE)]
 	private ProductOfferVariationImageUid $id;
 	
 	/** ID торгового предложения */
+    #[Assert\NotBlank]
 	#[ORM\ManyToOne(targetEntity: ProductOfferVariation::class, inversedBy: 'image')]
 	#[ORM\JoinColumn(name: 'variation', referencedColumnName: 'id')]
 	private ProductOfferVariation $variation;
 	
 	/** Название директории */
+    #[Assert\NotBlank]
+    #[Assert\Uuid]
 	#[ORM\Column(type: ProductVariationUid::TYPE, nullable: false)]
 	private ProductVariationUid $dir;
 	
 	/** Название файла */
-	#[ORM\Column(type: Types::STRING, length: 100, nullable: false)]
+    #[Assert\NotBlank]
+    #[Assert\Choice(['svg', 'png', 'jpg', 'jpeg', 'gif', 'webp'])]
+    #[Assert\Length(max: 5)]
+	#[ORM\Column(type: Types::STRING, length: 100)]
 	private string $name = 'img';
 	
 	/** Расширение файла */
-	#[ORM\Column(type: Types::STRING, length: 64, nullable: false)]
+    #[Assert\NotBlank]
+	#[ORM\Column(type: Types::STRING, length: 64)]
 	private string $ext = 'svg';
 	
 	/** Размер файла */
-	#[ORM\Column(type: Types::INTEGER, nullable: false)]
+    #[Assert\NotBlank]
+	#[ORM\Column(type: Types::INTEGER)]
 	private int $size = 0;
 	
 	/** Файл загружен на CDN */
-	#[ORM\Column(type: Types::BOOLEAN, nullable: false)]
+    #[Assert\NotBlank]
+	#[ORM\Column(type: Types::BOOLEAN)]
 	private bool $cdn = false;
 	
 	/** Заглавное фото */
-	#[ORM\Column(type: Types::BOOLEAN, nullable: false, options: ['default' => false])]
+    #[Assert\NotBlank]
+	#[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
 	private bool $root = false;
 	
 	
@@ -156,12 +168,12 @@ class ProductOfferVariationImage extends EntityEvent implements UploadEntityInte
 	{
 		return $this->name.'.'.$this->ext;
 	}
-	
-	
-	public function getDirName() : ProductOfferUid
-	{
-		return $this->dir;
-	}
+
+
+    public static function getDirName(): string
+    {
+        return  ProductVariationUid::class;
+    }
 	
 	
 	public function root() : void

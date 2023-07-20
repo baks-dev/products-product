@@ -24,14 +24,11 @@ use BaksDev\Products\Product\Repository\ProductUserProfileChoice\ProductUserProf
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class ProductFilterForm extends AbstractType
 {
@@ -58,19 +55,20 @@ final class ProductFilterForm extends AbstractType
 	public function buildForm(FormBuilderInterface $builder, array $options) : void
 	{
 		$builder->add('profile', ChoiceType::class, [
-			'choices' => $this->profileChoice->get(),
+			'choices' => $this->profileChoice->getProfileCollection(),
 			'choice_value' => function(?UserProfileUid $profile) {
 				return $profile?->getValue();
 			},
 			'choice_label' => function(UserProfileUid $profile) {
-				return $profile->getName();
+				return $profile->getAttr();
 			},
 			'label' => false,
-			'attr' => ['onchange' => 'this.form.submit()'],
+			/*'attr' => ['onchange' => 'this.form.submit()'],*/
 		]);
-		
+
+        
 		$builder->add('category', ChoiceType::class, [
-			'choices' => $this->categoryChoice->get(),
+			'choices' => $this->categoryChoice->getCategoryCollection(),
 			'choice_value' => function(?ProductCategoryUid $category) {
 				return $category?->getValue();
 			},
@@ -78,7 +76,7 @@ final class ProductFilterForm extends AbstractType
 				return $category->getOptions();
 			},
 			'label' => false,
-			'attr' => ['onchange' => 'this.form.submit()'],
+			/*'attr' => ['onchange' => 'this.form.submit()'],*/
 		]);
 		
 		$builder->addEventListener(

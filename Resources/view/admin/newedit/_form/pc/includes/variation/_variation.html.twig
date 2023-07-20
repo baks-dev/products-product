@@ -105,11 +105,21 @@
 	
 	{% if variation.quantity is defined %}
 		<div class="w-75">
-			{{ form_row(variation.quantity.quantity, { attr: { placeholder: 'Наличие'|trans } }) }}
+
+
+			{{ form_row(variation.quantity.quantity,
+				variation.quantity.quantity.vars.data is not null and loop.first ? { label : 'Наличие'|trans } : { label : false, attr:  { placeholder : 'Наличие'|trans } }
+			) }}
+
+
 		</div>
 		
 		<div class="w-75">
-			{{ form_row(variation.quantity.reserve, { attr: { placeholder: 'Резерв'|trans } }) }}
+
+			{{ form_row(variation.quantity.reserve,
+				variation.quantity.reserve.vars.data is not null and loop.first ? { label : 'Резерв'|trans } : { label : false, attr:  { placeholder : 'Резерв'|trans } }
+			) }}
+
 		</div>
 	
 	{% endif %}

@@ -29,47 +29,55 @@ use Symfony\Component\Uid\AbstractUid;
 final class ProductOfferConst extends Uid
 {
     public const TEST = '0188a99f-03ce-7df6-8775-19226c67fd66';
-    
+
     public const TYPE = 'product_offer_const';
-    
+
+
     private mixed $attr;
-    
+
     private mixed $option;
-    private ?int $count;
-    private ?int $counter;
-    
-    
+
+    private mixed $property;
+
+    private mixed $characteristic;
+
+
     public function __construct(
         AbstractUid|string|null $value = null,
         mixed $attr = null,
         mixed $option = null,
-        int $counter = null,
+        mixed $property = null,
+        mixed $characteristic = null,
     )
     {
         parent::__construct($value);
         $this->attr = $attr;
         $this->option = $option;
-        $this->counter = $counter;
+        $this->property = $property;
+        $this->characteristic = $characteristic;
     }
-    
-    
-    public function getAttr()
-    : mixed
+
+
+    public function getAttr(): mixed
     {
         return $this->attr;
     }
-    
-    
-    public function getOption()
-    : mixed
+
+
+    public function getOption(): mixed
     {
         return $this->option;
     }
-    
-    
-    public function getCounter()
-    : ?int
+
+
+    public function getProperty(): mixed
     {
-        return $this->counter;
+        return $this->property;
     }
+
+    public function getCharacteristic(): mixed
+    {
+        return $this->characteristic;
+    }
+
 }

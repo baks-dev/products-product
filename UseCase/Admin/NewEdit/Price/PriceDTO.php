@@ -26,6 +26,7 @@ namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Price;
 use BaksDev\Products\Product\Entity\Price\ProductPriceInterface;
 use BaksDev\Reference\Currency\Type\Currency;
 use BaksDev\Reference\Measurement\Type\Measurement;
+use BaksDev\Reference\Measurement\Type\MeasurementEnum;
 use BaksDev\Reference\Money\Type\Money;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -53,10 +54,10 @@ final class PriceDTO implements ProductPriceInterface
 	/** Единица измерения: */
 	private Measurement $measurement;
 
-
 	public function __construct()
 	{
 		$this->currency = new Currency();
+        $this->measurement = new Measurement(MeasurementEnum::STUNT);
 	}
 
 
@@ -66,8 +67,13 @@ final class PriceDTO implements ProductPriceInterface
 	}
 
 
-	public function setPrice(Money $price) : void
-	{
+	public function setPrice(Money|float|null $price) : void
+    {
+        if($price !== null)
+        {
+            $price = $price instanceof Money ? $price : new Money($price);
+        }
+
 		$this->price = $price;
 		//$this->price = $price instanceof Money ? $price : new Money($price);
 	}

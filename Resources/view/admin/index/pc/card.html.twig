@@ -15,15 +15,15 @@
 		<div class="d-flex">
 			{# Превью  #}
 
-			{% set img_path = item.product_image_cdn == true ? cdn_host : '' %}
+			{% set img_path = item.product_image_cdn == true ? CDN_HOST : '' %}
 			{% set product_image_ext = item.product_image_cdn == true ? 'small.'~item.product_image_ext : item.product_image_ext %}
 			
-			<a href="{{ path('Product:admin.newedit.edit', { id: item.event }) }}" class="pe-3">
+			<a href="{{ item.product_image ? img_path ~ item.product_image ~ item.product_image_ext : '#' }}" target='_product' class="pe-3">
 				<div class="rounded-circle bg-contain lazy p-1" style="width: 50px; height: 50px;"
 						data-bg="{{  item.product_image ? img_path ~ item.product_image ~ product_image_ext : '/assets/img/blank.svg' }}">
 				</div>
 			</a>
-			
+
 			<div class="ms-0">
 				
 				{# Название #}

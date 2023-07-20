@@ -21,36 +21,14 @@
  *  THE SOFTWARE.
  */
 
-declare(strict_types=1);
+namespace BaksDev\Products\Product\Repository\ProductByVariation;
 
-namespace BaksDev\Products\Product\Messenger;
+use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
 
-use Symfony\Component\Cache\Adapter\ApcuAdapter;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-
-#[AsMessageHandler(fromTransport: 'sync')]
-final class ProductCacheClear
+interface ProductByVariationInterface
 {
-    public function __invoke(ProductMessage $message)
-    {
-        // Чистим кеш модуля
-        $cache = new FilesystemAdapter('Product');
-        $cache->clear();
-
-        // Сбрасываем индивидуальный кеш
-        $cache = new ApcuAdapter('Product');
-        $cache->clear();
-
-        $cache = new ApcuAdapter((string) $message->getId()->getValue());
-        $cache->clear();
-
-        $cache = new ApcuAdapter((string) $message->getEvent()->getValue());
-        $cache->clear();
-
-        if ($message->getLast()) {
-            $cache = new ApcuAdapter((string) $message->getLast()->getValue());
-            $cache->clear();
-        }
-    }
+    /**
+     * Метод возвращает Product по постоянному уникальному идентификатору множественного варианта
+     */
+    public function getProductByVariationConstOrNull(ProductVariationConst $const) : ?array;
 }

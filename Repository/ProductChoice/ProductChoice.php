@@ -27,6 +27,7 @@ namespace BaksDev\Products\Product\Repository\ProductChoice;
 
 use BaksDev\Core\Type\Locale\Locale;
 use BaksDev\Products\Product\Entity as ProductEntity;
+use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
@@ -40,12 +41,15 @@ final class ProductChoice implements ProductChoiceInterface
     public function __construct(
         EntityManagerInterface $entityManager,
         TranslatorInterface $translator
-    ) {
+    )
+    {
         $this->entityManager = $entityManager;
         $this->translator = $translator;
     }
 
-    /** Метод возвращает все идентификаторы продуктов с названием */
+    /**
+     * Метод возвращает все идентификаторы продуктов с названием
+     */
 
     public function fetchAllProduct(): ?array
     {
@@ -57,12 +61,12 @@ final class ProductChoice implements ProductChoiceInterface
 
         $qb->from(ProductEntity\Product::class, 'product');
 
-        $qb->join(
+        /*$qb->join(
             ProductEntity\Event\ProductEvent::class,
             'event',
             'WITH',
             'event.id = product.event'
-        );
+        );*/
 
         $qb->join(
             ProductEntity\Active\ProductActive::class,
@@ -95,4 +99,57 @@ final class ProductChoice implements ProductChoiceInterface
 
         return $query->getResult();
     }
+
+
+    /**
+     * Метод возвращает активные идентификаторы событий продукции
+     */
+    public function fetchAllProductEvent(): ?array
+    {
+        $qb = $this->entityManager->createQueryBuilder();
+
+        $select = sprintf('new %s(product.event, trans.name)', ProductEventUid::class);
+
+        $qb->select($select);
+
+        $qb->from(ProductEntity\Product::class, 'product');
+
+        /*$qb->join(
+            ProductEntity\Event\ProductEvent::class,
+            'event',
+            'WITH',
+            'event.id = product.event'
+        );*/
+
+        $qb->join(
+            ProductEntity\Active\ProductActive::class,
+            'active',
+            'WITH',
+            '
+            active.event = product.event AND
+            active.active = true AND
+            active.activeFrom < CURRENT_TIMESTAMP() AND
+            (active.activeTo IS NULL OR active.activeTo > CURRENT_TIMESTAMP())
+		');
+
+        $qb->join(
+            ProductEntity\Trans\ProductTrans::class,
+            'trans',
+            'WITH',
+            'trans.event = product.event AND trans.local = :local'
+        );
+
+        $cacheQueries = new FilesystemAdapter('Product');
+
+        $query = $this->entityManager->createQuery($qb->getDQL());
+        $query->setQueryCache($cacheQueries);
+        $query->setResultCache($cacheQueries);
+        $query->enableResultCache();
+        $query->setLifetime(60 * 60 * 24);
+
+        $query->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
+
+        return $query->getResult();
+    }
+
 }

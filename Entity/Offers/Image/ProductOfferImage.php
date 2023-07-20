@@ -52,7 +52,6 @@ class ProductOfferImage extends EntityEvent implements UploadEntityInterface
 
     /** ID торгового предложения */
     #[Assert\NotBlank]
-    #[Assert\Type(ProductOffer::class)]
     #[ORM\ManyToOne(targetEntity: ProductOffer::class, inversedBy: 'image')]
     #[ORM\JoinColumn(name: 'offer', referencedColumnName: 'id')]
     private ProductOffer $offer;
@@ -65,14 +64,12 @@ class ProductOfferImage extends EntityEvent implements UploadEntityInterface
 
     /** Название файла */
     #[Assert\NotBlank]
-    #[Assert\Type('string')]
     #[Assert\Length(max: 100)]
     #[ORM\Column(type: Types::STRING, nullable: false)]
     private string $name = 'img';
 
     /** Расширение файла */
     #[Assert\NotBlank]
-    #[Assert\Type('string')]
     #[Assert\Choice(['svg', 'png', 'jpg', 'jpeg', 'gif', 'webp'])]
     #[Assert\Length(max: 5)]
     #[ORM\Column(type: Types::STRING, length: 64, nullable: false)]
@@ -80,17 +77,14 @@ class ProductOfferImage extends EntityEvent implements UploadEntityInterface
 
     /** Размер файла */
     #[Assert\NotBlank]
-    #[Assert\Type('integer')]
     #[ORM\Column(type: Types::INTEGER, nullable: false)]
     private int $size = 0;
 
     /** Файл загружен на CDN */
-    #[Assert\Type('bool')]
     #[ORM\Column(type: Types::BOOLEAN, nullable: false)]
     private bool $cdn = false;
 
     /** Заглавное фото */
-    #[Assert\Type('bool')]
     #[ORM\Column(type: Types::BOOLEAN, nullable: false, options: ['default' => false])]
     private bool $root = false;
 
@@ -162,13 +156,13 @@ class ProductOfferImage extends EntityEvent implements UploadEntityInterface
         return $this->name.'.'.$this->ext;
     }
 
-    public function getDirName(): ProductOfferUid
-    {
-        return $this->dir;
-    }
-
     public function root(): void
     {
         $this->root = true;
+    }
+
+    public static function getDirName(): string
+    {
+        return  ProductOfferUid::class;
     }
 }

@@ -31,48 +31,55 @@ use Symfony\Component\Uid\AbstractUid;
 final class ProductModificationConst extends Uid
 {
     public const TEST = '0188a99f-f8f7-753f-a8f1-62ea0ad1d29a';
-    
+
     public const TYPE = 'product_offer_variation_modification_const';
-    
+
     private mixed $attr;
-    
+
     private mixed $option;
-    
+
     private ?int $counter;
-    
-    
+
+    private mixed $reference;
+
+
     public function __construct(
         AbstractUid|string|null $value = null,
         mixed $attr = null,
         mixed $option = null,
         int $counter = null,
+        mixed $reference = null,
     )
     {
         parent::__construct($value);
-        
+
         $this->attr = $attr;
         $this->option = $option;
         $this->counter = $counter;
+        $this->reference = $reference;
     }
-    
-    
-    public function getAttr()
-    : mixed
+
+
+    public function getAttr(): mixed
     {
         return $this->attr;
     }
-    
-    
-    public function getOption()
-    : mixed
+
+
+    public function getOption(): mixed
     {
         return $this->option;
     }
-    
-    
-    public function getCounter()
-    : ?int
+
+
+    public function getCounter(): ?int
     {
         return $this->counter;
     }
+
+    public function getReference(): mixed
+    {
+        return $this->reference;
+    }
+    
 }

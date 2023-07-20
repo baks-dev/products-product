@@ -32,6 +32,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use InvalidArgumentException;
+use Symfony\Component\Validator\Constraints as Assert;
 
 // Вариант в торговом предложения
 
@@ -44,20 +45,27 @@ class ProductOfferVariation extends EntityEvent
     public const TABLE = 'product_offer_variation';
 
     /** ID варианта торгового предложения */
+    #[Assert\NotBlank]
+    #[Assert\Uuid]
     #[ORM\Id]
     #[ORM\Column(type: ProductVariationUid::TYPE)]
     private ProductVariationUid $id;
 
     /** ID торгового предложения  */
+    #[Assert\NotBlank]
     #[ORM\ManyToOne(targetEntity: ProductOffer::class, inversedBy: 'variation')]
     #[ORM\JoinColumn(name: 'offer', referencedColumnName: 'id')]
     private ProductOffer $offer;
 
     /** Постоянный уникальный идентификатор варианта */
+    #[Assert\NotBlank]
+    #[Assert\Uuid]
     #[ORM\Column(type: ProductVariationConst::TYPE)]
     private readonly ProductVariationConst $const;
 
     /** ID торгового предложения категории */
+    #[Assert\NotBlank]
+    #[Assert\Uuid]
     #[ORM\Column(name: 'category_variation', type: ProductCategoryOffersVariationUid::TYPE, nullable: true)]
     private ProductCategoryOffersVariationUid $categoryVariation;
 
@@ -82,10 +90,12 @@ class ProductOfferVariation extends EntityEvent
     private ?Quantity\ProductOfferVariationQuantity $quantity = null;
 
     /** Дополнительные фото торгового предложения */
+    #[Assert\Valid]
     #[ORM\OneToMany(mappedBy: 'variation', targetEntity: Image\ProductOfferVariationImage::class, cascade: ['all'])]
     private Collection $image;
 
     /** Коллекция вариаций в торговом предложении  */
+    #[Assert\Valid]
     #[ORM\OneToMany(mappedBy: 'variation', targetEntity: Modification\ProductOfferVariationModification::class, cascade: ['all'])]
     private Collection $modification;
 

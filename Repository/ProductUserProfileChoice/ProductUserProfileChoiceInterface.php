@@ -20,5 +20,5 @@ namespace BaksDev\Products\Product\Repository\ProductUserProfileChoice;
 
 interface ProductUserProfileChoiceInterface
 {
-	
+    public function getProfileCollection(): ?array;
 }

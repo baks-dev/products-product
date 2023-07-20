@@ -18,7 +18,7 @@
 				
 				<div class="item-collection-photo">
 					
-					{% set img_path = photo.vars.data.cdn is defined and photo.vars.data.cdn == true ? cdn_host : '' %}
+					{% set img_path = photo.vars.data.cdn is defined and photo.vars.data.cdn == true ? CDN_HOST : '' %}
 					
 					<label class="icon rounded-1 bg-contain lazy position-relative image-input"
 							style="width: 150px; height: 200px;"

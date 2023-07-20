@@ -24,14 +24,11 @@
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Info;
 
 use BaksDev\Products\Product\Repository\ProductUserProfileChoice\ProductUserProfileChoiceInterface;
-use BaksDev\Products\Product\UseCase\Admin\NewEdit\ProductDTO;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class InfoForm extends AbstractType
@@ -51,12 +48,12 @@ final class InfoForm extends AbstractType
 		
 		$builder
 			->add('profile', ChoiceType::class, [
-				'choices' => $this->profileChoice->get(),
-				'choice_value' => function(?UserProfileUid $status) {
-					return $status?->getValue();
+				'choices' => $this->profileChoice->getProfileCollection(),
+				'choice_value' => function(?UserProfileUid $profile) {
+					return $profile?->getValue();
 				},
-				'choice_label' => function(UserProfileUid $status) {
-					return $status->getName();
+				'choice_label' => function(UserProfileUid $profile) {
+					return $profile->getAttr();
 				},
 				'label' => false,
 				'expanded' => false,

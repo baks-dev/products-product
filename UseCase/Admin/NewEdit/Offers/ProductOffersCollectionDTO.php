@@ -24,12 +24,14 @@
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers;
 
 use BaksDev\Products\Category\Type\Offers\Id\ProductCategoryOffersUid;
+use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\ProductOffersInterface;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Offer\OfferDTO;
 use Doctrine\Common\Collections\ArrayCollection;
 use ReflectionProperty;
 
+/** @see ProductOffer */
 final class ProductOffersCollectionDTO implements ProductOffersInterface
 {
 	/** ID торгового предложения категории */
@@ -156,10 +158,19 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
 	
 	public function addImage(Image\ProductOfferImageCollectionDTO $image) : void
 	{
-		if(!$this->image->contains($image))
-		{
-			$this->image->add($image);
-		}
+
+        $filter = $this->image->filter(function(Image\ProductOfferImageCollectionDTO $element) use ($image)
+            {
+                return $image->getName() === $element->getName();
+            });
+
+        if($filter->isEmpty())
+        {
+            $this->image->add($image);
+
+        }
+
+
 	}
 	
 	
@@ -179,10 +190,17 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
 	
 	public function addVariation(Variation\ProductOffersVariationCollectionDTO $variation) : void
 	{
-		if(!$this->variation->contains($variation))
-		{
-			$this->variation->add($variation);
-		}
+
+        $filter = $this->variation->filter(function(Variation\ProductOffersVariationCollectionDTO $element) use ($variation)
+            {
+                return $variation->getValue() === $element->getValue();
+            });
+
+        if($filter->isEmpty())
+        {
+            $this->variation->add($variation);
+        }
+
 	}
 	
 	

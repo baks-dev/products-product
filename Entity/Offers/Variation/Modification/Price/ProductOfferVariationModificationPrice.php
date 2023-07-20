@@ -24,16 +24,14 @@
 namespace BaksDev\Products\Product\Entity\Offers\Variation\Modification\Price;
 
 
-use BaksDev\Products\Product\Entity\Offers\Offer\Offer;
+
 use BaksDev\Core\Entity\EntityEvent;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductOfferVariationModification;
-use BaksDev\Products\Product\Entity\Offers\Variation\ProductOfferVariation;
 use BaksDev\Reference\Currency\Type\Currency;
-use BaksDev\Reference\Currency\Type\CurrencyEnum;
 use BaksDev\Reference\Money\Type\Money;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use InvalidArgumentException;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /* Стоимость варианта торгового предложения */
 
@@ -45,6 +43,8 @@ class ProductOfferVariationModificationPrice extends EntityEvent
     public const TABLE = 'product_offer_variation_modification_price';
     
     /** ID события */
+    #[Assert\NotBlank]
+    #[Assert\Uuid]
     #[ORM\Id]
     #[ORM\OneToOne(inversedBy: 'price', targetEntity: ProductOfferVariationModification::class)]
 	#[ORM\JoinColumn(name: 'modification', referencedColumnName: "id")]

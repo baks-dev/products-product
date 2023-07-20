@@ -23,16 +23,16 @@
 
 namespace BaksDev\Products\Product\Entity\Offers;
 
-use InvalidArgumentException;
+use BaksDev\Core\Entity\EntityEvent;
+use BaksDev\Products\Category\Type\Offers\Id\ProductCategoryOffersUid;
+use BaksDev\Products\Product\Entity\Event\ProductEvent;
+use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
+use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use BaksDev\Core\Entity\EntityEvent;
-use Doctrine\Common\Collections\Collection;
+use InvalidArgumentException;
 use Symfony\Component\Validator\Constraints as Assert;
-use BaksDev\Products\Product\Entity\Event\ProductEvent;
-use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
-use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
-use BaksDev\Products\Category\Type\Offers\Id\ProductCategoryOffersUid;
 
 // Торговые предложения
 
@@ -47,14 +47,12 @@ class ProductOffer extends EntityEvent
     /** ID */
     #[Assert\NotBlank]
     #[Assert\Uuid]
-    #[Assert\Type(ProductOfferUid::class)]
     #[ORM\Id]
     #[ORM\Column(type: ProductOfferUid::TYPE)]
     private ProductOfferUid $id;
 
     /** ID события */
     #[Assert\NotBlank]
-    #[Assert\Type(ProductEvent::class)]
     #[ORM\ManyToOne(targetEntity: ProductEvent::class, inversedBy: 'offer')]
     #[ORM\JoinColumn(name: 'event', referencedColumnName: 'id')]
     private ProductEvent $event;
@@ -63,28 +61,24 @@ class ProductOffer extends EntityEvent
     #[Assert\NotBlank]
     #[Assert\Uuid]
     #[Assert\Type(ProductCategoryOffersUid::class)]
-    #[ORM\Column(name: 'category_offer', type: ProductCategoryOffersUid::TYPE, nullable: true)]
+    #[ORM\Column(name: 'category_offer', type: ProductCategoryOffersUid::TYPE)]
     private ProductCategoryOffersUid $categoryOffer;
 
     /** Постоянный уникальный идентификатор ТП */
     #[Assert\NotBlank]
     #[Assert\Uuid]
-    #[Assert\Type(ProductOfferConst::class)]
     #[ORM\Column(type: ProductOfferConst::TYPE)]
     private readonly ProductOfferConst $const;
 
     /** Заполненное значение */
-    #[Assert\Type('string')]
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $value = null;
 
     /** Артикул */
-    #[Assert\Type('string')]
     #[ORM\Column(type: Types::STRING, nullable: true)]
     private ?string $article = null;
 
     /** Постфикс */
-    #[Assert\Type('string')]
     #[ORM\Column(type: Types::STRING, nullable: true)]
     private ?string $postfix = null;
 

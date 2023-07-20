@@ -23,15 +23,16 @@
 
 namespace BaksDev\Products\Product\Entity\Offers\Variation\Modification;
 
-use InvalidArgumentException;
+use BaksDev\Core\Entity\EntityEvent;
+use BaksDev\Products\Category\Type\Offers\Modification\ProductCategoryOffersVariationModificationUid;
+use BaksDev\Products\Product\Entity\Offers\Variation\ProductOfferVariation;
+use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
+use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use BaksDev\Core\Entity\EntityEvent;
-use Doctrine\Common\Collections\Collection;
-use BaksDev\Products\Product\Entity\Offers\Variation\ProductOfferVariation;
-use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
-use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
-use BaksDev\Products\Category\Type\Offers\Modification\ProductCategoryOffersVariationModificationUid;
+use InvalidArgumentException;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /* Вариант в торговом предложения */
 
@@ -44,20 +45,27 @@ class ProductOfferVariationModification extends EntityEvent
     public const TABLE = 'product_offer_variation_modification';
 
     /** ID модификации множественного варианта варианта */
+    #[Assert\NotBlank]
+    #[Assert\Uuid]
     #[ORM\Id]
     #[ORM\Column(type: ProductModificationUid::TYPE)]
     private ProductModificationUid $id;
 
     /** ID множественного варианта  */
+    #[Assert\NotBlank]
     #[ORM\ManyToOne(targetEntity: ProductOfferVariation::class, inversedBy: 'modification')]
     #[ORM\JoinColumn(name: 'variation', referencedColumnName: 'id')]
     private ProductOfferVariation $variation;
 
     /** Постоянный уникальный идентификатор модификации */
+    #[Assert\NotBlank]
+    #[Assert\Uuid]
     #[ORM\Column(type: ProductModificationConst::TYPE)]
     private readonly ProductModificationConst $const;
 
-    /** ID одификации категории */
+    /** ID модификации категории */
+    #[Assert\NotBlank]
+    #[Assert\Uuid]
     #[ORM\Column(name: 'category_modification', type: ProductCategoryOffersVariationModificationUid::TYPE, nullable: true)]
     private ProductCategoryOffersVariationModificationUid $categoryModification;
 
@@ -74,14 +82,17 @@ class ProductOfferVariationModification extends EntityEvent
     private ?string $postfix = null;
 
     /** Стоимость модификации */
+    #[Assert\Valid]
     #[ORM\OneToOne(mappedBy: 'modification', targetEntity: Price\ProductOfferVariationModificationPrice::class, cascade: ['all'])]
     private ?Price\ProductOfferVariationModificationPrice $price = null;
 
     /** Количественный учет */
+    #[Assert\Valid]
     #[ORM\OneToOne(mappedBy: 'modification', targetEntity: Quantity\ProductOfferVariationModificationQuantity::class, cascade: ['all'])]
     private ?Quantity\ProductOfferVariationModificationQuantity $quantity = null;
 
     /** Дополнительные фото модификации */
+    #[Assert\Valid]
     #[ORM\OneToMany(mappedBy: 'modification', targetEntity: Image\ProductOfferVariationModificationImage::class, cascade: ['all'])]
     private Collection $image;
 

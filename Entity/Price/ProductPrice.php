@@ -70,6 +70,7 @@ class ProductPrice extends EntityEvent
     #[ORM\Column(type: Measurement::TYPE, length: 10, nullable: false)]
     private Measurement $measurement;
 
+
     public function __construct(ProductEvent $event)
     {
         $this->event = $event;

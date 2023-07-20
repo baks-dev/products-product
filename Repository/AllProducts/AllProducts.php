@@ -191,8 +191,7 @@ final class AllProducts implements AllProductsInterface
 			Entity\Offers\Variation\Modification\ProductOfferVariationModification::TABLE,
 			'product_offer_modification',
 			'product_offer_modification.variation = product_offer_variation.id '
-		)
-		;
+		);
 		
 		
 		/** Получаем тип модификации множественного варианта */

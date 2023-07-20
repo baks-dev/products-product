@@ -26,31 +26,52 @@ final class ProductOfferUid extends Uid
     public const TEST = '0188a99f-3b80-73b7-afe9-e00ffa1b53f2';
 
 	public const TYPE = 'product_offer_uid';
-	
-	private readonly ?string $option;
-	
-	private readonly ?string $offers;
-	
-	
-	public function __construct(AbstractUid|string|null $value = null, string $option = null, string $offers = null)
-	{
-		parent::__construct($value);
-		
-		$this->option = $option;
-		
-		$this->offers = $offers;
-	}
-	
-	
-	public function getOption() : ?string
-	{
-		return $this->option;
-	}
-	
-	
-	public function getOffers() : ?string
-	{
-		return $this->offers;
-	}
-	
+    
+    private mixed $attr;
+
+    private mixed $option;
+
+    private mixed $property;
+
+    private mixed $characteristic;
+
+
+    public function __construct(
+        AbstractUid|string|null $value = null,
+        mixed $attr = null,
+        mixed $option = null,
+        mixed $property = null,
+        mixed $characteristic = null,
+    )
+    {
+        parent::__construct($value);
+        $this->attr = $attr;
+        $this->option = $option;
+        $this->property = $property;
+        $this->characteristic = $characteristic;
+    }
+
+
+    public function getAttr(): mixed
+    {
+        return $this->attr;
+    }
+
+
+    public function getOption(): mixed
+    {
+        return $this->option;
+    }
+
+
+    public function getProperty(): mixed
+    {
+        return $this->property;
+    }
+
+    public function getCharacteristic(): mixed
+    {
+        return $this->characteristic;
+    }
+
 }

@@ -28,8 +28,10 @@ namespace BaksDev\Products\Product\Repository\ProductOfferChoice;
 use BaksDev\Core\Type\Locale\Locale;
 use BaksDev\Products\Category\Entity as CategoryEntity;
 use BaksDev\Products\Product\Entity as ProductEntity;
+use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
+use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -47,12 +49,14 @@ final class ProductOfferChoice implements ProductOfferChoiceInterface
         $this->translator = $translator;
     }
 
-    /** Метод возвращает все постоянные идентификаторы CONST торговых предложений продукта */
+    /**
+     * Метод возвращает все постоянные идентификаторы CONST торговых предложений продукта
+     */
     public function fetchProductOfferByProduct(ProductUid $product): ?array
     {
         $qb = $this->entityManager->createQueryBuilder();
 
-        $select = sprintf('new %s(offer.const, offer.value, trans.name)', ProductOfferConst::class);
+        $select = sprintf('new %s(offer.const, offer.value, trans.name, category_offer.reference)', ProductOfferConst::class);
 
         $qb->select($select);
 
@@ -98,6 +102,82 @@ final class ProductOfferChoice implements ProductOfferChoiceInterface
 //        dd($qb->getQuery()->getResult());
 //
 
+
+
+        $cacheQueries = new FilesystemAdapter('Product');
+
+        $query = $this->entityManager->createQuery($qb->getDQL());
+        $query->setQueryCache($cacheQueries);
+        $query->setResultCache($cacheQueries);
+        $query->enableResultCache();
+        $query->setLifetime(60 * 60 * 24);
+
+        $query->setParameter('product', $product, ProductUid::TYPE);
+        $query->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
+
+        return $query->getResult();
+    }
+
+
+
+    /**
+     * Метод возвращает все идентификаторы торговых предложений продукта по событию
+     */
+    public function fetchProductOfferByProductEvent(ProductEventUid $product): ?array
+    {
+
+        $qb = $this->entityManager->createQueryBuilder();
+
+        $select = sprintf('new %s(
+            offer.id, 
+            offer.value, 
+            trans.name, 
+            category_offer.reference
+        )', ProductOfferUid::class);
+
+        $qb->select($select);
+
+        $qb->from(ProductEntity\Product::class, 'product');
+
+        $qb->join(
+            ProductEntity\Event\ProductEvent::class,
+            'event',
+            'WITH',
+            'event.id = product.event'
+        );
+
+        $qb->join(
+            ProductEntity\Offers\ProductOffer::class,
+            'offer',
+            'WITH',
+            'offer.event = product.event'
+        );
+
+        // Тип торгового предложения
+
+        $qb->join(
+            CategoryEntity\Offers\ProductCategoryOffers::class,
+            'category_offer',
+            'WITH',
+            'category_offer.id = offer.categoryOffer'
+        );
+
+
+        $qb->leftJoin(
+            CategoryEntity\Offers\Trans\ProductCategoryOffersTrans::class,
+            'trans',
+            'WITH',
+            'trans.offer = category_offer.id AND trans.local = :local'
+        );
+
+
+        $qb->where('product.event = :product');
+
+        //        $qb->setParameter('product', $product, ProductUid::TYPE);
+        //        $qb->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
+        //
+        //        dd($qb->getQuery()->getResult());
+        //
 
 
         $cacheQueries = new FilesystemAdapter('Product');

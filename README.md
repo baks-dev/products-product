@@ -1,6 +1,6 @@
 # BaksDev Product
 
-![Version](https://img.shields.io/badge/version-6.3.1-blue) ![php 8.1+](https://img.shields.io/badge/php-min%208.1-red.svg)
+![Version](https://img.shields.io/badge/version-6.3.2-blue) ![php 8.1+](https://img.shields.io/badge/php-min%208.1-red.svg)
 
 Модуль Продукции
 
@@ -18,11 +18,6 @@ $ composer require baks-dev/products-product
 $ php bin/console baks:assets:install
 ```
 
-Роли администратора с помощью Fixtures
-
-``` bash
-$ php bin/console doctrine:fixtures:load --append
-```
 
 Изменения в схеме базы данных с помощью миграции
 
@@ -38,9 +33,6 @@ $ php bin/console doctrine:migrations:migrate
 $ php bin/phpunit --group=products-product
 ```
 
-## Журнал изменений ![Changelog](https://img.shields.io/badge/changelog-yellow)
-
-О том, что изменилось за последнее время, обратитесь к [CHANGELOG](CHANGELOG.md) за дополнительной информацией.
 
 ## Лицензия ![License](https://img.shields.io/badge/MIT-green)
 
