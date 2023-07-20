@@ -32,7 +32,7 @@ final class ProductVariationUid extends Uid
 {
     public const TEST = '0188a99f-af93-7a08-bff6-c6012155def5';
     
-	public const TYPE = 'product_offer_variation_uid';
+	public const TYPE = 'product_offer_variation';
 
 
     private mixed $attr;

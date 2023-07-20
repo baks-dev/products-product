@@ -31,6 +31,6 @@ final class ProductOfferVariationImageUid extends Uid
 {
     public const TEST = '0188a99f-d5c5-74f3-8d4f-40437ccd43a2';
     
-	public const TYPE = 'product_offer_variation_image_uid';
+	public const TYPE = 'product_offer_variation_image';
 	
 }
