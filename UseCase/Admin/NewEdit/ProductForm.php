@@ -33,7 +33,6 @@ use BaksDev\Products\Product\UseCase\Admin\NewEdit\Category\CategoryCollectionDT
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Property\PropertyCollectionDTO;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -417,7 +416,7 @@ final class ProductForm extends AbstractType
 							if($variationCategory->image)
 							{
 								$ProductOfferVariationImageCollectionDTO =
-									new NewEdit\Offers\Variation\Image\ProductOfferVariationImageCollectionDTO();
+									new NewEdit\Offers\Variation\Image\ProductVariationImageCollectionDTO();
 								$ProductOfferVariationImageCollectionDTO->setRoot(true);
 								$ProductOffersVariationCollectionDTO->addImage($ProductOfferVariationImageCollectionDTO
 								);
@@ -438,7 +437,7 @@ final class ProductForm extends AbstractType
 								if($modificationCategory->image)
 								{
 									$ProductOfferVariationModificationImageCollectionDTO =
-										new NewEdit\Offers\Variation\Modification\Image\ProductOfferVariationModificationImageCollectionDTO();
+										new NewEdit\Offers\Variation\Modification\Image\ProductModificationImageCollectionDTO();
 									$ProductOfferVariationModificationImageCollectionDTO->setRoot(true);
 									$ProductOffersVariationModificationCollectionDTO->addImage($ProductOfferVariationModificationImageCollectionDTO);
 									

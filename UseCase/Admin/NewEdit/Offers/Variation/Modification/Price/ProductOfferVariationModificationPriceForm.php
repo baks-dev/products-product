@@ -67,7 +67,7 @@ final class ProductOfferVariationModificationPriceForm extends AbstractType
 	public function configureOptions(OptionsResolver $resolver) : void
 	{
 		$resolver->setDefaults([
-			'data_class' => ProductOfferVariationModificationPriceDTO::class,
+			'data_class' => ProductModificationPriceDTO::class,
 		]);
 	}
 	

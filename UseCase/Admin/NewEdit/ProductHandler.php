@@ -186,7 +186,7 @@ final class ProductHandler
             {
                 /** Загрузка фото торгового предложения.
                  *
-                 * @var Offers\Variation\Image\ProductOfferVariationImageCollectionDTO $variationImage
+                 * @var Offers\Variation\Image\ProductVariationImageCollectionDTO $variationImage
                  */
                 foreach($variation->getImage() as $variationImage)
                 {
@@ -207,7 +207,7 @@ final class ProductHandler
                 {
                     /** Загрузка фото торгового предложения.
                      *
-                     * @var Offers\Variation\Modification\Image\ProductOfferVariationModificationImageCollectionDTO $modificationImage
+                     * @var Offers\Variation\Modification\Image\ProductModificationImageCollectionDTO $modificationImage
                      */
                     foreach($modification->getImage() as $modificationImage)
                     {

@@ -78,7 +78,7 @@ final class ProductVariationChoice implements ProductVariationChoiceInterface
 
 
         $qb->join(
-            ProductEntity\Offers\Variation\ProductOfferVariation::class,
+            ProductEntity\Offers\Variation\ProductVariation::class,
             'variation',
             'WITH',
             'variation.offer = offer.id'
@@ -87,14 +87,14 @@ final class ProductVariationChoice implements ProductVariationChoiceInterface
         // Тип торгового предложения
 
         $qb->join(
-            CategoryEntity\Offers\Variation\ProductCategoryOffersVariation::class,
+            CategoryEntity\Offers\Variation\ProductCategoryVariation::class,
             'category_variation',
             'WITH',
             'category_variation.id = variation.categoryVariation'
         );
 
         $qb->leftJoin(
-            CategoryEntity\Offers\Variation\Trans\ProductCategoryOffersVariationTrans::class,
+            CategoryEntity\Offers\Variation\Trans\ProductCategoryVariationTrans::class,
             'trans',
             'WITH',
             'trans.variation = category_variation.id AND trans.local = :local'
@@ -149,7 +149,7 @@ final class ProductVariationChoice implements ProductVariationChoiceInterface
 
 
         $qb->join(
-            ProductEntity\Offers\Variation\ProductOfferVariation::class,
+            ProductEntity\Offers\Variation\ProductVariation::class,
             'variation',
             'WITH',
             'variation.offer = offer.id'
@@ -158,14 +158,14 @@ final class ProductVariationChoice implements ProductVariationChoiceInterface
         // Тип торгового предложения
 
         $qb->join(
-            CategoryEntity\Offers\Variation\ProductCategoryOffersVariation::class,
+            CategoryEntity\Offers\Variation\ProductCategoryVariation::class,
             'category_variation',
             'WITH',
             'category_variation.id = variation.categoryVariation'
         );
 
         $qb->leftJoin(
-            CategoryEntity\Offers\Variation\Trans\ProductCategoryOffersVariationTrans::class,
+            CategoryEntity\Offers\Variation\Trans\ProductCategoryVariationTrans::class,
             'trans',
             'WITH',
             'trans.variation = category_variation.id AND trans.local = :local'

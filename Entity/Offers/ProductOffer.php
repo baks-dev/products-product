@@ -99,7 +99,7 @@ class ProductOffer extends EntityEvent
 
     /** Коллекция вариаций в торговом предложении  */
     #[Assert\Valid]
-    #[ORM\OneToMany(mappedBy: 'offer', targetEntity: Variation\ProductOfferVariation::class, cascade: ['all'])]
+    #[ORM\OneToMany(mappedBy: 'offer', targetEntity: Variation\ProductVariation::class, cascade: ['all'])]
     private Collection $variation;
 
     public function __construct(ProductEvent $event)

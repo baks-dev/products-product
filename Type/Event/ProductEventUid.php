@@ -30,30 +30,53 @@ final class ProductEventUid extends Uid
 {
     public const TEST = '0188a99e-7e95-7385-a2d5-b6fb3d0ca89f';
 
-	public const TYPE = 'product_event';
-	
-	private mixed $option;
-	
-	private mixed $attr;
-	
-	
-	public function __construct(AbstractUid|string|null $value = null, mixed $attr = null, mixed $option = null)
-	{
-		parent::__construct($value);
-		$this->option = $option;
-		$this->attr = $attr;
-	}
-	
-	
-	public function getAttr() : mixed
-	{
-		return $this->attr;
-	}
-	
-	
-	public function getOption() : mixed
-	{
-		return $this->option;
-	}
-	
+    public const TYPE = 'product_event';
+
+    private mixed $attr;
+
+    private mixed $option;
+
+    private mixed $property;
+
+    private mixed $characteristic;
+
+
+    public function __construct(
+        AbstractUid|string|null $value = null,
+        mixed $attr = null,
+        mixed $option = null,
+        mixed $property = null,
+        mixed $characteristic = null,
+    )
+    {
+        parent::__construct($value);
+        $this->attr = $attr;
+        $this->option = $option;
+        $this->property = $property;
+        $this->characteristic = $characteristic;
+    }
+
+
+    public function getAttr(): mixed
+    {
+        return $this->attr;
+    }
+
+
+    public function getOption(): mixed
+    {
+        return $this->option;
+    }
+
+
+    public function getProperty(): mixed
+    {
+        return $this->property;
+    }
+
+    public function getCharacteristic(): mixed
+    {
+        return $this->characteristic;
+    }
+
 }

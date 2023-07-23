@@ -23,7 +23,7 @@
 
 namespace BaksDev\Products\Product\Repository\CurrentQuantity\Modification;
 
-use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Quantity\ProductOfferVariationModificationQuantity;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Quantity\ProductModificationQuantity;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
@@ -36,6 +36,6 @@ interface CurrentQuantityByModificationInterface
         ProductOfferUid        $offer,
         ProductVariationUid    $variation,
         ProductModificationUid $modification,
-	) : ?ProductOfferVariationModificationQuantity;
+	) : ?ProductModificationQuantity;
 	
 }

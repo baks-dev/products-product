@@ -25,8 +25,8 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use BaksDev\Products\Product\Entity\Files\ProductFiles;
 use BaksDev\Products\Product\Entity\Offers\Image\ProductOfferImage;
-use BaksDev\Products\Product\Entity\Offers\Variation\Image\ProductOfferVariationImage;
-use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Image\ProductOfferVariationModificationImage;
+use BaksDev\Products\Product\Entity\Offers\Variation\Image\ProductVariationImage;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Image\ProductModificationImage;
 use BaksDev\Products\Product\Entity\Photo\ProductPhoto;
 use BaksDev\Products\Product\Entity\Video\ProductVideo;
 use Symfony\Config\TwigConfig;
@@ -93,12 +93,12 @@ return static function(TwigConfig $config, ContainerConfigurator $configurator) 
 	/** ОБЛОЖКИ множественных вариантов */
 	
 	/* Абсолютный Путь для загрузки обложек множественных вариантов */
-	$configurator->parameters()->set(ProductOfferVariationImage::TABLE,
-		'%kernel.project_dir%/public/upload/'.ProductOfferVariationImage::TABLE.'/'
+	$configurator->parameters()->set(ProductVariationImage::TABLE,
+		'%kernel.project_dir%/public/upload/'.ProductVariationImage::TABLE.'/'
 	);
 	
 	/* Относительный путь обложек множественных вариантов */
-	$config->global(ProductOfferVariationImage::TABLE)->value('/upload/'.ProductOfferVariationImage::TABLE.'/');
+	$config->global(ProductVariationImage::TABLE)->value('/upload/'.ProductVariationImage::TABLE.'/');
 	
 	
 	
@@ -107,12 +107,12 @@ return static function(TwigConfig $config, ContainerConfigurator $configurator) 
 	/** ОБЛОЖКИ модификаций множественных вариантов */
 	
 	/* Абсолютный Путь для загрузки обложек множественных вариантов */
-	$configurator->parameters()->set(ProductOfferVariationModificationImage::TABLE,
-		'%kernel.project_dir%/public/upload/'.ProductOfferVariationModificationImage::TABLE.'/'
+	$configurator->parameters()->set(ProductModificationImage::TABLE,
+		'%kernel.project_dir%/public/upload/'.ProductModificationImage::TABLE.'/'
 	);
 	
 	/* Относительный путь обложек множественных вариантов */
-	$config->global(ProductOfferVariationModificationImage::TABLE)->value('/upload/'.ProductOfferVariationModificationImage::TABLE.'/');
+	$config->global(ProductModificationImage::TABLE)->value('/upload/'.ProductModificationImage::TABLE.'/');
 	
 	
 };

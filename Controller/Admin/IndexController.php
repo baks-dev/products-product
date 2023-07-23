@@ -29,6 +29,9 @@ use BaksDev\Core\Form\Search\SearchForm;
 use BaksDev\Core\Listeners\Event\Security\RoleSecurity;
 use BaksDev\Products\Product\Forms\ProductFilter\Admin\ProductFilterDTO;
 use BaksDev\Products\Product\Forms\ProductFilter\Admin\ProductFilterForm;
+use BaksDev\Products\Product\Forms\ProductProfileFilter\ProductProfileFilterDTO;
+use BaksDev\Products\Product\Forms\ProductProfileFilter\ProductProfileFilterForm;
+use BaksDev\Products\Product\Forms\ProductProfileFilter\ProductProfileFilterFormAdmin;
 use BaksDev\Products\Product\Repository\AllProducts\AllProductsInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -48,17 +51,49 @@ final class IndexController extends AbstractController
     ): Response
     {
         // Поиск
-        $search = new SearchDTO();
-        $searchForm = $this->createForm(SearchForm::class, $search);
+        $search = new SearchDTO($request);
+        $searchForm = $this->createForm(SearchForm::class, $search, [
+            'action' => $this->generateUrl('Product:admin.index'),
+        ]);
         $searchForm->handleRequest($request);
+
 
         // Фильтр
         $filter = new ProductFilterDTO($request);
-        $filterForm = $this->createForm(ProductFilterForm::class, $filter);
+        $filterForm = $this->createForm(ProductFilterForm::class, $filter, [
+            'action' => $this->generateUrl('Product:admin.index'),
+        ]);
         $filterForm->handleRequest($request);
+        !$filterForm->isSubmitted() ?: $this->redirectToReferer();
+
+
+        /**
+         * Фильтр профиля пользователя
+         */
+
+        $profile = new ProductProfileFilterDTO($request, $this->getProfileUid());
+        $ROLE_ADMIN = $this->isGranted('ROLE_ADMIN');
+
+        if($ROLE_ADMIN)
+        {
+            $profileForm = $this->createForm(ProductProfileFilterFormAdmin::class, $profile, [
+                'action' => $this->generateUrl('Product:admin.index'),
+            ]);
+        }
+        else
+        {
+            $profileForm = $this->createForm(ProductProfileFilterForm::class, $profile, [
+                'action' => $this->generateUrl('Product:admin.index'),
+            ]);
+        }
+
+        $profileForm->handleRequest($request);
+        !$profileForm->isSubmitted() ?: $this->redirectToReferer();
+
+
 
         // Получаем список
-        $query = $getAllProduct->get($search, $filter);
+        $query = $getAllProduct->getAllProducts($search, $profile, $filter);
 
         return $this->render(
             [
@@ -66,6 +101,7 @@ final class IndexController extends AbstractController
                 'counter' => $getAllProduct->count(),
                 'search' => $searchForm->createView(),
                 'filter' => $filterForm->createView(),
+                'profile' => $profileForm->createView(),
             ]
         );
     }

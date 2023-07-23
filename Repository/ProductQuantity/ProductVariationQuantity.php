@@ -77,7 +77,7 @@ final class ProductVariationQuantity implements ProductVariationQuantityInterfac
         // Множественный вариант
 
         $qb->join(
-            ProductEntity\Offers\Variation\ProductOfferVariation::class,
+            ProductEntity\Offers\Variation\ProductVariation::class,
             'variation',
             'WITH',
             'variation.offer = offer.id AND variation.const = :variation_const'
@@ -97,7 +97,7 @@ final class ProductVariationQuantity implements ProductVariationQuantityInterfac
         // Только если у модификации указан количественный учет
 
         $qb->join(
-            CategoryEntity\Offers\Variation\ProductCategoryOffersVariation::class,
+            CategoryEntity\Offers\Variation\ProductCategoryVariation::class,
             'category_variation',
             'WITH',
             'category_variation.id = variation.categoryVariation AND category_variation.quantitative = true'

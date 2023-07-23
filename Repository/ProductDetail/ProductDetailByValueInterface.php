@@ -23,6 +23,7 @@
 
 namespace BaksDev\Products\Product\Repository\ProductDetail;
 
+use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 
 interface ProductDetailByValueInterface
@@ -40,4 +41,20 @@ interface ProductDetailByValueInterface
         string $variation = null,
         string $modification = null,
     ): array|bool;
+
+
+    /**
+     * Метод возвращает детальную информацию о продукте и его заполненному значению ТП, вариантов и модификаций.
+     *
+     * @param ?string $offer        - значение торгового предложения
+     * @param ?string $variation    - значение множественного варианта ТП
+     * @param ?string $modification - значение модификации множественного варианта ТП
+     */
+    public function fetchProductEventAssociative(
+        ProductEventUid $event,
+        string $offer = null,
+        string $variation = null,
+        string $modification = null,
+    ): array|bool;
+
 }

@@ -27,16 +27,12 @@ namespace BaksDev\Products\Product\Repository\AllProductsByCategory;
 
 use BaksDev\Core\Services\Paginator\PaginatorInterface;
 use BaksDev\Core\Type\Locale\Locale;
-use BaksDev\Products\Category\Type\Event\ProductCategoryEventUid;
+use BaksDev\Products\Category\Entity as CategoryEntity;
 use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
-
 use BaksDev\Products\Category\Type\Section\Field\Id\ProductCategorySectionFieldUid;
 use BaksDev\Products\Product\Entity as ProductEntity;
-use BaksDev\Products\Category\Entity as CategoryEntity;
-
 use BaksDev\Products\Product\Forms\ProductCategoryFilter\User\ProductCategoryFilterDTO;
 use Doctrine\DBAL\Connection;
-use Symfony\Component\Form\Form;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class AllProductsByCategory implements AllProductsByCategoryInterface
@@ -333,7 +329,7 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
 		
 		$qb->{$method}(
 			'product_offer',
-			ProductEntity\Offers\Variation\ProductOfferVariation::TABLE,
+			ProductEntity\Offers\Variation\ProductVariation::TABLE,
 			'product_offer_variation',
 			'product_offer_variation.offer = product_offer.id '.($filter->getVariation(
 			) ? ' AND product_offer_variation.value = :variation' : '').' '
@@ -346,7 +342,7 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
 		//		;
 		$qb->leftJoin(
 			'product_offer_variation',
-			CategoryEntity\Offers\Variation\ProductCategoryOffersVariation::TABLE,
+			CategoryEntity\Offers\Variation\ProductCategoryVariation::TABLE,
 			'category_offer_variation',
 			'category_offer_variation.id = product_offer_variation.category_variation'
 		);
@@ -380,7 +376,7 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
 		
 		$qb->{$method}(
 			'product_offer_variation',
-			ProductEntity\Offers\Variation\Modification\ProductOfferVariationModification::TABLE,
+			ProductEntity\Offers\Variation\Modification\ProductModification::TABLE,
 			'product_offer_modification',
 			'product_offer_modification.variation = product_offer_variation.id '.($filter->getModification(
 			) ? ' AND product_offer_modification.value = :modification' : '').' '
@@ -393,7 +389,7 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
 		//		;
 		$qb->leftJoin(
 			'product_offer_modification',
-			CategoryEntity\Offers\Variation\Modification\ProductCategoryOffersVariationModification::TABLE,
+			CategoryEntity\Offers\Variation\Modification\ProductCategoryModification::TABLE,
 			'category_offer_modification',
 			'category_offer_modification.id = product_offer_modification.category_modification'
 		);
@@ -404,7 +400,7 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
 		/** Цена множественного варианта */
 		$qb->leftJoin(
 			'product_offer_modification',
-			ProductEntity\Offers\Variation\Modification\Price\ProductOfferVariationModificationPrice::TABLE,
+			ProductEntity\Offers\Variation\Modification\Price\ProductModificationPrice::TABLE,
 			'product_modification_price',
 			'product_modification_price.modification = product_offer_modification.id'
 		)
@@ -459,7 +455,7 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
 		
 		$qb->leftJoin(
 			'product_offer_modification',
-			ProductEntity\Offers\Variation\Modification\Image\ProductOfferVariationModificationImage::TABLE,
+			ProductEntity\Offers\Variation\Modification\Image\ProductModificationImage::TABLE,
 			'product_offer_modification_image',
 			'
 			product_offer_modification_image.modification = product_offer_modification.id AND
@@ -474,7 +470,7 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
 		
 		$qb->leftJoin(
 			'product_offer',
-			ProductEntity\Offers\Variation\Image\ProductOfferVariationImage::TABLE,
+			ProductEntity\Offers\Variation\Image\ProductVariationImage::TABLE,
 			'product_offer_variation_image',
 			'
 			product_offer_variation_image.variation = product_offer_variation.id AND
@@ -521,9 +517,9 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
 		$qb->addSelect("
 			CASE
 			 WHEN product_offer_modification_image.name IS NOT NULL THEN
-					CONCAT ( '/upload/".ProductEntity\Offers\Variation\Modification\Image\ProductOfferVariationModificationImage::TABLE."' , '/', product_offer_modification_image.dir, '/', product_offer_modification_image.name, '.')
+					CONCAT ( '/upload/".ProductEntity\Offers\Variation\Modification\Image\ProductModificationImage::TABLE."' , '/', product_offer_modification_image.dir, '/', product_offer_modification_image.name, '.')
 			   WHEN product_offer_variation_image.name IS NOT NULL THEN
-					CONCAT ( '/upload/".ProductEntity\Offers\Variation\Image\ProductOfferVariationImage::TABLE."' , '/', product_offer_variation_image.dir, '/', product_offer_variation_image.name, '.')
+					CONCAT ( '/upload/".ProductEntity\Offers\Variation\Image\ProductVariationImage::TABLE."' , '/', product_offer_variation_image.dir, '/', product_offer_variation_image.name, '.')
 			   WHEN product_offer_images.name IS NOT NULL THEN
 					CONCAT ( '/upload/".ProductEntity\Offers\Image\ProductOfferImage::TABLE."' , '/', product_offer_images.dir, '/', product_offer_images.name, '.')
 			   WHEN product_photo.name IS NOT NULL THEN

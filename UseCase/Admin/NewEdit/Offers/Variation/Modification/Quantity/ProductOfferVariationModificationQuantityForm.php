@@ -48,7 +48,7 @@ final class ProductOfferVariationModificationQuantityForm extends AbstractType
 		$resolver->setDefaults
 		(
 			[
-				'data_class' => ProductOfferVariationModificationQuantityDTO::class,
+				'data_class' => ProductModificationQuantityDTO::class,
 			]
 		);
 	}

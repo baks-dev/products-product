@@ -29,15 +29,10 @@ use App\Module\Product\Entity\Product\Photo;
 use ImageCollectionDTO;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\RadioType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\File;
 
 final class ProductOfferVariationImageCollectionForm extends AbstractType
 {
@@ -66,7 +61,7 @@ final class ProductOfferVariationImageCollectionForm extends AbstractType
 	public function configureOptions(OptionsResolver $resolver) : void
 	{
 		$resolver->setDefaults([
-			'data_class' => ProductOfferVariationImageCollectionDTO::class,
+			'data_class' => ProductVariationImageCollectionDTO::class,
 		]);
 	}
 	

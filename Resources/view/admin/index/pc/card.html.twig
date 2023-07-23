@@ -1,73 +1,107 @@
-<tr class="vertical-middle">
-	
-	
-	<td class="text-nowrap">
-		{# Пользовательское меню #}
-		{{ include(_self|replace({ "card.html.twig": "_usecase.html.twig" })) }}
-	</td>
-	
-	<td class="text-center">
-		{{ item.category_name }}
-	</td>
-	
-	<td class="w-100">
-		
-		<div class="d-flex">
-			{# Превью  #}
+<div class="col-2 p-1">
 
-			{% set img_path = item.product_image_cdn == true ? CDN_HOST : '' %}
-			{% set product_image_ext = item.product_image_cdn == true ? 'small.'~item.product_image_ext : item.product_image_ext %}
-			
-			<a href="{{ item.product_image ? img_path ~ item.product_image ~ item.product_image_ext : '#' }}" target='_product' class="pe-3">
-				<div class="rounded-circle bg-contain lazy p-1" style="width: 50px; height: 50px;"
-						data-bg="{{  item.product_image ? img_path ~ item.product_image ~ product_image_ext : '/assets/img/blank.svg' }}">
-				</div>
-			</a>
+    <div class="border-bottom border-4 rounded-4 bg-primary border-primary">
 
-			<div class="ms-0">
-				
-				{# Название #}
-				<a href="{{ path('Product:admin.newedit.edit', { id: item.event }) }}">
-					
-					{{ item.product_name }}
-					
-					{{ item.product_offer_value|call_twig_func(item.product_offer_reference) }}
-					{{ item.product_offer_postfix }}
+        <div class="card bg-light-primary rounded-4">
 
-					{{ item.product_variation_value|call_twig_func(item.product_variation_reference) }}
-					{{ item.product_variation_postfix }}
+            <div class="card-body small p-2">
+                <div class="d-flex justify-content-between align-items-center small">
 
-					{{ item.product_modification_value|call_twig_func(item.product_modification_reference) }}
-					{{ item.product_modification_postfix }}
+                    {# {{ include(_self|replace({ "card.html.twig": "_usecase.html.twig" })) }} #}
 
-				</a>
-				
-				{# Описание #}
-				<div class="text-muted">
-					{{ string_width(item.product_preview, 100)|raw  }}
-				</div>
-			
-			</div>
-		</div>
-		
-		{# Описание #}
-		<div class="text-muted small">
-			{# {{ string_width(item.description, 150)|raw }} #}
-		</div>
-	
-	</td>
-	
-	<td class="text-center text-nowrap">
-		{{ item.product_article }}
-	</td>
+                    <div class="w-100 text-muted text-end">
+                        <span class="badge text-bg-secondary">{{ item.category_name }}</span> {# {{ item.part_date|date('d.m.Y H:i') }} #}
+                    </div>
+                </div>
+
+                {# <div class="d-flex justify-content-between align-items-end">
+                    <span class="h5 mb-0"> #}{# {{ money(item.order_price, item.order_currency) }} #}{# </span>
+                    <span class="small text-muted">1 шт</span>
+                </div> #}
+            </div>
+
+            {# Превью  #}
+
+            {% set img_path = item.product_image_cdn == true ? CDN_HOST : '' %}
+            {% set product_image_ext = item.product_image_cdn == true ? 'small.'~item.product_image_ext : item.product_image_ext %}
+
+            <div class="d-flex flex-column small gap-1 p-2 bg-cover lazy col-2 w-100"
+                 style=" height: 280px;"
+                 data-bg="{{ item.product_image ? img_path ~ item.product_image ~ product_image_ext : '/assets/img/blank.svg' }}"
+            >
+                <div
+                        class="icon rounded-circle bg-contain p-1 mb-2 shadow position-absolute"
+                        style="width: 25px; height: 25px;"
+                >
+                    {{ include(_self|replace({ "card.html.twig": "_usecase.html.twig" })) }}
+                </div>
+
+            </div>
 
 
-	<td class="text-center">
+            <div class="card-body d-flex flex-column p-2">
 
-	</td>
 
-	<td class="text-center">
+                <div>
+                    <a href="{# /admin/product/edit/06420615-8809-4662-9a2c-e3643dc95c48 #}"
+                       class="fw-bolder mb-1 text-dark text-decoration-none">
+                        {{ item.product_name }}
+                    </a>
+                    <div class="text-muted fw-bolder">
+                        {{ item.product_offer_value|call_twig_func(item.product_offer_reference) }}
+                        {{ item.product_offer_postfix }}
 
-	</td>
+                        {{ item.product_variation_value|call_twig_func(item.product_variation_reference) }}
+                        {{ item.product_variation_postfix }}
 
-</tr>
+
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center small">
+
+                    <div class="d-flex align-items-center">
+                        <span>Арт: &nbsp;</span>
+                        <form method="post" action='{{ path('Product:admin.index') }}' class="p-0">
+                            <input type="hidden" name="search_form[query]" value="{{ item.product_article }}">
+                            <button type="submit" class="btn btn-link text-decoration-none btn-sm p-0 border-0">
+                                <span class="small">{{ item.product_article }}</span>
+                            </button>
+
+                        </form>
+                    </div>
+
+                    <span
+                            data-bs-toggle="tooltip"
+                            data-bs-placement="bottom"
+                            title='QR продукции'
+                    >
+                        <a href="{{ path('Product:admin.qrcode', {
+                            product: item.event,
+                            offer: item.product_offer_id,
+                            variation: item.product_variation_id,
+                            modification: item.product_modification_id
+                        }) }}"
+                           class="btn-link btn p-0 pb-1 modal-link"
+                           data-bs-toggle="modal"
+                           data-bs-target="#modal"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor"
+                                 class="bi bi-qr-code" viewBox="0 0 16 16">
+                                <path d="M2 2h2v2H2V2Z"/>
+                                <path d="M6 0v6H0V0h6ZM5 1H1v4h4V1ZM4 12H2v2h2v-2Z"/>
+                                <path d="M6 10v6H0v-6h6Zm-5 1v4h4v-4H1Zm11-9h2v2h-2V2Z"/>
+                                <path d="M10 0v6h6V0h-6Zm5 1v4h-4V1h4ZM8 1V0h1v2H8v2H7V1h1Zm0 5V4h1v2H8ZM6 8V7h1V6h1v2h1V7h5v1h-4v1H7V8H6Zm0 0v1H2V8H1v1H0V7h3v1h3Zm10 1h-1V7h1v2Zm-1 0h-1v2h2v-1h-1V9Zm-4 0h2v1h-1v1h-1V9Zm2 3v-1h-1v1h-1v1H9v1h3v-2h1Zm0 0h3v1h-2v1h-1v-2Zm-4-1v1h1v-2H7v1h2Z"/>
+                                <path d="M7 12h1v3h4v1H7v-4Zm9 2v2h-3v-1h2v-1h1Z"/>
+                            </svg>
+                        </a>
+                    </span>
+
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+</div>

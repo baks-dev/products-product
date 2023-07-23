@@ -66,7 +66,7 @@ final class ProductModificationChoice implements ProductModificationChoiceInterf
 
         $qb->select($select);
 
-        $qb->from(ProductEntity\Offers\Variation\ProductOfferVariation::class, 'variation');
+        $qb->from(ProductEntity\Offers\Variation\ProductVariation::class, 'variation');
 
         $qb->join(
             ProductEntity\Offers\ProductOffer::class,
@@ -83,7 +83,7 @@ final class ProductModificationChoice implements ProductModificationChoiceInterf
         );
 
         $qb->join(
-            ProductEntity\Offers\Variation\Modification\ProductOfferVariationModification::class,
+            ProductEntity\Offers\Variation\Modification\ProductModification::class,
             'modification',
             'WITH',
             'modification.variation = variation.id'
@@ -92,14 +92,14 @@ final class ProductModificationChoice implements ProductModificationChoiceInterf
         // Тип торгового предложения
 
         $qb->join(
-            CategoryEntity\Offers\Variation\Modification\ProductCategoryOffersVariationModification::class,
+            CategoryEntity\Offers\Variation\Modification\ProductCategoryModification::class,
             'category_modification',
             'WITH',
             'category_modification.id = modification.categoryModification'
         );
 
         $qb->leftJoin(
-            CategoryEntity\Offers\Variation\Modification\Trans\ProductCategoryOffersVariationModificationTrans::class,
+            CategoryEntity\Offers\Variation\Modification\Trans\ProductCategoryModificationTrans::class,
             'trans',
             'WITH',
             'trans.modification = category_modification.id AND trans.local = :local'
@@ -139,7 +139,7 @@ final class ProductModificationChoice implements ProductModificationChoiceInterf
 
         $qb->select($select);
 
-        $qb->from(ProductEntity\Offers\Variation\ProductOfferVariation::class, 'variation');
+        $qb->from(ProductEntity\Offers\Variation\ProductVariation::class, 'variation');
 
         $qb->join(
             ProductEntity\Offers\ProductOffer::class,
@@ -157,7 +157,7 @@ final class ProductModificationChoice implements ProductModificationChoiceInterf
 
 
         $qb->join(
-            ProductEntity\Offers\Variation\Modification\ProductOfferVariationModification::class,
+            ProductEntity\Offers\Variation\Modification\ProductModification::class,
             'modification',
             'WITH',
             'modification.variation = variation.id'
@@ -166,14 +166,14 @@ final class ProductModificationChoice implements ProductModificationChoiceInterf
         // Тип торгового предложения
 
         $qb->join(
-            CategoryEntity\Offers\Variation\Modification\ProductCategoryOffersVariationModification::class,
+            CategoryEntity\Offers\Variation\Modification\ProductCategoryModification::class,
             'category_modification',
             'WITH',
             'category_modification.id = modification.categoryModification'
         );
 
         $qb->leftJoin(
-            CategoryEntity\Offers\Variation\Modification\Trans\ProductCategoryOffersVariationModificationTrans::class,
+            CategoryEntity\Offers\Variation\Modification\Trans\ProductCategoryModificationTrans::class,
             'trans',
             'WITH',
             'trans.modification = category_modification.id AND trans.local = :local'

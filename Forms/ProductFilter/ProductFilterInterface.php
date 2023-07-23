@@ -19,14 +19,11 @@
 namespace BaksDev\Products\Product\Forms\ProductFilter;
 
 use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
-use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 
 interface ProductFilterInterface
 {
 	
 	public function getCategory() : ?ProductCategoryUid;
-	
-	
-	public function getProfile() : ?UserProfileUid;
+
 	
 }

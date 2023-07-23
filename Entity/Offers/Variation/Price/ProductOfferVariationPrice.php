@@ -24,30 +24,28 @@
 namespace BaksDev\Products\Product\Entity\Offers\Variation\Price;
 
 
-use BaksDev\Products\Product\Entity\Offers\Offer\Offer;
 use BaksDev\Core\Entity\EntityEvent;
-use BaksDev\Products\Product\Entity\Offers\Variation\ProductOfferVariation;
+use BaksDev\Products\Product\Entity\Offers\Offer\Offer;
+use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Reference\Currency\Type\Currency;
-use BaksDev\Reference\Currency\Type\CurrencyEnum;
 use BaksDev\Reference\Money\Type\Money;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use InvalidArgumentException;
 
 /* Стоимость варианта торгового предложения */
 
 #[ORM\Entity]
-#[ORM\Table(name: 'product_offer_variation_price')]
+#[ORM\Table(name: 'product_variation_price')]
 
 class ProductOfferVariationPrice extends EntityEvent
 {
-    public const TABLE = 'product_offer_variation_price';
+    public const TABLE = 'product_variation_price';
     
     /** ID события */
     #[ORM\Id]
-    #[ORM\OneToOne(inversedBy: 'price', targetEntity: ProductOfferVariation::class)]
+    #[ORM\OneToOne(inversedBy: 'price', targetEntity: ProductVariation::class)]
 	#[ORM\JoinColumn(name: 'variation', referencedColumnName: "id")]
-    private ProductOfferVariation $variation;
+    private ProductVariation $variation;
     
     /** Стоимость */
     #[ORM\Column(name: 'price', type: Money::TYPE, nullable: true)]
@@ -58,7 +56,7 @@ class ProductOfferVariationPrice extends EntityEvent
     private Currency $currency;
     
 
-    public function __construct(ProductOfferVariation $variation) {
+    public function __construct(ProductVariation $variation) {
         $this->variation = $variation;
         $this->currency = new Currency();
     }

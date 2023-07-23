@@ -23,19 +23,19 @@
 
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation;
 
-use BaksDev\Products\Category\Type\Offers\Variation\ProductCategoryOffersVariationUid;
+use BaksDev\Products\Category\Type\Offers\Variation\ProductCategoryVariationUid;
 use BaksDev\Products\Product\Entity\Offers\OffersInterface;
-use BaksDev\Products\Product\Entity\Offers\Variation\ProductOfferVariationInterface;
+use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariationInterface;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Offer\OfferDTO;
 use Doctrine\Common\Collections\ArrayCollection;
 use ReflectionProperty;
 
-final class ProductOffersVariationCollectionDTO implements ProductOfferVariationInterface
+final class ProductOffersVariationCollectionDTO implements ProductVariationInterface
 {
 
     /** ID множественного варианта торгового предложения категории */
-    private ProductCategoryOffersVariationUid $categoryVariation;
+    private ProductCategoryVariationUid $categoryVariation;
 
     /** Постоянный уникальный идентификатор варианта */
     private readonly ProductVariationConst $const;
@@ -154,10 +154,10 @@ final class ProductOffersVariationCollectionDTO implements ProductOfferVariation
     }
 
 
-    public function addImage(Image\ProductOfferVariationImageCollectionDTO $image): void
+    public function addImage(Image\ProductVariationImageCollectionDTO $image): void
     {
 
-        $filter = $this->image->filter(function(Image\ProductOfferVariationImageCollectionDTO $element) use ($image)
+        $filter = $this->image->filter(function(Image\ProductVariationImageCollectionDTO $element) use ($image)
             {
                 return $image->getName() === $element->getName();
             });
@@ -170,7 +170,7 @@ final class ProductOffersVariationCollectionDTO implements ProductOfferVariation
     }
 
 
-    public function removeImage(Image\ProductOfferVariationImageCollectionDTO $image): void
+    public function removeImage(Image\ProductVariationImageCollectionDTO $image): void
     {
         $this->image->removeElement($image);
     }
@@ -201,13 +201,13 @@ final class ProductOffersVariationCollectionDTO implements ProductOfferVariation
 
     /** ID множественного варианта торгового предложения категории */
 
-    public function getCategoryVariation(): ProductCategoryOffersVariationUid
+    public function getCategoryVariation(): ProductCategoryVariationUid
     {
         return $this->categoryVariation;
     }
 
 
-    public function setCategoryVariation(ProductCategoryOffersVariationUid $categoryVariation): void
+    public function setCategoryVariation(ProductCategoryVariationUid $categoryVariation): void
     {
         $this->categoryVariation = $categoryVariation;
     }

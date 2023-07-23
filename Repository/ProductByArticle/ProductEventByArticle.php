@@ -28,8 +28,8 @@ namespace BaksDev\Products\Product\Repository\ProductByArticle;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
-use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductOfferVariationModification;
-use BaksDev\Products\Product\Entity\Offers\Variation\ProductOfferVariation;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
+use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Product\Entity\Product;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -94,7 +94,7 @@ final class ProductEventByArticle implements ProductEventByArticleInterface
         $qb = $this->entityManager->createQueryBuilder();
 
         $qb->select('event');
-        $qb->from(ProductOfferVariation::class, 'variation');
+        $qb->from(ProductVariation::class, 'variation');
         $qb->where('variation.article = :article');
         $qb->setParameter('article', $article);
 
@@ -117,11 +117,11 @@ final class ProductEventByArticle implements ProductEventByArticleInterface
 
         $qb->select('event');
 
-        $qb->from(ProductOfferVariationModification::class, 'modification');
+        $qb->from(ProductModification::class, 'modification');
         $qb->where('modification.article = :article');
         $qb->setParameter('article', $article);
 
-        $qb->join(ProductOfferVariation::class, 'variation', 'WITH', 'variation.id = modification.variation');
+        $qb->join(ProductVariation::class, 'variation', 'WITH', 'variation.id = modification.variation');
         $qb->join(ProductOffer::class, 'offer', 'WITH', 'offer.id = variation.offer');
 
         $qb->join(ProductEvent::class, 'event', 'WITH', 'event.id = offer.event');

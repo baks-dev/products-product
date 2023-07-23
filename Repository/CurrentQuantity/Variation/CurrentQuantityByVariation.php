@@ -75,12 +75,12 @@ final class CurrentQuantityByVariation implements CurrentQuantityByVariationInte
 		
 		/** Множественный вариант торгового предложения */
 		
-		$qb->join(ProductEntity\Offers\Variation\ProductOfferVariation::class,
+		$qb->join(ProductEntity\Offers\Variation\ProductVariation::class,
 			'variation', 'WITH', 'variation.id = :variation AND variation.offer = offer.id'
 		);
 		$qb->setParameter('variation', $variation, ProductVariationUid::TYPE);
 		
-		$qb->leftJoin(ProductEntity\Offers\Variation\ProductOfferVariation::class,
+		$qb->leftJoin(ProductEntity\Offers\Variation\ProductVariation::class,
 			'current_variation', 'WITH', 'current_variation.const = variation.const AND current_variation.offer = current_offer.id'
 		);
 		

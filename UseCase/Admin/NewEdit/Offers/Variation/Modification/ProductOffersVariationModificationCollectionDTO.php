@@ -24,16 +24,16 @@
 
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification;
 
-use BaksDev\Products\Category\Type\Offers\Modification\ProductCategoryOffersVariationModificationUid;
-use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductOfferVariationModificationInterface;
+use BaksDev\Products\Category\Type\Offers\Modification\ProductCategoryModificationUid;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModificationInterface;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
 use Doctrine\Common\Collections\ArrayCollection;
 use ReflectionProperty;
 
-final class ProductOffersVariationModificationCollectionDTO implements ProductOfferVariationModificationInterface
+final class ProductOffersVariationModificationCollectionDTO implements ProductModificationInterface
 {
 	/** ID множественного варианта торгового предложения категории */
-	private ProductCategoryOffersVariationModificationUid $categoryModification;
+	private ProductCategoryModificationUid $categoryModification;
 	
 	/** Постоянный уникальный идентификатор модификации */
 	private readonly ProductModificationConst $const;
@@ -48,10 +48,10 @@ final class ProductOffersVariationModificationCollectionDTO implements ProductOf
 	private ?string $postfix = null;
 
 	/** Стоимость торгового предложения */
-	private ?Price\ProductOfferVariationModificationPriceDTO $price = null;
+	private ?Price\ProductModificationPriceDTO $price = null;
 	
 	/** Количественный учет */
-	private ?Quantity\ProductOfferVariationModificationQuantityDTO $quantity = null;
+	private ?Quantity\ProductModificationQuantityDTO $quantity = null;
 	
 	/** Дополнительные фото торгового предложения */
 	private ArrayCollection $image;
@@ -114,13 +114,13 @@ final class ProductOffersVariationModificationCollectionDTO implements ProductOf
 	
 	/** Стоимость торгового предложения */
 	
-	public function getPrice() : ?Price\ProductOfferVariationModificationPriceDTO
+	public function getPrice() : ?Price\ProductModificationPriceDTO
 	{
 		return $this->price;
 	}
 	
 	
-	public function setPrice(?Price\ProductOfferVariationModificationPriceDTO $price) : void
+	public function setPrice(?Price\ProductModificationPriceDTO $price) : void
 	{
 		$this->price = $price;
 	}
@@ -128,13 +128,13 @@ final class ProductOffersVariationModificationCollectionDTO implements ProductOf
 	
 	/** Количественный учет */
 	
-	public function getQuantity() : ?Quantity\ProductOfferVariationModificationQuantityDTO
+	public function getQuantity() : ?Quantity\ProductModificationQuantityDTO
 	{
 		return $this->quantity;
 	}
 	
 	
-	public function setQuantity(?Quantity\ProductOfferVariationModificationQuantityDTO $quantity) : void
+	public function setQuantity(?Quantity\ProductModificationQuantityDTO $quantity) : void
 	{
 		$this->quantity = $quantity;
 	}
@@ -148,7 +148,7 @@ final class ProductOffersVariationModificationCollectionDTO implements ProductOf
 	}
 	
 	
-	public function addImage(Image\ProductOfferVariationModificationImageCollectionDTO $image) : void
+	public function addImage(Image\ProductModificationImageCollectionDTO $image) : void
 	{
 		if(!$this->image->contains($image))
 		{
@@ -157,25 +157,25 @@ final class ProductOffersVariationModificationCollectionDTO implements ProductOf
 	}
 	
 	
-	public function removeImage(Image\ProductOfferVariationModificationImageCollectionDTO $image) : void
+	public function removeImage(Image\ProductModificationImageCollectionDTO $image) : void
 	{
 		$this->image->removeElement($image);
 	}
 	
 	
 	/**
-	 * @return ProductCategoryOffersVariationModificationUid
+	 * @return ProductCategoryModificationUid
 	 */
-	public function getCategoryModification() : ProductCategoryOffersVariationModificationUid
+	public function getCategoryModification() : ProductCategoryModificationUid
 	{
 		return $this->categoryModification;
 	}
 	
 	
 	/**
-	 * @param ProductCategoryOffersVariationModificationUid $categoryVariation
+	 * @param ProductCategoryModificationUid $categoryVariation
 	 */
-	public function setCategoryModification(ProductCategoryOffersVariationModificationUid $categoryModification) : void
+	public function setCategoryModification(ProductCategoryModificationUid $categoryModification) : void
 	{
 		$this->categoryModification = $categoryModification;
 	}

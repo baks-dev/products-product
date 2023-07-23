@@ -24,7 +24,7 @@
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification;
 
 use BaksDev\Core\Services\Reference\ReferenceChoice;
-use BaksDev\Products\Category\Type\Offers\Modification\ProductCategoryOffersVariationModificationUid;
+use BaksDev\Products\Category\Type\Offers\Modification\ProductCategoryModificationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
@@ -60,10 +60,10 @@ final class ProductOffersVariationModificationCollectionForm extends AbstractTyp
 		$builder->get('categoryModification')->addModelTransformer(
 			new CallbackTransformer(
 				function($categoryModification) {
-					return $categoryModification instanceof ProductCategoryOffersVariationModificationUid ? $categoryModification->getValue() : $categoryModification;
+					return $categoryModification instanceof ProductCategoryModificationUid ? $categoryModification->getValue() : $categoryModification;
 				},
 				function($categoryModification) {
-					return new ProductCategoryOffersVariationModificationUid($categoryModification);
+					return new ProductCategoryModificationUid($categoryModification);
 				}
 			)
 		);

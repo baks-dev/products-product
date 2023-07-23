@@ -27,7 +27,7 @@ namespace BaksDev\Products\Product\Repository\ProductByVariation;
 
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
-use BaksDev\Products\Product\Entity\Offers\Variation\ProductOfferVariation;
+use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
 use Doctrine\ORM\EntityManagerInterface;
@@ -53,7 +53,7 @@ final class ProductByVariation implements ProductByVariationInterface
         $qb->addSelect('offer.id AS offer_id');
         $qb->addSelect('variation.id AS variation_id');
 
-        $qb->from(ProductOfferVariation::class, 'variation');
+        $qb->from(ProductVariation::class, 'variation');
 
         $qb->join(ProductOffer::class,
             'offer',

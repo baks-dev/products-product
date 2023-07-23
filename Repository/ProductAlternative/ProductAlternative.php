@@ -152,7 +152,7 @@ final class ProductAlternative implements ProductAlternativeInterface
 
         $qb->{$variationMethod}(
             'product_offer',
-            ProductEntity\Offers\Variation\ProductOfferVariation::TABLE,
+            ProductEntity\Offers\Variation\ProductVariation::TABLE,
             'product_variation',
             'product_variation.offer = product_offer.id '.(empty($variation) ? '' : 'AND product_variation.value = :variation')
         );
@@ -178,7 +178,7 @@ final class ProductAlternative implements ProductAlternativeInterface
         ;
         $qb->leftJoin(
             'product_variation',
-            CategoryEntity\Offers\Variation\ProductCategoryOffersVariation::TABLE,
+            CategoryEntity\Offers\Variation\ProductCategoryVariation::TABLE,
             'category_offer_variation',
             'category_offer_variation.id = product_variation.category_variation'
         );
@@ -189,7 +189,7 @@ final class ProductAlternative implements ProductAlternativeInterface
         ;
         $qb->leftJoin(
             'category_offer_variation',
-            CategoryEntity\Offers\Variation\Trans\ProductCategoryOffersVariationTrans::TABLE,
+            CategoryEntity\Offers\Variation\Trans\ProductCategoryVariationTrans::TABLE,
             'category_offer_variation_trans',
             'category_offer_variation_trans.variation = category_offer_variation.id AND category_offer_variation_trans.local = :local'
         );
@@ -223,7 +223,7 @@ final class ProductAlternative implements ProductAlternativeInterface
 
         $qb->{$modificationMethod}(
             'product_variation',
-            ProductEntity\Offers\Variation\Modification\ProductOfferVariationModification::TABLE,
+            ProductEntity\Offers\Variation\Modification\ProductModification::TABLE,
             'product_modification',
             'product_modification.variation = product_variation.id '.(empty($modification) ? '' : 'AND product_modification.value = :modification')
         );
@@ -235,7 +235,7 @@ final class ProductAlternative implements ProductAlternativeInterface
         // Цена модификации множественного варианта
         $qb->leftJoin(
             'product_modification',
-            ProductEntity\Offers\Variation\Modification\Price\ProductOfferVariationModificationPrice::TABLE,
+            ProductEntity\Offers\Variation\Modification\Price\ProductModificationPrice::TABLE,
             'product_modification_price',
             'product_modification_price.modification = product_modification.id'
         )
@@ -249,7 +249,7 @@ final class ProductAlternative implements ProductAlternativeInterface
         ;
         $qb->leftJoin(
             'product_modification',
-            CategoryEntity\Offers\Variation\Modification\ProductCategoryOffersVariationModification::TABLE,
+            CategoryEntity\Offers\Variation\Modification\ProductCategoryModification::TABLE,
             'category_offer_modification',
             'category_offer_modification.id = product_modification.category_modification'
         );
@@ -260,7 +260,7 @@ final class ProductAlternative implements ProductAlternativeInterface
         ;
         $qb->leftJoin(
             'category_offer_modification',
-            CategoryEntity\Offers\Variation\Modification\Trans\ProductCategoryOffersVariationModificationTrans::TABLE,
+            CategoryEntity\Offers\Variation\Modification\Trans\ProductCategoryModificationTrans::TABLE,
             'category_offer_modification_trans',
             'category_offer_modification_trans.modification = category_offer_modification.id AND category_offer_modification_trans.local = :local'
         );
@@ -268,7 +268,7 @@ final class ProductAlternative implements ProductAlternativeInterface
         // Наличие и резерв модификации множественного варианта
         $qb->leftJoin(
             'category_offer_modification',
-            ProductEntity\Offers\Variation\Modification\Quantity\ProductOfferVariationModificationQuantity::TABLE,
+            ProductEntity\Offers\Variation\Modification\Quantity\ProductModificationQuantity::TABLE,
             'product_modification_quantity',
             'product_modification_quantity.modification = product_modification.id'
         )
