@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Repository\ProductDetail;
 
+use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Core\Type\Locale\Locale;
 use BaksDev\Products\Category\Entity\Info\ProductCategoryInfo;
 use BaksDev\Products\Category\Entity\Offers\ProductCategoryOffers;
@@ -60,23 +61,21 @@ use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
-use Doctrine\DBAL\Cache\QueryCacheProfile;
-use Doctrine\DBAL\Connection;
-use Symfony\Component\Cache\Adapter\ApcuAdapter;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class ProductDetailByUid implements ProductDetailByUidInterface
 {
-    private Connection $connection;
 
     private TranslatorInterface $translator;
+    private DBALQueryBuilder $DBALQueryBuilder;
 
     public function __construct(
-        Connection $connection,
+     DBALQueryBuilder $DBALQueryBuilder,
         TranslatorInterface $translator,
     ) {
-        $this->connection = $connection;
+
         $this->translator = $translator;
+        $this->DBALQueryBuilder = $DBALQueryBuilder;
     }
 
     /**
@@ -88,7 +87,7 @@ final class ProductDetailByUid implements ProductDetailByUidInterface
         ?ProductVariationUid $variation = null,
         ?ProductModificationUid $modification = null,
     ): array|bool {
-        $qb = $this->connection->createQueryBuilder();
+        $qb = $this->DBALQueryBuilder->createQueryBuilder(self::class);
 
         $qb->select('product_event.product')->groupBy('product_event.product');
         $qb->addSelect('product_event.id')->addGroupBy('product_event.id');
@@ -592,19 +591,9 @@ final class ProductDetailByUid implements ProductDetailByUidInterface
 
 
         /* Кешируем результат DBAL */
-        $cacheFilesystem = new ApcuAdapter('Product');
+        return $qb
+            ->enableCache('Product', 86400)
+            ->fetchAssociative();
 
-        $config = $this->connection->getConfiguration();
-        $config?->setResultCache($cacheFilesystem);
-
-        return $this->connection->executeCacheQuery(
-            $qb->getSQL(),
-            $qb->getParameters(),
-            $qb->getParameterTypes(),
-            new QueryCacheProfile((60 * 60 * 30))
-        )->fetchAssociative();
-
-
-        return $qb->fetchAssociative();
     }
 }

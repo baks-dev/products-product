@@ -25,10 +25,7 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Forms\ProductProfileFilter;
 
-use BaksDev\Products\Category\Repository\CategoryChoice\CategoryChoiceInterface;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
-use BaksDev\Wildberries\Orders\Type\OrderStatus\Status\Collection\WbOrderStatusCollection;
-use BaksDev\Wildberries\Orders\Type\WildberriesStatus\Status\Collection\WildberriesStatusCollection;
 use BaksDev\Wildberries\Repository\WbTokenChoice\WbTokenChoiceInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -46,13 +43,9 @@ final class ProductProfileFilterFormAdmin extends AbstractType
 
     private WbTokenChoiceInterface $tokenChoice;
 
-
     public function __construct(
         WbTokenChoiceInterface $tokenChoice,
         RequestStack $request,
-        WbOrderStatusCollection $wbOrderStatusCollection,
-        WildberriesStatusCollection $wildberriesStatusCollection,
-        CategoryChoiceInterface $categoryChoice,
     )
     {
         $this->request = $request;

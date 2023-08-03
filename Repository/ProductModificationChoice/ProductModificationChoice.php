@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Repository\ProductModificationChoice;
 
+use BaksDev\Core\Doctrine\ORMQueryBuilder;
 use BaksDev\Core\Type\Locale\Locale;
 use BaksDev\Products\Category\Entity as CategoryEntity;
 use BaksDev\Products\Product\Entity as ProductEntity;
@@ -32,22 +33,22 @@ use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class ProductModificationChoice implements ProductModificationChoiceInterface
 {
-    private EntityManagerInterface $entityManager;
+
     private TranslatorInterface $translator;
+    private ORMQueryBuilder $ORMQueryBuilder;
 
     public function __construct(
-        EntityManagerInterface $entityManager,
+        ORMQueryBuilder $ORMQueryBuilder,
         TranslatorInterface $translator
     )
     {
-        $this->entityManager = $entityManager;
+
         $this->translator = $translator;
+        $this->ORMQueryBuilder = $ORMQueryBuilder;
     }
 
     /**
@@ -55,7 +56,7 @@ final class ProductModificationChoice implements ProductModificationChoiceInterf
      */
     public function fetchProductModificationConstByVariationConst(ProductVariationConst $const): ?array
     {
-        $qb = $this->entityManager->createQueryBuilder();
+        $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
 
         $select = sprintf('new %s(
             modification.const, 
@@ -104,22 +105,14 @@ final class ProductModificationChoice implements ProductModificationChoiceInterf
             'WITH',
             'trans.modification = category_modification.id AND trans.local = :local'
         );
+        $qb->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
 
         $qb->where('variation.const = :const');
+        $qb->setParameter('const', $const, ProductVariationConst::TYPE);
 
+        /* Кешируем результат ORM */
+        return $qb->enableCache('Product', 86400)->getResult();
 
-        $cacheQueries = new FilesystemAdapter('Product');
-
-        $query = $this->entityManager->createQuery($qb->getDQL());
-        $query->setQueryCache($cacheQueries);
-        $query->setResultCache($cacheQueries);
-        $query->enableResultCache();
-        $query->setLifetime(60 * 60 * 24);
-
-        $query->setParameter('const', $const, ProductVariationConst::TYPE);
-        $query->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
-
-        return $query->getResult();
     }
 
 
@@ -128,7 +121,7 @@ final class ProductModificationChoice implements ProductModificationChoiceInterf
      */
     public function fetchProductModificationByVariation(ProductVariationUid $variation): ?array
     {
-        $qb = $this->entityManager->createQueryBuilder();
+        $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
 
         $select = sprintf('new %s(
             modification.id, 
@@ -181,18 +174,12 @@ final class ProductModificationChoice implements ProductModificationChoiceInterf
 
         $qb->where('variation.id = :variation');
 
+        $qb->setParameter('variation', $variation, ProductVariationUid::TYPE);
+        $qb->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
 
-        $cacheQueries = new FilesystemAdapter('Product');
 
-        $query = $this->entityManager->createQuery($qb->getDQL());
-        $query->setQueryCache($cacheQueries);
-        $query->setResultCache($cacheQueries);
-        $query->enableResultCache();
-        $query->setLifetime(60 * 60 * 24);
+        /* Кешируем результат ORM */
+        return $qb->enableCache('Product', 86400)->getResult();
 
-        $query->setParameter('variation', $variation, ProductVariationUid::TYPE);
-        $query->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
-
-        return $query->getResult();
     }
 }

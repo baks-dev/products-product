@@ -25,35 +25,29 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Repository\ProductDetailOffer;
 
-use BaksDev\Core\Type\Locale\Locale;
+use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Products\Category\Entity as CategoryEntity;
 use BaksDev\Products\Product\Entity as ProductEntity;
 use BaksDev\Products\Product\Type\Id\ProductUid;
-use Doctrine\DBAL\Connection;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class ProductDetailOffer implements ProductDetailOfferInterface
 {
-    private Connection $connection;
 
-    private TranslatorInterface $translator;
 
-    public function __construct(
-        Connection $connection,
-        TranslatorInterface $translator,
-    ) {
-        $this->connection = $connection;
-        $this->translator = $translator;
+    private DBALQueryBuilder $DBALQueryBuilder;
+
+    public function __construct(DBALQueryBuilder $DBALQueryBuilder) {
+
+
+        $this->DBALQueryBuilder = $DBALQueryBuilder;
     }
 
     /** Метод возвращает торговые предложения продукта */
     public function fetchProductOfferAssociative(
         ProductUid $product,
-//        $offer = null,
-//        $variation = null,
-//        $modification = null,
+
     ): array|bool {
-        $qb = $this->connection->createQueryBuilder();
+        $qb = $this->DBALQueryBuilder->createQueryBuilder(self::class);
 
         $qb->select('product.id');
 
@@ -228,11 +222,11 @@ final class ProductDetailOffer implements ProductDetailOfferInterface
 
         $qb->where('product.id = :product');
         $qb->setParameter('product', $product, ProductUid::TYPE);
-        $qb->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
+        $qb->bindLocal();
 
         //$qb->select('id');
         //$qb->from(ClasssName::TABLE, 'wb_order');
 
-        return $qb->fetchAllAssociative();
+        return $qb->enableCache('Product', 86400)->fetchAllAssociative();
     }
 }

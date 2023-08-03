@@ -161,6 +161,11 @@ class ProductOfferImage extends EntityEvent implements UploadEntityInterface
         $this->root = true;
     }
 
+    public function getDir(): ProductOfferUid
+    {
+        return $this->dir;
+    }
+
     public static function getDirName(): string
     {
         return  ProductOfferUid::class;

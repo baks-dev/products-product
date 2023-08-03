@@ -3,12 +3,15 @@
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
 return function(RoutingConfigurator $routes) {
-	
-	$routes->import(
-        __DIR__.'/../../Controller',
+
+
+    $MODULE = substr(__DIR__, 0, strpos(__DIR__, "Resources"));
+
+    $routes->import(
+        $MODULE.'Controller',
         'attribute',
         false,
-        __DIR__.'/../../Controller/**/*Test.php'
+        $MODULE.'Controller/**/*Test.php'
     )
 		->prefix(\BaksDev\Core\Type\Locale\Locale::routes())
 		->namePrefix('Product:')

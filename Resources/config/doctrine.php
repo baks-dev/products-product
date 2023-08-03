@@ -100,11 +100,13 @@ return static function(ContainerConfigurator $container, DoctrineConfig $doctrin
 
 
 
-	$emDefault = $doctrine->orm()->entityManager('default');
-	$emDefault->autoMapping(true);
-	$emDefault->mapping('Product')
+    $emDefault = $doctrine->orm()->entityManager('default')->autoMapping(true);
+
+    $MODULE = substr(__DIR__, 0, strpos(__DIR__, "Resources"));
+
+    $emDefault->mapping('Product')
 		->type('attribute')
-		->dir(__DIR__.'/../../Entity')
+		->dir($MODULE.'Entity')
 		->isBundle(false)
 		->prefix('BaksDev\Products\Product\Entity')
 		->alias('Product')

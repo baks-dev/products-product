@@ -27,14 +27,16 @@ use BaksDev\Core\Controller\AbstractController;
 use BaksDev\Core\Listeners\Event\Security\RoleSecurity;
 use BaksDev\Products\Product\Entity;
 use BaksDev\Products\Product\UseCase\Admin\Delete\DeleteForm;
-use BaksDev\Products\Product\UseCase\Admin\Delete\ProductDTO;
 use BaksDev\Products\Product\UseCase\Admin\Delete\ProductDeleteHandler;
+use BaksDev\Products\Product\UseCase\Admin\Delete\ProductDTO;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Annotation\Route;
 
+#[AsController]
 #[RoleSecurity('ROLE_PRODUCT_DELETE')]
 final class DeleteController extends AbstractController
 {

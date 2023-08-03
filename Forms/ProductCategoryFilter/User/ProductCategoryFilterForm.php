@@ -57,7 +57,6 @@ final class ProductCategoryFilterForm extends AbstractType
 	
 	public function __construct(
 		AllFilterFieldsByCategoryInterface $fields,
-		
 		OfferFieldsCategoryChoiceInterface $offerChoice,
 		VariationFieldsCategoryChoiceInterface $variationChoice,
 		ModificationFieldsCategoryChoiceInterface $modificationChoice,
@@ -82,12 +81,10 @@ final class ProductCategoryFilterForm extends AbstractType
 		
 		if($data->getCategory())
 		{
-			
+
 			/** Торговое предложение раздела */
 			
 			$offerField = $this->offerChoice->getOfferFieldCollection($data->getCategory());
-			
-			
 			
 			if($offerField)
 			{
@@ -165,15 +162,11 @@ final class ProductCategoryFilterForm extends AbstractType
 			}
 			
 			
-			
-			
-			
+
 			/** Свойства, участвующие в фильтре */
 			
 			$fields = $this->fields->fetchAllFilterCategoryFieldsAssociative($data->getCategory());
-			
-			
-			
+
 			if($fields)
 			{
 				

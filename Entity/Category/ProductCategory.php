@@ -23,9 +23,9 @@
 
 namespace BaksDev\Products\Product\Entity\Category;
 
+use BaksDev\Core\Entity\EntityEvent;
 use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
-use BaksDev\Core\Entity\EntityEvent;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use InvalidArgumentException;
@@ -69,10 +69,16 @@ class ProductCategory extends EntityEvent
 	{
 		return $this->category;
 	}
-	
-	
-	
-	
+
+    /**
+     * Root
+     */
+    public function isRoot(): bool
+    {
+        return $this->root;
+    }
+
+
 	public function getDto($dto) : mixed
 	{
 		if($dto instanceof ProductCategoryInterface)

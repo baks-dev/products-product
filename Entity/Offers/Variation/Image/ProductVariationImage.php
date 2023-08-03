@@ -169,6 +169,10 @@ class ProductVariationImage extends EntityEvent implements UploadEntityInterface
 		return $this->name.'.'.$this->ext;
 	}
 
+    public function getDir(): ProductVariationUid
+    {
+        return $this->dir;
+    }
 
     public static function getDirName(): string
     {

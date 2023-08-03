@@ -28,8 +28,10 @@ use BaksDev\Products\Product\Entity;
 use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailByValueInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Annotation\Route;
 
+#[AsController]
 final class ProductController extends AbstractController
 {
     #[Route('/product/{url}', name: 'user.product')]

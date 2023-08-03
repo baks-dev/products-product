@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Repository\ProductChoice;
 
+use BaksDev\Core\Doctrine\ORMQueryBuilder;
 use BaksDev\Core\Type\Locale\Locale;
 use BaksDev\Products\Product\Entity\Active\ProductActive;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
@@ -32,44 +33,42 @@ use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class ProductChoice implements ProductChoiceInterface
 {
-    private EntityManagerInterface $entityManager;
+    private ORMQueryBuilder $ORMQueryBuilder;
     private TranslatorInterface $translator;
 
     public function __construct(
-        EntityManagerInterface $entityManager,
+        ORMQueryBuilder $ORMQueryBuilder,
         TranslatorInterface $translator
     )
     {
-        $this->entityManager = $entityManager;
         $this->translator = $translator;
+        $this->ORMQueryBuilder = $ORMQueryBuilder;
     }
 
     /**
-     * Метод возвращает все идентификаторы продуктов с названием
+     * Метод возвращает все идентификаторы продуктов (ProductUid) с названием
      */
 
     public function fetchAllProduct(): ?array
     {
-        $qb = $this->entityManager->createQueryBuilder();
+        $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
 
-        $select = sprintf('new %s(product.id, trans.name)', ProductUid::class);
+        $select = sprintf('new %s(product.id, trans.name, info.article)', ProductUid::class);
 
         $qb->select($select);
 
         $qb->from(Product::class, 'product');
 
-        /*$qb->join(
-            ProductEntity\Event\ProductEvent::class,
-            'event',
+        $qb->join(
+            ProductInfo::class,
+            'info',
             'WITH',
-            'event.id = product.event'
-        );*/
+            'info.product = product.id'
+        );
 
         $qb->join(
             ProductActive::class,
@@ -90,26 +89,21 @@ final class ProductChoice implements ProductChoiceInterface
             'trans.event = product.event AND trans.local = :local'
         );
 
-        $cacheQueries = new FilesystemAdapter('Product');
+        $qb->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
 
-        $query = $this->entityManager->createQuery($qb->getDQL());
-        $query->setQueryCache($cacheQueries);
-        $query->setResultCache($cacheQueries);
-        $query->enableResultCache();
-        $query->setLifetime(60 * 60 * 24);
 
-        $query->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
+        /* Кешируем результат ORM */
+        return $qb->enableCache('Product', 86400)->getResult();
 
-        return $query->getResult();
     }
 
 
     /**
-     * Метод возвращает активные идентификаторы событий продукции
+     * Метод возвращает активные идентификаторы событий (ProductEventUid) продукции
      */
     public function fetchAllProductEvent(): ?array
     {
-        $qb = $this->entityManager->createQueryBuilder();
+        $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
 
         $select = sprintf('new %s(product.event, trans.name, info.article)', ProductEventUid::class);
 
@@ -142,17 +136,12 @@ final class ProductChoice implements ProductChoiceInterface
             'trans.event = product.event AND trans.local = :local'
         );
 
-        $cacheQueries = new FilesystemAdapter('Product');
+        $qb->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
 
-        $query = $this->entityManager->createQuery($qb->getDQL());
-        $query->setQueryCache($cacheQueries);
-        $query->setResultCache($cacheQueries);
-        $query->enableResultCache();
-        $query->setLifetime(60 * 60 * 24);
 
-        $query->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
+        /* Кешируем результат ORM */
+        return $qb->enableCache('Product', 86400)->getResult();
 
-        return $query->getResult();
     }
 
 }

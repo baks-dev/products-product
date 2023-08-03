@@ -37,8 +37,10 @@ use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModifi
 use chillerlan\QRCode\QRCode;
 use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Annotation\Route;
 
+#[AsController]
 #[RoleSecurity('ROLE_PRODUCT')]
 final class QrcodeController extends AbstractController
 {

@@ -25,35 +25,35 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Repository\ProductDetail;
 
+use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Core\Type\Locale\Locale;
 use BaksDev\Products\Category\Entity as CategoryEntity;
 use BaksDev\Products\Product\Entity as ProductEntity;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
-use Doctrine\DBAL\Cache\QueryCacheProfile;
-use Doctrine\DBAL\Connection;
-use Symfony\Component\Cache\Adapter\ApcuAdapter;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class ProductDetailByValue implements ProductDetailByValueInterface
 {
-    private Connection $connection;
 
     private TranslatorInterface $translator;
+    private DBALQueryBuilder $DBALQueryBuilder;
 
     public function __construct(
-        Connection $connection,
         TranslatorInterface $translator,
-    ) {
-        $this->connection = $connection;
+        DBALQueryBuilder $DBALQueryBuilder,
+    )
+    {
+
         $this->translator = $translator;
+        $this->DBALQueryBuilder = $DBALQueryBuilder;
     }
 
     /**
      * Метод возвращает детальную информацию о продукте и его заполненному значению ТП, вариантов и модификаций.
      *
-     * @param ?string $offer        - значение торгового предложения
-     * @param ?string $variation    - значение множественного варианта ТП
+     * @param ?string $offer - значение торгового предложения
+     * @param ?string $variation - значение множественного варианта ТП
      * @param ?string $modification - значение модификации множественного варианта ТП
      */
     public function fetchProductAssociative(
@@ -61,8 +61,9 @@ final class ProductDetailByValue implements ProductDetailByValueInterface
         string $offer = null,
         string $variation = null,
         string $modification = null,
-    ): array|bool {
-        $qb = $this->connection->createQueryBuilder();
+    ): array|bool
+    {
+        $qb = $this->DBALQueryBuilder->createQueryBuilder(self::class);
 
         $qb->select('product.id')->groupBy('product.id');
         $qb->addSelect('product.event')->addGroupBy('product.event');
@@ -137,7 +138,7 @@ final class ProductDetailByValue implements ProductDetailByValueInterface
         )
             ->addGroupBy('product_offer.article');
 
-        if ($offer)
+        if($offer)
         {
             $qb->setParameter('product_offer_value', $offer);
         }
@@ -197,7 +198,7 @@ final class ProductDetailByValue implements ProductDetailByValueInterface
         )
             ->addGroupBy('product_offer_variation.article');
 
-        if ($variation)
+        if($variation)
         {
             $qb->setParameter('product_variation_value', $variation);
         }
@@ -259,7 +260,7 @@ final class ProductDetailByValue implements ProductDetailByValueInterface
         )
             ->addGroupBy('product_offer_modification.article');
 
-        if ($modification)
+        if($modification)
         {
             $qb->setParameter('product_modification_value', $modification);
         }
@@ -608,15 +609,19 @@ final class ProductDetailByValue implements ProductDetailByValueInterface
 
         /*dd($qb->fetchAssociative());*/
 
-        return $qb->fetchAssociative();
+
+        return $qb
+            ->enableCache('Product', 86400)
+            ->fetchAssociative();
+
     }
 
 
     /**
      * Метод возвращает детальную информацию о продукте и его заполненному значению ТП, вариантов и модификаций.
      *
-     * @param ?string $offer        - значение торгового предложения
-     * @param ?string $variation    - значение множественного варианта ТП
+     * @param ?string $offer - значение торгового предложения
+     * @param ?string $variation - значение множественного варианта ТП
      * @param ?string $modification - значение модификации множественного варианта ТП
      */
     public function fetchProductEventAssociative(
@@ -624,8 +629,9 @@ final class ProductDetailByValue implements ProductDetailByValueInterface
         string $offer = null,
         string $variation = null,
         string $modification = null,
-    ): array|bool {
-        $qb = $this->connection->createQueryBuilder();
+    ): array|bool
+    {
+        $qb = $this->DBALQueryBuilder->createQueryBuilder(self::class);
 
         $qb->select('product_event.product')->groupBy('product.id');
         $qb->addSelect('product_event.id')->addGroupBy('product.event');
@@ -695,7 +701,7 @@ final class ProductDetailByValue implements ProductDetailByValueInterface
         )
             ->addGroupBy('product_offer.article');
 
-        if ($offer)
+        if($offer)
         {
             $qb->setParameter('product_offer_value', $offer);
         }
@@ -755,7 +761,7 @@ final class ProductDetailByValue implements ProductDetailByValueInterface
         )
             ->addGroupBy('product_offer_variation.article');
 
-        if ($variation)
+        if($variation)
         {
             $qb->setParameter('product_variation_value', $variation);
         }
@@ -817,7 +823,7 @@ final class ProductDetailByValue implements ProductDetailByValueInterface
         )
             ->addGroupBy('product_offer_modification.article');
 
-        if ($modification)
+        if($modification)
         {
             $qb->setParameter('product_modification_value', $modification);
         }
@@ -1159,19 +1165,12 @@ final class ProductDetailByValue implements ProductDetailByValueInterface
 
 
         $qb->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
-        
+
+
         /* Кешируем результат DBAL */
-        $cacheFilesystem = new ApcuAdapter('Product');
-
-        $config = $this->connection->getConfiguration();
-        $config?->setResultCache($cacheFilesystem);
-
-        return $this->connection->executeCacheQuery(
-            $qb->getSQL(),
-            $qb->getParameters(),
-            $qb->getParameterTypes(),
-            new QueryCacheProfile((60 * 60 * 30))
-        )->fetchAssociative();
+        return $qb
+            ->enableCache('Product', 86400)
+            ->fetchAssociative();
 
     }
 

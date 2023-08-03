@@ -144,4 +144,8 @@ class ProductVideo extends EntityEvent implements UploadEntityInterface
         return ProductEventUid::class;
     }
 
+    public function getDir(): ProductEventUid
+    {
+        return $this->dir;
+    }
 }

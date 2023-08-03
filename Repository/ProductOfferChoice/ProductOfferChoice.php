@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Repository\ProductOfferChoice;
 
+use BaksDev\Core\Doctrine\ORMQueryBuilder;
 use BaksDev\Core\Type\Locale\Locale;
 use BaksDev\Products\Category\Entity as CategoryEntity;
 use BaksDev\Products\Product\Entity as ProductEntity;
@@ -32,21 +33,22 @@ use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class ProductOfferChoice implements ProductOfferChoiceInterface
 {
-    private EntityManagerInterface $entityManager;
+
     private TranslatorInterface $translator;
+    private ORMQueryBuilder $ORMQueryBuilder;
 
     public function __construct(
-        EntityManagerInterface $entityManager,
+        ORMQueryBuilder $ORMQueryBuilder,
         TranslatorInterface $translator
-    ) {
-        $this->entityManager = $entityManager;
+    )
+    {
+
         $this->translator = $translator;
+        $this->ORMQueryBuilder = $ORMQueryBuilder;
     }
 
     /**
@@ -54,7 +56,7 @@ final class ProductOfferChoice implements ProductOfferChoiceInterface
      */
     public function fetchProductOfferByProduct(ProductUid $product): ?array
     {
-        $qb = $this->entityManager->createQueryBuilder();
+        $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
 
         $select = sprintf('new %s(offer.const, offer.value, trans.name, category_offer.reference)', ProductOfferConst::class);
 
@@ -96,28 +98,14 @@ final class ProductOfferChoice implements ProductOfferChoiceInterface
 
         $qb->where('product.id = :product');
 
-//        $qb->setParameter('product', $product, ProductUid::TYPE);
-//        $qb->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
-//
-//        dd($qb->getQuery()->getResult());
-//
+        $qb->setParameter('product', $product, ProductUid::TYPE);
+        $qb->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
 
 
+        /* Кешируем результат ORM */
+        return $qb->enableCache('Product', 86400)->getResult();
 
-        $cacheQueries = new FilesystemAdapter('Product');
-
-        $query = $this->entityManager->createQuery($qb->getDQL());
-        $query->setQueryCache($cacheQueries);
-        $query->setResultCache($cacheQueries);
-        $query->enableResultCache();
-        $query->setLifetime(60 * 60 * 24);
-
-        $query->setParameter('product', $product, ProductUid::TYPE);
-        $query->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
-
-        return $query->getResult();
     }
-
 
 
     /**
@@ -126,7 +114,7 @@ final class ProductOfferChoice implements ProductOfferChoiceInterface
     public function fetchProductOfferByProductEvent(ProductEventUid $product): ?array
     {
 
-        $qb = $this->entityManager->createQueryBuilder();
+        $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
 
         $select = sprintf('new %s(
             offer.id, 
@@ -173,24 +161,12 @@ final class ProductOfferChoice implements ProductOfferChoiceInterface
 
         $qb->where('product.event = :product');
 
-        //        $qb->setParameter('product', $product, ProductUid::TYPE);
-        //        $qb->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
-        //
-        //        dd($qb->getQuery()->getResult());
-        //
+        $qb->setParameter('product', $product, ProductUid::TYPE);
+        $qb->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
 
 
-        $cacheQueries = new FilesystemAdapter('Product');
+        /* Кешируем результат ORM */
+        return $qb->enableCache('Product', 86400)->getResult();
 
-        $query = $this->entityManager->createQuery($qb->getDQL());
-        $query->setQueryCache($cacheQueries);
-        $query->setResultCache($cacheQueries);
-        $query->enableResultCache();
-        $query->setLifetime(60 * 60 * 24);
-
-        $query->setParameter('product', $product, ProductUid::TYPE);
-        $query->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
-
-        return $query->getResult();
     }
 }

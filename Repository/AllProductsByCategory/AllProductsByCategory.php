@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Repository\AllProductsByCategory;
 
+use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Core\Services\Paginator\PaginatorInterface;
 use BaksDev\Core\Type\Locale\Locale;
 use BaksDev\Products\Category\Entity as CategoryEntity;
@@ -32,29 +33,28 @@ use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
 use BaksDev\Products\Category\Type\Section\Field\Id\ProductCategorySectionFieldUid;
 use BaksDev\Products\Product\Entity as ProductEntity;
 use BaksDev\Products\Product\Forms\ProductCategoryFilter\User\ProductCategoryFilterDTO;
-use Doctrine\DBAL\Connection;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class AllProductsByCategory implements AllProductsByCategoryInterface
 {
-	
-	private Connection $connection;
-	
+
 	private PaginatorInterface $paginator;
 	
 	private TranslatorInterface $translator;
-	
-	
-	public function __construct(
-		Connection $connection,
+    private DBALQueryBuilder $DBALQueryBuilder;
+
+
+    public function __construct(
+		DBALQueryBuilder $DBALQueryBuilder,
 		TranslatorInterface $translator,
 		PaginatorInterface $paginator,
 	)
 	{
-		$this->connection = $connection;
+
 		$this->paginator = $paginator;
 		$this->translator = $translator;
-	}
+        $this->DBALQueryBuilder = $DBALQueryBuilder;
+    }
 	
 	
 	public function fetchAllProductByCategoryAssociative(
@@ -64,16 +64,11 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
 		string $expr = 'AND',
 	) : PaginatorInterface
 	{
-		$qb = $this->connection->createQueryBuilder();
-		
-		
+		$qb = $this->DBALQueryBuilder->createQueryBuilder(self::class);
 		
 		/** ЛОКАЛЬ */
 		$locale = new Locale($this->translator->getLocale());
 		$qb->setParameter('local', $locale, Locale::TYPE);
-		
-		
-		
 
 		
 		$qb->from(CategoryEntity\ProductCategory::TABLE, 'category');
@@ -668,7 +663,8 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
 			AS category_section_field"
 		);
 
-		return $this->paginator->fetchAllAssociative($qb);
+        return $this->paginator->fetchAllAssociative($qb);
+
 	}
 	
 }

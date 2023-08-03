@@ -167,4 +167,9 @@ class ProductFiles extends EntityEvent implements UploadEntityInterface
         $this->cdn = true;
     }
 
+    public function getDir(): ProductEventUid
+    {
+        return $this->dir;
+    }
+
 }

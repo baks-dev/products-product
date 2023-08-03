@@ -23,43 +23,29 @@
 
 namespace BaksDev\Products\Product\Repository\AllProducts;
 
+use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Core\Form\Search\SearchDTO;
 use BaksDev\Core\Services\Paginator\PaginatorInterface;
-use BaksDev\Core\Services\Switcher\SwitcherInterface;
-use BaksDev\Core\Type\Locale\Locale;
 use BaksDev\Products\Category\Entity as CategoryEntity;
 use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
 use BaksDev\Products\Product\Entity;
 use BaksDev\Products\Product\Forms\ProductFilter\ProductFilterInterface;
 use BaksDev\Products\Product\Forms\ProductProfileFilter\ProductProfileFilterInterface;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
-use Doctrine\DBAL\Connection;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use Symfony\Contracts\Cache\ItemInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class AllProducts implements AllProductsInterface
 {
-    private Connection $connection;
-
-    private SwitcherInterface $switcher;
-
     private PaginatorInterface $paginator;
-
-    private TranslatorInterface $translator;
+    private DBALQueryBuilder $DBALQueryBuilder;
 
 
     public function __construct(
-        Connection $connection,
-        TranslatorInterface $translator,
-        SwitcherInterface $switcher,
+        DBALQueryBuilder $DBALQueryBuilder,
         PaginatorInterface $paginator,
     )
     {
-        $this->connection = $connection;
-        $this->switcher = $switcher;
         $this->paginator = $paginator;
-        $this->translator = $translator;
+        $this->DBALQueryBuilder = $DBALQueryBuilder;
     }
 
 
@@ -70,11 +56,9 @@ final class AllProducts implements AllProductsInterface
     ): PaginatorInterface
     {
 
-        $qb = $this->connection->createQueryBuilder();
-
-        /** ЛОКАЛЬ */
-        $locale = new Locale($this->translator->getLocale());
-        $qb->setParameter('local', $locale, Locale::TYPE);
+        $qb = $this->DBALQueryBuilder
+            ->createQueryBuilder(self::class)
+            ->bindLocal();
 
 
         $qb->select('product.id');
@@ -189,8 +173,6 @@ final class AllProducts implements AllProductsInterface
         );
 
 
-
-
         /* Тип множественного варианта торгового предложения */
         $qb->addSelect('category_offer_variation.reference as product_variation_reference');
         $qb->leftJoin(
@@ -213,12 +195,11 @@ final class AllProducts implements AllProductsInterface
             'product_offer_modification.variation = product_offer_variation.id '
         );
 
-//        if($filter->getModification())
-//        {
-//            $qb->andWhere('product_offer_modification.value = :modification');
-//            $qb->setParameter('modification', $filter->getModification());
-//        }
-
+        //        if($filter->getModification())
+        //        {
+        //            $qb->andWhere('product_offer_modification.value = :modification');
+        //            $qb->setParameter('modification', $filter->getModification());
+        //        }
 
 
         /** Получаем тип модификации множественного варианта */
@@ -346,68 +327,42 @@ final class AllProducts implements AllProductsInterface
 
         if($search->getQuery())
         {
-            $search->query = mb_strtolower(trim($search->getQuery()));
 
-            $searcher = $this->connection->createQueryBuilder();
-
-            /* name */
-            $searcher->orWhere('LOWER(product_trans.name) LIKE :query');
-            $searcher->orWhere('LOWER(product_trans.name) LIKE :switcher');
-
-            /* preview */
-            $searcher->orWhere('LOWER(product_trans.preview) LIKE :query');
-            $searcher->orWhere('LOWER(product_trans.preview) LIKE :switcher');
-
-            /* article */
-            $searcher->orWhere('LOWER(product_info.article) LIKE :query');
-            $searcher->orWhere('LOWER(product_info.article) LIKE :switcher');
-
-            /* offer article */
-            $searcher->orWhere('LOWER(product_offer.article) LIKE :query');
-            $searcher->orWhere('LOWER(product_offer.article) LIKE :switcher');
-
-            $searcher->orWhere('LOWER(product_offer_modification.article) LIKE :query');
-            $searcher->orWhere('LOWER(product_offer_modification.article) LIKE :switcher');
-
-            $searcher->orWhere('LOWER(product_offer_variation.article) LIKE :query');
-            $searcher->orWhere('LOWER(product_offer_variation.article) LIKE :switcher');
-
-
-            $qb->andWhere('('.$searcher->getQueryPart('where').')');
-            $qb->setParameter('query', '%'.$this->switcher->toRus($search->query).'%');
-            $qb->setParameter('switcher', '%'.$this->switcher->toEng($search->query).'%');
-
-            //dump($this->switcher->toEng($search->query));
+            $qb
+                ->createSearchQueryBuilder($search)
+                ->addSearchEqualUid('product.id')
+                ->addSearchEqualUid('product.event')
+                ->addSearchEqualUid('product_offer_variation.id')
+                ->addSearchEqualUid('product_offer_modification.id')
+                ->addSearchLike('product_trans.name')
+                ->addSearchLike('product_trans.preview')
+                ->addSearchLike('product_info.article')
+                ->addSearchLike('product_offer.article')
+                ->addSearchLike('product_offer_modification.article')
+                ->addSearchLike('product_offer_modification.article')
+                ->addSearchLike('product_offer_variation.article');
 
         }
 
         $qb->orderBy('product.event', 'DESC');
 
-        //dd($this->connection->prepare('EXPLAIN (ANALYZE)  '.$qb->getSQL())->executeQuery($qb->getParameters())->fetchAllAssociativeIndexed());
-
-        //dd(current($qb->fetchAllAssociative()));
-
-        //$qb->select('*');
-
         return $this->paginator->fetchAllAssociative($qb);
 
     }
 
-
-    public function count()
-    {
-        //$cache->delete('AllProductsQueryCountCache');
-
-        return (new FilesystemAdapter())->get('AllProductsQueryCountCache', function(ItemInterface $item) {
-            $item->expiresAfter(60 * 60); // 60 сек = 1 мин
-
-            $qb = $this->connection->createQueryBuilder();
-            $qb->select('COUNT(*)');
-            $qb->from(Entity\Product::TABLE, 'product');
-
-            return $qb->executeQuery()->fetchOne();
-        });
-
-    }
-
+//
+//    public function count()
+//    {
+//        //$cache->delete('AllProductsQueryCountCache');
+//
+//        return (new FilesystemAdapter())->get('AllProductsQueryCountCache', function(ItemInterface $item) {
+//            $item->expiresAfter(60 * 60); // 60 сек = 1 мин
+//
+//            $qb = $this->connection->createQueryBuilder();
+//            $qb->select('COUNT(*)');
+//            $qb->from(Entity\Product::TABLE, 'product');
+//
+//            return $qb->executeQuery()->fetchOne();
+//        });
+//    }
 }

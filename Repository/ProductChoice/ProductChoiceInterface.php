@@ -25,6 +25,13 @@ namespace BaksDev\Products\Product\Repository\ProductChoice;
 
 interface ProductChoiceInterface
 {
-    /** Метод возвращает все идентификаторы продуктов с названием */
+    /**
+     * Метод возвращает все идентификаторы продуктов (ProductUid) с названием
+     */
     public function fetchAllProduct(): ?array;
+
+    /**
+     * Метод возвращает активные идентификаторы событий (ProductEventUid) продукции
+     */
+    public function fetchAllProductEvent(): ?array;
 }

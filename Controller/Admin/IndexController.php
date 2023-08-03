@@ -35,8 +35,10 @@ use BaksDev\Products\Product\Forms\ProductProfileFilter\ProductProfileFilterForm
 use BaksDev\Products\Product\Repository\AllProducts\AllProductsInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Annotation\Route;
 
+#[AsController]
 #[RoleSecurity('ROLE_PRODUCT')]
 final class IndexController extends AbstractController
 {
@@ -56,15 +58,6 @@ final class IndexController extends AbstractController
             'action' => $this->generateUrl('Product:admin.index'),
         ]);
         $searchForm->handleRequest($request);
-
-
-        // Фильтр
-        $filter = new ProductFilterDTO($request);
-        $filterForm = $this->createForm(ProductFilterForm::class, $filter, [
-            'action' => $this->generateUrl('Product:admin.index'),
-        ]);
-        $filterForm->handleRequest($request);
-        !$filterForm->isSubmitted() ?: $this->redirectToReferer();
 
 
         /**
@@ -90,15 +83,23 @@ final class IndexController extends AbstractController
         $profileForm->handleRequest($request);
         !$profileForm->isSubmitted() ?: $this->redirectToReferer();
 
-
-
+        
+        /**
+         * Фильтр продукции
+         */
+        $filter = new ProductFilterDTO($request);
+        $filterForm = $this->createForm(ProductFilterForm::class, $filter, [
+            'action' => $this->generateUrl('Product:admin.index'),
+        ]);
+        $filterForm->handleRequest($request);
+        !$filterForm->isSubmitted() ?: $this->redirectToReferer();
+        
         // Получаем список
         $query = $getAllProduct->getAllProducts($search, $profile, $filter);
 
         return $this->render(
             [
                 'query' => $query,
-                'counter' => $getAllProduct->count(),
                 'search' => $searchForm->createView(),
                 'filter' => $filterForm->createView(),
                 'profile' => $profileForm->createView(),

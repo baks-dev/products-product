@@ -107,6 +107,5 @@ final class ProductCategoryFilterDTO
 	{
 		$this->modification = $modification;
 	}
-	
-	
+    
 }

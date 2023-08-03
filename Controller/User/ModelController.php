@@ -28,8 +28,10 @@ use BaksDev\Products\Product\Entity;
 use BaksDev\Products\Product\Repository\ProductModel\ProductModelInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Annotation\Route;
 
+#[AsController]
 final class ModelController extends AbstractController
 {
 	#[Route('/model/{url}', name: 'user.model')]

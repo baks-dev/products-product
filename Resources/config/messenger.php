@@ -25,22 +25,8 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Symfony\Config\FrameworkConfig;
 
-return static function (ContainerConfigurator $configurator, FrameworkConfig $framework) {
-    $services = $configurator->services()
-        ->defaults()
-        ->autowire()
-        ->autoconfigure()
-    ;
+return static function (FrameworkConfig $framework) {
 
-    $namespace = 'BaksDev\Products\Product';
-
-    // Services
-
-//    $services->load($namespace.'\Messenger\\', __DIR__.'/../../Messenger')
-//        ->exclude('../../Messenger/**/*Message.php')
-//    ;
-
-    /** Транспорт заказов */
     $messenger = $framework->messenger();
 
     $messenger

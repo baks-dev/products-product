@@ -23,10 +23,10 @@ use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Users\User\Tests\TestUserAccount;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DependencyInjection\Attribute\When;
 
-/**
- * @group products-product
- */
+/** @group products-product */
+#[When(env: 'test')]
 final class EditControllerTest extends WebTestCase
 {
     private const URL = '/admin/product/edit/%s';

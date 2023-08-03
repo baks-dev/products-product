@@ -174,8 +174,12 @@ class ProductModificationImage extends EntityEvent implements UploadEntityInterf
     {
         return  ProductModificationUid::class;
     }
-	
-	
+
+    public function getDir(): ProductModificationUid
+    {
+        return $this->dir;
+    }
+
 	public function root() : void
 	{
 		$this->root = true;

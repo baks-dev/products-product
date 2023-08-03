@@ -25,26 +25,20 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Repository\ProductAlternative;
 
-use BaksDev\Core\Type\Locale\Locale;
+use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Products\Category\Entity as CategoryEntity;
 use BaksDev\Products\Category\Type\Section\Field\Id\ProductCategorySectionFieldUid;
 use BaksDev\Products\Product\Entity as ProductEntity;
-use Doctrine\DBAL\Connection;
 use stdClass;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class ProductAlternative implements ProductAlternativeInterface
 {
-    private Connection $connection;
 
-    private TranslatorInterface $translator;
+    private DBALQueryBuilder $DBALQueryBuilder;
 
-    public function __construct(
-        Connection $connection,
-        TranslatorInterface $translator,
-    ) {
-        $this->connection = $connection;
-        $this->translator = $translator;
+    public function __construct(DBALQueryBuilder $DBALQueryBuilder) {
+
+        $this->DBALQueryBuilder = $DBALQueryBuilder;
     }
 
     public function fetchAllAlternativeAssociative(
@@ -53,9 +47,8 @@ final class ProductAlternative implements ProductAlternativeInterface
         ?string $modification,
         ?array $property,
     ): ?array {
-        $qb = $this->connection->createQueryBuilder();
 
-        $qb->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
+        $qb = $this->DBALQueryBuilder->createQueryBuilder(self::class);
 
         $qb->addSelect('product_offer.value as product_offer_value')
             ->addGroupBy('product_offer.value')
@@ -508,8 +501,10 @@ final class ProductAlternative implements ProductAlternativeInterface
         $qb->where('product_offer.value = :offer');
         $qb->setParameter('offer', $offer);
 
+        $qb->bindLocal();
+
         // dump($qb->fetchAllAssociative());
 
-        return $qb->fetchAllAssociative();
+        return $qb->enableCache('Product', 86400)->fetchAllAssociative();
     }
 }

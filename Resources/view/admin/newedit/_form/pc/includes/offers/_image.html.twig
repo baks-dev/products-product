@@ -11,7 +11,7 @@
 							style="width: 150px; height: 200px;"
 							
 							data-bg="{{ image.vars.data.name is defined and image.vars.data.name is not null ?
-							img_path ~ product_offer_images ~ image.vars.data.dir ~'/'~ image.vars.data.name~'.'~image.vars.data.ext  : '/assets/img/blank.svg' }}"
+							img_path ~ '/upload/' ~ constant('BaksDev\\Products\\Product\\Entity\\Offers\\Image\\ProductOfferImage::TABLE') ~'/' ~ image.vars.data.dir ~'/'~ image.vars.data.name~'.'~image.vars.data.ext  : '/assets/img/blank.svg' }}"
 					>
 						
 						<div class="position-absolute top-0 start-100 rounded-circle border p-2 ms-1 d-flex align-items-center justify-content-center"

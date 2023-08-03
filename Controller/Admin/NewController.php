@@ -35,8 +35,10 @@ use BaksDev\Products\Product\UseCase\Admin\NewEdit\ProductHandler;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Annotation\Route;
 
+#[AsController]
 #[RoleSecurity('ROLE_PRODUCT_NEW')]
 final class NewController extends AbstractController
 {

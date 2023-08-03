@@ -170,6 +170,10 @@ class ProductPhoto extends EntityEvent implements UploadEntityInterface
         $this->root = true;
     }
 
+    public function getDir(): ProductEventUid
+    {
+        return $this->dir;
+    }
 
     public static function getDirName(): string
     {

@@ -35,8 +35,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Annotation\Route;
 
+#[AsController]
 #[RoleSecurity('ROLE_PRODUCT_EDIT')]
 final class EditController extends AbstractController
 {
@@ -80,8 +82,6 @@ final class EditController extends AbstractController
 
             return $this->redirectToReferer();
         }
-
-        // dd($ProductDTO);
 
         return $this->render(['form' => $form->createView()]);
     }

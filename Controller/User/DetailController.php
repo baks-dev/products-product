@@ -34,8 +34,10 @@ use DateTimeImmutable;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Annotation\Route;
 
+#[AsController]
 final class DetailController extends AbstractController
 {
     #[Route('/product/{url}/{offer}/{variation}/{modification}', name: 'user.detail')]
@@ -89,7 +91,8 @@ final class DetailController extends AbstractController
                 'variation' => $variation,
                 'modification' => $modification,
             ],
-                fileName: 'notfound/template.html.twig',
+                //fileName: 'notfound/template.html.twig',
+                routingName: 'user.detail.notfound',
                 response: new Response(status: $status)
             );
         }

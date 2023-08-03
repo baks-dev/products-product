@@ -22,10 +22,10 @@ use BaksDev\Products\Category\Entity\Info\ProductCategoryInfo;
 use BaksDev\Users\User\Tests\TestUserAccount;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DependencyInjection\Attribute\When;
 
-/**
- * @group products-product
- */
+/** @group products-product */
+#[When(env: 'test')]
 final class CategoryControllerTest extends WebTestCase
 {
     private const URL = '/catalog/%s';

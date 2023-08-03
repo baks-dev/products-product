@@ -24,20 +24,19 @@
 namespace BaksDev\Products\Product\Controller\User\Catalog;
 
 use BaksDev\Core\Controller\AbstractController;
-use BaksDev\Products\Category\Entity\Info\ProductCategoryInfo;
-use BaksDev\Products\Category\Repository\AllFilterFieldsByCategory\AllFilterFieldsByCategoryInterface;
 use BaksDev\Products\Category\Repository\CategoryByUrl\CategoryByUrlInterface;
 use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
 use BaksDev\Products\Product\Forms\ProductCategoryFilter\User\ProductCategoryFilterDTO;
 use BaksDev\Products\Product\Forms\ProductCategoryFilter\User\ProductCategoryFilterForm;
 use BaksDev\Products\Product\Repository\AllProductsByCategory\AllProductsByCategoryInterface;
-use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 
+#[AsController]
 final class VariationController extends AbstractController
 {
 	#[Route('/catalog/{url}/variation/{offer}/{variation}/{page<\d+>}', name: 'user.catalog.variation')]

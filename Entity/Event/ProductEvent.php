@@ -25,6 +25,7 @@ namespace BaksDev\Products\Product\Entity\Event;
 
 use BaksDev\Core\Entity\EntityEvent;
 use BaksDev\Core\Type\Locale\Locale;
+use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
 use BaksDev\Products\Product\Entity\Active\ProductActive;
 use BaksDev\Products\Product\Entity\Category\ProductCategory;
 use BaksDev\Products\Product\Entity\Files\ProductFiles;
@@ -161,7 +162,8 @@ class ProductEvent extends EntityEvent
      */
     public function getDto($dto): mixed
     {
-        if ($dto instanceof ProductEventInterface) {
+        if($dto instanceof ProductEventInterface)
+        {
             return parent::getDto($dto);
         }
 
@@ -175,7 +177,8 @@ class ProductEvent extends EntityEvent
      */
     public function setEntity($dto): mixed
     {
-        if ($dto instanceof ProductEventInterface) {
+        if($dto instanceof ProductEventInterface)
+        {
             return parent::setEntity($dto);
         }
 
@@ -187,8 +190,10 @@ class ProductEvent extends EntityEvent
         $name = null;
 
         /** @var ProductTrans $trans */
-        foreach ($this->translate as $trans) {
-            if ($name = $trans->getNameByLocal($locale)) {
+        foreach($this->translate as $trans)
+        {
+            if($name = $trans->getNameByLocal($locale))
+            {
                 break;
             }
         }
@@ -200,6 +205,25 @@ class ProductEvent extends EntityEvent
     {
         return $this->category;
     }
+
+    /**
+     * Метод возвращает идентификатор корневой категории продукта
+     */
+    public function getRootCategory() : ?ProductCategoryUid
+    {
+        $filter = $this->category->filter(function(ProductCategory $category) {
+            return $category->isRoot();
+
+        });
+
+        if($filter->isEmpty())
+        {
+            return null;
+        }
+
+        return $filter->current()->getCategory();
+    }
+
 
     public function getOffer(): Collection
     {

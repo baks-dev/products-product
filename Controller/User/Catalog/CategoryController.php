@@ -32,9 +32,11 @@ use BaksDev\Products\Product\Repository\AllProductsByCategory\AllProductsByCateg
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 
+#[AsController]
 final class CategoryController extends AbstractController
 {
 	#[Route('/catalog/{url}/{page<\d+>}', name: 'user.catalog.category')]
