@@ -1,0 +1,108 @@
+
+{% set img_active = true %}
+
+
+<div class="modal fade lightbox-modal" style="--bs-modal-width: none;" id="lightboxModal" tabindex="-1"
+	 aria-hidden="true">
+
+	<div class="modal-dialog modal-dialog-centered w-100 h-100 m-0 p-0">
+		<div class="modal-content h-auto min-vh-100 rounded-0">
+
+			<div class="modal-header border-0">
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+			</div>
+
+			<div class="modal-body d-flex align-items-center">
+
+				<div id="carouselExampleDark" class="carousel carousel-dark slide w-100" data-bs-ride="carousel">
+
+					<div id="glass" class="carousel-inner">
+						
+						
+						{% for modification_image in product_modification_image | filter(img => img.product_img_ext is defined) %}
+
+								{% set img_path = modification_image.product_img_cdn == true ? CDN_HOST : '' %}
+								{% set image_ext = modification_image.product_img_cdn == true ? 'large.'~modification_image.product_img_ext : modification_image.product_img_ext %}
+								
+								<div class="carousel-item {{ img_active ? 'active' }}">
+									<img src="{{ img_path ~ modification_image.product_img ~ image_ext }}" class="d-block m-auto vh-75 mh-100"   alt="{{ card.product_name }}">
+								</div>
+								
+								{% set img_active = false %}
+						{% endfor %}
+						
+						
+						
+						{% for variation_image in product_variation_image | filter(img => img.product_img_ext is defined) %}
+							
+								{% set img_path = variation_image.product_img_cdn == true ? CDN_HOST : '' %}
+								{% set image_ext = variation_image.product_img_cdn == true ? 'large.'~variation_image.product_img_ext : variation_image.product_img_ext %}
+								
+								
+								<div class="carousel-item {{ img_active ? 'active' }}">
+									<img src="{{ img_path ~ variation_image.product_img ~ image_ext }}" class="d-block m-auto vh-75 mh-100" alt="{{ card.product_name }}">
+								</div>
+								
+								{% set img_active = false %}
+							
+						{% endfor %}
+						
+						
+						
+						
+						
+						{% for offer_images in product_offer_images | filter(img => img.product_img_ext is defined) %}
+							
+							
+								{% set img_path = offer_images.product_img_cdn == true ? CDN_HOST : '' %}
+								{% set image_ext = offer_images.product_img_cdn == true ? 'large.'~offer_images.product_img_ext : offer_images.product_img_ext %}
+								
+								
+								<div class="carousel-item {{ img_active ? 'active' }}">
+									<img src="{{ img_path ~ offer_images.product_img ~ image_ext }}" class="d-block m-auto vh-75 mh-100" alt="{{ card.product_name }}">
+								</div>
+								
+								{% set img_active = false %}
+							{
+						{% endfor %}
+						
+					
+						{% for product_images in product_photo | filter(img => img.product_img_ext is defined) %}
+							
+							
+								
+								{% set img_path = product_images.product_img_cdn == true ? CDN_HOST : '' %}
+								{% set image_ext = product_images.product_img_cdn == true ? 'large.'~product_images.product_img_ext : product_images.product_img_ext %}
+			
+						
+								<div class="carousel-item {{ img_active ? 'active' }}">
+									<img src="{{ img_path ~ product_images.product_img ~ image_ext }}" class="d-block m-auto vh-75 mh-100" alt="{{ card.product_name }}">
+								</div>
+								
+								{% set img_active = false %}
+							
+						
+						{% endfor %}
+
+
+					</div>
+
+					<button class="carousel-control-prev pe-5" type="button" data-bs-target="#carouselExampleDark"
+							data-bs-slide="prev">
+						<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+						<span class="visually-hidden">Previous</span>
+					</button>
+
+					<button class="carousel-control-next ps-5" type="button" data-bs-target="#carouselExampleDark"
+							data-bs-slide="next">
+						<span class="carousel-control-next-icon" aria-hidden="true"></span>
+						<span class="visually-hidden">Next</span>
+					</button>
+				</div>
+
+			</div>
+
+		</div>
+	</div>
+</div>
+

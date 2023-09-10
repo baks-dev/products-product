@@ -1,0 +1,41 @@
+{# ---- ШАБЛОН ------------------------------------------------------------ #}
+{% extends '@Template/default/user/base.html.twig' %}
+
+{% block title %}Продукция{% endblock %}
+
+
+{# ---- CSS ------------------------------------------------------------ #}
+{# {% block stylesheets %} #}
+{#    <link href="{{ path('user_posts_home_css') }}" rel="stylesheet"> #}
+{# {% endblock %} #}
+
+{# ---- HEADER-БЛОК ------------------------------------------------------------ #}
+{# {% block header %}
+    {{ include(_self|replace({ "template.html.twig": "header.html.twig" })) }}
+{% endblock %} #}
+
+
+{# ---- LEFT-БЛОК ------------------------------------------------------------ #}
+{# {% block left %} #}
+{#   {% include '@Template/flowers/left.html.twig' %} #}
+{# {% endblock %} #}
+
+
+
+{# ---- КОНТЕНТ-БЛОК ------------------------------------------------------------ #}
+{% block content %}
+
+    {{ include(_self|replace({ "template.html.twig": "content.html.twig" })) }}
+
+{% endblock %}
+
+
+{# ---- FOOTER-БЛОК ------------------------------------------------------------ #}
+{#{% block footer %}
+    #}{#{{ include(_self|replace({ "template.html.twig": "footer.html.twig" })) }}#}{#
+{% endblock %}#}
+
+ {% block javascript %}
+ /*<script data-src="/plugins/nice-select2/nice-select2.min.js" class="lazy"></script>*/
+ {% endblock %}
+

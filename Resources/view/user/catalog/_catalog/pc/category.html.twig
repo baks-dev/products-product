@@ -1,0 +1,46 @@
+{# ВЛОЖЕННЫЕ РАЗДЕЛЫ (КТАЕГОРИИ) #}
+	
+	{% set parent_category = category.parent_category|json_decode %}
+	
+	{% if parent_category[0].parent_category_url %}
+		
+		<ul class="leader list-group list-group-flush list-group-horizontal flex-wrap gap-3 mb-3 bg-light p-3">
+			
+			{% for parent in parent_category|filter(v => v.parent_category_counter > 0) %}
+				
+				{# {{ dump(parent) }} #}
+				
+				{# parent_category_cover_cdn
+					parent_category_cover_ext
+					parent_category_cover_name #}
+				
+				{% set img_path = parent.parent_category_cover_cdn == true ? CDN_HOST : '' %}
+				{% set parent_cover_ext = parent.parent_category_cover_cdn == true ? 'small.'~parent.parent_category_cover_ext : parent.parent_category_cover_ext %}
+				
+				
+				<li class="list-group-item bg-transparent border-0 text-truncate rounded-5" style="width: 32%;">
+					
+					<a href="{{ path('Product:user.catalog.category', { url : parent.parent_category_url }) }}"
+							class="text-decoration-none text-dark d-flex gap-3 align-items-center w-100 justify-content-start"
+							title="{{ parent.parent_category_name }}">
+						
+						<div class=''>
+								<span class="icon rounded-circle bg-contain lazy p-1 entered lazy"
+										style="width: 43px; height: 43px;
+										background-image: url('/assets/img/empty.svg');"
+										data-bg="{{ parent.parent_category_cover_name ? img_path ~ parent.parent_category_cover_name ~ parent_cover_ext : '/assets/img/blank.svg' }}"
+								>
+								</span>
+						</div>
+						
+						<div>
+							{{ parent.parent_category_name }}
+							<div class='small'><small>{{ parent.parent_category_counter }} товаров</small></div>
+						</div>
+					</a>
+				</li>
+			{% endfor %}
+		
+		</ul>
+	{% endif %}
+	
