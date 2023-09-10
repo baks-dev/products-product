@@ -23,12 +23,12 @@
 
 namespace BaksDev\Products\Product\Listeners\Entity;
 
-use Doctrine\ORM\Events;
 use BaksDev\Core\Type\Ip\IpAddress;
-use Doctrine\Persistence\Event\LifecycleEventArgs;
-use Symfony\Component\HttpFoundation\RequestStack;
 use BaksDev\Products\Product\Entity\Modify\ProductModify;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
+use Doctrine\ORM\Events;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 #[AsEntityListener(event: Events::prePersist, method: 'prePersist', entity: ProductModify::class)]
@@ -52,7 +52,7 @@ final class ProductModifyListener
 
         if ($token)
         {
-            $data->setUser($token->getUser());
+            $data->setUsr($token->getUser());
         }
 
         /* Если пользователь не из консоли */

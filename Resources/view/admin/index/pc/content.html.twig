@@ -15,17 +15,19 @@
                 </h1>
             </div>
 
-            <div class="w-100 d-flex align-items-center gap-3 justify-content-end">
-                {{ form_start(profile) }}
-                <div class="d-flex justify-content-end position-relative my-1 gap-3">
+{#            {% if is_granted('ROLE_ADMIN') %}
+                <div class="w-100 d-flex align-items-center gap-3 justify-content-end">
+                    {{ form_start(profile) }}
+                    <div class="d-flex justify-content-end position-relative my-1 gap-3">
 
-                    <div class="w-50">
-                        {{ form_widget(profile.profile, {
-                            placeholder: 'Выберите профиль из списка ...', attr: { 'data-select' : 'select2', class: 'mb-0' } }) }}
+                        <div class="w-50">
+                            {{ form_widget(profile.profile, {
+                                placeholder: 'Выберите профиль из списка ...', attr: { 'data-select' : 'select2', class: 'mb-0' } }) }}
+                        </div>
                     </div>
+                    {{ form_end(profile) }}
                 </div>
-                {{ form_end(profile) }}
-            </div>
+            {% endif %}#}
 
             {% if is_granted('ROLE_PRODUCT_NEW') %}
                 <a href="{{ path('Product:admin.newedit.new') }}" class="btn btn-primary" title="Добавить продукт">

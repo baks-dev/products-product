@@ -30,7 +30,8 @@ use BaksDev\Products\Category\Entity as CategoryEntity;
 use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
 use BaksDev\Products\Product\Entity;
 use BaksDev\Products\Product\Forms\ProductFilter\ProductFilterInterface;
-use BaksDev\Products\Product\Forms\ProductProfileFilter\ProductProfileFilterInterface;
+use BaksDev\Users\Profile\UserProfile\Entity\Personal\UserProfilePersonal;
+use BaksDev\Users\Profile\UserProfile\Entity\UserProfile;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 
 final class AllProducts implements AllProductsInterface
@@ -51,8 +52,9 @@ final class AllProducts implements AllProductsInterface
 
     public function getAllProducts(
         SearchDTO $search,
-        ProductProfileFilterInterface $profile,
-        ProductFilterInterface $filter
+        ?UserProfileUid $profile,
+        ProductFilterInterface $filter,
+
     ): PaginatorInterface
     {
 
@@ -77,10 +79,10 @@ final class AllProducts implements AllProductsInterface
             'product_trans.event = product_event.id AND product_trans.local = :local'
         );
 
-        if($profile->getProfile())
+        if($profile)
         {
             $qb->andWhere('product_info.profile = :profile');
-            $qb->setParameter('profile', $profile->getProfile(), UserProfileUid::TYPE);
+            $qb->setParameter('profile', $profile, UserProfileUid::TYPE);
         }
 
         /* ProductInfo */
@@ -92,6 +94,25 @@ final class AllProducts implements AllProductsInterface
             Entity\Info\ProductInfo::TABLE,
             'product_info',
             'product_info.product = product.id'
+        );
+
+
+        /** Ответственное лицо (Профиль пользователя) */
+
+
+        $qb->leftJoin(
+            'product_info',
+            UserProfile::TABLE,
+            'users_profile',
+            'users_profile.id = product_info.profile'
+        );
+
+        $qb->addSelect('users_profile_personal.username AS users_profile_username');
+        $qb->leftJoin(
+            'users_profile',
+            UserProfilePersonal::TABLE,
+            'users_profile_personal',
+            'users_profile_personal.event = users_profile.event'
         );
 
         /* ProductModify */
@@ -323,6 +344,7 @@ final class AllProducts implements AllProductsInterface
             'category_trans',
             'category_trans.event = category.event AND category_trans.local = :local'
         );
+
 
 
         if($search->getQuery())

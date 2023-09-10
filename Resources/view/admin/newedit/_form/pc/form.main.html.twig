@@ -31,6 +31,7 @@
 					</h4>
 				</div>
 			</div>
+
 			<div class="card-body pb-0">
 				{# Торговый каталог #}
 				{{ include(_self|replace({ "form.main.html.twig": "includes/main/_price.html.twig" })) }}
@@ -54,18 +55,17 @@
 			</div>
 			
 			<div class="card-body pb-0">
-				
 				{# Профиль пользователя #}
-				{{ form_row(form.info.profile, { label : 'Прикрепить к профилю пользователя'|trans, placeholder : 'Выберите профиль из списка...'  } ) }}
-				
-				
+				{% if is_granted('ROLE_ADMIN') %}
+					{{ form_row(form.info.profile, { label : 'Прикрепить к профилю пользователя'|trans, placeholder : 'Выберите профиль из списка...'  } ) }}
+				{% endif %}
+
 				{# Активность #}
 				{{ include(_self|replace({ "form.main.html.twig": "includes/main/_active.html.twig" })) }}
-			
 			</div>
+
 		</div>
-		
-		
+
 		<div class="card w-100 border-light">
 			
 			<div class="card-header border-light bg-body">

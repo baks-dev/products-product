@@ -25,10 +25,12 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Repository\ProductChoice;
 
+use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Core\Doctrine\ORMQueryBuilder;
 use BaksDev\Core\Type\Locale\Locale;
 use BaksDev\Products\Product\Entity\Active\ProductActive;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
+use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
@@ -39,14 +41,17 @@ final class ProductChoice implements ProductChoiceInterface
 {
     private ORMQueryBuilder $ORMQueryBuilder;
     private TranslatorInterface $translator;
+    private DBALQueryBuilder $DBALQueryBuilder;
 
     public function __construct(
         ORMQueryBuilder $ORMQueryBuilder,
+        DBALQueryBuilder $DBALQueryBuilder,
         TranslatorInterface $translator
     )
     {
         $this->translator = $translator;
         $this->ORMQueryBuilder = $ORMQueryBuilder;
+        $this->DBALQueryBuilder = $DBALQueryBuilder;
     }
 
     /**
@@ -55,45 +60,56 @@ final class ProductChoice implements ProductChoiceInterface
 
     public function fetchAllProduct(): ?array
     {
-        $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
 
-        $select = sprintf('new %s(product.id, trans.name, info.article)', ProductUid::class);
 
-        $qb->select($select);
+        $qb = $this->DBALQueryBuilder->createQueryBuilder(self::class)->bindLocal();
 
-        $qb->from(Product::class, 'product');
+        $qb->from(Product::TABLE, 'product');
 
         $qb->join(
-            ProductInfo::class,
+            'product',
+            ProductInfo::TABLE,
             'info',
-            'WITH',
             'info.product = product.id'
         );
 
+        $qb->leftJoin(
+            'product',
+            ProductOffer::TABLE,
+            'offer',
+            'offer.event = product.event'
+        );
+
         $qb->join(
-            ProductActive::class,
+            'product',
+            ProductActive::TABLE,
             'active',
-            'WITH',
             '
             active.event = product.event AND
             active.active = true AND
-            active.activeFrom < CURRENT_TIMESTAMP() AND
-            (active.activeTo IS NULL OR active.activeTo > CURRENT_TIMESTAMP())
+            active.active_from < NOW() AND
+            ( active.active_to IS NULL OR active.active_to > NOW() )
 		'
         );
 
         $qb->join(
-            ProductTrans::class,
+            'product',
+            ProductTrans::TABLE,
             'trans',
-            'WITH',
             'trans.event = product.event AND trans.local = :local'
         );
 
-        $qb->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
 
+        $qb->addSelect('product.id AS value');
+        $qb->addSelect('trans.name AS attr');
+        $qb->addSelect('offer.article AS option');
+
+        //dd($qb->fetchAllAssociativeIndexed(ProductUid::class));
 
         /* Кешируем результат ORM */
-        return $qb->enableCache('Product', 86400)->getResult();
+        return $qb
+            ->enableCache('Product', 86400)
+            ->fetchAllAssociativeIndexed(ProductUid::class);
 
     }
 

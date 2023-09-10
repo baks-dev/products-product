@@ -98,7 +98,7 @@ final class ProductUserProfileChoice implements ProductUserProfileChoiceInterfac
             AccountEntity\Account::class,
             'account',
             'WITH',
-            'account.id = info.user',
+            'account.id = info.usr',
         );
 
         $qb->join(

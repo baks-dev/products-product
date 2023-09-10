@@ -26,6 +26,7 @@ use BaksDev\Products\Category\Repository\VariationFieldsCategoryChoice\Variation
 use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -65,24 +66,38 @@ final class ProductFilterForm extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        //$data = $builder->getData();
 
         /**
          * Категория
          */
-        $builder->add('category', ChoiceType::class, [
-            'choices' => $this->categoryChoice->getCategoryCollection(),
-            'choice_value' => function(?ProductCategoryUid $category) {
-                return $category?->getValue();
-            },
-            'choice_label' => function(ProductCategoryUid $category) {
-                return $category->getOptions();
-            },
-            'label' => false,
-            'required' => false,
-            /*'attr' => ['onchange' => 'this.form.submit()'],*/
-        ]);
 
+        $builder->add('category', HiddenType::class);
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event): void {
+            /** @var ProductFilterDTO $data */
+            $data = $event->getData();
+
+            /** Если жестко не указана категория - выводим список для выбора */
+            if($data && !$data->getCategory(true))
+            {
+                $builder = $event->getForm();
+
+
+                $builder->add('category', ChoiceType::class, [
+                    'choices' => $this->categoryChoice->getCategoryCollection(),
+                    'choice_value' => function(?ProductCategoryUid $category) {
+                        return $category?->getValue();
+                    },
+                    'choice_label' => function(ProductCategoryUid $category) {
+                        return $category->getOptions();
+                    },
+                    'label' => false,
+                    'required' => false,
+                    /*'attr' => ['onchange' => 'this.form.submit()'],*/
+                ]);
+            }
+
+        });
 
 
         $builder->addEventListener(
@@ -97,7 +112,7 @@ final class ProductFilterForm extends AbstractType
                 $this->request->getSession()->set(ProductFilterDTO::offer, $data->getOffer());
                 $this->request->getSession()->set(ProductFilterDTO::variation, $data->getVariation());
                 $this->request->getSession()->set(ProductFilterDTO::modification, $data->getModification());
-                
+
             }
         );
 
@@ -112,7 +127,6 @@ final class ProductFilterForm extends AbstractType
                 $data = $event->getData();
                 $builder = $event->getForm();
 
-
                 $Category = $data->getCategory();
 
                 if(isset($this->request->getMainRequest()?->get($builder->getName())['category']))
@@ -121,6 +135,7 @@ final class ProductFilterForm extends AbstractType
                         new ProductCategoryUid($this->request->getMainRequest()?->get($builder->getName())['category']) : null;
 
                 }
+
 
                 if($Category)
                 {
@@ -212,8 +227,13 @@ final class ProductFilterForm extends AbstractType
             }
         );
 
+
+
+
+
+
     }
-    
+
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults

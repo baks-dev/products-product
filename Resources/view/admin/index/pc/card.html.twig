@@ -8,8 +8,12 @@
                 <div class="d-flex justify-content-between align-items-center small">
 
                     {# {{ include(_self|replace({ "card.html.twig": "_usecase.html.twig" })) }} #}
+                    {# Бренд #}
+                    <div class="w-100">
+                        {{ item.users_profile_username }}
+                    </div>
 
-                    <div class="w-100 text-muted text-end">
+                    <div class="text-muted">
                         <span class="badge text-bg-secondary">{{ item.category_name }}</span> {# {{ item.part_date|date('d.m.Y H:i') }} #}
                     </div>
                 </div>

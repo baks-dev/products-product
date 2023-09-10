@@ -32,8 +32,6 @@ final class ProductFilterDTO implements ProductFilterInterface
 
     private Request $request;
 
-
-
     /**
      * Категория
      */
@@ -76,8 +74,13 @@ final class ProductFilterDTO implements ProductFilterInterface
     }
 
 
-    public function getCategory(): ?ProductCategoryUid
+    public function getCategory(bool $readonly = false): ?ProductCategoryUid
     {
+        if($readonly)
+        {
+            return $this->category;
+        }
+
         return $this->category ?: $this->request->getSession()->get(self::category);
     }
 

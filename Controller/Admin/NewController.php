@@ -49,10 +49,17 @@ final class NewController extends AbstractController
         ProductHandler $handler,
         ?ProductEventUid $id = null,
     ): Response {
+
         $ProductDTO = new ProductDTO();
 
+        if($this->getFilterProfile())
+        {
+            $ProductDTO->getInfo()->setProfile($this->getFilterProfile());
+        }
+
         // Если передан идентификатор события - копируем
-        if ($id) {
+        if ($id)
+        {
             $Event = $entityManager->getRepository(Entity\Event\ProductEvent::class)->find($id);
 
             if ($Event) {
@@ -61,7 +68,7 @@ final class NewController extends AbstractController
             }
         }
 
-        // Если передана категория - присваиваем для подгрузки настроект (свойства, ТП)
+        // Если передана категория - присваиваем для настроек (свойства, ТП)
         if ($request->get('category')) {
             $CategoryCollectionDTO = new CategoryCollectionDTO();
             $CategoryCollectionDTO->rootCategory();
