@@ -49,6 +49,11 @@ final class ProductUid extends Uid
         $this->option = $option;
     }
 
+    public function __toString(): string
+    {
+        return $this->getValue();
+    }
+
     public function getAttr(): mixed
     {
         return $this->attr;

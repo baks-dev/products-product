@@ -25,11 +25,11 @@ namespace BaksDev\Products\Product\Controller\Admin;
 
 use BaksDev\Core\Controller\AbstractController;
 use BaksDev\Core\Listeners\Event\Security\RoleSecurity;
-use BaksDev\Products\Product\Entity;
-use BaksDev\Products\Product\UseCase\Admin\Delete\DeleteForm;
+use BaksDev\Products\Product\Entity\Event\ProductEvent;
+use BaksDev\Products\Product\Entity\Product;
+use BaksDev\Products\Product\UseCase\Admin\Delete\ProductDeleteDTO;
+use BaksDev\Products\Product\UseCase\Admin\Delete\ProductDeleteForm;
 use BaksDev\Products\Product\UseCase\Admin\Delete\ProductDeleteHandler;
-use BaksDev\Products\Product\UseCase\Admin\Delete\ProductDTO;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -43,36 +43,34 @@ final class DeleteController extends AbstractController
     #[Route('/admin/product/delete/{id}', name: 'admin.delete', methods: ['POST', 'GET'])]
     public function delete(
         Request $request,
-        ProductDeleteHandler $handler,
-        #[MapEntity] Entity\Event\ProductEvent $Event,
-        EntityManagerInterface $entityManager,
-    ): Response {
-        $product = new ProductDTO();
-        $Event->getDto($product);
+        ProductDeleteHandler $productDeleteHandler,
+        #[MapEntity] ProductEvent $Event
+    ): Response
+    {
 
-        $Info = $entityManager->getRepository(Entity\Info\ProductInfo::class)->findOneBy(['product' => $Event->getProduct()]);
-        $Info->getDto($product->getInfo());
+        $ProductDeleteDTO = new ProductDeleteDTO();
+        $Event->getDto($ProductDeleteDTO);
 
-        $form = $this->createForm(DeleteForm::class, $product, [
-            'action' => $this->generateUrl('Product:admin.delete', ['id' => $product->getEvent()]),
+        $form = $this->createForm(ProductDeleteForm::class, $ProductDeleteDTO, [
+            'action' => $this->generateUrl('Product:admin.delete', ['id' => $ProductDeleteDTO->getEvent()]),
         ]);
+
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            if ($form->has('delete')) {
-                $handle = $handler->handle($product);
+        if($form->isSubmitted() && $form->isValid() && $form->has('delete'))
+        {
+            $handle = $productDeleteHandler->handle($ProductDeleteDTO);
 
-                if ($handle) {
-                    $this->addFlash('success', 'admin.delete.success', 'products.product');
-
-                    return $this->redirectToRoute('Product:admin.index');
-                }
-            }
-
-            $this->addFlash('danger', 'admin.delete.danger', 'products.product');
+            $this->addFlash
+            (
+                'admin.page.delete',
+                $handle instanceof Product ? 'admin.success.delete' : 'admin.danger.delete',
+                'admin.products.product',
+                $handle
+            );
 
             return $this->redirectToRoute('Product:admin.index');
-            // return $this->redirectToReferer();
+
         }
 
         return $this->render(

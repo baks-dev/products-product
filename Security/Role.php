@@ -33,7 +33,7 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 #[AutoconfigureTag('baks.security.role')]
 #[AutoconfigureTag('baks.menu.admin')]
-class Role implements RoleInterface, MenuAdminInterface
+final class Role implements RoleInterface, MenuAdminInterface
 {
     public const ROLE = 'ROLE_PRODUCT';
 
@@ -42,9 +42,12 @@ class Role implements RoleInterface, MenuAdminInterface
         return self::ROLE;
     }
 
+
+
     /**
      * Добавляем раздел в меню администрирования.
      */
+
 
     /** Метод возвращает PATH раздела */
     public function getPath(): string
@@ -78,4 +81,6 @@ class Role implements RoleInterface, MenuAdminInterface
     {
         return false;
     }
+
+
 }

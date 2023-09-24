@@ -26,48 +26,24 @@ namespace BaksDev\Products\Product\UseCase\Admin\Delete\Info;
 use BaksDev\Products\Product\Entity\Info\ProductInfoInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/** @see ProductInfo */
 final class InfoDTO implements ProductInfoInterface
 {
-	
-	/** Семантическая ссылка на товар (строка с тире и нижним подчеркиванием) */
+	/** Семантическая ссылка на товар */
 	#[Assert\NotBlank]
-	#[Assert\Regex(
-		pattern: '/^[a-z0-9\_\-]+$/i'
-	)]
-	private string $url;
-	
-	/* URL */
-	
-	/**
-	 * @return string
-	 */
-	public function getUrl() : string
-	{
-		return $this->url;
-	}
-	
-	
-	/**
-	 * @param string $url
-	 */
-	public function setUrl(string $url) : void
-	{
-		$this->url = $url;
-	}
-	
-	
-	public function updateUrlUniq() : void
-	{
-		$this->url = uniqid($this->url.'_', false);
-	}
-	
-	
-	/**
-	 * @return bool
-	 */
-	public function getActive() : bool
-	{
-		return $this->active;
-	}
-	
+	private readonly string $url;
+
+    public function __construct() {
+        /** Сбрасываем семантическую ссылку */
+        $this->url = uniqid('', false);
+    }
+
+    /**
+     * Семантическая ссылка на товар
+     */
+    public function getUrl(): string
+    {
+        return $this->url;
+    }
+
 }

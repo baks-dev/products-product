@@ -1,6 +1,6 @@
 {% set arr_property = card.category_section_field|json_decode %}
 
-<main class="main container px-4">
+<main class="main d-print-none container px-4">
     <div class="mt-3">
         {{ include(_self|replace({ "content.html.twig": "breadcrumb.html.twig" })) }}
     </div>

@@ -45,12 +45,21 @@
 
             <div class="card-body d-flex flex-column p-2">
 
+                <div class="text-truncate bg-contain"
+                     data-bs-toggle="tooltip"
+                     data-bs-placement="top"
+                     title="{{ item.product_name }}"
+                >
 
-                <div>
-                    <a href="{# /admin/product/edit/06420615-8809-4662-9a2c-e3643dc95c48 #}"
-                       class="fw-bolder mb-1 text-dark text-decoration-none">
-                        {{ item.product_name }}
+
+                    <a href="{{ (is_granted(ROLE~'_EDIT') or is_granted('ROLE_ADMIN')) ? path('Product:admin.newedit.edit', { id: item.event }) }}"
+                       class="fw-bolder mb-1 text-dark text-decoration-none"
+
+                    >
+                        {{ item.product_name|capitalize }}
                     </a>
+
+
                     <div class="text-muted fw-bolder">
                         {{ item.product_offer_value|call_twig_func(item.product_offer_reference) }}
                         {{ item.product_offer_postfix }}
@@ -75,7 +84,7 @@
                         </form>
                     </div>
 
-                    <span
+                    {#<span
                             data-bs-toggle="tooltip"
                             data-bs-placement="bottom"
                             title='QR продукции'
@@ -99,8 +108,7 @@
                                 <path d="M7 12h1v3h4v1H7v-4Zm9 2v2h-3v-1h2v-1h1Z"/>
                             </svg>
                         </a>
-                    </span>
-
+                    </span>#}
                 </div>
 
 

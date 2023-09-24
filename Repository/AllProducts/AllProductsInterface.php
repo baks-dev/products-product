@@ -18,7 +18,16 @@
 
 namespace BaksDev\Products\Product\Repository\AllProducts;
 
+use BaksDev\Core\Form\Search\SearchDTO;
+use BaksDev\Core\Services\Paginator\PaginatorInterface;
+use BaksDev\Products\Product\Forms\ProductFilter\ProductFilterInterface;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
+
 interface AllProductsInterface
 {
-	
+    public function getAllProducts(
+        SearchDTO $search,
+        ProductFilterInterface $filter,
+        ?UserProfileUid $profile
+    ): PaginatorInterface;
 }

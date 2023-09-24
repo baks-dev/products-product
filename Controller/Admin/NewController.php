@@ -26,7 +26,8 @@ namespace BaksDev\Products\Product\Controller\Admin;
 use BaksDev\Core\Controller\AbstractController;
 use BaksDev\Core\Listeners\Event\Security\RoleSecurity;
 use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
-use BaksDev\Products\Product\Entity;
+use BaksDev\Products\Product\Entity\Event\ProductEvent;
+use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Category\CategoryCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\ProductDTO;
@@ -46,21 +47,21 @@ final class NewController extends AbstractController
     public function new(
         Request $request,
         EntityManagerInterface $entityManager,
-        ProductHandler $handler,
+        ProductHandler $productHandler,
         ?ProductEventUid $id = null,
     ): Response {
 
         $ProductDTO = new ProductDTO();
 
-        if($this->getFilterProfile())
+        if($this->getAdminFilterProfile())
         {
-            $ProductDTO->getInfo()->setProfile($this->getFilterProfile());
+            $ProductDTO->getInfo()->setProfile($this->getAdminFilterProfile());
         }
 
         // Если передан идентификатор события - копируем
         if ($id)
         {
-            $Event = $entityManager->getRepository(Entity\Event\ProductEvent::class)->find($id);
+            $Event = $entityManager->getRepository(ProductEvent::class)->find($id);
 
             if ($Event) {
                 $Event->getDto($ProductDTO);
@@ -80,18 +81,17 @@ final class NewController extends AbstractController
         $form = $this->createForm(ProductForm::class, $ProductDTO);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $Product = $handler->handle($ProductDTO);
+        if ($form->isSubmitted() && $form->isValid() && $form->has('product')) {
 
-            if ($Product instanceof Entity\Product) {
-                $this->addFlash('success', 'admin.success.new', 'admin.products.product');
+            $handle = $productHandler->handle($ProductDTO);
 
-                return $this->redirectToRoute('Product:admin.index');
-            }
-
-            $this->addFlash('danger', 'admin.danger.new', 'admin.products.product', $Product);
-
-            return $this->redirectToReferer();
+            $this->addFlash
+            (
+                'admin.page.new',
+                $handle instanceof Product ? 'admin.success.new' : 'admin.danger.new',
+                'admin.products.product',
+                $handle
+            );
         }
 
         return $this->render(['form' => $form->createView()]);

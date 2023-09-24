@@ -5,14 +5,24 @@ ROLE_PRODUCT:
   desc: 'Список продукции'
 
 # Правила
+ROLE_PRODUCT_INDEX:
+  name: 'Просмотр'
+  desc: ''
 
 ROLE_PRODUCT_NEW:
   name: 'Добавить'
+  desc: ''
 
 ROLE_PRODUCT_EDIT:
   name: 'Редактировать'
+  desc: ''
 
 ROLE_PRODUCT_DELETE:
   name: 'Удалить'
+  desc: ''
+
+ROLE_PRODUCT_RENAME:
+  name: 'Переименовать'
+  desc: ''
 
 

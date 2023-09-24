@@ -35,17 +35,17 @@
 	<ul class="leader list-group list-group-flush ">
 
 
-		{% if constant('BaksDev\\Manufacture\\Part\\Entity\\ManufacturePart::TABLE') is defined and (is_granted('ROLE_MANUFACTURE_PART_NEW') or is_granted('ROLE_ADMIN')) %}
+		{#{% if constant('BaksDev\\Manufacture\\Part\\Entity\\ManufacturePart::TABLE') is defined and (is_granted('ROLE_MANUFACTURE_PART_NEW') or is_granted('ROLE_ADMIN')) %}
 
 			<li class="list-group-item d-flex justify-content-between bg-transparent border-0 text-truncate rounded-5">
 
-				{#<a href="{{ path('UsersTable:admin.action.delete', { id: item.event }) }}"
+				#}{#<a href="{{ path('UsersTable:admin.action.delete', { id: item.event }) }}"
 				   class="text-decoration-none text-dark w-100 modal-link"
 				   data-bs-toggle="modal"
 				   data-bs-target="#modal"
 				   title="{{ 'btn.delete'|trans({}, 'core.btn') }}">
 					Добавить партию производства
-				</a>#}
+				</a>#}{#
 
 				<a href="{{ path('ManufacturePart:admin.newedit.new', {
 					product: item.event,
@@ -62,7 +62,7 @@
 				</a>
 			</li>
 
-		{% endif %}
+		{% endif %}#}
 
 		
 		{# Редактировать #}
@@ -77,6 +77,22 @@
 			</li>
 			
 		{% endif %}
+
+		{# Редактировать #}
+		{% if is_granted(ROLE~'_RENAME') or is_granted('ROLE_ADMIN') %}
+
+			<li class="list-group-item d-flex justify-content-between bg-transparent border-0 text-truncate rounded-5">
+				<a href="{{ path('Product:admin.rename', { id: item.event }) }}"
+				   class="text-decoration-none text-dark w-100 modal-link"
+				   data-bs-toggle="modal"
+				   data-bs-target="#modal"
+				   title="{{ 'btn.rename'|trans({}, 'core.btn') }}">
+					{{ 'btn.rename'|trans({}, 'core.btn') }}
+				</a>
+			</li>
+
+		{% endif %}
+
 		
 		{# Удалить #}
 		{% if  is_granted(ROLE~'_DELETE') or is_granted('ROLE_ADMIN') %}

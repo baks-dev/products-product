@@ -21,66 +21,72 @@
  *  THE SOFTWARE.
  */
 
-namespace BaksDev\Products\Product\UseCase\Admin\Delete;
+declare(strict_types=1);
 
+namespace BaksDev\Products\Product\UseCase\Admin\Rename;
+
+use BaksDev\Core\Type\Locale\Locale;
 use BaksDev\Products\Product\Entity\Event\ProductEventInterface;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class ProductDTO implements ProductEventInterface
+/** @see ProductEvent */
+final class RenameProductDTO implements ProductEventInterface
 {
-    /**
-     * Идентификатор события.
-     */
+
+    /** Идентификатор */
     #[Assert\Uuid]
+    #[Assert\NotBlank]
     private ?ProductEventUid $id = null;
 
-    //    private ?ParentCategoryUid $parent;
-
     #[Assert\Valid]
-    private Modify\ModifyDTO $modify;
+    private ArrayCollection $translate;
 
-    #[Assert\Valid]
-    private Info\InfoDTO $info;
 
-    public function __construct()
-    {
-        $this->modify = new Modify\ModifyDTO();
-        $this->info = new Info\InfoDTO();
+    public function __construct() {
+        $this->translate = new ArrayCollection();
     }
 
-    public function getEvent(): ?ProductEventUid
+    public function getEvent() : ?ProductEventUid
     {
         return $this->id;
     }
 
-    public function setId(ProductEventUid $id): void
+    public function setId(ProductEventUid $id) : void
     {
         $this->id = $id;
     }
 
-    // Modify
 
-    public function getModify(): Modify\ModifyDTO
+    /* TRANS */
+
+    public function setTranslate(ArrayCollection $trans): void
     {
-        return $this->modify;
+        $this->translate = $trans;
     }
 
-    public function getInfo(): Info\InfoDTO
+
+    public function getTranslate(): ArrayCollection
     {
-        return $this->info;
+
+        /* Вычисляем расхождение и добавляем неопределенные локали */
+        foreach(Locale::diffLocale($this->translate) as $locale)
+        {
+            $ProductTransDTO = new Trans\ProductTransDTO();
+            $ProductTransDTO->setLocal($locale);
+            $this->addTranslate($ProductTransDTO);
+        }
+
+        return $this->translate;
     }
 
-    public function setInfo(Info\InfoDTO $info): void
-    {
-        $this->info = $info;
-    }
 
-    //    /**
-    //     * @param DeliveryTransportModifyDTO $Modify
-    //     */
-    //    public function setModify(DeliveryTransportModifyDTO $Modify) : void
-    //    {
-    //        $this->modify = $Modify;
-    //    }
+    public function addTranslate(Trans\ProductTransDTO $trans): void
+    {
+        if(!$this->translate->contains($trans))
+        {
+            $this->translate->add($trans);
+        }
+    }
 }

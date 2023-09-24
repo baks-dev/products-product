@@ -26,7 +26,9 @@ namespace BaksDev\Products\Product\Controller\Admin;
 use BaksDev\Core\Controller\AbstractController;
 use BaksDev\Core\Listeners\Event\Security\RoleSecurity;
 use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
-use BaksDev\Products\Product\Entity;
+use BaksDev\Products\Product\Entity\Event\ProductEvent;
+use BaksDev\Products\Product\Entity\Info\ProductInfo;
+use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Category\CategoryCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\ProductDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\ProductForm;
@@ -44,43 +46,50 @@ final class EditController extends AbstractController
 {
     #[Route('/admin/product/edit/{id}', name: 'admin.newedit.edit', methods: ['GET', 'POST'])]
     public function edit(
-        #[MapEntity] Entity\Event\ProductEvent $Event,
+        #[MapEntity] ProductEvent $Event,
         Request $request,
-        ProductHandler $handler,
+        ProductHandler $productHandler,
         EntityManagerInterface $entityManager,
-    ): Response {
+    ): Response
+    {
         $ProductDTO = new ProductDTO();
         $Event->getDto($ProductDTO);
 
         // Если передана категория - присваиваем для подгрузки настроект (свойства, ТП)
-        if ($request->get('category')) {
+        if($request->get('category'))
+        {
             /** @var CategoryCollectionDTO $category */
-            foreach ($ProductDTO->getCategory() as $category) {
-                if ($category->getRoot()) {
+            foreach($ProductDTO->getCategory() as $category)
+            {
+                if($category->getRoot())
+                {
                     $category->setCategory(new ProductCategoryUid($request->get('category')));
                 }
             }
         }
 
-        $Info = $entityManager->getRepository(Entity\Info\ProductInfo::class)->findOneBy(['product' => $Event->getProduct()]);
+        $Info = $entityManager->getRepository(ProductInfo::class)->findOneBy(['product' => $Event->getProduct()]);
         $Info->getDto($ProductDTO->getInfo());
 
         // Форма добавления
         $form = $this->createForm(ProductForm::class, $ProductDTO);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $Product = $handler->handle($ProductDTO);
+        if($form->isSubmitted() && $form->isValid() && $form->has('product'))
+        {
 
-            if ($Product instanceof Entity\Product) {
-                $this->addFlash('success', 'admin.success.update', 'admin.products.product');
+            $handle = $productHandler->handle($ProductDTO);
 
-                return $this->redirectToRoute('Product:admin.index');
-            }
+            $this->addFlash
+            (
+                'admin.page.edit',
+                $handle instanceof Product ? 'admin.success.edit' : 'admin.danger.edit',
+                'admin.products.product',
+                $handle
+            );
 
-            $this->addFlash('danger', 'admin.danger.update', 'admin.products.product', $Product);
+            return $this->redirectToRoute('Product:admin.index');
 
-            return $this->redirectToReferer();
         }
 
         return $this->render(['form' => $form->createView()]);

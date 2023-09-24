@@ -2,12 +2,22 @@ ROLE_PRODUCT:
   name: 'Products'
   desc: 'Product List'
 
+ROLE_PRODUCT_INDEX:
+  name: 'View'
+  desc: ''
 
 ROLE_PRODUCT_NEW:
   name: 'Add'
+  desc: ''
 
 ROLE_PRODUCT_EDIT:
   name: 'Edit'
+  desc: ''
 
 ROLE_PRODUCT_DELETE:
   name: 'Delete'
+  desc: ''
+
+ROLE_PRODUCT_RENAME:
+  name: 'Rename'
+  desc: ''

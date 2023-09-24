@@ -21,30 +21,26 @@
  *  THE SOFTWARE.
  */
 
-namespace BaksDev\Products\Product\UseCase\Admin\Delete\Modify;
+declare(strict_types=1);
 
-use BaksDev\Core\Type\Modify\ModifyAction;
-use BaksDev\Core\Type\Modify\ModifyActionEnum;
-use BaksDev\Products\Product\Entity\Modify\ProductModifyInterface;
-use Symfony\Component\Validator\Constraints as Assert;
+namespace BaksDev\Products\Product\Security;
 
-final class ModifyDTO implements ProductModifyInterface
+use BaksDev\Users\Profile\Group\Security\RoleInterface;
+use BaksDev\Users\Profile\Group\Security\VoterInterface;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
+
+#[AutoconfigureTag('baks.security.voter')]
+class VoterIndex implements VoterInterface
 {
-    /**
-     * Модификатор
-     */
-    #[Assert\NotBlank]
-    private readonly ModifyAction $action;
+    public const VOTER = 'INDEX';
 
-    public function __construct()
+    public static function getVoter(): string
     {
-        $this->action = new ModifyAction(ModifyActionEnum::DELETE);
+        return Role::ROLE.'_'.self::VOTER;
     }
 
-    public function getAction(): ModifyAction
+    public function equals(RoleInterface $role): bool
     {
-        return $this->action;
+        return Role::ROLE === $role->getRole();
     }
-	
 }
-

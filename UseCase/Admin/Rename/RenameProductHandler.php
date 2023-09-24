@@ -21,30 +21,30 @@
  *  THE SOFTWARE.
  */
 
-namespace BaksDev\Products\Product\UseCase\Admin\Delete;
+namespace BaksDev\Products\Product\UseCase\Admin\Rename;
 
 use BaksDev\Core\Messenger\MessageDispatchInterface;
-use BaksDev\Products\Product\Entity\Event\ProductEvent;
-use BaksDev\Products\Product\Entity\Info\ProductInfo;
-use BaksDev\Products\Product\Entity\Product;
+use BaksDev\Products\Product\Entity;
 use BaksDev\Products\Product\Messenger\ProductMessage;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-final class ProductDeleteHandler
+final class RenameProductHandler
 {
     private EntityManagerInterface $entityManager;
-    private ValidatorInterface $validator;
-    private LoggerInterface $logger;
-    private MessageDispatchInterface $messageDispatch;
 
+    private ValidatorInterface $validator;
+
+    private LoggerInterface $logger;
+
+    private MessageDispatchInterface $messageDispatch;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         ValidatorInterface $validator,
         LoggerInterface $logger,
-        MessageDispatchInterface $messageDispatch
+        MessageDispatchInterface $messageDispatch,
     )
     {
         $this->entityManager = $entityManager;
@@ -53,9 +53,8 @@ final class ProductDeleteHandler
         $this->messageDispatch = $messageDispatch;
     }
 
-    public function handle(
-        ProductDeleteDTO $command
-    ): Product|string
+
+    public function handle(RenameProductDTO $command): Entity\Product|string
     {
 
         /**
@@ -68,72 +67,97 @@ final class ProductDeleteHandler
             /** Ошибка валидации */
             $uniqid = uniqid('', false);
             $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__LINE__ => __FILE__]);
+
             return $uniqid;
         }
 
-
-        /** Получаем событие */
-        $Event = $this->entityManager->getRepository(ProductEvent::class)
-            ->find($command->getEvent());
-
-        if($Event === null)
+        if(!$command->getEvent())
         {
             $uniqid = uniqid('', false);
-            $errorsString = sprintf(
-                'Not found %s by id: %s',
-                ProductEvent::class,
-                $command->getEvent()
-            );
-            $this->logger->error($uniqid.': '.$errorsString);
+            $this->logger->error(sprintf('%s: Не указан идентификатор события', $uniqid), [__LINE__ => __FILE__]);
 
             return $uniqid;
         }
 
 
-        /** Получаем корень агрегата */
-        $Main = $this->entityManager->getRepository(Product::class)
+        $EventRepo = $this->entityManager->getRepository(Entity\Event\ProductEvent::class)->find(
+            $command->getEvent(),
+        );
+
+        if(null === $EventRepo)
+        {
+            $uniqid = uniqid('', false);
+
+            $this->logger->error(sprintf('%s: Событие ProductEvent не найдено (event: %s)',
+                $uniqid,
+                $command->getEvent()
+            ), [__LINE__ => __FILE__]);
+
+            return $uniqid;
+        }
+
+        $Event = $EventRepo->cloneEntity();
+        $this->entityManager->clear();
+        $Event->setEntity($command);
+
+
+        // Получаем продукт
+        $Product = $this->entityManager->getRepository(Entity\Product::class)
             ->findOneBy(['event' => $command->getEvent()]);
 
-        if(empty($Main))
+
+        if(empty($Product))
         {
             $uniqid = uniqid('', false);
-            $errorsString = sprintf(
-                'Not found %s by event: %s',
-                Product::class,
+
+            $this->logger->error(sprintf('%s: Агрегат Product не найден, либо был изменен (event: %s)',
+                $uniqid,
                 $command->getEvent()
-            );
-            $this->logger->error($uniqid.': '.$errorsString);
+            ), [__LINE__ => __FILE__]);
 
             return $uniqid;
         }
 
 
-        // Сбрасываем семантическую ссылку
-        $ProductInfo = $this->entityManager->getRepository(ProductInfo::class)
-            ->find($Main->getId());
+        $Product->setEvent($Event); // Обновляем событие агрегата
 
-        if($ProductInfo)
+        $this->entityManager->persist($Event);
+
+
+        // Валидация события
+        $errors = $this->validator->validate($Event);
+
+        if(count($errors) > 0)
         {
-            $ProductInfo->setEntity($command->getInfo());
+            /** Ошибка валидации */
+            $uniqid = uniqid('', false);
+            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__LINE__ => __FILE__]);
+
+            return $uniqid;
         }
 
 
-        /* Применяем изменения к событию */
-        $Event->setEntity($command);
-        $this->entityManager->persist($Event);
+        // Валидация агрегата
+        $errors = $this->validator->validate($Product);
 
-        /* Удаляем корень агрегата */
-        $this->entityManager->remove($Main);
+        if(count($errors) > 0)
+        {
+            /** Ошибка валидации */
+            $uniqid = uniqid('', false);
+            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__LINE__ => __FILE__]);
+
+            return $uniqid;
+        }
+
 
         $this->entityManager->flush();
 
         /* Отправляем событие в шину  */
         $this->messageDispatch->dispatch(
-            message: new ProductMessage($Main->getId(), $Main->getEvent(), $command->getEvent()),
-            transport: 'products'
+            message: new ProductMessage($Product->getId(), $Product->getEvent(), $command->getEvent()),
+            transport: 'products',
         );
 
-
-        return $Main;
+        return $Product;
     }
 }

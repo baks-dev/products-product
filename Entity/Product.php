@@ -22,6 +22,7 @@ namespace BaksDev\Products\Product\Entity;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /* Product */
 
@@ -34,12 +35,16 @@ class Product //extends Event
 	public const TABLE = 'product';
 	
 	/** ID */
+    #[Assert\NotBlank]
+    #[Assert\Uuid]
 	#[ORM\Id]
 	#[ORM\Column(type: ProductUid::TYPE)]
 	private ProductUid $id;
 	
 	/** ID События */
-	#[ORM\Column(type: ProductEventUid::TYPE, unique: true, nullable: false)]
+    #[Assert\NotBlank]
+    #[Assert\Uuid]
+	#[ORM\Column(type: ProductEventUid::TYPE, unique: true)]
 	private ProductEventUid $event;
 	
 	

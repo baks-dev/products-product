@@ -52,9 +52,8 @@ final class AllProducts implements AllProductsInterface
 
     public function getAllProducts(
         SearchDTO $search,
-        ?UserProfileUid $profile,
         ProductFilterInterface $filter,
-
+        ?UserProfileUid $profile
     ): PaginatorInterface
     {
 
@@ -68,7 +67,7 @@ final class AllProducts implements AllProductsInterface
 
         $qb->from(Entity\Product::TABLE, 'product');
 
-        $qb->join('product', Entity\Event\ProductEvent::TABLE, 'product_event', 'product_event.id = product.event');
+        $qb->leftJoin('product', Entity\Event\ProductEvent::TABLE, 'product_event', 'product_event.id = product.event');
 
         $qb->addSelect('product_trans.name AS product_name');
         $qb->addSelect('product_trans.preview AS product_preview');
@@ -98,7 +97,6 @@ final class AllProducts implements AllProductsInterface
 
 
         /** Ответственное лицо (Профиль пользователя) */
-
 
         $qb->leftJoin(
             'product_info',
@@ -146,13 +144,13 @@ final class AllProducts implements AllProductsInterface
         }
 
 
-        /* Цена торгового предожения */
-        $qb->leftJoin(
-            'product_offer',
-            Entity\Offers\Price\ProductOfferPrice::TABLE,
-            'product_offer_price',
-            'product_offer_price.offer = product_offer.id'
-        );
+//        /* Цена торгового предожения */
+//        $qb->leftJoin(
+//            'product_offer',
+//            Entity\Offers\Price\ProductOfferPrice::TABLE,
+//            'product_offer_price',
+//            'product_offer_price.offer = product_offer.id'
+//        );
 
         /* Тип торгового предложения */
         $qb->addSelect('category_offer.reference as product_offer_reference');

@@ -70,7 +70,7 @@ final class ProductByVariation implements ProductByVariationInterface
         $qb->join(Product::class,
             'product',
             'WITH',
-            'product.id = event.product'
+            'product.event = event.id'
         );
 
         $qb->where('variation.const = :const');

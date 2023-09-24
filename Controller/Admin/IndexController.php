@@ -93,7 +93,7 @@ final class IndexController extends AbstractController
 
 
         // Получаем список
-        $query = $getAllProduct->getAllProducts($search, $this->getFilterProfile(), $filter);
+        $query = $getAllProduct->getAllProducts($search, $filter, $this->getAdminFilterProfile());
 
         return $this->render(
             [

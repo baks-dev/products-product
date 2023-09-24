@@ -1,31 +1,29 @@
 admin:
   page:
-    index: 'Каталог продукции'
-    new: 'Добавить продукт'
-    edit: 'Редактировать продукт'
-    delete: 'Удалить продукцию'
+    index: 'Product Catalog'
+    new: 'Add product'
+    edit: 'Edit product'
+    delete: 'Delete products'
 
   breadcrumb:
-    index: 'Каталог продукции'
-    new: 'Добавить продукт'
-    edit: 'Редактировать продукт'
-    delete: 'Удалить продукт'
+    index: 'Product Catalog'
+    new: 'Add product'
+    edit: 'Edit product'
+    delete: 'Delete a product'
 
 
   form:
     label:
       trans:
-        name: 'Название товара'
-      url: 'Символьный код продукта'
+        name: 'Product name'
+      url: 'Product symbol code'
   success:
-    new: 'Продукт успешно добавлен'
-    update: 'Продукт успешно обновлен'
-    delete: 'Продукт успешно удален в корзину'
-    restore: 'Продукт успешно восстановлен'
+    new: 'Product added successfully'
+    update: 'Product updated successfully'
+    delete: 'Product successfully removed to cart'
+    restore: 'The product was successfully restored'
   danger:
-    new: '%s: Ошибка при добавлении продукта'
-    update: '%s: Ошибка при обновлении продукта'
-    delete: '%s: Ошибка при удалении продукта'
-    restore: '%s: Ошибка при восстановлении продукта'
-
-
+    new: '%s: Error adding product'
+    update: '%s: Error updating product'
+    delete: '%s: Error deleting product'
+    restore: '%s: Error while restoring product'

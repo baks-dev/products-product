@@ -21,30 +21,52 @@
  *  THE SOFTWARE.
  */
 
-namespace BaksDev\Products\Product\UseCase\Admin\Delete\Modify;
+namespace BaksDev\Products\Product\UseCase\Admin\Delete;
 
-use BaksDev\Core\Type\Modify\ModifyAction;
-use BaksDev\Core\Type\Modify\ModifyActionEnum;
-use BaksDev\Products\Product\Entity\Modify\ProductModifyInterface;
+use BaksDev\Products\Product\Entity\Event\ProductEventInterface;
+use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class ModifyDTO implements ProductModifyInterface
+final class ProductDeleteDTO implements ProductEventInterface
 {
     /**
-     * Модификатор
+     * Идентификатор события.
      */
+    #[Assert\Uuid]
     #[Assert\NotBlank]
-    private readonly ModifyAction $action;
+    private readonly ProductEventUid $id;
+
+    #[Assert\Valid]
+    private Modify\ModifyDTO $modify;
+
+    #[Assert\Valid]
+    private Info\InfoDTO $info;
 
     public function __construct()
     {
-        $this->action = new ModifyAction(ModifyActionEnum::DELETE);
+        $this->modify = new Modify\ModifyDTO();
+        $this->info = new Info\InfoDTO();
     }
 
-    public function getAction(): ModifyAction
+    public function getEvent(): ?ProductEventUid
     {
-        return $this->action;
+        return $this->id;
     }
-	
-}
 
+    public function setId(ProductEventUid $id): void
+    {
+        $this->id = $id;
+    }
+
+    public function getModify(): Modify\ModifyDTO
+    {
+        return $this->modify;
+    }
+
+    public function getInfo(): Info\InfoDTO
+    {
+        return $this->info;
+    }
+
+
+}

@@ -23,7 +23,7 @@
 
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit;
 
-use BaksDev\Core\Services\Messenger\MessageDispatchInterface;
+use BaksDev\Core\Messenger\MessageDispatchInterface;
 use BaksDev\Files\Resources\Upload\File\FileUploadInterface;
 use BaksDev\Files\Resources\Upload\Image\ImageUploadInterface;
 use BaksDev\Products\Product\Entity;
@@ -152,7 +152,7 @@ final class ProductHandler
             {
                 /** TODO  */
                 $ProductVideo = $Video->getEntityUpload();
-                $this->fileUpload->upload($Video->file, $ProductVideo);
+                $this->imageUpload->upload($Video->file, $ProductVideo);
             }
         }
 
@@ -173,7 +173,7 @@ final class ProductHandler
                 {
                     /** TODO  */
                     $ProductOfferImage = $offerImage->getEntityUpload();
-                    $this->fileUpload->upload($offerImage->file, $ProductOfferImage);
+                    $this->imageUpload->upload($offerImage->file, $ProductOfferImage);
                 }
             }
 
@@ -194,7 +194,7 @@ final class ProductHandler
                     {
                         /** TODO  */
                         $ProductOfferVariationImage = $variationImage->getEntityUpload();
-                        $this->fileUpload->upload($variationImage->file, $ProductOfferVariationImage);
+                        $this->imageUpload->upload($variationImage->file, $ProductOfferVariationImage);
                     }
                 }
 
@@ -215,7 +215,7 @@ final class ProductHandler
                         {
                             /** TODO  */
                             $ProductOfferVariationModificationImage = $modificationImage->getEntityUpload();
-                            $this->fileUpload->upload(
+                            $this->imageUpload->upload(
                                 $modificationImage->file,
                                 $ProductOfferVariationModificationImage,
                             );
@@ -282,9 +282,9 @@ final class ProductHandler
 
         if(count($errors) > 0)
         {
+            /** Ошибка валидации */
             $uniqid = uniqid('', false);
-            $errorsString = (string) $errors;
-            $this->logger->error($uniqid.': '.$errorsString);
+            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__LINE__ => __FILE__]);
 
             return $uniqid;
         }

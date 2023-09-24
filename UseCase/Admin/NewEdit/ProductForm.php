@@ -239,13 +239,13 @@ final class ProductForm extends AbstractType
 				}
 			}
 		);
-		
-		/* Сохранить ******************************************************/
-		$builder->add(
-			'Save',
-			SubmitType::class,
-			['label' => 'Save', 'label_html' => true, 'attr' => ['class' => 'btn-primary']]
-		);
+        
+        /* Сохранить ******************************************************/
+        $builder->add(
+            'product',
+            SubmitType::class,
+            ['label' => 'Save', 'label_html' => true, 'attr' => ['class' => 'btn-primary']]
+        );
 		
 		/*
 		 * OFFERS
@@ -454,6 +454,9 @@ final class ProductForm extends AbstractType
 				}
 			);
 		}
+
+
+
 	}
 	
 	

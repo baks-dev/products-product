@@ -25,6 +25,7 @@ namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Trans;
 
 use BaksDev\Core\Type\Locale\Locale;
 use BaksDev\Products\Product\Entity\Trans\ProductTransInterface;
+use ReflectionProperty;
 use Symfony\Component\Validator\Constraints as Assert;
 
 final class ProductTransDTO implements ProductTransInterface
@@ -35,7 +36,7 @@ final class ProductTransDTO implements ProductTransInterface
 	
 	/** Название продукта (строка с точкой, нижнее подчеркивание тире процент скобки) */
 	#[Assert\NotBlank]
-	#[Assert\Regex(pattern: '/^[\w \.\_\-\(\)\%]+$/iu')]
+	#[Assert\Regex(pattern: '/^[\w \.\,\_\-\(\)\%]+$/iu')]
 	private ?string $name;
 	
 	/** Краткое описание */
@@ -57,7 +58,7 @@ final class ProductTransDTO implements ProductTransInterface
 	
 	public function setLocal(Locale $local) : void
 	{
-		if(!(new \ReflectionProperty($this::class, 'local'))->isInitialized($this))
+		if(!(new ReflectionProperty($this::class, 'local'))->isInitialized($this))
 		{
 			$this->local = $local;
 		}
