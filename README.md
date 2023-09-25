@@ -38,4 +38,3 @@ $ php bin/phpunit --group=products-product
 
 The MIT License (MIT). Обратитесь к [Файлу лицензии](LICENSE.md) за дополнительной информацией.
 
-
