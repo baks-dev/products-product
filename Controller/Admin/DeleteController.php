@@ -70,7 +70,6 @@ final class DeleteController extends AbstractController
             );
 
             return $this->redirectToRoute('Product:admin.index');
-
         }
 
         return $this->render(
