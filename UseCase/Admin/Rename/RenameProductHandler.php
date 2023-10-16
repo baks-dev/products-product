@@ -66,7 +66,7 @@ final class RenameProductHandler
         {
             /** Ошибка валидации */
             $uniqid = uniqid('', false);
-            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__LINE__ => __FILE__]);
+            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__FILE__.':'.__LINE__]);
 
             return $uniqid;
         }
@@ -74,7 +74,7 @@ final class RenameProductHandler
         if(!$command->getEvent())
         {
             $uniqid = uniqid('', false);
-            $this->logger->error(sprintf('%s: Не указан идентификатор события', $uniqid), [__LINE__ => __FILE__]);
+            $this->logger->error(sprintf('%s: Не указан идентификатор события', $uniqid), [__FILE__.':'.__LINE__]);
 
             return $uniqid;
         }
@@ -91,15 +91,16 @@ final class RenameProductHandler
             $this->logger->error(sprintf('%s: Событие ProductEvent не найдено (event: %s)',
                 $uniqid,
                 $command->getEvent()
-            ), [__LINE__ => __FILE__]);
+            ), [__FILE__.':'.__LINE__]);
 
             return $uniqid;
         }
 
+        $EventRepo->setEntity($command);
+        $EventRepo->setEntityManager($this->entityManager);
         $Event = $EventRepo->cloneEntity();
-        $this->entityManager->clear();
-        $Event->setEntity($command);
-
+//        $this->entityManager->clear();
+//        $this->entityManager->persist($Event);
 
         // Получаем продукт
         $Product = $this->entityManager->getRepository(Entity\Product::class)
@@ -113,15 +114,12 @@ final class RenameProductHandler
             $this->logger->error(sprintf('%s: Агрегат Product не найден, либо был изменен (event: %s)',
                 $uniqid,
                 $command->getEvent()
-            ), [__LINE__ => __FILE__]);
+            ), [__FILE__.':'.__LINE__]);
 
             return $uniqid;
         }
 
-
         $Product->setEvent($Event); // Обновляем событие агрегата
-
-        $this->entityManager->persist($Event);
 
 
         // Валидация события
@@ -131,7 +129,7 @@ final class RenameProductHandler
         {
             /** Ошибка валидации */
             $uniqid = uniqid('', false);
-            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__LINE__ => __FILE__]);
+            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__FILE__.':'.__LINE__]);
 
             return $uniqid;
         }
@@ -144,7 +142,7 @@ final class RenameProductHandler
         {
             /** Ошибка валидации */
             $uniqid = uniqid('', false);
-            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__LINE__ => __FILE__]);
+            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__FILE__.':'.__LINE__]);
 
             return $uniqid;
         }

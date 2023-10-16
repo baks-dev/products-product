@@ -23,9 +23,9 @@
 
 namespace BaksDev\Products\Product\Entity\Seo;
 
-use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Core\Entity\EntityEvent;
 use BaksDev\Core\Type\Locale\Locale;
+use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use InvalidArgumentException;
@@ -60,11 +60,20 @@ class ProductSeo extends EntityEvent
 	private ?string $description;
 	
 	
-	public function __construct(ProductEvent $event) { $this->event = $event; }
+	public function __construct(ProductEvent $event)
+    {
+        $this->event = $event;
+    }
+
+    public function __toString(): string
+    {
+        return (string) $this->event;
+    }
 	
-	
-	public function getDto($dto) : mixed
+	public function getDto($dto): mixed
 	{
+        $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
+
 		if($dto instanceof ProductSeoInterface)
 		{
 			return parent::getDto($dto);
@@ -74,15 +83,14 @@ class ProductSeo extends EntityEvent
 	}
 	
 	
-	public function setEntity($dto) : mixed
+	public function setEntity($dto): mixed
 	{
-		
 		if(empty($dto->getTitle()) && empty($dto->getDescription()) && empty($dto->getKeywords()))
 		{
 			return false;
 		}
 		
-		if($dto instanceof ProductSeoInterface)
+		if($dto instanceof ProductSeoInterface || $dto instanceof self)
 		{
 			return parent::setEntity($dto);
 		}

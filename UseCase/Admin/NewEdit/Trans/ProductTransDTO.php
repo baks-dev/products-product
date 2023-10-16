@@ -37,15 +37,15 @@ final class ProductTransDTO implements ProductTransInterface
 	/** Название продукта (строка с точкой, нижнее подчеркивание тире процент скобки) */
 	#[Assert\NotBlank]
 	#[Assert\Regex(pattern: '/^[\w \.\,\_\-\(\)\%]+$/iu')]
-	private ?string $name;
+	private ?string $name = null;
 	
-	/** Краткое описание */
-	//#[Assert\Regex(pattern: '/^[\w \.\_\-\(\)\%]+$/iu')]
-	private ?string $preview = null;
-	
-	/** Детальное описание */
-	//#[Assert\Regex(pattern: '/^[\w \.\_\-\(\)\%]+$/iu')]
-	private ?string $description = null;
+//	/** Краткое описание */
+//	//#[Assert\Regex(pattern: '/^[\w \.\_\-\(\)\%]+$/iu')]
+//	private ?string $preview = null;
+//
+//	/** Детальное описание */
+//	//#[Assert\Regex(pattern: '/^[\w \.\_\-\(\)\%]+$/iu')]
+//	private ?string $description = null;
 	
 	
 	/** Локаль */
@@ -58,7 +58,7 @@ final class ProductTransDTO implements ProductTransInterface
 	
 	public function setLocal(Locale $local) : void
 	{
-		if(!(new ReflectionProperty($this::class, 'local'))->isInitialized($this))
+		if(!(new ReflectionProperty(self::class, 'local'))->isInitialized($this))
 		{
 			$this->local = $local;
 		}
@@ -79,32 +79,32 @@ final class ProductTransDTO implements ProductTransInterface
 	}
 	
 	
-	/** Краткое описание */
-	
-	public function getPreview() : ?string
-	{
-		return $this->preview;
-	}
-	
-	
-	public function setPreview(?string $preview) : void
-	{
-		$this->preview = $preview;
-	}
-	
-	
-	/** Детальное описание */
-	
-	public function getDescription() : ?string
-	{
-		return $this->description;
-	}
-	
-	
-	public function setDescription(?string $description) : void
-	{
-		$this->description = $description;
-	}
-	
+//	/** Краткое описание */
+//
+//	public function getPreview() : ?string
+//	{
+//		return $this->preview;
+//	}
+//
+//
+//	public function setPreview(?string $preview) : void
+//	{
+//		$this->preview = $preview;
+//	}
+//
+//
+//	/** Детальное описание */
+//
+//	public function getDescription() : ?string
+//	{
+//		return $this->description;
+//	}
+//
+//
+//	public function setDescription(?string $description) : void
+//	{
+//		$this->description = $description;
+//	}
+//
 }
 

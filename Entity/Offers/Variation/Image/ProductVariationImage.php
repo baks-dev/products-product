@@ -35,7 +35,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'product_variation_images')]
-#[ORM\Index(columns: ['dir', 'cdn'])]
 #[ORM\Index(columns: ['root'])]
 class ProductVariationImage extends EntityEvent implements UploadEntityInterface
 {
@@ -50,30 +49,27 @@ class ProductVariationImage extends EntityEvent implements UploadEntityInterface
 	
 	/** ID торгового предложения */
     #[Assert\NotBlank]
+    #[Assert\Uuid]
 	#[ORM\ManyToOne(targetEntity: ProductVariation::class, inversedBy: 'image')]
 	#[ORM\JoinColumn(name: 'variation', referencedColumnName: 'id')]
 	private ProductVariation $variation;
 	
-	/** Название директории */
-    #[Assert\NotBlank]
-    #[Assert\Uuid]
-	#[ORM\Column(type: ProductVariationUid::TYPE, nullable: false)]
-	private ProductVariationUid $dir;
-	
+
 	/** Название файла */
     #[Assert\NotBlank]
-    #[Assert\Choice(['svg', 'png', 'jpg', 'jpeg', 'gif', 'webp'])]
-    #[Assert\Length(max: 5)]
-	#[ORM\Column(type: Types::STRING, length: 100)]
-	private string $name = 'img';
-	
-	/** Расширение файла */
+    #[Assert\Length(max: 100)]
+	#[ORM\Column(type: Types::STRING)]
+	private string $name;
+
+    /** Расширение файла */
     #[Assert\NotBlank]
-	#[ORM\Column(type: Types::STRING, length: 64)]
-	private string $ext = 'svg';
+    #[Assert\Choice(['png', 'gif', 'jpg', 'jpeg', 'webp'])]
+	#[ORM\Column(type: Types::STRING)]
+	private string $ext;
 	
 	/** Размер файла */
     #[Assert\NotBlank]
+    #[Assert\Range(max: 1048576)] // 1024 * 1024
 	#[ORM\Column(type: Types::INTEGER)]
 	private int $size = 0;
 	
@@ -97,9 +93,13 @@ class ProductVariationImage extends EntityEvent implements UploadEntityInterface
 	
 	public function __clone()
 	{
-		$this->id = new ProductOfferVariationImageUid();
+        $this->id = clone $this->id;
 	}
-	
+
+    public function __toString(): string
+    {
+        return (string) $this->id;
+    }
 	
 	public function getId() : ProductOfferVariationImageUid
 	{
@@ -107,8 +107,10 @@ class ProductVariationImage extends EntityEvent implements UploadEntityInterface
 	}
 	
 	
-	public function getDto($dto) : mixed
+	public function getDto($dto): mixed
 	{
+        $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
+
 		if($dto instanceof ProductVariationImageInterface)
 		{
 			return parent::getDto($dto);
@@ -118,7 +120,7 @@ class ProductVariationImage extends EntityEvent implements UploadEntityInterface
 	}
 	
 	
-	public function setEntity($dto) : mixed
+	public function setEntity($dto): mixed
 	{
 		
 		/* Если размер файла нулевой - не заполняем сущность */
@@ -132,7 +134,7 @@ class ProductVariationImage extends EntityEvent implements UploadEntityInterface
 			$dto->setEntityUpload($this);
 		}
 		
-		if($dto instanceof ProductVariationImageInterface)
+		if($dto instanceof ProductVariationImageInterface || $dto instanceof self)
 		{
 			return parent::setEntity($dto);
 		}
@@ -146,43 +148,57 @@ class ProductVariationImage extends EntityEvent implements UploadEntityInterface
 		$this->name = $name;
 		$this->ext = $ext;
 		$this->size = $size;
-		$this->dir = $this->variation->getId();
+		//$this->dir = $this->variation->getId();
 		$this->cdn = false;
 	}
 	
 	
-	public function updCdn(string $ext) : void
+	public function updCdn(?string $ext = null) : void
 	{
-		$this->ext = $ext;
-		$this->cdn = true;
-	}
-	
-	
-	public function getUploadDir() : object
-	{
-		return $this->variation->getId();
-	}
-	
-	
-	public function getFileName() : string
-	{
-		return $this->name.'.'.$this->ext;
-	}
+        if($ext)
+        {
+            $this->ext = $ext;
+        }
 
-    public function getDir(): ProductVariationUid
-    {
-        return $this->dir;
-    }
-
-    public static function getDirName(): string
-    {
-        return  ProductVariationUid::class;
-    }
+        $this->cdn = true;
+	}
 	
+	
+//	public function getUploadDir() : object
+//	{
+//		return $this->variation->getId();
+//	}
+//
+//
+//	public function getFileName(): string
+//	{
+//		return $this->name.'.'.$this->ext;
+//	}
+//
+//    public function getDir(): ProductVariationUid
+//    {
+//        return $this->dir;
+//    }
+//
+//    public static function getDirName(): string
+//    {
+//        return  ProductVariationUid::class;
+//    }
+//
 	
 	public function root() : void
 	{
 		$this->root = true;
 	}
+
+    /**
+     * Ext
+     */
+    public function getExt(): string
+    {
+        return $this->ext;
+    }
+
+
 	
 }

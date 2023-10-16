@@ -18,6 +18,7 @@
 
 namespace BaksDev\Products\Product\Type\Offers\Id;
 
+use App\Kernel;
 use BaksDev\Core\Type\UidType\Uid;
 use Symfony\Component\Uid\AbstractUid;
 
@@ -45,6 +46,7 @@ final class ProductOfferUid extends Uid
     )
     {
         parent::__construct($value);
+
         $this->attr = $attr;
         $this->option = $option;
         $this->property = $property;

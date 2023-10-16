@@ -33,6 +33,7 @@ final class ProductModificationQuantityDTO implements ProductModificationQuantit
 	
 	/** Резерв */
 	#[Assert\NotBlank]
+    #[Assert\Range(min: 0)]
 	private ?int $reserve = 0;
 	
 	

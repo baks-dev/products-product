@@ -25,8 +25,12 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Repository\CurrentQuantity\Modification;
 
-use BaksDev\Products\Product\Entity as ProductEntity;
+use BaksDev\Products\Product\Entity\Event\ProductEvent;
+use BaksDev\Products\Product\Entity\Offers\ProductOffer;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Quantity\ProductModificationQuantity;
+use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
+use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
@@ -56,39 +60,38 @@ final class CurrentQuantityByModification implements CurrentQuantityByModificati
 		$qb->select('quantity');
 		
 		
-		$qb->from(ProductEntity\Event\ProductEvent::class, 'event');
+		$qb->from(ProductEvent::class, 'event');
 		$qb->where('event.id = :event');
 		$qb->setParameter('event', $event, ProductEventUid::TYPE);
 		
 		
-		$qb->join(ProductEntity\Product::class,
-			'product', 'WITH', 'product.id = event.product'
+		$qb->join(Product::class,
+			'product', 'WITH', 'product.id = event.main'
 		);
 		
 		
 		
 		/** Торговое предложение */
 		
-		$qb->join(ProductEntity\Offers\ProductOffer::class,
+		$qb->join(ProductOffer::class,
 			'offer', 'WITH', 'offer.id = :offer AND offer.event = event.id'
 		);
 		$qb->setParameter('offer', $offer, ProductOfferUid::TYPE);
 		
-		$qb->leftJoin(ProductEntity\Offers\ProductOffer::class,
+		$qb->leftJoin(ProductOffer::class,
 			'current_offer', 'WITH', 'current_offer.const = offer.const AND current_offer.event = product.event'
 		); //
 		
 
 		
-		
 		/** Множественный вариант торгового предложения */
 		
-		$qb->join(ProductEntity\Offers\Variation\ProductVariation::class,
+		$qb->join(ProductVariation::class,
 			'variation', 'WITH', 'variation.id = :variation AND variation.offer = offer.id'
 		);
 		$qb->setParameter('variation', $variation, ProductVariationUid::TYPE);
 		
-		$qb->leftJoin(ProductEntity\Offers\Variation\ProductVariation::class,
+		$qb->leftJoin(ProductVariation::class,
 			'current_variation', 'WITH', 'current_variation.const = variation.const AND current_variation.offer = current_offer.id'
 		);
 		
@@ -96,12 +99,12 @@ final class CurrentQuantityByModification implements CurrentQuantityByModificati
 		
 		/** Модификация множественного варианта торгового предложения */
 		
-		$qb->join(ProductEntity\Offers\Variation\Modification\ProductModification::class,
+		$qb->join(ProductModification::class,
 			'modification', 'WITH', 'modification.id = :modification AND modification.variation = variation.id'
 		);
 		$qb->setParameter('modification', $modification, ProductModificationUid::TYPE);
 		
-		$qb->leftJoin(ProductEntity\Offers\Variation\Modification\ProductModification::class,
+		$qb->leftJoin(ProductModification::class,
 			'current_modification', 'WITH', 'current_modification.const = modification.const AND current_modification.variation = current_variation.id'
 		);
 		

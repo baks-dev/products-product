@@ -23,6 +23,7 @@
 
 namespace BaksDev\Products\Product\Controller\Admin;
 
+use App\Kernel;
 use BaksDev\Core\Controller\AbstractController;
 use BaksDev\Core\Listeners\Event\Security\RoleSecurity;
 use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
@@ -55,6 +56,7 @@ final class EditController extends AbstractController
         $ProductDTO = new ProductDTO();
         $Event->getDto($ProductDTO);
 
+
         // Если передана категория - присваиваем для подгрузки настроект (свойства, ТП)
         if($request->get('category'))
         {
@@ -68,7 +70,7 @@ final class EditController extends AbstractController
             }
         }
 
-        $Info = $entityManager->getRepository(ProductInfo::class)->findOneBy(['product' => $Event->getProduct()]);
+        $Info = $entityManager->getRepository(ProductInfo::class)->findOneBy(['product' => $Event->getMain()]);
         $Info->getDto($ProductDTO->getInfo());
 
         // Форма добавления

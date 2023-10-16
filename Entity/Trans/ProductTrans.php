@@ -49,20 +49,22 @@ class ProductTrans extends EntityEvent
 	#[ORM\Column(type: Types::STRING, length: 100, nullable: false)]
 	private string $name;
 	
-	/** Краткое опсиание */
-	#[ORM\Column(type: Types::TEXT, nullable: true)]
-	private ?string $preview;
+
 	
-	/** Краткое опсиание */
-	#[ORM\Column(type: Types::TEXT, nullable: true)]
-	private ?string $description;
+	public function __construct(ProductEvent $event)
+    {
+        $this->event = $event;
+    }
+
+    public function __toString(): string
+    {
+        return (string) $this->event;
+    }
 	
-	
-	public function __construct(ProductEvent $event) { $this->event = $event; }
-	
-	
-	public function getDto($dto) : mixed
+	public function getDto($dto): mixed
 	{
+        $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
+
 		if($dto instanceof ProductTransInterface)
 		{
 			return parent::getDto($dto);
@@ -72,9 +74,9 @@ class ProductTrans extends EntityEvent
 	}
 	
 	
-	public function setEntity($dto) : mixed
+	public function setEntity($dto): mixed
 	{
-		if($dto instanceof ProductTransInterface)
+		if($dto instanceof ProductTransInterface || $dto instanceof self)
 		{
 			return parent::setEntity($dto);
 		}

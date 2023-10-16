@@ -92,8 +92,8 @@ final class ProductDetailByValue implements ProductDetailByValueInterface
         );
 
         $qb->addSelect('product_trans.name AS product_name')->addGroupBy('product_trans.name');
-        $qb->addSelect('product_trans.preview AS product_preview')->addGroupBy('product_trans.preview');
-        $qb->addSelect('product_trans.description AS product_description')->addGroupBy('product_trans.description');
+//        $qb->addSelect('product_trans.preview AS product_preview')->addGroupBy('product_trans.preview');
+//        $qb->addSelect('product_trans.description AS product_description')->addGroupBy('product_trans.description');
         $qb->leftJoin(
             'product_event',
             ProductEntity\Trans\ProductTrans::TABLE,
@@ -342,7 +342,7 @@ final class ProductDetailByValue implements ProductDetailByValueInterface
 					JSONB_BUILD_OBJECT
 					(
 						'product_img_root', product_offer_modification_image.root,
-						'product_img', CONCAT ( '/upload/".ProductEntity\Offers\Variation\Modification\Image\ProductModificationImage::TABLE."' , '/', product_offer_modification_image.dir, '/', product_offer_modification_image.name, '.'),
+						'product_img', CONCAT ( '/upload/".ProductEntity\Offers\Variation\Modification\Image\ProductModificationImage::TABLE."' , '/', product_offer_modification_image.name),
 						'product_img_ext', product_offer_modification_image.ext,
 						'product_img_cdn', product_offer_modification_image.cdn
 						
@@ -370,7 +370,7 @@ final class ProductDetailByValue implements ProductDetailByValueInterface
 					JSONB_BUILD_OBJECT
 					(
 						'product_img_root', product_offer_variation_image.root,
-						'product_img', CONCAT ( '/upload/".ProductEntity\Offers\Variation\Image\ProductVariationImage::TABLE."' , '/', product_offer_variation_image.dir, '/', product_offer_variation_image.name, '.'),
+						'product_img', CONCAT ( '/upload/".ProductEntity\Offers\Variation\Image\ProductVariationImage::TABLE."' , '/', product_offer_variation_image.name),
 						'product_img_ext', product_offer_variation_image.ext,
 						'product_img_cdn', product_offer_variation_image.cdn
 						
@@ -400,7 +400,7 @@ final class ProductDetailByValue implements ProductDetailByValueInterface
 					JSONB_BUILD_OBJECT
 					(
 						'product_img_root', product_offer_images.root,
-						'product_img', CONCAT ( '/upload/".ProductEntity\Offers\Image\ProductOfferImage::TABLE."' , '/', product_offer_images.dir, '/', product_offer_images.name, '.'),
+						'product_img', CONCAT ( '/upload/".ProductEntity\Offers\Image\ProductOfferImage::TABLE."' , '/', product_offer_images.name),
 						'product_img_ext', product_offer_images.ext,
 						'product_img_cdn', product_offer_images.cdn
 						
@@ -432,7 +432,7 @@ final class ProductDetailByValue implements ProductDetailByValueInterface
 					JSONB_BUILD_OBJECT
 					(
 						'product_img_root', product_photo.root,
-						'product_img', CONCAT ( '/upload/".ProductEntity\Photo\ProductPhoto::TABLE."' , '/', product_photo.dir, '/', product_photo.name, '.'),
+						'product_img', CONCAT ( '/upload/".ProductEntity\Photo\ProductPhoto::TABLE."' , '/', product_photo.name),
 						'product_img_ext', product_photo.ext,
 						'product_img_cdn', product_photo.cdn
 						
@@ -633,7 +633,7 @@ final class ProductDetailByValue implements ProductDetailByValueInterface
     {
         $qb = $this->DBALQueryBuilder->createQueryBuilder(self::class);
 
-        $qb->select('product_event.product')->groupBy('product.id');
+        $qb->select('product_event.main')->groupBy('product.id');
         $qb->addSelect('product_event.id')->addGroupBy('product.event');
 
         $qb->from(ProductEntity\Event\ProductEvent::TABLE, 'product_event');
@@ -655,8 +655,8 @@ final class ProductDetailByValue implements ProductDetailByValueInterface
         );
 
         $qb->addSelect('product_trans.name AS product_name')->addGroupBy('product_trans.name');
-        $qb->addSelect('product_trans.preview AS product_preview')->addGroupBy('product_trans.preview');
-        $qb->addSelect('product_trans.description AS product_description')->addGroupBy('product_trans.description');
+//        $qb->addSelect('product_trans.preview AS product_preview')->addGroupBy('product_trans.preview');
+//        $qb->addSelect('product_trans.description AS product_description')->addGroupBy('product_trans.description');
         $qb->leftJoin(
             'product_event',
             ProductEntity\Trans\ProductTrans::TABLE,
@@ -905,7 +905,7 @@ final class ProductDetailByValue implements ProductDetailByValueInterface
 					JSONB_BUILD_OBJECT
 					(
 						'product_img_root', product_offer_modification_image.root,
-						'product_img', CONCAT ( '/upload/".ProductEntity\Offers\Variation\Modification\Image\ProductModificationImage::TABLE."' , '/', product_offer_modification_image.dir, '/', product_offer_modification_image.name, '.'),
+						'product_img', CONCAT ( '/upload/".ProductEntity\Offers\Variation\Modification\Image\ProductModificationImage::TABLE."' , '/', product_offer_modification_image.name),
 						'product_img_ext', product_offer_modification_image.ext,
 						'product_img_cdn', product_offer_modification_image.cdn
 						
@@ -933,7 +933,7 @@ final class ProductDetailByValue implements ProductDetailByValueInterface
 					JSONB_BUILD_OBJECT
 					(
 						'product_img_root', product_offer_variation_image.root,
-						'product_img', CONCAT ( '/upload/".ProductEntity\Offers\Variation\Image\ProductVariationImage::TABLE."' , '/', product_offer_variation_image.dir, '/', product_offer_variation_image.name, '.'),
+						'product_img', CONCAT ( '/upload/".ProductEntity\Offers\Variation\Image\ProductVariationImage::TABLE."' , '/', product_offer_variation_image.name),
 						'product_img_ext', product_offer_variation_image.ext,
 						'product_img_cdn', product_offer_variation_image.cdn
 						
@@ -963,7 +963,7 @@ final class ProductDetailByValue implements ProductDetailByValueInterface
 					JSONB_BUILD_OBJECT
 					(
 						'product_img_root', product_offer_images.root,
-						'product_img', CONCAT ( '/upload/".ProductEntity\Offers\Image\ProductOfferImage::TABLE."' , '/', product_offer_images.dir, '/', product_offer_images.name, '.'),
+						'product_img', CONCAT ( '/upload/".ProductEntity\Offers\Image\ProductOfferImage::TABLE."' , '/', product_offer_images.name),
 						'product_img_ext', product_offer_images.ext,
 						'product_img_cdn', product_offer_images.cdn
 						
@@ -995,7 +995,7 @@ final class ProductDetailByValue implements ProductDetailByValueInterface
 					JSONB_BUILD_OBJECT
 					(
 						'product_img_root', product_photo.root,
-						'product_img', CONCAT ( '/upload/".ProductEntity\Photo\ProductPhoto::TABLE."' , '/', product_photo.dir, '/', product_photo.name, '.'),
+						'product_img', CONCAT ( '/upload/".ProductEntity\Photo\ProductPhoto::TABLE."' , '/', product_photo.name),
 						'product_img_ext', product_photo.ext,
 						'product_img_cdn', product_photo.cdn
 						

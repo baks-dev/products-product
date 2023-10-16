@@ -42,7 +42,7 @@ class ProductModify extends EntityEvent
 	
 	/** ID события */
 	#[ORM\Id]
-	#[ORM\OneToOne(inversedBy: 'modify', targetEntity: ProductEvent::class, cascade: ['persist'])]
+	#[ORM\OneToOne(inversedBy: 'modify', targetEntity: ProductEvent::class)]
 	#[ORM\JoinColumn(name: 'event', referencedColumnName: 'id')]
 	private ProductEvent $event;
 	
@@ -77,20 +77,24 @@ class ProductModify extends EntityEvent
 		$this->agent = 'console';
 		
 	}
-	
-	
+
 	public function __clone() : void
 	{
 		$this->modDate = new DateTimeImmutable();
-		
 		$this->action = new ModifyAction(ModifyActionEnum::UPDATE);
 		$this->ip = new IpAddress('127.0.0.1');
 		$this->agent = 'console';
 	}
-	
-	
-	public function getDto($dto) : mixed
+
+    public function __toString(): string
+    {
+        return (string) $this->event;
+    }
+
+	public function getDto($dto): mixed
 	{
+        $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
+
 		if($dto instanceof ProductModifyInterface)
 		{
 			return parent::getDto($dto);
@@ -100,9 +104,9 @@ class ProductModify extends EntityEvent
 	}
 	
 	
-	public function setEntity($dto) : mixed
+	public function setEntity($dto): mixed
 	{
-		if($dto instanceof ProductModifyInterface)
+		if($dto instanceof ProductModifyInterface || $dto instanceof self)
 		{
 			return parent::setEntity($dto);
 		}

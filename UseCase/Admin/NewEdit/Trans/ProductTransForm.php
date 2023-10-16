@@ -46,8 +46,8 @@ final class ProductTransForm extends AbstractType
 		);
 		
 		$builder->add('name', TextType::class);
-		$builder->add('preview', TextareaType::class, ['required' => false]);
-		$builder->add('description', TextareaType::class, ['required' => false]);
+//		$builder->add('preview', TextareaType::class, ['required' => false]);
+//		$builder->add('description', TextareaType::class, ['required' => false]);
 		
 	}
 	

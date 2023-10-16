@@ -43,9 +43,18 @@
 		{% endfor %}
 	{% endif %}
 	
-	{% set img_path = root_image.product_img_cdn == true ? CDN_HOST : '' %}
-	{% set root_image_ext = root_image.product_img_cdn == true ? 'medium.'~root_image.product_img_ext : root_image.product_img_ext %}
-	
+
+	{# Обложка #}
+	{% set image_path = '/logo.webp' %}
+
+	{% if root_image.product_img_ext is defined and root_image.product_img_ext is not null %}
+		{% set img_host =  root_image.product_img_cdn == true  ? CDN_HOST : '' %}
+		{% set img_dir = root_image.product_img %}
+		{% set img_file = (img_host is empty ? '/image.' : '/small.') ~ root_image.product_img_ext %}
+		{% set image_path = img_host ~ img_table ~ img_dir ~ img_file %}
+	{% endif %}
+
+
 	<meta property="og:locale" content="{{ app.request.getLocale() }}_{{ app.request.getLocale()|upper }}">
 	<meta property="og:type" content="product">
 	<meta property="og:site_name" content="{{ app.request.host }}">
@@ -54,7 +63,7 @@
 			content="Купить по выгодной цене {{ card.product_name }} от {{ money(card.product_price) }}">
 	<meta property="og:url" content="{{ app.request.uri }}">
 	<meta property="og:image"
-			content="{{ absolute_url( root_image ? img_path ~ root_image.product_img ~ root_image_ext : '/logo.webp' ) }}">
+			content="{{ absolute_url( image_path ) }}">
 	
 	<meta name="twitter:card" content="summary_large_image">
 	<meta name="twitter:site" content="@https://{{ app.request.host }}">
@@ -62,7 +71,7 @@
 	<meta name="twitter:description"
 			content="Купить по выгодной цене {{ card.product_name }} от {{ money(card.product_price) }}">
 	<meta name="twitter:image:src"
-			content="{{ absolute_url( root_image ? img_path ~ root_image.product_img ~ root_image_ext : '/logo.webp' ) }}">
+			content="{{ absolute_url( image_path ) }}">
 
 {% endblock %}
 

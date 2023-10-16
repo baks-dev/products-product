@@ -108,7 +108,7 @@
 
 
 			{{ form_row(variation.quantity.quantity,
-				variation.quantity.quantity.vars.data is not null and loop.first ? { label : 'Наличие'|trans } : { label : false, attr:  { placeholder : 'Наличие'|trans } }
+				variation.quantity.quantity.vars.data is not null and loop.first ? { label : 'Наличие'|trans, attr: { min: 0 } } : { label : false, attr:  { placeholder : 'Наличие'|trans, min: 0  } }
 			) }}
 
 
@@ -117,7 +117,7 @@
 		<div class="w-75">
 
 			{{ form_row(variation.quantity.reserve,
-				variation.quantity.reserve.vars.data is not null and loop.first ? { label : 'Резерв'|trans } : { label : false, attr:  { placeholder : 'Резерв'|trans } }
+				variation.quantity.reserve.vars.data is not null and loop.first ? { label : 'Резерв'|trans, attr: { min: 0 } } : { label : false, attr:  { placeholder : 'Резерв'|trans, min: 0 } }
 			) }}
 
 		</div>

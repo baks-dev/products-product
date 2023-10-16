@@ -37,7 +37,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'product_offer_images')]
-#[ORM\Index(columns: ['dir', 'cdn'])]
 #[ORM\Index(columns: ['root'])]
 class ProductOfferImage extends EntityEvent implements UploadEntityInterface
 {
@@ -52,40 +51,35 @@ class ProductOfferImage extends EntityEvent implements UploadEntityInterface
 
     /** ID торгового предложения */
     #[Assert\NotBlank]
+    #[Assert\Uuid]
     #[ORM\ManyToOne(targetEntity: ProductOffer::class, inversedBy: 'image')]
     #[ORM\JoinColumn(name: 'offer', referencedColumnName: 'id')]
     private ProductOffer $offer;
 
-    /** Название директории */
-    #[Assert\NotBlank]
-    #[Assert\Uuid]
-    #[ORM\Column(type: ProductOfferUid::TYPE, nullable: false)]
-    private ProductOfferUid $dir;
-
     /** Название файла */
     #[Assert\NotBlank]
     #[Assert\Length(max: 100)]
-    #[ORM\Column(type: Types::STRING, nullable: false)]
-    private string $name = 'img';
+    #[ORM\Column(type: Types::STRING)]
+    private string $name;
 
     /** Расширение файла */
     #[Assert\NotBlank]
-    #[Assert\Choice(['svg', 'png', 'jpg', 'jpeg', 'gif', 'webp'])]
-    #[Assert\Length(max: 5)]
-    #[ORM\Column(type: Types::STRING, length: 64, nullable: false)]
-    private string $ext = 'svg';
+    #[Assert\Choice(['png', 'gif', 'jpg', 'jpeg', 'webp'])]
+    #[ORM\Column(type: Types::STRING)]
+    private string $ext;
 
     /** Размер файла */
     #[Assert\NotBlank]
-    #[ORM\Column(type: Types::INTEGER, nullable: false)]
+    #[Assert\Range(max: 1048576)] // 1024 * 1024
+    #[ORM\Column(type: Types::INTEGER)]
     private int $size = 0;
 
     /** Файл загружен на CDN */
-    #[ORM\Column(type: Types::BOOLEAN, nullable: false)]
+    #[ORM\Column(type: Types::BOOLEAN)]
     private bool $cdn = false;
 
     /** Заглавное фото */
-    #[ORM\Column(type: Types::BOOLEAN, nullable: false, options: ['default' => false])]
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
     private bool $root = false;
 
     public function __construct(ProductOffer $offer)
@@ -96,7 +90,12 @@ class ProductOfferImage extends EntityEvent implements UploadEntityInterface
 
     public function __clone()
     {
-        $this->id = new ProductOfferImageUid();
+        $this->id = clone $this->id;
+    }
+
+    public function __toString(): string
+    {
+        return (string) $this->id;
     }
 
     public function getId(): ProductOfferImageUid
@@ -106,7 +105,10 @@ class ProductOfferImage extends EntityEvent implements UploadEntityInterface
 
     public function getDto($dto): mixed
     {
-        if ($dto instanceof ProductOfferImageInterface) {
+        $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
+
+        if ($dto instanceof ProductOfferImageInterface)
+        {
             return parent::getDto($dto);
         }
 
@@ -124,7 +126,7 @@ class ProductOfferImage extends EntityEvent implements UploadEntityInterface
             $dto->setEntityUpload($this);
         }
 
-        if ($dto instanceof ProductOfferImageInterface) {
+        if ($dto instanceof ProductOfferImageInterface || $dto instanceof self) {
             return parent::setEntity($dto);
         }
 
@@ -136,38 +138,53 @@ class ProductOfferImage extends EntityEvent implements UploadEntityInterface
         $this->name = $name;
         $this->ext = $ext;
         $this->size = $size;
-        $this->dir = $this->offer->getId();
+        //$this->dir = $this->offer->getId();
         $this->cdn = false;
     }
 
-    public function updCdn(string $ext): void
+    public function updCdn(?string $ext = null): void
     {
-        $this->ext = $ext;
+        if($ext)
+        {
+            $this->ext = $ext;
+        }
+
         $this->cdn = true;
     }
 
-    public function getUploadDir(): object
+    /**
+     * Ext
+     */
+    public function getExt(): string
     {
-        return $this->offer->getId();
+        return $this->ext;
     }
 
-    public function getFileName(): string
-    {
-        return $this->name.'.'.$this->ext;
-    }
+
+
+
+//    public function getUploadDir(): object
+//    {
+//        return $this->offer->getId();
+//    }
+//
+//    public function getFileName(): string
+//    {
+//        return $this->name.'.'.$this->ext;
+//    }
 
     public function root(): void
     {
         $this->root = true;
     }
 
-    public function getDir(): ProductOfferUid
-    {
-        return $this->dir;
-    }
-
-    public static function getDirName(): string
-    {
-        return  ProductOfferUid::class;
-    }
+//    public function getDir(): ProductOfferUid
+//    {
+//        return $this->dir;
+//    }
+//
+//    public static function getDirName(): string
+//    {
+//        return  ProductOfferUid::class;
+//    }
 }

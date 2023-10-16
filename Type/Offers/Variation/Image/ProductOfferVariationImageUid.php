@@ -25,12 +25,14 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Type\Offers\Variation\Image;
 
+use App\Kernel;
 use BaksDev\Core\Type\UidType\Uid;
+use Symfony\Component\Uid\AbstractUid;
 
 final class ProductOfferVariationImageUid extends Uid
 {
     public const TEST = '0188a99f-d5c5-74f3-8d4f-40437ccd43a2';
     
 	public const TYPE = 'product_variation_image';
-	
+
 }

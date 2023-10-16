@@ -118,12 +118,12 @@
 					{% if offer.quantity is defined %}
 						<div class="w-75">
 
-							{{ form_row(offer.quantity.quantity, offer.quantity.quantity.vars.data ? { label : 'Наличие' } : { label : false, attr : { placeholder : 'Наличие' }} ) }}
+							{{ form_row(offer.quantity.quantity, offer.quantity.quantity.vars.data ? { label : 'Наличие', attr: { min: 0 } } : { label : false, attr : { placeholder : 'Наличие', min: 0 }} ) }}
 						</div>
 
 						<div class="w-75">
 
-							{{ form_row(offer.quantity.reserve, offer.quantity.reserve.vars.data ? { label : 'Резерв' } : { label : false, attr : { placeholder : 'Резерв' }} ) }}
+							{{ form_row(offer.quantity.reserve, offer.quantity.reserve.vars.data ? { label : 'Резерв', attr: { min: 0 } } : { label : false, attr : { placeholder : 'Резерв', min: 0 }} ) }}
 						</div>
 
 					{% endif %}

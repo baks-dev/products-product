@@ -25,8 +25,9 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Repository\CurrentQuantity;
 
-use BaksDev\Products\Product\Entity as ProductEntity;
+use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Price\ProductPrice;
+use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -48,11 +49,11 @@ final class CurrentQuantityByEvent implements CurrentQuantityByEventInterface
 		
 		$qb->select('quantity');
 		
-		$qb->from(ProductEntity\Event\ProductEvent::class, 'event');
+		$qb->from(ProductEvent::class, 'event');
 		
 		
-		$qb->join(ProductEntity\Product::class,
-			'product', 'WITH', 'product.id = event.product'
+		$qb->join(Product::class,
+			'product', 'WITH', 'product.id = event.main'
 		);
 		
 		/** Текущее наличие */

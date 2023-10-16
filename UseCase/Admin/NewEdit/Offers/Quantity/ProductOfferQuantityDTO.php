@@ -33,6 +33,7 @@ final class ProductOfferQuantityDTO implements ProductOfferQuantityInterface
 	
 	/** Резерв */
 	#[Assert\NotBlank]
+	#[Assert\Range(min: 0)]
 	private ?int $reserve = 0;
 	
 	

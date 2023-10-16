@@ -26,6 +26,8 @@
 	
 	<div class="card-body">
 
+
+
 		{{ form_row(form.offer.vars.prototype.categoryOffer, { attr : { value : form.dataOffer.vars.value } }) }}
 		
 		{% if (form.offer.children|first).image is defined %}
@@ -122,11 +124,11 @@
 						
 						<div class="w-75 mb-3">
 							
-							{{ form_widget(form.offer.vars.prototype.quantity.quantity, { attr : { placeholder : 'Наличие' }} ) }}
+							{{ form_widget(form.offer.vars.prototype.quantity.quantity, { attr : { placeholder : 'Наличие', min: 0 }} ) }}
 						</div>
 						
 						<div class="w-75 mb-3">
-							{{ form_widget(form.offer.vars.prototype.quantity.reserve, { attr : { placeholder : 'Резерв' }} ) }}
+							{{ form_widget(form.offer.vars.prototype.quantity.reserve, { attr : { placeholder : 'Резерв', min: 0 }} ) }}
 							
 						</div>
 					

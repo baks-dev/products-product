@@ -232,8 +232,7 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
 		}
 		
 		$qb->addSelect('product_trans.name AS product_name')->addGroupBy('product_trans.name'); // Название продукта
-		$qb->addSelect('product_trans.preview AS product_preview')->addGroupBy('product_trans.preview'
-		); // Превью описание
+		//$qb->addSelect('product_trans.preview AS product_preview')->addGroupBy('product_trans.preview'); // Превью описание
 		
 		$qb->leftJoin(
 			'product_event',
@@ -458,7 +457,6 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
 			'
 		)
 			->addGroupBy('product_offer_modification_image.name')
-			->addGroupBy('product_offer_modification_image.dir')
 			->addGroupBy('product_offer_modification_image.ext')
 			->addGroupBy('product_offer_modification_image.cdn')
 		;
@@ -473,7 +471,6 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
 			'
 		)
 			->addGroupBy('product_offer_variation_image.name')
-			->addGroupBy('product_offer_variation_image.dir')
 			->addGroupBy('product_offer_variation_image.ext')
 			->addGroupBy('product_offer_variation_image.cdn')
 		;
@@ -489,7 +486,6 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
 			'
 		)
 			->addGroupBy('product_offer_images.name')
-			->addGroupBy('product_offer_images.dir')
 			->addGroupBy('product_offer_images.ext')
 			->addGroupBy('product_offer_images.cdn')
 		;
@@ -504,7 +500,6 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
 			product_photo.root = true
 			'
 		)->addGroupBy('product_photo.name')
-			->addGroupBy('product_photo.dir')
 			->addGroupBy('product_photo.ext')
 			->addGroupBy('product_photo.cdn')
 		;
@@ -512,13 +507,13 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
 		$qb->addSelect("
 			CASE
 			 WHEN product_offer_modification_image.name IS NOT NULL THEN
-					CONCAT ( '/upload/".ProductEntity\Offers\Variation\Modification\Image\ProductModificationImage::TABLE."' , '/', product_offer_modification_image.dir, '/', product_offer_modification_image.name, '.')
+					CONCAT ( '/upload/".ProductEntity\Offers\Variation\Modification\Image\ProductModificationImage::TABLE."' , '/', product_offer_modification_image.name)
 			   WHEN product_offer_variation_image.name IS NOT NULL THEN
-					CONCAT ( '/upload/".ProductEntity\Offers\Variation\Image\ProductVariationImage::TABLE."' , '/', product_offer_variation_image.dir, '/', product_offer_variation_image.name, '.')
+					CONCAT ( '/upload/".ProductEntity\Offers\Variation\Image\ProductVariationImage::TABLE."' , '/', product_offer_variation_image.name)
 			   WHEN product_offer_images.name IS NOT NULL THEN
-					CONCAT ( '/upload/".ProductEntity\Offers\Image\ProductOfferImage::TABLE."' , '/', product_offer_images.dir, '/', product_offer_images.name, '.')
+					CONCAT ( '/upload/".ProductEntity\Offers\Image\ProductOfferImage::TABLE."' , '/', product_offer_images.name)
 			   WHEN product_photo.name IS NOT NULL THEN
-					CONCAT ( '/upload/".ProductEntity\Photo\ProductPhoto::TABLE."' , '/', product_photo.dir, '/', product_photo.name, '.')
+					CONCAT ( '/upload/".ProductEntity\Photo\ProductPhoto::TABLE."' , '/', product_photo.name)
 			   ELSE NULL
 			END AS product_image
 		"

@@ -41,7 +41,7 @@ final class UniqProductUrlQuery implements UniqProductUrlInterface
 	
 	/** Метод проверяет, имееется ли указанный URL карточки, и что он не пренадлежить новой (редактируемой)  */
 	
-	public function get(string $url, ProductUid $product) : mixed
+	public function get(string $url, ProductUid $product): mixed
 	{
 		$qbSub = $this->connection->createQueryBuilder();
 		$qbSub->select('1');

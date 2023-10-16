@@ -17,14 +17,22 @@
 			{% for photo in form.photo %}
 				
 				<div class="item-collection-photo">
-					
-					{% set img_path = photo.vars.data.cdn is defined and photo.vars.data.cdn == true ? CDN_HOST : '' %}
-					
+
+					{# Обложка  #}
+					{% set image_path = '/assets/img/blank.svg' %}
+
+					{% if photo.vars.data.ext is defined and photo.vars.data.ext is not null %}
+						{% set img_host =  photo.vars.data.cdn == true  ? CDN_HOST : '' %}
+						{% set img_table = '/upload/' ~ constant('BaksDev\\Products\\Product\\Entity\\Photo\\ProductPhoto::TABLE')~'/' %}
+						{% set img_dir = photo.vars.data.name %}
+						{% set img_file = (img_host is empty ? '/image.' : '/small.') ~ photo.vars.data.ext %}
+						{% set image_path = img_host ~ img_table ~ img_dir ~ img_file %}
+					{% endif %}
+
+
 					<label class="icon rounded-1 bg-contain lazy position-relative image-input"
 							style="width: 150px; height: 200px;"
-							
-							data-bg="{{ photo.vars.data.name is defined and photo.vars.data.name is not null ?
-							img_path ~ '/upload/' ~ constant('BaksDev\\Products\\Product\\Entity\\Photo\\ProductPhoto::TABLE') ~'/' ~ photo.vars.data.dir ~'/'~ photo.vars.data.name~'.'~photo.vars.data.ext  : '/assets/img/blank.svg' }}"
+							data-bg="{{ image_path }}"
 					>
 						
 						<div class="position-absolute top-0 start-100 rounded-circle border p-2 ms-1 d-flex align-items-center justify-content-center"

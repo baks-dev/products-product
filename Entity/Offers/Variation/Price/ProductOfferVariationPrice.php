@@ -60,22 +60,27 @@ class ProductOfferVariationPrice extends EntityEvent
         $this->variation = $variation;
         $this->currency = new Currency();
     }
-    
 
-    public function getDto($dto) : mixed
+    public function __toString(): string
     {
+        return (string) $this->variation;
+    }
+
+    public function getDto($dto): mixed
+    {
+        $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
+
         if($dto instanceof ProductOfferVariationPriceInterface)
         {
-			
             return parent::getDto($dto);
         }
         
         throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
     }
     
-    public function setEntity($dto) : mixed
+    public function setEntity($dto): mixed
     {
-        if($dto instanceof ProductOfferVariationPriceInterface)
+        if($dto instanceof ProductOfferVariationPriceInterface || $dto instanceof self)
         {
 			if(empty($dto->getPrice()?->getValue()))
 			{

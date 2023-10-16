@@ -72,7 +72,7 @@ final class ProductOffersVariationCollectionDTO implements ProductVariationInter
     /** Постоянный уникальный идентификатор варианта */
     public function getConst(): ProductVariationConst
     {
-        if(!(new ReflectionProperty($this::class, 'const'))->isInitialized($this))
+        if(!(new ReflectionProperty(self::class, 'const'))->isInitialized($this))
         {
             $this->const = new ProductVariationConst();
         }
@@ -83,7 +83,7 @@ final class ProductOffersVariationCollectionDTO implements ProductVariationInter
 
     public function setConst(ProductVariationConst $const): void
     {
-        if(!(new ReflectionProperty($this::class, 'const'))->isInitialized($this))
+        if(!(new ReflectionProperty(self::class, 'const'))->isInitialized($this))
         {
             $this->const = $const;
         }

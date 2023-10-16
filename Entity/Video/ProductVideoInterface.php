@@ -25,8 +25,8 @@ namespace BaksDev\Products\Product\Entity\Video;
 
 interface ProductVideoInterface
 {
-	public function getEntityUpload() : mixed;
-	
-	public function setEntityUpload(mixed $entityUpload) : void;
+//	public function getEntityUpload(): mixed;
+//
+//	public function setEntityUpload(mixed $entityUpload) : void;
 	
 }

@@ -43,7 +43,7 @@ final class DeleteControllerTest extends WebTestCase
 
 
     /** Доступ по роли */
-    public function testRoleProductSuccessful(): void
+    public function testRoleSuccessful(): void
     {
         // Получаем одно из событий
         $Event = self::$identifier;

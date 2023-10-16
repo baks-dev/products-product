@@ -23,6 +23,7 @@
 
 namespace BaksDev\Products\Product\Type\Id;
 
+use App\Kernel;
 use BaksDev\Core\Type\UidType\Uid;
 use Symfony\Component\Uid\AbstractUid;
 
@@ -42,9 +43,8 @@ final class ProductUid extends Uid
         mixed $option = null
     ) {
 
-
         parent::__construct($value);
-        
+
         $this->attr = $attr;
         $this->option = $option;
     }

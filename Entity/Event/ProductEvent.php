@@ -28,6 +28,7 @@ use BaksDev\Core\Type\Locale\Locale;
 use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
 use BaksDev\Products\Product\Entity\Active\ProductActive;
 use BaksDev\Products\Product\Entity\Category\ProductCategory;
+use BaksDev\Products\Product\Entity\Description\ProductDescription;
 use BaksDev\Products\Product\Entity\Files\ProductFiles;
 use BaksDev\Products\Product\Entity\Modify\ProductModify;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
@@ -50,7 +51,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'product_event')]
-#[ORM\Index(columns: ['product'])]
+#[ORM\Index(columns: ['main'])]
 class ProductEvent extends EntityEvent
 {
     public const TABLE = 'product_event';
@@ -66,7 +67,7 @@ class ProductEvent extends EntityEvent
     #[Assert\NotBlank]
     #[Assert\Uuid]
     #[ORM\Column(type: ProductUid::TYPE, nullable: false)]
-    private ?ProductUid $product = null;
+    private ?ProductUid $main = null;
 
     /** Категории */
     #[Assert\Valid]
@@ -91,6 +92,11 @@ class ProductEvent extends EntityEvent
     #[Assert\Valid]
     #[ORM\OneToMany(mappedBy: 'event', targetEntity: ProductTrans::class, cascade: ['all'])]
     private Collection $translate;
+
+    /** Перевод */
+    #[Assert\Valid]
+    #[ORM\OneToMany(mappedBy: 'event', targetEntity: ProductDescription::class, cascade: ['all'])]
+    private Collection $description;
 
     /** Фото продукта */
     #[Assert\Valid]
@@ -125,14 +131,17 @@ class ProductEvent extends EntityEvent
     public function __construct()
     {
         $this->id = new ProductEventUid();
-        // $this->active = new Active($this);
-        // $this->price = new Price($this);
         $this->modify = new ProductModify($this);
     }
 
     public function __clone()
     {
-        $this->id = new ProductEventUid();
+        $this->id = clone $this->id;
+    }
+
+    public function __toString(): string
+    {
+        return (string) $this->id;
     }
 
     public function getId(): ProductEventUid
@@ -140,28 +149,21 @@ class ProductEvent extends EntityEvent
         return $this->id;
     }
 
-    public function getProduct(): ?ProductUid
+
+    public function getMain(): ?ProductUid
     {
-        return $this->product;
+        return $this->main;
     }
 
-    public function setProduct(ProductUid|Product $product): void
+    public function setMain(ProductUid|Product $main): void
     {
-        $this->product = $product instanceof Product ? $product->getId() : $product;
+        $this->main = $main instanceof Product ? $main->getId() : $main;
     }
 
-    //    public function isModifyActionEquals(ModifyActionEnum $action) : bool
-    //    {
-    //        return $this->modify->equals($action);
-    //    }
-
-    /**
-     * @param mixed $dto
-     *
-     * @throws Exception
-     */
     public function getDto($dto): mixed
     {
+        $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
+
         if($dto instanceof ProductEventInterface)
         {
             return parent::getDto($dto);
@@ -170,14 +172,9 @@ class ProductEvent extends EntityEvent
         throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
     }
 
-    /**
-     * @param mixed $dto
-     *
-     * @throws Exception
-     */
     public function setEntity($dto): mixed
     {
-        if($dto instanceof ProductEventInterface)
+        if($dto instanceof ProductEventInterface || $dto instanceof self)
         {
             return parent::setEntity($dto);
         }
@@ -201,10 +198,6 @@ class ProductEvent extends EntityEvent
         return $name;
     }
 
-    public function getCategory(): Collection
-    {
-        return $this->category;
-    }
 
     /**
      * Метод возвращает идентификатор корневой категории продукта
@@ -224,9 +217,38 @@ class ProductEvent extends EntityEvent
         return $filter->current()->getCategory();
     }
 
+    public function getCategory(): Collection
+    {
+        return $this->category;
+    }
 
     public function getOffer(): Collection
     {
         return $this->offer;
     }
+
+    /**
+     * Photo
+     */
+    public function getPhoto(): Collection
+    {
+        return $this->photo;
+    }
+
+    /**
+     * File
+     */
+    public function getFile(): Collection
+    {
+        return $this->file;
+    }
+
+    /**
+     * Video
+     */
+    public function getVideo(): Collection
+    {
+        return $this->video;
+    }
+
 }

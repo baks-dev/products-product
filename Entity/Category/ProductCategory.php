@@ -57,13 +57,16 @@ class ProductCategory extends EntityEvent
     #[Assert\Type('bool')]
 	#[ORM\Column(type: Types::BOOLEAN, nullable: false)]
 	private bool $root = false;
-	
-	
+
 	public function __construct(ProductEvent $event)
 	{
 		$this->event = $event;
 	}
-	
+
+    public function __toString(): string
+    {
+        return (string) $this->event;
+    }
 	
 	public function getCategory() : ProductCategoryUid
 	{
@@ -78,20 +81,22 @@ class ProductCategory extends EntityEvent
         return $this->root;
     }
 
-
-	public function getDto($dto) : mixed
+	public function getDto($dto): mixed
 	{
+        $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
+
 		if($dto instanceof ProductCategoryInterface)
 		{
 			return parent::getDto($dto);
 		}
+
 		throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
 	}
 	
 	
-	public function setEntity($dto) : mixed
+	public function setEntity($dto): mixed
 	{
-		if($dto instanceof ProductCategoryInterface)
+		if($dto instanceof ProductCategoryInterface || $dto instanceof self)
 		{
 			return parent::setEntity($dto);
 		}

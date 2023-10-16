@@ -25,8 +25,8 @@ namespace BaksDev\Products\Product\Entity\Files;
 
 interface ProductFilesInterface
 {
-	public function getEntityUpload() : mixed;
-	
-	public function setEntityUpload(mixed $entityUpload) : void;
+//	public function getEntityUpload(): mixed;
+//
+//	public function setEntityUpload(mixed $entityUpload) : void;
 	
 }

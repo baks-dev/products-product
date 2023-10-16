@@ -23,6 +23,10 @@
 
 namespace BaksDev\Products\Product\Repository\ProductDetail;
 
+use BaksDev\Products\Product\Entity\Event\ProductEvent;
+use BaksDev\Products\Product\Entity\Offers\ProductOffer;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
+use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
@@ -34,9 +38,9 @@ interface ProductDetailByUidInterface
      * Метод возвращает детальную информацию о продукте по его идентификаторам события, ТП, вариантов и модификаций.
      */
     public function fetchProductDetailByEventAssociative(
-        ProductEventUid $event,
-        ?ProductOfferUid $offer = null,
-        ?ProductVariationUid $variation = null,
-        ?ProductModificationUid $modification = null,
-    ): array|bool;
+        ProductEvent|ProductEventUid|string $event,
+        ProductOffer|ProductOfferUid|string|null $offer = null,
+        ProductVariation|ProductVariationUid|string|null $variation = null,
+        ProductModification|ProductModificationUid|string|null $modification = null,
+    ): ?array;
 }

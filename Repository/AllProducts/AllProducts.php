@@ -70,7 +70,7 @@ final class AllProducts implements AllProductsInterface
         $qb->leftJoin('product', Entity\Event\ProductEvent::TABLE, 'product_event', 'product_event.id = product.event');
 
         $qb->addSelect('product_trans.name AS product_name');
-        $qb->addSelect('product_trans.preview AS product_preview');
+        //$qb->addSelect('product_trans.preview AS product_preview');
         $qb->leftJoin(
             'product_event',
             Entity\Trans\ProductTrans::TABLE,
@@ -276,11 +276,11 @@ final class AllProducts implements AllProductsInterface
         $qb->addSelect("
 			CASE
 			   WHEN product_offer_variation_image.name IS NOT NULL THEN
-					CONCAT ( '/upload/".Entity\Offers\Variation\Image\ProductVariationImage::TABLE."' , '/', product_offer_variation_image.dir, '/', product_offer_variation_image.name, '.')
+					CONCAT ( '/upload/".Entity\Offers\Variation\Image\ProductVariationImage::TABLE."' , '/', product_offer_variation_image.name)
 			   WHEN product_offer_images.name IS NOT NULL THEN
-					CONCAT ( '/upload/".Entity\Offers\Image\ProductOfferImage::TABLE."' , '/', product_offer_images.dir, '/', product_offer_images.name, '.')
+					CONCAT ( '/upload/".Entity\Offers\Image\ProductOfferImage::TABLE."' , '/', product_offer_images.name)
 			   WHEN product_photo.name IS NOT NULL THEN
-					CONCAT ( '/upload/".Entity\Photo\ProductPhoto::TABLE."' , '/', product_photo.dir, '/', product_photo.name, '.')
+					CONCAT ( '/upload/".Entity\Photo\ProductPhoto::TABLE."' , '/', product_photo.name)
 			   ELSE NULL
 			END AS product_image
 		"
@@ -355,7 +355,7 @@ final class AllProducts implements AllProductsInterface
                 ->addSearchEqualUid('product_offer_variation.id')
                 ->addSearchEqualUid('product_offer_modification.id')
                 ->addSearchLike('product_trans.name')
-                ->addSearchLike('product_trans.preview')
+                //->addSearchLike('product_trans.preview')
                 ->addSearchLike('product_info.article')
                 ->addSearchLike('product_offer.article')
                 ->addSearchLike('product_offer_modification.article')

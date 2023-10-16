@@ -31,17 +31,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 final class PhotoCollectionDTO implements ProductPhotoInterface
 {
 	/** Файл загрузки фото */
-	#[Assert\File(
-		maxSize: '2048k',
-		mimeTypes: [
-			'image/png',
-			'image/gif',
-			'image/jpeg',
-			'image/pjpeg',
-			'image/webp',
-		],
-		mimeTypesMessage: 'Please upload a valid file'
-	)]
 	public ?File $file = null;
 	
 	private ?string $name = null;
@@ -53,14 +42,7 @@ final class PhotoCollectionDTO implements ProductPhotoInterface
 	private bool $cdn = false;
 	
 	private bool $root = false;
-	
-	private ProductEventUid|null $dir = null;
-	
-	
-	/** Сущность для загрузки и обновления файла  */
-	private mixed $entityUpload = null;
-	
-	
+
 
 	public function getName() : ?string
 	{
@@ -95,19 +77,6 @@ final class PhotoCollectionDTO implements ProductPhotoInterface
 	{
 		$this->cdn = $cdn;
 	}
-	
-	
-
-	public function getDir() : ?ProductEventUid
-	{
-		return $this->dir;
-	}
-
-	public function setDir(?ProductEventUid $dir) : void
-	{
-		$this->dir = $dir;
-	}
-	
 
 	
 	public function getRoot() : bool
@@ -131,24 +100,6 @@ final class PhotoCollectionDTO implements ProductPhotoInterface
 	{
 		$this->size = $size;
 	}
-	
-	
-	/**
-	 * @return mixed
-	 */
-	public function getEntityUpload() : mixed
-	{
-		return $this->entityUpload;
-	}
-	
-	
-	/**
-	 * @param mixed $entityUpload
-	 */
-	public function setEntityUpload(mixed $entityUpload) : void
-	{
-		$this->entityUpload = $entityUpload;
-	}
-	
+
 }
 

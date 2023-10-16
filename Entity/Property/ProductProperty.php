@@ -23,9 +23,9 @@
 
 namespace BaksDev\Products\Product\Entity\Property;
 
+use BaksDev\Core\Entity\EntityEvent;
 use BaksDev\Products\Category\Type\Section\Field\Id\ProductCategorySectionFieldUid;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
-use BaksDev\Core\Entity\EntityEvent;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use InvalidArgumentException;
@@ -56,12 +56,21 @@ class ProductProperty extends EntityEvent
 	private ?string $value = null;
 	
 	
-	public function __construct(ProductEvent $event) { $this->event = $event; }
+	public function __construct(ProductEvent $event)
+    {
+        $this->event = $event;
+    }
+
+    public function __toString(): string
+    {
+        return (string) $this->event;
+    }
 	
-	
-	public function getDto($dto) : mixed
+	public function getDto($dto): mixed
 	{
-		if($dto instanceof ProductPropertyInterface)
+        $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
+
+		if($dto instanceof ProductPropertyInterface || $dto instanceof self)
 		{
 			return parent::getDto($dto);
 		}
@@ -70,9 +79,9 @@ class ProductProperty extends EntityEvent
 	}
 	
 	
-	public function setEntity($dto) : mixed
+	public function setEntity($dto): mixed
 	{
-		if($dto instanceof ProductPropertyInterface)
+		if($dto instanceof ProductPropertyInterface || $dto instanceof self)
 		{
 			return parent::setEntity($dto);
 		}

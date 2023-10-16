@@ -32,19 +32,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 final class ProductModificationImageCollectionDTO implements ProductModificationImageInterface
 {
-	
-	/** Обложка категории */
-	#[Assert\File(
-		maxSize: '2048k',
-		mimeTypes: [
-			'image/png',
-			'image/gif',
-			'image/jpeg',
-			'image/pjpeg',
-			'image/webp',
-		],
-		mimeTypesMessage: 'Please upload a valid file'
-	)]
+
 	public ?File $file = null;
 	
 	/** Название файла */
@@ -61,13 +49,7 @@ final class ProductModificationImageCollectionDTO implements ProductModification
 	
 	/** Размер файла */
 	private ?int $size = null;
-	
-	/** Диреткория загрузки файла */
-	private ?ProductOfferUid $dir = null;
-	
-	/** Сущность для загрузки и обновления файла  */
-	private mixed $entityUpload = null;
-	
+
 	
 	
 	/** Название файла */
@@ -76,12 +58,7 @@ final class ProductModificationImageCollectionDTO implements ProductModification
 	{
 		return $this->name;
 	}
-	
-	
-	public function setName(?string $name) : void
-	{
-		$this->name = $name;
-	}
+
 	
 	
 	/** Расширение */
@@ -90,12 +67,7 @@ final class ProductModificationImageCollectionDTO implements ProductModification
 	{
 		return $this->ext;
 	}
-	
-	
-	public function setExt(?string $ext) : void
-	{
-		$this->ext = $ext;
-	}
+
 	
 	
 	/** Флаг загрузки CDN */
@@ -105,40 +77,7 @@ final class ProductModificationImageCollectionDTO implements ProductModification
 		return $this->cdn;
 	}
 	
-	
-	public function setCdn(bool $cdn) : void
-	{
-		$this->cdn = $cdn;
-	}
-	
-	
-	/** Диреткория загрузки файла */
-	
-	public function getDir() : ?ProductOfferUid
-	{
-		return $this->dir;
-	}
-	
-	
-	public function setDir(ProductOfferUid $dir) : void
-	{
-		$this->dir = $dir;
-	}
-	
-	
-	/** Идентификатор торгового предложения */
-	
-	public function getOffer() : ?ProductOffer
-	{
-		return $this->offer;
-	}
-	
-	
-	public function setOffer(?ProductOffer $imgOffer) : void
-	{
-		$this->offer = $imgOffer;
-	}
-	
+
 	
 	/** Главное фото */
 	
@@ -160,26 +99,6 @@ final class ProductModificationImageCollectionDTO implements ProductModification
 	{
 		return $this->size;
 	}
-	
-	
-	public function setSize(?int $size) : void
-	{
-		$this->size = $size;
-	}
-	
-	
 
-	public function getEntityUpload() : mixed
-	{
-		return $this->entityUpload;
-	}
-	
-
-	public function setEntityUpload(mixed $entityUpload) : void
-	{
-		$this->entityUpload = $entityUpload;
-	}
-	
-	
 }
 

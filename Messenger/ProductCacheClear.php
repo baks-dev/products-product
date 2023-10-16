@@ -29,7 +29,7 @@ use BaksDev\Core\Cache\AppCacheInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
-#[AsMessageHandler(fromTransport: 'sync')]
+#[AsMessageHandler]
 final class ProductCacheClear
 {
     private AppCacheInterface $cache;
@@ -49,6 +49,6 @@ final class ProductCacheClear
         $cache = $this->cache->init('Product');
         $cache->clear();
 
-        $this->messageDispatchLogger->info('Очистили кеш Product', [__LINE__ => __FILE__]);
+        $this->messageDispatchLogger->info('Очистили кеш Product', [__FILE__.':'.__LINE__]);
     }
 }

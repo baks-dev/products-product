@@ -20,6 +20,7 @@ namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Seo;
 
 use BaksDev\Core\Type\Locale\Locale;
 use BaksDev\Products\Product\Entity\Seo\ProductSeoInterface;
+use ReflectionProperty;
 use Symfony\Component\Validator\Constraints as Assert;
 
 final class SeoCollectionDTO implements ProductSeoInterface
@@ -51,14 +52,14 @@ final class SeoCollectionDTO implements ProductSeoInterface
 	
 	
 	/** Локаль */
-	
-	public function setLocal(string $local) : void
-	{
-		if(!(new \ReflectionProperty($this::class, 'local'))->isInitialized($this))
-		{
-			$this->local = new Locale($local);
-		}
-	}
+
+    public function setLocal(Locale|string $local) : void
+    {
+        if(!(new ReflectionProperty(self::class, 'local'))->isInitialized($this))
+        {
+            $this->local = $local instanceof Locale ? $local : new Locale($local);
+        }
+    }
 	
 	
 	/**
@@ -143,7 +144,7 @@ final class SeoCollectionDTO implements ProductSeoInterface
 	//    /**
 	//     * @return string
 	//     */
-	//    public function getTitle() : string
+	//    public function getTitle(): string
 	//    {
 	//        return $this->title;
 	//    }
@@ -151,7 +152,7 @@ final class SeoCollectionDTO implements ProductSeoInterface
 	//    /**
 	//     * @return string
 	//     */
-	//    public function getKeywords() : string
+	//    public function getKeywords(): string
 	//    {
 	//        return $this->keywords;
 	//    }
@@ -159,7 +160,7 @@ final class SeoCollectionDTO implements ProductSeoInterface
 	//    /**
 	//     * @return string
 	//     */
-	//    public function getDescription() : string
+	//    public function getDescription(): string
 	//    {
 	//        return $this->description;
 	//    }

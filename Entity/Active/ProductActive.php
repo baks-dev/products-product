@@ -47,7 +47,7 @@ class ProductActive extends EntityEvent
     #[Assert\NotBlank]
     #[Assert\Type(ProductEvent::class)]
 	#[ORM\Id]
-	#[ORM\OneToOne(inversedBy: 'active', targetEntity: ProductEvent::class, cascade: ['persist'])]
+	#[ORM\OneToOne(inversedBy: 'active', targetEntity: ProductEvent::class)]
 	#[ORM\JoinColumn(name: 'event', referencedColumnName: 'id')]
 	private ProductEvent $event;
 	
@@ -71,25 +71,24 @@ class ProductActive extends EntityEvent
 		$this->event = $event;
 		$this->activeFrom = new DateTimeImmutable();
 	}
-	
-	
-	/**
-	 * @throws Exception
-	 */
-	public function getDto($dto) : mixed
+
+    public function __toString(): string
+    {
+        return (string) $this->event;
+    }
+
+	public function getDto($dto): mixed
 	{
+        $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
+
 		if($dto instanceof ProductActiveInterface)
 		{
 			return parent::getDto($dto);
 		}
 		throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
 	}
-	
-	
-	/**
-	 * @throws Exception
-	 */
-	public function setEntity($dto) : mixed
+
+	public function setEntity($dto): mixed
 	{
 		$format = "H:i";
 		
@@ -107,7 +106,7 @@ class ProductActive extends EntityEvent
 			$dto->setActiveTo($getActiveTo);
 		}
 		
-		if($dto instanceof ProductActiveInterface)
+		if($dto instanceof ProductActiveInterface || $dto instanceof self)
 		{
 			return parent::setEntity($dto);
 		}

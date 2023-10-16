@@ -25,25 +25,12 @@ namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Image;
 
 
 use BaksDev\Products\Product\Entity\Offers\Variation\Image\ProductVariationImageInterface;
-use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\Validator\Constraints as Assert;
 
 final class ProductVariationImageCollectionDTO implements ProductVariationImageInterface
 {
 	
 	/** Обложка категории */
-	#[Assert\File(
-		maxSize: '2048k',
-		mimeTypes: [
-			'image/png',
-			'image/gif',
-			'image/jpeg',
-			'image/pjpeg',
-			'image/webp',
-		],
-		mimeTypesMessage: 'Please upload a valid file'
-	)]
 	public ?File $file = null;
 	
 	/** Название файла */
@@ -60,14 +47,7 @@ final class ProductVariationImageCollectionDTO implements ProductVariationImageI
 	
 	/** Размер файла */
 	private ?int $size = null;
-	
-	/** Диреткория загрузки файла */
-	private ?ProductVariationUid $dir = null;
-	
-	/** Сущность для загрузки и обновления файла  */
-	private mixed $entityUpload = null;
-	
-	
+
 	
 	/** Название файла */
 	
@@ -75,12 +55,7 @@ final class ProductVariationImageCollectionDTO implements ProductVariationImageI
 	{
 		return $this->name;
 	}
-	
-	
-	public function setName(?string $name) : void
-	{
-		$this->name = $name;
-	}
+
 	
 	
 	/** Расширение */
@@ -89,12 +64,7 @@ final class ProductVariationImageCollectionDTO implements ProductVariationImageI
 	{
 		return $this->ext;
 	}
-	
-	
-	public function setExt(?string $ext) : void
-	{
-		$this->ext = $ext;
-	}
+
 	
 	
 	/** Флаг загрузки CDN */
@@ -103,41 +73,7 @@ final class ProductVariationImageCollectionDTO implements ProductVariationImageI
 	{
 		return $this->cdn;
 	}
-	
-	
-	public function setCdn(bool $cdn) : void
-	{
-		$this->cdn = $cdn;
-	}
-	
-	
-	/** Диреткория загрузки файла */
-	
-	public function getDir() : ?ProductVariationUid
-	{
-		return $this->dir;
-	}
-	
-	
-	public function setDir(ProductVariationUid $dir) : void
-	{
-		$this->dir = $dir;
-	}
-	
-	
-//	/** Идентификатор торгового предложения */
-//
-//	public function getOffer() : ?ProductOffer
-//	{
-//		return $this->offer;
-//	}
-//
-//
-//	public function setOffer(?ProductOffer $imgOffer) : void
-//	{
-//		$this->offer = $imgOffer;
-//	}
-//
+
 	
 	/** Главное фото */
 	
@@ -152,33 +88,13 @@ final class ProductVariationImageCollectionDTO implements ProductVariationImageI
 		$this->root = $root;
 	}
 	
-	
+
 	/** Размер файла */
-	
+
 	public function getSize() : ?int
 	{
 		return $this->size;
 	}
-	
-	
-	public function setSize(?int $size) : void
-	{
-		$this->size = $size;
-	}
-	
-	
 
-	public function getEntityUpload() : mixed
-	{
-		return $this->entityUpload;
-	}
-	
-
-	public function setEntityUpload(mixed $entityUpload) : void
-	{
-		$this->entityUpload = $entityUpload;
-	}
-	
-	
 }
 

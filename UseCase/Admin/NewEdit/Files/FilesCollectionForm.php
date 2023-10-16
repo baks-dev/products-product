@@ -34,7 +34,7 @@ final class FilesCollectionForm extends AbstractType
 				[
 					'label' => false,
 					'required' => false,
-					'attr' => ['accept' => ".doc, .docx, .xls, .xlsx, .pdf"],
+					'attr' => ['accept' => ".doc, .docx, .xls, .xlsx, .csv, .pdf, .zip, .rar"],
 				]
 			)
 		;

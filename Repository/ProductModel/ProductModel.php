@@ -86,8 +86,8 @@ final class ProductModel implements ProductModelInterface
 		);
 		
 		$qb->addSelect('product_trans.name AS product_name')->addGroupBy('product_trans.name');
-		$qb->addSelect('product_trans.preview AS product_preview')->addGroupBy('product_trans.preview');
-		$qb->addSelect('product_trans.description AS product_description')->addGroupBy('product_trans.description');
+//		$qb->addSelect('product_trans.preview AS product_preview')->addGroupBy('product_trans.preview');
+//		$qb->addSelect('product_trans.description AS product_description')->addGroupBy('product_trans.description');
 		$qb->leftJoin(
 			'product_event',
 			ProductEntity\Trans\ProductTrans::TABLE,
@@ -373,7 +373,7 @@ final class ProductModel implements ProductModelInterface
 					JSONB_BUILD_OBJECT
 					(
 						'product_img_root', product_offer_modification_image.root,
-						'product_img', CONCAT ( '/upload/".ProductEntity\Offers\Variation\Modification\Image\ProductModificationImage::TABLE."' , '/', product_offer_modification_image.dir, '/', product_offer_modification_image.name, '.'),
+						'product_img', CONCAT ( '/upload/".ProductEntity\Offers\Variation\Modification\Image\ProductModificationImage::TABLE."' , '/', product_offer_modification_image.name),
 						'product_img_ext', product_offer_modification_image.ext,
 						'product_img_cdn', product_offer_modification_image.cdn
 						
@@ -402,7 +402,7 @@ final class ProductModel implements ProductModelInterface
 					JSONB_BUILD_OBJECT
 					(
 						'product_img_root', product_offer_variation_image.root,
-						'product_img', CONCAT ( '/upload/".ProductEntity\Offers\Variation\Image\ProductVariationImage::TABLE."' , '/', product_offer_variation_image.dir, '/', product_offer_variation_image.name, '.'),
+						'product_img', CONCAT ( '/upload/".ProductEntity\Offers\Variation\Image\ProductVariationImage::TABLE."' , '/', product_offer_variation_image.name),
 						'product_img_ext', product_offer_variation_image.ext,
 						'product_img_cdn', product_offer_variation_image.cdn
 						
@@ -434,7 +434,7 @@ final class ProductModel implements ProductModelInterface
 					JSONB_BUILD_OBJECT
 					(
 						'product_img_root', product_offer_images.root,
-						'product_img', CONCAT ( '/upload/".ProductEntity\Offers\Image\ProductOfferImage::TABLE."' , '/', product_offer_images.dir, '/', product_offer_images.name, '.'),
+						'product_img', CONCAT ( '/upload/".ProductEntity\Offers\Image\ProductOfferImage::TABLE."' , '/', product_offer_images.name),
 						'product_img_ext', product_offer_images.ext,
 						'product_img_cdn', product_offer_images.cdn
 						
@@ -465,7 +465,7 @@ final class ProductModel implements ProductModelInterface
 					JSONB_BUILD_OBJECT
 					(
 						'product_img_root', product_photo.root,
-						'product_img', CONCAT ( '/upload/".ProductEntity\Photo\ProductPhoto::TABLE."' , '/', product_photo.dir, '/', product_photo.name, '.'),
+						'product_img', CONCAT ( '/upload/".ProductEntity\Photo\ProductPhoto::TABLE."' , '/', product_photo.name),
 						'product_img_ext', product_photo.ext,
 						'product_img_cdn', product_photo.cdn
 						
@@ -624,13 +624,12 @@ final class ProductModel implements ProductModelInterface
 		
 		$qb->addSelect("
 			CASE
-			 WHEN category_cover.dir IS NOT NULL THEN
-					CONCAT ( '/upload/".CategoryEntity\Cover\ProductCategoryCover::TABLE."' , '/', category_cover.dir, '/', category_cover.name, '.')
+			 WHEN category_cover.name IS NOT NULL THEN
+					CONCAT ( '/upload/".CategoryEntity\Cover\ProductCategoryCover::TABLE."' , '/', category_cover.name)
 			   		ELSE NULL
 			END AS category_cover_dir
 		"
 		)
-			->addGroupBy('category_cover.dir')
 			->addGroupBy('category_cover.name')
 		;
 		

@@ -69,13 +69,12 @@ if (searcOffer)
     });
 }
 
-
-
-
 function searcherOffer() {
 
     let $filter = this.value.toUpperCase();
     let $counter = 0;
+
+    let $ul = document.getElementById("searcher-offer");
 
     $ul.querySelectorAll('li').forEach(function (item) {
 

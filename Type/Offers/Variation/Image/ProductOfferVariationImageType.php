@@ -29,13 +29,13 @@ use BaksDev\Core\Type\UidType\UidType;
 
 final class ProductOfferVariationImageType extends UidType
 {
-	public function getClassType() : string
+	public function getClassType(): string
 	{
 		return ProductOfferVariationImageUid::class;
 	}
 	
 	
-	public function getName() : string
+	public function getName(): string
 	{
 		return ProductOfferVariationImageUid::TYPE;
 	}

@@ -61,14 +61,10 @@ final class ProductEventByArticle implements ProductEventByArticleInterface
         /** @var Product $Product */
         $Product = $qb->getQuery()->getOneOrNullResult();
 
-
-
         if($Product)
         {
             return $this->entityManager->getRepository(ProductEvent::class)->find($Product->getEvent());
         }
-
-
 
         /** Поиск по артикулу в торговом предложении */
         $qb = $this->entityManager->createQueryBuilder();

@@ -28,7 +28,6 @@ use BaksDev\Products\Category\Repository\CategoryModificationForm\CategoryModifi
 use BaksDev\Products\Category\Repository\CategoryOffersForm\CategoryOffersFormInterface;
 use BaksDev\Products\Category\Repository\CategoryPropertyById\CategoryPropertyByIdInterface;
 use BaksDev\Products\Category\Repository\CategoryVariationForm\CategoryVariationFormInterface;
-use BaksDev\Products\Product\UseCase\Admin\NewEdit;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Category\CategoryCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Property\PropertyCollectionDTO;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -85,7 +84,7 @@ final class ProductForm extends AbstractType
 		
 		/* CATEGORIES CollectionType */
 		$builder->add('category', CollectionType::class, [
-			'entry_type' => NewEdit\Category\CategoryCollectionForm::class,
+			'entry_type' => Category\CategoryCollectionForm::class,
 			'entry_options' => ['label' => false],
 			'label' => false,
 			'by_reference' => false,
@@ -96,7 +95,7 @@ final class ProductForm extends AbstractType
 		
 		/* FILES Collection */
 		$builder->add('file', CollectionType::class, [
-			'entry_type' => NewEdit\Files\FilesCollectionForm::class,
+			'entry_type' => Files\FilesCollectionForm::class,
 			'entry_options' => ['label' => false],
 			'label' => false,
 			'by_reference' => false,
@@ -107,7 +106,7 @@ final class ProductForm extends AbstractType
 		
 		/* SEO Collection */
 		$builder->add('seo', CollectionType::class, [
-			'entry_type' => NewEdit\Seo\SeoCollectionForm::class,
+			'entry_type' => Seo\SeoCollectionForm::class,
 			'entry_options' => ['label' => false],
 			'label' => false,
 			'by_reference' => false,
@@ -118,7 +117,7 @@ final class ProductForm extends AbstractType
 		
 		/* TRANS CollectionType */
 		$builder->add('translate', CollectionType::class, [
-			'entry_type' => NewEdit\Trans\ProductTransForm::class,
+			'entry_type' => Trans\ProductTransForm::class,
 			'entry_options' => ['label' => false],
 			'label' => false,
 			'by_reference' => false,
@@ -126,10 +125,22 @@ final class ProductForm extends AbstractType
 			'allow_add' => true,
 			'prototype_name' => '__trans__',
 		]);
+
+
+        /* TRANS CollectionType */
+        $builder->add('description', CollectionType::class, [
+            'entry_type' => Description\ProductDescriptionForm::class,
+            'entry_options' => ['label' => false],
+            'label' => false,
+            'by_reference' => false,
+            'allow_delete' => true,
+            'allow_add' => true,
+            'prototype_name' => '__description__',
+        ]);
 		
 		/* PHOTOS CollectionType */
 		$builder->add('photo', CollectionType::class, [
-			'entry_type' => NewEdit\Photo\PhotoCollectionForm::class,
+			'entry_type' => Photo\PhotoCollectionForm::class,
 			'entry_options' => ['label' => false],
 			'label' => false,
 			'by_reference' => false,
@@ -140,7 +151,7 @@ final class ProductForm extends AbstractType
 		
 		/* FILES CollectionType */
 		$builder->add('file', CollectionType::class, [
-			'entry_type' => NewEdit\Files\FilesCollectionForm::class,
+			'entry_type' => Files\FilesCollectionForm::class,
 			'entry_options' => ['label' => false],
 			'label' => false,
 			'by_reference' => false,
@@ -151,7 +162,7 @@ final class ProductForm extends AbstractType
 		
 		/* VIDEOS CollectionType */
 		$builder->add('video', CollectionType::class, [
-			'entry_type' => NewEdit\Video\VideoCollectionForm::class,
+			'entry_type' => Video\VideoCollectionForm::class,
 			'entry_options' => ['label' => false],
 			'label' => false,
 			'by_reference' => false,
@@ -173,7 +184,7 @@ final class ProductForm extends AbstractType
 		
 		/* CollectionType */
 		$builder->add('property', CollectionType::class, [
-			'entry_type' => NewEdit\Property\PropertyCollectionForm::class,
+			'entry_type' => Property\PropertyCollectionForm::class,
 			'entry_options' => [
 				'label' => false,
 				'properties' => $propertyCategory,
@@ -185,7 +196,7 @@ final class ProductForm extends AbstractType
 			'prototype_name' => '__properties__',
 		]);
 
-
+        $builder->add('dataOffer', HiddenType::class, ['mapped' => false]);
 
 		$builder->addEventListener(
 			FormEvents::PRE_SET_DATA,
@@ -194,7 +205,8 @@ final class ProductForm extends AbstractType
 				/* @var ProductDTO $data */
 				$data = $event->getData();
 				$form = $event->getForm();
-				
+
+
 				if($data && $propertyCategory)
 				{
 					$sort = 0;
@@ -265,7 +277,7 @@ final class ProductForm extends AbstractType
 		$modificationCategory = $variationCategory ? $this->categoryModification->get($variationCategory->id) : null;
 
 		$builder->add('offer', CollectionType::class, [
-			'entry_type' => NewEdit\Offers\ProductOffersCollectionForm::class,
+			'entry_type' => Offers\ProductOffersCollectionForm::class,
 			'entry_options' => [
 				'label' => false,
 				//'category_id' => $category,
@@ -396,12 +408,12 @@ final class ProductForm extends AbstractType
 					if(!empty($offersCategory) && $data->getOffer()->isEmpty())
 					{
 						
-						$ProductOffersCollectionDTO = new NewEdit\Offers\ProductOffersCollectionDTO();
+						$ProductOffersCollectionDTO = new Offers\ProductOffersCollectionDTO();
 						$ProductOffersCollectionDTO->setCategoryOffer($offersCategory->id);
 
 						if($offersCategory->image)
 						{
-							$ProductOfferImageCollectionDTO = new NewEdit\Offers\Image\ProductOfferImageCollectionDTO();
+							$ProductOfferImageCollectionDTO = new Offers\Image\ProductOfferImageCollectionDTO();
 							$ProductOfferImageCollectionDTO->setRoot(true);
 							$ProductOffersCollectionDTO->addImage($ProductOfferImageCollectionDTO);
 						}
@@ -409,14 +421,14 @@ final class ProductForm extends AbstractType
 						if($variationCategory)
 						{
 
-							$ProductOffersVariationCollectionDTO = new NewEdit\Offers\Variation\ProductOffersVariationCollectionDTO(
+							$ProductOffersVariationCollectionDTO = new Offers\Variation\ProductOffersVariationCollectionDTO(
 							);
 							$ProductOffersVariationCollectionDTO->setCategoryVariation($variationCategory->id);
 							
 							if($variationCategory->image)
 							{
 								$ProductOfferVariationImageCollectionDTO =
-									new NewEdit\Offers\Variation\Image\ProductVariationImageCollectionDTO();
+									new Offers\Variation\Image\ProductVariationImageCollectionDTO();
 								$ProductOfferVariationImageCollectionDTO->setRoot(true);
 								$ProductOffersVariationCollectionDTO->addImage($ProductOfferVariationImageCollectionDTO
 								);
@@ -428,7 +440,7 @@ final class ProductForm extends AbstractType
 							if($modificationCategory)
 							{
 								$ProductOffersVariationModificationCollectionDTO =
-									new NewEdit\Offers\Variation\Modification\ProductOffersVariationModificationCollectionDTO(
+									new Offers\Variation\Modification\ProductOffersVariationModificationCollectionDTO(
 									);
 								$ProductOffersVariationModificationCollectionDTO
 									->setCategoryModification($modificationCategory->id)
@@ -437,7 +449,7 @@ final class ProductForm extends AbstractType
 								if($modificationCategory->image)
 								{
 									$ProductOfferVariationModificationImageCollectionDTO =
-										new NewEdit\Offers\Variation\Modification\Image\ProductModificationImageCollectionDTO();
+										new Offers\Variation\Modification\Image\ProductModificationImageCollectionDTO();
 									$ProductOfferVariationModificationImageCollectionDTO->setRoot(true);
 									$ProductOffersVariationModificationCollectionDTO->addImage($ProductOfferVariationModificationImageCollectionDTO);
 									

@@ -44,10 +44,10 @@ use Symfony\Component\Routing\Annotation\Route;
 #[RoleSecurity('ROLE_PRODUCT')]
 final class QrcodeController extends AbstractController
 {
-    #[Route('/admin/product/qrcode', name: 'admin.qrcode', methods: ['GET', 'POST'])]
+    #[Route('/admin/product/qrcode/{product}', name: 'admin.qrcode', methods: ['GET', 'POST'])]
     public function qrcode(
         ProductDetailByUidInterface $productInfo,
-        #[ParamConverter(ProductEventUid::class)] $product,
+        #[ParamConverter(ProductEventUid::class)] ProductEventUid $product,
         #[ParamConverter(ProductOfferUid::class)] $offer = null,
         #[ParamConverter(ProductVariationUid::class)] $variation = null,
         #[ParamConverter(ProductModificationUid::class)] $modification = null,

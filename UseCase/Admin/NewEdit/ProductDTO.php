@@ -24,6 +24,7 @@
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit;
 
 use ArrayIterator;
+use BaksDev\Core\Type\Device\Device;
 use BaksDev\Core\Type\Locale\Locale;
 use BaksDev\Products\Product\Entity\Event\ProductEventInterface;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
@@ -79,6 +80,9 @@ final class ProductDTO implements ProductEventInterface
     #[Assert\Valid]
     private ArrayCollection $translate;
 
+    #[Assert\Valid]
+    private ArrayCollection $description;
+
 
     //private ArrayCollection $collectionProperty;
 
@@ -96,6 +100,7 @@ final class ProductDTO implements ProductEventInterface
         $this->seo = new ArrayCollection();
         $this->translate = new ArrayCollection();
         $this->video = new ArrayCollection();
+        $this->description = new ArrayCollection();
     }
 
 
@@ -431,6 +436,43 @@ final class ProductDTO implements ProductEventInterface
         if(!$this->translate->contains($trans))
         {
             $this->translate->add($trans);
+        }
+    }
+
+
+    /* DESCRIPTION */
+
+    public function setDescription(ArrayCollection $description): void
+    {
+        $this->description = $description;
+    }
+
+
+    public function getDescription(): ArrayCollection
+    {
+
+        /* Вычисляем расхождение и добавляем неопределенные локали */
+        foreach(Locale::diffLocale($this->description) as $locale)
+        {
+            /** @var Device $device */
+            foreach(Device::cases() as $device)
+            {
+                $ProductDescriptionDTO = new Description\ProductDescriptionDTO();
+                $ProductDescriptionDTO->setLocal($locale);
+                $ProductDescriptionDTO->setDevice($device);
+                $this->addDescription($ProductDescriptionDTO);
+            }
+        }
+
+        return $this->description;
+    }
+
+
+    public function addDescription(Description\ProductDescriptionDTO $trans): void
+    {
+        if(!$this->description->contains($trans))
+        {
+            $this->description->add($trans);
         }
     }
 

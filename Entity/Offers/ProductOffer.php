@@ -116,7 +116,12 @@ class ProductOffer extends EntityEvent
 
     public function __clone()
     {
-        $this->id = new ProductOfferUid();
+        $this->id = clone $this->id;
+    }
+
+    public function __toString(): string
+    {
+        return (string) $this->id;
     }
 
     public function getId(): ProductOfferUid
@@ -134,6 +139,8 @@ class ProductOffer extends EntityEvent
 
     public function getDto($dto): mixed
     {
+        $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
+
         if ($dto instanceof ProductOffersInterface)
         {
             return parent::getDto($dto);
@@ -144,11 +151,28 @@ class ProductOffer extends EntityEvent
 
     public function setEntity($dto): mixed
     {
-        if ($dto instanceof ProductOffersInterface)
+        if ($dto instanceof ProductOffersInterface || $dto instanceof self)
         {
             return parent::setEntity($dto);
         }
 
         throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
     }
+
+    /**
+     * Image
+     */
+    public function getImage(): Collection
+    {
+        return $this->image;
+    }
+
+    /**
+     * Variation
+     */
+    public function getVariation(): Collection
+    {
+        return $this->variation;
+    }
+
 }

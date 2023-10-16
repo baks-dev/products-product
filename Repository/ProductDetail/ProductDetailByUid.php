@@ -82,14 +82,58 @@ final class ProductDetailByUid implements ProductDetailByUidInterface
      * Метод возвращает детальную информацию о продукте по его идентификаторам события, ТП, вариантов и модификаций.
      */
     public function fetchProductDetailByEventAssociative(
-        ProductEventUid $event,
-        ?ProductOfferUid $offer = null,
-        ?ProductVariationUid $variation = null,
-        ?ProductModificationUid $modification = null,
-    ): array|bool {
+        ProductEvent|ProductEventUid|string $event,
+        ProductOffer|ProductOfferUid|string|null $offer = null,
+        ProductVariation|ProductVariationUid|string|null $variation = null,
+        ProductModification|ProductModificationUid|string|null $modification = null,
+    ): ?array {
+
+
+        if($event instanceof ProductEvent)
+        {
+            $event = $event->getId();
+        }
+
+        if(is_string($event))
+        {
+            $event = new ProductEventUid($event);
+        }
+
+
+        if($offer instanceof ProductOffer)
+        {
+            $offer = $offer->getId();
+        }
+
+        if(is_string($offer))
+        {
+            $offer = new ProductOfferUid($offer);
+        }
+
+
+        if($variation instanceof ProductVariation)
+        {
+            $variation = $variation->getId();
+        }
+
+        if(is_string($variation))
+        {
+            $variation = new ProductVariationUid($variation);
+        }
+
+        if($modification instanceof ProductModification)
+        {
+            $modification = $modification->getId();
+        }
+
+        if(is_string($modification))
+        {
+            $modification = new ProductModificationUid($modification);
+        }
+
         $qb = $this->DBALQueryBuilder->createQueryBuilder(self::class);
 
-        $qb->select('product_event.product')->groupBy('product_event.product');
+        $qb->select('product_event.main')->groupBy('product_event.main');
         $qb->addSelect('product_event.id')->addGroupBy('product_event.id');
 
         $qb->from(ProductEvent::TABLE, 'product_event');
@@ -112,8 +156,8 @@ final class ProductDetailByUid implements ProductDetailByUidInterface
         );
 
         $qb->addSelect('product_trans.name AS product_name')->addGroupBy('product_trans.name');
-        $qb->addSelect('product_trans.preview AS product_preview')->addGroupBy('product_trans.preview');
-        $qb->addSelect('product_trans.description AS product_description')->addGroupBy('product_trans.description');
+        //$qb->addSelect('product_trans.preview AS product_preview')->addGroupBy('product_trans.preview');
+        //$qb->addSelect('product_trans.description AS product_description')->addGroupBy('product_trans.description');
         $qb->leftJoin(
             'product_event',
             ProductTrans::TABLE,
@@ -142,7 +186,7 @@ final class ProductDetailByUid implements ProductDetailByUidInterface
             'product_event',
             ProductInfo::TABLE,
             'product_info',
-            'product_info.product = product_event.product '
+            'product_info.product = product_event.main '
         )->addGroupBy('product_info.article');
 
         /* Торговое предложение */
@@ -366,17 +410,14 @@ final class ProductDetailByUid implements ProductDetailByUidInterface
         )
 
         ->addGroupBy('product_offer_variation_image.name')
-        ->addGroupBy('product_offer_variation_image.dir')
         ->addGroupBy('product_offer_variation_image.ext')
         ->addGroupBy('product_offer_variation_image.cdn')
 
         ->addGroupBy('product_offer_images.name')
-        ->addGroupBy('product_offer_images.dir')
         ->addGroupBy('product_offer_images.ext')
         ->addGroupBy('product_offer_images.cdn')
 
         ->addGroupBy('product_photo.name')
-        ->addGroupBy('product_photo.dir')
         ->addGroupBy('product_photo.ext')
         ->addGroupBy('product_photo.cdn')
 
@@ -394,11 +435,11 @@ final class ProductDetailByUid implements ProductDetailByUidInterface
             "
 			CASE
 			   WHEN product_offer_variation_image.name IS NOT NULL THEN
-					CONCAT ( '/upload/".ProductVariationImage::TABLE."' , '/', product_offer_variation_image.dir, '/', product_offer_variation_image.name, '.')
+					CONCAT ( '/upload/".ProductVariationImage::TABLE."' , '/', product_offer_variation_image.name)
 			   WHEN product_offer_images.name IS NOT NULL THEN
-					CONCAT ( '/upload/".ProductOfferImage::TABLE."' , '/', product_offer_images.dir, '/', product_offer_images.name, '.')
+					CONCAT ( '/upload/".ProductOfferImage::TABLE."' , '/', product_offer_images.name)
 			   WHEN product_photo.name IS NOT NULL THEN
-					CONCAT ( '/upload/".ProductPhoto::TABLE."' , '/', product_photo.dir, '/', product_photo.name, '.')
+					CONCAT ( '/upload/".ProductPhoto::TABLE."' , '/', product_photo.name)
 			   ELSE NULL
 			END AS product_image
 		"

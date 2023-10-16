@@ -42,7 +42,7 @@ class ProductPrice extends EntityEvent
 
     /** ID события */
     #[ORM\Id]
-    #[ORM\OneToOne(inversedBy: 'price', targetEntity: ProductEvent::class, cascade: ['persist'])]
+    #[ORM\OneToOne(inversedBy: 'price', targetEntity: ProductEvent::class)]
     #[ORM\JoinColumn(name: 'event', referencedColumnName: 'id')]
     private ProductEvent $event;
 
@@ -77,9 +77,17 @@ class ProductPrice extends EntityEvent
         $this->currency = new Currency();
     }
 
+    public function __toString(): string
+    {
+        return (string) $this->event;
+    }
+
     public function getDto($dto): mixed
     {
-        if ($dto instanceof ProductPriceInterface) {
+        $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
+
+        if ($dto instanceof ProductPriceInterface)
+        {
             return parent::getDto($dto);
         }
 
@@ -88,8 +96,10 @@ class ProductPrice extends EntityEvent
 
     public function setEntity($dto): mixed
     {
-        if ($dto instanceof ProductPriceInterface) {
-            if (null === $dto->getPrice()) {
+        if ($dto instanceof ProductPriceInterface || $dto instanceof self)
+        {
+            if (null === $dto->getPrice())
+            {
                 return false;
             }
 

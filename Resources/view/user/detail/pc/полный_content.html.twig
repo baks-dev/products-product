@@ -49,22 +49,20 @@
 		{# LIGHTBOX  #}
 		
 		<div class="w-100">
-			
-			{# ГЛАВНОЕ ФОТО #}	
-			
-			{% set img_path = card.product_image_cdn == true ? CDN_HOST : '' %}
-			{% set product_image_ext = card.product_image_cdn == true ? 'small.'~card.product_image_ext : card.product_image_ext %}
-			
-			{# <img data-src="{{ card.product_image ? img_path ~ card.product_image ~ product_image_ext : '/assets/img/blank.svg' }}"
-					src="/assets/img/empty.png" class="lazy card-img-top "
-					alt="{{ card.product_name }}"
-					title="{{ card.product_name }}"
-			> #}
-			
+
+			{# Обложка #}
+			{% set image_path = '/assets/img/blank.svg' %}
+
+			{% if card.product_image_ext is defined and card.product_image_ext is not null %}
+				{% set img_host =  card.product_image_cdn == true  ? CDN_HOST : '' %}
+				{% set img_dir = card.product_image %}
+				{% set img_file = (img_host is empty ? '/image.' : '/small.') ~ card.product_image_ext %}
+				{% set image_path = img_host ~ img_table ~ img_dir ~ img_file %}
+			{% endif %}
+
 			<div id="img-product" data-bs-toggle="modal" data-bs-target="#lightboxModal"
 					class="icon rounded-5 border lazy bg-contain bg-body w-100 shadow-none p-3" style="height: 380px;"
-					data-bg="{{ card.product_image ? img_path ~ card.product_image ~ product_image_ext : '/assets/img/blank.svg' }}"
-					
+					data-bg="{{ image_path }}"
 					title="{{ card.product_name }}"
 			>
 			
@@ -83,25 +81,25 @@
 				</div> #}
 				
 				<button class="btn btn-link icon bg-cover rounded-4 lazy img-product"
-						data-bg="{{ card.product_image ? img_path ~ card.product_image ~ product_image_ext : '/assets/img/blank.svg' }}"
+						data-bg="{{ image_path }}"
 						style="width: 70px; height: 70px;"
 						aria-label="Triangle Sports TH201"
 				></button>
 				
 				<button class="btn btn-link icon bg-cover rounded-4 lazy img-product"
-						data-bg="{{ card.product_image ? img_path ~ card.product_image ~ product_image_ext : '/assets/img/blank.svg' }}"
+						data-bg="{{ image_path }}"
 						style="width: 70px; height: 70px;"
 						aria-label="Triangle Sports TH201"
 				></button>
 				
 				<button class="btn btn-link icon bg-cover rounded-4 lazy img-product"
-						data-bg="{{ card.product_image ? img_path ~ card.product_image ~ product_image_ext : '/assets/img/blank.svg' }}"
+						data-bg="{{ image_path }}"
 						style="width: 70px; height: 70px;"
 						aria-label="Triangle Sports TH201"
 				></button>
 				
 				<button class="btn btn-link icon bg-cover rounded-4 lazy img-product"
-						data-bg="{{ card.product_image ? img_path ~ card.product_image ~ product_image_ext : '/assets/img/blank.svg' }}"
+						data-bg="{{ image_path }}"
 						style="width: 70px; height: 70px;"
 						aria-label="Triangle Sports TH201"
 				></button>

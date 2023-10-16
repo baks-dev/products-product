@@ -32,13 +32,13 @@ final class ProductSettingsIdentifier
 	}
 	
 	
-	public function __toString() : string
+	public function __toString(): string
 	{
 		return $this->value;
 	}
 	
 	
-	public function getValue() : string
+	public function getValue(): string
 	{
 		return $this->value;
 	}

@@ -62,10 +62,17 @@ class ProductOfferQuantity extends EntityEvent
 	{
 		$this->offer = $offer;
 	}
-	
-	
-	public function getDto($dto) : mixed
+
+
+    public function __toString(): string
+    {
+        return (string) $this->offer;
+    }
+
+    public function getDto($dto): mixed
 	{
+        $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
+
 		if($dto instanceof ProductOfferQuantityInterface)
 		{
 			return parent::getDto($dto);
@@ -75,9 +82,9 @@ class ProductOfferQuantity extends EntityEvent
 	}
 	
 	
-	public function setEntity($dto) : mixed
+	public function setEntity($dto): mixed
 	{
-		if($dto instanceof ProductOfferQuantityInterface)
+		if($dto instanceof ProductOfferQuantityInterface || $dto instanceof self)
 		{
 			if(empty($dto->getQuantity()) && empty($dto->getReserve()))
 			{

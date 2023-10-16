@@ -26,9 +26,7 @@ namespace BaksDev\Products\Product\Entity\Offers\Price;
 use BaksDev\Core\Entity\EntityEvent;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Reference\Currency\Type\Currency;
-use BaksDev\Reference\Currency\Type\CurrencyEnum;
 use BaksDev\Reference\Money\Type\Money;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use InvalidArgumentException;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -66,10 +64,16 @@ class ProductOfferPrice extends EntityEvent
 		$this->offer = $offer;
 		$this->currency = new Currency();
 	}
+
+    public function __toString(): string
+    {
+        return (string) $this->offer;
+    }
 	
-	
-	public function getDto($dto) : mixed
+	public function getDto($dto): mixed
 	{
+        $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
+
 		if($dto instanceof ProductOfferPriceInterface)
 		{
 			return parent::getDto($dto);
@@ -79,9 +83,9 @@ class ProductOfferPrice extends EntityEvent
 	}
 	
 	
-	public function setEntity($dto) : mixed
+	public function setEntity($dto): mixed
 	{
-		if($dto instanceof ProductOfferPriceInterface)
+		if($dto instanceof ProductOfferPriceInterface || $dto instanceof self)
 		{
 			if(empty($dto->getPrice()?->getValue()))
 			{

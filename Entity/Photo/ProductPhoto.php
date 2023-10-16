@@ -50,29 +50,26 @@ class ProductPhoto extends EntityEvent implements UploadEntityInterface
 
     /** ID события */
     #[Assert\NotBlank]
+    #[Assert\Uuid]
     #[ORM\ManyToOne(targetEntity: ProductEvent::class, inversedBy: 'photo')]
     #[ORM\JoinColumn(name: 'event', referencedColumnName: 'id')]
     private ProductEvent $event;
 
-    /** Название директории */
-    #[Assert\NotBlank]
-    #[Assert\Uuid]
-    #[ORM\Column(type: ProductEventUid::TYPE)]
-    private ProductEventUid $dir;
-
     /** Название файла */
     #[Assert\NotBlank]
-    #[ORM\Column(type: Types::STRING, length: 100)]
+    #[Assert\Length(max: 100)]
+    #[ORM\Column(type: Types::STRING)]
     private string $name;
 
     /** Расширение файла */
-    #[Assert\Choice(['svg', 'png', 'jpg', 'jpeg', 'gif', 'webp'])]
-    #[Assert\Length(max: 5)]
-    #[ORM\Column(type: Types::STRING, length: 64)]
+    #[Assert\NotBlank]
+    #[Assert\Choice(['png', 'gif', 'jpg', 'jpeg', 'webp'])]
+    #[ORM\Column(type: Types::STRING)]
     private string $ext;
 
     /** Размер файла */
     #[Assert\NotBlank]
+    #[Assert\Range(max: 1048576)] // 1024 * 1024
     #[ORM\Column(type: Types::INTEGER)]
     private int $size = 0;
 
@@ -99,7 +96,12 @@ class ProductPhoto extends EntityEvent implements UploadEntityInterface
 
     public function __clone()
     {
-        $this->id = new ProductPhotoUid();
+        $this->id = clone $this->id;
+    }
+
+    public function __toString(): string
+    {
+        return (string) $this->id;
     }
 
 
@@ -109,14 +111,11 @@ class ProductPhoto extends EntityEvent implements UploadEntityInterface
     }
 
 
-    public function getUploadDir(): object
-    {
-        return $this->event->getId();
-    }
-
 
     public function getDto($dto): mixed
     {
+        $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
+
         if($dto instanceof ProductPhotoInterface)
         {
             return parent::getDto($dto);
@@ -134,12 +133,12 @@ class ProductPhoto extends EntityEvent implements UploadEntityInterface
             return false;
         }
 
-        if(!empty($dto->file))
-        {
-            $dto->setEntityUpload($this);
-        }
+//        if(!empty($dto->file))
+//        {
+//            $dto->setEntityUpload($this);
+//        }
 
-        if($dto instanceof ProductPhotoInterface)
+        if($dto instanceof ProductPhotoInterface || $dto instanceof self)
         {
             return parent::setEntity($dto);
         }
@@ -147,37 +146,56 @@ class ProductPhoto extends EntityEvent implements UploadEntityInterface
         throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
     }
 
-
     public function updFile(string $name, string $ext, int $size): void
     {
         $this->name = $name;
         $this->ext = $ext;
         $this->size = $size;
-        $this->dir = $this->event->getId();
+        //$this->dir = $this->event->getId();
         $this->cdn = false;
     }
 
 
-    public function updCdn(string $ext): void
+    public function updCdn(?string $ext = null): void
     {
-        $this->ext = $ext;
+        if($ext)
+        {
+            $this->ext = $ext;
+        }
+
         $this->cdn = true;
     }
 
+    public function getExt(): string
+    {
+        return $this->ext;
+    }
 
     public function root(): void
     {
         $this->root = true;
     }
 
-    public function getDir(): ProductEventUid
-    {
-        return $this->dir;
-    }
 
-    public static function getDirName(): string
-    {
-        return ProductEventUid::class;
-    }
+
+
+
+
+
+    //    public function getUploadDir(): object
+    //    {
+    //        return $this->event->getId();
+    //    }
+
+
+    //    public function getDir(): ProductEventUid
+//    {
+//        return $this->dir;
+//    }
+
+//    public static function getDirName(): string
+//    {
+//        return ProductEventUid::class;
+//    }
 
 }

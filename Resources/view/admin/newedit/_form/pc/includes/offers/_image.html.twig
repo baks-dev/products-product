@@ -1,17 +1,27 @@
 {% trans_default_domain 'admin.products.product' %}
 
 			{#{% for image in offer.image %}#}
-				
-		
+
+
+
 				<div id='item_{{ image.vars.id }}'>
-					
-					{% set img_path = image.vars.data.cdn is defined and image.vars.data.cdn == true ? CDN_HOST : '' %}
-					
+
+					{# Обложка  #}
+					{% set image_path = '/assets/img/blank.svg' %}
+
+					{% if image.vars.data.ext is defined and image.vars.data.ext is not null %}
+						{% set img_host = image.vars.data.cdn  == true  ? CDN_HOST : '' %}
+						{% set img_table = '/upload/' ~ constant('BaksDev\\Products\\Product\\Entity\\Offers\\Image\\ProductOfferImage::TABLE')~'/' %}
+						{% set img_dir = image.vars.data.name %}
+						{% set img_file = (img_host is empty ? '/image.' : '/small.') ~ image.vars.data.ext %}
+						{% set image_path = img_host ~ img_table ~ img_dir ~ img_file %}
+					{% endif %}
+
+
 					<label class="icon rounded-1 bg-contain lazy position-relative image-input"
 							style="width: 150px; height: 200px;"
 							
-							data-bg="{{ image.vars.data.name is defined and image.vars.data.name is not null ?
-							img_path ~ '/upload/' ~ constant('BaksDev\\Products\\Product\\Entity\\Offers\\Image\\ProductOfferImage::TABLE') ~'/' ~ image.vars.data.dir ~'/'~ image.vars.data.name~'.'~image.vars.data.ext  : '/assets/img/blank.svg' }}"
+							data-bg="{{ image_path }}"
 					>
 						
 						<div class="position-absolute top-0 start-100 rounded-circle border p-2 ms-1 d-flex align-items-center justify-content-center"

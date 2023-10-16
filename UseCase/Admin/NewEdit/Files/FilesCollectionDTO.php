@@ -24,24 +24,11 @@
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Files;
 
 use BaksDev\Products\Product\Entity\Files\ProductFilesInterface;
-use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\Validator\Constraints as Assert;
 
 final class FilesCollectionDTO implements ProductFilesInterface
 {
-	
-	#[Assert\File(
-		maxSize: '2048k',
-		mimeTypes: [
-			'application/pdf',
-			'application/x-pdf',
-			'application/msword',
-			'application/vnd.ms-word',
-			'application/vnd.ms-excel',
-		],
-		mimeTypesMessage: 'Please upload a valid file'
-	)]
+
 	public ?File $file = null;
 	
 	private ?string $name = null;
@@ -51,87 +38,28 @@ final class FilesCollectionDTO implements ProductFilesInterface
 	private bool $cdn = false;
 	
 	private ?int $size = null;
-	
-	private ProductEventUid|null $dir = null;
-	
-	/** Сущность для загрузки и обновления файла  */
-	private mixed $entityUpload = null;
-	
+
 	
 
 	public function getName() : ?string
 	{
 		return $this->name;
 	}
-	
-	public function setName(?string $name) : void
-	{
-		$this->name = $name;
-	}
-	
-	
 
 	public function getExt() : ?string
 	{
 		return $this->ext;
 	}
 
-	public function setExt(?string $ext) : void
-	{
-		$this->ext = $ext;
-	}
-	
-	
-
 	public function getCdn() : bool
 	{
 		return $this->cdn;
 	}
-
-	public function setCdn(bool $cdn) : void
-	{
-		$this->cdn = $cdn;
-	}
-	
-	
-
-	public function getDir() : ?ProductEventUid
-	{
-		return $this->dir;
-	}
-	
-	
-	public function setDir(ProductEventUid $dir) : void
-	{
-		$this->dir = $dir;
-	}
-	
-	
 
 	public function getSize() : ?int
 	{
 		return $this->size;
 	}
 
-	public function setSize(?int $size) : void
-	{
-		$this->size = $size;
-	}
-	
-	
-
-	public function getEntityUpload() : mixed
-	{
-		return $this->entityUpload;
-	}
-
-	public function setEntityUpload(mixed $entityUpload) : void
-	{
-		$this->entityUpload = $entityUpload;
-	}
-	
-	
-
-	
 }
 

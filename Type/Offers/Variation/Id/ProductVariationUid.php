@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Type\Offers\Variation\Id;
 
+use App\Kernel;
 use BaksDev\Core\Type\UidType\Uid;
 use Symfony\Component\Uid\AbstractUid;
 
@@ -53,6 +54,7 @@ final class ProductVariationUid extends Uid
     )
     {
         parent::__construct($value);
+
         $this->attr = $attr;
         $this->option = $option;
         $this->property = $property;

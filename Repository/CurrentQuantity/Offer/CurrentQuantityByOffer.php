@@ -25,8 +25,10 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Repository\CurrentQuantity\Offer;
 
-use BaksDev\Products\Product\Entity as ProductEntity;
+use BaksDev\Products\Product\Entity\Event\ProductEvent;
+use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\Quantity\ProductOfferQuantity;
+use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use Doctrine\ORM\EntityManagerInterface;
@@ -51,21 +53,21 @@ final class CurrentQuantityByOffer implements CurrentQuantityByOfferInterface
 		
 		$qb->select('quantity');
 		
-		$qb->from(ProductEntity\Event\ProductEvent::class, 'event');
+		$qb->from(ProductEvent::class, 'event');
 		
 		
-		$qb->join(ProductEntity\Product::class,
-			'product', 'WITH', 'product.id = event.product'
+		$qb->join(Product::class,
+			'product', 'WITH', 'product.id = event.main'
 		);
 		
 		/** Торговое предложение */
 		
-		$qb->join(ProductEntity\Offers\ProductOffer::class,
+		$qb->join(ProductOffer::class,
 			'offer', 'WITH', 'offer.id = :offer AND offer.event = event.id'
 		);
 		$qb->setParameter('offer', $offer, ProductOfferUid::TYPE);
 		
-		$qb->leftJoin(ProductEntity\Offers\ProductOffer::class,
+		$qb->leftJoin(ProductOffer::class,
 			'current_offer', 'WITH', 'current_offer.const = offer.const AND current_offer.event = product.event'
 		);
 		

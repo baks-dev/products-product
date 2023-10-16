@@ -28,16 +28,9 @@ use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/** @see ProductVideo */
 final class VideoCollectionDTO implements ProductVideoInterface
 {
-	#[Assert\File(
-		maxSize: '4096k',
-		mimeTypes: [
-			'application/avi',
-			'application/mp4',
-		],
-		mimeTypesMessage: 'Please upload a valid file'
-	)]
 	public ?File $file = null;
 	
 	private ?string $name = null;
@@ -47,88 +40,28 @@ final class VideoCollectionDTO implements ProductVideoInterface
 	private bool $cdn = false;
 	
 	private ?int $size = null;
-	
-	private ProductEventUid|null $dir = null;
-	
-	
-	/** Сущность для загрузки и обновления файла  */
-	private mixed $entityUpload = null;
-	
-	
+
 
 	public function getName() : ?string
 	{
 		return $this->name;
 	}
 
-	public function setName(?string $name) : void
-	{
-		$this->name = $name;
-	}
-	
-	
-	
-	
 	public function getExt() : ?string
 	{
 		return $this->ext;
 	}
 
-	public function setExt(?string $ext) : void
-	{
-		$this->ext = $ext;
-	}
-	
-	
 
 	public function getCdn() : bool
 	{
 		return $this->cdn;
 	}
 
-	public function setCdn(bool $cdn) : void
-	{
-		$this->cdn = $cdn;
-	}
-	
-	
-	
-	
-	public function getDir() : ?ProductEventUid
-	{
-		return $this->dir;
-	}
-
-	public function setDir(?ProductEventUid $dir) : void
-	{
-		$this->dir = $dir;
-	}
-	
-	
 
 	public function getSize() : ?int
 	{
 		return $this->size;
 	}
-	
 
-	public function setSize(?int $size) : void
-	{
-		$this->size = $size;
-	}
-	
-	
-	
-	public function getEntityUpload() : mixed
-	{
-		return $this->entityUpload;
-	}
-	
-	
-	public function setEntityUpload(mixed $entityUpload) : void
-	{
-		$this->entityUpload = $entityUpload;
-	}
-	
-	
 }

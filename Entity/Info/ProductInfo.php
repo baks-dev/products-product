@@ -23,10 +23,10 @@
 
 namespace BaksDev\Products\Product\Entity\Info;
 
+use BaksDev\Core\Entity\EntityEvent;
 use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
-use BaksDev\Core\Entity\EntityEvent;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use InvalidArgumentException;
@@ -63,6 +63,10 @@ class ProductInfo extends EntityEvent
         $this->product = $product instanceof Product ? $product->getId() : $product;
     }
 
+    public function __toString(): string
+    {
+        return (string) $this->product;
+    }
 
     public function getProduct(): ProductUid
     {
@@ -72,7 +76,10 @@ class ProductInfo extends EntityEvent
 
     public function getDto($dto): mixed
     {
-        if ($dto instanceof ProductInfoInterface) {
+        $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
+
+        if ($dto instanceof ProductInfoInterface)
+        {
             return parent::getDto($dto);
         }
 
@@ -82,7 +89,7 @@ class ProductInfo extends EntityEvent
 
     public function setEntity($dto): mixed
     {
-        if ($dto instanceof ProductInfoInterface) {
+        if ($dto instanceof ProductInfoInterface || $dto instanceof self) {
             return parent::setEntity($dto);
         }
 

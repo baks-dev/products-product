@@ -34,17 +34,6 @@ final class ProductOfferImageCollectionDTO implements ProductOfferImageInterface
 {
 	
 	/** Обложка категории */
-	#[Assert\File(
-		maxSize: '2048k',
-		mimeTypes: [
-			'image/png',
-			'image/gif',
-			'image/jpeg',
-			'image/pjpeg',
-			'image/webp',
-		],
-		mimeTypesMessage: 'Please upload a valid file'
-	)]
 	public ?File $file = null;
 	
 	/** Название файла */
@@ -61,24 +50,8 @@ final class ProductOfferImageCollectionDTO implements ProductOfferImageInterface
 	
 	/** Размер файла */
 	private ?int $size = null;
-	
-	/** Диреткория загрузки файла */
-	private ?ProductOfferUid $dir = null;
-	
-	
-	/** Сущность для загрузки и обновления файла  */
-	private mixed $entityUpload = null;
-	
-	
-	/**
-	 * @return File|null
-	 */
-	public function getFile() : ?File
-	{
-		return $this->file;
-	}
-	
-	
+
+
 	
 	/** Название файла */
 	
@@ -86,69 +59,23 @@ final class ProductOfferImageCollectionDTO implements ProductOfferImageInterface
 	{
 		return $this->name;
 	}
-	
-	
-	public function setName(?string $name) : void
-	{
-		$this->name = $name;
-	}
-	
-	
+
+
 	/** Расширение */
 	
 	public function getExt() : ?string
 	{
 		return $this->ext;
 	}
-	
-	
-	public function setExt(?string $ext) : void
-	{
-		$this->ext = $ext;
-	}
-	
-	
+
 	/** Флаг загрузки CDN */
 	
 	public function getCdn() : bool
 	{
 		return $this->cdn;
 	}
-	
-	
-	public function setCdn(bool $cdn) : void
-	{
-		$this->cdn = $cdn;
-	}
-	
-	
-	/** Диреткория загрузки файла */
-	
-	public function getDir() : ?ProductOfferUid
-	{
-		return $this->dir;
-	}
-	
-	
-	public function setDir(ProductOfferUid $dir) : void
-	{
-		$this->dir = $dir;
-	}
-	
-	
-	/** Идентификатор торгового предложения */
-	
-	public function getOffer() : ?ProductOffer
-	{
-		return $this->offer;
-	}
-	
-	
-	public function setOffer(?ProductOffer $imgOffer) : void
-	{
-		$this->offer = $imgOffer;
-	}
-	
+
+
 	
 	/** Главное фото */
 	
@@ -163,34 +90,12 @@ final class ProductOfferImageCollectionDTO implements ProductOfferImageInterface
 		$this->root = $root;
 	}
 	
-	
 	/** Размер файла */
 	
 	public function getSize() : ?int
 	{
 		return $this->size;
 	}
-	
-	
-	public function setSize(?int $size) : void
-	{
-		$this->size = $size;
-	}
-	
-	
-
-	public function getEntityUpload() : mixed
-	{
-		return $this->entityUpload;
-	}
-
-	public function setEntityUpload(mixed $entityUpload) : void
-	{
-		$this->entityUpload = $entityUpload;
-	}
-	
-	
-
 	
 }
 

@@ -14,10 +14,7 @@
 					parent_category_cover_ext
 					parent_category_cover_name #}
 				
-				{% set img_path = parent.parent_category_cover_cdn == true ? CDN_HOST : '' %}
-				{% set parent_cover_ext = parent.parent_category_cover_cdn == true ? 'small.'~parent.parent_category_cover_ext : parent.parent_category_cover_ext %}
-				
-				
+
 				<li class="list-group-item bg-transparent border-0 text-truncate rounded-5" style="width: 32%;">
 					
 					<a href="{{ path('Product:user.catalog.category', { url : parent.parent_category_url }) }}"
@@ -25,10 +22,22 @@
 							title="{{ parent.parent_category_name }}">
 						
 						<div class=''>
-								<span class="icon rounded-circle bg-contain lazy p-1 entered lazy"
+
+							{# Обложка  #}
+							{% set image_path = '/assets/img/blank.svg' %}
+
+							{% if parent.parent_category_cover_ext is defined and parent.parent_category_cover_ext is not null %}
+								{% set img_host =  parent.parent_category_cover_cdn == true  ? CDN_HOST : '' %}
+								{% set img_dir = parent.parent_category_cover_name %}
+								{% set img_file = (img_host is empty ? '/image.' : '/small.') ~ parent.parent_category_cover_ext %}
+								{% set image_path = img_host ~ img_dir ~ img_file %}
+							{% endif %}
+
+
+							<span class="icon rounded-circle bg-contain lazy p-1 entered lazy"
 										style="width: 43px; height: 43px;
 										background-image: url('/assets/img/empty.svg');"
-										data-bg="{{ parent.parent_category_cover_name ? img_path ~ parent.parent_category_cover_name ~ parent_cover_ext : '/assets/img/blank.svg' }}"
+										data-bg="{{ image_path }}"
 								>
 								</span>
 						</div>

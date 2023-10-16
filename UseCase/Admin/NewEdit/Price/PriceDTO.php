@@ -49,6 +49,7 @@ final class PriceDTO implements ProductPriceInterface
 
 	/** Резерв */
 	#[Assert\NotBlank]
+    #[Assert\Range(min: 0)]
 	private ?int $reserve = 0;
 
 	/** Единица измерения: */
@@ -78,37 +79,22 @@ final class PriceDTO implements ProductPriceInterface
 		//$this->price = $price instanceof Money ? $price : new Money($price);
 	}
 
-
-	/**
-	 * @return Currency
-	 */
 	public function getCurrency() : Currency
 	{
 		return $this->currency;
 	}
 
 
-	/**
-	 * @param string $currency
-	 */
-	public function setCurrency(string $currency) : void
+	public function setCurrency(Currency|string $currency) : void
 	{
-		$this->currency = new Currency($currency);
+		$this->currency = $currency instanceof Currency ? $currency : new Currency($currency);
 	}
 
-
-	/**
-	 * @return bool
-	 */
 	public function getRequest() : bool
 	{
 		return $this->request;
 	}
 
-
-	/**
-	 * @param bool $request
-	 */
 	public function setRequest(bool $request) : void
 	{
 		$this->request = $request;
@@ -139,18 +125,11 @@ final class PriceDTO implements ProductPriceInterface
 	}
 
 
-	/**
-	 * @return Measurement
-	 */
 	public function getMeasurement() : Measurement
 	{
 		return $this->measurement;
 	}
 
-
-	/**
-	 * @param Measurement $measurement
-	 */
 	public function setMeasurement(Measurement $measurement) : void
 	{
 		$this->measurement = $measurement;

@@ -23,65 +23,213 @@
 
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit;
 
+use BaksDev\Core\Entity\AbstractHandler;
 use BaksDev\Core\Messenger\MessageDispatchInterface;
 use BaksDev\Files\Resources\Upload\File\FileUploadInterface;
 use BaksDev\Files\Resources\Upload\Image\ImageUploadInterface;
-use BaksDev\Products\Product\Entity;
+use BaksDev\Products\Product\Entity\Event\ProductEvent;
+use BaksDev\Products\Product\Entity\Info\ProductInfo;
+use BaksDev\Products\Product\Entity\Offers\Image\ProductOfferImage;
+use BaksDev\Products\Product\Entity\Offers\ProductOffer;
+use BaksDev\Products\Product\Entity\Offers\Variation\Image\ProductVariationImage;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Image\ProductModificationImage;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
+use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
+use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Messenger\ProductMessage;
 use BaksDev\Products\Product\Repository\UniqProductUrl\UniqProductUrlInterface;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Files\FilesCollectionDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Image\ProductOfferImageCollectionDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Image\ProductVariationImageCollectionDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification\Image\ProductModificationImageCollectionDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Photo\PhotoCollectionDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Video\VideoCollectionDTO;
 use Doctrine\ORM\EntityManagerInterface;
+use DomainException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-final class ProductHandler
+final class ProductHandler extends AbstractHandler
 {
 
-    private EntityManagerInterface $entityManager;
+    //    private EntityManagerInterface $entityManager;
+    //
+    //    private ImageUploadInterface $imageUpload;
+    //
+    //    private FileUploadInterface $fileUpload;
+    //
+    //    private UniqProductUrlInterface $uniqProductUrl;
+    //
+    //    private ValidatorInterface $validator;
+    //
+    //    private LoggerInterface $logger;
+    //
+    //    // /** Событие нового продукта */
+    //    // private ?ProductPersistEvent $persist = null;
+    //
+    //    // /** Событие обновлеия продукта */
+    //    // private ?ProductUpdateEvent $update = null;
+    //    private MessageDispatchInterface $messageDispatch;
 
-    private ImageUploadInterface $imageUpload;
 
-    private FileUploadInterface $fileUpload;
+    //    public function __construct(
+    //        EntityManagerInterface $entityManager,
+    //        ImageUploadInterface $imageUpload,
+    //        FileUploadInterface $fileUpload,
+    //        UniqProductUrlInterface $uniqProductUrl,
+    //        ValidatorInterface $validator,
+    //        LoggerInterface $logger,
+    //        MessageDispatchInterface $messageDispatch,
+    //    )
+    //    {
+    //        $this->entityManager = $entityManager;
+    //        $this->imageUpload = $imageUpload;
+    //        $this->fileUpload = $fileUpload;
+    //        $this->uniqProductUrl = $uniqProductUrl;
+    //        $this->validator = $validator;
+    //        $this->logger = $logger;
+    //        $this->messageDispatch = $messageDispatch;
+    //    }
 
-    private UniqProductUrlInterface $uniqProductUrl;
 
-    private ValidatorInterface $validator;
-
-    private LoggerInterface $logger;
-
-    // /** Событие нового продукта */
-    // private ?ProductPersistEvent $persist = null;
-
-    // /** Событие обновлеия продукта */
-    // private ?ProductUpdateEvent $update = null;
-    private MessageDispatchInterface $messageDispatch;
-
-
-    public function __construct(
-        EntityManagerInterface $entityManager,
-        ImageUploadInterface $imageUpload,
-        FileUploadInterface $fileUpload,
-        UniqProductUrlInterface $uniqProductUrl,
-        ValidatorInterface $validator,
-        LoggerInterface $logger,
-        MessageDispatchInterface $messageDispatch,
-    )
+    public function handle(ProductDTO $command): Product|string
     {
-        $this->entityManager = $entityManager;
-        $this->imageUpload = $imageUpload;
-        $this->fileUpload = $fileUpload;
-        $this->uniqProductUrl = $uniqProductUrl;
-        $this->validator = $validator;
-        $this->logger = $logger;
-        $this->messageDispatch = $messageDispatch;
+        /* Валидация DTO  */
+        $this->validatorCollection->add($command);
+
+        $this->main = new Product();
+        $this->event = new ProductEvent();
+
+        try
+        {
+            $command->getEvent() ? $this->preUpdate($command) : $this->prePersist($command);
+        }
+        catch(DomainException $errorUniqid)
+        {
+            return $errorUniqid;
+        }
+
+
+        // Загрузка базового фото галереи
+        foreach($this->event->getPhoto() as $ProductPhoto)
+        {
+            /** @var PhotoCollectionDTO $PhotoCollectionDTO */
+            $PhotoCollectionDTO = $ProductPhoto->getEntityDto();
+
+            if(null !== $PhotoCollectionDTO->file)
+            {
+                $this->imageUpload->upload($PhotoCollectionDTO->file, $ProductPhoto);
+            }
+        }
+
+        // Загрузка файлов PDF галереи
+        foreach($this->event->getFile() as $ProductFile)
+        {
+            /** @var FilesCollectionDTO $FilesCollectionDTO */
+            $FilesCollectionDTO = $ProductFile->getEntityDto();
+
+            if($FilesCollectionDTO->file !== null)
+            {
+                $this->fileUpload->upload($FilesCollectionDTO->file, $ProductFile);
+            }
+        }
+
+
+        // Загрузка файлов Видео галереи
+        foreach($this->event->getVideo() as $ProductVideo)
+        {
+            /** @var VideoCollectionDTO $VideoCollectionDTO */
+            $VideoCollectionDTO = $ProductVideo->getEntityDto();
+
+            if($VideoCollectionDTO->file !== null)
+            {
+                $this->fileUpload->upload($VideoCollectionDTO->file, $ProductVideo);
+            }
+        }
+
+
+        /**
+         * Загрузка фото торгового предложения.
+         *
+         * @var ProductOffer $ProductOffer
+         */
+
+        foreach($this->event->getOffer() as $ProductOffer)
+        {
+
+            /** @var ProductOfferImage $ProductOfferImage */
+            foreach($ProductOffer->getImage() as $ProductOfferImage)
+            {
+                /** @var ProductOfferImageCollectionDTO $ProductOfferImageCollectionDTO */
+                $ProductOfferImageCollectionDTO = $ProductOfferImage->getEntityDto();
+
+                if($ProductOfferImageCollectionDTO->file !== null)
+                {
+                    $this->imageUpload->upload($ProductOfferImageCollectionDTO->file, $ProductOfferImage);
+                }
+            }
+
+            /** @var ProductVariation $ProductVariation */
+            foreach($ProductOffer->getVariation() as $ProductVariation)
+            {
+                /** @var ProductVariationImage $ProductVariationImage */
+                foreach($ProductVariation->getImage() as $ProductVariationImage)
+                {
+                    /** @var ProductVariationImageCollectionDTO $ProductVariationImageCollectionDTO */
+                    $ProductVariationImageCollectionDTO = $ProductVariationImage->getEntityDto();
+
+                    if($ProductVariationImageCollectionDTO->file !== null)
+                    {
+                        $this->imageUpload->upload($ProductVariationImageCollectionDTO->file, $ProductVariationImage);
+                    }
+                }
+
+                /** @var ProductModification $ProductModification */
+                foreach($ProductVariation->getModification() as $ProductModification)
+                {
+
+                    /** @var ProductModificationImage $ProductModificationImage */
+                    foreach($ProductModification->getImage() as $ProductModificationImage)
+                    {
+                        /** @var ProductModificationImageCollectionDTO $ProductModificationImageCollectionDTO */
+                        $ProductModificationImageCollectionDTO = $ProductModificationImage->getEntityDto();
+
+                        if($ProductModificationImageCollectionDTO->file !== null)
+                        {
+                            $this->imageUpload->upload($ProductModificationImageCollectionDTO->file, $ProductModificationImage);
+                        }
+                    }
+
+                }
+            }
+        }
+
+        /* Валидация всех объектов */
+        if($this->validatorCollection->isInvalid())
+        {
+            return $this->validatorCollection->getErrorUniqid();
+        }
+
+        $this->entityManager->flush();
+
+        /* Отправляем событие в шину  */
+        $this->messageDispatch->dispatch(
+            message: new ProductMessage($this->main->getId(), $this->main->getEvent(), $command->getEvent()),
+            transport: 'products',
+        );
+
+        return $this->main;
+
+
     }
 
 
-    public function handle(ProductDTO $command): Entity\Product|string
+    public function OLDhandle(ProductDTO $command): Product|string
     {
         // Объявялем событие
         if($command->getEvent())
         {
-            $EventRepo = $this->entityManager->getRepository(Entity\Event\ProductEvent::class)->find(
+            $EventRepo = $this->entityManager->getRepository(ProductEvent::class)->find(
                 $command->getEvent(),
             );
 
@@ -90,7 +238,7 @@ final class ProductHandler
                 $uniqid = uniqid('', false);
                 $errorsString = sprintf(
                     'Not found %s by id: %s',
-                    Entity\Event\ProductEvent::class,
+                    ProductEvent::class,
                     $command->getEvent(),
                 );
                 $this->logger->error($uniqid.': '.$errorsString);
@@ -98,63 +246,66 @@ final class ProductHandler
                 return $uniqid;
             }
 
+            $EventRepo->setEntity($command);
+            $EventRepo->setEntityManager($this->entityManager);
             $Event = $EventRepo->cloneEntity();
         }
         else
         {
-            $Event = new Entity\Event\ProductEvent();
+            $Event = new ProductEvent();
+            $Event->setEntity($command);
             $this->entityManager->persist($Event);
         }
 
-        $this->entityManager->clear();
+        //        $this->entityManager->clear();
+        //        $this->entityManager->persist($Event);
 
-        $Event->setEntity($command);
+        //
+        //        // Загрузка базового фото галлереи
+        //        foreach($command->getPhoto() as $Photo)
+        //        {
+        //            /**
+        //             * Загружаем базового фото галлереи.
+        //             *
+        //             * @var Photo\PhotoCollectionDTO $Photo
+        //             */
+        //            if(null !== $Photo->file)
+        //            {
+        //                $ProductPhoto = $Photo->getEntityUpload();
+        //                $this->imageUpload->upload($Photo->file, $ProductPhoto);
+        //            }
+        //        }
+        //
+        //        // Загрузка файлов PDF галлереи
+        //        foreach($command->getFile() as $File)
+        //        {
+        //            /**
+        //             * Загружаем базового фото галлереи.
+        //             *
+        //             * @var Files\FilesCollectionDTO $File
+        //             */
+        //            if(null !== $File->file)
+        //            {
+        //                $ProductFile = $File->getEntityUpload();
+        //                $this->fileUpload->upload($File->file, $ProductFile);
+        //            }
+        //        }
 
-        // Загрузка базового фото галлереи
-        foreach($command->getPhoto() as $Photo)
-        {
-            /**
-             * Загружаем базового фото галлереи.
-             *
-             * @var Photo\PhotoCollectionDTO $Photo
-             */
-            if(null !== $Photo->file)
-            {
-                $ProductPhoto = $Photo->getEntityUpload();
-                $this->imageUpload->upload($Photo->file, $ProductPhoto);
-            }
-        }
-
-        // Загрузка файлов PDF галлереи
-        foreach($command->getFile() as $File)
-        {
-            /**
-             * Загружаем базового фото галлереи.
-             *
-             * @var Files\FilesCollectionDTO $File
-             */
-            if(null !== $File->file)
-            {
-                $ProductFile = $File->getEntityUpload();
-                $this->fileUpload->upload($File->file, $ProductFile);
-            }
-        }
-
-        // Загрузка файлов Видео галлереи
-        foreach($command->getVideo() as $Video)
-        {
-            /**
-             * Загружаем базового фото галлереи.
-             *
-             * @var Video\VideoCollectionDTO $Video
-             */
-            if(null !== $Video->file)
-            {
-                /** TODO  */
-                $ProductVideo = $Video->getEntityUpload();
-                $this->imageUpload->upload($Video->file, $ProductVideo);
-            }
-        }
+        //        // Загрузка файлов Видео галлереи
+        //        foreach($command->getVideo() as $Video)
+        //        {
+        //            /**
+        //             * Загружаем базового фото галлереи.
+        //             *
+        //             * @var Video\VideoCollectionDTO $Video
+        //             */
+        //            if(null !== $Video->file)
+        //            {
+        //                /** TODO  */
+        //                $ProductVideo = $Video->getEntityUpload();
+        //                $this->imageUpload->upload($Video->file, $ProductVideo);
+        //            }
+        //        }
 
         /** Загрузка фото торгового предложения.
          *
@@ -226,16 +377,14 @@ final class ProductHandler
         }
 
 
-
-        // @var Entity\Product $Product
-        if($Event->getProduct())
+        if($Event->getMain())
         {
             // Получаем продукт
-            $Product = $this->entityManager->getRepository(Entity\Product::class)
+            $Product = $this->entityManager->getRepository(Product::class)
                 ->findOneBy(['event' => $command->getEvent()]);
 
             // Получаем информацию о продукте
-            $ProductInfo = $this->entityManager->getRepository(Entity\Info\ProductInfo::class)
+            $ProductInfo = $this->entityManager->getRepository(ProductInfo::class)
                 ->find($Product->getId());
 
             if(empty($Product))
@@ -243,7 +392,7 @@ final class ProductHandler
                 $uniqid = uniqid('', false);
                 $errorsString = sprintf(
                     'Not found %s by event: %s',
-                    Entity\Product::class,
+                    Product::class,
                     $command->getEvent(),
                 );
                 $this->logger->error($uniqid.': '.$errorsString);
@@ -253,13 +402,13 @@ final class ProductHandler
         }
         else
         {
-            $Product = new Entity\Product();
+            $Product = new Product();
             $this->entityManager->persist($Product);
 
-            $ProductInfo = new Entity\Info\ProductInfo($Product);
+            $ProductInfo = new ProductInfo($Product);
             $this->entityManager->persist($ProductInfo);
 
-            $Event->setProduct($Product);
+            $Event->setMain($Product);
         }
 
         /** Проверяем уникальность семантической ссылки продукта */
@@ -273,22 +422,24 @@ final class ProductHandler
         $ProductInfo->setEntity($infoDTO); // Обновляем ProductInfo
         $Product->setEvent($Event); // Обновляем событие
 
-        $this->entityManager->persist($Event);
 
+        /**
+         * Валидация Event
+         */
 
-
-        // Валидация события
         $errors = $this->validator->validate($Event);
 
         if(count($errors) > 0)
         {
             /** Ошибка валидации */
             $uniqid = uniqid('', false);
-            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__LINE__ => __FILE__]);
+            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__FILE__.':'.__LINE__]);
 
             return $uniqid;
         }
-        
+
+
+        //$this->getRemoveEntity($Event);
         $this->entityManager->flush();
 
         /* Отправляем событие в шину  */
@@ -299,4 +450,16 @@ final class ProductHandler
 
         return $Product;
     }
+
+
+    //    public function getRemoveEntity($Event): void
+    //    {
+    //        if($Event->getRemoveEntity())
+    //        {
+    //            foreach($Event->getRemoveEntity() as $remove)
+    //            {
+    //                $this->entityManager->remove($remove);
+    //            }
+    //        }
+    //    }
 }

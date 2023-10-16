@@ -101,11 +101,11 @@
 
 	{% if variation_first.quantity is defined %}
 		<div class="w-75">
-			{{ form_row(form.offer.vars.prototype.variation.vars.prototype.quantity.quantity, { attr: { placeholder: 'Наличие'|trans } }) }}
+			{{ form_row(form.offer.vars.prototype.variation.vars.prototype.quantity.quantity, { attr: { placeholder: 'Наличие'|trans, min: 0 } }) }}
 		</div>
 
 		<div class="w-75">
-			{{ form_row(form.offer.vars.prototype.variation.vars.prototype.quantity.reserve, { attr: { placeholder: 'Резерв'|trans } }) }}
+			{{ form_row(form.offer.vars.prototype.variation.vars.prototype.quantity.reserve, { attr: { placeholder: 'Резерв'|trans, min: 0 } }) }}
 		</div>
 
 	{% endif %}

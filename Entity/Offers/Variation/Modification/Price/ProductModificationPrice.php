@@ -63,10 +63,16 @@ class ProductModificationPrice extends EntityEvent
         $this->modification = $modification;
         $this->currency = new Currency();
     }
-    
 
-    public function getDto($dto) : mixed
+    public function __toString(): string
     {
+        return (string) $this->modification;
+    }
+
+    public function getDto($dto): mixed
+    {
+        $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
+
         if($dto instanceof ProductModificationPriceInterface)
         {
             return parent::getDto($dto);
@@ -75,9 +81,9 @@ class ProductModificationPrice extends EntityEvent
         throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
     }
     
-    public function setEntity($dto) : mixed
+    public function setEntity($dto): mixed
     {
-        if($dto instanceof ProductModificationPriceInterface)
+        if($dto instanceof ProductModificationPriceInterface || $dto instanceof self)
         {
 			if(empty($dto->getPrice()?->getValue()))
 			{

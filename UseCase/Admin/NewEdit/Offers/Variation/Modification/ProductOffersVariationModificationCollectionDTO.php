@@ -67,7 +67,7 @@ final class ProductOffersVariationModificationCollectionDTO implements ProductMo
 	
 	public function getConst() : ProductModificationConst
 	{
-		if(!(new ReflectionProperty($this::class, 'const'))->isInitialized($this))
+		if(!(new ReflectionProperty(self::class, 'const'))->isInitialized($this))
 		{
 			$this->const = new ProductModificationConst();
 		}
@@ -77,7 +77,7 @@ final class ProductOffersVariationModificationCollectionDTO implements ProductMo
 	
 	public function setConst(ProductModificationConst $const) : void
 	{
-        if(!(new ReflectionProperty($this::class, 'const'))->isInitialized($this))
+        if(!(new ReflectionProperty(self::class, 'const'))->isInitialized($this))
         {
             $this->const = $const;
         }

@@ -25,8 +25,12 @@ namespace BaksDev\Products\Product\Entity\Offers\Variation\Modification\Image;
 
 interface ProductModificationImageInterface
 {
-	public function getEntityUpload() : mixed;
-	
-	public function setEntityUpload(mixed $entityUpload) : void;
+    public function getName() : ?string;
+
+
+    public function getExt() : ?string;
+
+
+    public function getCdn() : bool;
 	
 }

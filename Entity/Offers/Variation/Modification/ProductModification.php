@@ -100,14 +100,18 @@ class ProductModification extends EntityEvent
     {
         $this->id = new ProductModificationUid();
         $this->variation = $variation;
-
         $this->price = new Price\ProductModificationPrice($this);
         $this->quantity = new Quantity\ProductModificationQuantity($this);
     }
 
     public function __clone()
     {
-        $this->id = new ProductModificationUid();
+        $this->id = clone $this->id;
+    }
+
+    public function __toString(): string
+    {
+        return (string) $this->id;
     }
 
     public function getId(): ProductModificationUid
@@ -135,6 +139,8 @@ class ProductModification extends EntityEvent
 
     public function getDto($dto): mixed
     {
+        $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
+
         if ($dto instanceof ProductModificationInterface)
         {
             return parent::getDto($dto);
@@ -145,11 +151,21 @@ class ProductModification extends EntityEvent
 
     public function setEntity($dto): mixed
     {
-        if ($dto instanceof ProductModificationInterface)
+        if ($dto instanceof ProductModificationInterface || $dto instanceof self)
         {
             return parent::setEntity($dto);
         }
 
         throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
     }
+
+    /**
+     * Image
+     */
+    public function getImage(): Collection
+    {
+        return $this->image;
+    }
+
+
 }

@@ -34,6 +34,7 @@ final class ProductOfferVariationQuantityDTO implements ProductOfferVariationQua
 	
 	/** Резерв */
 	#[Assert\NotBlank]
+    #[Assert\Range(min: 0)]
 	private ?int $reserve = 0;
 	
 	

@@ -18,26 +18,29 @@
 
             <div class="card-body pb-0">
 
-                {% set identifier = form.translate.vars.id %}
+                {% set identifier = form.description.vars.id %}
 
-                {% if form.translate.count > 1 %}
+                {% if form.description.count > 1 %}
 
                     <ul class="nav nav-pills gap-3 mb-3" id="navdesc-{{ identifier }}" role="tablist">
 
-                        {% for translate in form.translate %}
+                        {% for description in form.description %}
 
                             <li class="nav-item" role="presentation">
-                                <button class="btn fw-bolder nav-link{{ app.request.locale == translate.vars.value.local? ' active' : '' }}"
+                                <button class="btn fw-bolder nav-link{{ app.request.locale == description.vars.value.local and  description.vars.value.device == 'pc'  ? ' active' : '' }}"
                                         data-bs-toggle="tab"
                                         type="button"
                                         role="tab"
                                         aria-selected="true"
 
-                                        id="navdesc-{{ identifier }}-{{ translate.vars.value.local }}-tab"
-                                        data-bs-target="#navdesc-{{ identifier }}-{{ translate.vars.value.local }}"
-                                        aria-controls="navdesc-{{ identifier }}-{{ translate.vars.value.local }}"
+                                        id="navdesc-{{ identifier }}-{{ description.vars.value.local }}-{{ description.vars.value.device }}-tab"
+                                        data-bs-target="#navdesc-{{ identifier }}-{{ description.vars.value.local }}-{{ description.vars.value.device }}"
+                                        aria-controls="navdesc-{{ identifier }}-{{ description.vars.value.local }}-{{ description.vars.value.device }}"
                                 >
-                                    <small class="text-uppercase px-3">{{ translate.vars.value.local|trans({}, 'core') }}</small>
+                                    <small class="text-uppercase px-3">
+                                        {{ description.vars.value.local|trans({}, 'core', description.vars.value.local) }}
+                                        {{ description.vars.value.device|trans({}, 'device', description.vars.value.local) }}
+                                    </small>
                                 </button>
                             </li>
 
@@ -50,23 +53,22 @@
                 <div class="tab-content" id="navdesc-{{ identifier }}-content">
 
 
-                    {% for translate in form.translate %}
+                    {% for description in form.description %}
 
-                        <div class="tab-pane fade{{ app.request.locale == translate.vars.value.local? ' show active' : '' }}"
-                             id="navdesc-{{ identifier }}-{{ translate.vars.value.local }}" role="tabpanel"
-                             aria-labelledby="navdesc-{{ identifier }}-{{ translate.vars.value.local }}-tab">
+                        <div class="tab-pane fade{{ app.request.locale == description.vars.value.local and  description.vars.value.device == 'pc' ? ' show active' : '' }}"
+                             id="navdesc-{{ identifier }}-{{ description.vars.value.local }}-{{ description.vars.value.device }}" role="tabpanel"
+                             aria-labelledby="navdesc-{{ identifier }}-{{ description.vars.value.local }}-{{ description.vars.value.device }}-tab">
 
-                            {# Краткое опсиание #}
-                            {{ form_row(translate.preview, {
-                                label : 'Краткое описание'|trans,
+                           {# Краткое опсиание #}
+                            {{ form_row(description.preview, {
+                                label : 'Краткое описание'|trans({}, 'core', description.vars.value.local),
                                 attr: { class: 'ckeditor' }
                             }) }}
 
-                            {{ form_row(translate.description, {
+                            {{ form_row(description.description, {
                                 label : 'Детальное описание'|trans,
                                 attr: { class: 'ckeditor h-25' }
                             }) }}
-
 
                         </div>
                     {% endfor %}

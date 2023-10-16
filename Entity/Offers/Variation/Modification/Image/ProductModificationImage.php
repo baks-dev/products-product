@@ -35,7 +35,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'product_modification_images')]
-#[ORM\Index(columns: ['dir', 'cdn'])]
 #[ORM\Index(columns: ['root'])]
 class ProductModificationImage extends EntityEvent implements UploadEntityInterface
 {
@@ -54,27 +53,28 @@ class ProductModificationImage extends EntityEvent implements UploadEntityInterf
 	#[ORM\JoinColumn(name: 'modification', referencedColumnName: 'id')]
 	private ProductModification $modification;
 	
-	/** Название директории */
-    #[Assert\NotBlank]
-    #[Assert\Uuid]
-	#[ORM\Column(type: ProductModificationUid::TYPE)]
-	private ProductModificationUid $dir;
+//	/** Название директории */
+//    #[Assert\NotBlank]
+//    #[Assert\Uuid]
+//	#[ORM\Column(type: ProductModificationUid::TYPE)]
+//	private ProductModificationUid $dir;
 	
 	/** Название файла */
     #[Assert\NotBlank]
-    #[Assert\Choice(['svg', 'png', 'jpg', 'jpeg', 'gif', 'webp'])]
-    #[Assert\Length(max: 5)]
-	#[ORM\Column(type: Types::STRING, length: 100)]
-	private string $name = 'img';
-	
-	/** Расширение файла */
+    #[Assert\Length(max: 100)]
+    #[ORM\Column(type: Types::STRING)]
+	private string $name;
+
+    /** Расширение файла */
     #[Assert\NotBlank]
-	#[ORM\Column(type: Types::STRING, length: 64)]
-	private string $ext = 'svg';
-	
-	/** Размер файла */
+    #[Assert\Choice(['png', 'gif', 'jpg', 'jpeg', 'webp'])]
+    #[ORM\Column(type: Types::STRING)]
+	private string $ext;
+
+    /** Размер файла */
     #[Assert\NotBlank]
-	#[ORM\Column(type: Types::INTEGER)]
+    #[Assert\Range(max: 1048576)] // 1024 * 1024
+    #[ORM\Column(type: Types::INTEGER)]
 	private int $size = 0;
 	
 	/** Файл загружен на CDN */
@@ -97,7 +97,7 @@ class ProductModificationImage extends EntityEvent implements UploadEntityInterf
 	
 	public function __clone()
 	{
-		$this->id = new ProductOfferVariationModificationImageUid();
+        $this->id = clone $this->id;
 	}
 	
 	
@@ -105,10 +105,17 @@ class ProductModificationImage extends EntityEvent implements UploadEntityInterf
 	{
 		return $this->id;
 	}
+
+    public function __toString(): string
+    {
+        return (string) $this->id;
+    }
 	
 	
-	public function getDto($dto) : mixed
+	public function getDto($dto): mixed
 	{
+        $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
+
 		if($dto instanceof ProductModificationImageInterface)
 		{
 			return parent::getDto($dto);
@@ -118,7 +125,7 @@ class ProductModificationImage extends EntityEvent implements UploadEntityInterf
 	}
 	
 	
-	public function setEntity($dto) : mixed
+	public function setEntity($dto): mixed
 	{
 		
 		/* Если размер файла нулевой - не заполняем сущность */
@@ -132,7 +139,7 @@ class ProductModificationImage extends EntityEvent implements UploadEntityInterf
 			$dto->setEntityUpload($this);
 		}
 		
-		if($dto instanceof ProductModificationImageInterface)
+		if($dto instanceof ProductModificationImageInterface || $dto instanceof self)
 		{
 			return parent::setEntity($dto);
 		}
@@ -146,39 +153,53 @@ class ProductModificationImage extends EntityEvent implements UploadEntityInterf
 		$this->name = $name;
 		$this->ext = $ext;
 		$this->size = $size;
-		$this->dir = $this->modification->getId();
+		//$this->dir = $this->modification->getId();
 		$this->cdn = false;
 	}
 	
 	
-	public function updCdn(string $ext) : void
+	public function updCdn(?string $ext = null) : void
 	{
-		$this->ext = $ext;
-		$this->cdn = true;
-	}
-	
-	
-	public function getUploadDir() : object
-	{
-		return $this->modification->getId();
-	}
-	
-	
-	public function getFileName() : string
-	{
-		return $this->name.'.'.$this->ext;
+        if($ext)
+        {
+            $this->ext = $ext;
+        }
+
+        $this->cdn = true;
 	}
 
-
-    public static function getDirName(): string
+    /**
+     * Ext
+     */
+    public function getExt(): string
     {
-        return  ProductModificationUid::class;
+        return $this->ext;
     }
 
-    public function getDir(): ProductModificationUid
-    {
-        return $this->dir;
-    }
+
+	
+	
+//	public function getUploadDir() : object
+//	{
+//		return $this->modification->getId();
+//	}
+//
+//
+//	public function getFileName(): string
+//	{
+//		return $this->name.'.'.$this->ext;
+//	}
+//
+//
+//    public static function getDirName(): string
+//    {
+//        return  ProductModificationUid::class;
+//    }
+//
+//    public function getDir(): ProductModificationUid
+//    {
+//        return $this->dir;
+//    }
 
 	public function root() : void
 	{
