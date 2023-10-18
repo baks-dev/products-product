@@ -35,7 +35,7 @@
 
                     {# Ссылка на родительский раздел  #}
                     {% if category.parent_category_url %}
-                        <a href="{{ path('Product:user.catalog.category', { url : category.parent_category_url }) }}"
+                        <a href="{{ path('products-product:user.catalog.category', { url : category.parent_category_url }) }}"
                            class="small text-lowercase"
                            title="{{ category.parent_category_name }}">
                             Все {{ category.parent_category_name }}

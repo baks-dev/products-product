@@ -87,7 +87,7 @@ class ProductTrans extends EntityEvent
 	
 	public function getNameByLocal(Locale $locale) : ?string
 	{
-		if($this->local->getValue() === $locale->getValue())
+		if($this->local->getLocalValue() === $locale->getLocalValue())
 		{
 			return $this->name;
 		}

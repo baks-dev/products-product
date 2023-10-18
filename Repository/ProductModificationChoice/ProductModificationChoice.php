@@ -111,7 +111,7 @@ final class ProductModificationChoice implements ProductModificationChoiceInterf
         $qb->setParameter('const', $const, ProductVariationConst::TYPE);
 
         /* Кешируем результат ORM */
-        return $qb->enableCache('Product', 86400)->getResult();
+        return $qb->enableCache('products-product', 86400)->getResult();
 
     }
 
@@ -179,7 +179,7 @@ final class ProductModificationChoice implements ProductModificationChoiceInterf
 
 
         /* Кешируем результат ORM */
-        return $qb->enableCache('Product', 86400)->getResult();
+        return $qb->enableCache('products-product', 86400)->getResult();
 
     }
 }

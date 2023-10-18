@@ -38,7 +38,7 @@ final class ProductDescriptionForm extends AbstractType
 		$builder->get('local')->addModelTransformer(
 			new CallbackTransformer(
 				function($local) {
-					return $local instanceof Locale ? $local->getValue() : $local;
+					return $local instanceof Locale ? $local->getLocalValue() : $local;
 				},
 				function($price) {
 					return new Locale($price);

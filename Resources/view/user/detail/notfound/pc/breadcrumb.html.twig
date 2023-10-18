@@ -20,14 +20,14 @@
 		</li>
 		
 		{# <li class="breadcrumb-item">
-			<a href="{{ path('Product:user.catalog.category') }}" class="text-muted" aria-label="Продукция" title="Продукция">Продукция</a>
+			<a href="{{ path('products-product:user.catalog.category') }}" class="text-muted" aria-label="Продукция" title="Продукция">Продукция</a>
 		</li> #}
 		
-		{# {{ dd(path('Product:user.detail', { url: card.url })) }} #}
+		{# {{ dd(path('products-product:user.detail', { url: card.url })) }} #}
 		
 		
 		<li class="breadcrumb-item">
-			<a href="{{ path('Product:user.catalog.category', { url : card.category_url }) }}" class="text-muted"
+			<a href="{{ path('products-product:user.catalog.category', { url : card.category_url }) }}" class="text-muted"
 					aria-label="{{ card.category_name }}"
 					title="{{ card.category_name }}">
 				{{ card.category_name }}
@@ -42,7 +42,7 @@
 		{% if breadcrumb_active_name %}
 			
 			<li class="breadcrumb-item">
-				<a href="{{ path('Product:user.model', { url: card.url }) }}" class="text-muted"
+				<a href="{{ path('products-product:user.model', { url: card.url }) }}" class="text-muted"
 						aria-label="{{ card.product_name }}"
 						title="{{ card.product_name }}">
 					{{ card.product_name }}

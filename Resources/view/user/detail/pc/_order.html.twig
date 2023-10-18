@@ -180,7 +180,7 @@
                             {% endif %}
 
 
-                            <a href='{{ path('Product:user.detail', {
+                            <a href='{{ path('products-product:user.detail', {
                                 url : card.url ,
                                 offer: offer.product_offer_value,
                                 variation: offer.product_variation_value,
@@ -207,7 +207,7 @@
                                 {% set search_text = false %}
                             {% endif %}
 
-                            <a href='{{ path('Product:user.detail', {
+                            <a href='{{ path('products-product:user.detail', {
                                 url : card.url ,
                                 offer: offer.product_offer_value,
                                 variation: offer.product_variation_value
@@ -231,7 +231,7 @@
                             {% set search_text = false %}
                         {% endif %}
 
-                        <a href='{{ path('Product:user.detail', {
+                        <a href='{{ path('products-product:user.detail', {
                             url : card.url ,
                             offer: offer.product_offer_value
                         }) }}' class="btn btn-link btn-sm lh-1 text-decoration-none">

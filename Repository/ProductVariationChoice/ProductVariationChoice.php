@@ -106,7 +106,7 @@ final class ProductVariationChoice implements ProductVariationChoiceInterface
 
 
         /* Кешируем результат ORM */
-        return $qb->enableCache('Product', 86400)->getResult();
+        return $qb->enableCache('products-product', 86400)->getResult();
 
     }
 
@@ -165,7 +165,7 @@ final class ProductVariationChoice implements ProductVariationChoiceInterface
 
 
         /* Кешируем результат ORM */
-        return $qb->enableCache('Product', 86400)->getResult();
+        return $qb->enableCache('products-product', 86400)->getResult();
 
     }
 

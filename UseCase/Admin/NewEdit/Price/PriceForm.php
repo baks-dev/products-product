@@ -62,10 +62,10 @@ final class PriceForm extends AbstractType
 			[
 				'choices' => Currency::cases(),
 				'choice_value' => function(?Currency $currency) {
-					return $currency?->getValue();
+					return $currency?->getCurrencyValue();
 				},
 				'choice_label' => function(?Currency $currency) {
-					return $currency?->getValue();
+					return $currency?->getCurrencyValue();
 				},
 				'translation_domain' => 'reference.currency',
 				'label' => false,
@@ -86,10 +86,10 @@ final class PriceForm extends AbstractType
 			->add('measurement', ChoiceType::class, [
 				'choices' => Measurement::cases(),
 				'choice_value' => function(?Measurement $measurement) {
-					return $measurement?->getValue();
+					return $measurement?->getMeasurementValue();
 				},
 				'choice_label' => function(?Measurement $measurement) {
-					return $measurement?->getName();
+					return $measurement?->getMeasurementValue();
 				},
 				'choice_translation_domain' => 'reference.measurement',
 				

@@ -75,7 +75,7 @@ final class ModificationController extends AbstractController
 		$ProductCategoryFilterDTO->setModification($modification);
 		
 		
-		$filterForm = $this->createForm(ProductCategoryFilterForm::class, $ProductCategoryFilterDTO, ['action' => $this->generateUrl('Product:user.catalog.category', ['url' => $url])]);
+		$filterForm = $this->createForm(ProductCategoryFilterForm::class, $ProductCategoryFilterDTO, ['action' => $this->generateUrl('products-product:user.catalog.category', ['url' => $url])]);
 		$filterForm->handleRequest($request);
 		
 		$property = null;

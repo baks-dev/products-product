@@ -84,6 +84,11 @@ final class RenameProductDTO implements ProductEventInterface
 
     public function addTranslate(Trans\ProductTransDTO $trans): void
     {
+        if(empty($trans->getLocal()->getLocalValue()))
+        {
+            return;
+        }
+
         if(!$this->translate->contains($trans))
         {
             $this->translate->add($trans);

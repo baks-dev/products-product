@@ -304,7 +304,7 @@
 									{% if order_modification is null or order_modification != offer.product_offer_value~offer.product_variation_value~offer.product_modification_value %}
 										
 										
-										<a href='{{ path('Product:user.detail', {
+										<a href='{{ path('products-product:user.detail', {
 											url : card.url ,
 											offer: offer.product_offer_value,
 											variation: offer.product_variation_value,
@@ -323,7 +323,7 @@
 									
 									{% if order_variation is null or order_variation != offer.product_offer_value~offer.product_variation_value %}
 										
-										<a href='{{ path('Product:user.detail', {
+										<a href='{{ path('products-product:user.detail', {
 											url : card.url ,
 											offer: offer.product_offer_value,
 											variation: offer.product_variation_value
@@ -343,7 +343,7 @@
 								
 								
 								{% if order_offer is null or order_offer != offer.product_offer_value %}
-									<a href='{{ path('Product:user.detail', {
+									<a href='{{ path('products-product:user.detail', {
 										url : card.url ,
 										offer: offer.product_offer_value
 									}) }}' class="btn btn-link btn-sm lh-1 text-decoration-none">
@@ -436,7 +436,7 @@
 						
 						{% if order_modification is null or order_modification != offer.product_offer_value~offer.product_variation_value~offer.product_modification_value %}
 							
-							<a href='{{ path('Product:user.detail', {
+							<a href='{{ path('products-product:user.detail', {
 								url : card.url ,
 								offer: offer.product_offer_value,
 								variation: offer.product_variation_value,
@@ -455,7 +455,7 @@
 						
 						{% if order_variation is null or order_variation != offer.product_offer_value~offer.product_variation_value %}
 							
-							<a href='{{ path('Product:user.detail', {
+							<a href='{{ path('products-product:user.detail', {
 								url : card.url ,
 								offer: offer.product_offer_value,
 								variation: offer.product_variation_value
@@ -468,7 +468,7 @@
 				
 				{% else %}
 					{% if order_offer is null or order_offer != offer.product_offer_value %}
-						<a href='{{ path('Product:user.detail', {
+						<a href='{{ path('products-product:user.detail', {
 							url : card.url ,
 							offer: offer.product_offer_value
 						}) }}' class="btn btn-link btn-sm lh-1 text-decoration-none">

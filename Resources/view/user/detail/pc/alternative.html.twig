@@ -55,7 +55,7 @@
 						<td>
 							<div class='d-flex gap-3 align-items-center'>
 								
-								<a href="{{ path('Product:user.detail', { url: alt.product_url,
+								<a href="{{ path('products-product:user.detail', { url: alt.product_url,
 									offer : alt.product_offer_value,
 									variation : alt.product_variation_value,
 									modification : alt.product_modification_value
@@ -134,7 +134,7 @@
 						<td>
 							
 							{% if alt.quantity %}
-								<a href="{{ path('Orders:user.add', {
+								<a href="{{ path('orders-order:user.add', {
 									product: alt.event,
 									offer : alt.product_offer_uid,
 									variation : alt.product_variation_uid,

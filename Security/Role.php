@@ -52,7 +52,7 @@ final class Role implements RoleInterface, MenuAdminInterface
     /** Метод возвращает PATH раздела */
     public function getPath(): string
     {
-        return 'Product:admin.index';
+        return 'products-product:admin.index';
     }
 
     /** Метод возвращает секцию, в которую помещается ссылка на раздел */

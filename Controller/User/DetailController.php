@@ -125,7 +125,7 @@ final class DetailController extends AbstractController
         $AddProductBasketDTO = new OrderProductDTO();
         $form = $this->createForm(OrderProductForm::class, $AddProductBasketDTO, [
             'action' => $this->generateUrl(
-                'Orders:user.add',
+                'orders-order:user.add',
                 [
                     'product' => $productCard['event'],
                     'offer' => $productCard['product_offer_uid'],

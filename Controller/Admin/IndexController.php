@@ -52,7 +52,7 @@ final class IndexController extends AbstractController
         // Поиск
         $search = new SearchDTO($request);
         $searchForm = $this->createForm(SearchForm::class, $search, [
-            'action' => $this->generateUrl('Product:admin.index'),
+            'action' => $this->generateUrl('products-product:admin.index'),
         ]);
         $searchForm->handleRequest($request);
 
@@ -67,13 +67,13 @@ final class IndexController extends AbstractController
 //        if($ROLE_ADMIN)
 //        {
 //            $profileForm = $this->createForm(ProductProfileFilterFormAdmin::class, $profile, [
-//                'action' => $this->generateUrl('Product:admin.index'),
+//                'action' => $this->generateUrl('products-product:admin.index'),
 //            ]);
 //        }
 //        else
 //        {
 //            $profileForm = $this->createForm(ProductProfileFilterForm::class, $profile, [
-//                'action' => $this->generateUrl('Product:admin.index'),
+//                'action' => $this->generateUrl('products-product:admin.index'),
 //            ]);
 //        }
 //
@@ -86,7 +86,7 @@ final class IndexController extends AbstractController
          */
         $filter = new ProductFilterDTO($request);
         $filterForm = $this->createForm(ProductFilterForm::class, $filter, [
-            'action' => $this->generateUrl('Product:admin.index'),
+            'action' => $this->generateUrl('products-product:admin.index'),
         ]);
         $filterForm->handleRequest($request);
         !$filterForm->isSubmitted() ?: $this->redirectToReferer();

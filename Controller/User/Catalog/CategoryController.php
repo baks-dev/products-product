@@ -64,7 +64,7 @@ final class CategoryController extends AbstractController
 		$ProductCategoryFilterDTO = new ProductCategoryFilterDTO($CategoryUid);
 		$filterForm = $this->createForm(ProductCategoryFilterForm::class,
 			$ProductCategoryFilterDTO,
-			['action' => $this->generateUrl('Product:user.catalog.category', ['url' => $url])]
+			['action' => $this->generateUrl('products-product:user.catalog.category', ['url' => $url])]
 		);
 		$filterForm->handleRequest($request);
 		
@@ -75,7 +75,7 @@ final class CategoryController extends AbstractController
 		{
 			if($ProductCategoryFilterDTO->getModification())
 			{
-				return $this->redirectToRoute('Product:user.catalog.modification',
+				return $this->redirectToRoute('products-product:user.catalog.modification',
 					[
 						'url' => $url,
 						'offer' => $ProductCategoryFilterDTO->getOffer() ?: 'all',
@@ -87,7 +87,7 @@ final class CategoryController extends AbstractController
 			
 			if($ProductCategoryFilterDTO->getVariation())
 			{
-				return $this->redirectToRoute('Product:user.catalog.variation',
+				return $this->redirectToRoute('products-product:user.catalog.variation',
 					[
 						'url' => $url,
 						'offer' => $ProductCategoryFilterDTO->getOffer() ?: 'all',
@@ -98,7 +98,7 @@ final class CategoryController extends AbstractController
 			
 			if($ProductCategoryFilterDTO->getOffer() && $ProductCategoryFilterDTO->getOffer() !== 'all')
 			{
-				return $this->redirectToRoute('Product:user.catalog.offer',
+				return $this->redirectToRoute('products-product:user.catalog.offer',
 					[
 						'url' => $url,
 						'offer' => $ProductCategoryFilterDTO->getOffer(),

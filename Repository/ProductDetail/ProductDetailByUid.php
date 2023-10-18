@@ -633,7 +633,7 @@ final class ProductDetailByUid implements ProductDetailByUidInterface
 
         /* Кешируем результат DBAL */
         return $qb
-            ->enableCache('Product', 86400)
+            ->enableCache('products-product', 86400)
             ->fetchAssociative();
 
     }

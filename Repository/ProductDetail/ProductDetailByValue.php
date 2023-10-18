@@ -611,7 +611,7 @@ final class ProductDetailByValue implements ProductDetailByValueInterface
 
 
         return $qb
-            ->enableCache('Product', 86400)
+            ->enableCache('products-product', 86400)
             ->fetchAssociative();
 
     }
@@ -1169,7 +1169,7 @@ final class ProductDetailByValue implements ProductDetailByValueInterface
 
         /* Кешируем результат DBAL */
         return $qb
-            ->enableCache('Product', 86400)
+            ->enableCache('products-product', 86400)
             ->fetchAssociative();
 
     }

@@ -108,7 +108,7 @@ final class ProductChoice implements ProductChoiceInterface
 
         /* Кешируем результат ORM */
         return $qb
-            ->enableCache('Product', 86400)
+            ->enableCache('products-product', 86400)
             ->fetchAllAssociativeIndexed(ProductUid::class);
 
     }
@@ -156,7 +156,7 @@ final class ProductChoice implements ProductChoiceInterface
 
 
         /* Кешируем результат ORM */
-        return $qb->enableCache('Product', 86400)->getResult();
+        return $qb->enableCache('products-product', 86400)->getResult();
 
     }
 

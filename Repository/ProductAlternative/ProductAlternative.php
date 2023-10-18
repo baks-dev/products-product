@@ -505,6 +505,6 @@ final class ProductAlternative implements ProductAlternativeInterface
 
         // dump($qb->fetchAllAssociative());
 
-        return $qb->enableCache('Product', 86400)->fetchAllAssociative();
+        return $qb->enableCache('products-product', 86400)->fetchAllAssociative();
     }
 }

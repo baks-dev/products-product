@@ -90,7 +90,7 @@ final class EditController extends AbstractController
                 $handle
             );
 
-            return $this->redirectToRoute('Product:admin.index');
+            return $this->redirectToRoute('products-product:admin.index');
 
         }
 

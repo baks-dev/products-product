@@ -60,7 +60,7 @@
                 >
 
 
-                    <a href="{{ (is_granted(ROLE~'_EDIT') or is_granted('ROLE_ADMIN')) ? path('Product:admin.newedit.edit', { id: item.event }) }}"
+                    <a href="{{ (is_granted(ROLE~'_EDIT') or is_granted('ROLE_ADMIN')) ? path('products-product:admin.newedit.edit', { id: item.event }) }}"
                        class="fw-bolder mb-1 text-dark text-decoration-none"
 
                     >
@@ -83,7 +83,7 @@
 
                     <div class="d-flex align-items-center">
                         <span>Арт: &nbsp;</span>
-                        <form method="post" action='{{ path('Product:admin.index') }}' class="p-0">
+                        <form method="post" action='{{ path('products-product:admin.index') }}' class="p-0">
                             <input type="hidden" name="search_form[query]" value="{{ item.product_article }}">
                             <button type="submit" class="btn btn-link text-decoration-none btn-sm p-0 border-0">
                                 <span class="small">{{ item.product_article }}</span>
@@ -98,7 +98,7 @@
                             data-bs-delay='{"show":600,"hide":100}'
                             title='QR продукции'
                     >
-                        <a href="{{ path('Product:admin.qrcode', {
+                        <a href="{{ path('products-product:admin.qrcode', {
                             product: item.event,
                             offer: item.product_offer_id,
                             variation: item.product_variation_id,

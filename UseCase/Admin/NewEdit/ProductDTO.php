@@ -26,6 +26,7 @@ namespace BaksDev\Products\Product\UseCase\Admin\NewEdit;
 use ArrayIterator;
 use BaksDev\Core\Type\Device\Device;
 use BaksDev\Core\Type\Locale\Locale;
+use BaksDev\Core\Type\Locale\Locales\LocaleDisable;
 use BaksDev\Products\Product\Entity\Event\ProductEventInterface;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Active\ActiveDTO;
@@ -381,6 +382,11 @@ final class ProductDTO implements ProductEventInterface
 
     public function addSeo(SeoCollectionDTO $seo): void
     {
+        if(empty($seo->getLocal()->getLocalValue()))
+        {
+            return;
+        }
+
         if(!$this->seo->contains($seo))
         {
             $this->seo->add($seo);
@@ -418,7 +424,6 @@ final class ProductDTO implements ProductEventInterface
 
     public function getTranslate(): ArrayCollection
     {
-
         /* Вычисляем расхождение и добавляем неопределенные локали */
         foreach(Locale::diffLocale($this->translate) as $locale)
         {
@@ -433,6 +438,11 @@ final class ProductDTO implements ProductEventInterface
 
     public function addTranslate(Trans\ProductTransDTO $trans): void
     {
+        if(empty($trans->getLocal()->getLocalValue()))
+        {
+            return;
+        }
+
         if(!$this->translate->contains($trans))
         {
             $this->translate->add($trans);
@@ -468,11 +478,16 @@ final class ProductDTO implements ProductEventInterface
     }
 
 
-    public function addDescription(Description\ProductDescriptionDTO $trans): void
+    public function addDescription(Description\ProductDescriptionDTO $description): void
     {
-        if(!$this->description->contains($trans))
+        if(empty($description->getLocal()->getLocalValue()))
         {
-            $this->description->add($trans);
+            return;
+        }
+
+        if(!$this->description->contains($description))
+        {
+            $this->description->add($description);
         }
     }
 

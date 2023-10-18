@@ -227,6 +227,6 @@ final class ProductDetailOffer implements ProductDetailOfferInterface
         //$qb->select('id');
         //$qb->from(ClasssName::TABLE, 'wb_order');
 
-        return $qb->enableCache('Product', 86400)->fetchAllAssociative();
+        return $qb->enableCache('products-product', 86400)->fetchAllAssociative();
     }
 }

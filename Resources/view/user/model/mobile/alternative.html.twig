@@ -45,7 +45,7 @@
                     <td>
                         <div class='d-flex gap-3 align-items-center'>
 
-                            <a href="{{ path('Product:user.detail', { url: card.url,
+                            <a href="{{ path('products-product:user.detail', { url: card.url,
                                 offer : offers.offer_value,
                                 variation : offers.variation_value,
                                 modification : offers.modification_value
@@ -98,7 +98,7 @@
                     <td>
                         {% if offers.price %}
 
-                            <a href="{{ path('Orders:user.add', {
+                            <a href="{{ path('orders-order:user.add', {
                                 product: card.event,
                                 offer : offers.offer_uid,
                                 variation : offers.variation_uid,
@@ -172,7 +172,7 @@
                                 <td>
                                     <div class='d-flex gap-3 align-items-center'>
 
-                                        <a href="{{ path('Product:user.detail', { url: card.url,
+                                        <a href="{{ path('products-product:user.detail', { url: card.url,
                                             offer : offers.offer_value,
                                             variation : offers.variation_value,
                                             modification : offers.modification_value
@@ -227,7 +227,7 @@
 
                                 <td>
                                     {% if offers.price %}
-                                        <a href="{{ path('Orders:user.add', {
+                                        <a href="{{ path('orders-order:user.add', {
                                             product: card.event,
                                             offer : offers.offer_uid,
                                             variation : offers.variation_uid,

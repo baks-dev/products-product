@@ -52,7 +52,7 @@ final class DeleteController extends AbstractController
         $Event->getDto($ProductDeleteDTO);
 
         $form = $this->createForm(ProductDeleteForm::class, $ProductDeleteDTO, [
-            'action' => $this->generateUrl('Product:admin.delete', ['id' => $ProductDeleteDTO->getEvent()]),
+            'action' => $this->generateUrl('products-product:admin.delete', ['id' => $ProductDeleteDTO->getEvent()]),
         ]);
 
         $form->handleRequest($request);
@@ -69,7 +69,7 @@ final class DeleteController extends AbstractController
                 $handle
             );
 
-            return $this->redirectToRoute('Product:admin.index');
+            return $this->redirectToRoute('products-product:admin.index');
         }
 
         return $this->render(

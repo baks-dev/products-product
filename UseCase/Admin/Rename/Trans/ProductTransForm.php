@@ -36,7 +36,7 @@ final class ProductTransForm extends AbstractType
 		$builder->get('local')->addModelTransformer(
 			new CallbackTransformer(
 				function($price) {
-					return $price instanceof Locale ? $price->getValue() : $price;
+					return $price instanceof Locale ? $price->getLocalValue() : $price;
 				},
 				function($price) {
 					return new Locale($price);

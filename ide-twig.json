@@ -1,7 +1,7 @@
 {
   "namespaces": [
     {
-      "namespace": "Product",
+      "namespace": "products-product",
       "path": "Resources/view"
     }
   ]
