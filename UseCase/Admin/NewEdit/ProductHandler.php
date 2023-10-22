@@ -25,6 +25,7 @@ namespace BaksDev\Products\Product\UseCase\Admin\NewEdit;
 
 use BaksDev\Core\Entity\AbstractHandler;
 use BaksDev\Core\Messenger\MessageDispatchInterface;
+use BaksDev\Core\Validator\ValidatorCollectionInterface;
 use BaksDev\Files\Resources\Upload\File\FileUploadInterface;
 use BaksDev\Files\Resources\Upload\Image\ImageUploadInterface;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
@@ -46,51 +47,26 @@ use BaksDev\Products\Product\UseCase\Admin\NewEdit\Photo\PhotoCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Video\VideoCollectionDTO;
 use Doctrine\ORM\EntityManagerInterface;
 use DomainException;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 final class ProductHandler extends AbstractHandler
 {
 
-    //    private EntityManagerInterface $entityManager;
-    //
-    //    private ImageUploadInterface $imageUpload;
-    //
-    //    private FileUploadInterface $fileUpload;
-    //
-    //    private UniqProductUrlInterface $uniqProductUrl;
-    //
-    //    private ValidatorInterface $validator;
-    //
-    //    private LoggerInterface $logger;
-    //
-    //    // /** Событие нового продукта */
-    //    // private ?ProductPersistEvent $persist = null;
-    //
-    //    // /** Событие обновлеия продукта */
-    //    // private ?ProductUpdateEvent $update = null;
-    //    private MessageDispatchInterface $messageDispatch;
+    private UniqProductUrlInterface $uniqProductUrl;
+
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        MessageDispatchInterface $messageDispatch,
+        ValidatorCollectionInterface $validatorCollection,
+        ImageUploadInterface $imageUpload,
+        FileUploadInterface $fileUpload,
+        UniqProductUrlInterface $uniqProductUrl,
+    )
+    {
+        parent::__construct($entityManager, $messageDispatch, $validatorCollection, $imageUpload, $fileUpload);
 
 
-    //    public function __construct(
-    //        EntityManagerInterface $entityManager,
-    //        ImageUploadInterface $imageUpload,
-    //        FileUploadInterface $fileUpload,
-    //        UniqProductUrlInterface $uniqProductUrl,
-    //        ValidatorInterface $validator,
-    //        LoggerInterface $logger,
-    //        MessageDispatchInterface $messageDispatch,
-    //    )
-    //    {
-    //        $this->entityManager = $entityManager;
-    //        $this->imageUpload = $imageUpload;
-    //        $this->fileUpload = $fileUpload;
-    //        $this->uniqProductUrl = $uniqProductUrl;
-    //        $this->validator = $validator;
-    //        $this->logger = $logger;
-    //        $this->messageDispatch = $messageDispatch;
-    //    }
-
+        $this->uniqProductUrl = $uniqProductUrl;
+    }
 
     public function handle(ProductDTO $command): Product|string
     {
@@ -109,6 +85,13 @@ final class ProductHandler extends AbstractHandler
             return $errorUniqid;
         }
 
+        /** Проверяем уникальность семантической ссылки продукта */
+        $infoDTO = $command->getInfo();
+        $uniqProductUrl = $this->uniqProductUrl->get($infoDTO->getUrl(), $this->main->getId());
+        if($uniqProductUrl)
+        {
+            $infoDTO->updateUrlUniq(); // Обновляем URL на уникальный с префиксом
+        }
 
         // Загрузка базового фото галереи
         foreach($this->event->getPhoto() as $ProductPhoto)
@@ -219,7 +202,6 @@ final class ProductHandler extends AbstractHandler
         );
 
         return $this->main;
-
 
     }
 

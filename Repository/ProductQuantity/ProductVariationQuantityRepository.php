@@ -26,14 +26,17 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Repository\ProductQuantity;
 
 use BaksDev\Products\Category\Entity as CategoryEntity;
-use BaksDev\Products\Product\Entity as ProductEntity;
-use BaksDev\Products\Product\Entity\Offers\Variation\Quantity\ProductOfferVariationQuantity;
+use BaksDev\Products\Product\Entity\Event\ProductEvent;
+use BaksDev\Products\Product\Entity\Offers\ProductOffer;
+use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
+use BaksDev\Products\Product\Entity\Offers\Variation\Quantity\ProductVariationQuantity;
+use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
 use Doctrine\ORM\EntityManagerInterface;
 
-final class ProductVariationQuantity implements ProductVariationQuantityInterface
+final class ProductVariationQuantityRepository implements ProductVariationQuantityRepositoryInterface
 {
     private EntityManagerInterface $entityManager;
 
@@ -47,17 +50,17 @@ final class ProductVariationQuantity implements ProductVariationQuantityInterfac
         ProductUid $product,
         ProductOfferConst $offer,
         ProductVariationConst $variation
-    ): ?ProductOfferVariationQuantity {
+    ): ?ProductVariationQuantity {
         $qb = $this->entityManager->createQueryBuilder();
 
         $qb->select('quantity');
 
-        $qb->from(ProductEntity\Product::class, 'product');
+        $qb->from(Product::class, 'product');
         $qb->where('product.id = :product');
         $qb->setParameter('product', $product, ProductUid::TYPE);
 
         $qb->join(
-            ProductEntity\Event\ProductEvent::class,
+            ProductEvent::class,
             'event',
             'WITH',
             'event.id = product.event'
@@ -66,7 +69,7 @@ final class ProductVariationQuantity implements ProductVariationQuantityInterfac
         // Торговое предложение
 
         $qb->join(
-            ProductEntity\Offers\ProductOffer::class,
+            ProductOffer::class,
             'offer',
             'WITH',
             'offer.event = event.id AND offer.const = :offer_const'
@@ -77,7 +80,7 @@ final class ProductVariationQuantity implements ProductVariationQuantityInterfac
         // Множественный вариант
 
         $qb->join(
-            ProductEntity\Offers\Variation\ProductVariation::class,
+            ProductVariation::class,
             'variation',
             'WITH',
             'variation.offer = offer.id AND variation.const = :variation_const'
@@ -87,7 +90,7 @@ final class ProductVariationQuantity implements ProductVariationQuantityInterfac
 
 
         $qb->leftJoin(
-            ProductEntity\Offers\Variation\Quantity\ProductOfferVariationQuantity::class,
+            ProductVariationQuantity::class,
             'quantity',
             'WITH',
             'quantity.variation = variation.id'

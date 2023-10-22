@@ -30,14 +30,18 @@ use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Offer\OfferDTO;
 use Doctrine\Common\Collections\ArrayCollection;
 use ReflectionProperty;
+use Symfony\Component\Validator\Constraints as Assert;
 
+/** @see ProductVariation */
 final class ProductOffersVariationCollectionDTO implements ProductVariationInterface
 {
 
     /** ID множественного варианта торгового предложения категории */
-    private ProductCategoryVariationUid $categoryVariation;
+    private ?ProductCategoryVariationUid $categoryVariation;
 
     /** Постоянный уникальный идентификатор варианта */
+    #[Assert\NotBlank]
+    #[Assert\Uuid]
     private readonly ProductVariationConst $const;
 
     /** Заполненное значение */
@@ -50,15 +54,19 @@ final class ProductOffersVariationCollectionDTO implements ProductVariationInter
     private ?string $postfix = null;
 
     /** Стоимость торгового предложения */
-    private ?Price\ProductOfferVariationPriceDTO $price = null;
+    #[Assert\Valid]
+    private ?Price\ProductVariationPriceDTO $price = null;
 
     /** Количественный учет */
-    private ?Quantity\ProductOfferVariationQuantityDTO $quantity = null;
+    #[Assert\Valid]
+    private ?Quantity\ProductVariationQuantityDTO $quantity = null;
 
     /** Дополнительные фото торгового предложения */
+    #[Assert\Valid]
     private ArrayCollection $image;
 
     /** Модификации множественных вариантов */
+    #[Assert\Valid]
     private ArrayCollection $modification;
 
 
@@ -120,13 +128,13 @@ final class ProductOffersVariationCollectionDTO implements ProductVariationInter
 
     /** Стоимость торгового предложения */
 
-    public function getPrice(): ?Price\ProductOfferVariationPriceDTO
+    public function getPrice(): ?Price\ProductVariationPriceDTO
     {
         return $this->price;
     }
 
 
-    public function setPrice(?Price\ProductOfferVariationPriceDTO $price): void
+    public function setPrice(?Price\ProductVariationPriceDTO $price): void
     {
         $this->price = $price;
     }
@@ -134,13 +142,13 @@ final class ProductOffersVariationCollectionDTO implements ProductVariationInter
 
     /** Количественный учет */
 
-    public function getQuantity(): ?Quantity\ProductOfferVariationQuantityDTO
+    public function getQuantity(): ?Quantity\ProductVariationQuantityDTO
     {
         return $this->quantity;
     }
 
 
-    public function setQuantity(?Quantity\ProductOfferVariationQuantityDTO $quantity): void
+    public function setQuantity(?Quantity\ProductVariationQuantityDTO $quantity): void
     {
         $this->quantity = $quantity;
     }
@@ -201,13 +209,13 @@ final class ProductOffersVariationCollectionDTO implements ProductVariationInter
 
     /** ID множественного варианта торгового предложения категории */
 
-    public function getCategoryVariation(): ProductCategoryVariationUid
+    public function getCategoryVariation(): ?ProductCategoryVariationUid
     {
         return $this->categoryVariation;
     }
 
 
-    public function setCategoryVariation(ProductCategoryVariationUid $categoryVariation): void
+    public function setCategoryVariation(?ProductCategoryVariationUid $categoryVariation): void
     {
         $this->categoryVariation = $categoryVariation;
     }

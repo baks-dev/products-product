@@ -21,36 +21,13 @@
  *  THE SOFTWARE.
  */
 
+namespace BaksDev\Products\Product\Entity\Offers\Variation\Quantity;
 
-namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Quantity;
-
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
-final class ProductOfferVariationQuantityForm extends AbstractType
+interface ProductVariationQuantityInterface
 {
-	
-	public function buildForm(FormBuilderInterface $builder, array $options) : void
-	{
-		/* Количество В наличие */
-		$builder->add('quantity', IntegerType::class, ['required' => false, 'label' => false,]);
-		
-		/* Зарезервирован */
-		$builder->add('reserve', IntegerType::class, ['required' => false, 'label' => false,]);
-		
-	}
+	public function getQuantity() : ?int;
 	
 	
-	public function configureOptions(OptionsResolver $resolver) : void
-	{
-		$resolver->setDefaults
-		(
-			[
-				'data_class' => ProductVariationQuantityDTO::class,
-			]
-		);
-	}
+	public function getReserve() : ?int;
 	
 }

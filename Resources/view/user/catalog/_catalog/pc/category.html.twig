@@ -7,13 +7,6 @@
 		<ul class="leader list-group list-group-flush list-group-horizontal flex-wrap gap-3 mb-3 bg-light p-3">
 			
 			{% for parent in parent_category|filter(v => v.parent_category_counter > 0) %}
-				
-				{# {{ dump(parent) }} #}
-				
-				{# parent_category_cover_cdn
-					parent_category_cover_ext
-					parent_category_cover_name #}
-				
 
 				<li class="list-group-item bg-transparent border-0 text-truncate rounded-5" style="width: 32%;">
 					

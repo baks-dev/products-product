@@ -34,7 +34,7 @@ use InvalidArgumentException;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'product_variation_quantity')]
-class ProductOfferVariationQuantity extends EntityEvent
+class ProductVariationQuantity extends EntityEvent
 {
 	public const TABLE = 'product_variation_quantity';
 	
@@ -67,7 +67,7 @@ class ProductOfferVariationQuantity extends EntityEvent
 	{
         $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
 
-		if($dto instanceof ProductOfferVariationQuantityInterface)
+		if($dto instanceof ProductVariationQuantityInterface)
 		{
 			return parent::getDto($dto);
 		}
@@ -78,7 +78,7 @@ class ProductOfferVariationQuantity extends EntityEvent
 	
 	public function setEntity($dto): mixed
 	{
-		if($dto instanceof ProductOfferVariationQuantityInterface || $dto instanceof self)
+		if($dto instanceof ProductVariationQuantityInterface || $dto instanceof self)
 		{
 			if(empty($dto->getQuantity()) && empty($dto->getReserve()))
 			{

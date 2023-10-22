@@ -21,11 +21,62 @@
  *  THE SOFTWARE.
  */
 
-namespace BaksDev\Products\Product\Entity\Offers\Variation\Price;
+declare(strict_types=1);
 
+namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Price;
+
+use BaksDev\Products\Product\Entity\Offers\Price\ProductOfferPriceInterface;
+use BaksDev\Products\Product\Entity\Offers\Variation\Price\ProductVariationPriceInterface;
+use BaksDev\Reference\Currency\Type\Currency;
 use BaksDev\Reference\Money\Type\Money;
+use Symfony\Component\Validator\Constraints as Assert;
 
-interface ProductOfferVariationPriceInterface
+final class ProductVariationPriceDTO implements ProductVariationPriceInterface
 {
-	public function getPrice() : ?Money;
+	
+	/** Стоимость */
+	private ?Money $price = null;
+	
+	/** Валюта */
+	private ?Currency $currency;
+	
+	
+	public function __construct()
+	{
+		$this->currency = new Currency();
+	}
+	
+	
+	/** Стоимость */
+	
+	public function getPrice() : ?Money
+	{
+		return $this->price;
+	}
+	
+	
+	public function setPrice(Money|float|null $price) : void
+	{
+		if($price !== null)
+		{
+			$price = $price instanceof Money ? $price : new Money($price);
+		}
+		
+		$this->price = $price;
+	}
+	
+	
+	/** Валюта */
+	
+	public function getCurrency() : Currency
+	{
+		return $this->currency ?: new Currency();
+	}
+	
+	
+	public function setCurrency(?Currency $currency) : void
+	{
+		$this->currency = $currency;
+	}
+	
 }

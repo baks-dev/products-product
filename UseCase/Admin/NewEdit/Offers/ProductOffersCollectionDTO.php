@@ -30,14 +30,17 @@ use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Offer\OfferDTO;
 use Doctrine\Common\Collections\ArrayCollection;
 use ReflectionProperty;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /** @see ProductOffer */
 final class ProductOffersCollectionDTO implements ProductOffersInterface
 {
 	/** ID торгового предложения категории */
-	private ProductCategoryOffersUid $categoryOffer;
+	private ?ProductCategoryOffersUid $categoryOffer;
 	
 	/** Постоянный уникальный идентификатор ТП */
+    #[Assert\NotBlank]
+    #[Assert\Uuid]
 	private readonly ProductOfferConst $const;
 	
 	/** Заполненное значение */
@@ -51,15 +54,19 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
 
 
     /** Стоимость торгового предложения */
+    #[Assert\Valid]
 	private ?Price\ProductOfferPriceDTO $price = null;
 	
 	/** Количественный учет */
+    #[Assert\Valid]
 	private ?Quantity\ProductOfferQuantityDTO $quantity = null;
 	
 	/** Дополнительные фото торгового предложения */
+    #[Assert\Valid]
 	private ArrayCollection $image;
 	
 	/** Коллекция вариаций в торговом предложении  */
+    #[Assert\Valid]
 	private ArrayCollection $variation;
 	
 	
@@ -212,13 +219,13 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
 	
 	
 	/** ID торгового предложения категории */
-	public function getCategoryOffer() : ProductCategoryOffersUid
+	public function getCategoryOffer() : ?ProductCategoryOffersUid
 	{
 		return $this->categoryOffer;
 	}
 	
 
-	public function setCategoryOffer(ProductCategoryOffersUid $categoryOffer) : void
+	public function setCategoryOffer(?ProductCategoryOffersUid $categoryOffer) : void
 	{
 		$this->categoryOffer = $categoryOffer;
 	}

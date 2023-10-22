@@ -50,9 +50,9 @@ use BaksDev\Products\Product\Entity\Offers\Variation\Image\ProductVariationImage
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Price\ProductModificationPrice;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Quantity\ProductModificationQuantity;
-use BaksDev\Products\Product\Entity\Offers\Variation\Price\ProductOfferVariationPrice;
+use BaksDev\Products\Product\Entity\Offers\Variation\Price\ProductVariationPrice;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
-use BaksDev\Products\Product\Entity\Offers\Variation\Quantity\ProductOfferVariationQuantity;
+use BaksDev\Products\Product\Entity\Offers\Variation\Quantity\ProductVariationQuantity;
 use BaksDev\Products\Product\Entity\Photo\ProductPhoto;
 use BaksDev\Products\Product\Entity\Price\ProductPrice;
 use BaksDev\Products\Product\Entity\Property\ProductProperty;
@@ -272,7 +272,7 @@ final class ProductDetailByUid implements ProductDetailByUidInterface
         /* Цена множественного варианта */
         $qb->leftJoin(
             'product_offer_variation',
-            ProductOfferVariationPrice::TABLE,
+            ProductVariationPrice::TABLE,
             'product_variation_price',
             'product_variation_price.variation = product_offer_variation.id'
         )
@@ -306,7 +306,7 @@ final class ProductDetailByUid implements ProductDetailByUidInterface
         /* Наличие и резерв множественного варианта */
         $qb->leftJoin(
             'category_offer_variation',
-            ProductOfferVariationQuantity::TABLE,
+            ProductVariationQuantity::TABLE,
             'product_variation_quantity',
             'product_variation_quantity.variation = product_offer_variation.id'
         )

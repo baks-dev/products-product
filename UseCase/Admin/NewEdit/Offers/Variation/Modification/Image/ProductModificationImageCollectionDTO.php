@@ -59,6 +59,12 @@ final class ProductModificationImageCollectionDTO implements ProductModification
 		return $this->name;
 	}
 
+    public function setName(?string $name): self
+    {
+        $this->name = $name;
+        return $this;
+    }
+
 	
 	
 	/** Расширение */
@@ -68,8 +74,14 @@ final class ProductModificationImageCollectionDTO implements ProductModification
 		return $this->ext;
 	}
 
-	
-	
+    public function setExt(?string $ext): self
+    {
+        $this->ext = $ext;
+        return $this;
+    }
+
+
+
 	/** Флаг загрузки CDN */
 	
 	public function getCdn() : bool
@@ -99,6 +111,12 @@ final class ProductModificationImageCollectionDTO implements ProductModification
 	{
 		return $this->size;
 	}
+
+    public function setSize(?int $size): self
+    {
+        $this->size = $size;
+        return $this;
+    }
 
 }
 

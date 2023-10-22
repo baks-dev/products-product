@@ -41,39 +41,39 @@ final class ProductProfileFilterForm extends AbstractType
 
     private RequestStack $request;
 
-    private WbTokenChoiceInterface $tokenChoice;
+    //private WbTokenChoiceInterface $tokenChoice;
 
     public function __construct(
-        WbTokenChoiceInterface $tokenChoice,
+        //WbTokenChoiceInterface $tokenChoice,
         RequestStack $request,
     )
     {
         $this->request = $request;
-        $this->tokenChoice = $tokenChoice;
+        //$this->tokenChoice = $tokenChoice;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
 
-        $AccessProfileTokenCollection = $this->tokenChoice->getAccessProfileTokenCollection();
-
-        if($AccessProfileTokenCollection)
-        {
-            $builder->add('profile', ChoiceType::class, [
-                'choices' => $this->tokenChoice->getAccessProfileTokenCollection(),
-                'choice_value' => function(?UserProfileUid $profile) {
-                    return $profile?->getValue();
-                },
-                'choice_label' => function(UserProfileUid $profile) {
-                    return $profile->getAttr();
-                },
-                'label' => false,
-            ]);
-        }
-        else
-        {
-            $builder->add('profile', HiddenType::class);
-        }
+//        $AccessProfileTokenCollection = $this->tokenChoice->getAccessProfileTokenCollection();
+//
+//        if($AccessProfileTokenCollection)
+//        {
+//            $builder->add('profile', ChoiceType::class, [
+//                'choices' => $this->tokenChoice->getAccessProfileTokenCollection(),
+//                'choice_value' => function(?UserProfileUid $profile) {
+//                    return $profile?->getValue();
+//                },
+//                'choice_label' => function(UserProfileUid $profile) {
+//                    return $profile->getAttr();
+//                },
+//                'label' => false,
+//            ]);
+//        }
+//        else
+//        {
+//            $builder->add('profile', HiddenType::class);
+//        }
 
 
         $builder->addEventListener(

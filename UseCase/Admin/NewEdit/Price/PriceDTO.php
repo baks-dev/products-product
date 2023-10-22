@@ -33,8 +33,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 final class PriceDTO implements ProductPriceInterface
 {
 	/** Стоимость */
-	#[Assert\NotBlank]
-	private ?Money $price;
+	//#[Assert\NotBlank]
+	private ?Money $price = null;
 
 	/** Валюта */
 	#[Assert\NotBlank]
@@ -44,11 +44,10 @@ final class PriceDTO implements ProductPriceInterface
 	private bool $request = false;
 
 	/** В наличие */
-    #[Assert\NotBlank]
+    #[Assert\Range(min: 0)]
 	private ?int $quantity = 0; // 0 - нет в наличие
 
 	/** Резерв */
-	#[Assert\NotBlank]
     #[Assert\Range(min: 0)]
 	private ?int $reserve = 0;
 
@@ -60,7 +59,6 @@ final class PriceDTO implements ProductPriceInterface
 		$this->currency = new Currency();
         $this->measurement = new Measurement(MeasurementStunt::class);
 	}
-
 
 	public function getPrice() : ?Money
 	{

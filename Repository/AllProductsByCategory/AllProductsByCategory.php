@@ -347,7 +347,7 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
 		
 		$qb->leftJoin(
 			'category_offer_variation',
-			ProductEntity\Offers\Variation\Price\ProductOfferVariationPrice::TABLE,
+			ProductEntity\Offers\Variation\Price\ProductVariationPrice::TABLE,
 			'product_variation_price',
 			'product_variation_price.variation = product_offer_variation.id'
 		)

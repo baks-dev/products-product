@@ -24,28 +24,41 @@
 namespace BaksDev\Products\Product\Entity\Info;
 
 use BaksDev\Core\Entity\EntityEvent;
+use BaksDev\Core\Entity\EntityReadonly;
+use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use InvalidArgumentException;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /* Неизменяемые данные Продукта */
 
 
 #[ORM\Entity]
 #[ORM\Table(name: 'product_info')]
-class ProductInfo extends EntityEvent
+class ProductInfo extends EntityReadonly
 {
     public const TABLE = 'product_info';
 
     /** ID Product */
+    #[Assert\NotBlank]
+    #[Assert\Uuid]
     #[ORM\Id]
     #[ORM\Column(type: ProductUid::TYPE)]
     private ProductUid $product;
 
+    /** ID события */
+    #[Assert\NotBlank]
+    #[Assert\Uuid]
+    #[ORM\OneToOne(inversedBy: 'info', targetEntity: ProductEvent::class)]
+    #[ORM\JoinColumn(name: 'event', referencedColumnName: 'id')]
+    private ProductEvent $event;
+
     /** Семантическая ссылка на товар */
+    #[Assert\NotBlank]
     #[ORM\Column(type: Types::STRING, unique: true)]
     private string $url;
 
@@ -54,13 +67,15 @@ class ProductInfo extends EntityEvent
     private ?string $article = null;
 
     /** Профиль пользователя, которому принадлежит товар */
+    #[Assert\Uuid]
     #[ORM\Column(type: UserProfileUid::TYPE, nullable: true)]
     private ?UserProfileUid $profile = null;
 
 
-    public function __construct(Product|ProductUid $product)
+    public function __construct(ProductEvent $event)
     {
-        $this->product = $product instanceof Product ? $product->getId() : $product;
+        $this->event = $event;
+        $this->product = $event->getMain();
     }
 
     public function __toString(): string
@@ -72,6 +87,14 @@ class ProductInfo extends EntityEvent
     {
         return $this->product;
     }
+
+    public function setEvent(ProductEvent $event): self
+    {
+        $this->event = $event;
+        return $this;
+    }
+
+
 
 
     public function getDto($dto): mixed

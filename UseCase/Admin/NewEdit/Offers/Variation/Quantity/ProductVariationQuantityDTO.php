@@ -24,10 +24,10 @@
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Quantity;
 
 use BaksDev\Products\Product\Entity\Offers\Quantity\ProductOfferQuantityInterface;
-use BaksDev\Products\Product\Entity\Offers\Variation\Quantity\ProductOfferVariationQuantityInterface;
+use BaksDev\Products\Product\Entity\Offers\Variation\Quantity\ProductVariationQuantityInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class ProductOfferVariationQuantityDTO implements ProductOfferVariationQuantityInterface
+final class ProductVariationQuantityDTO implements ProductVariationQuantityInterface
 {
 	/** В наличие */
 	private ?int $quantity = null; // 0 - нет в наличие

@@ -52,11 +52,10 @@ final class ProductController extends AbstractController
         
         // $mod = new ModifyAction('update');
         //        $mod = ModifyAction::UPDATE;
-        //        dump($mod->value);
         //
         //
         //        $mod = ModifyAction::from($mod->value);
-        //        dump($mod);
+
         
         return $this->render(['card' => $productCard]);
         

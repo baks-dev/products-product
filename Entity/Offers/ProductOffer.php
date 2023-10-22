@@ -58,11 +58,10 @@ class ProductOffer extends EntityEvent
     private ProductEvent $event;
 
     /** ID торгового предложения категории */
-    #[Assert\NotBlank]
     #[Assert\Uuid]
     #[Assert\Type(ProductCategoryOffersUid::class)]
-    #[ORM\Column(name: 'category_offer', type: ProductCategoryOffersUid::TYPE)]
-    private ProductCategoryOffersUid $categoryOffer;
+    #[ORM\Column(name: 'category_offer', type: ProductCategoryOffersUid::TYPE, nullable: true)]
+    private ?ProductCategoryOffersUid $categoryOffer = null;
 
     /** Постоянный уникальный идентификатор ТП */
     #[Assert\NotBlank]

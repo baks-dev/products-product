@@ -29,6 +29,7 @@ use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModific
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
 use Doctrine\Common\Collections\ArrayCollection;
 use ReflectionProperty;
+use Symfony\Component\Validator\Constraints as Assert;
 
 final class ProductOffersVariationModificationCollectionDTO implements ProductModificationInterface
 {
@@ -36,6 +37,8 @@ final class ProductOffersVariationModificationCollectionDTO implements ProductMo
 	private ProductCategoryModificationUid $categoryModification;
 	
 	/** Постоянный уникальный идентификатор модификации */
+    #[Assert\NotBlank]
+    #[Assert\Uuid]
 	private readonly ProductModificationConst $const;
 	
 	/** Заполненное значение */
@@ -48,12 +51,15 @@ final class ProductOffersVariationModificationCollectionDTO implements ProductMo
 	private ?string $postfix = null;
 
 	/** Стоимость торгового предложения */
+    #[Assert\Valid]
 	private ?Price\ProductModificationPriceDTO $price = null;
 	
 	/** Количественный учет */
+    #[Assert\Valid]
 	private ?Quantity\ProductModificationQuantityDTO $quantity = null;
 	
 	/** Дополнительные фото торгового предложения */
+    #[Assert\Valid]
 	private ArrayCollection $image;
 	
 

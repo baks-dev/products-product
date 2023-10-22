@@ -60,6 +60,13 @@ final class ProductOfferImageCollectionDTO implements ProductOfferImageInterface
 		return $this->name;
 	}
 
+    public function setName(?string $name): self
+    {
+        $this->name = $name;
+        return $this;
+    }
+
+
 
 	/** Расширение */
 	
@@ -67,6 +74,14 @@ final class ProductOfferImageCollectionDTO implements ProductOfferImageInterface
 	{
 		return $this->ext;
 	}
+
+    public function setExt(?string $ext): self
+    {
+        $this->ext = $ext;
+        return $this;
+    }
+
+
 
 	/** Флаг загрузки CDN */
 	
@@ -96,6 +111,14 @@ final class ProductOfferImageCollectionDTO implements ProductOfferImageInterface
 	{
 		return $this->size;
 	}
+
+    public function setSize(?int $size): self
+    {
+        $this->size = $size;
+        return $this;
+    }
+
+
 	
 }
 

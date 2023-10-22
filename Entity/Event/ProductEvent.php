@@ -30,6 +30,7 @@ use BaksDev\Products\Product\Entity\Active\ProductActive;
 use BaksDev\Products\Product\Entity\Category\ProductCategory;
 use BaksDev\Products\Product\Entity\Description\ProductDescription;
 use BaksDev\Products\Product\Entity\Files\ProductFiles;
+use BaksDev\Products\Product\Entity\Info\ProductInfo;
 use BaksDev\Products\Product\Entity\Modify\ProductModify;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Photo\ProductPhoto;
@@ -73,6 +74,12 @@ class ProductEvent extends EntityEvent
     #[Assert\Valid]
     #[ORM\OneToMany(mappedBy: 'event', targetEntity: ProductCategory::class, cascade: ['all'])]
     private Collection $category;
+
+    /**
+     * Стикер заказа
+     */
+    #[ORM\OneToOne(mappedBy: 'event', targetEntity: ProductInfo::class, cascade: ['all'])]
+    private ?ProductInfo $info = null;
 
     /** Статусы активности продукта */
     #[Assert\Valid]
@@ -127,6 +134,8 @@ class ProductEvent extends EntityEvent
     #[Assert\Valid]
     #[ORM\OneToMany(mappedBy: 'event', targetEntity: ProductProperty::class, cascade: ['all'])]
     private Collection $property;
+
+
 
     public function __construct()
     {

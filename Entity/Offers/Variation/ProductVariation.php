@@ -64,10 +64,9 @@ class ProductVariation extends EntityEvent
     private readonly ProductVariationConst $const;
 
     /** ID торгового предложения категории */
-    #[Assert\NotBlank]
     #[Assert\Uuid]
     #[ORM\Column(name: 'category_variation', type: ProductCategoryVariationUid::TYPE, nullable: true)]
-    private ProductCategoryVariationUid $categoryVariation;
+    private ?ProductCategoryVariationUid $categoryVariation = null;
 
     /** Заполненное значение */
     #[ORM\Column(type: Types::TEXT, nullable: true)]
@@ -82,12 +81,12 @@ class ProductVariation extends EntityEvent
     private ?string $postfix = null;
 
     /** Стоимость торгового предложения */
-    #[ORM\OneToOne(mappedBy: 'variation', targetEntity: Price\ProductOfferVariationPrice::class, cascade: ['all'])]
-    private ?Price\ProductOfferVariationPrice $price = null;
+    #[ORM\OneToOne(mappedBy: 'variation', targetEntity: Price\ProductVariationPrice::class, cascade: ['all'])]
+    private ?Price\ProductVariationPrice $price = null;
 
     /** Количественный учет */
-    #[ORM\OneToOne(mappedBy: 'variation', targetEntity: Quantity\ProductOfferVariationQuantity::class, cascade: ['all'])]
-    private ?Quantity\ProductOfferVariationQuantity $quantity = null;
+    #[ORM\OneToOne(mappedBy: 'variation', targetEntity: Quantity\ProductVariationQuantity::class, cascade: ['all'])]
+    private ?Quantity\ProductVariationQuantity $quantity = null;
 
     /** Дополнительные фото торгового предложения */
     #[Assert\Valid]
@@ -105,8 +104,8 @@ class ProductVariation extends EntityEvent
         // $this->const = new ProductVariationConst();
         $this->offer = $offer;
 
-        $this->price = new Price\ProductOfferVariationPrice($this);
-        $this->quantity = new Quantity\ProductOfferVariationQuantity($this);
+        $this->price = new Price\ProductVariationPrice($this);
+        $this->quantity = new Quantity\ProductVariationQuantity($this);
         // $this->images = new ArrayCollection();
     }
 

@@ -115,10 +115,7 @@
 		<div class="w-100">
 			<h3 class="h6 mb-3 ms-2">Характеристики:</h3>
 			
-			
-			{# {{ dd(arr_property | filter(public => public.f2 == true)) }}
-			#}
-			
+
 			<div class="d-flex flex-column gap-3">
 				
 				{% set odd = 'bg-light' %}
@@ -196,8 +193,7 @@
 						<div class="w-50 d-flex gap-3 align-items-center">
 							{% set render = name_property.f5|call_twig_func(name_property.f3~'_render') %}
 							
-							{# {{ dump(name_property.f3) }} #}
-							
+
 							{% if render %}
 								{{ render|raw }}
 							{% else %}

@@ -49,13 +49,11 @@ final class EditController extends AbstractController
     public function edit(
         #[MapEntity] ProductEvent $Event,
         Request $request,
-        ProductHandler $productHandler,
-        EntityManagerInterface $entityManager,
+        ProductHandler $productHandler
     ): Response
     {
         $ProductDTO = new ProductDTO();
         $Event->getDto($ProductDTO);
-
 
         // Если передана категория - присваиваем для подгрузки настроект (свойства, ТП)
         if($request->get('category'))
@@ -69,9 +67,6 @@ final class EditController extends AbstractController
                 }
             }
         }
-
-        $Info = $entityManager->getRepository(ProductInfo::class)->findOneBy(['product' => $Event->getMain()]);
-        $Info->getDto($ProductDTO->getInfo());
 
         // Форма добавления
         $form = $this->createForm(ProductForm::class, $ProductDTO);

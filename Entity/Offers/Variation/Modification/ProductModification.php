@@ -64,10 +64,9 @@ class ProductModification extends EntityEvent
     private readonly ProductModificationConst $const;
 
     /** ID модификации категории */
-    #[Assert\NotBlank]
     #[Assert\Uuid]
     #[ORM\Column(name: 'category_modification', type: ProductCategoryModificationUid::TYPE, nullable: true)]
-    private ProductCategoryModificationUid $categoryModification;
+    private ?ProductCategoryModificationUid $categoryModification = null;
 
     /** Заполненное значение */
     #[ORM\Column(type: Types::TEXT, nullable: true)]

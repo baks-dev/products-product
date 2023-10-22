@@ -90,8 +90,7 @@ class ProductsRenameCommand extends Command
     
                         $this->entityManager->flush();
                         $this->entityManager->clear();
-                        
-                        dump($name);
+
                     }
                     
                     

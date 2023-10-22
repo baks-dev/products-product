@@ -186,7 +186,7 @@ final class AllProducts implements AllProductsInterface
         /* Цена множественного варианта */
         $qb->leftJoin(
             'category_offer_variation',
-            Entity\Offers\Variation\Price\ProductOfferVariationPrice::TABLE,
+            Entity\Offers\Variation\Price\ProductVariationPrice::TABLE,
             'product_variation_price',
             'product_variation_price.variation = product_offer_variation.id'
         );

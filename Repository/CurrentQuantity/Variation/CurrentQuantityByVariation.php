@@ -28,7 +28,7 @@ namespace BaksDev\Products\Product\Repository\CurrentQuantity\Variation;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
-use BaksDev\Products\Product\Entity\Offers\Variation\Quantity\ProductOfferVariationQuantity;
+use BaksDev\Products\Product\Entity\Offers\Variation\Quantity\ProductVariationQuantity;
 use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
@@ -51,7 +51,7 @@ final class CurrentQuantityByVariation implements CurrentQuantityByVariationInte
         ProductOfferUid $offer,
         ProductVariationUid $variation
 	
-	) : ?ProductOfferVariationQuantity
+	) : ?ProductVariationQuantity
 	{
 		$qb = $this->entityManager->createQueryBuilder();
 		
@@ -89,7 +89,7 @@ final class CurrentQuantityByVariation implements CurrentQuantityByVariationInte
 		
 		
 		/** Текущее наличие */
-		$qb->leftJoin(ProductOfferVariationQuantity::class,
+		$qb->leftJoin(ProductVariationQuantity::class,
 			'quantity', 'WITH', 'quantity.variation = current_variation.id'
 		);
 		
