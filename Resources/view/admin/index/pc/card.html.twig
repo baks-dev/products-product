@@ -67,15 +67,21 @@
                         {{ item.product_name|capitalize }}
                     </a>
 
-
                     <div class="text-muted fw-bolder">
-                        {{ item.product_offer_value|call_twig_func(item.product_offer_reference) }}
-                        {{ item.product_offer_postfix }}
+                        {% if item.product_offer_value %}
+                            {{ item.product_offer_value|call_twig_func(item.product_offer_reference) }}
+                            {{ item.product_offer_postfix }}
+                        {% endif %}
 
-                        {{ item.product_variation_value|call_twig_func(item.product_variation_reference) }}
-                        {{ item.product_variation_postfix }}
+                        {% if item.product_variation_value %}
+                            {{ item.product_variation_value|call_twig_func(item.product_variation_reference) }}
+                            {{ item.product_variation_postfix }}
+                        {% endif %}
 
-
+                        {% if item.product_modification_value %}
+                            {{ item.product_modification_value|call_twig_func(item.product_modification_reference) }}
+                            {{ item.product_modification_postfix }}
+                        {% endif %}
                     </div>
                 </div>
 
