@@ -41,15 +41,15 @@ final class ProductProfileFilterFormAdmin extends AbstractType
 
     private RequestStack $request;
 
-    private WbTokenChoiceInterface $tokenChoice;
+    //private WbTokenChoiceInterface $tokenChoice;
 
     public function __construct(
-        WbTokenChoiceInterface $tokenChoice,
+        //WbTokenChoiceInterface $tokenChoice,
         RequestStack $request,
     )
     {
         $this->request = $request;
-        $this->tokenChoice = $tokenChoice;
+        //$this->tokenChoice = $tokenChoice;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -57,35 +57,35 @@ final class ProductProfileFilterFormAdmin extends AbstractType
         /**
          * Профиль пользователя
          */
-        $AccessProfileTokenCollection = $this->tokenChoice->getTokenCollection();
+       // $AccessProfileTokenCollection = $this->tokenChoice->getTokenCollection();
         $builder->add('profile', HiddenType::class);
         
-        $builder->addEventListener(
-            FormEvents::PRE_SET_DATA,
-            function(FormEvent $event) use ($AccessProfileTokenCollection): void {
-                /** @var ProductProfileFilterDTO $data */
-                $data = $event->getData();
-                $form = $event->getForm();
-
-                if(count($AccessProfileTokenCollection) === 1)
-                {
-                    $data->setProfile(current($AccessProfileTokenCollection));
-                    //return;
-                }
-
-                $form->add('profile', ChoiceType::class, [
-                    'choices' => $AccessProfileTokenCollection,
-                    'choice_value' => function(?UserProfileUid $profile) {
-                        return $profile?->getValue();
-                    },
-                    'choice_label' => function(UserProfileUid $profile) {
-                        return $profile->getAttr();
-                    },
-                    'label' => false,
-                ]);
-
-            }
-        );
+//        $builder->addEventListener(
+//            FormEvents::PRE_SET_DATA,
+//            function(FormEvent $event) use ($AccessProfileTokenCollection): void {
+//                /** @var ProductProfileFilterDTO $data */
+//                $data = $event->getData();
+//                $form = $event->getForm();
+//
+//                if(count($AccessProfileTokenCollection) === 1)
+//                {
+//                    $data->setProfile(current($AccessProfileTokenCollection));
+//                    //return;
+//                }
+//
+//                $form->add('profile', ChoiceType::class, [
+//                    'choices' => $AccessProfileTokenCollection,
+//                    'choice_value' => function(?UserProfileUid $profile) {
+//                        return $profile?->getValue();
+//                    },
+//                    'choice_label' => function(UserProfileUid $profile) {
+//                        return $profile->getAttr();
+//                    },
+//                    'label' => false,
+//                ]);
+//
+//            }
+//        );
 
 
         $builder->addEventListener(
