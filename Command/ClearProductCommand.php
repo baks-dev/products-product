@@ -144,10 +144,7 @@ class ClearProductCommand extends Command
         }
 
         $EntityManager->flush();
-
-
-        // 018ac6bb-e19c-746c-aeff-a4671aabfd18
-        // 018ac6bb-e19c-746c-aeff-a4671aabfd18
+        $EntityManager->clear();
 
         $io->success('Команда успешно завершена');
 
