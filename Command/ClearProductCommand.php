@@ -91,27 +91,28 @@ class ClearProductCommand extends Command
             $exist->from(WbProductCard::TABLE, 'wb_card');
             $exist->where('wb_card.product = product.id');
             $qb->where('NOT EXISTS('.$exist->getSQL().')');
-        }
 
-        foreach($qb->fetchAllAssociative() as $item)
-        {
-            $ProductDeleteDTO = new ProductDeleteDTO();
-            $ProductDeleteDTO->setId(new ProductEventUid($item['event']));
-            $Product = $this->productDeleteHandler->handle($ProductDeleteDTO);
 
-            if(!$Product instanceof Product)
+            foreach($qb->fetchAllAssociative() as $item)
             {
-                $remove = $this->DBALQueryBuilder->createQueryBuilder(self::class);
-                $remove
-                    ->delete(Product::TABLE, 'product')
-                    ->where('product.id = :id')
-                    ->setParameter('id', $item['id'])
-                    ->andWhere('product.event = :event')
-                    ->setParameter('event', $item['event'])
-                    ->executeQuery();
-            }
+                $ProductDeleteDTO = new ProductDeleteDTO();
+                $ProductDeleteDTO->setId(new ProductEventUid($item['event']));
+                $Product = $this->productDeleteHandler->handle($ProductDeleteDTO);
 
-            $io->text(sprintf('Удалили продукцию event: %s', $item['event']));
+                if(!$Product instanceof Product)
+                {
+                    $remove = $this->DBALQueryBuilder->createQueryBuilder(self::class);
+                    $remove
+                        ->delete(Product::TABLE, 'product')
+                        ->where('product.id = :id')
+                        ->setParameter('id', $item['id'])
+                        ->andWhere('product.event = :event')
+                        ->setParameter('event', $item['event'])
+                        ->executeQuery();
+                }
+
+                $io->text(sprintf('Удалили продукцию event: %s', $item['event']));
+            }
         }
 
 
