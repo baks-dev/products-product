@@ -102,7 +102,7 @@ class ProductEvent extends EntityEvent
 
     /** Перевод */
     #[Assert\Valid]
-    #[ORM\OneToMany(mappedBy: 'event', targetEntity: ProductDescription::class, cascade: ['all'])]
+    #[ORM\OneToMany(mappedBy: 'event', targetEntity: ProductDescription::class, cascade: ['persist', 'remove'])]
     private Collection $description;
 
     /** Фото продукта */

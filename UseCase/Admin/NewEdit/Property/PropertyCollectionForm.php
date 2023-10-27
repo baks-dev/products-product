@@ -85,19 +85,19 @@ final class PropertyCollectionForm extends AbstractType
 					);
 					
 					$fieldType = $this->fieldsChoice->getChoice($propCat->fieldType);
-					
+
 					$form->add
 					(
 						'value',
-						$fieldType->form(),
+                        $fieldType ? $fieldType->form() : HiddenType::class,
 						[
 							'label' => $propCat->fieldTrans,
 							'required' => $propCat->fieldRequired,
 						]
 					);
-					
 
-					
+
+
 				}
 			}
 		);

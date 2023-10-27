@@ -86,15 +86,26 @@ final class ProductModel implements ProductModelInterface
 		);
 		
 		$qb->addSelect('product_trans.name AS product_name')->addGroupBy('product_trans.name');
-//		$qb->addSelect('product_trans.preview AS product_preview')->addGroupBy('product_trans.preview');
-//		$qb->addSelect('product_trans.description AS product_description')->addGroupBy('product_trans.description');
+
 		$qb->leftJoin(
 			'product_event',
 			ProductEntity\Trans\ProductTrans::TABLE,
 			'product_trans',
 			'product_trans.event = product_event.id AND product_trans.local = :local'
 		);
-		
+
+        $qb->addSelect('product_desc.preview AS product_preview')->addGroupBy('product_desc.preview');
+        $qb->addSelect('product_desc.description AS product_description')->addGroupBy('product_desc.description');
+
+        $qb
+            ->leftJoin(
+                'product_event',
+                ProductEntity\Description\ProductDescription::TABLE,
+                'product_desc',
+                'product_desc.event = product_event.id AND product_desc.device = :device '
+
+            )->setParameter('device', 'pc');
+
 		/** Цена товара */
 		$qb->leftJoin(
 			'product_event',
