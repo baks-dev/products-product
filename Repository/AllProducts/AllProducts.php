@@ -70,13 +70,27 @@ final class AllProducts implements AllProductsInterface
         $qb->leftJoin('product', Entity\Event\ProductEvent::TABLE, 'product_event', 'product_event.id = product.event');
 
         $qb->addSelect('product_trans.name AS product_name');
-        //$qb->addSelect('product_trans.preview AS product_preview');
+
         $qb->leftJoin(
             'product_event',
             Entity\Trans\ProductTrans::TABLE,
             'product_trans',
             'product_trans.event = product_event.id AND product_trans.local = :local'
         );
+
+
+        $qb->addSelect('product_desc.preview AS product_preview')
+        ->addSelect('product_desc.description AS product_description')
+
+
+            ->leftJoin(
+                'product_event',
+                Entity\Description\ProductDescription::TABLE,
+                'product_desc',
+                'product_desc.event = product_event.id AND product_desc.device = :device '
+
+            )->setParameter('device', 'pc');
+
 
         if($profile)
         {

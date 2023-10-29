@@ -40,6 +40,7 @@ use BaksDev\Products\Category\Entity\Section\ProductCategorySection;
 use BaksDev\Products\Category\Entity\Trans\ProductCategoryTrans;
 use BaksDev\Products\Product\Entity\Active\ProductActive;
 use BaksDev\Products\Product\Entity\Category\ProductCategory;
+use BaksDev\Products\Product\Entity\Description\ProductDescription;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
 use BaksDev\Products\Product\Entity\Offers\Image\ProductOfferImage;
@@ -156,14 +157,26 @@ final class ProductDetailByUid implements ProductDetailByUidInterface
         );
 
         $qb->addSelect('product_trans.name AS product_name')->addGroupBy('product_trans.name');
-        //$qb->addSelect('product_trans.preview AS product_preview')->addGroupBy('product_trans.preview');
-        //$qb->addSelect('product_trans.description AS product_description')->addGroupBy('product_trans.description');
+
         $qb->leftJoin(
             'product_event',
             ProductTrans::TABLE,
             'product_trans',
             'product_trans.event = product_event.id AND product_trans.local = :local'
         );
+
+
+        $qb->addSelect('product_desc.preview AS product_preview')->addGroupBy('product_desc.preview');
+        $qb->addSelect('product_desc.description AS product_description')->addGroupBy('product_desc.description');
+
+        $qb
+            ->leftJoin(
+                'product_event',
+                ProductDescription::TABLE,
+                'product_desc',
+                'product_desc.event = product_event.id AND product_desc.device = :device '
+
+            )->setParameter('device', 'pc');
 
         /* Базовая Цена товара */
         $qb->leftJoin(
