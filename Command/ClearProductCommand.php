@@ -90,8 +90,8 @@ class ClearProductCommand extends Command
             $exist->select('1');
             $exist->from(WbProductCard::TABLE, 'wb_card');
             $exist->where('wb_card.product = product.id');
-            $qb->where('NOT EXISTS('.$exist->getSQL().')');
 
+            $qb->where('NOT EXISTS('.$exist->getSQL().')');
 
             foreach($qb->fetchAllAssociative() as $item)
             {
@@ -118,22 +118,27 @@ class ClearProductCommand extends Command
 
 
         /**
-         * Чистим корзину и события старше 30 суток
+         * Чистим корзину и события старше 30 суток карточки которых удалены
          */
 
         $clear = $this->DBALQueryBuilder->createQueryBuilder(self::class);
 
         $clear->select('product_modify.event');
         $clear->from(ProductModify::TABLE, 'product_modify');
+        $clear->leftJoin(
+            'product_modify',
+            ProductEvent::TABLE,
+            'product_event',
+            'product_event.id = product_modify.event'
+        );
 
         $modify = $this->DBALQueryBuilder->createQueryBuilder(self::class);
         $modify->select('1');
         $modify->from(Product::TABLE, 'product');
-        $modify->where('product.event = product_modify.event');
+        $modify->where('product.id = product_event.main');
 
         $clear->where('NOT EXISTS('.$modify->getSQL().')');
         $clear->andWhere('product_modify.mod_date < ( NOW() - interval \'30 DAY\')');
-
 
         $EntityManager = $this->ORMQueryBuilder->getEntityManager();
         $ProductEventRepository = $EntityManager->getRepository(ProductEvent::class);
