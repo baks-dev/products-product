@@ -94,9 +94,6 @@ class ProductInfo extends EntityReadonly
         return $this;
     }
 
-
-
-
     public function getDto($dto): mixed
     {
         $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
@@ -117,5 +114,10 @@ class ProductInfo extends EntityReadonly
         }
 
         throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
+    }
+
+    public function updateUrlUniq() : void
+    {
+        $this->url = uniqid($this->url.'_', false);
     }
 }

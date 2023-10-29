@@ -23,12 +23,10 @@ use Doctrine\DBAL\Types\StringType;
 
 final class ProductSettingsType extends StringType
 {
-	
 	public function convertToDatabaseValue($value, AbstractPlatform $platform): mixed
 	{
 		return $value instanceof ProductSettingsIdentifier ? $value->getValue() : $value;
 	}
-	
 	
 	public function convertToPHPValue($value, AbstractPlatform $platform): mixed
 	{

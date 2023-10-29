@@ -76,7 +76,7 @@ class ProductEvent extends EntityEvent
     private Collection $category;
 
     /**
-     * Стикер заказа
+     * Информация о продукции
      */
     #[ORM\OneToOne(mappedBy: 'event', targetEntity: ProductInfo::class, cascade: ['all'])]
     private ?ProductInfo $info = null;
@@ -259,5 +259,15 @@ class ProductEvent extends EntityEvent
     {
         return $this->video;
     }
+
+    /**
+     * Info
+     */
+    public function getInfo(): ProductInfo
+    {
+        return $this->info;
+    }
+
+
 
 }

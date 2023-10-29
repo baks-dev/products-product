@@ -90,8 +90,9 @@ final class ProductHandler extends AbstractHandler
         $uniqProductUrl = $this->uniqProductUrl->get($infoDTO->getUrl(), $this->main->getId());
         if($uniqProductUrl)
         {
-            $infoDTO->updateUrlUniq(); // Обновляем URL на уникальный с префиксом
+            $this->event->getInfo()->updateUrlUniq(); // Обновляем URL на уникальный с префиксом
         }
+
 
         // Загрузка базового фото галереи
         foreach($this->event->getPhoto() as $ProductPhoto)
