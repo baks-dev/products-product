@@ -35,26 +35,20 @@ final class ProductVariationConst extends Uid
 
     public const TYPE = 'product_variation_const';
 
-    /**
-     * @var null|mixed
-     */
+
     private mixed $attr;
 
-    /**
-     * @var null|mixed
-     */
     private mixed $option;
-    private ?int $counter;
-    /**
-     * @var mixed|null
-     */
+
+    private mixed $property;
+
     private mixed $reference;
 
     public function __construct(
         AbstractUid|string|null $value = null,
         mixed $attr = null,
         mixed $option = null,
-        int $counter = null,
+        mixed $property = null,
         mixed $reference = null,
     )
     {
@@ -62,7 +56,7 @@ final class ProductVariationConst extends Uid
 
         $this->attr = $attr;
         $this->option = $option;
-        $this->counter = $counter;
+        $this->property = $property;
         $this->reference = $reference;
     }
 
@@ -76,9 +70,9 @@ final class ProductVariationConst extends Uid
         return $this->option;
     }
 
-    public function getCounter(): ?int
+    public function getProperty(): mixed
     {
-        return $this->counter;
+        return $this->property;
     }
 
     public function getReference(): mixed

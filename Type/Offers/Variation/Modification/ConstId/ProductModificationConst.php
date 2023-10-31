@@ -39,7 +39,7 @@ final class ProductModificationConst extends Uid
 
     private mixed $option;
 
-    private ?int $counter;
+    private mixed $property;
 
     private mixed $reference;
 
@@ -48,7 +48,7 @@ final class ProductModificationConst extends Uid
         AbstractUid|string|null $value = null,
         mixed $attr = null,
         mixed $option = null,
-        int $counter = null,
+        int $property = null,
         mixed $reference = null,
     )
     {
@@ -56,7 +56,7 @@ final class ProductModificationConst extends Uid
 
         $this->attr = $attr;
         $this->option = $option;
-        $this->counter = $counter;
+        $this->property = $property;
         $this->reference = $reference;
     }
 
@@ -73,9 +73,9 @@ final class ProductModificationConst extends Uid
     }
 
 
-    public function getCounter(): ?int
+    public function getProperty(): mixed
     {
-        return $this->counter;
+        return $this->property;
     }
 
     public function getReference(): mixed
