@@ -19,10 +19,8 @@
 
 {# ---- КОНТЕНТ-БЛОК ------------------------------------------------------------ #}
 {% block content %}
-	
 	{{ include(_self|replace({ "template.html.twig": baks_settings.device~"/content.html.twig" })) }}
 {% endblock %}
-
 
 {% block javascript %}
 <script async data-src="/assets/plugins/ckeditor/ckeditor.min.js?v={{ version }}" class='lazy'></script>

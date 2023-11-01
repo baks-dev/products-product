@@ -29,7 +29,7 @@
                 </div>
             {% endif %}#}
 
-            {% if is_granted('ROLE_PRODUCT_NEW') %}
+            {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_PRODUCT_NEW') %}
                 <a href="{{ path('products-product:admin.newedit.new') }}" class="btn btn-primary" title="Добавить продукт">
                     {{ 'btn.new'|trans({}, 'core.btn') }}
                 </a>
