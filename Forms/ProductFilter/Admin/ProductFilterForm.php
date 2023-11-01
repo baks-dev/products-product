@@ -93,7 +93,6 @@ final class ProductFilterForm extends AbstractType
                     },
                     'label' => false,
                     'required' => false,
-                    /*'attr' => ['onchange' => 'this.form.submit()'],*/
                 ]);
             }
 
