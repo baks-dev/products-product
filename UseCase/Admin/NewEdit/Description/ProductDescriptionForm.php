@@ -34,7 +34,7 @@ final class ProductDescriptionForm extends AbstractType
 	public function buildForm(FormBuilderInterface $builder, array $options) : void
 	{
 		$builder->add('local', HiddenType::class);
-		
+
 		$builder->get('local')->addModelTransformer(
 			new CallbackTransformer(
 				function($local) {
@@ -60,8 +60,8 @@ final class ProductDescriptionForm extends AbstractType
             )
         );
 
-
         $builder->add('preview', TextareaType::class, ['required' => false]);
+
 		$builder->add('description', TextareaType::class, ['required' => false]);
 	}
 	

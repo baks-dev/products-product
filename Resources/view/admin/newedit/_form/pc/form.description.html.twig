@@ -59,6 +59,9 @@
                              id="navdesc-{{ identifier }}-{{ description.vars.value.local }}-{{ description.vars.value.device }}" role="tabpanel"
                              aria-labelledby="navdesc-{{ identifier }}-{{ description.vars.value.local }}-{{ description.vars.value.device }}-tab">
 
+                            {{ form_widget(description.local) }}
+                            {{ form_widget(description.device) }}
+
                            {# Краткое опсиание #}
                             {{ form_row(description.preview, {
                                 label : 'Краткое описание'|trans({}, 'core', description.vars.value.local),

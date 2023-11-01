@@ -78,12 +78,10 @@ class ProductModificationImage extends EntityEvent implements UploadEntityInterf
 	private int $size = 0;
 	
 	/** Файл загружен на CDN */
-    #[Assert\NotBlank]
-	#[ORM\Column(type: Types::BOOLEAN)]
+	#[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
 	private bool $cdn = false;
 	
 	/** Заглавное фото */
-    #[Assert\NotBlank]
 	#[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
 	private bool $root = false;
 	

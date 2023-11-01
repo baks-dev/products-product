@@ -82,7 +82,7 @@ final class ProductHandler extends AbstractHandler
         }
         catch(DomainException $errorUniqid)
         {
-            return $errorUniqid;
+            return $errorUniqid->getMessage();
         }
 
         /** Проверяем уникальность семантической ссылки продукта */

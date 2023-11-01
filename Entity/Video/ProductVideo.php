@@ -73,7 +73,7 @@ class ProductVideo extends EntityEvent implements UploadEntityInterface
     private int $size = 0;
 
     /** Файл загружен на CDN */
-    #[ORM\Column(type: Types::BOOLEAN)]
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
     private bool $cdn = false;
 
 
