@@ -50,7 +50,6 @@
 
                     {#<categoryId>101</categoryId>#}
 
-
                     {# Обложка  #}
                     {% set image_path = '/assets/img/empty.png' %}
 
@@ -63,11 +62,12 @@
 
                     <picture>{{ absolute_url(image_path) }}</picture>
 
-
                 {# Свойства, учавствующие в ПРЕВЬЮ #}
-
                 {% for name_property in arr_property | filter(preview => preview.field_card == true) %}
-                    <param name="{{ name_property.field_trans }}">{{ name_property.field_value }}</param>
+                    {% set var = name_property.field_value|call_twig_func(name_property.field_type) %}
+                    {% if var %}
+                        <param name="{{ name_property.field_trans }}">{{ var }}</param>
+                    {% endif %}
                 {% endfor %}
 
                     {#<stock>более 20</stock>#}
@@ -89,7 +89,6 @@
                     <quality>excellent</quality>
                 </condition>#}
                 </offer>
-
 
         {% endfor %}
             </offers>
