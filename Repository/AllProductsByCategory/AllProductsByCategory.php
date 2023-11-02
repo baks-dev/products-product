@@ -650,21 +650,37 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
 
     /** Метод возвращает все товары в категории */
     public function fetchAllProductByCategory(
-        ProductCategoryUid $category
+        ProductCategoryUid $category = null
     ): array
     {
-        $qb = $this->DBALQueryBuilder->createQueryBuilder(self::class);
+        $qb = $this->DBALQueryBuilder
+            ->createQueryBuilder(self::class)
+            ->bindLocal();
 
-        $qb
-            ->from(ProductEntity\Category\ProductCategory::TABLE, 'product_category')
-            ->where('product_category.category = :category AND product_category.root = true')
-            ->setParameter('category', $category, ProductCategoryUid::TYPE);
+        if($category)
+        {
+            $qb
+                ->from(ProductEntity\Category\ProductCategory::TABLE, 'product_category')
+                ->where('product_category.category = :category AND product_category.root = true')
+                ->setParameter('category', $category, ProductCategoryUid::TYPE);
 
-        $qb->join('product_category',
-            ProductEntity\Product::TABLE,
-            'product',
-            'product.event = product_category.event'
-        );
+            $qb->join('product_category',
+                ProductEntity\Product::TABLE,
+                'product',
+                'product.event = product_category.event'
+            );
+        }
+        else
+        {
+            $qb->from(ProductEntity\Product::TABLE, 'product');
+
+            $qb->leftJoin('product',
+                ProductEntity\Category\ProductCategory::TABLE,
+                'product_category',
+                'product_category.event = product.event AND product_category.root = true'
+            );
+        }
+
 
         $qb->addSelect('product_info.url');
 
@@ -673,6 +689,16 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
             ProductEntity\Info\ProductInfo::TABLE,
             'product_info',
             'product_info.product = product.id'
+        );
+
+
+        $qb->addSelect('product_trans.name AS product_name');
+
+        $qb->leftJoin(
+            'product',
+            ProductEntity\Trans\ProductTrans::TABLE,
+            'product_trans',
+            'product_trans.event = product.event AND product_trans.local = :local'
         );
 
 
@@ -685,17 +711,32 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
                 'product_modify.event = product.event'
             );
 
+
+
+
+        /** Торговое предложение */
         $qb
             ->addSelect('product_offer.value AS offer_value',)
             ->leftJoin(
-            'product',
-            ProductEntity\Offers\ProductOffer::TABLE,
+                'product',
+                ProductEntity\Offers\ProductOffer::TABLE,
+                'product_offer',
+                'product_offer.event = product.event'
+            );
+
+        /* Цена торгового предожения */
+        $qb->leftJoin(
             'product_offer',
-            'product_offer.event = product.event'
+            ProductEntity\Offers\Price\ProductOfferPrice::TABLE,
+            'product_offer_price',
+            'product_offer_price.offer = product_offer.id'
         );
 
 
-        /** Множественные варианты торгового предложения */
+
+
+
+
         $qb
             ->addSelect('product_offer_variation.value AS variation_value')
             ->leftJoin(
@@ -704,6 +745,14 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
                 'product_offer_variation',
                 'product_offer_variation.offer = product_offer.id'
             );
+
+
+        $qb->leftJoin(
+            'product_offer_variation',
+            ProductEntity\Offers\Variation\Price\ProductVariationPrice::TABLE,
+            'product_variation_price',
+            'product_variation_price.variation = product_offer_variation.id'
+        );
 
 
         /** Модификация множественного варианта торгового предложения */
@@ -716,6 +765,216 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
                 'product_offer_modification.variation = product_offer_variation.id'
             );
 
+        /** Цена множественного варианта */
+        $qb->leftJoin(
+            'product_offer_modification',
+            ProductEntity\Offers\Variation\Modification\Price\ProductModificationPrice::TABLE,
+            'product_modification_price',
+            'product_modification_price.modification = product_offer_modification.id'
+        );
+
+
+        /** Цена товара */
+        $qb->leftJoin(
+            'product',
+            ProductEntity\Price\ProductPrice::TABLE,
+            'product_price',
+            'product_price.event = product.event'
+        );
+
+
+        /** Идентификатор */
+        $qb->addSelect("
+			CASE
+			   WHEN product_offer_modification.const IS NOT NULL THEN product_offer_modification.const
+			   WHEN product_offer_variation.const IS NOT NULL THEN product_offer_variation.const
+			   WHEN product_offer.const IS NOT NULL THEN product_offer.const
+			   ELSE product.id
+			END AS product_id
+		"
+        );
+
+
+        /** Стоимость */
+        $qb->addSelect("
+			CASE
+			   WHEN product_modification_price.price IS NOT NULL AND product_modification_price.price > 0 THEN product_modification_price.price
+			   WHEN product_variation_price.price IS NOT NULL AND product_variation_price.price > 0  THEN product_variation_price.price
+			   WHEN product_offer_price.price IS NOT NULL AND product_offer_price.price > 0 THEN product_offer_price.price
+			   WHEN product_price.price IS NOT NULL THEN product_price.price
+			   ELSE NULL
+			END AS product_price
+		"
+        );
+
+        /** Валюта продукта */
+        $qb->addSelect("
+			CASE
+			   WHEN product_modification_price.price IS NOT NULL AND product_modification_price.price > 0 THEN product_modification_price.currency
+			   WHEN product_variation_price.price IS NOT NULL AND product_variation_price.price > 0  THEN product_variation_price.currency
+			   WHEN product_offer_price.price IS NOT NULL AND product_offer_price.price > 0 THEN product_offer_price.currency
+			   WHEN product_price.price IS NOT NULL THEN product_price.currency
+			   ELSE NULL
+			END AS product_currency
+		"
+        );
+
+
+
+
+
+        /** Фото продукта */
+
+        $qb->leftJoin(
+            'product_offer_modification',
+            ProductEntity\Offers\Variation\Modification\Image\ProductModificationImage::TABLE,
+            'product_offer_modification_image',
+            '
+			product_offer_modification_image.modification = product_offer_modification.id AND
+			product_offer_modification_image.root = true
+			'
+        );
+
+        $qb->leftJoin(
+            'product_offer',
+            ProductEntity\Offers\Variation\Image\ProductVariationImage::TABLE,
+            'product_offer_variation_image',
+            '
+			product_offer_variation_image.variation = product_offer_variation.id AND
+			product_offer_variation_image.root = true
+			'
+        );
+
+        $qb->leftJoin(
+            'product_offer',
+            ProductEntity\Offers\Image\ProductOfferImage::TABLE,
+            'product_offer_images',
+            '
+			product_offer_variation_image.name IS NULL AND
+			product_offer_images.offer = product_offer.id AND
+			product_offer_images.root = true
+			'
+        );
+
+        $qb->leftJoin(
+            'product_offer',
+            ProductEntity\Photo\ProductPhoto::TABLE,
+            'product_photo',
+            '
+			product_offer_images.name IS NULL AND
+			product_photo.event = product.event AND
+			product_photo.root = true
+			'
+        );
+
+        $qb->addSelect("
+			CASE
+			 WHEN product_offer_modification_image.name IS NOT NULL THEN
+					CONCAT ( '/upload/".ProductEntity\Offers\Variation\Modification\Image\ProductModificationImage::TABLE."' , '/', product_offer_modification_image.name)
+			   WHEN product_offer_variation_image.name IS NOT NULL THEN
+					CONCAT ( '/upload/".ProductEntity\Offers\Variation\Image\ProductVariationImage::TABLE."' , '/', product_offer_variation_image.name)
+			   WHEN product_offer_images.name IS NOT NULL THEN
+					CONCAT ( '/upload/".ProductEntity\Offers\Image\ProductOfferImage::TABLE."' , '/', product_offer_images.name)
+			   WHEN product_photo.name IS NOT NULL THEN
+					CONCAT ( '/upload/".ProductEntity\Photo\ProductPhoto::TABLE."' , '/', product_photo.name)
+			   ELSE NULL
+			END AS product_image
+		"
+        );
+
+        /** Расширение файла */
+        $qb->addSelect("
+			CASE
+			WHEN product_offer_modification_image.name IS NOT NULL THEN
+					product_offer_modification_image.ext
+			   WHEN product_offer_variation_image.name IS NOT NULL THEN
+					product_offer_variation_image.ext
+			   WHEN product_offer_images.name IS NOT NULL THEN
+					product_offer_images.ext
+			   WHEN product_photo.name IS NOT NULL THEN
+					product_photo.ext
+			   ELSE NULL
+			END AS product_image_ext
+		"
+        );
+
+        /** Флаг загрузки файла CDN */
+        $qb->addSelect("
+			CASE
+			   WHEN product_offer_variation_image.name IS NOT NULL THEN
+					product_offer_variation_image.cdn
+			   WHEN product_offer_images.name IS NOT NULL THEN
+					product_offer_images.cdn
+			   WHEN product_photo.name IS NOT NULL THEN
+					product_photo.cdn
+			   ELSE NULL
+			END AS product_image_cdn
+		"
+        );
+
+
+
+
+        /** Свойства, учавствующие в карточке */
+
+        $qb->leftJoin(
+            'product_category',
+            CategoryEntity\ProductCategory::TABLE,
+            'category',
+            'category.id = product_category.category'
+        );
+
+
+        $qb->leftJoin(
+            'category',
+            CategoryEntity\Section\ProductCategorySection::TABLE,
+            'category_section',
+            'category_section.event = category.event'
+        );
+
+
+
+        $qb->leftJoin(
+            'category_section',
+            CategoryEntity\Section\Field\ProductCategorySectionField::TABLE,
+            'category_section_field',
+            'category_section_field.section = category_section.id AND category_section_field.card = TRUE'
+        );
+
+        $qb->leftJoin(
+            'category_section_field',
+            CategoryEntity\Section\Field\Trans\ProductCategorySectionFieldTrans::TABLE,
+            'category_section_field_trans',
+            'category_section_field_trans.field = category_section_field.id AND category_section_field_trans.local = :local'
+        );
+
+
+        $qb->leftJoin(
+            'category_section_field',
+            ProductEntity\Property\ProductProperty::TABLE,
+            'product_property',
+            'product_property.event = product.event AND product_property.field = category_section_field.id'
+        );
+
+
+        $qb->addSelect("JSON_AGG
+		( DISTINCT
+
+				JSONB_BUILD_OBJECT
+				(
+					'0', category_section_field.sort,
+					'field_name', category_section_field.name,
+					'field_card', category_section_field.card,
+					'field_type', category_section_field.type,
+					'field_trans', category_section_field_trans.name,
+					'field_value', product_property.value
+				)
+
+		)
+			AS category_section_field"
+        );
+
+        $qb->allGroupByExclude();
 
         return $qb->enableCache('products-product', 86400)->fetchAllAssociative();
 
