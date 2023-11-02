@@ -83,7 +83,7 @@
 
 		{% if root_image.product_img_ext is defined and root_image.product_img_ext is not null %}
 			{% set img_host =  root_image.product_img_cdn == true  ? CDN_HOST : '' %}
-			{% set img_dir = root_image.product_img_name %}
+			{% set img_dir = root_image.product_img %}
 			{% set img_file = (img_host is empty ? '/image.' : '/medium.') ~ root_image.product_img_ext %}
 			{% set image_path = img_host ~ img_dir ~ img_file %}
 		{% endif %}

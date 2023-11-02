@@ -143,11 +143,22 @@ class ClearProductCommand extends Command
         $EntityManager = $this->ORMQueryBuilder->getEntityManager();
         $ProductEventRepository = $EntityManager->getRepository(ProductEvent::class);
 
-        foreach($clear->fetchFirstColumn() as $item)
+
+        $batchSize = 20;
+
+        foreach($clear->fetchFirstColumn() as $i => $item)
         {
             $remove = $ProductEventRepository->find($item);
             $EntityManager->remove($remove);
+
+            if (($i % $batchSize) === 0) {
+                $EntityManager->flush();
+                $EntityManager->clear();
+
+                $io->text(sprintf('Удалили %s событий', $i) );
+            }
         }
+
 
         $EntityManager->flush();
         $EntityManager->clear();

@@ -21,46 +21,46 @@
  *  THE SOFTWARE.
  */
 
-namespace BaksDev\Products\Product\Controller\User;
+namespace BaksDev\Products\Product\Controller;
 
 use BaksDev\Core\Controller\AbstractController;
-use BaksDev\Products\Product\Entity;
-use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailByValueInterface;
-use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use BaksDev\Core\Listeners\Event\Security\RoleSecurity;
+use BaksDev\Core\Type\UidType\ParamConverter;
+use BaksDev\Products\Category\Entity\ProductCategory;
+use BaksDev\Products\Category\Repository\AllCategoryByMenu\AllCategoryByMenuInterface;
+use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
+use BaksDev\Products\Product\Repository\AllProductsByCategory\AllProductsByCategoryInterface;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
+use ReflectionAttribute;
+use ReflectionClass;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\RouterInterface;
+
 
 #[AsController]
-final class ProductController extends AbstractController
+final class SitemapController extends AbstractController
 {
-    #[Route('/product/{url}', name: 'user.product')]
-    public function index(
-        #[MapEntity(mapping: ['url' => 'url'])] Entity\Info\ProductInfo $info,
-        ProductDetailByValueInterface $productDetail,
+
+    /**
+     * Ссылки на товары в категории
+     */
+    #[Route('/sitemap/products/{category}/urls.xml', name: 'sitemap', methods: ['GET'])]
+    public function urls(
+        #[ParamConverter(ProductCategoryUid::class)] $category,
+        AllProductsByCategoryInterface $productsByCategory
     ): Response
     {
+        //dd($productsByCategory->fetchAllProductByCategory($category));
 
-        $productCard = $productDetail->fetchProductAssociative(
-            $info->getProduct()
-        );
+        $response = $this->render(['urls' => $productsByCategory->fetchAllProductByCategory($category)]);
+        $response->headers->set('Content-Type', 'text/xml');
 
-        //dump($info);
-        //dump($productCard);
-
-
-        // $mod = new ModifyAction('update');
-        //        $mod = ModifyAction::UPDATE;
-        //
-        //
-        //        $mod = ModifyAction::from($mod->value);
-
-
-        return $this->render(['card' => $productCard]);
-
-        //        return $this->render('home/index.html.twig', [
-        //            'controller_name' => 'HomeController',
-        //        ]);
+        return $response;
     }
 
 

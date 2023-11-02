@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+    {# Продукция #}
+    {% for url in urls %}
+        <url>
+            <loc>
+                {{ absolute_url(path('products-product:user.detail', {
+                    url: url.url,
+                    offer: url.offer_value,
+                    variation: url.variation_value,
+                    modification: url.modification_value
+                } )) }}
+            </loc>
+            <lastmod>{{ url.modify|date('Y-m-d\\TH:i:sP') }}</lastmod>
+        </url>
+    {% endfor %}
+</urlset>
