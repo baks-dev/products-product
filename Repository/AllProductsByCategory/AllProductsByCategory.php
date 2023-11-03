@@ -712,8 +712,6 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
             );
 
 
-
-
         /** Торговое предложение */
         $qb
             ->addSelect('product_offer.value AS offer_value',)
@@ -732,9 +730,18 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
             'product_offer_price.offer = product_offer.id'
         );
 
+        /* Получаем тип торгового предложения */
+        $qb
+            ->addSelect('category_offer.reference as offer_reference')
+            ->leftJoin(
+                'product_offer',
+                CategoryEntity\Offers\ProductCategoryOffers::TABLE,
+                'category_offer',
+                'category_offer.id = product_offer.category_offer'
+            );
 
 
-
+        /** Множественный вариант */
 
 
         $qb
@@ -754,6 +761,19 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
             'product_variation_price.variation = product_offer_variation.id'
         );
 
+        $qb
+            ->addSelect('category_offer_variation.reference as variation_reference')
+            ->leftJoin(
+                'product_offer_variation',
+                CategoryEntity\Offers\Variation\ProductCategoryVariation::TABLE,
+                'category_offer_variation',
+                'category_offer_variation.id = product_offer_variation.category_variation'
+            );
+
+
+
+
+
 
         /** Модификация множественного варианта торгового предложения */
         $qb
@@ -771,6 +791,16 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
             ProductEntity\Offers\Variation\Modification\Price\ProductModificationPrice::TABLE,
             'product_modification_price',
             'product_modification_price.modification = product_offer_modification.id'
+        );
+
+        /** Получаем тип модификации множественного варианта */
+        $qb
+            ->addSelect('category_offer_modification.reference as modification_reference')
+            ->leftJoin(
+            'product_offer_modification',
+            CategoryEntity\Offers\Variation\Modification\ProductCategoryModification::TABLE,
+            'category_offer_modification',
+            'category_offer_modification.id = product_offer_modification.category_modification'
         );
 
 
@@ -818,9 +848,6 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
 			END AS product_currency
 		"
         );
-
-
-
 
 
         /** Фото продукта */
@@ -913,8 +940,6 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
         );
 
 
-
-
         /** Свойства, учавствующие в карточке */
 
         $qb->leftJoin(
@@ -931,7 +956,6 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
             'category_section',
             'category_section.event = category.event'
         );
-
 
 
         $qb->leftJoin(

@@ -47,19 +47,65 @@ use Symfony\Component\Routing\RouterInterface;
 final class ExportController extends AbstractController
 {
 
-    #[Route('/export.xml', name: 'export.xml', methods: ['GET'])]
-    public function yml(
+    #[Route('/export.xml', name: 'export', methods: ['GET'])]
+    public function search(
         Request $request,
         SettingsMainInterface $settingsMain,
         AllProductsByCategoryInterface $productsByCategory
     ): Response
     {
 
-//        dd($settingsMain->getSettingsMainAssociative($request->getHost(), $request->getLocale()));
+        //        dd($settingsMain->getSettingsMainAssociative($request->getHost(), $request->getLocale()));
 
         $response = $this->render([
             'settings' => $settingsMain->getSettingsMainAssociative($request->getHost(), $request->getLocale()),
-            'products' => $productsByCategory->fetchAllProductByCategory()]
+            'products' => $productsByCategory->fetchAllProductByCategory()],
+            file: 'export.html.twig'
+        );
+        $response->headers->set('Content-Type', 'text/xml');
+
+        return $response;
+    }
+
+
+    #[Route('/catalog.xml', name: 'export.catalog', methods: ['GET'])]
+    public function catalog(
+        Request $request,
+        SettingsMainInterface $settingsMain,
+        AllCategoryByMenuInterface $allCategory,
+        AllProductsByCategoryInterface $productsByCategory
+    ): Response
+    {
+
+
+        //        dd($settingsMain->getSettingsMainAssociative($request->getHost(), $request->getLocale()));
+
+        $response = $this->render([
+            'settings' => $settingsMain->getSettingsMainAssociative($request->getHost(), $request->getLocale()),
+            'category' => $allCategory->fetchAllCatalogMenuAssociative(),
+            'products' => $productsByCategory->fetchAllProductByCategory()],
+            file: 'catalog.html.twig'
+        );
+        $response->headers->set('Content-Type', 'text/xml');
+
+        return $response;
+    }
+
+
+    #[Route('/terms.xml', name: 'export.terms', methods: ['GET'])]
+    public function terms(
+        Request $request,
+        SettingsMainInterface $settingsMain,
+        AllProductsByCategoryInterface $productsByCategory
+    ): Response
+    {
+
+        //        dd($settingsMain->getSettingsMainAssociative($request->getHost(), $request->getLocale()));
+
+        $response = $this->render([
+            'settings' => $settingsMain->getSettingsMainAssociative($request->getHost(), $request->getLocale()),
+            'products' => $productsByCategory->fetchAllProductByCategory()],
+            file: 'terms.html.twig'
         );
         $response->headers->set('Content-Type', 'text/xml');
 

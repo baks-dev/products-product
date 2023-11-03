@@ -1,17 +1,51 @@
 {# ---- ШАБЛОН ------------------------------------------------------------ #}
 {% extends Template('/user/base.html.twig') %}
 
-{% block title %}
-	{{ card.product_name }}
-{% endblock %}
 
-{% block description %}
-	Купить по выгодной цене {{ card.product_name }} от {{ money(card.product_price) }}
-{% endblock %}
+{% if card.seo_title %}
+	{% set PRODUCT_NAME = card.seo_title|trans({
+		'%PRODUCT_NAME%' : card.product_name,
+		'%PRODUCT_OFFER%' : null,
+		'%PRODUCT_VARIATION%' : null,
+		'%PRODUCT_MOD%' : null,
+	})|trim %}
+{% else %}
+	{% set PRODUCT_NAME = card.product_name %}
+{% endif %}
+
+
+{% if card.seo_description %}
+	{% set PRODUCT_DESC = card.seo_description|trans({
+		'%PRODUCT_NAME%' : card.product_name,
+		'%PRODUCT_OFFER%' : '',
+		'%PRODUCT_VARIATION%' : '',
+		'%PRODUCT_MOD%' : '',
+	})|trim %}
+{% else %}
+	{% set PRODUCT_DESC = card.product_preview|striptags %}
+{% endif %}
+
+{% if card.seo_keywords %}
+	{% set PRODUCT_KEYWORDS = card.seo_keywords|trans({
+		'%PRODUCT_NAME%' : card.product_name,
+		'%PRODUCT_OFFER%' : '',
+		'%PRODUCT_VARIATION%' : '',
+		'%PRODUCT_MOD%' : '',
+	})|replace({ ' ,': null })|trim %}
+{% else %}
+	{% set PRODUCT_KEYWORDS = 'Купить по выгодной цене ' ~ card.product_name ~ ' от ' ~ money(card.product_price) %}
+{% endif %}
+
+
+{% block title %}{{ PRODUCT_NAME }}{% endblock %}
+
+{% block description %}{{ PRODUCT_DESC }}{% endblock %}
+
+{% block keywords %}{{ PRODUCT_KEYWORDS }}{% endblock %}
 
 
 {% block meta %}
-	
+
 	{% set product_modification_image = card.product_modification_image|json_decode %}
 	{% set product_variation_image = card.product_variation_image|json_decode %}
 	{% set product_offer_images = card.product_offer_images|json_decode %}
@@ -58,7 +92,7 @@
 	<meta property="og:locale" content="{{ app.request.getLocale() }}_{{ app.request.getLocale()|upper }}">
 	<meta property="og:type" content="product">
 	<meta property="og:site_name" content="{{ app.request.host }}">
-	<meta property="og:title" content="{{ card.product_name }}">
+	<meta property="og:title" content="{{ PRODUCT_NAME }}">
 	<meta property="og:description"
 			content="Купить по выгодной цене {{ card.product_name }} от {{ money(card.product_price) }}">
 	<meta property="og:url" content="{{ app.request.uri }}">
@@ -67,7 +101,7 @@
 	
 	<meta name="twitter:card" content="summary_large_image">
 	<meta name="twitter:site" content="@https://{{ app.request.host }}">
-	<meta name="twitter:title" content="{{ card.product_name }}">
+	<meta name="twitter:title" content="{{ PRODUCT_NAME }}">
 	<meta name="twitter:description"
 			content="Купить по выгодной цене {{ card.product_name }} от {{ money(card.product_price) }}">
 	<meta name="twitter:image:src"
