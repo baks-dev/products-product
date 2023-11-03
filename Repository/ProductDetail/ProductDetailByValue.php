@@ -91,6 +91,19 @@ final class ProductDetailByValue implements ProductDetailByValueInterface
 			'
         );
 
+        $qb->addSelect('product_seo.title AS seo_title')->addGroupBy('product_seo.title');
+        $qb->addSelect('product_seo.keywords AS seo_keywords')->addGroupBy('product_seo.keywords');
+        $qb->addSelect('product_seo.description AS seo_description')->addGroupBy('product_seo.description');
+
+        $qb
+            ->leftJoin(
+            'product',
+            ProductEntity\Seo\ProductSeo::TABLE,
+            'product_seo',
+            'product_seo.event = product.event AND product_seo.local = :local'
+        );
+
+
         $qb->addSelect('product_trans.name AS product_name')->addGroupBy('product_trans.name');
 
         $qb->leftJoin(

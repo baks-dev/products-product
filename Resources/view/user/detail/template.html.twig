@@ -112,6 +112,9 @@
 
 {# ---- КОНТЕНТ-БЛОК ------------------------------------------------------------ #}
 {% block content %}
+
+	{{ dd(card) }}
+
 	{{ include(_self|replace({ "template.html.twig":baks_settings.device~"/content.html.twig" })) }}
 	{# CSS #}
 	<div style="display: none !important;" class='breadcrumb breadcrumb-item text-secondary small opacity-75 accordion accordion-button btn-link p-0 collapsed tooltip bs-tooltip-bottom bs-tooltip-start bs-tooltip-end icon rounded-4 mb-2 lazy bg-contain p-1'>
