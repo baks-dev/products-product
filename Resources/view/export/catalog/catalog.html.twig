@@ -42,7 +42,7 @@
 
                 {% set arr_property = card.category_section_field|json_decode %}
 
-                <offer id='{{ card.product_id }}'>
+                <offer id='{{ card.product_id }}' available='{{ card.product_quantity ? 'true' : 'false' }}'>
                     <name>{{ card.product_name }}
                         {# Значение множественного варианта ТП #}
                         {{ card.variation_value|call_twig_func(card.variation_reference) ~ card.modification_value|call_twig_func(card.modification_reference) }}
