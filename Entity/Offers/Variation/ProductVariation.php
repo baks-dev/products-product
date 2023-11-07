@@ -96,6 +96,7 @@ class ProductVariation extends EntityEvent
     /** Дополнительные фото торгового предложения */
     #[Assert\Valid]
     #[ORM\OneToMany(mappedBy: 'variation', targetEntity: Image\ProductVariationImage::class, cascade: ['all'])]
+    #[ORM\OrderBy(['root' => 'DESC'])]
     private Collection $image;
 
     /** Коллекция вариаций в торговом предложении  */

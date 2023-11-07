@@ -99,6 +99,7 @@ class ProductOffer extends EntityEvent
     /** Дополнительные фото торгового предложения */
     #[Assert\Valid]
     #[ORM\OneToMany(mappedBy: 'offer', targetEntity: Image\ProductOfferImage::class, cascade: ['all'])]
+    #[ORM\OrderBy(['root' => 'DESC'])]
     private Collection $image;
 
     /** Коллекция вариаций в торговом предложении  */

@@ -98,6 +98,7 @@ class ProductModification extends EntityEvent
     /** Дополнительные фото модификации */
     #[Assert\Valid]
     #[ORM\OneToMany(mappedBy: 'modification', targetEntity: Image\ProductModificationImage::class, cascade: ['all'])]
+    #[ORM\OrderBy(['root' => 'DESC'])]
     private Collection $image;
 
     public function __construct(ProductVariation $variation)

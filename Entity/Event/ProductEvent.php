@@ -108,6 +108,7 @@ class ProductEvent extends EntityEvent
     /** Фото продукта */
     #[Assert\Valid]
     #[ORM\OneToMany(mappedBy: 'event', targetEntity: ProductPhoto::class, cascade: ['all'])]
+    #[ORM\OrderBy(['root' => 'DESC'])]
     private Collection $photo;
 
     /** Файлы (документы) продукта */

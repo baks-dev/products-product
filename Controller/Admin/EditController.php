@@ -68,19 +68,12 @@ final class EditController extends AbstractController
             }
         }
 
-
         // Форма добавления
         $form = $this->createForm(ProductForm::class, $ProductDTO);
         $form->handleRequest($request);
 
-
-
-
         if($form->isSubmitted() && $form->isValid() && $form->has('product'))
         {
-            dump($request->files->get('product_form'));
-            dd($ProductDTO);
-
             $handle = $productHandler->handle($ProductDTO);
 
             $this->addFlash
@@ -92,7 +85,6 @@ final class EditController extends AbstractController
             );
 
             return $this->redirectToRoute('products-product:admin.index');
-
         }
 
         return $this->render(['form' => $form->createView()]);
