@@ -23,6 +23,8 @@
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use BaksDev\Products\Product\Type\Barcode\ProductBarcode;
+use BaksDev\Products\Product\Type\Barcode\ProductBarcodeType;
 use BaksDev\Products\Product\Type\Event\ProductEventType;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\File\ProductFileType;
@@ -76,8 +78,8 @@ return static function(ContainerConfigurator $container, DoctrineConfig $doctrin
 	$doctrine->dbal()->type(ProductOfferVariationModificationImageUid::TYPE)->class(ProductOfferVariationModificationImageType::class);
 	$doctrine->dbal()->type(ProductModificationConst::TYPE)->class(ProductModificationConstType::class);
 	$doctrine->dbal()->type(ProductModificationUid::TYPE)->class(ProductModificationType::class);
-	
-	
+	$doctrine->dbal()->type(ProductBarcode::TYPE)->class(ProductBarcodeType::class);
+
 	$services = $container->services()
 		->defaults()
 		->autowire()
@@ -97,7 +99,6 @@ return static function(ContainerConfigurator $container, DoctrineConfig $doctrin
 
 	$services->set(ProductModificationUid::class)->class(ProductModificationUid::class);
 	$services->set(ProductModificationConst::class)->class(ProductModificationConst::class);
-
 
 
     $emDefault = $doctrine->orm()->entityManager('default')->autoMapping(true);

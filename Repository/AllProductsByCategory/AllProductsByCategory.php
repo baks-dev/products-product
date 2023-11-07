@@ -27,6 +27,8 @@ namespace BaksDev\Products\Product\Repository\AllProductsByCategory;
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Core\Services\Paginator\PaginatorInterface;
+use BaksDev\Core\Type\Device\Device;
+use BaksDev\Core\Type\Device\Devices\Desktop;
 use BaksDev\Core\Type\Locale\Locale;
 use BaksDev\Products\Category\Entity as CategoryEntity;
 use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
@@ -657,6 +659,8 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
             ->createQueryBuilder(self::class)
             ->bindLocal();
 
+        $qb->addSelect('product_category.category');
+
         if($category)
         {
             $qb
@@ -682,14 +686,15 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
         }
 
 
-        $qb->addSelect('product_info.url');
-
-        $qb->leftJoin(
-            'product',
-            ProductEntity\Info\ProductInfo::TABLE,
-            'product_info',
-            'product_info.product = product.id'
-        );
+        $qb
+            ->addSelect('product_info.url')
+            //->addSelect('product_info.article')
+            ->leftJoin(
+                'product',
+                ProductEntity\Info\ProductInfo::TABLE,
+                'product_info',
+                'product_info.product = product.id'
+            );
 
 
         $qb->addSelect('product_trans.name AS product_name');
@@ -701,6 +706,15 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
             'product_trans.event = product.event AND product_trans.local = :local'
         );
 
+
+        $qb
+            ->addSelect('product_desc.preview')
+            ->leftJoin(
+            'product',
+            ProductEntity\Description\ProductDescription::TABLE,
+            'product_desc',
+            'product_desc.event = product.event AND product_desc.local = :local AND product_desc.device = :device'
+        )->setParameter('device', new Device(Desktop::class), Device::TYPE);
 
         $qb
             ->addSelect('product_modify.mod_date AS modify',)
@@ -715,6 +729,7 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
         /** Торговое предложение */
         $qb
             ->addSelect('product_offer.value AS offer_value',)
+            ->addSelect('product_offer.postfix AS offer_postfix',)
             ->leftJoin(
                 'product',
                 ProductEntity\Offers\ProductOffer::TABLE,
@@ -730,6 +745,13 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
             'product_offer_price.offer = product_offer.id'
         );
 
+        $qb->leftJoin(
+            'product_offer',
+            ProductEntity\Offers\Quantity\ProductOfferQuantity::TABLE,
+            'product_offer_quantity',
+            'product_offer_quantity.offer = product_offer.id'
+        );
+
         /* Получаем тип торгового предложения */
         $qb
             ->addSelect('category_offer.reference as offer_reference')
@@ -742,10 +764,9 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
 
 
         /** Множественный вариант */
-
-
         $qb
             ->addSelect('product_offer_variation.value AS variation_value')
+            ->addSelect('product_offer_variation.postfix AS variation_postfix')
             ->leftJoin(
                 'product_offer',
                 ProductEntity\Offers\Variation\ProductVariation::TABLE,
@@ -761,6 +782,13 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
             'product_variation_price.variation = product_offer_variation.id'
         );
 
+        $qb->leftJoin(
+            'category_offer_variation',
+            ProductEntity\Offers\Variation\Quantity\ProductVariationQuantity::TABLE,
+            'product_variation_quantity',
+            'product_variation_quantity.variation = product_offer_variation.id'
+        );
+
         $qb
             ->addSelect('category_offer_variation.reference as variation_reference')
             ->leftJoin(
@@ -773,11 +801,10 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
 
 
 
-
-
         /** Модификация множественного варианта торгового предложения */
         $qb
             ->addSelect('product_offer_modification.value AS modification_value')
+            ->addSelect('product_offer_modification.postfix AS modification_postfix')
             ->leftJoin(
                 'product_offer_variation',
                 ProductEntity\Offers\Variation\Modification\ProductModification::TABLE,
@@ -793,15 +820,22 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
             'product_modification_price.modification = product_offer_modification.id'
         );
 
+        $qb->leftJoin(
+            'category_offer_modification',
+            ProductEntity\Offers\Variation\Modification\Quantity\ProductModificationQuantity::TABLE,
+            'product_modification_quantity',
+            'product_modification_quantity.modification = product_offer_modification.id'
+        );
+
         /** Получаем тип модификации множественного варианта */
         $qb
             ->addSelect('category_offer_modification.reference as modification_reference')
             ->leftJoin(
-            'product_offer_modification',
-            CategoryEntity\Offers\Variation\Modification\ProductCategoryModification::TABLE,
-            'category_offer_modification',
-            'category_offer_modification.id = product_offer_modification.category_modification'
-        );
+                'product_offer_modification',
+                CategoryEntity\Offers\Variation\Modification\ProductCategoryModification::TABLE,
+                'category_offer_modification',
+                'category_offer_modification.id = product_offer_modification.category_modification'
+            );
 
 
         /** Цена товара */
@@ -849,6 +883,26 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
 		"
         );
 
+
+        $qb->addSelect(
+            '
+			CASE
+			   WHEN product_modification_quantity.quantity IS NOT NULL AND product_modification_quantity.reserve IS NOT NULL THEN (product_modification_quantity.quantity - product_modification_quantity.reserve)
+			   WHEN product_modification_quantity.quantity IS NOT NULL THEN product_modification_quantity.quantity
+
+			   WHEN product_variation_quantity.quantity IS NOT NULL AND product_variation_quantity.reserve  IS NOT NULL THEN (product_variation_quantity.quantity - product_variation_quantity.reserve)
+			   WHEN product_variation_quantity.quantity IS NOT NULL THEN product_variation_quantity.quantity
+
+			   WHEN product_offer_quantity.quantity IS NOT NULL  AND product_offer_quantity.reserve IS NOT NULL THEN (product_offer_quantity.quantity - product_offer_quantity.reserve)
+			   WHEN product_offer_quantity.quantity IS NOT NULL THEN product_offer_quantity.quantity
+			   
+			   WHEN product_price.quantity IS NOT NULL AND product_price.reserve IS NOT NULL THEN (product_price.quantity - product_price.reserve)
+			   WHEN product_price.quantity IS NOT NULL THEN product_price.quantity
+			   
+			   ELSE NULL
+			END AS product_quantity
+		'
+        );
 
         /** Фото продукта */
 
@@ -978,6 +1032,36 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
             ProductEntity\Property\ProductProperty::TABLE,
             'product_property',
             'product_property.event = product.event AND product_property.field = category_section_field.id'
+        );
+
+
+        /* Артикул продукта */
+
+        $qb->addSelect(
+            '
+			CASE
+			   WHEN product_offer_modification.article IS NOT NULL THEN product_offer_modification.article
+			   WHEN product_offer_variation.article IS NOT NULL THEN product_offer_variation.article
+			   WHEN product_offer.article IS NOT NULL THEN product_offer.article
+			   WHEN product_info.article IS NOT NULL THEN product_info.article
+			   ELSE NULL
+			END AS product_article
+		'
+        );
+
+
+        /* Артикул продукта */
+
+        $qb->addSelect(
+            '
+			CASE
+			   WHEN product_offer_modification.barcode IS NOT NULL THEN product_offer_modification.barcode
+			   WHEN product_offer_variation.barcode IS NOT NULL THEN product_offer_variation.barcode
+			   WHEN product_offer.barcode IS NOT NULL THEN product_offer.barcode
+			   WHEN product_info.barcode IS NOT NULL THEN product_info.barcode
+			   ELSE NULL
+			END AS product_barcode
+		'
         );
 
 

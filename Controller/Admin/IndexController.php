@@ -92,8 +92,31 @@ final class IndexController extends AbstractController
         !$filterForm->isSubmitted() ?: $this->redirectToReferer();
 
 
-        // Получаем список
-        $query = $getAllProduct->getAllProducts($search, $filter, $this->getAdminFilterProfile());
+        $isFilter = (bool) $search->getQuery() || $filter->getOffer() || $filter->getVariation() || $filter->getModification();
+
+        if($isFilter)
+        {
+            // Получаем список торговых предложений
+            $query = $getAllProduct
+                ->search($search)
+                ->filter($filter)
+                ->getAllProductsOffers($this->getProfileUid());
+        }
+        else
+        {
+            // Получаем список продукции
+            $query = $getAllProduct
+                ->filter($filter)
+                ->getAllProducts($this->getProfileUid());
+        }
+
+
+
+
+
+        // Получаем список оп фильтру
+        //$query = $getAllProduct->getAllProducts($search, $filter, $this->getAdminFilterProfile());
+
 
         return $this->render(
             [
@@ -101,7 +124,8 @@ final class IndexController extends AbstractController
                 'search' => $searchForm->createView(),
                 'filter' => $filterForm->createView(),
                 //'profile' => $profileForm->createView(),
-            ]
+            ],
+            file : $isFilter ? 'offers.html.twig' : 'product.html.twig'
         );
     }
 }

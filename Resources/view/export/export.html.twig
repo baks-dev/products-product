@@ -49,15 +49,19 @@
 
             {% set arr_property = card.category_section_field|json_decode %}
 
-
             <offer id='{{ card.product_id }}'>
                     <name>{{ card.product_name }}
-
+                        {# Значение множественного варианта ТП #}
+                        {{ card.variation_value|call_twig_func(card.variation_reference) ~ card.modification_value|call_twig_func(card.modification_reference) }}
                         {# Значение торгового предложения #}
                         {{ card.offer_value|call_twig_func(card.offer_reference) }}
-
-                        {# Значение множественного варианта ТП #}
-                        {{ card.variation_value|call_twig_func(card.variation_reference) ~ card.modification_value|call_twig_func(card.modification_reference) }}</name>
+                        {# Постфикс торгового предложения #}
+                        {{ card.offer_postfix }}
+                        {# Постфикс множественного варианта #}
+                        {{ card.variation_postfix }}
+                        {# Постфикс модификации #}
+                        {{ card.modification_postfix }}
+                    </name>
                     {#<vendor>Brand</vendor>#}
                     {#<vendorCode>A1234567B</vendorCode>#}
                     <url>{{ absolute_url(path('products-product:user.detail', {
@@ -66,7 +70,7 @@
                             variation: card.variation_value,
                             modification: card.modification_value
                         } )) }}</url>
-                    <price>{{ (card.product_price / 100) }}</price>
+                    <price>{{ (card.product_price / 100) ?: 'по запросу' }}</price>
                     <currencyId>{{ card.product_currency|upper }}</currencyId>
                     {#<oldprice>9990</oldprice>#}
                     {#<enable_auto_discounts>true</enable_auto_discounts>#}

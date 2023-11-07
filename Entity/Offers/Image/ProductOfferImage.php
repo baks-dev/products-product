@@ -161,30 +161,15 @@ class ProductOfferImage extends EntityEvent implements UploadEntityInterface
     }
 
 
+    public function getPathDir(): string
+    {
+        return $this->name;
+    }
 
-
-//    public function getUploadDir(): object
-//    {
-//        return $this->offer->getId();
-//    }
-//
-//    public function getFileName(): string
-//    {
-//        return $this->name.'.'.$this->ext;
-//    }
 
     public function root(): void
     {
         $this->root = true;
     }
 
-//    public function getDir(): ProductOfferUid
-//    {
-//        return $this->dir;
-//    }
-//
-//    public static function getDirName(): string
-//    {
-//        return  ProductOfferUid::class;
-//    }
 }

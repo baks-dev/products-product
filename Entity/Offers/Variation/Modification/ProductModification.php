@@ -26,6 +26,7 @@ namespace BaksDev\Products\Product\Entity\Offers\Variation\Modification;
 use BaksDev\Core\Entity\EntityEvent;
 use BaksDev\Products\Category\Type\Offers\Modification\ProductCategoryModificationUid;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
+use BaksDev\Products\Product\Type\Barcode\ProductBarcode;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
 use Doctrine\Common\Collections\Collection;
@@ -44,7 +45,7 @@ class ProductModification extends EntityEvent
 {
     public const TABLE = 'product_modification';
 
-    /** ID модификации множественного варианта варианта */
+    /** ID модификации множественного варианта */
     #[Assert\NotBlank]
     #[Assert\Uuid]
     #[ORM\Id]
@@ -75,6 +76,10 @@ class ProductModification extends EntityEvent
     /** Артикул */
     #[ORM\Column(type: Types::STRING, nullable: true)]
     private ?string $article = null;
+
+    /** Штрихкод товара */
+    #[ORM\Column(type: ProductBarcode::TYPE, nullable: true)]
+    private ?ProductBarcode $barcode = null;
 
     /** Постфикс */
     #[ORM\Column(type: Types::STRING, nullable: true)]

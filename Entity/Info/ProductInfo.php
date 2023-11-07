@@ -27,6 +27,7 @@ use BaksDev\Core\Entity\EntityEvent;
 use BaksDev\Core\Entity\EntityReadonly;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Product;
+use BaksDev\Products\Product\Type\Barcode\ProductBarcode;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Doctrine\DBAL\Types\Types;
@@ -65,6 +66,10 @@ class ProductInfo extends EntityReadonly
     /** Артикул товара */
     #[ORM\Column(type: Types::STRING, nullable: true)]
     private ?string $article = null;
+
+    /** Штрихкод товара */
+    #[ORM\Column(type: ProductBarcode::TYPE, nullable: true)]
+    private ?ProductBarcode $barcode = null;
 
     /** Профиль пользователя, которому принадлежит товар */
     #[Assert\Uuid]

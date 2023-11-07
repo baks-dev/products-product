@@ -160,30 +160,12 @@ class ProductVariationImage extends EntityEvent implements UploadEntityInterface
 
         $this->cdn = true;
 	}
-	
-	
-//	public function getUploadDir() : object
-//	{
-//		return $this->variation->getId();
-//	}
-//
-//
-//	public function getFileName(): string
-//	{
-//		return $this->name.'.'.$this->ext;
-//	}
-//
-//    public function getDir(): ProductVariationUid
-//    {
-//        return $this->dir;
-//    }
-//
-//    public static function getDirName(): string
-//    {
-//        return  ProductVariationUid::class;
-//    }
-//
-	
+
+    public function getPathDir(): string
+    {
+        return $this->name;
+    }
+
 	public function root() : void
 	{
 		$this->root = true;
@@ -197,6 +179,4 @@ class ProductVariationImage extends EntityEvent implements UploadEntityInterface
         return $this->ext;
     }
 
-
-	
 }

@@ -26,6 +26,7 @@ namespace BaksDev\Products\Product\Entity\Offers;
 use BaksDev\Core\Entity\EntityEvent;
 use BaksDev\Products\Category\Type\Offers\Id\ProductCategoryOffersUid;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
+use BaksDev\Products\Product\Type\Barcode\ProductBarcode;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use Doctrine\Common\Collections\Collection;
@@ -77,6 +78,10 @@ class ProductOffer extends EntityEvent
     #[ORM\Column(type: Types::STRING, nullable: true)]
     private ?string $article = null;
 
+    /** Штрихкод товара */
+    #[ORM\Column(type: ProductBarcode::TYPE, nullable: true)]
+    private ?ProductBarcode $barcode = null;
+
     /** Постфикс */
     #[ORM\Column(type: Types::STRING, nullable: true)]
     private ?string $postfix = null;
@@ -105,12 +110,8 @@ class ProductOffer extends EntityEvent
     {
         $this->event = $event;
         $this->id = new ProductOfferUid();
-        // $this->const = new ProductOfferConst();
-        // $this->variation = new ArrayCollection();
-
         $this->price = new Price\ProductOfferPrice($this);
         $this->quantity = new Quantity\ProductOfferQuantity($this);
-        // $this->images = new ArrayCollection();
     }
 
     public function __clone()

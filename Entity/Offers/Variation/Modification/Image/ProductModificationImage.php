@@ -166,6 +166,11 @@ class ProductModificationImage extends EntityEvent implements UploadEntityInterf
         $this->cdn = true;
 	}
 
+    public function getPathDir(): string
+    {
+        return $this->name;
+    }
+
     /**
      * Ext
      */
@@ -174,30 +179,6 @@ class ProductModificationImage extends EntityEvent implements UploadEntityInterf
         return $this->ext;
     }
 
-
-	
-	
-//	public function getUploadDir() : object
-//	{
-//		return $this->modification->getId();
-//	}
-//
-//
-//	public function getFileName(): string
-//	{
-//		return $this->name.'.'.$this->ext;
-//	}
-//
-//
-//    public static function getDirName(): string
-//    {
-//        return  ProductModificationUid::class;
-//    }
-//
-//    public function getDir(): ProductModificationUid
-//    {
-//        return $this->dir;
-//    }
 
 	public function root() : void
 	{

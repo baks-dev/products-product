@@ -24,9 +24,13 @@ namespace BaksDev\Products\Product\Command;
 //use App\Module\Products\Product\Type\Offers\Id\ProductOfferUid;
 //use App\Module\Products\Product\Type\Offers\Image\ImageUid;
 //use App\Module\Wildberries\Products\Product\Repository\ProductBarcode\ProductBarcodeInterface;
+use BaksDev\Core\Doctrine\ORMQueryBuilder;
 use BaksDev\Files\Resources\Messanger\Request\Images\CDNUploadImage;
 use BaksDev\Files\Resources\Messanger\Request\Images\CDNUploadImageMessage;
 use BaksDev\Products\Product\Entity\Offers\Image\ProductOfferImage;
+use BaksDev\Products\Product\Entity\Offers\Variation\Image\ProductVariationImage;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Image\ProductModificationImage;
+use BaksDev\Products\Product\Entity\Photo\ProductPhoto;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -45,74 +49,114 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 class ProductsRepackWebpCdnCommand extends Command
 {
 	private EntityManagerInterface $entityManager;
-	
-	private ParameterBagInterface $parameter;
-    private string $upload;
+
     private CDNUploadImage $CDNUploadImage;
 
     public function __construct(
-        #[Autowire('%kernel.project_dir%/public/upload/')] string $upload,
-		EntityManagerInterface $entityManager,
+
+        EntityManagerInterface $entityManager,
         CDNUploadImage $CDNUploadImage
 	)
 	{
-		parent::__construct();
-		$this->entityManager = $entityManager;
-        $this->upload = $upload;
+        //$this->upload = $upload;
         $this->CDNUploadImage = $CDNUploadImage;
+        $this->entityManager = $entityManager;
+
+        parent::__construct();
     }
 	
 	
 	protected function execute(InputInterface $input, OutputInterface $output) : int
 	{
 		$io = new SymfonyStyle($input, $output);
+
+
+        $progressBar = new ProgressBar($output);
+        $progressBar->start();
+
+
+        /** Галерея фото */
+
+        $productPhotos = $this->entityManager->getRepository(ProductPhoto::class)->findBy(['cdn' => false]);
+        $this->entityManager->clear();
+
+        /** @var $productPhoto ProductPhoto */
+        foreach($productPhotos as $k => $productPhoto)
+        {
+            $message = new CDNUploadImageMessage(
+                $productPhoto->getId(),
+                ProductPhoto::class,
+                $productPhoto->getPathDir()
+            );
+
+            ($this->CDNUploadImage)($message);
+
+            $progressBar->advance();
+        }
+
+
+        /** Торговые предложения */
 		
 		$offerImages = $this->entityManager->getRepository(ProductOfferImage::class)->findBy(['cdn' => false]);
-
-		/** Применить ко всем директориям разрешение */
-		// sudo find /home/crm.white-sign.ru/public/assets/images/products/offer -type d -exec chmod 773 {} \;
-		
-		$progressBar = new ProgressBar($output);
-		$progressBar->start();
+        $this->entityManager->clear();
 		
 		/** @var $offerImage ProductOfferImage */
 		foreach($offerImages as $offerImage)
 		{
-			$progressBar->advance();
-			
-			$uploadDir = $this->upload.ProductOfferImage::TABLE.'/'.$offerImage->getDir();
-
-//			/* Пропускаем, если пережатый файл уже имеется */
-//			if(is_file($uploadDir.'/'.$offerImage->getFileName()))
-//			{
-//				continue;
-//			}
-
-            /** Применить к директории разрешение */
-            //exec('sudo find '.$uploadDir.' -type d -exec chmod 773 {} \;');
-			
-			//$fileInfo = pathinfo($uploadDir.'/'.$offerImage->getFileName());
-			
-			/* Пропускаем, если нет оригинала файла */
-			if(!is_file($uploadDir.'/'.$offerImage->getFileName()))
-			{
-                $io->error(sprintf('Отсутствует изображение торгового предложения %s', $offerImage->getId()));
-				continue;
-			}
-
 			$message = new CDNUploadImageMessage(
                 $offerImage->getId(),
                 ProductOfferImage::class,
-                $offerImage->getFileName(),
-				$offerImage->getDir(),
+                $offerImage->getPathDir()
 			);
 
             ($this->CDNUploadImage)($message);
 
-
+            $progressBar->advance();
 		}
-		
-		$this->entityManager->clear();
+
+
+        /** Множественные варианты  */
+
+        $variationImages = $this->entityManager->getRepository(ProductVariationImage::class)->findBy(['cdn' => false]);
+        $this->entityManager->clear();
+
+        /** @var $variationImage ProductVariationImage */
+        foreach($variationImages as $variationImage)
+        {
+            $message = new CDNUploadImageMessage(
+                $variationImage->getId(),
+                ProductVariationImage::class,
+                $variationImage->getPathDir()
+            );
+
+            ($this->CDNUploadImage)($message);
+
+            $progressBar->advance();
+        }
+
+
+
+        /** Модификации множественных вариантов */
+
+        $modificationImages = $this->entityManager->getRepository(ProductModificationImage::class)->findBy(['cdn' => false]);
+        $this->entityManager->clear();
+
+        /** @var $modificationImage ProductModificationImage */
+        foreach($modificationImages as $modificationImage)
+        {
+            $message = new CDNUploadImageMessage(
+                $modificationImage->getId(),
+                ProductModificationImage::class,
+                $modificationImage->getPathDir()
+            );
+
+            ($this->CDNUploadImage)($message);
+
+            $progressBar->advance();
+        }
+
+
+
 		$progressBar->finish();
 		$io->success('Команда успешно завершена');
 		

@@ -26,6 +26,7 @@ namespace BaksDev\Products\Product\Entity\Offers\Variation;
 use BaksDev\Core\Entity\EntityEvent;
 use BaksDev\Products\Category\Type\Offers\Variation\ProductCategoryVariationUid;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
+use BaksDev\Products\Product\Type\Barcode\ProductBarcode;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use Doctrine\Common\Collections\Collection;
@@ -75,6 +76,10 @@ class ProductVariation extends EntityEvent
     /** Артикул */
     #[ORM\Column(type: Types::STRING, nullable: true)]
     private ?string $article = null;
+
+    /** Штрихкод товара */
+    #[ORM\Column(type: ProductBarcode::TYPE, nullable: true)]
+    private ?ProductBarcode $barcode = null;
 
     /** Постфикс */
     #[ORM\Column(type: Types::STRING, nullable: true)]

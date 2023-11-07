@@ -68,10 +68,6 @@
                     </a>
 
                     <div class="text-muted fw-bolder">
-                        {% if item.product_offer_value %}
-                            {{ item.product_offer_value|call_twig_func(item.product_offer_reference) }}
-                            {{ item.product_offer_postfix }}
-                        {% endif %}
 
                         {% if item.product_variation_value %}
                             {{ item.product_variation_value|call_twig_func(item.product_variation_reference) }}
@@ -81,6 +77,11 @@
                         {% if item.product_modification_value %}
                             {{ item.product_modification_value|call_twig_func(item.product_modification_reference) }}
                             {{ item.product_modification_postfix }}
+                        {% endif %}
+
+                        {% if item.product_offer_value %}
+                            {{ item.product_offer_value|call_twig_func(item.product_offer_reference) }}
+                            {{ item.product_offer_postfix }}
                         {% endif %}
                     </div>
                 </div>
