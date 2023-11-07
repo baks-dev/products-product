@@ -70,11 +70,17 @@ final class ProductHandler extends AbstractHandler
 
     public function handle(ProductDTO $command): Product|string
     {
+
+        dd($command);
+
         /* Валидация DTO  */
         $this->validatorCollection->add($command);
 
         $this->main = new Product();
         $this->event = new ProductEvent();
+
+
+
 
         try
         {
@@ -94,6 +100,8 @@ final class ProductHandler extends AbstractHandler
         }
 
 
+        dd($this->event);
+
         // Загрузка базового фото галереи
         foreach($this->event->getPhoto() as $ProductPhoto)
         {
@@ -105,6 +113,10 @@ final class ProductHandler extends AbstractHandler
                 $this->imageUpload->upload($PhotoCollectionDTO->file, $ProductPhoto);
             }
         }
+
+
+
+
 
         // Загрузка файлов PDF галереи
         foreach($this->event->getFile() as $ProductFile)

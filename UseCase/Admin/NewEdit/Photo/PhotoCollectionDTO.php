@@ -28,8 +28,12 @@ use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/** @see ProductPhoto */
 final class PhotoCollectionDTO implements ProductPhotoInterface
 {
+
+
+
 	/** Файл загрузки фото */
 	public ?File $file = null;
 	

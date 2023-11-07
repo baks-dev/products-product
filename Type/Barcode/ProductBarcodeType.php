@@ -30,7 +30,7 @@ final class ProductBarcodeType extends StringType
 	
 	public function convertToPHPValue($value, AbstractPlatform $platform): mixed
 	{
-		return !empty($value) ? new ProductBarcode($value) : $value;
+		return !empty($value) ? new ProductBarcode($value) : null;
 	}
 	
 	
@@ -44,5 +44,4 @@ final class ProductBarcodeType extends StringType
 	{
 		return true;
 	}
-	
 }

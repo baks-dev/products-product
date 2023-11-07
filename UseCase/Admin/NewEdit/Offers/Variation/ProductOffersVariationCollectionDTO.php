@@ -167,7 +167,7 @@ final class ProductOffersVariationCollectionDTO implements ProductVariationInter
 
         $filter = $this->image->filter(function(Image\ProductVariationImageCollectionDTO $element) use ($image)
             {
-                return $image->getName() === $element->getName();
+                return !$image->file && $image->getName() === $element->getName();
             });
 
         if($filter->isEmpty())

@@ -168,7 +168,7 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
 
         $filter = $this->image->filter(function(Image\ProductOfferImageCollectionDTO $element) use ($image)
             {
-                return $image->getName() === $element->getName();
+                return !$image->file && $image->getName() === $element->getName();
             });
 
         if($filter->isEmpty())

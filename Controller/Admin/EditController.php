@@ -52,8 +52,8 @@ final class EditController extends AbstractController
         ProductHandler $productHandler
     ): Response
     {
-        $ProductDTO = new ProductDTO();
-        $Event->getDto($ProductDTO);
+        //$ProductDTO = new ProductDTO();
+        $ProductDTO = $Event->getDto(ProductDTO::class);
 
         // Если передана категория - присваиваем для подгрузки настроект (свойства, ТП)
         if($request->get('category'))
@@ -68,12 +68,18 @@ final class EditController extends AbstractController
             }
         }
 
+
         // Форма добавления
         $form = $this->createForm(ProductForm::class, $ProductDTO);
         $form->handleRequest($request);
 
+
+
+
         if($form->isSubmitted() && $form->isValid() && $form->has('product'))
         {
+            dump($request->files->get('product_form'));
+            dd($ProductDTO);
 
             $handle = $productHandler->handle($ProductDTO);
 

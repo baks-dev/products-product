@@ -156,10 +156,15 @@ final class ProductOffersVariationModificationCollectionDTO implements ProductMo
 	
 	public function addImage(Image\ProductModificationImageCollectionDTO $image) : void
 	{
-		if(!$this->image->contains($image))
-		{
-			$this->image->add($image);
-		}
+        $filter = $this->image->filter(function(Image\ProductModificationImageCollectionDTO $element) use ($image)
+        {
+            return !$image->file && $image->getName() === $element->getName();
+        });
+
+        if($filter->isEmpty())
+        {
+            $this->image->add($image);
+        }
 	}
 	
 	
@@ -167,20 +172,12 @@ final class ProductOffersVariationModificationCollectionDTO implements ProductMo
 	{
 		$this->image->removeElement($image);
 	}
-	
-	
-	/**
-	 * @return ProductCategoryModificationUid
-	 */
+
 	public function getCategoryModification() : ProductCategoryModificationUid
 	{
 		return $this->categoryModification;
 	}
-	
-	
-	/**
-	 * @param ProductCategoryModificationUid $categoryVariation
-	 */
+
 	public function setCategoryModification(ProductCategoryModificationUid $categoryModification) : void
 	{
 		$this->categoryModification = $categoryModification;
@@ -197,9 +194,6 @@ final class ProductOffersVariationModificationCollectionDTO implements ProductMo
     {
         $this->postfix = $postfix;
     }
-	
-
-
 
 }
 

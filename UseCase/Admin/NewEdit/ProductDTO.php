@@ -135,10 +135,9 @@ final class ProductDTO implements ProductEventInterface
 
     public function addCategory(CategoryCollectionDTO $category): void
     {
-        $filter = $this->category->filter(function(CategoryCollectionDTO $element) use ($category)
-            {
-                return $category->getCategory()?->equals($element->getCategory());
-            });
+        $filter = $this->category->filter(function(CategoryCollectionDTO $element) use ($category) {
+            return $category->getCategory()?->equals($element->getCategory());
+        });
 
         if($filter->isEmpty())
         {
@@ -236,10 +235,9 @@ final class ProductDTO implements ProductEventInterface
     public function addOffer(Offers\ProductOffersCollectionDTO $offer): void
     {
 
-        $filter = $this->offer->filter(function(Offers\ProductOffersCollectionDTO $element) use ($offer)
-            {
-                return $offer->getValue() === $element->getValue();
-            });
+        $filter = $this->offer->filter(function(Offers\ProductOffersCollectionDTO $element) use ($offer) {
+            return $offer->getValue() === $element->getValue();
+        });
 
         if($filter->isEmpty())
         {
@@ -273,17 +271,14 @@ final class ProductDTO implements ProductEventInterface
 
     public function addPhoto(PhotoCollectionDTO $photo): void
     {
-
-        $filter = $this->photo->filter(function(PhotoCollectionDTO $element) use ($photo)
-            {
-                return $photo->getName() === $element->getName();
-            });
+        $filter = $this->photo->filter(function(PhotoCollectionDTO $element) use ($photo) {
+            return !$photo->file && $photo->getName() === $element->getName();
+        });
 
         if($filter->isEmpty())
         {
             $this->photo->add($photo);
         }
-
     }
 
 
@@ -346,11 +341,10 @@ final class ProductDTO implements ProductEventInterface
 
         $iterator = $this->property->getIterator();
 
-        $iterator->uasort(function($first, $second)
-            {
+        $iterator->uasort(function($first, $second) {
 
-                return $first->getSort() > $second->getSort() ? 1 : -1;
-            });
+            return $first->getSort() > $second->getSort() ? 1 : -1;
+        });
 
         return $iterator;
     }
@@ -359,10 +353,9 @@ final class ProductDTO implements ProductEventInterface
     public function addProperty(PropertyCollectionDTO $property): void
     {
 
-        $filter = $this->property->filter(function(PropertyCollectionDTO $element) use ($property)
-            {
-                return $property->getField()?->equals($element->getField());
-            });
+        $filter = $this->property->filter(function(PropertyCollectionDTO $element) use ($property) {
+            return $property->getField()?->equals($element->getField());
+        });
 
         if($filter->isEmpty())
         {
