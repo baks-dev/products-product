@@ -48,7 +48,7 @@ final class ProductModificationConst extends Uid
         AbstractUid|string|null $value = null,
         mixed $attr = null,
         mixed $option = null,
-        int $property = null,
+        mixed $property = null,
         mixed $reference = null,
     )
     {

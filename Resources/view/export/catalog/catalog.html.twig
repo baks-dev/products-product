@@ -1,26 +1,5 @@
 <?xml version="1.0"?>
 
-{# 'color' => '00BFFF'
-  'title' => 'Triangle Tyres Russia - китайские шины Триангл оптом и в розницу'
-  'keywords' => 'купить, Триангл, Triangle'
-  'description' => 'Купить шины Триангл оптом и в розницу по выгодной цене' #}
-
-
-{# {{ card.product_name }}
-#}{# Значение торгового предложения #}{#
-{{ card.product_offer_value|call_twig_func(card.product_offer_reference) }}
-#}{# Постфикс торгового предложения #}{#
-{{ card.product_offer_postfix }}
-#}{# Значение множественного варианта ТП #}{#
-{{ card.product_variation_value|call_twig_func(card.product_variation_reference) }}
-#}{# Постфикс множественного варианта #}{#
-{{ card.product_variation_postfix }}
-#}{# Значение модификации множественного варианта ТП #}{#
-{{ card.product_modification_value|call_twig_func(card.product_modification_reference) }}
-#}{# Постфикс модификации #}{#
-{{ card.product_modification_postfix }} #}
-
-
 <yml_catalog date='{{ 'now'|date('Y-m-d\\TH:00:00P') }}'>
     <shop>
         <name>{{ settings.title }}</name>
