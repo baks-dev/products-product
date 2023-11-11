@@ -76,6 +76,15 @@ final class ProductFilterDTO implements ProductFilterInterface
         }
 
         $this->category = $category;
+
+//        $this->request->getSession()->remove(self::offer);
+//        $this->request->getSession()->remove(self::variation);
+//        $this->request->getSession()->remove(self::modification);
+//
+//        $this->offer = null;
+//        $this->variation = null;
+//        $this->modification = null;
+
     }
 
 

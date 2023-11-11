@@ -106,8 +106,8 @@ final class ProductFilterForm extends AbstractType
                 $data = $event->getData();
 
                 $this->request->getSession()->remove(ProductFilterDTO::category);
-                $this->request->getSession()->set(ProductFilterDTO::category, $data->getCategory());
 
+                $this->request->getSession()->set(ProductFilterDTO::category, $data->getCategory());
                 $this->request->getSession()->set(ProductFilterDTO::offer, $data->getOffer());
                 $this->request->getSession()->set(ProductFilterDTO::variation, $data->getVariation());
                 $this->request->getSession()->set(ProductFilterDTO::modification, $data->getModification());
@@ -134,7 +134,6 @@ final class ProductFilterForm extends AbstractType
                         new ProductCategoryUid($this->request->getMainRequest()?->get($builder->getName())['category']) : null;
 
                 }
-
 
                 if($Category)
                 {

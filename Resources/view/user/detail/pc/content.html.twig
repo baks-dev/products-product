@@ -199,7 +199,7 @@
                         {% set img_host =  product_images.product_img_cdn == true  ? CDN_HOST : '' %}
                         {% set img_dir = product_images.product_img %}
                         {% set img_file = (img_host is empty ? '/image.' : '/min.') ~ product_images.product_img_ext %}
-                        {% set image_path = img_host ~ img_table ~ img_dir ~ img_file %}
+                        {% set image_path = img_host ~ img_dir ~ img_file %}
                     {% endif %}
 
 

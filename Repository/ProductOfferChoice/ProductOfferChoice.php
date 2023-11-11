@@ -58,7 +58,12 @@ final class ProductOfferChoice implements ProductOfferChoiceInterface
     {
         $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
 
-        $select = sprintf('new %s(offer.const, offer.value, trans.name, category_offer.reference)', ProductOfferConst::class);
+        $select = sprintf('new %s(
+            offer.const, 
+            offer.value, 
+            trans.name, 
+            category_offer.reference
+        )', ProductOfferConst::class);
 
         $qb->select($select);
 
