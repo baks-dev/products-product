@@ -48,7 +48,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsCommand(
     name: 'baks:products-product:upgrade:info',
-    description: 'Обновляет ссылки меню администратора',
+    description: 'Обновляем сущность Info продукции событиями Event',
     aliases: ['baks:project:upgrade:products-product:info']
 )]
 #[AutoconfigureTag('baks.project.upgrade')]

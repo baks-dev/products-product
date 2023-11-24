@@ -18,13 +18,6 @@
 
 namespace BaksDev\Products\Product\Command;
 
-//use App\Module\Files\Res\Messanger\Request\Images\Handler;
-//use App\Module\Products\Product\Entity\Offers\Offer\Image\Image;
-//use App\Module\Products\Product\Entity\Trans\Trans;
-//use App\Module\Products\Product\Type\Offers\Id\ProductOfferUid;
-//use App\Module\Products\Product\Type\Offers\Image\ImageUid;
-//use App\Module\Wildberries\Products\Product\Repository\ProductBarcode\ProductBarcodeInterface;
-use BaksDev\Core\Doctrine\ORMQueryBuilder;
 use BaksDev\Files\Resources\Messanger\Request\Images\CDNUploadImage;
 use BaksDev\Files\Resources\Messanger\Request\Images\CDNUploadImageMessage;
 use BaksDev\Products\Product\Entity\Offers\Image\ProductOfferImage;
@@ -38,12 +31,9 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
-/** ProductsRenameCommand */
 #[AsCommand(
-	name: 'baks:products:webp',
+	name: 'baks::products-product:webp',
 	description: 'Сжатие обложек карточек товаров которые не пережаты')
 ]
 class ProductsRepackWebpCdnCommand extends Command

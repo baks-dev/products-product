@@ -49,12 +49,7 @@ final class IndexController extends AbstractController
         int $page = 0,
     ): Response
     {
-        // Поиск
-        $search = new SearchDTO($request);
-        $searchForm = $this->createForm(SearchForm::class, $search, [
-            'action' => $this->generateUrl('products-product:admin.index'),
-        ]);
-        $searchForm->handleRequest($request);
+
 
 
 //        /**
@@ -92,7 +87,15 @@ final class IndexController extends AbstractController
         !$filterForm->isSubmitted() ?: $this->redirectToReferer();
 
 
-        $isFilter = (bool) $search->getQuery() || $filter->getOffer() || $filter->getVariation() || $filter->getModification();
+        // Поиск
+        $search = new SearchDTO($request);
+        $searchForm = $this->createForm(SearchForm::class, $search, [
+            'action' => $this->generateUrl('products-product:admin.index'),
+        ]);
+        $searchForm->handleRequest($request);
+
+
+        $isFilter = (bool) ($search->getQuery() || $filter->getOffer() || $filter->getVariation() || $filter->getModification());
 
         if($isFilter)
         {
@@ -109,9 +112,6 @@ final class IndexController extends AbstractController
                 ->filter($filter)
                 ->getAllProducts($this->getProfileUid());
         }
-
-
-
 
 
         // Получаем список оп фильтру

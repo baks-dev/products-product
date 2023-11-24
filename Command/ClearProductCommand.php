@@ -43,7 +43,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 /** ProductsRenameCommand */
 #[AsCommand(
-    name: 'baks:clear:products-product',
+    name: 'baks:products-product:clear',
     description: 'Удаляет все карточки, у которых нет связей с маркетплейсами. Очищает корзину и неактивные события старше 30 суток')
 ]
 class ClearProductCommand extends Command

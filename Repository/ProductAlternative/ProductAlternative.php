@@ -45,31 +45,34 @@ final class ProductAlternative implements ProductAlternativeInterface
         string $offer,
         ?string $variation,
         ?string $modification,
-        ?array $property,
+        ?array $property = null
     ): ?array {
 
-        $qb = $this->DBALQueryBuilder->createQueryBuilder(self::class);
+        $qb = $this->DBALQueryBuilder
+            ->createQueryBuilder(self::class)
+            ->bindLocal()
+        ;
 
         $qb->addSelect('product_offer.value as product_offer_value')
-            ->addGroupBy('product_offer.value')
-            ->addGroupBy('product_offer.article')
+            //->addGroupBy('product_offer.value')
+            //->addGroupBy('product_offer.article')
         ;
 
         $qb->addSelect('product_offer.postfix as product_offer_postfix')
-            ->addGroupBy('product_offer.postfix')
+            //->addGroupBy('product_offer.postfix')
         ;
 
         $qb->addSelect('product_offer.id as product_offer_uid')
-            ->addGroupBy('product_offer.id')
+            //->addGroupBy('product_offer.id')
         ;
 
         $qb->from(ProductEntity\Offers\ProductOffer::TABLE, 'product_offer');
 
         $qb->addSelect('product.id')
-            ->addGroupBy('product.id ')
+            //->addGroupBy('product.id ')
         ;
         $qb->addSelect('product.event')
-            ->addGroupBy('product.event ')
+            //->addGroupBy('product.event ')
         ;
         $qb->join(
             'product_offer',
@@ -87,13 +90,13 @@ final class ProductAlternative implements ProductAlternativeInterface
             'product_offer_price',
             'product_offer_price.offer = product_offer.id'
         )
-            ->addGroupBy('product_offer_price.price')
+            //->addGroupBy('product_offer_price.price')
             ->addGroupBy('product_offer_price.currency')
         ;
 
         // Получаем тип торгового предложения
         $qb->addSelect('category_offer.reference AS product_offer_reference')
-            ->addGroupBy('category_offer.reference')
+            //->addGroupBy('category_offer.reference')
         ;
         $qb->leftJoin(
             'product_offer',
@@ -104,7 +107,7 @@ final class ProductAlternative implements ProductAlternativeInterface
 
         // Получаем название торгового предложения
         $qb->addSelect('category_offer_trans.name as product_offer_name')
-            ->addGroupBy('category_offer_trans.name')
+            //->addGroupBy('category_offer_trans.name')
         ;
         $qb->leftJoin(
             'category_offer',
@@ -122,23 +125,23 @@ final class ProductAlternative implements ProductAlternativeInterface
             'product_offer_quantity',
             'product_offer_quantity.offer = product_offer.id'
         )
-            ->addGroupBy('product_offer_quantity.quantity')
+            //->addGroupBy('product_offer_quantity.quantity')
             ->addGroupBy('product_offer_quantity.reserve')
         ;
 
         // МНОЖЕСТВЕННЫЕ ВАРИАНТЫ
 
         $qb->addSelect('product_variation.value as product_variation_value')
-            ->addGroupBy('product_variation.value')
-            ->addGroupBy('product_variation.article')
+            //->addGroupBy('product_variation.value')
+            //->addGroupBy('product_variation.article')
         ;
 
         $qb->addSelect('product_variation.postfix as product_variation_postfix')
-            ->addGroupBy('product_variation.postfix')
+            //->addGroupBy('product_variation.postfix')
         ;
 
         $qb->addSelect('product_variation.id as product_variation_uid')
-            ->addGroupBy('product_variation.id')
+            //->addGroupBy('product_variation.id')
         ;
 
         $variationMethod = empty($variation) ? 'leftJoin' : 'join';
@@ -161,13 +164,13 @@ final class ProductAlternative implements ProductAlternativeInterface
             'product_variation_price',
             'product_variation_price.variation = product_variation.id'
         )
-            ->addGroupBy('product_variation_price.price')
+            //->addGroupBy('product_variation_price.price')
             ->addGroupBy('product_variation_price.currency')
         ;
 
         // Получаем тип множественного варианта
         $qb->addSelect('category_offer_variation.reference as product_variation_reference')
-            ->addGroupBy('category_offer_variation.reference')
+            //->addGroupBy('category_offer_variation.reference')
         ;
         $qb->leftJoin(
             'product_variation',
@@ -178,7 +181,7 @@ final class ProductAlternative implements ProductAlternativeInterface
 
         // Получаем название множественного варианта
         $qb->addSelect('category_offer_variation_trans.name as product_variation_name')
-            ->addGroupBy('category_offer_variation_trans.name')
+            //->addGroupBy('category_offer_variation_trans.name')
         ;
         $qb->leftJoin(
             'category_offer_variation',
@@ -194,22 +197,22 @@ final class ProductAlternative implements ProductAlternativeInterface
             'product_variation_quantity',
             'product_variation_quantity.variation = product_variation.id'
         )
-            ->addGroupBy('product_variation_quantity.quantity')
+            //->addGroupBy('product_variation_quantity.quantity')
             ->addGroupBy('product_variation_quantity.reserve')
         ;
 
         // МОДИФИКАЦИЯ
         $qb->addSelect('product_modification.value as product_modification_value')
-            ->addGroupBy('product_modification.value')
+            //->addGroupBy('product_modification.value')
             ->addGroupBy('product_modification.article')
         ;
 
         $qb->addSelect('product_modification.postfix as product_modification_postfix')
-            ->addGroupBy('product_modification.postfix')
+            ///->addGroupBy('product_modification.postfix')
         ;
 
         $qb->addSelect('product_modification.id as product_modification_uid')
-            ->addGroupBy('product_modification.id')
+            //->addGroupBy('product_modification.id')
         ;
 
         $modificationMethod = empty($modification) ? 'leftJoin' : 'join';
@@ -232,13 +235,13 @@ final class ProductAlternative implements ProductAlternativeInterface
             'product_modification_price',
             'product_modification_price.modification = product_modification.id'
         )
-            ->addGroupBy('product_modification_price.price')
+            //->addGroupBy('product_modification_price.price')
             ->addGroupBy('product_modification_price.currency')
         ;
 
         // Получаем тип модификации множественного варианта
         $qb->addSelect('category_offer_modification.reference as product_modification_reference')
-            ->addGroupBy('category_offer_modification.reference')
+            //->addGroupBy('category_offer_modification.reference')
         ;
         $qb->leftJoin(
             'product_modification',
@@ -249,7 +252,7 @@ final class ProductAlternative implements ProductAlternativeInterface
 
         // Получаем название типа модификации
         $qb->addSelect('category_offer_modification_trans.name as product_modification_name')
-            ->addGroupBy('category_offer_modification_trans.name')
+            //->addGroupBy('category_offer_modification_trans.name')
         ;
         $qb->leftJoin(
             'category_offer_modification',
@@ -265,7 +268,7 @@ final class ProductAlternative implements ProductAlternativeInterface
             'product_modification_quantity',
             'product_modification_quantity.modification = product_modification.id'
         )
-            ->addGroupBy('product_modification_quantity.quantity')
+            //->addGroupBy('product_modification_quantity.quantity')
             ->addGroupBy('product_modification_quantity.reserve')
         ;
 
@@ -337,14 +340,26 @@ final class ProductAlternative implements ProductAlternativeInterface
         // СВОЙСТВА, УЧАВСТВУЮЩИЕ В ФИЛЬТРЕ АЛЬТЕРНАТИВ
 
         if ($property) {
+
             /** @var stdClass $props */
             foreach ($property as $props) {
+
+                if(empty($props->field_uid))
+                {
+                    continue;
+                }
+
+                $alias = md5($props->field_uid);
+
                 $qb->join(
                     'product_offer',
                     ProductEntity\Property\ProductProperty::TABLE,
-                    'product_property',
-                    'product_property.event = product_offer.event AND product_property.field = :field AND product_property.value = :props'
+                    'product_property_'.$alias,
+                    'product_property_'.$alias.'.event = product_offer.event AND product_property_'.$alias.'.field = :field AND product_property_'.$alias.'.value = :props_'.$alias
                 );
+
+
+                // 'product_property.event = product_offer.event AND product_property.field = :field AND product_property.value = :props'
 
                 $qb->setParameter(
                     'field',
@@ -352,9 +367,14 @@ final class ProductAlternative implements ProductAlternativeInterface
                     ProductCategorySectionFieldUid::TYPE
                 );
 
-                $qb->setParameter('props', $props->field_value);
+
+                $qb->setParameter('props_'.$alias, $props->field_value);
             }
         }
+
+
+
+
 
         $qb->join(
             'product',
@@ -364,7 +384,9 @@ final class ProductAlternative implements ProductAlternativeInterface
         );
 
         // Проверяем активность продукции
-        $qb->addSelect('product_active.active_from')->addGroupBy('product_active.active_from');
+        $qb->addSelect('product_active.active_from')
+            //->addGroupBy('product_active.active_from')
+        ;
 
         $qb->join(
             'product',
@@ -382,7 +404,9 @@ final class ProductAlternative implements ProductAlternativeInterface
         );
 
         // Название твоара
-        $qb->addSelect('product_trans.name AS product_name')->addGroupBy('product_trans.name');
+        $qb->addSelect('product_trans.name AS product_name')
+        //    ->addGroupBy('product_trans.name')
+        ;
 
         $qb->leftJoin(
             'product_event',
@@ -398,15 +422,15 @@ final class ProductAlternative implements ProductAlternativeInterface
             'product_price',
             'product_price.event = product_event.id'
         )
-            ->addGroupBy('product_price.price')
+            ///->addGroupBy('product_price.price')
             ->addGroupBy('product_price.currency')
-            ->addGroupBy('product_price.quantity')
+            //->addGroupBy('product_price.quantity')
             ->addGroupBy('product_price.reserve')
         ;
 
         $qb->addSelect('product_info.url AS product_url')
-            ->addGroupBy('product_info.url')
-            ->addGroupBy('product_info.article')
+            //->addGroupBy('product_info.url')
+            //->addGroupBy('product_info.article')
         ;
 
         $qb->leftJoin(
@@ -434,7 +458,9 @@ final class ProductAlternative implements ProductAlternativeInterface
             'category.id = product_event_category.category'
         );
 
-        $qb->addSelect('category_trans.name AS category_name')->addGroupBy('category_trans.name');
+        $qb->addSelect('category_trans.name AS category_name')
+            //->addGroupBy('category_trans.name')
+        ;
 
         $qb->leftJoin(
             'category',
@@ -443,7 +469,9 @@ final class ProductAlternative implements ProductAlternativeInterface
             'category_trans.event = category.event AND category_trans.local = :local'
         );
 
-        $qb->addSelect('category_info.url AS category_url')->addGroupBy('category_info.url');
+        $qb->addSelect('category_info.url AS category_url')
+            //->addGroupBy('category_info.url')
+        ;
         $qb->leftJoin(
             'category',
             CategoryEntity\Info\ProductCategoryInfo::TABLE,
@@ -501,9 +529,16 @@ final class ProductAlternative implements ProductAlternativeInterface
         $qb->where('product_offer.value = :offer');
         $qb->setParameter('offer', $offer);
 
-        $qb->bindLocal();
+        $qb->allGroupByExclude();
 
+        //GROUP BY product_modification.article, product_offer.value, product_offer.postfix, product_offer.id, product.id, product.event, category_offer.reference, category_offer_trans.name, product_variation.value, product_variation.postfix, product_variation.id, category_offer_variation.reference, category_offer_variation_trans.name, product_modification.value, product_modification.postfix, product_modification.id, category_offer_modification.reference, category_offer_modification_trans.name, article, price, currency, quantity, product_active.active_from, product_trans.name, product_info.url, category_trans.name, category_info.url
 
-        return $qb->enableCache('products-product', 86400)->fetchAllAssociative();
+        //dd($qb->fetchAllAssociative());
+
+        $qb->setMaxResults(1000);
+
+        return $qb
+            ->enableCache('products-product', 86400)
+            ->fetchAllAssociative();
     }
 }

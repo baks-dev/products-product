@@ -76,7 +76,6 @@ class ProductInfo extends EntityReadonly
     #[ORM\Column(type: UserProfileUid::TYPE, nullable: true)]
     private ?UserProfileUid $profile = null;
 
-
     public function __construct(ProductEvent $event)
     {
         $this->event = $event;
