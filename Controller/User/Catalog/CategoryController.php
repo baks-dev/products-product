@@ -59,7 +59,8 @@ final class CategoryController extends AbstractController
 		}
 		
 		$CategoryUid = new ProductCategoryUid($info['category_id']);
-		
+
+
 		/* ФИЛЬТР */
 		$ProductCategoryFilterDTO = new ProductCategoryFilterDTO($CategoryUid);
 		$filterForm = $this->createForm(ProductCategoryFilterForm::class,

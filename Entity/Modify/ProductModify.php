@@ -129,7 +129,6 @@ class ProductModify extends EntityEvent
 		$this->usr = $usr instanceof User ? $usr->getId() : $usr;
 	}
 	
-	
 	public function equals(mixed $action) : bool
 	{
 		return $this->action->equals($action);

@@ -355,14 +355,11 @@ final class ProductAlternative implements ProductAlternativeInterface
                     'product_offer',
                     ProductEntity\Property\ProductProperty::TABLE,
                     'product_property_'.$alias,
-                    'product_property_'.$alias.'.event = product_offer.event AND product_property_'.$alias.'.field = :field AND product_property_'.$alias.'.value = :props_'.$alias
+                    'product_property_'.$alias.'.event = product_offer.event AND product_property_'.$alias.'.field = :field_'.$alias.' AND product_property_'.$alias.'.value = :props_'.$alias
                 );
 
-
-                // 'product_property.event = product_offer.event AND product_property.field = :field AND product_property.value = :props'
-
                 $qb->setParameter(
-                    'field',
+                    'field_'.$alias,
                     new ProductCategorySectionFieldUid($props->field_uid),
                     ProductCategorySectionFieldUid::TYPE
                 );

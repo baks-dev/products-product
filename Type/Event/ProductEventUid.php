@@ -41,9 +41,8 @@ final class ProductEventUid extends Uid
 
     private mixed $characteristic;
 
-
     public function __construct(
-        AbstractUid|string|null $value = null,
+        AbstractUid|self|string|null $value = null,
         mixed $attr = null,
         mixed $option = null,
         mixed $property = null,
