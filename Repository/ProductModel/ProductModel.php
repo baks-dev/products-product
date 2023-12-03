@@ -64,11 +64,11 @@ final class ProductModel implements ProductModelInterface
 
         //$qb->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
 
-        $qb->select('product.id');
-        $qb->addSelect('product.event');
+        //$qb->select('product.id');
+        //$qb->addSelect('product.event');
 
-        $qb->select('product.id');//->groupBy('product.id');
-        $qb->addSelect('product.event');//->addGroupBy('product.event');
+        $qb->select('product.id')->groupBy('product.id');
+        $qb->addSelect('product.event')->addGroupBy('product.event');
 
         $qb->from(ProductEntity\Product::TABLE, 'product');
 
@@ -79,9 +79,9 @@ final class ProductModel implements ProductModelInterface
         );
 
 
-        $qb->addSelect('product_active.active');//->addGroupBy('product_active.active');
-        $qb->addSelect('product_active.active_from');//->addGroupBy('product_active.active_from');
-        $qb->addSelect('product_active.active_to');//->addGroupBy('product_active.active_to');
+        $qb->addSelect('product_active.active')->addGroupBy('product_active.active');
+        $qb->addSelect('product_active.active_from')->addGroupBy('product_active.active_from');
+        $qb->addSelect('product_active.active_to')->addGroupBy('product_active.active_to');
 
 
         $qb->join('product',
@@ -93,9 +93,9 @@ final class ProductModel implements ProductModelInterface
 			'
         );
 
-        $qb->addSelect('product_seo.title AS seo_title');//->addGroupBy('product_seo.title');
-        $qb->addSelect('product_seo.keywords AS seo_keywords');//->addGroupBy('product_seo.keywords');
-        $qb->addSelect('product_seo.description AS seo_description');//->addGroupBy('product_seo.description');
+        $qb->addSelect('product_seo.title AS seo_title')->addGroupBy('product_seo.title');
+        $qb->addSelect('product_seo.keywords AS seo_keywords')->addGroupBy('product_seo.keywords');
+        $qb->addSelect('product_seo.description AS seo_description')->addGroupBy('product_seo.description');
 
         $qb
             ->leftJoin(
@@ -106,7 +106,7 @@ final class ProductModel implements ProductModelInterface
             );
 
 
-        $qb->addSelect('product_trans.name AS product_name');//->addGroupBy('product_trans.name');
+        $qb->addSelect('product_trans.name AS product_name')->addGroupBy('product_trans.name');
 
         $qb->leftJoin(
             'product_event',
@@ -115,8 +115,8 @@ final class ProductModel implements ProductModelInterface
             'product_trans.event = product_event.id AND product_trans.local = :local'
         );
 
-        $qb->addSelect('product_desc.preview AS product_preview');//->addGroupBy('product_desc.preview');
-        $qb->addSelect('product_desc.description AS product_description');//->addGroupBy('product_desc.description');
+        $qb->addSelect('product_desc.preview AS product_preview')->addGroupBy('product_desc.preview');
+        $qb->addSelect('product_desc.description AS product_description')->addGroupBy('product_desc.description');
 
         $qb
             ->leftJoin(
@@ -134,22 +134,22 @@ final class ProductModel implements ProductModelInterface
             'product_price',
             'product_price.event = product_event.id'
         )
-            //			->addGroupBy('product_price.price')
-            //			->addGroupBy('product_price.currency')
-            //			->addGroupBy('product_price.quantity')
-            //			->addGroupBy('product_price.reserve')
+            ->addGroupBy('product_price.price')
+            ->addGroupBy('product_price.currency')
+            ->addGroupBy('product_price.quantity')
+            ->addGroupBy('product_price.reserve')
         ;
 
         /* ProductInfo */
 
-        $qb->addSelect('product_info.url');//->addGroupBy('product_info.url');
+        $qb->addSelect('product_info.url')->addGroupBy('product_info.url');
 
         $qb->leftJoin(
             'product_event',
             ProductEntity\Info\ProductInfo::TABLE,
             'product_info',
             'product_info.product = product.id '
-        );//->addGroupBy('product_info.article');
+        )->addGroupBy('product_info.article');
 
 
         /** Торговое предложение */
@@ -162,7 +162,7 @@ final class ProductModel implements ProductModelInterface
         );
 
         /** Получаем тип торгового предложения */
-        $qb->addSelect('category_offer.reference AS product_offer_reference');//->addGroupBy('category_offer.reference');
+        $qb->addSelect('category_offer.reference AS product_offer_reference')->addGroupBy('category_offer.reference');
         $qb->leftJoin(
             'product_offer',
             CategoryEntity\Offers\ProductCategoryOffers::TABLE,
@@ -252,7 +252,7 @@ final class ProductModel implements ProductModelInterface
             ProductEntity\Offers\Variation\Modification\ProductModification::TABLE,
             'product_offer_modification',
             'product_offer_modification.variation = product_offer_variation.id'
-        )//->addGroupBy('product_offer_modification.article')
+        )->addGroupBy('product_offer_modification.article')
         ;
 
         /** Получаем название типа */
@@ -279,8 +279,8 @@ final class ProductModel implements ProductModelInterface
             'product_modification_price',
             'product_modification_price.modification = product_offer_modification.id'
         )
-            //->addGroupBy('product_modification_price.price')
-            //->addGroupBy('product_modification_price.currency')
+            ->addGroupBy('product_modification_price.price')
+            ->addGroupBy('product_modification_price.currency')
         ;
 
         /* Наличие и резерв модификации множественного варианта */
@@ -591,7 +591,7 @@ final class ProductModel implements ProductModelInterface
             'category.id = product_event_category.category'
         );
 
-        $qb->addSelect('category_trans.name AS category_name');//->addGroupBy('category_trans.name');
+        $qb->addSelect('category_trans.name AS category_name')->addGroupBy('category_trans.name');
 
         $qb->leftJoin(
             'category',
@@ -600,7 +600,7 @@ final class ProductModel implements ProductModelInterface
             'category_trans.event = category.event AND category_trans.local = :local'
         );
 
-        $qb->addSelect('category_info.url AS category_url');//->addGroupBy('category_info.url');
+        $qb->addSelect('category_info.url AS category_url')->addGroupBy('category_info.url');
         $qb->leftJoin(
             'category',
             CategoryEntity\Info\ProductCategoryInfo::TABLE,
@@ -617,8 +617,8 @@ final class ProductModel implements ProductModelInterface
 
         /** Обложка */
 
-        $qb->addSelect('category_cover.ext AS category_cover_ext');//->addGroupBy('category_cover.ext');
-        $qb->addSelect('category_cover.cdn AS category_cover_cdn');//->addGroupBy('category_cover.cdn');
+        $qb->addSelect('category_cover.ext AS category_cover_ext')->addGroupBy('category_cover.ext');
+        $qb->addSelect('category_cover.cdn AS category_cover_cdn')->addGroupBy('category_cover.cdn');
 
         $qb->addSelect("
 			CASE
@@ -627,7 +627,7 @@ final class ProductModel implements ProductModelInterface
 			   		ELSE NULL
 			END AS category_cover_dir
 		"
-        )//->addGroupBy('category_cover.name')
+        )->addGroupBy('category_cover.name')
         ;
 
 
@@ -683,6 +683,9 @@ final class ProductModel implements ProductModelInterface
 
         $qb->where('product.id = :product');
         $qb->setParameter('product', $product, ProductUid::TYPE);
+
+
+        //$qb->allGroupByExclude();
 
 
         //$qb->select('id');
