@@ -4,14 +4,12 @@
     {# Продукция #}
     {% for url in urls %}
         <url>
-            <loc>
-                {{ absolute_url(path('products-product:user.detail', {
+            <loc>{{ absolute_url(path('products-product:user.detail', {
                     url: url.url,
                     offer: url.offer_value,
                     variation: url.variation_value,
                     modification: url.modification_value
-                } )) }}
-            </loc>
+                } )) }}</loc>
             <lastmod>{{ url.modify|date('Y-m-d\\TH:i:sP') }}</lastmod>
         </url>
     {% endfor %}
