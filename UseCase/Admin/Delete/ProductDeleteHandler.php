@@ -130,7 +130,7 @@ final class ProductDeleteHandler
         /* Отправляем событие в шину  */
         $this->messageDispatch->dispatch(
             message: new ProductMessage($Main->getId(), $Main->getEvent(), $command->getEvent()),
-            transport: 'products'
+            transport: 'products-product'
         );
 
 

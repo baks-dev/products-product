@@ -199,7 +199,7 @@ final class ProductHandler extends AbstractHandler
         /* Отправляем событие в шину  */
         $this->messageDispatch->dispatch(
             message: new ProductMessage($this->main->getId(), $this->main->getEvent(), $command->getEvent()),
-            transport: 'products',
+            transport: 'products-product',
         );
 
         return $this->main;

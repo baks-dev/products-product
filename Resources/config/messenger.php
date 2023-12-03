@@ -30,9 +30,9 @@ return static function (FrameworkConfig $framework) {
     $messenger = $framework->messenger();
 
     $messenger
-        ->transport('products')
+        ->transport('products-product')
         ->dsn('%env(MESSENGER_TRANSPORT_DSN)%')
-        ->options(['queue_name' => 'products'])
+        ->options(['queue_name' => 'products-product'])
         ->retryStrategy()
         ->maxRetries(5)
         ->delay(1000)

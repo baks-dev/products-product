@@ -153,7 +153,7 @@ final class RenameProductHandler
         /* Отправляем событие в шину  */
         $this->messageDispatch->dispatch(
             message: new ProductMessage($Product->getId(), $Product->getEvent(), $command->getEvent()),
-            transport: 'products',
+            transport: 'products-product',
         );
 
         return $Product;
