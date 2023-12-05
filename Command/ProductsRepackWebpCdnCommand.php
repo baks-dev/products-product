@@ -33,7 +33,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
-	name: 'baks::products-product:webp',
+	name: 'baks:products-product:webp',
 	description: 'Сжатие обложек карточек товаров которые не пережаты')
 ]
 class ProductsRepackWebpCdnCommand extends Command
