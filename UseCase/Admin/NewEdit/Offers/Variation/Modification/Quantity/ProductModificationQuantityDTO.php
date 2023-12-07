@@ -26,6 +26,7 @@ namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modifi
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Quantity\ProductModificationQuantityInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/** @see ProductModificationQuantity */
 final class ProductModificationQuantityDTO implements ProductModificationQuantityInterface
 {
 	/** В наличие */
@@ -35,8 +36,8 @@ final class ProductModificationQuantityDTO implements ProductModificationQuantit
 	#[Assert\NotBlank]
     #[Assert\Range(min: 0)]
 	private ?int $reserve = 0;
-	
-	
+
+
 	/** В наличие */
 	
 	public function getQuantity() : ?int
