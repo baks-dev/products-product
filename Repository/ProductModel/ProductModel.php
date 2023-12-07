@@ -67,8 +67,8 @@ final class ProductModel implements ProductModelInterface
         //$qb->select('product.id');
         //$qb->addSelect('product.event');
 
-        $qb->select('product.id')->groupBy('product.id');
-        $qb->addSelect('product.event')->addGroupBy('product.event');
+        $qb->select('product.id');//->groupBy('product.id');
+        $qb->addSelect('product.event');//->addGroupBy('product.event');
 
         $qb->from(ProductEntity\Product::TABLE, 'product');
 
@@ -79,9 +79,9 @@ final class ProductModel implements ProductModelInterface
         );
 
 
-        $qb->addSelect('product_active.active')->addGroupBy('product_active.active');
-        $qb->addSelect('product_active.active_from')->addGroupBy('product_active.active_from');
-        $qb->addSelect('product_active.active_to')->addGroupBy('product_active.active_to');
+        $qb->addSelect('product_active.active');//->addGroupBy('product_active.active');
+        $qb->addSelect('product_active.active_from');//->addGroupBy('product_active.active_from');
+        $qb->addSelect('product_active.active_to');//->addGroupBy('product_active.active_to');
 
 
         $qb->join('product',
@@ -93,9 +93,9 @@ final class ProductModel implements ProductModelInterface
 			'
         );
 
-        $qb->addSelect('product_seo.title AS seo_title')->addGroupBy('product_seo.title');
-        $qb->addSelect('product_seo.keywords AS seo_keywords')->addGroupBy('product_seo.keywords');
-        $qb->addSelect('product_seo.description AS seo_description')->addGroupBy('product_seo.description');
+        $qb->addSelect('product_seo.title AS seo_title');//->addGroupBy('product_seo.title');
+        $qb->addSelect('product_seo.keywords AS seo_keywords');//->addGroupBy('product_seo.keywords');
+        $qb->addSelect('product_seo.description AS seo_description');//->addGroupBy('product_seo.description');
 
         $qb
             ->leftJoin(
@@ -106,7 +106,7 @@ final class ProductModel implements ProductModelInterface
             );
 
 
-        $qb->addSelect('product_trans.name AS product_name')->addGroupBy('product_trans.name');
+        $qb->addSelect('product_trans.name AS product_name');//->addGroupBy('product_trans.name');
 
         $qb->leftJoin(
             'product_event',
@@ -115,8 +115,8 @@ final class ProductModel implements ProductModelInterface
             'product_trans.event = product_event.id AND product_trans.local = :local'
         );
 
-        $qb->addSelect('product_desc.preview AS product_preview')->addGroupBy('product_desc.preview');
-        $qb->addSelect('product_desc.description AS product_description')->addGroupBy('product_desc.description');
+        $qb->addSelect('product_desc.preview AS product_preview');//->addGroupBy('product_desc.preview');
+        $qb->addSelect('product_desc.description AS product_description');//->addGroupBy('product_desc.description');
 
         $qb
             ->leftJoin(
@@ -127,6 +127,9 @@ final class ProductModel implements ProductModelInterface
 
             )->setParameter('device', 'pc');
 
+
+
+
         /** Цена товара */
         $qb->leftJoin(
             'product_event',
@@ -134,22 +137,24 @@ final class ProductModel implements ProductModelInterface
             'product_price',
             'product_price.event = product_event.id'
         )
-            ->addGroupBy('product_price.price')
-            ->addGroupBy('product_price.currency')
-            ->addGroupBy('product_price.quantity')
-            ->addGroupBy('product_price.reserve')
+//            ->addGroupBy('product_price.price')
+//            ->addGroupBy('product_price.currency')
+//            ->addGroupBy('product_price.quantity')
+//            ->addGroupBy('product_price.reserve')
         ;
 
         /* ProductInfo */
 
-        $qb->addSelect('product_info.url')->addGroupBy('product_info.url');
+        $qb->addSelect('product_info.url');//->addGroupBy('product_info.url');
 
         $qb->leftJoin(
             'product_event',
             ProductEntity\Info\ProductInfo::TABLE,
             'product_info',
             'product_info.product = product.id '
-        )->addGroupBy('product_info.article');
+        )
+            //->addGroupBy('product_info.article')
+        ;
 
 
         /** Торговое предложение */
@@ -162,7 +167,7 @@ final class ProductModel implements ProductModelInterface
         );
 
         /** Получаем тип торгового предложения */
-        $qb->addSelect('category_offer.reference AS product_offer_reference')->addGroupBy('category_offer.reference');
+        $qb->addSelect('category_offer.reference AS product_offer_reference');//->addGroupBy('category_offer.reference');
         $qb->leftJoin(
             'product_offer',
             CategoryEntity\Offers\ProductCategoryOffers::TABLE,
@@ -179,12 +184,23 @@ final class ProductModel implements ProductModelInterface
         );
 
         /** Цена торгового предожения */
-        $qb->leftJoin(
-            'product_offer',
-            ProductEntity\Offers\Price\ProductOfferPrice::TABLE,
-            'product_offer_price',
-            'product_offer_price.offer = product_offer.id'
-        );
+//        $qb->leftJoin(
+//            'product_offer',
+//            ProductEntity\Offers\Price\ProductOfferPrice::TABLE,
+//            'product_offer_price',
+//            'product_offer_price.offer = product_offer.id'
+//        );
+
+
+        $qb
+            ->leftOneJoin(
+                'product_offer',
+                ProductEntity\Offers\Price\ProductOfferPrice::TABLE,
+                'product_offer_price',
+                'product_offer_price.offer = product_offer.id',
+                'offer'
+            );
+
 
 
         /** Наличие и резерв торгового предложения */
@@ -222,12 +238,22 @@ final class ProductModel implements ProductModelInterface
         );
 
         /* Цена множественного варианта */
-        $qb->leftJoin(
-            'product_offer_variation',
-            ProductEntity\Offers\Variation\Price\ProductVariationPrice::TABLE,
-            'product_variation_price',
-            'product_variation_price.variation = product_offer_variation.id'
-        );
+//        $qb->leftJoin(
+//            'product_offer_variation',
+//            ProductEntity\Offers\Variation\Price\ProductVariationPrice::TABLE,
+//            'product_variation_price',
+//            'product_variation_price.variation = product_offer_variation.id'
+//        );
+
+        $qb
+            ->leftOneJoin(
+                'product_offer_variation',
+                ProductEntity\Offers\Variation\Price\ProductVariationPrice::TABLE,
+                'product_variation_price',
+                'product_variation_price.variation = product_offer_variation.id',
+                'variation'
+            );
+
 
         /* Наличие и резерв множественного варианта */
         $qb->leftJoin(
@@ -252,7 +278,8 @@ final class ProductModel implements ProductModelInterface
             ProductEntity\Offers\Variation\Modification\ProductModification::TABLE,
             'product_offer_modification',
             'product_offer_modification.variation = product_offer_variation.id'
-        )->addGroupBy('product_offer_modification.article')
+        )
+            //->addGroupBy('product_offer_modification.article')
         ;
 
         /** Получаем название типа */
@@ -273,15 +300,42 @@ final class ProductModel implements ProductModelInterface
 
 
         /* Цена модификации множественного варианта */
-        $qb->leftJoin(
+//        $qb->leftJoin(
+//            'product_offer_modification',
+//            ProductEntity\Offers\Variation\Modification\Price\ProductModificationPrice::TABLE,
+//            'product_modification_price',
+//            'product_modification_price.modification = product_offer_modification.id'
+//        )
+//            //->addGroupBy('product_modification_price.price')
+//            //->addGroupBy('product_modification_price.currency')
+//        ;
+
+
+        $qb
+            ->leftOneJoin(
             'product_offer_modification',
             ProductEntity\Offers\Variation\Modification\Price\ProductModificationPrice::TABLE,
             'product_modification_price',
-            'product_modification_price.modification = product_offer_modification.id'
-        )
-            ->addGroupBy('product_modification_price.price')
-            ->addGroupBy('product_modification_price.currency')
-        ;
+            'product_modification_price.modification = product_offer_modification.id',
+            'modification'
+        );
+
+
+        //$qb->addSelect('MIN(product_modification_price.price) AS product_price');
+
+        /** Стоимость продукта */
+//        $qb->addSelect("
+//                    CASE
+//                       WHEN product_modification_price.price > 0 THEN product_modification_price.price
+//                       WHEN MIN(product_variation_price.price) > 0 THEN MIN(product_variation_price.price)
+//                       WHEN MIN(product_offer_price.price) > 0 THEN MIN(product_offer_price.price)
+//                       WHEN product_price.price IS NOT NULL AND product_price.price > 0 THEN product_price.price
+//                       ELSE NULL
+//                    END AS product_price
+//                "
+//        );
+
+
 
         /* Наличие и резерв модификации множественного варианта */
         $qb->leftJoin(
@@ -299,7 +353,7 @@ final class ProductModel implements ProductModelInterface
 					(
 
 						/* свойства для сортирвоки JSON */
-						'0', CONCAT(product_offer.value, product_offer_variation.value, product_offer_modification.value),
+						'0', CONCAT(product_offer.value, product_offer_variation.value, product_offer_modification.value, product_modification_price.price),
 
 						
 
@@ -478,87 +532,88 @@ final class ProductModel implements ProductModelInterface
         );
 
 
-        /** Стоимость продукта */
-        /*$qb->addSelect("
-            CASE
-               WHEN MIN(product_modification_price.price) > 0 THEN MIN(product_modification_price.price)
-               WHEN MIN(product_variation_price.price) > 0 THEN MIN(product_variation_price.price)
-               WHEN MIN(product_offer_price.price) > 0 THEN MIN(product_offer_price.price)
-               WHEN product_price.price IS NOT NULL AND product_price.price > 0 THEN product_price.price
-               ELSE NULL
-            END AS product_price
-        "
-        );*/
+
+
+
+        //$qb->addSelect('product_price.price AS product_price');
+
+
+
+
+       // $qb->addSelect('product_modification_price.price AS product_price');
 
 
         /** Минимальная стоиомсть продукта */
-        $qb->addSelect("CASE
-                          
-                   
-                   /* СТОИМОСТЬ МОДИФИКАЦИИ */       
-        WHEN (ARRAY_AGG(
-                            DISTINCT product_modification_price.price ORDER BY product_modification_price.price
-                         ) 
-                         FILTER 
-                         (
-                            WHERE  product_modification_price.price > 0
-                         )
-                     )[1] > 0 
-                     
-                     THEN (ARRAY_AGG(
-                            DISTINCT product_modification_price.price ORDER BY product_modification_price.price
-                         ) 
-                         FILTER 
-                         (
-                            WHERE  product_modification_price.price > 0
-                         )
-                     )[1]
-         
-         
-         /* СТОИМОСТЬ ВАРИАНТА */
-         WHEN (ARRAY_AGG(
-                            DISTINCT product_variation_price.price ORDER BY product_variation_price.price
-                         ) 
-                         FILTER 
-                         (
-                            WHERE  product_variation_price.price > 0
-                         )
-                     )[1] > 0 
-                     
-                     THEN (ARRAY_AGG(
-                            DISTINCT product_variation_price.price ORDER BY product_variation_price.price
-                         ) 
-                         FILTER 
-                         (
-                            WHERE  product_variation_price.price > 0
-                         )
-                     )[1]
-         
-         /* СТОИМОСТЬ ТП */
-            WHEN (ARRAY_AGG(
-                            DISTINCT product_offer_price.price ORDER BY product_offer_price.price
-                         ) 
-                         FILTER 
-                         (
-                            WHERE  product_offer_price.price > 0
-                         )
-                     )[1] > 0 
-                     
-                     THEN (ARRAY_AGG(
-                            DISTINCT product_offer_price.price ORDER BY product_offer_price.price
-                         ) 
-                         FILTER 
-                         (
-                            WHERE  product_offer_price.price > 0
-                         )
-                     )[1]
-         
-			  
-			   WHEN product_price.price IS NOT NULL THEN product_price.price
-			   ELSE NULL
-			END AS product_price
-		"
-        );
+//        $qb->addSelect("CASE
+//
+//
+//                   /* СТОИМОСТЬ МОДИФИКАЦИИ */
+//        WHEN (ARRAY_AGG(
+//                            DISTINCT product_modification_price.price ORDER BY product_modification_price.price
+//                         )
+//                         FILTER
+//                         (
+//                            WHERE  product_modification_price.price > 0
+//                         )
+//                     )[1] > 0
+//
+//                     THEN (ARRAY_AGG(
+//                            DISTINCT product_modification_price.price ORDER BY product_modification_price.price
+//                         )
+//                         FILTER
+//                         (
+//                            WHERE  product_modification_price.price > 0
+//                         )
+//                     )[1]
+//
+//
+//         /* СТОИМОСТЬ ВАРИАНТА */
+//         WHEN (ARRAY_AGG(
+//                            DISTINCT product_variation_price.price ORDER BY product_variation_price.price
+//                         )
+//                         FILTER
+//                         (
+//                            WHERE  product_variation_price.price > 0
+//                         )
+//                     )[1] > 0
+//
+//                     THEN (ARRAY_AGG(
+//                            DISTINCT product_variation_price.price ORDER BY product_variation_price.price
+//                         )
+//                         FILTER
+//                         (
+//                            WHERE  product_variation_price.price > 0
+//                         )
+//                     )[1]
+//
+//         /* СТОИМОСТЬ ТП */
+//            WHEN (ARRAY_AGG(
+//                            DISTINCT product_offer_price.price ORDER BY product_offer_price.price
+//                         )
+//                         FILTER
+//                         (
+//                            WHERE  product_offer_price.price > 0
+//                         )
+//                     )[1] > 0
+//
+//                     THEN (ARRAY_AGG(
+//                            DISTINCT product_offer_price.price ORDER BY product_offer_price.price
+//                         )
+//                         FILTER
+//                         (
+//                            WHERE  product_offer_price.price > 0
+//                         )
+//                     )[1]
+//
+//
+//			   WHEN product_price.price IS NOT NULL THEN product_price.price
+//			   ELSE NULL
+//			END AS product_price
+//		"
+//        );
+
+
+
 
         /** Валюта продукта */
         /*$qb->addSelect("
@@ -591,7 +646,7 @@ final class ProductModel implements ProductModelInterface
             'category.id = product_event_category.category'
         );
 
-        $qb->addSelect('category_trans.name AS category_name')->addGroupBy('category_trans.name');
+        $qb->addSelect('category_trans.name AS category_name');//->addGroupBy('category_trans.name');
 
         $qb->leftJoin(
             'category',
@@ -600,7 +655,7 @@ final class ProductModel implements ProductModelInterface
             'category_trans.event = category.event AND category_trans.local = :local'
         );
 
-        $qb->addSelect('category_info.url AS category_url')->addGroupBy('category_info.url');
+        $qb->addSelect('category_info.url AS category_url');//->addGroupBy('category_info.url');
         $qb->leftJoin(
             'category',
             CategoryEntity\Info\ProductCategoryInfo::TABLE,
@@ -617,8 +672,8 @@ final class ProductModel implements ProductModelInterface
 
         /** Обложка */
 
-        $qb->addSelect('category_cover.ext AS category_cover_ext')->addGroupBy('category_cover.ext');
-        $qb->addSelect('category_cover.cdn AS category_cover_cdn')->addGroupBy('category_cover.cdn');
+        $qb->addSelect('category_cover.ext AS category_cover_ext');//->addGroupBy('category_cover.ext');
+        $qb->addSelect('category_cover.cdn AS category_cover_cdn');//->addGroupBy('category_cover.cdn');
 
         $qb->addSelect("
 			CASE
@@ -627,8 +682,7 @@ final class ProductModel implements ProductModelInterface
 			   		ELSE NULL
 			END AS category_cover_dir
 		"
-        )->addGroupBy('category_cover.name')
-        ;
+        );//->addGroupBy('category_cover.name')
 
 
         $qb->leftJoin(
@@ -685,7 +739,7 @@ final class ProductModel implements ProductModelInterface
         $qb->setParameter('product', $product, ProductUid::TYPE);
 
 
-        //$qb->allGroupByExclude();
+        $qb->allGroupByExclude();
 
 
         //$qb->select('id');
@@ -693,7 +747,9 @@ final class ProductModel implements ProductModelInterface
 
         /*dd($qb->fetchAssociative());*/
 
-        return $qb->enableCache('products-product', 86400)->fetchAssociative();
+        return $qb
+            //->enableCache('products-product', 86400)
+            ->fetchAssociative();
     }
 
 }

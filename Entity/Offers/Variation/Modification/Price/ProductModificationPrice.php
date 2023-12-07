@@ -37,7 +37,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'product_modification_price')]
-
+#[ORM\Index(columns: ['price'])]
 class ProductModificationPrice extends EntityEvent
 {
     public const TABLE = 'product_modification_price';
