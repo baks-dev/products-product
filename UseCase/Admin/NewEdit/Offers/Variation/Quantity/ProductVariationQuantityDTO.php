@@ -56,7 +56,9 @@ final class ProductVariationQuantityDTO implements ProductVariationQuantityInter
 	
 	public function getReserve() : ?int
 	{
-		return $this->reserve;
+        $this->reserve = $this->reserve && $this->reserve >= 0 ? $this->reserve : 0;
+
+        return $this->reserve;
 	}
 	
 	

@@ -55,6 +55,8 @@ final class ProductOfferQuantityDTO implements ProductOfferQuantityInterface
 	
 	public function getReserve() : ?int
 	{
+        $this->reserve = $this->reserve && $this->reserve >= 0 ? $this->reserve : 0;
+
 		return $this->reserve;
 	}
 	
