@@ -40,15 +40,16 @@ final class ModelController extends AbstractController
 		ProductModelInterface $productModel,
 	) : Response
 	{
-		
+
 		$card = $productModel->fetchModelAssociative($info->getProduct());
-		
+
 		//dump($card);
-		
+
 		return $this->render([
 			'card' => $card,
 		]);
-		
+
 	}
-	
+
+
 }
