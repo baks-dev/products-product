@@ -9,13 +9,13 @@
 		{{ card.product_name }}
 		
 		{# Значение торгового предложения #}
-		{{ card.product_offer_value|call_twig_func(card.product_offer_reference) }}
+		{{ card.product_offer_value|call_twig_func(card.product_offer_reference~'_render') }}
 		
 		{# Значение множественного варианта ТП #}
-		{{ card.product_variation_value|call_twig_func(card.product_variation_reference) }}
+		{{ card.product_variation_value|call_twig_func(card.product_variation_reference~'_render') }}
 		
 		{# Значение модификации множественного варианта ТП #}
-		{{ card.product_modification_value|call_twig_func(card.product_modification_reference) }}
+		{{ card.product_modification_value|call_twig_func(card.product_modification_reference~'_render') }}
 		
 		{# Свойства, учавствующие в названии #}
 		{% for name_property in arr_property | filter(props => props.field_name == true) %}
@@ -309,9 +309,11 @@
 											variation: offer.product_variation_value,
 											modification: offer.product_modification_value
 										}) }}' class="btn btn-link btn-sm lh-1 text-decoration-none">
+
+											{{ offer.product_variation_value|call_twig_func(offer.category_offer_variation~'_render') ~
+											offer.product_modification_value|call_twig_func(offer.category_offer_modification~'_render') }}
+
 											{{ offer.product_offer_value|call_twig_func(offer.product_offer_reference) }}
-											{{ offer.product_variation_value|call_twig_func(offer.category_offer_variation) }}
-											{{ offer.product_modification_value|call_twig_func(offer.category_offer_modification) }}
 										</a>
 									
 									{% endif %}
@@ -327,8 +329,8 @@
 											offer: offer.product_offer_value,
 											variation: offer.product_variation_value
 										}) }}' class="btn btn-link btn-sm lh-1 text-decoration-none">
-											{{ offer.product_offer_value|call_twig_func(offer.product_offer_reference) }}
-											{{ offer.product_variation_value|call_twig_func(offer.category_offer_variation) }}
+											{{ offer.product_offer_value|call_twig_func(offer.product_offer_reference~'_render') }}
+											{{ offer.product_variation_value|call_twig_func(offer.category_offer_variation~'_render') }}
 										
 										</a>
 									
@@ -441,9 +443,11 @@
 								variation: offer.product_variation_value,
 								modification: offer.product_modification_value
 							}) }}' class="btn btn-link btn-sm lh-1 text-decoration-none">
-								{{ offer.product_offer_value|call_twig_func(offer.product_offer_reference) }}
-								{{ offer.product_variation_value|call_twig_func(offer.category_offer_variation) }}
-								{{ offer.product_modification_value|call_twig_func(offer.category_offer_modification) }}
+
+								{{ offer.product_variation_value|call_twig_func(offer.category_offer_variation~'_render') ~
+								offer.product_modification_value|call_twig_func(offer.category_offer_modification~'_render') }}
+
+								{{ offer.product_offer_value|call_twig_func(offer.product_offer_reference~'_render') }}
 							</a>
 						
 						{% endif %}
@@ -459,8 +463,8 @@
 								offer: offer.product_offer_value,
 								variation: offer.product_variation_value
 							}) }}' class="btn btn-link btn-sm lh-1 text-decoration-none">
-								{{ offer.product_offer_value|call_twig_func(offer.product_offer_reference) }}
-								{{ offer.product_variation_value|call_twig_func(offer.category_offer_variation) }}
+								{{ offer.product_offer_value|call_twig_func(offer.product_offer_reference~'_render') }}
+								{{ offer.product_variation_value|call_twig_func(offer.category_offer_variation~'_render') }}
 							</a>
 						{% endif %}
 					{% endif %}

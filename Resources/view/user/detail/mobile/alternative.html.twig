@@ -43,17 +43,19 @@
 							modification : alt.product_modification_value
 						}) }}">
 							{{ alt.product_name }}
-							
-							{# Значение торгового предложения #}
-							{{ alt.product_offer_value|call_twig_func(alt.product_offer_reference) }}
-							{{ alt.product_offer_postfix }}
 
 							{# Значение множественного варианта ТП #}
-							{{ alt.product_variation_value|call_twig_func(alt.product_variation_reference) }}
-							{{ alt.product_variation_postfix }}
+							{{ alt.product_variation_value|call_twig_func(alt.product_variation_reference~'_render') ~
+							alt.product_modification_value|call_twig_func(alt.product_modification_reference~'_render') }}
 
-							{# Значение модификации множественного варианта ТП #}
-							{{ alt.product_modification_value|call_twig_func(alt.product_modification_reference) }}
+							{# Значение торгового предложения #}
+							{{ alt.product_offer_value|call_twig_func(alt.product_offer_reference~'_render') }}
+
+							{# Постфикс торгового предложения #}
+							{{ alt.product_offer_postfix }}
+							{# Постфикс множественного варианта #}
+							{{ alt.product_variation_postfix }}
+							{# Постфикс модификации #}
 							{{ alt.product_modification_postfix }}
 							
 						</a>

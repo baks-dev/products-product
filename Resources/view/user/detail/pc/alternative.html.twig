@@ -88,20 +88,20 @@
 						</td>
 						
 						<td>
-							{{ alt.product_offer_value|call_twig_func(alt.product_offer_reference~'_render') }}
+							{{ alt.product_offer_value|call_twig_func(alt.product_offer_reference) }}
 							{{ alt.product_offer_postfix }}
 						</td>
 						
 						{% if name_variation %}
 							<td>
-								{{ alt.product_variation_value|call_twig_func(alt.product_variation_reference~'_render') }}
+								{{ alt.product_variation_value|call_twig_func(alt.product_variation_reference) }}
 								{{ alt.product_variation_postfix }}
 							</td>
 						{% endif %}
 						
 						{% if name_modification %}
 							<td>
-								{{ alt.product_modification_value|call_twig_func(alt.product_modification_reference~'_render') }}
+								{{ alt.product_modification_value|call_twig_func(alt.product_modification_reference) }}
 								{{ alt.product_modification_postfix }}
 							</td>
 						{% endif %}

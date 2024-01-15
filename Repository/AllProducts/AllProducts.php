@@ -239,7 +239,7 @@ final class AllProducts implements AllProductsInterface
 
 
         /** Модификация множественного варианта */
-        $qb->addSelect('product_modification.value as product_modification_id');
+        $qb->addSelect('product_modification.id as product_modification_id');
         $qb->addSelect('product_modification.value as product_modification_value');
         $qb->addSelect('product_modification.postfix as product_modification_postfix');
 

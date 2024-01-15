@@ -150,9 +150,11 @@
 							variation: offer.product_variation_value,
 							modification: offer.product_modification_value
 						}) }}' class="btn btn-link btn-sm lh-1 text-decoration-none">
-							{{ offer.product_offer_value|call_twig_func(offer.product_offer_reference) }}
-							{{ offer.product_variation_value|call_twig_func(offer.product_variation_reference) }}
-							{{ offer.product_modification_value|call_twig_func(offer.product_modification_reference) }}
+
+							{{ offer.product_variation_value|call_twig_func(offer.product_variation_reference~'_render') ~
+							offer.product_modification_value|call_twig_func(offer.product_modification_reference~'_render') }}
+
+							{{ offer.product_offer_value|call_twig_func(offer.product_offer_reference~'_render') }}
 						</a>
 					
 					
@@ -176,8 +178,8 @@
 							offer: offer.product_offer_value,
 							variation: offer.product_variation_value
 						}) }}' class="btn btn-link btn-sm lh-1 text-decoration-none">
-							{{ offer.product_offer_value|call_twig_func(offer.product_offer_reference) }}
-							{{ offer.product_variation_value|call_twig_func(offer.product_variation_reference) }}
+							{{ offer.product_offer_value|call_twig_func(offer.product_offer_reference~'_render') }}
+							{{ offer.product_variation_value|call_twig_func(offer.product_variation_reference~'_render') }}
 						
 						</a>
 					{% endif %}
