@@ -229,15 +229,17 @@ final class ProductCategoryFilterForm extends AbstractType
 					}
 				);
 				
-				/* Сохранить ******************************************************/
-				$builder->add(
-					'filter',
-					SubmitType::class,
-					['label' => 'Save', 'label_html' => true, 'attr' => ['class' => 'btn-primary'], 'priority' => $i]
-				);
+
 			}
 			
 		}
+
+        /* Сохранить ******************************************************/
+        $builder->add(
+            'filter',
+            SubmitType::class,
+            ['label' => 'Save', 'label_html' => true, 'attr' => ['class' => 'btn-primary']]
+        );
 		
 	}
 	

@@ -59,9 +59,9 @@ final class EditControllerTest extends WebTestCase
             $client->request('GET', sprintf(self::URL, $Event->getValue()));
 
             self::assertResponseIsSuccessful();
-        } else {
-            self::assertTrue(true);
         }
+
+        self::assertTrue(true);
     }
 
     // доступ по роли ROLE_ADMIN
@@ -82,9 +82,9 @@ final class EditControllerTest extends WebTestCase
             $client->request('GET', sprintf(self::URL, $Event->getValue()));
 
             self::assertResponseIsSuccessful();
-        } else {
-            self::assertTrue(true);
         }
+
+        self::assertTrue(true);
     }
 
     // доступ по роли ROLE_USER
@@ -104,9 +104,9 @@ final class EditControllerTest extends WebTestCase
             $client->request('GET', sprintf(self::URL, $Event->getValue()));
 
             self::assertResponseStatusCodeSame(403);
-        } else {
-            self::assertTrue(true);
         }
+
+        self::assertTrue(true);
     }
 
     /** Доступ по без роли */
@@ -122,8 +122,8 @@ final class EditControllerTest extends WebTestCase
 
             // Full authentication is required to access this resource
             self::assertResponseStatusCodeSame(401);
-        } else {
-            self::assertTrue(true);
         }
+
+        self::assertTrue(true);
     }
 }

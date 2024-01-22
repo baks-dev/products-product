@@ -25,12 +25,12 @@ namespace BaksDev\Products\Product\Controller;
 
 use BaksDev\Core\Controller\AbstractController;
 use BaksDev\Core\Listeners\Event\Security\RoleSecurity;
+use BaksDev\Core\Repository\SettingsMain\SettingsMainInterface;
 use BaksDev\Core\Type\UidType\ParamConverter;
 use BaksDev\Products\Category\Entity\ProductCategory;
 use BaksDev\Products\Category\Repository\AllCategoryByMenu\AllCategoryByMenuInterface;
 use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
 use BaksDev\Products\Product\Repository\AllProductsByCategory\AllProductsByCategoryInterface;
-use BaksDev\Settings\Main\Repository\SettingsMain\SettingsMainInterface;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use ReflectionAttribute;
 use ReflectionClass;
