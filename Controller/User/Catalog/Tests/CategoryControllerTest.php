@@ -38,6 +38,9 @@ final class CategoryControllerTest extends WebTestCase
     {
         $em = self::getContainer()->get(EntityManagerInterface::class);
         self::$identifier = $em->getRepository(ProductCategoryInfo::class)->findOneBy([], ['event' => 'DESC'])?->getUrl();
+
+        $em->clear();
+        //$em->close();
     }
 
     public function testSuccessful(): void
