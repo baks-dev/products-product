@@ -26,7 +26,7 @@ namespace BaksDev\Products\Product\UseCase\Admin\Delete\Info;
 use BaksDev\Products\Product\Entity\Info\ProductInfoInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/** @see ProductInfo */
+/** @see ProductSignCode */
 final class InfoDTO implements ProductInfoInterface
 {
 	/** Семантическая ссылка на товар */

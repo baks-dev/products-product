@@ -34,7 +34,7 @@ use Symfony\Component\Routing\Annotation\Route;
 #[AsController]
 final class ProductController extends AbstractController
 {
-    #[Route('/product/{url}', name: 'user.product')]
+    #[Route('/catalog/triangle/{url}/detail', name: 'user.product')]
     public function index(
         #[MapEntity(mapping: ['url' => 'url'])] Entity\Info\ProductInfo $info,
         ProductDetailByValueInterface $productDetail,

@@ -57,7 +57,11 @@ final class SitemapController extends AbstractController
     {
         //dd($productsByCategory->fetchAllProductByCategory($category));
 
-        $response = $this->render(['urls' => $productsByCategory->fetchAllProductByCategory($category)]);
+        $response = $this->render(
+            [
+                'urls' => $productsByCategory->fetchAllProductByCategory($category)
+            ]
+        );
         $response->headers->set('Content-Type', 'text/xml');
 
         return $response;

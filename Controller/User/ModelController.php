@@ -34,7 +34,7 @@ use Symfony\Component\Routing\Annotation\Route;
 #[AsController]
 final class ModelController extends AbstractController
 {
-	#[Route('/model/{url}', name: 'user.model')]
+	#[Route('/catalog/{category}/{url}', name: 'user.model')]
 	public function model(
 		#[MapEntity(mapping: ['url' => 'url'])] Entity\Info\ProductInfo $info,
 		ProductModelInterface $productModel,

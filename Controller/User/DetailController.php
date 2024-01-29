@@ -40,17 +40,19 @@ use Symfony\Component\Routing\Annotation\Route;
 #[AsController]
 final class DetailController extends AbstractController
 {
-    #[Route('/product/{url}/{offer}/{variation}/{modification}', name: 'user.detail')]
+    #[Route('/catalog/{category}/{url}/{offer}/{variation}/{modification}', name: 'user.detail')]
     public function index(
         Request $request,
         #[MapEntity(mapping: ['url' => 'url'])] Entity\Info\ProductInfo $info,
         ProductDetailByValueInterface $productDetail,
         ProductDetailOfferInterface $productDetailOffer,
         ProductAlternativeInterface $productAlternative,
-        $offer = null,
+        string $offer,
         $variation = null,
         $modification = null,
     ): Response {
+
+
         //
         $productCard = $productDetail->fetchProductAssociative(
             $info->getProduct(),

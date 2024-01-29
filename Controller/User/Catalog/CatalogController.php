@@ -45,12 +45,13 @@ final class CatalogController extends AbstractController
         int $page = 0,
     ): Response
     {
+
+        return $this->redirectToRoute('core:user.homepage');
+
         // Поиск
         $search = new SearchDTO();
         $searchForm = $this->createForm(SearchForm::class, $search);
         $searchForm->handleRequest($request);
-
-        dd('catalog');
 
 
         // Фильтр

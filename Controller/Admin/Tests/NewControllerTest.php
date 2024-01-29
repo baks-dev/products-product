@@ -21,7 +21,7 @@ use BaksDev\Users\User\Tests\TestUserAccount;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
-/** @group products-product */
+/** @group products-sign */
 #[When(env: 'test')]
 final class NewControllerTest extends WebTestCase
 {

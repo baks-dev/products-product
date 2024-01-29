@@ -688,7 +688,6 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
         $qb->addSelect('product.id');
 
 
-
         $qb
             ->addSelect('product_info.url')
             //->addSelect('product_info.article')
@@ -713,11 +712,11 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
         $qb
             ->addSelect('product_desc.preview')
             ->leftJoin(
-            'product',
-            ProductEntity\Description\ProductDescription::TABLE,
-            'product_desc',
-            'product_desc.event = product.event AND product_desc.local = :local AND product_desc.device = :device'
-        )->setParameter('device', new Device(Desktop::class), Device::TYPE);
+                'product',
+                ProductEntity\Description\ProductDescription::TABLE,
+                'product_desc',
+                'product_desc.event = product.event AND product_desc.local = :local AND product_desc.device = :device'
+            )->setParameter('device', new Device(Desktop::class), Device::TYPE);
 
         $qb
             ->addSelect('product_modify.mod_date AS modify',)
@@ -883,11 +882,10 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
 			END AS product_currency
 		"
         )
-        ->addGroupBy('product_modification_price.currency')
-        ->addGroupBy('product_variation_price.currency')
-        ->addGroupBy('product_offer_price.currency')
-        ->addGroupBy('product_price.currency')
-        ;
+            ->addGroupBy('product_modification_price.currency')
+            ->addGroupBy('product_variation_price.currency')
+            ->addGroupBy('product_offer_price.currency')
+            ->addGroupBy('product_price.currency');
 
 
         $qb->addSelect(
@@ -912,8 +910,7 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
             ->addGroupBy('product_modification_quantity.reserve')
             ->addGroupBy('product_variation_quantity.reserve')
             ->addGroupBy('product_offer_quantity.reserve')
-            ->addGroupBy('product_price.reserve')
-        ;
+            ->addGroupBy('product_price.reserve');
 
         /** Фото продукта */
 
@@ -1015,6 +1012,16 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
             'category',
             'category.id = product_category.category'
         );
+
+
+        $qb
+            ->addSelect('category_info.url AS category_url')
+            ->leftJoin(
+                'category',
+                CategoryEntity\Info\ProductCategoryInfo::TABLE,
+                'category_info',
+                'category_info.event = category.event'
+            );
 
 
         $qb->leftJoin(
