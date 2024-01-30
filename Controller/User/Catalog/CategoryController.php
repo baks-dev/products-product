@@ -39,19 +39,19 @@ use Symfony\Component\Routing\Exception\RouteNotFoundException;
 #[AsController]
 final class CategoryController extends AbstractController
 {
-	#[Route('/catalog/{url}/{page<\d+>}', name: 'user.catalog.category')]
+	#[Route('/catalog/{category}/{page<\d+>}', name: 'user.catalog.category')]
 	public function index(
 		Request $request,
 		//#[MapEntity(mapping: ['url' => 'url', 'active' => true])] ProductCategoryInfo $info,
 		AllProductsByCategoryInterface $productsByCategory,
 		CategoryByUrlInterface $categoryByUrl,
-		string $url,
+		string $category,
 		int $page = 0,
 	) : Response
 	{
 		
 		/* Получаем информацию о разделе */
-		$info = $categoryByUrl->fetchCategoryAssociative($url);
+		$info = $categoryByUrl->fetchCategoryAssociative($category);
 		
 		if(!$info)
 		{
@@ -65,7 +65,7 @@ final class CategoryController extends AbstractController
 		$ProductCategoryFilterDTO = new ProductCategoryFilterDTO($CategoryUid);
 		$filterForm = $this->createForm(ProductCategoryFilterForm::class,
 			$ProductCategoryFilterDTO,
-			['action' => $this->generateUrl('products-product:user.catalog.category', ['url' => $url])]
+			['action' => $this->generateUrl('products-product:user.catalog.category', ['category' => $category])]
 		);
 		$filterForm->handleRequest($request);
 		
@@ -78,7 +78,7 @@ final class CategoryController extends AbstractController
 			{
 				return $this->redirectToRoute('products-product:user.catalog.modification',
 					[
-						'url' => $url,
+						'category' => $category,
 						'offer' => $ProductCategoryFilterDTO->getOffer() ?: 'all',
 						'variation' => $ProductCategoryFilterDTO->getVariation() ?: 'all',
 						'modification' => $ProductCategoryFilterDTO->getModification(),
@@ -90,7 +90,7 @@ final class CategoryController extends AbstractController
 			{
 				return $this->redirectToRoute('products-product:user.catalog.variation',
 					[
-						'url' => $url,
+						'category' => $category,
 						'offer' => $ProductCategoryFilterDTO->getOffer() ?: 'all',
 						'variation' => $ProductCategoryFilterDTO->getVariation(),
 					]
@@ -101,7 +101,7 @@ final class CategoryController extends AbstractController
 			{
 				return $this->redirectToRoute('products-product:user.catalog.offer',
 					[
-						'url' => $url,
+						'category' => $category,
 						'offer' => $ProductCategoryFilterDTO->getOffer(),
 					]
 				);

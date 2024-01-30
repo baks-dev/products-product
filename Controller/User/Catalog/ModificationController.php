@@ -39,13 +39,13 @@ use Symfony\Component\Routing\Exception\RouteNotFoundException;
 #[AsController]
 final class ModificationController extends AbstractController
 {
-	#[Route('/catalog/{url}/modification/{offer}/{variation}/{modification}/{page<\d+>}', name: 'user.catalog.modification')]
+	#[Route('/catalog/{category}/modification/{offer}/{variation}/{modification}/{page<\d+>}', name: 'user.catalog.modification')]
 	public function index(
 		Request $request,
 		//#[MapEntity(mapping: ['url' => 'url', 'active' => true])] ProductCategoryInfo $info,
 		AllProductsByCategoryInterface $productsByCategory,
 		CategoryByUrlInterface $categoryByUrl,
-		string $url,
+		string $category,
 		string $offer,
 		string $variation,
 		string $modification,
@@ -58,7 +58,7 @@ final class ModificationController extends AbstractController
 		//dump($info->getCategory());
 		//dump($productsByCategory->fetchAllProductByCategoryAssociative($info->getCategory()));
 		
-		$info = $categoryByUrl->fetchCategoryAssociative($url);
+		$info = $categoryByUrl->fetchCategoryAssociative($category);
 		
 		if(!$info)
 		{
@@ -75,7 +75,8 @@ final class ModificationController extends AbstractController
 		$ProductCategoryFilterDTO->setModification($modification);
 		
 		
-		$filterForm = $this->createForm(ProductCategoryFilterForm::class, $ProductCategoryFilterDTO, ['action' => $this->generateUrl('products-product:user.catalog.category', ['url' => $url])]);
+		$filterForm = $this->createForm(ProductCategoryFilterForm::class, $ProductCategoryFilterDTO,
+            ['action' => $this->generateUrl('products-product:user.catalog.category', ['category' => $category])]);
 		$filterForm->handleRequest($request);
 		
 		$property = null;

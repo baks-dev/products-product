@@ -748,7 +748,7 @@ final class ProductModel implements ProductModelInterface
         /*dd($qb->fetchAssociative());*/
 
         return $qb
-            //->enableCache('products-product', 86400)
+            ->enableCache('products-product', 86400)
             ->fetchAssociative();
     }
 

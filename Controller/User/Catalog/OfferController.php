@@ -39,13 +39,13 @@ use Symfony\Component\Routing\Exception\RouteNotFoundException;
 #[AsController]
 final class OfferController extends AbstractController
 {
-	#[Route('/catalog/{url}/offer/{offer}/{page<\d+>}', name: 'user.catalog.offer', methods: ['GEt', 'POSt'])]
+	#[Route('/catalog/{category}/offer/{offer}/{page<\d+>}', name: 'user.catalog.offer', methods: ['GEt', 'POSt'])]
 	public function index(
 		Request $request,
 		//#[MapEntity(mapping: ['url' => 'url', 'active' => true])] ProductCategoryInfo $info,
 		AllProductsByCategoryInterface $productsByCategory,
 		CategoryByUrlInterface $categoryByUrl,
-		string $url,
+		string $category,
 		string $offer,
 		int $page = 0,
 	) : Response
@@ -56,7 +56,7 @@ final class OfferController extends AbstractController
 		//dump($info->getCategory());
 		//dump($productsByCategory->fetchAllProductByCategoryAssociative($info->getCategory()));
 		
-		$info = $categoryByUrl->fetchCategoryAssociative($url);
+		$info = $categoryByUrl->fetchCategoryAssociative($category);
 		
 		if(!$info)
 		{
@@ -71,7 +71,7 @@ final class OfferController extends AbstractController
 		$ProductCategoryFilterDTO->setOffer($offer);
 		
 		$filterForm = $this->createForm(ProductCategoryFilterForm::class, $ProductCategoryFilterDTO,
-			['action' => $this->generateUrl('products-product:user.catalog.category', ['url' => $url])]);
+			['action' => $this->generateUrl('products-product:user.catalog.category', ['category' => $category])]);
 		$filterForm->handleRequest($request);
 		
 		$property = null;
@@ -97,8 +97,9 @@ final class OfferController extends AbstractController
 		}
 		
 		$otherProducts = false;
+
 		$Products = $productsByCategory->fetchAllProductByCategoryAssociative($CategoryUid, $ProductCategoryFilterDTO, $property);
-		
+
 		/** Если список пуст - пробуем предложить другие варианты */
 		if(!$Products->getData())
 		{
@@ -109,8 +110,8 @@ final class OfferController extends AbstractController
 				$otherProducts = true;
 			}
 		}
-		
-		
+
+
 		
 		return $this->render([
 			'category' => $info,

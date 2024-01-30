@@ -51,29 +51,28 @@ final class IndexController extends AbstractController
     {
 
 
-
-//        /**
-//         * Фильтр профиля пользователя
-//         */
-//
-//        $profile = new ProductProfileFilterDTO($request, $this->getProfileUid());
-//        $ROLE_ADMIN = $this->isGranted('ROLE_ADMIN');
-//
-//        if($ROLE_ADMIN)
-//        {
-//            $profileForm = $this->createForm(ProductProfileFilterFormAdmin::class, $profile, [
-//                'action' => $this->generateUrl('products-product:admin.index'),
-//            ]);
-//        }
-//        else
-//        {
-//            $profileForm = $this->createForm(ProductProfileFilterForm::class, $profile, [
-//                'action' => $this->generateUrl('products-product:admin.index'),
-//            ]);
-//        }
-//
-//        $profileForm->handleRequest($request);
-//        !$profileForm->isSubmitted() ?: $this->redirectToReferer();
+        //        /**
+        //         * Фильтр профиля пользователя
+        //         */
+        //
+        //        $profile = new ProductProfileFilterDTO($request, $this->getProfileUid());
+        //        $ROLE_ADMIN = $this->isGranted('ROLE_ADMIN');
+        //
+        //        if($ROLE_ADMIN)
+        //        {
+        //            $profileForm = $this->createForm(ProductProfileFilterFormAdmin::class, $profile, [
+        //                'action' => $this->generateUrl('products-product:admin.index'),
+        //            ]);
+        //        }
+        //        else
+        //        {
+        //            $profileForm = $this->createForm(ProductProfileFilterForm::class, $profile, [
+        //                'action' => $this->generateUrl('products-product:admin.index'),
+        //            ]);
+        //        }
+        //
+        //        $profileForm->handleRequest($request);
+        //        !$profileForm->isSubmitted() ?: $this->redirectToReferer();
 
 
         /**
@@ -97,20 +96,20 @@ final class IndexController extends AbstractController
 
         $isFilter = (bool) ($search->getQuery() || $filter->getOffer() || $filter->getVariation() || $filter->getModification());
 
+
+        $getAllProduct
+            ->search($search)
+            ->filter($filter);
+
         if($isFilter)
         {
             // Получаем список торговых предложений
-            $query = $getAllProduct
-                ->search($search)
-                ->filter($filter)
-                ->getAllProductsOffers($this->getProfileUid());
+            $query = $getAllProduct->getAllProductsOffers($this->getProfileUid());
         }
         else
         {
             // Получаем список продукции
-            $query = $getAllProduct
-                ->filter($filter)
-                ->getAllProducts($this->getProfileUid());
+            $query = $getAllProduct->getAllProducts($this->getProfileUid());
         }
 
 
@@ -125,7 +124,7 @@ final class IndexController extends AbstractController
                 'filter' => $filterForm->createView(),
                 //'profile' => $profileForm->createView(),
             ],
-            file : $isFilter ? 'offers.html.twig' : 'product.html.twig'
+            file: $isFilter ? 'offers.html.twig' : 'product.html.twig'
         );
     }
 }

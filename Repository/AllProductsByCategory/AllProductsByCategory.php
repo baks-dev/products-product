@@ -85,8 +85,20 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
         );
 
 
-        $qb->addSelect('category_trans.name AS category_name')
-            ->addGroupBy('category_trans.name');
+        $qb
+            ->addSelect('category_info.url AS category_url')
+            ->leftJoin(
+            'category_event',
+            CategoryEntity\Info\ProductCategoryInfo::TABLE,
+            'category_info',
+            'category_info.event = category_event.id'
+        );
+
+
+
+
+
+        $qb->addSelect('category_trans.name AS category_name');
 
         $qb->leftJoin(
             'category_event',
@@ -121,10 +133,8 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
         );
 
 
-        $qb->select('product.id')
-            ->groupBy('product.id');
-        $qb->addSelect('product.event')
-            ->addGroupBy('product.event');
+        $qb->addSelect('product.id');
+        $qb->addSelect('product.event');
 
 
         /** Категория продукта */
@@ -135,6 +145,8 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
             'product_category',
             'product_category.category = category_event.category'
         );
+
+
 
 
         $qb->join('product_category',
@@ -149,7 +161,6 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
             'product_event',
             'product_event.id = product.event'
         );
-
 
         /** ФИЛЬТР СВОЙСТВ */
         if($property)
@@ -218,7 +229,7 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
             }
         }
 
-        $qb->addSelect('product_trans.name AS product_name')->addGroupBy('product_trans.name'); // Название продукта
+        $qb->addSelect('product_trans.name AS product_name');
 
         $qb->leftJoin(
             'product_event',
@@ -228,8 +239,8 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
         );
 
 
-        $qb->addSelect('product_desc.preview AS product_preview')->addGroupBy('product_desc.preview');
-        $qb->addSelect('product_desc.description AS product_description')->addGroupBy('product_desc.description');
+        $qb->addSelect('product_desc.preview AS product_preview');
+        $qb->addSelect('product_desc.description AS product_description');
 
         $qb
             ->leftJoin(
@@ -252,10 +263,7 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
 
         /* ProductInfo */
 
-        $qb->addSelect('product_info.url')
-            ->addGroupBy('product_info.url')
-            ->addGroupBy('product_info.article'
-            ); // Артикул
+        $qb->addSelect('product_info.url');
 
         $qb->leftJoin(
             'product_event',
@@ -273,7 +281,6 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
             $qb->setParameter('offer', $filter->getOffer());
         }
 
-        //$qb->addSelect('product_offer.value as product_offer_value')->addGroupBy('product_offer.value'); // значение торгового предложения
 
         $qb->{$method}(
             'product_event',
@@ -283,7 +290,6 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
         );
 
         /* Получаем тип торгового предложения */
-        //$qb->addSelect('category_offer.reference as product_offer_reference')->addGroupBy('category_offer.reference'); // тип (field) торгового предложения
         $qb->leftJoin(
             'product_offer',
             CategoryEntity\Offers\ProductCategoryOffers::TABLE,
@@ -293,13 +299,14 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
 
 
         /* Цена торгового предожения */
-        $qb->leftJoin(
+        $qb
+
+            ->leftJoin(
             'product_offer',
             ProductEntity\Offers\Price\ProductOfferPrice::TABLE,
             'product_offer_price',
             'product_offer_price.offer = product_offer.id'
         )
-            //->addGroupBy('product_offer_price.price')
             ->addGroupBy('product_offer_price.currency');
 
 
@@ -312,22 +319,17 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
             $qb->setParameter('variation', $filter->getVariation());
         }
 
-        //		$qb->addSelect('product_variation.value as product_variation_value')
-        //			->addGroupBy('product_variation.value')
-        //		;
+
 
         $qb->{$method}(
             'product_offer',
             ProductEntity\Offers\Variation\ProductVariation::TABLE,
             'product_variation',
             'product_variation.offer = product_offer.id '.($filter->getVariation() ? ' AND product_variation.value = :variation' : '').' '
-        )//->addGroupBy('product_variation.article')
-        ;
+        );
 
         /** Получаем тип множественного варианта */
-        //		$qb->addSelect('category_variation.reference as product_variation_reference')
-        //			->addGroupBy('category_variation.reference')
-        //		;
+
         $qb->leftJoin(
             'product_variation',
             CategoryEntity\Offers\Variation\ProductCategoryVariation::TABLE,
@@ -336,8 +338,6 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
         );
 
         /** Цена множественного варианта */
-        //$qb->addSelect('MIN(product_variation_price.price) as variation_price');
-        //$qb->addSelect('product_variation_price.currency as variation_currency');
 
         $qb->leftJoin(
             'category_variation',
@@ -357,22 +357,15 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
             $qb->setParameter('modification', $filter->getModification());
         }
 
-        //		$qb->addSelect('product_modification.value as product_modification_value')
-        //			->addGroupBy('product_modification.value')
-        //		;
-
         $qb->{$method}(
             'product_variation',
             ProductEntity\Offers\Variation\Modification\ProductModification::TABLE,
             'product_modification',
             'product_modification.variation = product_variation.id '.($filter->getModification() ? ' AND product_modification.value = :modification' : '').' '
-        )//->addGroupBy('product_modification.article')
-        ;
+        );
 
         /** Получаем тип модификации множественного варианта */
-        //		$qb->addSelect('category_modification.reference as category_modification')
-        //			->addGroupBy('category_modification.reference')
-        //		;
+
         $qb->leftJoin(
             'product_modification',
             CategoryEntity\Offers\Variation\Modification\ProductCategoryModification::TABLE,
@@ -380,8 +373,6 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
             'category_modification.id = product_modification.category_modification'
         );
 
-        //$qb->addSelect('MIN(product_modification_price.price) as modification_price');
-        //$qb->addSelect('product_modification_price.currency as modification_currency');
 
         /** Цена множественного варианта */
         $qb->leftJoin(
@@ -390,7 +381,6 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
             'product_modification_price',
             'product_modification_price.modification = product_modification.id'
         )
-            //->addGroupBy('product_modification_price.price')
             ->addGroupBy('product_modification_price.currency');
 
         $qb->addSelect("JSON_AGG
@@ -421,20 +411,6 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
 			AS product_offers"
         );
 
-        //$qb->addSelect("'".Entity\Offers\Variation\Image\ProductOfferVariationImage::TABLE."' AS upload_image_dir ");
-
-        /** Артикул продукта */
-
-        //		$qb->addSelect("
-        //			CASE
-        //			   WHEN product_modification.article IS NOT NULL THEN product_modification.article
-        //			   WHEN product_variation.article IS NOT NULL THEN product_variation.article
-        //			   WHEN product_offer.article IS NOT NULL THEN product_offer.article
-        //			   WHEN product_info.article IS NOT NULL THEN product_info.article
-        //			   ELSE NULL
-        //			END AS product_article
-        //		"
-        //		);
 
         /** Фото продукта */
 
@@ -446,10 +422,8 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
 			product_modification_image.modification = product_modification.id AND
 			product_modification_image.root = true
 			'
-        )
-            ->addGroupBy('product_modification_image.name')
-            ->addGroupBy('product_modification_image.ext')
-            ->addGroupBy('product_modification_image.cdn');
+        );
+
 
         $qb->leftJoin(
             'product_offer',
@@ -459,10 +433,8 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
 			product_variation_image.variation = product_variation.id AND
 			product_variation_image.root = true
 			'
-        )
-            ->addGroupBy('product_variation_image.name')
-            ->addGroupBy('product_variation_image.ext')
-            ->addGroupBy('product_variation_image.cdn');
+        );
+
 
         $qb->leftJoin(
             'product_offer',
@@ -473,10 +445,8 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
 			product_offer_images.offer = product_offer.id AND
 			product_offer_images.root = true
 			'
-        )
-            ->addGroupBy('product_offer_images.name')
-            ->addGroupBy('product_offer_images.ext')
-            ->addGroupBy('product_offer_images.cdn');
+        );
+
 
         $qb->leftJoin(
             'product_offer',
@@ -487,9 +457,7 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
 			product_photo.event = product_event.id AND
 			product_photo.root = true
 			'
-        )->addGroupBy('product_photo.name')
-            ->addGroupBy('product_photo.ext')
-            ->addGroupBy('product_photo.cdn');
+        );
 
         $qb->addSelect("
 			CASE
@@ -644,6 +612,8 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
 		)
 			AS category_section_field"
         );
+
+        $qb->allGroupByExclude();
 
         return $this->paginator->fetchAllAssociative($qb);
 
