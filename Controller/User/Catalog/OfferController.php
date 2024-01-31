@@ -24,6 +24,8 @@
 namespace BaksDev\Products\Product\Controller\User\Catalog;
 
 use BaksDev\Core\Controller\AbstractController;
+use BaksDev\Core\Form\Search\SearchDTO;
+use BaksDev\Core\Form\Search\SearchForm;
 use BaksDev\Products\Category\Repository\CategoryByUrl\CategoryByUrlInterface;
 use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
 use BaksDev\Products\Product\Forms\ProductCategoryFilter\User\ProductCategoryFilterDTO;
@@ -111,14 +113,19 @@ final class OfferController extends AbstractController
 			}
 		}
 
+        // Поиск по всему сайту
+        $allSearch = new SearchDTO($request);
+        $allSearchForm = $this->createForm(SearchForm::class, $allSearch, [
+            'action' => $this->generateUrl('core:search'),
+        ]);
 
-		
 		return $this->render([
 			'category' => $info,
 			'products' => $Products,
 			'filter' =>  $filterForm->createView(),
 			'other' =>  $otherProducts,
 			'fields' =>  $fields,
+            'all_search' => $allSearchForm->createView(),
 		]);
 		
 		//        return $this->render('home/index.html.twig', [

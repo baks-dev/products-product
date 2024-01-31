@@ -62,10 +62,18 @@ final class CatalogController extends AbstractController
         // Получаем список
         $Product = $allProduct->fetchAllProductAssociative($search);
 
+        // Поиск по всему сайту
+        $allSearch = new SearchDTO($request);
+        $allSearchForm = $this->createForm(SearchForm::class, $allSearch, [
+            'action' => $this->generateUrl('core:search'),
+        ]);
+
+
         return $this->render(
             [
                 'query' => $Product,
                 'search' => $searchForm->createView(),
+                'all_search' => $allSearchForm->createView(),
             ]
         );
     }

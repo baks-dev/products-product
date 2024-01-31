@@ -27,7 +27,7 @@
 				{% if category.parent_category_name %}
 					<li class="breadcrumb-item">
 						
-						<a href="{{ path('products-product:user.catalog.category', { url : category.parent_category_url }) }}"
+						<a href="{{ path('products-product:user.catalog.category', { category : category.parent_category_url }) }}"
 								class="text-muted"
 								aria-label="{{ category.parent_category_name }}"
 								title="{{ category.parent_category_name }}">

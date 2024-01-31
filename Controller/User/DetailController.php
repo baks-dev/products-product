@@ -24,6 +24,8 @@
 namespace BaksDev\Products\Product\Controller\User;
 
 use BaksDev\Core\Controller\AbstractController;
+use BaksDev\Core\Form\Search\SearchDTO;
+use BaksDev\Core\Form\Search\SearchForm;
 use BaksDev\Orders\Order\UseCase\User\Basket\Add\OrderProductDTO;
 use BaksDev\Orders\Order\UseCase\User\Basket\Add\OrderProductForm;
 use BaksDev\Products\Product\Entity;
@@ -137,6 +139,12 @@ final class DetailController extends AbstractController
             ),
         ]);
 
+        // Поиск по всему сайту
+        $allSearch = new SearchDTO($request);
+        $allSearchForm = $this->createForm(SearchForm::class, $allSearch, [
+            'action' => $this->generateUrl('core:search'),
+        ]);
+
         return $this->render([
             'card' => $productCard,
             'offers' => $productOffer,
@@ -145,6 +153,7 @@ final class DetailController extends AbstractController
             'variation' => $variation,
             'modification' => $modification,
             'basket' => $form->createView(),
+            'all_search' => $allSearchForm->createView(),
         ]);
     }
 }

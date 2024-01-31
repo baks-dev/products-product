@@ -24,9 +24,12 @@
 namespace BaksDev\Products\Product\Controller\User;
 
 use BaksDev\Core\Controller\AbstractController;
+use BaksDev\Core\Form\Search\SearchDTO;
+use BaksDev\Core\Form\Search\SearchForm;
 use BaksDev\Products\Product\Entity;
 use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailByValueInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Annotation\Route;
@@ -36,6 +39,7 @@ final class ProductController extends AbstractController
 {
     #[Route('/catalog/triangle/{url}/detail', name: 'user.product')]
     public function index(
+        Request $request,
         #[MapEntity(mapping: ['url' => 'url'])] Entity\Info\ProductInfo $info,
         ProductDetailByValueInterface $productDetail,
     ): Response
@@ -45,22 +49,16 @@ final class ProductController extends AbstractController
             $info->getProduct()
         );
 
-        //dump($info);
-        //dump($productCard);
+        // Поиск по всему сайту
+        $allSearch = new SearchDTO($request);
+        $allSearchForm = $this->createForm(SearchForm::class, $allSearch, [
+            'action' => $this->generateUrl('core:search'),
+        ]);
 
-
-        // $mod = new ModifyAction('update');
-        //        $mod = ModifyAction::UPDATE;
-        //
-        //
-        //        $mod = ModifyAction::from($mod->value);
-
-
-        return $this->render(['card' => $productCard]);
-
-        //        return $this->render('home/index.html.twig', [
-        //            'controller_name' => 'HomeController',
-        //        ]);
+        return $this->render([
+            'card' => $productCard,
+            'all_search' => $allSearchForm->createView(),
+        ]);
     }
 
 
