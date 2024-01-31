@@ -1,6 +1,6 @@
 
 
-<div class="card w-100 mb-3" id='item-collection-offer-{{ offer.vars.name }}'>
+<div class="card w-100 mb-3 offers {{ selectOfffer is null or offer.vars.data.const == selectOfffer ?: 'd-none' }}" id='item-collection-offer-{{ offer.vars.name }}'>
 	<div class="card-header border-light bg-body">
 		<div class="card-title  d-flex gap-3 align-items-center">
 
@@ -159,7 +159,7 @@
 
 				<div class="card-body offer-variation-collection" id='{{ offer.vars.id }}-collection'>
 					{% for variation in offer.variation %}
-						<div id='item_{{ variation.vars.id }}'>
+						<div class="offers {{ selectVariation is null or variation.vars.data.const == selectVariation ?: 'd-none' }}" id='item_{{ variation.vars.id }}'>
 						{{ include(_self|replace({ "offers/_offer.html.twig": "variation/_variation.html.twig" })) }}
 						</div>
 					{% endfor %}

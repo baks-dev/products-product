@@ -59,8 +59,13 @@
                      title="{{ item.product_name }}"
                 >
 
-
-                    <a href="{{ (is_granted(ROLE~'_EDIT') or is_granted('ROLE_ADMIN')) ? path('products-product:admin.newedit.edit', { id: item.event }) }}"
+                    <a href="{{ (is_granted(ROLE~'_EDIT') or is_granted('ROLE_ADMIN')) ?
+                    path('products-product:admin.newedit.edit', {
+                        id: item.event,
+                        offfer: item.product_offer_const,
+                        variation: item.product_variation_const,
+                        modification: item.product_modification_const,
+                    }) }}"
                        class="fw-bolder mb-1 text-dark text-decoration-none"
 
                     >

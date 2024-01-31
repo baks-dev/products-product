@@ -45,14 +45,57 @@ if ($name) {
 }
 
 
+const allOffers = document.getElementById('allOffers');
+
+if (allOffers)
+{
+    allOffers.addEventListener("change", (event) => {
+        if (allOffers.checked)
+        {
+            document.querySelectorAll('.offers').forEach(function (item) {
+
+                if (item.classList.contains('d-none'))
+                {
+                    item.classList.remove('d-none');
+                    item.classList.add('d-block');
+                }
+
+            });
+        }
+        else
+        {
+            document.querySelectorAll('.offers').forEach(function (item) {
+
+                if (item.classList.contains('d-block'))
+                {
+                    item.classList.remove('d-block');
+                    item.classList.add('d-none');
+                }
+
+            });
+        }
+    });
+}
 
 const searcOffer = document.getElementById('searcherOffer');
+
 if (searcOffer)
 {
     let $ul = document.getElementById("searcher-offer");
 
     searcOffer.addEventListener('keyup', searcherOffer);
     searcOffer.addEventListener('focus', searcherOffer);
+
+    document.addEventListener("click", function (event) {
+
+        var isClickInsideBlock1 = $ul.contains(event.target);
+        var isClickInsideBlock2 = searcOffer.contains(event.target);
+
+        if (!isClickInsideBlock1 && !isClickInsideBlock2) {
+            $ul.classList.remove('show');
+        }
+    });
+
 
     $ul.querySelectorAll('li').forEach(function (item) {
 
@@ -67,6 +110,13 @@ if (searcOffer)
             }, 200);
         });
     });
+
+
+
+    // searcOffer.addEventListener("focusout", (event) => {
+    //     $ul.classList.remove('show');
+    // });
+
 }
 
 function searcherOffer() {

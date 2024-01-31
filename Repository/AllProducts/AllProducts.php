@@ -168,6 +168,7 @@ final class AllProducts implements AllProductsInterface
         /** Торговое предложение */
 
         $qb->addSelect('product_offer.id as product_offer_id');
+        $qb->addSelect('product_offer.const as product_offer_const');
         $qb->addSelect('product_offer.value as product_offer_value');
         $qb->addSelect('product_offer.postfix as product_offer_postfix');
 
@@ -206,6 +207,7 @@ final class AllProducts implements AllProductsInterface
         /** Множественные варианты торгового предложения */
 
         $qb->addSelect('product_variation.id as product_variation_id');
+        $qb->addSelect('product_variation.const as product_variation_const');
         $qb->addSelect('product_variation.value as product_variation_value');
         $qb->addSelect('product_variation.postfix as product_variation_postfix');
 
@@ -245,6 +247,7 @@ final class AllProducts implements AllProductsInterface
 
         /** Модификация множественного варианта */
         $qb->addSelect('product_modification.id as product_modification_id');
+        $qb->addSelect('product_modification.const as product_modification_const');
         $qb->addSelect('product_modification.value as product_modification_value');
         $qb->addSelect('product_modification.postfix as product_modification_postfix');
 

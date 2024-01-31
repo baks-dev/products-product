@@ -147,7 +147,7 @@
 
 	<div class="card-body variation-modification-collection" id='collection_{{ variation.vars.id }}'>
 		{% for modification in variation.modification %}
-			<div id='item_{{ modification.vars.id }}'>
+			<div class="offers {{ selectModification is null or modification.vars.data.const == selectModification ?: 'd-none' }}" id='item_{{ modification.vars.id }}'>
 				{{ include(_self|replace({ "variation/_variation.html.twig": "modification/_modification.html.twig" })) }}
 			</div>
 		{% endfor %}

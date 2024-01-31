@@ -1,10 +1,15 @@
 <div id="collection-offer">
+
+    {% set selectOfffer = app.request.get('offfer') %}
+    {% set selectVariation = app.request.get('variation') %}
+    {% set selectModification = app.request.get('modification') %}
+
     {% for offer in form.offer %}
         {{ include(_self|replace({ "form.offers.html.twig": "includes/offers/_offer.html.twig" })) }}
     {% endfor %}
 </div>
 
-<div class="position-sticky d-flex gap-3 z-index-3 w-50" style="bottom: 3rem;">
+<div class="position-sticky d-flex align-items-center gap-3 z-index-3 w-100" style="bottom: 3rem;">
     <button type="button" id="offer_addCollection"
             class="btn btn-sm btn-outline-primary border-0 add_collection"
             data-prototype="prototype.offer"
@@ -27,7 +32,7 @@
 
 
     {# Поиск по артикулам  #}
-    <div class="w-50 position-relative">
+    <div class="w-25 position-relative">
         <input type="search" class="form-control w-100 d-none" id="searcherOffer" placeholder="Перейти к артикулу...">
 
         <ul id="searcher-offer" class="dropdown-menu dropdown-menu-center small position-absolute p-2 mb-3 w-100"
@@ -77,6 +82,16 @@
 
             {% endfor %}
         </ul>
+
+
+
+    </div>
+
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="allOffers">
+        <label class="form-check-label" for="allOffers">
+            Показать все
+        </label>
     </div>
 
 
