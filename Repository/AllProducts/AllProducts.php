@@ -389,20 +389,26 @@ final class AllProducts implements AllProductsInterface
         if($this->search->getQuery())
         {
             /** Поиск по модификации */
-            $result = $this->elasticGetIndex->handle(ProductModification::class, $this->search->getQuery(), 0);
-            $counter = $result['hits']['total']['value'];
+            $result = $this->elasticGetIndex ? $this->elasticGetIndex->handle(ProductModification::class, $this->search->getQuery(), 1) : false;
 
-            if($counter)
+            if($result)
             {
-                /** Идентификаторы */
-                $data = array_column($result['hits']['hits'], "_source");
+                $counter = $result['hits']['total']['value'];
 
-                $qb
-                    ->createSearchQueryBuilder($this->search)
-                    ->addSearchInArray('product_modification.id', array_column($data, "id"));
+                if($counter)
+                {
+                    /** Идентификаторы */
+                    $data = array_column($result['hits']['hits'], "_source");
 
-                return $this->paginator->fetchAllAssociative($qb);
+                    $qb
+                        ->createSearchQueryBuilder($this->search)
+                        ->addSearchInArray('product_modification.id', array_column($data, "id"));
+
+                    return $this->paginator->fetchAllAssociative($qb);
+                }
             }
+
+
 
 
 
@@ -780,21 +786,27 @@ final class AllProducts implements AllProductsInterface
         {
 
             /** Поиск по продукции */
-            $result = $this->elasticGetIndex->handle(Product::class, $this->search->getQuery(), 1);
+            $result = $this->elasticGetIndex ? $this->elasticGetIndex->handle(Product::class, $this->search->getQuery(), 1) : false;
 
-            $counter = $result['hits']['total']['value'];
-
-            if($counter)
+            if($result)
             {
-                /** Идентификаторы */
-                $data = array_column($result['hits']['hits'], "_source");
+                $counter = $result['hits']['total']['value'];
 
-                $qb
-                    ->createSearchQueryBuilder($this->search)
-                    ->addSearchInArray('product.id', array_column($data, "id"));
+                if($counter)
+                {
+                    /** Идентификаторы */
+                    $data = array_column($result['hits']['hits'], "_source");
 
-                return $this->paginator->fetchAllAssociative($qb);
+                    $qb
+                        ->createSearchQueryBuilder($this->search)
+                        ->addSearchInArray('product.id', array_column($data, "id"));
+
+                    return $this->paginator->fetchAllAssociative($qb);
+                }
             }
+
+
+
 
             $qb
                 ->createSearchQueryBuilder($this->search)
