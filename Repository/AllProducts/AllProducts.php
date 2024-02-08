@@ -26,6 +26,7 @@ namespace BaksDev\Products\Product\Repository\AllProducts;
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Core\Form\Search\SearchDTO;
 use BaksDev\Core\Services\Paginator\PaginatorInterface;
+
 //use BaksDev\Products\Category\Entity as CategoryEntity;
 use BaksDev\Elastic\Api\Index\ElasticGetIndex;
 use BaksDev\Products\Category\Entity\Info\ProductCategoryInfo;
@@ -91,22 +92,21 @@ final class AllProducts implements AllProductsInterface
             ->createQueryBuilder(self::class)
             ->bindLocal();
 
-
-        $qb->select('product.id');
-        $qb->addSelect('product.event');
-
-        $qb->from(Product::TABLE, 'product');
+        $qb
+            ->select('product.id')
+            ->addSelect('product.event')
+            ->from(Product::TABLE, 'product');
 
         $qb->leftJoin('product', ProductEvent::TABLE, 'product_event', 'product_event.id = product.event');
 
-        $qb->addSelect('product_trans.name AS product_name');
-
-        $qb->leftJoin(
-            'product_event',
-            ProductTrans::TABLE,
-            'product_trans',
-            'product_trans.event = product_event.id AND product_trans.local = :local'
-        );
+        $qb
+            ->addSelect('product_trans.name AS product_name')
+            ->leftJoin(
+                'product_event',
+                ProductTrans::TABLE,
+                'product_trans',
+                'product_trans.event = product_event.id AND product_trans.local = :local'
+            );
 
 
         $qb
@@ -127,14 +127,14 @@ final class AllProducts implements AllProductsInterface
 
         /* ProductInfo */
 
-        $qb->addSelect('product_info.url');
-
-        $qb->leftJoin(
-            'product_event',
-            ProductInfo::TABLE,
-            'product_info',
-            'product_info.product = product.id'
-        );
+        $qb
+            ->addSelect('product_info.url')
+            ->leftJoin(
+                'product_event',
+                ProductInfo::TABLE,
+                'product_info',
+                'product_info.product = product.id'
+            );
 
 
         /** Ответственное лицо (Профиль пользователя) */
@@ -146,13 +146,14 @@ final class AllProducts implements AllProductsInterface
             'users_profile.id = product_info.profile'
         );
 
-        $qb->addSelect('users_profile_personal.username AS users_profile_username');
-        $qb->leftJoin(
-            'users_profile',
-            UserProfilePersonal::TABLE,
-            'users_profile_personal',
-            'users_profile_personal.event = users_profile.event'
-        );
+        $qb
+            ->addSelect('users_profile_personal.username AS users_profile_username')
+            ->leftJoin(
+                'users_profile',
+                UserProfilePersonal::TABLE,
+                'users_profile_personal',
+                'users_profile_personal.event = users_profile.event'
+            );
 
         /* ProductModify */
 
@@ -167,17 +168,17 @@ final class AllProducts implements AllProductsInterface
 
         /** Торговое предложение */
 
-        $qb->addSelect('product_offer.id as product_offer_id');
-        $qb->addSelect('product_offer.const as product_offer_const');
-        $qb->addSelect('product_offer.value as product_offer_value');
-        $qb->addSelect('product_offer.postfix as product_offer_postfix');
-
-        $qb->leftJoin(
-            'product_event',
-            ProductOffer::TABLE,
-            'product_offer',
-            'product_offer.event = product_event.id'
-        );
+        $qb
+            ->addSelect('product_offer.id as product_offer_id')
+            ->addSelect('product_offer.const as product_offer_const')
+            ->addSelect('product_offer.value as product_offer_value')
+            ->addSelect('product_offer.postfix as product_offer_postfix')
+            ->leftJoin(
+                'product_event',
+                ProductOffer::TABLE,
+                'product_offer',
+                'product_offer.event = product_event.id'
+            );
 
         if($this->filter->getOffer())
         {
@@ -195,28 +196,29 @@ final class AllProducts implements AllProductsInterface
         //        );
 
         /* Тип торгового предложения */
-        $qb->addSelect('category_offer.reference as product_offer_reference');
-        $qb->leftJoin(
-            'product_offer',
-            ProductCategoryOffers::TABLE,
-            'category_offer',
-            'category_offer.id = product_offer.category_offer'
-        );
+        $qb
+            ->addSelect('category_offer.reference as product_offer_reference')
+            ->leftJoin(
+                'product_offer',
+                ProductCategoryOffers::TABLE,
+                'category_offer',
+                'category_offer.id = product_offer.category_offer'
+            );
 
 
         /** Множественные варианты торгового предложения */
 
-        $qb->addSelect('product_variation.id as product_variation_id');
-        $qb->addSelect('product_variation.const as product_variation_const');
-        $qb->addSelect('product_variation.value as product_variation_value');
-        $qb->addSelect('product_variation.postfix as product_variation_postfix');
-
-        $qb->leftJoin(
-            'product_offer',
-            ProductVariation::TABLE,
-            'product_variation',
-            'product_variation.offer = product_offer.id'
-        );
+        $qb
+            ->addSelect('product_variation.id as product_variation_id')
+            ->addSelect('product_variation.const as product_variation_const')
+            ->addSelect('product_variation.value as product_variation_value')
+            ->addSelect('product_variation.postfix as product_variation_postfix')
+            ->leftJoin(
+                'product_offer',
+                ProductVariation::TABLE,
+                'product_variation',
+                'product_variation.offer = product_offer.id'
+            );
 
 
         if($this->filter->getVariation())
@@ -236,27 +238,28 @@ final class AllProducts implements AllProductsInterface
 
 
         /* Тип множественного варианта торгового предложения */
-        $qb->addSelect('category_variation.reference as product_variation_reference');
-        $qb->leftJoin(
-            'product_variation',
-            ProductCategoryVariation::TABLE,
-            'category_variation',
-            'category_variation.id = product_variation.category_variation'
-        );
+        $qb
+            ->addSelect('category_variation.reference as product_variation_reference')
+            ->leftJoin(
+                'product_variation',
+                ProductCategoryVariation::TABLE,
+                'category_variation',
+                'category_variation.id = product_variation.category_variation'
+            );
 
 
         /** Модификация множественного варианта */
-        $qb->addSelect('product_modification.id as product_modification_id');
-        $qb->addSelect('product_modification.const as product_modification_const');
-        $qb->addSelect('product_modification.value as product_modification_value');
-        $qb->addSelect('product_modification.postfix as product_modification_postfix');
-
-        $qb->leftJoin(
-            'product_variation',
-            ProductModification::TABLE,
-            'product_modification',
-            'product_modification.variation = product_variation.id '
-        );
+        $qb
+            ->addSelect('product_modification.id as product_modification_id')
+            ->addSelect('product_modification.const as product_modification_const')
+            ->addSelect('product_modification.value as product_modification_value')
+            ->addSelect('product_modification.postfix as product_modification_postfix')
+            ->leftJoin(
+                'product_variation',
+                ProductModification::TABLE,
+                'product_modification',
+                'product_modification.variation = product_variation.id '
+            );
 
 
         if($this->filter->getModification())
@@ -266,13 +269,14 @@ final class AllProducts implements AllProductsInterface
         }
 
         /** Получаем тип модификации множественного варианта */
-        $qb->addSelect('category_modification.reference as product_modification_reference');
-        $qb->leftJoin(
-            'product_modification',
-            ProductCategoryModification::TABLE,
-            'category_modification',
-            'category_modification.id = product_modification.category_modification'
-        );
+        $qb
+            ->addSelect('category_modification.reference as product_modification_reference')
+            ->leftJoin(
+                'product_modification',
+                ProductCategoryModification::TABLE,
+                'category_modification',
+                'category_modification.id = product_modification.category_modification'
+            );
 
 
         //$qb->addSelect("'".Entity\Offers\Variation\Image\ProductOfferVariationImage::TABLE."' AS upload_image_dir ");
@@ -376,18 +380,19 @@ final class AllProducts implements AllProductsInterface
             'category.id = product_event_category.category'
         );
 
-        $qb->addSelect('category_trans.name AS category_name');
-
-        $qb->leftJoin(
-            'category',
-            ProductCategoryTrans::TABLE,
-            'category_trans',
-            'category_trans.event = category.event AND category_trans.local = :local'
-        );
+        $qb
+            ->addSelect('category_trans.name AS category_name')
+            ->leftJoin(
+                'category',
+                ProductCategoryTrans::TABLE,
+                'category_trans',
+                'category_trans.event = category.event AND category_trans.local = :local'
+            );
 
 
         if($this->search->getQuery())
         {
+
             /** Поиск по модификации */
             $result = $this->elasticGetIndex ? $this->elasticGetIndex->handle(ProductModification::class, $this->search->getQuery(), 1) : false;
 
@@ -407,10 +412,6 @@ final class AllProducts implements AllProductsInterface
                     return $this->paginator->fetchAllAssociative($qb);
                 }
             }
-
-
-
-
 
             $qb
                 ->createSearchQueryBuilder($this->search)
@@ -442,10 +443,10 @@ final class AllProducts implements AllProductsInterface
             ->createQueryBuilder(self::class)
             ->bindLocal();
 
-        $qb->select('product.id');
-        $qb->addSelect('product.event');
-
-        $qb->from(Product::TABLE, 'product');
+        $qb
+            ->select('product.id')
+            ->addSelect('product.event')
+            ->from(Product::TABLE, 'product');
 
         $qb->leftJoin(
             'product',
@@ -453,17 +454,18 @@ final class AllProducts implements AllProductsInterface
             'product_event',
             'product_event.id = product.event');
 
-        $qb->addSelect('product_trans.name AS product_name');
+        $qb
+            ->addSelect('product_trans.name AS product_name')
+            ->leftJoin(
+                'product_event',
+                ProductTrans::TABLE,
+                'product_trans',
+                'product_trans.event = product_event.id AND product_trans.local = :local'
+            );
 
-        $qb->leftJoin(
-            'product_event',
-            ProductTrans::TABLE,
-            'product_trans',
-            'product_trans.event = product_event.id AND product_trans.local = :local'
-        );
 
-
-        $qb->addSelect('product_desc.preview AS product_preview')
+        $qb
+            ->addSelect('product_desc.preview AS product_preview')
             ->addSelect('product_desc.description AS product_description')
             ->leftJoin(
                 'product_event',
@@ -480,14 +482,14 @@ final class AllProducts implements AllProductsInterface
 
         /* ProductInfo */
 
-        $qb->addSelect('product_info.url');
-
-        $qb->leftJoin(
-            'product_event',
-            ProductInfo::TABLE,
-            'product_info',
-            'product_info.product = product.id'
-        );
+        $qb
+            ->addSelect('product_info.url')
+            ->leftJoin(
+                'product_event',
+                ProductInfo::TABLE,
+                'product_info',
+                'product_info.product = product.id'
+            );
 
         /** Ответственное лицо (Профиль пользователя) */
 
@@ -500,13 +502,14 @@ final class AllProducts implements AllProductsInterface
                 'users_profile.id = product_info.profile'
             );
 
-        $qb->addSelect('users_profile_personal.username AS users_profile_username');
-        $qb->leftJoin(
-            'users_profile',
-            UserProfilePersonal::TABLE,
-            'users_profile_personal',
-            'users_profile_personal.event = users_profile.event'
-        );
+        $qb
+            ->addSelect('users_profile_personal.username AS users_profile_username')
+            ->leftJoin(
+                'users_profile',
+                UserProfilePersonal::TABLE,
+                'users_profile_personal',
+                'users_profile_personal.event = users_profile.event'
+            );
 
         /* ProductModify */
 
@@ -738,11 +741,11 @@ final class AllProducts implements AllProductsInterface
         $qb
             ->addSelect('category_info.url AS category_url')
             ->leftJoin(
-            'category',
-            ProductCategoryInfo::TABLE,
-            'category_info',
-            'category_info.event = category.event'
-        );
+                'category',
+                ProductCategoryInfo::TABLE,
+                'category_info',
+                'category_info.event = category.event'
+            );
 
 
         $qb->addSelect('category_trans.name AS category_name');
@@ -804,8 +807,6 @@ final class AllProducts implements AllProductsInterface
                     return $this->paginator->fetchAllAssociative($qb);
                 }
             }
-
-
 
 
             $qb
