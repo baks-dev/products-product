@@ -30,5 +30,5 @@ interface ProductByVariationInterface
     /**
      * Метод возвращает Product по постоянному уникальному идентификатору множественного варианта
      */
-    public function getProductByVariationConstOrNull(ProductVariationConst $const) : ?array;
+    public function getProductByVariationOrNull(ProductVariationConst $const): ?array;
 }

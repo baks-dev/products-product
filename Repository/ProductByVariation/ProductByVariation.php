@@ -25,56 +25,79 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Repository\ProductByVariation;
 
+use BaksDev\Core\Doctrine\ORMQueryBuilder;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
+use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use Doctrine\ORM\EntityManagerInterface;
 
 final class ProductByVariation implements ProductByVariationInterface
 {
-    private EntityManagerInterface $entityManager;
+    private ORMQueryBuilder $ORMQueryBuilder;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(ORMQueryBuilder $ORMQueryBuilder)
     {
-        $this->entityManager = $entityManager;
+        $this->ORMQueryBuilder = $ORMQueryBuilder;
     }
 
     /**
      * Метод возвращает массив идентификаторов продукта
      */
-    public function getProductByVariationConstOrNull(ProductVariationConst $const) : ?array
+    public function getProductByVariationOrNull(ProductVariationUid|ProductVariationConst $variation): ?array
     {
-        $qb = $this->entityManager->createQueryBuilder();
+        $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
 
-        $qb->select('product.id AS product_id');
-        $qb->addSelect('event.id AS event_id');
-        $qb->addSelect('offer.id AS offer_id');
-        $qb->addSelect('variation.id AS variation_id');
+        if($variation instanceof ProductVariationConst)
+        {
+            $qb
+                ->addSelect('variation.id AS variation_id')
+                ->from(ProductVariation::class, 'variation')
+                ->where('variation.const = :const')
+                ->setParameter('const', $variation, ProductVariationConst::TYPE);
+        }
 
-        $qb->from(ProductVariation::class, 'variation');
+        if($variation instanceof ProductVariationUid)
+        {
+            $qb
+                ->from(ProductVariation::class, 'var')
+                ->where('var.id = :variation')
+                ->setParameter('variation', $variation, ProductVariationUid::TYPE);
 
-        $qb->join(ProductOffer::class,
-            'offer',
-            'WITH',
-            'offer.id = variation.offer'
-        );
+            $qb
+                ->join(ProductVariation::class,
+                    'variation',
+                    'WITH',
+                    'variation.const = var.const'
+                );
+        }
 
-        $qb->join(ProductEvent::class,
-            'event',
-            'WITH',
-            'event.id = offer.event'
-        );
+        $qb
+            ->addSelect('offer.id AS offer_id')
+            ->join(ProductOffer::class,
+                'offer',
+                'WITH',
+                'offer.id = variation.offer'
+            );
 
-        $qb->join(Product::class,
-            'product',
-            'WITH',
-            'product.event = event.id'
-        );
+        $qb
+            ->addSelect('event.id AS event_id')
+            ->join(ProductEvent::class,
+                'event',
+                'WITH',
+                'event.id = offer.event'
+            );
 
-        $qb->where('variation.const = :const');
-        $qb->setParameter('const', $const, ProductVariationConst::TYPE);
+        $qb
+            ->addSelect('product.id AS product_id')
+            ->join(Product::class,
+                'product',
+                'WITH',
+                'product.event = event.id'
+            );
+
 
         return $qb->getQuery()->getOneOrNullResult();
     }

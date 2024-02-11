@@ -42,8 +42,6 @@ final class Role implements RoleInterface, MenuAdminInterface
         return self::ROLE;
     }
 
-
-
     /**
      * Добавляем раздел в меню администрирования.
      */
@@ -64,7 +62,7 @@ final class Role implements RoleInterface, MenuAdminInterface
     /** Метод возвращает позицию, в которую располагается ссылка в секции меню */
     public function getSortMenu(): int
     {
-        return 500;
+        return 100;
     }
 
     /** Метод возвращает флаг "Показать в выпадающем меню"  */
