@@ -44,7 +44,6 @@ final class VariationController extends AbstractController
 	#[Route('/catalog/{category}/variation/{offer}/{variation}/{page<\d+>}', name: 'user.catalog.variation')]
 	public function index(
 		Request $request,
-		//#[MapEntity(mapping: ['url' => 'url', 'active' => true])] ProductCategoryInfo $info,
 		AllProductsByCategoryInterface $productsByCategory,
 		CategoryByUrlInterface $categoryByUrl,
 		string $category,
@@ -53,14 +52,8 @@ final class VariationController extends AbstractController
 		int $page = 0,
 	) : Response
 	{
-		
-		
-		//dd('Каталог с ВАРИАНТОВ с модифиакторами');
-		
-		//dump($info->getCategory());
-		//dump($productsByCategory->fetchAllProductByCategoryAssociative($info->getCategory()));
-		
-		$info = $categoryByUrl->fetchCategoryAssociative($category);
+
+        $info = $categoryByUrl->fetchCategoryAssociative($category);
 		
 		if(!$info)
 		{
@@ -68,10 +61,8 @@ final class VariationController extends AbstractController
 		}
 		
 		$CategoryUid = new ProductCategoryUid($info['category_id']);
-		
-		
-		//$ProductCategoryFilterDTO = new ProductCategoryFilterDTO($info->getCategory());
-		$ProductCategoryFilterDTO = new ProductCategoryFilterDTO($CategoryUid);
+
+        $ProductCategoryFilterDTO = new ProductCategoryFilterDTO($CategoryUid);
 		$ProductCategoryFilterDTO->setOffer($offer !== 'all' ? $offer : null);
 		$ProductCategoryFilterDTO->setVariation($variation);
 		$filterForm = $this->createForm(ProductCategoryFilterForm::class, $ProductCategoryFilterDTO,
@@ -132,10 +123,6 @@ final class VariationController extends AbstractController
 			'fields' =>  $fields,
             'all_search' => $allSearchForm->createView(),
 		]);
-		
-		//        return $this->render('home/index.html.twig', [
-		//            'controller_name' => 'HomeController',
-		//        ]);
 	}
 	
 }

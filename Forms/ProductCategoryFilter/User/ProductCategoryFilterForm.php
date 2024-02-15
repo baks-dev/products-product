@@ -97,12 +97,8 @@ final class ProductCategoryFilterForm extends AbstractType
 						$inputOffer->form(),
 						[
 							'label' => $offerField->getOption(),
-							//'mapped' => false,
 							'priority' => 200,
 							'required' => false,
-							
-							//'block_name' => $field['type'],
-							//'data' => isset($session[$field['type']]) ? $session[$field['type']] : null,
 						]
 					);
 					
@@ -122,13 +118,10 @@ final class ProductCategoryFilterForm extends AbstractType
 								$inputVariation->form(),
 								[
 									'label' => $variationField->getOption(),
-									//'mapped' => false,
 									'priority' => 199,
 									'required' => false,
-									
-									//'block_name' => $field['type'],
-									//'data' => isset($session[$field['type']]) ? $session[$field['type']] : null,
-								]
+
+                                ]
 							);
 							
 							/** Модификации множественных вариантов торгового предложения */
@@ -146,12 +139,8 @@ final class ProductCategoryFilterForm extends AbstractType
 										$inputModification->form(),
 										[
 											'label' => $modificationField->getOption(),
-											//'mapped' => false,
 											'priority' => 198,
 											'required' => false,
-											
-											//'block_name' => $field['type'],
-											//'data' => isset($session[$field['type']]) ? $session[$field['type']] : null,
 										]
 									);
 								}
@@ -169,14 +158,9 @@ final class ProductCategoryFilterForm extends AbstractType
 
 			if($fields)
 			{
-				
-				//dd($fields);
-				
 				$session = $this->request->getSession()->get('catalog_filter');
-				
-				//dump($session);
-				
-				$i = 100;
+
+                $i = 100;
 				foreach($fields as $field)
 				{
 					$input = $this->choice->getChoice(new  InputField($field['type']));

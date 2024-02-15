@@ -530,10 +530,8 @@ final class ProductAlternative implements ProductAlternativeInterface
 
         $qb->allGroupByExclude();
 
-        //GROUP BY product_modification.article, product_offer.value, product_offer.postfix, product_offer.id, product.id, product.event, category_offer.reference, category_offer_trans.name, product_variation.value, product_variation.postfix, product_variation.id, category_offer_variation.reference, category_offer_variation_trans.name, product_modification.value, product_modification.postfix, product_modification.id, category_offer_modification.reference, category_offer_modification_trans.name, article, price, currency, quantity, product_active.active_from, product_trans.name, product_info.url, category_trans.name, category_info.url
 
         //dd($qb->fetchAllAssociative());
-
 
 
         return $qb
