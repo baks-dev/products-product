@@ -102,7 +102,7 @@ class ProductInfo extends EntityReadonly
     {
         $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
 
-        if ($dto instanceof ProductInfoInterface)
+        if($dto instanceof ProductInfoInterface)
         {
             return parent::getDto($dto);
         }
@@ -113,14 +113,15 @@ class ProductInfo extends EntityReadonly
 
     public function setEntity($dto): mixed
     {
-        if ($dto instanceof ProductInfoInterface || $dto instanceof self) {
+        if($dto instanceof ProductInfoInterface || $dto instanceof self)
+        {
             return parent::setEntity($dto);
         }
 
         throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
     }
 
-    public function updateUrlUniq() : void
+    public function updateUrlUniq(): void
     {
         $this->url = uniqid($this->url.'_', false);
     }
