@@ -51,30 +51,6 @@ final class IndexController extends AbstractController
     {
 
 
-        //        /**
-        //         * Фильтр профиля пользователя
-        //         */
-        //
-        //        $profile = new ProductProfileFilterDTO($request, $this->getProfileUid());
-        //        $ROLE_ADMIN = $this->isGranted('ROLE_ADMIN');
-        //
-        //        if($ROLE_ADMIN)
-        //        {
-        //            $profileForm = $this->createForm(ProductProfileFilterFormAdmin::class, $profile, [
-        //                'action' => $this->generateUrl('products-product:admin.index'),
-        //            ]);
-        //        }
-        //        else
-        //        {
-        //            $profileForm = $this->createForm(ProductProfileFilterForm::class, $profile, [
-        //                'action' => $this->generateUrl('products-product:admin.index'),
-        //            ]);
-        //        }
-        //
-        //        $profileForm->handleRequest($request);
-        //        !$profileForm->isSubmitted() ?: $this->redirectToReferer();
-
-
         /**
          * Фильтр продукции по ТП
          */

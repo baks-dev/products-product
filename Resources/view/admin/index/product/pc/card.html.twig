@@ -48,7 +48,8 @@
                 </div>
 
 
-                <form method="post" class="position-absolute bottom-0 end-0 p-1">
+                <form method="post" action="{{ path('products-product:admin.index') }}"
+                      class="position-absolute bottom-0 end-0 p-1">
                     <input type="hidden" name="search_form[query]" value="{{ item.article }}">
 
                     {# <button type="submit"
