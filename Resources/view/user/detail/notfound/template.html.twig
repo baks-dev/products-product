@@ -25,8 +25,8 @@
 <script nonce="{{ csp_nonce() }}">
 document.querySelectorAll('.img-product').forEach((el) => el.addEventListener('click', () => document.getElementById('img-product').style.backgroundImage = el.style.backgroundImage ));
 
-document.getElementById('plus').addEventListener('click', () => { document.getElementById('result').value = document.getElementById('result').value * 1 + 1 } );
-document.getElementById('minus').addEventListener('click', () => {
+(document.getElementById('plus'))?.addEventListener('click', () => { document.getElementById('result').value = document.getElementById('result').value * 1 + 1 } );
+(document.getElementById('minus'))?.addEventListener('click', () => {
     let result = document.getElementById('result').value;
     if (result > 1) document.getElementById('result').value = result * 1 - 1 } );
 

@@ -36,8 +36,10 @@
 				
 				<td>
 					<div class='d-flex gap-3 align-items-center'>
-						
-						<a href="{{ path('products-product:user.detail', { url: alt.product_url,
+
+                        <a href="{{ path('products-product:user.detail', {
+                            category: alt.category_url,
+                            url: alt.product_url,
 							offer : alt.product_offer_value,
 							variation : alt.product_variation_value,
 							modification : alt.product_modification_value

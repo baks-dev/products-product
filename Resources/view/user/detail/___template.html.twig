@@ -139,7 +139,7 @@
 document.querySelectorAll('.img-product').forEach((el) => el.addEventListener('click', () => document.getElementById('img-product').style.backgroundImage = el.style.backgroundImage ));
 
 /* Счетчик  */
-document.getElementById('plus').addEventListener('click', () => {
+(document.getElementById('plus'))?.addEventListener('click', () => {
     
     let price_total = document.getElementById('order_product_form_price_total');
      let result = price_total.value;
@@ -150,7 +150,7 @@ document.getElementById('plus').addEventListener('click', () => {
 });
 
 
-document.getElementById('minus').addEventListener('click', () => {
+(document.getElementById('minus'))?.addEventListener('click', () => {
     
     
     let price_total = document.getElementById('order_product_form_price_total');
@@ -159,27 +159,7 @@ document.getElementById('minus').addEventListener('click', () => {
     if (result > 1) document.getElementById('order_product_form_price_total').value = result * 1 - 1 } );
 
 </script>
-{#<script>
 
-
- window.addEventListener('load', function () {
-
-     /*jsRequire('https://cdn.jsdelivr.net/npm/bs5-lightbox@1.8.2/dist/index.bundle.min.js');*/
-
-     /*import Lightbox from 'bs5-lightbox';*/
-
-/*const options = {
-	keyboard: true,
-	size: 'fullscreen'
-};
-
-document.querySelectorAll('.my-lightbox-toggle').forEach((el) => el.addEventListener('click', (e) => {
-	e.preventDefault();
-	const lightbox = new Lightbox(el, options);
-	lightbox.show();
-}));*/
- });
-</script>#}
 
 {% endblock %}
 
