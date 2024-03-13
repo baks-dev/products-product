@@ -129,47 +129,14 @@
 {% endblock %}
 
 
-
-
-{# ---- CSS ------------------------------------------------------------ #}
-{#  {% block stylesheets %}
-	 
-	 <style>
-
-	 </style>
-
- {% endblock %} #}
-
-{# ---- HEADER-БЛОК ------------------------------------------------------------ #}
-{# {% block header %}
-    {{ include(_self|replace({ "template.html.twig": "header.html.twig" })) }}
-{% endblock %} #}
-
-
-{# ---- LEFT-БЛОК ------------------------------------------------------------ #}
-{# {% block left %} #}
-{#   {% include '@Template/flowers/left.html.twig' %} #}
-{# {% endblock %} #}
-
-
 {# ---- КОНТЕНТ-БЛОК ------------------------------------------------------------ #}
 {% block content %}
-
-
-
-
     {{ include(_self|replace({ "template.html.twig":baks_settings.device~"/content.html.twig" })) }}
-    <div style="display: none !important;"
-         class='accordion accordion-button btn-link p-0 collapsed tooltip bs-tooltip-bottom bs-tooltip-start bs-tooltip-end alert alert-warning rounded-4 mt-3'>
-    </div>
-
 {% endblock %}
 
 
-
-
 {% block javascript %}
-<script async data-src="/assets/order_orders/modal_basket.min.js?v={{ version }}" class='lazy'></script>
+<script nonce='{{ csp_nonce() }}' async  data-src="/assets/order_orders/modal_basket.min.js?v={{ version }}" class='lazy'></script>
 <script nonce="{{ csp_nonce() }}">
 document.querySelectorAll('.img-product').forEach((el) => el.addEventListener('click', () => document.getElementById('img-product').style.backgroundImage = el.style.backgroundImage ));
 </script>
