@@ -44,5 +44,6 @@ return static function (FrameworkConfig $framework) {
     ;
 
     $messenger->transport('failed-products-product')
-        ->dsn('%env(MESSENGER_TRANSPORT_DSN)%');
+        ->dsn('%env(MESSENGER_TRANSPORT_DSN)%')
+        ->options(['queue_name' => 'failed-products-product']);
 };
