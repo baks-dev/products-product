@@ -20,8 +20,8 @@ namespace BaksDev\Products\Product\Command;
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Core\Doctrine\ORMQueryBuilder;
-use BaksDev\Files\Resources\Messanger\Request\Images\CDNUploadImage;
-use BaksDev\Files\Resources\Messanger\Request\Images\CDNUploadImageMessage;
+use BaksDev\Files\Resources\Messenger\Request\Images\CDNUploadImage;
+use BaksDev\Files\Resources\Messenger\Request\Images\CDNUploadImageMessage;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Modify\ProductModify;
 use BaksDev\Products\Product\Entity\Offers\Image\ProductOfferImage;

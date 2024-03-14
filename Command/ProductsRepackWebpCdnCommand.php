@@ -18,8 +18,8 @@
 
 namespace BaksDev\Products\Product\Command;
 
-use BaksDev\Files\Resources\Messanger\Request\Images\CDNUploadImage;
-use BaksDev\Files\Resources\Messanger\Request\Images\CDNUploadImageMessage;
+use BaksDev\Files\Resources\Messenger\Request\Images\CDNUploadImage;
+use BaksDev\Files\Resources\Messenger\Request\Images\CDNUploadImageMessage;
 use BaksDev\Products\Product\Entity\Offers\Image\ProductOfferImage;
 use BaksDev\Products\Product\Entity\Offers\Variation\Image\ProductVariationImage;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Image\ProductModificationImage;
