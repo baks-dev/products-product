@@ -1,7 +1,7 @@
 {% trans_default_domain 'admin.products.product' %}
 
 <div class="d-flex justify-content-around pb-3 radio-buttons " data-buttons="true">
-	<label class="btn p-3 border-dashed rounded-3 w-100 {{ form.price.request.vars.data ? 'active' }}">
+    <label class="btn p-3 border-dotted rounded-3 w-100 {{ form.price.request.vars.data ? 'active' }}">
 		<div class="form-check d-flex h3 align-items-center">
 			{{ form_widget(form.price.request, { label: false }) }}
 			<div class='d-flex flex-column' style='font-size: 1.2rem;'>

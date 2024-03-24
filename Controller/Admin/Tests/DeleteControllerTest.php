@@ -143,6 +143,7 @@ final class DeleteControllerTest extends WebTestCase
 
                 // Full authentication is required to access this resource
                 self::assertResponseStatusCodeSame(401);
+
             }
         }
 
