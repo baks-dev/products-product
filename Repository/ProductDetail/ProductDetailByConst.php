@@ -26,9 +26,7 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Repository\ProductDetail;
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
-use BaksDev\Core\Type\Locale\Locale;
 use BaksDev\Products\Category\Entity as CategoryEntity;
-
 use BaksDev\Products\Product\Entity\Active\ProductActive;
 use BaksDev\Products\Product\Entity\Category\ProductCategory;
 use BaksDev\Products\Product\Entity\Description\ProductDescription;
