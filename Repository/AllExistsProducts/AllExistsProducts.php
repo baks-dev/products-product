@@ -84,7 +84,7 @@ final class AllExistsProducts implements AllExistsProductsInterface
     }
 
 
-    /** Получает всю продукцию, имеющуюся в наличие */
+    /** Получает всю продукцию, имеющуюся в наличии */
     public function getAllProducts(): PaginatorInterface
     {
         $qb = $this->DBALQueryBuilder

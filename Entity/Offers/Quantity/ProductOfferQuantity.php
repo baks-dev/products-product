@@ -46,11 +46,11 @@ class ProductOfferQuantity extends EntityEvent
 	#[ORM\OneToOne(inversedBy: 'quantity', targetEntity: ProductOffer::class)]
 	#[ORM\JoinColumn(name: 'offer', referencedColumnName: "id")]
 	private ProductOffer $offer;
-	
-	/** В наличие */
+
+    /** В наличии */
     #[Assert\Type('integer')]
 	#[ORM\Column(type: Types::INTEGER, options: ['default' => 0])]
-	private ?int $quantity = 0; // 0 - нет в наличие
+    private ?int $quantity = 0; // 0 - нет в наличии
 	
 	/** Резерв */
     #[Assert\Type('integer')]

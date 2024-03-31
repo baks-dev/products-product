@@ -28,16 +28,16 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 final class ProductOfferQuantityDTO implements ProductOfferQuantityInterface
 {
-	/** В наличие */
-	private ?int $quantity = null; // 0 - нет в наличие
+    /** В наличии */
+    private ?int $quantity = null; // 0 - нет в наличии
 	
 	/** Резерв */
 	#[Assert\NotBlank]
 	#[Assert\Range(min: 0)]
 	private ?int $reserve = 0;
-	
-	
-	/** В наличие */
+
+
+    /** В наличии */
 	
 	public function getQuantity() : ?int
 	{

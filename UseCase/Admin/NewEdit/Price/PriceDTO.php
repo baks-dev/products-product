@@ -43,9 +43,9 @@ final class PriceDTO implements ProductPriceInterface
 	/** Цена по запросу */
 	private bool $request = false;
 
-	/** В наличие */
+    /** В наличии */
     #[Assert\Range(min: 0)]
-	private ?int $quantity = 0; // 0 - нет в наличие
+    private ?int $quantity = 0; // 0 - нет в наличии
 
 	/** Резерв */
     #[Assert\Range(min: 0)]

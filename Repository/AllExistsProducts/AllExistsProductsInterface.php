@@ -30,7 +30,7 @@ interface AllExistsProductsInterface
 
     public function filter(ProductFilterDTO $filter): self;
 
-    /** Метод всю возвращает продукцию, которая имеется в наличие */
+    /** Метод всю возвращает продукцию, которая имеется в наличии */
     public function getAllProducts(): PaginatorInterface;
 
 }

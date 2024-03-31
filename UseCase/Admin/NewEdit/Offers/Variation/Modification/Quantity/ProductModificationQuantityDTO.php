@@ -29,8 +29,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 /** @see ProductModificationQuantity */
 final class ProductModificationQuantityDTO implements ProductModificationQuantityInterface
 {
-	/** В наличие */
-	private ?int $quantity = null; // 0 - нет в наличие
+    /** В наличии */
+    private ?int $quantity = null; // 0 - нет в наличии
 
 	/** Резерв */
 	#[Assert\NotBlank]
@@ -38,7 +38,7 @@ final class ProductModificationQuantityDTO implements ProductModificationQuantit
 	private ?int $reserve = 0;
 
 
-	/** В наличие */
+    /** В наличии */
 
 	public function getQuantity() : ?int
 	{

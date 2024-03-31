@@ -40,13 +40,13 @@ class ProductVariationQuantity extends EntityEvent
 	
 	/** ID события */
 	#[ORM\Id]
-	#[ORM\OneToOne(inversedBy: 'quantity', targetEntity: ProductVariation::class)]
+    #[ORM\OneToOne(targetEntity: ProductVariation::class, inversedBy: 'quantity')]
 	#[ORM\JoinColumn(name: 'variation', referencedColumnName: "id")]
 	private ProductVariation $variation;
-	
-	/** В наличие */
+
+    /** В наличии */
 	#[ORM\Column(type: Types::INTEGER, options: ['default' => 0])]
-	private ?int $quantity = 0; // 0 - нет в наличие
+    private ?int $quantity = 0; // 0 - нет в наличии
 	
 	/** Резерв */
 	#[ORM\Column(type: Types::INTEGER, options: ['default' => 0])]

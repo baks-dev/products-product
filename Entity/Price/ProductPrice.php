@@ -42,7 +42,7 @@ class ProductPrice extends EntityEvent
 
     /** ID события */
     #[ORM\Id]
-    #[ORM\OneToOne(inversedBy: 'price', targetEntity: ProductEvent::class)]
+    #[ORM\OneToOne(targetEntity: ProductEvent::class, inversedBy: 'price')]
     #[ORM\JoinColumn(name: 'event', referencedColumnName: 'id')]
     private ProductEvent $event;
 
@@ -58,9 +58,9 @@ class ProductPrice extends EntityEvent
     #[ORM\Column(type: Types::BOOLEAN, nullable: false)]
     private bool $request = false;
 
-    /** В наличие */
+    /** В наличии */
     #[ORM\Column(type: Types::INTEGER, options: ['default' => 0])]
-    private ?int $quantity = 0; // 0 - нет в наличие
+    private ?int $quantity = 0; // 0 - нет в наличии
 
     /** Резерв */
     #[ORM\Column(type: Types::INTEGER, options: ['default' => 0])]

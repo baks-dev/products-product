@@ -74,8 +74,8 @@ final class PriceForm extends AbstractType
 		
 		/* Цена по запросу */
 		$builder->add('request', CheckboxType::class, ['label' => false, 'required' => false]);
-		
-		/* Количество В наличие */
+
+        /* Количество В наличии */
 		$builder->add('quantity', IntegerType::class, ['required' => false]);
 		
 		/* Зарезервирован */

@@ -34,7 +34,7 @@ final class ProductOfferVariationModificationQuantityForm extends AbstractType
 	
 	public function buildForm(FormBuilderInterface $builder, array $options) : void
 	{
-		/* Количество В наличие */
+        /* Количество В наличии */
 		$builder->add('quantity', IntegerType::class, ['required' => false, 'label' => false,]);
 		
 		/* Зарезервирован */

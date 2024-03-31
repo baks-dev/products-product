@@ -45,13 +45,13 @@ class ProductModificationQuantity extends EntityEvent
     #[Assert\NotBlank]
     #[Assert\Uuid]
     #[ORM\Id]
-    #[ORM\OneToOne(inversedBy: 'quantity', targetEntity: ProductModification::class)]
+    #[ORM\OneToOne(targetEntity: ProductModification::class, inversedBy: 'quantity')]
     #[ORM\JoinColumn(name: 'modification', referencedColumnName: "id")]
     private ProductModification $modification;
 
-    /** В наличие */
+    /** В наличии */
     #[ORM\Column(type: Types::INTEGER, options: ['default' => 0])]
-    private ?int $quantity = 0; // 0 - нет в наличие
+    private ?int $quantity = 0; // 0 - нет в наличии
 
     /** Резерв */
     #[ORM\Column(type: Types::INTEGER, options: ['default' => 0])]
