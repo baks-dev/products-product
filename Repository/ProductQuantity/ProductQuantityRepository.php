@@ -25,8 +25,10 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Repository\ProductQuantity;
 
-use BaksDev\Products\Product\Entity as ProductEntity;
+
+use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Price\ProductPrice;
+use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -48,19 +50,19 @@ final class ProductQuantityRepository implements ProductQuantityInterface
 
         $qb->select('price');
 
-        $qb->from(ProductEntity\Product::class, 'product');
+        $qb->from(Product::class, 'product');
         $qb->where('product.id = :product');
         $qb->setParameter('product', $product, ProductUid::TYPE);
 
         $qb->join(
-            ProductEntity\Event\ProductEvent::class,
+            ProductEvent::class,
             'event',
             'WITH',
             'event.id = product.event'
         );
 
         $qb->join(
-            ProductEntity\Price\ProductPrice::class,
+            ProductPrice::class,
             'price',
             'WITH',
             'price.event = product.event'

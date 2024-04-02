@@ -143,7 +143,7 @@ final class ProductDetailByConstRepository implements ProductDetailByConstInterf
                 'product',
                 ProductInfo::class,
                 'product_info',
-                'product_info.product = product.event '
+                'product_info.product = product.id '
             )
             ->addGroupBy('product_info.article');
 

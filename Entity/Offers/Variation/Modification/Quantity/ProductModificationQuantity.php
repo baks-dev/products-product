@@ -104,11 +104,16 @@ class ProductModificationQuantity extends EntityEvent
         $this->reserve += $reserve;
     }
 
-
     /** Удаляем из резерва указанное количество */
     public function subReserve(?int $reserve): void
     {
         $this->reserve -= $reserve;
+    }
+
+    /** Присваиваем резерву указанное количество */
+    public function setReserve(?int $reserve): void
+    {
+        $this->reserve = $reserve ?: 0;
     }
 
 
@@ -118,10 +123,16 @@ class ProductModificationQuantity extends EntityEvent
         $this->quantity -= $quantity;
     }
 
-
     /** Добавляем в наличие указанное количество */
     public function addQuantity(?int $quantity): void
     {
         $this->quantity += $quantity;
     }
+
+    /** Присваиваем наличию указанное количество */
+    public function setQuantity(?int $quantity): void
+    {
+        $this->quantity = $quantity ?: 0;
+    }
+
 }

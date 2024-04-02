@@ -121,6 +121,15 @@ class ProductPrice extends EntityEvent
         $this->reserve -= $reserve;
     }
 
+    /** Присваиваем резерву указанное количество */
+    public function setReserve(?int $reserve): void
+    {
+        $this->reserve = $reserve ?: 0;
+    }
+
+
+
+
     /** Удаляем из наличия указанное количество */
     public function subQuantity(?int $quantity): void
     {
@@ -133,9 +142,16 @@ class ProductPrice extends EntityEvent
         $this->quantity += $quantity;
     }
 
-    /** Возвращает текущее состояни наличия */
+    /** Возвращает текущее состояние наличия */
     public function getQuantity(): ?int
     {
         return $this->quantity;
     }
+
+    /** Присваиваем наличию указанное количество */
+    public function setQuantity(?int $quantity): void
+    {
+        $this->quantity = $quantity ?: 0;
+    }
+
 }

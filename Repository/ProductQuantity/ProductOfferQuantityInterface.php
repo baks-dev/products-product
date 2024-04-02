@@ -23,6 +23,7 @@
 
 namespace BaksDev\Products\Product\Repository\ProductQuantity;
 
+use BaksDev\Products\Product\Entity\Offers\Quantity\ProductOfferQuantity;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 
@@ -32,5 +33,5 @@ interface ProductOfferQuantityInterface
     public function getProductOfferQuantity(
         ProductUid $product,
         ProductOfferConst $offer
-    ): ?\BaksDev\Products\Product\Entity\Offers\Quantity\ProductOfferQuantity;
+    ): ?ProductOfferQuantity;
 }

@@ -25,16 +25,21 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Repository\ProductQuantity;
 
-use BaksDev\Products\Category\Entity as CategoryEntity;
-use BaksDev\Products\Product\Entity as ProductEntity;
+
+use BaksDev\Products\Category\Entity\Offers\Variation\Modification\ProductCategoryModification;
+use BaksDev\Products\Product\Entity\Event\ProductEvent;
+use BaksDev\Products\Product\Entity\Offers\ProductOffer;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Quantity\ProductModificationQuantity;
+use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
+use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
 use Doctrine\ORM\EntityManagerInterface;
 
-final class ProductModificationQuantityRepository implements ProductModificationQuantityRepositoryInterface
+final class ProductModificationQuantityRepository implements ProductModificationQuantityInterface
 {
     private EntityManagerInterface $entityManager;
 
@@ -54,13 +59,13 @@ final class ProductModificationQuantityRepository implements ProductModification
 
         $qb->select('quantity');
 
-        $qb->from(ProductEntity\Product::class, 'product');
+        $qb->from(Product::class, 'product');
 
         $qb->where('product.id = :product');
         $qb->setParameter('product', $product, ProductUid::TYPE);
 
         $qb->join(
-            ProductEntity\Event\ProductEvent::class,
+            ProductEvent::class,
             'event',
             'WITH',
             'event.id = product.event'
@@ -69,7 +74,7 @@ final class ProductModificationQuantityRepository implements ProductModification
         // Торговое предложение
 
         $qb->join(
-            ProductEntity\Offers\ProductOffer::class,
+            ProductOffer::class,
             'offer',
             'WITH',
             'offer.event = event.id AND offer.const = :offer_const'
@@ -80,7 +85,7 @@ final class ProductModificationQuantityRepository implements ProductModification
         // Множественный вариант
 
         $qb->join(
-            ProductEntity\Offers\Variation\ProductVariation::class,
+            ProductVariation::class,
             'variation',
             'WITH',
             'variation.offer = offer.id AND variation.const = :variation_const'
@@ -91,14 +96,14 @@ final class ProductModificationQuantityRepository implements ProductModification
         // Модификация множественного варианта
 
         $qb->join(
-            ProductEntity\Offers\Variation\Modification\ProductModification::class,
+            ProductModification::class,
             'modification',
             'WITH',
             'modification.variation = variation.id AND modification.const = :modification_const'
         );
 
         $qb->leftJoin(
-            ProductEntity\Offers\Variation\Modification\Quantity\ProductModificationQuantity::class,
+            ProductModificationQuantity::class,
             'quantity',
             'WITH',
             'quantity.modification = modification.id'
@@ -109,7 +114,7 @@ final class ProductModificationQuantityRepository implements ProductModification
         // Только если у модификации указан количественный учет
 
         $qb->join(
-            CategoryEntity\Offers\Variation\Modification\ProductCategoryModification::class,
+            ProductCategoryModification::class,
             'category_modification',
             'WITH',
             'category_modification.id = modification.categoryModification AND category_modification.quantitative = true'

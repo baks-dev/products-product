@@ -26,7 +26,7 @@ namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modifi
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Quantity\ProductModificationQuantityInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/** @see ProductModificationQuantity */
+/** @see ProductModificationQuantityRepository */
 final class ProductModificationQuantityDTO implements ProductModificationQuantityInterface
 {
     /** В наличии */

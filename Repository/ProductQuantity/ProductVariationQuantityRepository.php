@@ -25,7 +25,7 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Repository\ProductQuantity;
 
-use BaksDev\Products\Category\Entity as CategoryEntity;
+use BaksDev\Products\Category\Entity\Offers\Variation\ProductCategoryVariation;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
@@ -36,7 +36,7 @@ use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
 use Doctrine\ORM\EntityManagerInterface;
 
-final class ProductVariationQuantityRepository implements ProductVariationQuantityRepositoryInterface
+final class ProductVariationQuantityRepository implements ProductVariationQuantityInterface
 {
     private EntityManagerInterface $entityManager;
 
@@ -100,7 +100,7 @@ final class ProductVariationQuantityRepository implements ProductVariationQuanti
         // Только если у модификации указан количественный учет
 
         $qb->join(
-            CategoryEntity\Offers\Variation\ProductCategoryVariation::class,
+            ProductCategoryVariation::class,
             'category_variation',
             'WITH',
             'category_variation.id = variation.categoryVariation AND category_variation.quantitative = true'

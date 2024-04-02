@@ -23,18 +23,20 @@
 
 namespace BaksDev\Products\Product\Repository\ProductQuantity;
 
-
-use BaksDev\Products\Product\Entity\Offers\Variation\Quantity\ProductVariationQuantity;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Quantity\ProductModificationQuantity;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
+use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
 
-interface ProductVariationQuantityRepositoryInterface
+interface ProductModificationQuantityInterface
 {
-    /** Метод возвращает количественный учет множественного варианта */
-    public function getProductVariationQuantity(
+    /** Метод возвращает количественный учет модификации множественного варианта */
+
+    public function getProductModificationQuantity(
         ProductUid $product,
         ProductOfferConst $offer,
-        ProductVariationConst $variation
-    ): ?ProductVariationQuantity;
+        ProductVariationConst $variation,
+        ProductModificationConst $modification
+    ): ?ProductModificationQuantity;
 }
