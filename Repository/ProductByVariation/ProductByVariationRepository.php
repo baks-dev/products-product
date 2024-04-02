@@ -34,7 +34,7 @@ use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use Doctrine\ORM\EntityManagerInterface;
 
-final class ProductByVariation implements ProductByVariationInterface
+final class ProductByVariationRepository implements ProductByVariationInterface
 {
     private ORMQueryBuilder $ORMQueryBuilder;
 

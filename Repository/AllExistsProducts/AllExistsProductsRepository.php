@@ -26,6 +26,7 @@ namespace BaksDev\Products\Product\Repository\AllExistsProducts;
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Core\Form\Search\SearchDTO;
 use BaksDev\Core\Services\Paginator\PaginatorInterface;
+
 //use BaksDev\Products\Category\Entity as CategoryEntity;
 use BaksDev\Products\Category\Entity\Offers\ProductCategoryOffers;
 use BaksDev\Products\Category\Entity\Offers\Variation\Modification\ProductCategoryModification;
@@ -54,7 +55,7 @@ use BaksDev\Users\Profile\UserProfile\Entity\Personal\UserProfilePersonal;
 use BaksDev\Users\Profile\UserProfile\Entity\UserProfile;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 
-final class AllExistsProducts implements AllExistsProductsInterface
+final class AllExistsProductsRepository implements AllExistsProductsInterface
 {
     private PaginatorInterface $paginator;
     private DBALQueryBuilder $DBALQueryBuilder;
@@ -220,7 +221,6 @@ final class AllExistsProducts implements AllExistsProductsInterface
             'product_offer_quantity',
             'product_offer_quantity.offer = product_offer.id'
         );
-
 
 
         /** Множественные варианты торгового предложения */

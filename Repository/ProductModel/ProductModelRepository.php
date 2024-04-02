@@ -33,7 +33,7 @@ use BaksDev\Products\Product\Type\Id\ProductUid;
 use Doctrine\DBAL\Connection;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-final class ProductModel implements ProductModelInterface
+final class ProductModelRepository implements ProductModelInterface
 {
 
     //	private Connection $connection;
@@ -128,8 +128,6 @@ final class ProductModel implements ProductModelInterface
             )->setParameter('device', 'pc');
 
 
-
-
         /** Цена товара */
         $qb->leftJoin(
             'product_event',
@@ -137,10 +135,10 @@ final class ProductModel implements ProductModelInterface
             'product_price',
             'product_price.event = product_event.id'
         )
-//            ->addGroupBy('product_price.price')
-//            ->addGroupBy('product_price.currency')
-//            ->addGroupBy('product_price.quantity')
-//            ->addGroupBy('product_price.reserve')
+            //            ->addGroupBy('product_price.price')
+            //            ->addGroupBy('product_price.currency')
+            //            ->addGroupBy('product_price.quantity')
+            //            ->addGroupBy('product_price.reserve')
         ;
 
         /* ProductInfo */
@@ -152,8 +150,7 @@ final class ProductModel implements ProductModelInterface
             ProductEntity\Info\ProductInfo::TABLE,
             'product_info',
             'product_info.product = product.id '
-        )
-            //->addGroupBy('product_info.article')
+        )//->addGroupBy('product_info.article')
         ;
 
 
@@ -184,12 +181,12 @@ final class ProductModel implements ProductModelInterface
         );
 
         /** Цена торгового предожения */
-//        $qb->leftJoin(
-//            'product_offer',
-//            ProductEntity\Offers\Price\ProductOfferPrice::TABLE,
-//            'product_offer_price',
-//            'product_offer_price.offer = product_offer.id'
-//        );
+        //        $qb->leftJoin(
+        //            'product_offer',
+        //            ProductEntity\Offers\Price\ProductOfferPrice::TABLE,
+        //            'product_offer_price',
+        //            'product_offer_price.offer = product_offer.id'
+        //        );
 
 
         $qb
@@ -200,7 +197,6 @@ final class ProductModel implements ProductModelInterface
                 'product_offer_price.offer = product_offer.id',
                 'offer'
             );
-
 
 
         /** Наличие и резерв торгового предложения */
@@ -238,12 +234,12 @@ final class ProductModel implements ProductModelInterface
         );
 
         /* Цена множественного варианта */
-//        $qb->leftJoin(
-//            'product_offer_variation',
-//            ProductEntity\Offers\Variation\Price\ProductVariationPrice::TABLE,
-//            'product_variation_price',
-//            'product_variation_price.variation = product_offer_variation.id'
-//        );
+        //        $qb->leftJoin(
+        //            'product_offer_variation',
+        //            ProductEntity\Offers\Variation\Price\ProductVariationPrice::TABLE,
+        //            'product_variation_price',
+        //            'product_variation_price.variation = product_offer_variation.id'
+        //        );
 
         $qb
             ->leftOneJoin(
@@ -278,8 +274,7 @@ final class ProductModel implements ProductModelInterface
             ProductEntity\Offers\Variation\Modification\ProductModification::TABLE,
             'product_offer_modification',
             'product_offer_modification.variation = product_offer_variation.id'
-        )
-            //->addGroupBy('product_offer_modification.article')
+        )//->addGroupBy('product_offer_modification.article')
         ;
 
         /** Получаем название типа */
@@ -300,41 +295,40 @@ final class ProductModel implements ProductModelInterface
 
 
         /* Цена модификации множественного варианта */
-//        $qb->leftJoin(
-//            'product_offer_modification',
-//            ProductEntity\Offers\Variation\Modification\Price\ProductModificationPrice::TABLE,
-//            'product_modification_price',
-//            'product_modification_price.modification = product_offer_modification.id'
-//        )
-//            //->addGroupBy('product_modification_price.price')
-//            //->addGroupBy('product_modification_price.currency')
-//        ;
+        //        $qb->leftJoin(
+        //            'product_offer_modification',
+        //            ProductEntity\Offers\Variation\Modification\Price\ProductModificationPrice::TABLE,
+        //            'product_modification_price',
+        //            'product_modification_price.modification = product_offer_modification.id'
+        //        )
+        //            //->addGroupBy('product_modification_price.price')
+        //            //->addGroupBy('product_modification_price.currency')
+        //        ;
 
 
         $qb
             ->leftOneJoin(
-            'product_offer_modification',
-            ProductEntity\Offers\Variation\Modification\Price\ProductModificationPrice::TABLE,
-            'product_modification_price',
-            'product_modification_price.modification = product_offer_modification.id',
-            'modification'
-        );
+                'product_offer_modification',
+                ProductEntity\Offers\Variation\Modification\Price\ProductModificationPrice::TABLE,
+                'product_modification_price',
+                'product_modification_price.modification = product_offer_modification.id',
+                'modification'
+            );
 
 
         //$qb->addSelect('MIN(product_modification_price.price) AS product_price');
 
         /** Стоимость продукта */
-//        $qb->addSelect("
-//                    CASE
-//                       WHEN product_modification_price.price > 0 THEN product_modification_price.price
-//                       WHEN MIN(product_variation_price.price) > 0 THEN MIN(product_variation_price.price)
-//                       WHEN MIN(product_offer_price.price) > 0 THEN MIN(product_offer_price.price)
-//                       WHEN product_price.price IS NOT NULL AND product_price.price > 0 THEN product_price.price
-//                       ELSE NULL
-//                    END AS product_price
-//                "
-//        );
-
+        //        $qb->addSelect("
+        //                    CASE
+        //                       WHEN product_modification_price.price > 0 THEN product_modification_price.price
+        //                       WHEN MIN(product_variation_price.price) > 0 THEN MIN(product_variation_price.price)
+        //                       WHEN MIN(product_offer_price.price) > 0 THEN MIN(product_offer_price.price)
+        //                       WHEN product_price.price IS NOT NULL AND product_price.price > 0 THEN product_price.price
+        //                       ELSE NULL
+        //                    END AS product_price
+        //                "
+        //        );
 
 
         /* Наличие и резерв модификации множественного варианта */
@@ -532,87 +526,80 @@ final class ProductModel implements ProductModelInterface
         );
 
 
-
-
-
         //$qb->addSelect('product_price.price AS product_price');
 
 
-
-
-       // $qb->addSelect('product_modification_price.price AS product_price');
+        // $qb->addSelect('product_modification_price.price AS product_price');
 
 
         /** Минимальная стоиомсть продукта */
-//        $qb->addSelect("CASE
-//
-//
-//                   /* СТОИМОСТЬ МОДИФИКАЦИИ */
-//        WHEN (ARRAY_AGG(
-//                            DISTINCT product_modification_price.price ORDER BY product_modification_price.price
-//                         )
-//                         FILTER
-//                         (
-//                            WHERE  product_modification_price.price > 0
-//                         )
-//                     )[1] > 0
-//
-//                     THEN (ARRAY_AGG(
-//                            DISTINCT product_modification_price.price ORDER BY product_modification_price.price
-//                         )
-//                         FILTER
-//                         (
-//                            WHERE  product_modification_price.price > 0
-//                         )
-//                     )[1]
-//
-//
-//         /* СТОИМОСТЬ ВАРИАНТА */
-//         WHEN (ARRAY_AGG(
-//                            DISTINCT product_variation_price.price ORDER BY product_variation_price.price
-//                         )
-//                         FILTER
-//                         (
-//                            WHERE  product_variation_price.price > 0
-//                         )
-//                     )[1] > 0
-//
-//                     THEN (ARRAY_AGG(
-//                            DISTINCT product_variation_price.price ORDER BY product_variation_price.price
-//                         )
-//                         FILTER
-//                         (
-//                            WHERE  product_variation_price.price > 0
-//                         )
-//                     )[1]
-//
-//         /* СТОИМОСТЬ ТП */
-//            WHEN (ARRAY_AGG(
-//                            DISTINCT product_offer_price.price ORDER BY product_offer_price.price
-//                         )
-//                         FILTER
-//                         (
-//                            WHERE  product_offer_price.price > 0
-//                         )
-//                     )[1] > 0
-//
-//                     THEN (ARRAY_AGG(
-//                            DISTINCT product_offer_price.price ORDER BY product_offer_price.price
-//                         )
-//                         FILTER
-//                         (
-//                            WHERE  product_offer_price.price > 0
-//                         )
-//                     )[1]
-//
-//
-//			   WHEN product_price.price IS NOT NULL THEN product_price.price
-//			   ELSE NULL
-//			END AS product_price
-//		"
-//        );
-
-
+        //        $qb->addSelect("CASE
+        //
+        //
+        //                   /* СТОИМОСТЬ МОДИФИКАЦИИ */
+        //        WHEN (ARRAY_AGG(
+        //                            DISTINCT product_modification_price.price ORDER BY product_modification_price.price
+        //                         )
+        //                         FILTER
+        //                         (
+        //                            WHERE  product_modification_price.price > 0
+        //                         )
+        //                     )[1] > 0
+        //
+        //                     THEN (ARRAY_AGG(
+        //                            DISTINCT product_modification_price.price ORDER BY product_modification_price.price
+        //                         )
+        //                         FILTER
+        //                         (
+        //                            WHERE  product_modification_price.price > 0
+        //                         )
+        //                     )[1]
+        //
+        //
+        //         /* СТОИМОСТЬ ВАРИАНТА */
+        //         WHEN (ARRAY_AGG(
+        //                            DISTINCT product_variation_price.price ORDER BY product_variation_price.price
+        //                         )
+        //                         FILTER
+        //                         (
+        //                            WHERE  product_variation_price.price > 0
+        //                         )
+        //                     )[1] > 0
+        //
+        //                     THEN (ARRAY_AGG(
+        //                            DISTINCT product_variation_price.price ORDER BY product_variation_price.price
+        //                         )
+        //                         FILTER
+        //                         (
+        //                            WHERE  product_variation_price.price > 0
+        //                         )
+        //                     )[1]
+        //
+        //         /* СТОИМОСТЬ ТП */
+        //            WHEN (ARRAY_AGG(
+        //                            DISTINCT product_offer_price.price ORDER BY product_offer_price.price
+        //                         )
+        //                         FILTER
+        //                         (
+        //                            WHERE  product_offer_price.price > 0
+        //                         )
+        //                     )[1] > 0
+        //
+        //                     THEN (ARRAY_AGG(
+        //                            DISTINCT product_offer_price.price ORDER BY product_offer_price.price
+        //                         )
+        //                         FILTER
+        //                         (
+        //                            WHERE  product_offer_price.price > 0
+        //                         )
+        //                     )[1]
+        //
+        //
+        //			   WHEN product_price.price IS NOT NULL THEN product_price.price
+        //			   ELSE NULL
+        //			END AS product_price
+        //		"
+        //        );
 
 
         /** Валюта продукта */

@@ -23,46 +23,49 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\Repository\CurrentProductEvent;
+namespace BaksDev\Products\Product\Repository\CurrentQuantity;
 
-use BaksDev\Core\Doctrine\ORMQueryBuilder;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
+use BaksDev\Products\Product\Entity\Price\ProductPrice;
 use BaksDev\Products\Product\Entity\Product;
-use BaksDev\Products\Product\Type\Id\ProductUid;
+use BaksDev\Products\Product\Type\Event\ProductEventUid;
 
-final class CurrentProductEvent implements CurrentProductEventInterface
+use Doctrine\ORM\EntityManagerInterface;
+
+final class CurrentQuantityByEventRepository implements CurrentQuantityByEventInterface
 {
+    private EntityManagerInterface $entityManager;
 
-    private ORMQueryBuilder $ORMQueryBuilder;
 
-    public function __construct(ORMQueryBuilder $ORMQueryBuilder)
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->ORMQueryBuilder = $ORMQueryBuilder;
+        $this->entityManager = $entityManager;
     }
 
-    /**
-     * Метод возвращает активное событие продукции
-     */
-    public function getProductEvent(mixed $product): ?ProductEvent
+
+    public function getQuantity(ProductEventUid $event): ?ProductPrice
     {
-        $product = new ProductUid((string) $product);
+        $qb = $this->entityManager->createQueryBuilder();
 
-        $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
+        $qb->select('quantity');
 
-        $qb
-            ->from(Product::class, 'product')
-            ->where('product.id = :product')
-            ->setParameter('product', $product, ProductUid::TYPE);
-        $qb
-            ->select('event')
-            ->join(
-                ProductEvent::class,
-                'event',
-                'WITH',
-                'event.id = product.event AND event.main = product.id'
-            );
+        $qb->from(ProductEvent::class, 'event');
 
 
-        return $qb->getOneOrNullResult();
+        $qb->join(Product::class,
+            'product', 'WITH', 'product.id = event.main'
+        );
+
+        /** Текущее наличие */
+        $qb->leftJoin(ProductPrice::class,
+            'quantity', 'WITH', 'quantity.event = product.event'
+        );
+
+
+        $qb->where('event.id = :event');
+        $qb->setParameter('event', $event, ProductEventUid::TYPE);
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
+
 }

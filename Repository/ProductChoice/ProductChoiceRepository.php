@@ -37,7 +37,7 @@ use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-final class ProductChoice implements ProductChoiceInterface
+final class ProductChoiceRepository implements ProductChoiceInterface
 {
     private ORMQueryBuilder $ORMQueryBuilder;
     private TranslatorInterface $translator;

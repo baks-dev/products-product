@@ -33,7 +33,7 @@ use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Product\Entity\Product;
 use Doctrine\ORM\EntityManagerInterface;
 
-final class ProductEventByArticle implements ProductEventByArticleInterface
+final class ProductEventByArticleRepository implements ProductEventByArticleInterface
 {
 
     private EntityManagerInterface $entityManager;

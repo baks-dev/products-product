@@ -44,7 +44,7 @@ use InvalidArgumentException;
 /**
  * Класс возвращает идентификаторы продукции по модификации
  */
-final class ProductByModification implements ProductByModificationInterface
+final class ProductByModificationRepository implements ProductByModificationInterface
 {
     private DBALQueryBuilder $DBALQueryBuilder;
 

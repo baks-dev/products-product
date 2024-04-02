@@ -23,48 +23,42 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\Repository\ProductQuantity;
+namespace BaksDev\Products\Product\Repository\ExistProductRelationAction;
 
-use BaksDev\Products\Product\Entity as ProductEntity;
-use BaksDev\Products\Product\Entity\Price\ProductPrice;
+use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Products\Product\Type\Id\ProductUid;
-use Doctrine\ORM\EntityManagerInterface;
+use BaksDev\Users\UsersTable\Entity\Actions\Products\UsersTableActionsProduct;
+use BaksDev\Users\UsersTable\Entity\Actions\UsersTableActions;
 
-final class ProductQuantity implements ProductQuantityInterface
+final class ExistProductRelationActionRepository implements ExistProductRelationActionInterface
 {
-    private EntityManagerInterface $entityManager;
+    private DBALQueryBuilder $DBALQueryBuilder;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(DBALQueryBuilder $DBALQueryBuilder,)
     {
-        $this->entityManager = $entityManager;
+        $this->DBALQueryBuilder = $DBALQueryBuilder;
     }
 
-    /** Метод возвращает количественный учет продукта */
-    public function getProductQuantity(
-        ProductUid $product
-    ): ?ProductPrice {
-        $qb = $this->entityManager->createQueryBuilder();
 
-        $qb->select('price');
+    /**
+     * Метод проверяет, имеется ли зависимость процесса от продукта
+     */
+    public function existProductRelation(ProductUid $product): bool
+    {
+        $qb = $this->DBALQueryBuilder->createQueryBuilder(self::class);
 
-        $qb->from(ProductEntity\Product::class, 'product');
-        $qb->where('product.id = :product');
+        $qb->from(UsersTableActionsProduct::TABLE, 'product');
+
+        $qb->join(
+            'product',
+            UsersTableActions::TABLE,
+            'action',
+            'action.event = product.event'
+        );
+
+        $qb->where('product.product = :product');
         $qb->setParameter('product', $product, ProductUid::TYPE);
 
-        $qb->join(
-            ProductEntity\Event\ProductEvent::class,
-            'event',
-            'WITH',
-            'event.id = product.event'
-        );
-
-        $qb->join(
-            ProductEntity\Price\ProductPrice::class,
-            'price',
-            'WITH',
-            'price.event = product.event'
-        );
-
-        return $qb->getQuery()->getOneOrNullResult();
+        return $qb->fetchExist();
     }
 }

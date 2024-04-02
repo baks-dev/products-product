@@ -33,55 +33,55 @@ use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use Doctrine\ORM\EntityManagerInterface;
 
-final class CurrentQuantityByOffer implements CurrentQuantityByOfferInterface
+final class CurrentQuantityByOfferRepository implements CurrentQuantityByOfferInterface
 {
-	private EntityManagerInterface $entityManager;
-	
-	
-	public function __construct(EntityManagerInterface $entityManager)
-	{
-		$this->entityManager = $entityManager;
-	}
-	
-	
-	public function getOfferQuantity(
-		ProductEventUid $event,
-		ProductOfferUid $offer
-	) : ?ProductOfferQuantity
-	{
-		$qb = $this->entityManager->createQueryBuilder();
-		
-		$qb->select('quantity');
-		
-		$qb->from(ProductEvent::class, 'event');
-		
-		
-		$qb->join(Product::class,
-			'product', 'WITH', 'product.id = event.main'
-		);
-		
-		/** Торговое предложение */
-		
-		$qb->join(ProductOffer::class,
-			'offer', 'WITH', 'offer.id = :offer AND offer.event = event.id'
-		);
-		$qb->setParameter('offer', $offer, ProductOfferUid::TYPE);
-		
-		$qb->leftJoin(ProductOffer::class,
-			'current_offer', 'WITH', 'current_offer.const = offer.const AND current_offer.event = product.event'
-		);
-		
-		
-		/** Текущее наличие */
-		$qb->leftJoin(ProductOfferQuantity::class,
-			'quantity', 'WITH', 'quantity.offer = current_offer.id'
-		);
-		
-		
-		$qb->where('event.id = :event');
-		$qb->setParameter('event', $event, ProductEventUid::TYPE);
-		
-		return $qb->getQuery()->getOneOrNullResult();
-	}
-	
+    private EntityManagerInterface $entityManager;
+
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
+
+    public function getOfferQuantity(
+        ProductEventUid $event,
+        ProductOfferUid $offer
+    ): ?ProductOfferQuantity
+    {
+        $qb = $this->entityManager->createQueryBuilder();
+
+        $qb->select('quantity');
+
+        $qb->from(ProductEvent::class, 'event');
+
+
+        $qb->join(Product::class,
+            'product', 'WITH', 'product.id = event.main'
+        );
+
+        /** Торговое предложение */
+
+        $qb->join(ProductOffer::class,
+            'offer', 'WITH', 'offer.id = :offer AND offer.event = event.id'
+        );
+        $qb->setParameter('offer', $offer, ProductOfferUid::TYPE);
+
+        $qb->leftJoin(ProductOffer::class,
+            'current_offer', 'WITH', 'current_offer.const = offer.const AND current_offer.event = product.event'
+        );
+
+
+        /** Текущее наличие */
+        $qb->leftJoin(ProductOfferQuantity::class,
+            'quantity', 'WITH', 'quantity.offer = current_offer.id'
+        );
+
+
+        $qb->where('event.id = :event');
+        $qb->setParameter('event', $event, ProductEventUid::TYPE);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
 }

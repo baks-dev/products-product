@@ -37,7 +37,7 @@ use BaksDev\Products\Product\Entity as ProductEntity;
 use BaksDev\Products\Product\Forms\ProductCategoryFilter\User\ProductCategoryFilterDTO;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-final class AllProductsByCategory implements AllProductsByCategoryInterface
+final class AllProductsByCategoryRepository implements AllProductsByCategoryInterface
 {
 
     private PaginatorInterface $paginator;
@@ -88,14 +88,11 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
         $qb
             ->addSelect('category_info.url AS category_url')
             ->leftJoin(
-            'category_event',
-            CategoryEntity\Info\ProductCategoryInfo::TABLE,
-            'category_info',
-            'category_info.event = category_event.id'
-        );
-
-
-
+                'category_event',
+                CategoryEntity\Info\ProductCategoryInfo::TABLE,
+                'category_info',
+                'category_info.event = category_event.id'
+            );
 
 
         $qb->addSelect('category_trans.name AS category_name');
@@ -145,8 +142,6 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
             'product_category',
             'product_category.category = category_event.category'
         );
-
-
 
 
         $qb->join('product_category',
@@ -300,13 +295,12 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
 
         /* Цена торгового предожения */
         $qb
-
             ->leftJoin(
-            'product_offer',
-            ProductEntity\Offers\Price\ProductOfferPrice::TABLE,
-            'product_offer_price',
-            'product_offer_price.offer = product_offer.id'
-        )
+                'product_offer',
+                ProductEntity\Offers\Price\ProductOfferPrice::TABLE,
+                'product_offer_price',
+                'product_offer_price.offer = product_offer.id'
+            )
             ->addGroupBy('product_offer_price.currency');
 
 
@@ -318,7 +312,6 @@ final class AllProductsByCategory implements AllProductsByCategoryInterface
             $method = 'join';
             $qb->setParameter('variation', $filter->getVariation());
         }
-
 
 
         $qb->{$method}(

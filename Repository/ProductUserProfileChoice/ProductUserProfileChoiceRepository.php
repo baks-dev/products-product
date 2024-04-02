@@ -32,7 +32,7 @@ use BaksDev\Users\Profile\UserProfile\Type\UserProfileStatus\Status\UserProfileS
 use BaksDev\Users\Profile\UserProfile\Type\UserProfileStatus\UserProfileStatus;
 use Doctrine\ORM\EntityManagerInterface;
 
-final class ProductUserProfileChoice implements ProductUserProfileChoiceInterface
+final class ProductUserProfileChoiceRepository implements ProductUserProfileChoiceInterface
 {
 
     private EntityManagerInterface $entityManager;

@@ -31,7 +31,7 @@ use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use Doctrine\ORM\EntityManagerInterface;
 
-final class ProductOfferQuantity implements ProductOfferQuantityInterface
+final class ProductOfferQuantityRepository implements ProductOfferQuantityInterface
 {
     private EntityManagerInterface $entityManager;
 
@@ -44,7 +44,8 @@ final class ProductOfferQuantity implements ProductOfferQuantityInterface
     public function getProductOfferQuantity(
         ProductUid $product,
         ProductOfferConst $offer
-    ): ? ProductEntity\Offers\Quantity\ProductOfferQuantity {
+    ): ?ProductEntity\Offers\Quantity\ProductOfferQuantity
+    {
         $qb = $this->entityManager->createQueryBuilder();
 
         $qb->select('quantity');

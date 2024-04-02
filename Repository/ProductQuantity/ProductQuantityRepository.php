@@ -23,49 +23,49 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\Repository\CurrentQuantity;
+namespace BaksDev\Products\Product\Repository\ProductQuantity;
 
-use BaksDev\Products\Product\Entity\Event\ProductEvent;
+use BaksDev\Products\Product\Entity as ProductEntity;
 use BaksDev\Products\Product\Entity\Price\ProductPrice;
-use BaksDev\Products\Product\Entity\Product;
-use BaksDev\Products\Product\Type\Event\ProductEventUid;
-
+use BaksDev\Products\Product\Type\Id\ProductUid;
 use Doctrine\ORM\EntityManagerInterface;
 
-final class CurrentQuantityByEvent implements CurrentQuantityByEventInterface
+final class ProductQuantityRepository implements ProductQuantityInterface
 {
-	private EntityManagerInterface $entityManager;
-	
-	
-	public function __construct(EntityManagerInterface $entityManager)
-	{
-		$this->entityManager = $entityManager;
-	}
-	
-	
-	public function getQuantity(ProductEventUid $event) : ?ProductPrice
-	{
-		$qb = $this->entityManager->createQueryBuilder();
-		
-		$qb->select('quantity');
-		
-		$qb->from(ProductEvent::class, 'event');
-		
-		
-		$qb->join(Product::class,
-			'product', 'WITH', 'product.id = event.main'
-		);
-		
-		/** Текущее наличие */
-		$qb->leftJoin(ProductPrice::class,
-			'quantity', 'WITH', 'quantity.event = product.event'
-		);
-		
-		
-		$qb->where('event.id = :event');
-		$qb->setParameter('event', $event, ProductEventUid::TYPE);
-		
-		return $qb->getQuery()->getOneOrNullResult();
-	}
-	
+    private EntityManagerInterface $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
+    /** Метод возвращает количественный учет продукта */
+    public function getProductQuantity(
+        ProductUid $product
+    ): ?ProductPrice
+    {
+        $qb = $this->entityManager->createQueryBuilder();
+
+        $qb->select('price');
+
+        $qb->from(ProductEntity\Product::class, 'product');
+        $qb->where('product.id = :product');
+        $qb->setParameter('product', $product, ProductUid::TYPE);
+
+        $qb->join(
+            ProductEntity\Event\ProductEvent::class,
+            'event',
+            'WITH',
+            'event.id = product.event'
+        );
+
+        $qb->join(
+            ProductEntity\Price\ProductPrice::class,
+            'price',
+            'WITH',
+            'price.event = product.event'
+        );
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
 }

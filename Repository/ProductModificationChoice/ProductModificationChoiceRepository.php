@@ -23,20 +23,21 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\Repository\ProductVariationChoice;
+namespace BaksDev\Products\Product\Repository\ProductModificationChoice;
 
 use BaksDev\Core\Doctrine\ORMQueryBuilder;
 use BaksDev\Core\Type\Locale\Locale;
 use BaksDev\Products\Category\Entity as CategoryEntity;
 use BaksDev\Products\Product\Entity as ProductEntity;
-use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
-use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
+use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
+use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-final class ProductVariationChoice implements ProductVariationChoiceInterface
+final class ProductModificationChoiceRepository implements ProductModificationChoiceInterface
 {
+
     private TranslatorInterface $translator;
     private ORMQueryBuilder $ORMQueryBuilder;
 
@@ -45,28 +46,100 @@ final class ProductVariationChoice implements ProductVariationChoiceInterface
         TranslatorInterface $translator
     )
     {
+
         $this->translator = $translator;
         $this->ORMQueryBuilder = $ORMQueryBuilder;
     }
 
     /**
-     * Метод возвращает все постоянные идентификаторы CONST множественных вариантов торговых предложений продукта
+     * Метод возвращает все постоянные идентификаторы CONST модификаций множественных вариантов торговых предложений продукта
      */
-    public function fetchProductVariationByOfferConst(ProductOfferConst $const): ?array
+    public function fetchProductModificationConstByVariationConst(ProductVariationConst $const): ?array
     {
         $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
 
         $select = sprintf('new %s(
-            variation.const, 
-            variation.value, 
+            modification.const, 
+            modification.value, 
             trans.name, 
-            category_variation.reference
-        )', ProductVariationConst::class);
+            category_modification.reference
+        )', ProductModificationConst::class);
 
         $qb->select($select);
 
-        $qb->from(ProductEntity\Offers\ProductOffer::class, 'offer');
+        $qb->from(ProductEntity\Offers\Variation\ProductVariation::class, 'variation');
 
+        $qb->join(
+            ProductEntity\Offers\ProductOffer::class,
+            'offer',
+            'WITH',
+            'offer.id = variation.offer'
+        );
+
+        $qb->join(
+            ProductEntity\Product::class,
+            'product',
+            'WITH',
+            'product.event = offer.event'
+        );
+
+        $qb->join(
+            ProductEntity\Offers\Variation\Modification\ProductModification::class,
+            'modification',
+            'WITH',
+            'modification.variation = variation.id'
+        );
+
+        // Тип торгового предложения
+
+        $qb->join(
+            CategoryEntity\Offers\Variation\Modification\ProductCategoryModification::class,
+            'category_modification',
+            'WITH',
+            'category_modification.id = modification.categoryModification'
+        );
+
+        $qb->leftJoin(
+            CategoryEntity\Offers\Variation\Modification\Trans\ProductCategoryModificationTrans::class,
+            'trans',
+            'WITH',
+            'trans.modification = category_modification.id AND trans.local = :local'
+        );
+        $qb->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
+
+        $qb->where('variation.const = :const');
+        $qb->setParameter('const', $const, ProductVariationConst::TYPE);
+
+        /* Кешируем результат ORM */
+        return $qb->enableCache('products-product', 86400)->getResult();
+
+    }
+
+
+    /**
+     * Метод возвращает все идентификаторы модификаций множественных вариантов торговых предложений продукта
+     */
+    public function fetchProductModificationByVariation(ProductVariationUid $variation): ?array
+    {
+        $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
+
+        $select = sprintf('new %s(
+            modification.id, 
+            modification.value, 
+            trans.name, 
+            category_modification.reference
+        )', ProductModificationUid::class);
+
+        $qb->select($select);
+
+        $qb->from(ProductEntity\Offers\Variation\ProductVariation::class, 'variation');
+
+        $qb->join(
+            ProductEntity\Offers\ProductOffer::class,
+            'offer',
+            'WITH',
+            'offer.id = variation.offer'
+        );
 
         $qb->join(
             ProductEntity\Product::class,
@@ -77,31 +150,31 @@ final class ProductVariationChoice implements ProductVariationChoiceInterface
 
 
         $qb->join(
-            ProductEntity\Offers\Variation\ProductVariation::class,
-            'variation',
+            ProductEntity\Offers\Variation\Modification\ProductModification::class,
+            'modification',
             'WITH',
-            'variation.offer = offer.id'
+            'modification.variation = variation.id'
         );
 
         // Тип торгового предложения
 
         $qb->join(
-            CategoryEntity\Offers\Variation\ProductCategoryVariation::class,
-            'category_variation',
+            CategoryEntity\Offers\Variation\Modification\ProductCategoryModification::class,
+            'category_modification',
             'WITH',
-            'category_variation.id = variation.categoryVariation'
+            'category_modification.id = modification.categoryModification'
         );
 
         $qb->leftJoin(
-            CategoryEntity\Offers\Variation\Trans\ProductCategoryVariationTrans::class,
+            CategoryEntity\Offers\Variation\Modification\Trans\ProductCategoryModificationTrans::class,
             'trans',
             'WITH',
-            'trans.variation = category_variation.id AND trans.local = :local'
+            'trans.modification = category_modification.id AND trans.local = :local'
         );
 
-        $qb->where('offer.const = :const');
+        $qb->where('variation.id = :variation');
 
-        $qb->setParameter('const', $const, ProductOfferConst::TYPE);
+        $qb->setParameter('variation', $variation, ProductVariationUid::TYPE);
         $qb->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
 
 
@@ -109,64 +182,4 @@ final class ProductVariationChoice implements ProductVariationChoiceInterface
         return $qb->enableCache('products-product', 86400)->getResult();
 
     }
-
-
-    public function fetchProductVariationByOffer(ProductOfferUid $offer): ?array
-    {
-        $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
-
-        $select = sprintf('new %s(
-            variation.id, 
-            variation.value, 
-            trans.name, 
-            category_variation.reference
-        )', ProductVariationUid::class);
-
-        $qb->select($select);
-
-        $qb->from(ProductEntity\Offers\ProductOffer::class, 'offer');
-
-
-        $qb->join(
-            ProductEntity\Product::class,
-            'product',
-            'WITH',
-            'product.event = offer.event'
-        );
-
-
-        $qb->join(
-            ProductEntity\Offers\Variation\ProductVariation::class,
-            'variation',
-            'WITH',
-            'variation.offer = offer.id'
-        );
-
-        // Тип торгового предложения
-
-        $qb->join(
-            CategoryEntity\Offers\Variation\ProductCategoryVariation::class,
-            'category_variation',
-            'WITH',
-            'category_variation.id = variation.categoryVariation'
-        );
-
-        $qb->leftJoin(
-            CategoryEntity\Offers\Variation\Trans\ProductCategoryVariationTrans::class,
-            'trans',
-            'WITH',
-            'trans.variation = category_variation.id AND trans.local = :local'
-        );
-
-        $qb->where('offer.id = :offer');
-
-        $qb->setParameter('offer', $offer, ProductOfferUid::TYPE);
-        $qb->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
-
-
-        /* Кешируем результат ORM */
-        return $qb->enableCache('products-product', 86400)->getResult();
-
-    }
-
 }

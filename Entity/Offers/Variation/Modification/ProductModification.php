@@ -87,17 +87,17 @@ class ProductModification extends EntityEvent
 
     /** Стоимость модификации */
     #[Assert\Valid]
-    #[ORM\OneToOne(mappedBy: 'modification', targetEntity: Price\ProductModificationPrice::class, cascade: ['all'])]
+    #[ORM\OneToOne(targetEntity: Price\ProductModificationPrice::class, mappedBy: 'modification', cascade: ['all'])]
     private ?Price\ProductModificationPrice $price = null;
 
     /** Количественный учет */
     #[Assert\Valid]
-    #[ORM\OneToOne(mappedBy: 'modification', targetEntity: Quantity\ProductModificationQuantity::class, cascade: ['all'])]
+    #[ORM\OneToOne(targetEntity: Quantity\ProductModificationQuantity::class, mappedBy: 'modification', cascade: ['all'])]
     private ?Quantity\ProductModificationQuantity $quantity = null;
 
     /** Дополнительные фото модификации */
     #[Assert\Valid]
-    #[ORM\OneToMany(mappedBy: 'modification', targetEntity: Image\ProductModificationImage::class, cascade: ['all'])]
+    #[ORM\OneToMany(targetEntity: Image\ProductModificationImage::class, mappedBy: 'modification', cascade: ['all'])]
     #[ORM\OrderBy(['root' => 'DESC'])]
     private Collection $image;
 

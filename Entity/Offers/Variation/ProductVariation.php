@@ -86,22 +86,22 @@ class ProductVariation extends EntityEvent
     private ?string $postfix = null;
 
     /** Стоимость торгового предложения */
-    #[ORM\OneToOne(mappedBy: 'variation', targetEntity: Price\ProductVariationPrice::class, cascade: ['all'])]
+    #[ORM\OneToOne(targetEntity: Price\ProductVariationPrice::class, mappedBy: 'variation', cascade: ['all'])]
     private ?Price\ProductVariationPrice $price = null;
 
     /** Количественный учет */
-    #[ORM\OneToOne(mappedBy: 'variation', targetEntity: Quantity\ProductVariationQuantity::class, cascade: ['all'])]
+    #[ORM\OneToOne(targetEntity: Quantity\ProductVariationQuantity::class, mappedBy: 'variation', cascade: ['all'])]
     private ?Quantity\ProductVariationQuantity $quantity = null;
 
     /** Дополнительные фото торгового предложения */
     #[Assert\Valid]
-    #[ORM\OneToMany(mappedBy: 'variation', targetEntity: Image\ProductVariationImage::class, cascade: ['all'])]
+    #[ORM\OneToMany(targetEntity: Image\ProductVariationImage::class, mappedBy: 'variation', cascade: ['all'])]
     #[ORM\OrderBy(['root' => 'DESC'])]
     private Collection $image;
 
     /** Коллекция вариаций в торговом предложении  */
     #[Assert\Valid]
-    #[ORM\OneToMany(mappedBy: 'variation', targetEntity: Modification\ProductModification::class, cascade: ['all'])]
+    #[ORM\OneToMany(targetEntity: Modification\ProductModification::class, mappedBy: 'variation', cascade: ['all'])]
     private Collection $modification;
 
     public function __construct(ProductOffer $offer)

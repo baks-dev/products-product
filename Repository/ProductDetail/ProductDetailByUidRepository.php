@@ -64,16 +64,17 @@ use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-final class ProductDetailByUid implements ProductDetailByUidInterface
+final class ProductDetailByUidRepository implements ProductDetailByUidInterface
 {
 
     private TranslatorInterface $translator;
     private DBALQueryBuilder $DBALQueryBuilder;
 
     public function __construct(
-     DBALQueryBuilder $DBALQueryBuilder,
+        DBALQueryBuilder $DBALQueryBuilder,
         TranslatorInterface $translator,
-    ) {
+    )
+    {
 
         $this->translator = $translator;
         $this->DBALQueryBuilder = $DBALQueryBuilder;
@@ -87,7 +88,8 @@ final class ProductDetailByUid implements ProductDetailByUidInterface
         ProductOffer|ProductOfferUid|string|null $offer = null,
         ProductVariation|ProductVariationUid|string|null $variation = null,
         ProductModification|ProductModificationUid|string|null $modification = null,
-    ): ?array {
+    ): ?array
+    {
 
 
         if($event instanceof ProductEvent)
@@ -217,7 +219,7 @@ final class ProductDetailByUid implements ProductDetailByUidInterface
         )
             ->addGroupBy('product_offer.article');
 
-        if ($offer)
+        if($offer)
         {
             $qb->setParameter('product_offer', $offer);
         }
@@ -277,7 +279,7 @@ final class ProductDetailByUid implements ProductDetailByUidInterface
         )
             ->addGroupBy('product_offer_variation.article');
 
-        if ($variation)
+        if($variation)
         {
             $qb->setParameter('product_variation', $variation);
         }
@@ -340,7 +342,7 @@ final class ProductDetailByUid implements ProductDetailByUidInterface
         )
             ->addGroupBy('product_offer_modification.article');
 
-        if ($modification)
+        if($modification)
         {
             $qb->setParameter('product_modification', $modification);
         }
@@ -405,7 +407,6 @@ final class ProductDetailByUid implements ProductDetailByUidInterface
         );
 
 
-
         /* Фото продукта */
 
         $qb->leftJoin(
@@ -421,21 +422,15 @@ final class ProductDetailByUid implements ProductDetailByUidInterface
             'product_offer_variation_image',
             'product_offer_variation_image.variation = product_offer_variation.id AND product_offer_variation_image.root = true'
         )
-
-        ->addGroupBy('product_offer_variation_image.name')
-        ->addGroupBy('product_offer_variation_image.ext')
-        ->addGroupBy('product_offer_variation_image.cdn')
-
-        ->addGroupBy('product_offer_images.name')
-        ->addGroupBy('product_offer_images.ext')
-        ->addGroupBy('product_offer_images.cdn')
-
-        ->addGroupBy('product_photo.name')
-        ->addGroupBy('product_photo.ext')
-        ->addGroupBy('product_photo.cdn')
-
-
-        ;
+            ->addGroupBy('product_offer_variation_image.name')
+            ->addGroupBy('product_offer_variation_image.ext')
+            ->addGroupBy('product_offer_variation_image.cdn')
+            ->addGroupBy('product_offer_images.name')
+            ->addGroupBy('product_offer_images.ext')
+            ->addGroupBy('product_offer_images.cdn')
+            ->addGroupBy('product_photo.name')
+            ->addGroupBy('product_photo.ext')
+            ->addGroupBy('product_photo.cdn');
 
         $qb->leftJoin(
             'product_offer',

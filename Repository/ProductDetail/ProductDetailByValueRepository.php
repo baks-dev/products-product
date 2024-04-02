@@ -33,7 +33,7 @@ use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-final class ProductDetailByValue implements ProductDetailByValueInterface
+final class ProductDetailByValueRepository implements ProductDetailByValueInterface
 {
 
     private TranslatorInterface $translator;
@@ -97,11 +97,11 @@ final class ProductDetailByValue implements ProductDetailByValueInterface
 
         $qb
             ->leftJoin(
-            'product',
-            ProductEntity\Seo\ProductSeo::TABLE,
-            'product_seo',
-            'product_seo.event = product.event AND product_seo.local = :local'
-        );
+                'product',
+                ProductEntity\Seo\ProductSeo::TABLE,
+                'product_seo',
+                'product_seo.event = product.event AND product_seo.local = :local'
+            );
 
 
         $qb->addSelect('product_trans.name AS product_name')->addGroupBy('product_trans.name');
@@ -112,7 +112,6 @@ final class ProductDetailByValue implements ProductDetailByValueInterface
             'product_trans',
             'product_trans.event = product_event.id AND product_trans.local = :local'
         );
-
 
 
         $qb->addSelect('product_desc.preview AS product_preview')->addGroupBy('product_desc.preview');
@@ -689,7 +688,6 @@ final class ProductDetailByValue implements ProductDetailByValueInterface
             'product_trans',
             'product_trans.event = product_event.id AND product_trans.local = :local'
         );
-
 
 
         $qb->addSelect('product_desc.preview AS product_preview')->addGroupBy('product_desc.preview');

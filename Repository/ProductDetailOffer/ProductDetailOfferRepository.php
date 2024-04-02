@@ -30,13 +30,14 @@ use BaksDev\Products\Category\Entity as CategoryEntity;
 use BaksDev\Products\Product\Entity as ProductEntity;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 
-final class ProductDetailOffer implements ProductDetailOfferInterface
+final class ProductDetailOfferRepository implements ProductDetailOfferInterface
 {
 
 
     private DBALQueryBuilder $DBALQueryBuilder;
 
-    public function __construct(DBALQueryBuilder $DBALQueryBuilder) {
+    public function __construct(DBALQueryBuilder $DBALQueryBuilder)
+    {
 
 
         $this->DBALQueryBuilder = $DBALQueryBuilder;
@@ -46,7 +47,8 @@ final class ProductDetailOffer implements ProductDetailOfferInterface
     public function fetchProductOfferAssociative(
         ProductUid $product,
 
-    ): array|bool {
+    ): array|bool
+    {
         $qb = $this->DBALQueryBuilder->createQueryBuilder(self::class);
 
         $qb->select('product.id');
@@ -89,7 +91,7 @@ final class ProductDetailOffer implements ProductDetailOfferInterface
         )
             //->addGroupBy('product_offer_price.price')
             //->addGroupBy('product_offer_price.currency')
-;
+        ;
 
         /* Получаем тип торгового предложения */
         $qb->addSelect('category_offer.reference AS product_offer_reference');
