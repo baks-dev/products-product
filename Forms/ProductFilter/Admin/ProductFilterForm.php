@@ -25,6 +25,7 @@ use BaksDev\Products\Category\Repository\OfferFieldsCategoryChoice\OfferFieldsCa
 use BaksDev\Products\Category\Repository\VariationFieldsCategoryChoice\VariationFieldsCategoryChoiceInterface;
 use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -67,6 +68,8 @@ final class ProductFilterForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
 
+        $builder->add('all', CheckboxType::class);
+
         /**
          * Категория
          */
@@ -76,11 +79,16 @@ final class ProductFilterForm extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event): void {
             /** @var ProductFilterDTO $data */
             $data = $event->getData();
+            $builder = $event->getForm();
+
+            if(!$data->isAllVisible())
+            {
+                $builder->remove('all');
+            }
 
             /** Если жестко не указана категория - выводим список для выбора */
             if($data && !$data->getCategory(true))
             {
-                $builder = $event->getForm();
 
 
                 $builder->add('category', ChoiceType::class, [
@@ -106,6 +114,10 @@ final class ProductFilterForm extends AbstractType
                 $data = $event->getData();
 
                 $this->request->getSession()->remove(ProductFilterDTO::category);
+
+                $this->request->getSession()->set(ProductFilterDTO::all, $data->getAll());
+
+
 
                 $this->request->getSession()->set(ProductFilterDTO::category, $data->getCategory());
                 $this->request->getSession()->set(ProductFilterDTO::offer, $data->getOffer());
@@ -224,10 +236,6 @@ final class ProductFilterForm extends AbstractType
                 }
             }
         );
-
-
-
-
 
 
     }

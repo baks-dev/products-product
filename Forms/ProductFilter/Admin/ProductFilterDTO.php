@@ -20,6 +20,7 @@ namespace BaksDev\Products\Product\Forms\ProductFilter\Admin;
 
 use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
 use BaksDev\Products\Product\Forms\ProductFilter\ProductFilterInterface;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Symfony\Component\HttpFoundation\Request;
 
 final class ProductFilterDTO implements ProductFilterInterface
@@ -29,6 +30,7 @@ final class ProductFilterDTO implements ProductFilterInterface
     public const offer = 'nOuksvfLiZ';
     public const variation = 'AItZEGxyrY';
     public const modification = 'FxCmFxVZxk';
+    public const all = 'zQWwZXxhf';
 
     private Request $request;
 
@@ -53,12 +55,18 @@ final class ProductFilterDTO implements ProductFilterInterface
     private ?string $modification = null;
 
 
+    /**
+     * Показать все профили
+     */
+    private bool $visible = false;
+
+    private ?bool $all = null;
+
+
     public function __construct(Request $request)
     {
         $this->request = $request;
-
     }
-
 
     /**
      * Категория
@@ -77,13 +85,13 @@ final class ProductFilterDTO implements ProductFilterInterface
 
         $this->category = $category;
 
-//        $this->request->getSession()->remove(self::offer);
-//        $this->request->getSession()->remove(self::variation);
-//        $this->request->getSession()->remove(self::modification);
-//
-//        $this->offer = null;
-//        $this->variation = null;
-//        $this->modification = null;
+        //        $this->request->getSession()->remove(self::offer);
+        //        $this->request->getSession()->remove(self::variation);
+        //        $this->request->getSession()->remove(self::modification);
+        //
+        //        $this->offer = null;
+        //        $this->variation = null;
+        //        $this->modification = null;
 
     }
 
@@ -130,7 +138,7 @@ final class ProductFilterDTO implements ProductFilterInterface
 
     public function setVariation(?string $variation): void
     {
-        if(empty($variation) || empty($this->category) ||  empty($this->offer))
+        if(empty($variation) || empty($this->category) || empty($this->offer))
         {
             $this->request->getSession()->remove(self::variation);
         }
@@ -150,13 +158,46 @@ final class ProductFilterDTO implements ProductFilterInterface
 
     public function setModification(?string $modification): void
     {
-        if(empty($modification) || empty($this->category) ||  empty($this->offer) || empty($this->variation) )
+        if(empty($modification) || empty($this->category) || empty($this->offer) || empty($this->variation))
         {
             $this->request->getSession()->remove(self::modification);
         }
 
         $this->modification = $modification;
     }
-	
+
+    /**
+     * Показать все профили
+     */
+    public function getAll(): bool
+    {
+        if($this->all === null && $this->request->getSession()->get(self::all) === false)
+        {
+            return false;
+        }
+
+        return $this->all ?? true;
+    }
+
+    public function setAll(bool $all): self
+    {
+        $this->all = $all;
+
+        return $this;
+    }
+
+    public function allVisible(): self
+    {
+        $this->visible = true;
+        return $this;
+    }
+
+    public function isAllVisible(): bool
+    {
+        $this->all = $this->visible ? null : false;
+
+        return $this->visible;
+    }
+
 }
 
