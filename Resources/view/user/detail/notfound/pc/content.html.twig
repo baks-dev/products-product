@@ -261,6 +261,7 @@
 									
 									
 									<a href='{{ path('products-product:user.detail', {
+                                        category: card.category_url,
 										url : card.url ,
 										offer: offer.product_offer_value,
 										variation: offer.product_variation_value,
@@ -287,6 +288,7 @@
 									
 									
 									<a href='{{ path('products-product:user.detail', {
+                                        category: card.category_url,
 										url : card.url ,
 										offer: offer.product_offer_value,
 										variation: offer.product_variation_value
@@ -400,6 +402,7 @@
 							{% if order_modification is null or order_modification != offer.product_offer_value~offer.product_variation_value~offer.product_modification_value %}
 								
 								<a href='{{ path('products-product:user.detail', {
+                                    category: card.category_url,
 									url : card.url ,
 									offer: offer.product_offer_value,
 									variation: offer.product_variation_value,

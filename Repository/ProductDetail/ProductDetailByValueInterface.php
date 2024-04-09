@@ -37,9 +37,10 @@ interface ProductDetailByValueInterface
      */
     public function fetchProductAssociative(
         ProductUid $product,
-        string $offer = null,
-        string $variation = null,
-        string $modification = null,
+        ?string $offer = null,
+        ?string $variation = null,
+        ?string $modification = null,
+        ?string $postfix = null,
     ): array|bool;
 
 

@@ -77,7 +77,6 @@ final class ExportController extends AbstractController
     ): Response
     {
 
-
         //        dd($settingsMain->getSettingsMainAssociative($request->getHost(), $request->getLocale()));
 
         $response = $this->render([

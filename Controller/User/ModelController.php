@@ -53,7 +53,6 @@ final class ModelController extends AbstractController
             'action' => $this->generateUrl('core:search'),
         ]);
 
-
 		return $this->render([
 			'card' => $card,
             'all_search' => $allSearchForm->createView(),

@@ -3,8 +3,8 @@
 <yml_catalog date='{{ 'now'|date('Y-m-d\\TH:00:00P') }}'>
 
     <shop>
-        <name>{{ settings.title }}</name>
-        <company>{{ settings.description }}</company>
+        <name>{{ settings.title is defined ?: 'Company name' }}</name>
+        <company>{{ settings.description is defined ?: 'Добро пожаловать' }}</company>
         <url>{{ absolute_url(path('core:user.homepage')) }}</url>
         <platform>Symfony</platform>
         <version>1.0</version>
@@ -24,6 +24,7 @@
 
                 <offer id='{{ card.product_id }}'>
                     <url>{{ absolute_url(path('products-product:user.detail', {
+                            category: card.category_url,
                             url: card.url,
                             offer: card.offer_value,
                             variation: card.variation_value,
