@@ -2,8 +2,8 @@
 
 <yml_catalog date='{{ 'now'|date('Y-m-d\\TH:00:00P') }}'>
     <shop>
-        <name>{{ settings.title is defined ?: 'Company name' }}</name>
-        <company>{{ settings.description is defined ?: 'Добро пожаловать' }}</company>
+        <name>{{ settings.title is defined ? settings.title : 'Company name' }}</name>
+        <company>{{ settings.description is defined ? settings.description : 'Добро пожаловать' }}</company>
         <url>{{ absolute_url(path('core:user.homepage')) }}</url>
         <platform>Symfony</platform>
         <categories>
@@ -11,6 +11,7 @@
                 <category id='{{ id }}'>{{ cat.category_name }}</category>
             {% endfor %}
         </categories>
+
         {# <delivery-options>
             <option cost="200" days="1"/>
         </delivery-options> #}
@@ -20,11 +21,11 @@
         </pickup-options> #}
 
         <offers>
-            {% for card in products %}
+            {% for card in products|filter(v => v.product_price > 0) %}
 
                 {% set arr_property = card.category_section_field|json_decode %}
 
-                <offer id='{{ card.product_id }}' available='{{ card.product_quantity > 0 }}'>
+                <offer id='{{ card.product_id }}' available='{{ card.product_quantity > 0 ? 'true' : 'false' }}'>
 
                     <name>{{ card.product_name }}
                         {# Значение множественного варианта ТП #}
@@ -100,22 +101,20 @@
 
                         {# Длина, ширина, высота в упаковке в сантиметрах. (20.1/20.551/22.5) #}
                         <dimensions>
-                            {{ card.product_parameter_length / 10 }}/
-                            {{ card.product_parameter_width / 10 }}/
-                            {{ card.product_parameter_height / 10 }}
+                            {{ card.product_parameter_length / 10 }}/{{ card.product_parameter_width / 10 }}
+                            /{{ card.product_parameter_height / 10 }}
                         </dimensions>
 
                     {% endif %}
-
 
                     {# <condition type='preowned'>
                     <quality>excellent</quality>
                 </condition> #}
                 </offer>
 
-                {{ dd(card) }}
-
             {% endfor %}
+
+
         </offers>
 
     </shop>

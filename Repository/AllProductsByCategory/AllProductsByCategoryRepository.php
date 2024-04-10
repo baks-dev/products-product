@@ -1024,6 +1024,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
 
         $dbal
             ->addSelect('category_trans.name AS category_name')
+            ->addSelect('category_trans.description AS category_desc')
             ->leftJoin(
                 'category',
                 ProductCategoryTrans::class,
