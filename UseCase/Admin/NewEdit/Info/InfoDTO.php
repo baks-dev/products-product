@@ -25,8 +25,10 @@ namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Info;
 
 use BaksDev\Products\Product\Entity\Info\ProductInfoInterface;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
+use Doctrine\DBAL\Types\Types;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/** @see ProductInfo */
 final class InfoDTO implements ProductInfoInterface
 {
 	/** Семантическая ссылка на товар (строка с тире и нижним подчеркиванием) */
@@ -42,6 +44,9 @@ final class InfoDTO implements ProductInfoInterface
 	/** Профиль пользователя */
 	#[Assert\Uuid]
 	private ?UserProfileUid $profile = null;
+
+    /** Сортировка */
+    private int $sort = 500;
 	
 	
 	/** Семантическая ссылка на товар */
@@ -90,6 +95,19 @@ final class InfoDTO implements ProductInfoInterface
 	{
 		$this->profile = $profile;
 	}
-	
+
+    /**
+     * Sort
+     */
+    public function getSort(): int
+    {
+        return $this->sort;
+    }
+
+    public function setSort(int $sort): self
+    {
+        $this->sort = $sort;
+        return $this;
+    }
 }
 

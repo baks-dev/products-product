@@ -54,7 +54,7 @@ class ProductInfo extends EntityReadonly
     /** ID события */
     #[Assert\NotBlank]
     #[Assert\Uuid]
-    #[ORM\OneToOne(inversedBy: 'info', targetEntity: ProductEvent::class)]
+    #[ORM\OneToOne(targetEntity: ProductEvent::class, inversedBy: 'info')]
     #[ORM\JoinColumn(name: 'event', referencedColumnName: 'id')]
     private ProductEvent $event;
 
@@ -70,6 +70,10 @@ class ProductInfo extends EntityReadonly
     /** Штрихкод товара */
     #[ORM\Column(type: ProductBarcode::TYPE, nullable: true)]
     private ?ProductBarcode $barcode = null;
+
+    /** Сортировка */
+    #[ORM\Column(type: Types::SMALLINT, options: ['default' => 500])]
+    private int $sort = 500;
 
     /** Профиль пользователя, которому принадлежит товар */
     #[Assert\Uuid]
