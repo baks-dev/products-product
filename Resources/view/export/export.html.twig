@@ -48,7 +48,8 @@
                             url: card.url,
                             offer: card.offer_value ?: null,
                             variation: card.variation_value ?: null,
-                            modification: card.modification_value ?: null
+                            modification: card.modification_value ?: null,
+                            postfix:  (card.modification_postfix ?: card.variation_postfix ?: card.offer_postfix ?: null )|replace({ '/': '-' })
                         } )) }}</url>
 
 
@@ -111,6 +112,8 @@
                     <quality>excellent</quality>
                 </condition> #}
                 </offer>
+
+                {{ dd(card) }}
 
             {% endfor %}
         </offers>
