@@ -53,7 +53,6 @@
                             postfix:  (card.modification_postfix ?: card.variation_postfix ?: card.offer_postfix ?: null )|replace({ '/': '-' })
                         } )) }}</url>
 
-
                     <price>{{ (card.product_price / 100) ?: 'по запросу' }}</price>
                     <currencyId>{{ card.product_currency|upper }}</currencyId>
                     {# <oldprice>9990</oldprice> #}
@@ -73,8 +72,10 @@
 
                     <picture>{{ absolute_url(image_path) }}</picture>
 
+
                     {# Свойства, учавствующие в ПРЕВЬЮ #}
                     {% for name_property in arr_property | filter(preview => preview.field_card == true) %}
+
                         {% set var = name_property.field_value|call_twig_func(name_property.field_type) %}
                         {% if var %}
                             <param name="{{ name_property.field_trans }}">{{ var }}</param>
@@ -100,10 +101,8 @@
                         <weight>{{ card.product_parameter_weight / 100 }}</weight>
 
                         {# Длина, ширина, высота в упаковке в сантиметрах. (20.1/20.551/22.5) #}
-                        <dimensions>
-                            {{ card.product_parameter_length / 10 }}/{{ card.product_parameter_width / 10 }}
-                            /{{ card.product_parameter_height / 10 }}
-                        </dimensions>
+                        <dimensions>{{ card.product_parameter_length / 10 }}/{{ card.product_parameter_width / 10 }}
+                            /{{ card.product_parameter_height / 10 }}</dimensions>
 
                     {% endif %}
 

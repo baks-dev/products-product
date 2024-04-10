@@ -300,7 +300,9 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
                 'product_info.product = product.id'
             );
 
-        /** Торговое предложение */
+        /**
+         * Торговое предложение
+         */
 
         $method = 'leftJoin';
 
@@ -318,7 +320,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
             'product_offer.event = product_event.id '.($filter->getOffer() ? ' AND product_offer.value = :offer' : '').' '
         );
 
-        /* Получаем тип торгового предложения */
+        /*  тип торгового предложения */
         $dbal->leftJoin(
             'product_offer',
             ProductCategoryOffers::class,
@@ -338,7 +340,19 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
             ->addGroupBy('product_offer_price.currency');
 
 
-        /** Множественные варианты торгового предложения */
+        $dbal
+            ->addSelect('SUM(product_offer_quantity.quantity) AS product_offer_quantity')
+            ->leftJoin(
+                'product_offer',
+                ProductOfferQuantity::class,
+                'product_offer_quantity',
+                'product_offer_quantity.offer = product_offer.id'
+            );
+
+
+        /**
+         * Множественные варианты торгового предложения
+         */
 
         $method = 'leftJoin';
         if($filter->getVariation())
@@ -355,7 +369,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
             'product_variation.offer = product_offer.id '.($filter->getVariation() ? ' AND product_variation.value = :variation' : '').' '
         );
 
-        /** Получаем тип множественного варианта */
+        /* тип множественного варианта */
 
         $dbal->leftJoin(
             'product_variation',
@@ -364,7 +378,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
             'category_variation.id = product_variation.category_variation'
         );
 
-        /** Цена множественного варианта */
+        /* Цена множественного варианта */
 
         $dbal->leftJoin(
             'category_variation',
@@ -374,7 +388,20 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
         )
             ->addGroupBy('product_variation_price.currency');
 
-        /** Модификация множественного варианта торгового предложения */
+
+        $dbal
+            ->addSelect('SUM(product_variation_quantity.quantity) AS product_variation_quantity')
+            ->leftJoin(
+                'category_variation',
+                ProductVariationQuantity::class,
+                'product_variation_quantity',
+                'product_variation_quantity.variation = product_variation.id'
+            );
+
+
+        /**
+         * Модификация множественного варианта торгового предложения
+         */
 
         $method = 'leftJoin';
         if($filter->getModification())
@@ -390,7 +417,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
             'product_modification.variation = product_variation.id '.($filter->getModification() ? ' AND product_modification.value = :modification' : '').' '
         );
 
-        /** Получаем тип модификации множественного варианта */
+        /* тип модификации множественного варианта */
 
         $dbal->leftJoin(
             'product_modification',
@@ -400,7 +427,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
         );
 
 
-        /** Цена множественного варианта */
+        /* Цена множественного варианта */
         $dbal->leftJoin(
             'product_modification',
             ProductModificationPrice::class,
@@ -408,6 +435,18 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
             'product_modification_price.modification = product_modification.id'
         )
             ->addGroupBy('product_modification_price.currency');
+
+
+        $dbal
+            ->addSelect('SUM(product_modification_quantity.quantity) AS product_modification_quantity')
+            ->leftJoin(
+                'product_modification',
+                ProductModificationQuantity::class,
+                'product_modification_quantity',
+                'product_modification_quantity.modification = product_modification.id'
+            )
+            ->addGroupBy('product_modification_price.currency');
+
 
         $dbal->addSelect("JSON_AGG
 			( DISTINCT
@@ -419,16 +458,22 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
 						'0', CONCAT(product_offer.value, product_variation.value, product_modification.value),
 						
 						
+						'offer_uid', product_offer.id, /* значение торгового предложения */
 						'offer_value', product_offer.value, /* значение торгового предложения */
 						'offer_reference', category_offer.reference, /* тип (field) торгового предложения */
+						'offer_postfix', product_offer.postfix, /* значение торгового предложения */
 						'offer_article', product_offer.article, /* артикул торгового предложения */
 
+						'variation_uid', product_variation.id, /* значение множественного варианта */
 						'variation_value', product_variation.value, /* значение множественного варианта */
 						'variation_reference', category_variation.reference, /* тип (field) множественного варианта */
+						'variation_postfix', product_variation.postfix, /* значение множественного варианта */
 						'variation_article', category_variation.article, /* валюта множественного варианта */
 
+						'modification_uid', product_modification.id, /* значение модификации */
 						'modification_value', product_modification.value, /* значение модификации */
 						'modification_reference', category_modification.reference, /* тип (field) модификации */
+						'modification_postfix', product_modification.postfix, /* значение модификации */
 						'modification_article', category_modification.article /* артикул модификации */
 
 					)
@@ -445,8 +490,8 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
             ProductModificationImage::class,
             'product_modification_image',
             '
-			product_modification_image.modification = product_modification.id AND
-			product_modification_image.root = true
+                product_modification_image.modification = product_modification.id AND
+                product_modification_image.root = true
 			'
         );
 
@@ -598,20 +643,48 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
 			   WHEN product_price.price IS NOT NULL THEN product_price.price
 			   ELSE NULL
 			END AS product_price
-		"
-        );
+		");
 
         /** Валюта продукта */
         $dbal->addSelect("
 			CASE
-			   WHEN MIN(product_modification_price.price) IS NOT NULL AND MIN(product_modification_price.price) > 0 THEN product_modification_price.currency
-			   WHEN MIN(product_variation_price.price) IS NOT NULL AND MIN(product_variation_price.price) > 0  THEN product_variation_price.currency
-			   WHEN MIN(product_offer_price.price) IS NOT NULL AND MIN(product_offer_price.price) > 0 THEN product_offer_price.currency
-			   WHEN product_price.price IS NOT NULL THEN product_price.currency
+			   WHEN MIN(product_modification_price.price) IS NOT NULL AND MIN(product_modification_price.price) > 0 
+			   THEN product_modification_price.currency
+			   
+			   WHEN MIN(product_variation_price.price) IS NOT NULL AND MIN(product_variation_price.price) > 0  
+			   THEN product_variation_price.currency
+			   
+			   WHEN MIN(product_offer_price.price) IS NOT NULL AND MIN(product_offer_price.price) > 0 
+			   THEN product_offer_price.currency
+			   
+			   WHEN product_price.price IS NOT NULL 
+			   THEN product_price.currency
+			   
 			   ELSE NULL
+			   
 			END AS product_currency
 		"
         );
+
+        /** Количественный учет */
+        $dbal->addSelect("
+			CASE
+			    WHEN product_modification_quantity.quantity > 0 
+			    THEN product_modification_quantity.quantity
+					
+			   WHEN product_variation_quantity.quantity > 0 
+			   THEN product_variation_quantity.quantity
+					
+			   WHEN product_offer_quantity.quantity > 0 
+			   THEN product_offer_quantity.quantity
+					
+			   WHEN product_price.quantity > 0 
+			   THEN product_price.quantity
+			   
+			   ELSE 0
+			   
+			END AS product_quantity
+		");
 
 
         $dbal->leftJoin(

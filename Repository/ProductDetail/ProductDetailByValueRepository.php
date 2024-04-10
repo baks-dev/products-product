@@ -99,6 +99,12 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
         ?string $postfix = null,
     ): array|bool
     {
+
+        if($postfix)
+        {
+            $postfix = str_replace('-', '/', $postfix);
+        }
+
         $dbal = $this->DBALQueryBuilder
             ->createQueryBuilder(self::class)
             ->bindLocal();
