@@ -30,7 +30,12 @@ use Symfony\Component\Form\Form;
 
 interface AllProductsByCategoryInterface
 {
-	public function fetchAllProductByCategoryAssociative(ProductCategoryUid $category, ProductCategoryFilterDTO $filter, ?array $property, string $string = 'AND') : PaginatorInterface;
+    public function fetchAllProductByCategoryAssociative(
+        ProductCategoryUid $category,
+        ProductCategoryFilterDTO $filter,
+        ?array $property,
+        string $expr = 'AND'
+    ): PaginatorInterface;
 
 
     /** Метод возвращает все товары в категории */
