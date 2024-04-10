@@ -30,6 +30,9 @@ use BaksDev\Core\Services\Paginator\PaginatorInterface;
 use BaksDev\Core\Type\Device\Device;
 use BaksDev\Core\Type\Device\Devices\Desktop;
 use BaksDev\Core\Type\Locale\Locale;
+use BaksDev\Delivery\BaksDevDeliveryBundle;
+use BaksDev\DeliveryTransport\BaksDevDeliveryTransportBundle;
+use BaksDev\DeliveryTransport\Entity\ProductParameter\DeliveryPackageProductParameter;
 use BaksDev\Products\Category\Entity\Event\ProductCategoryEvent;
 use BaksDev\Products\Category\Entity\Info\ProductCategoryInfo;
 use BaksDev\Products\Category\Entity\Offers\ProductCategoryOffers;
@@ -661,7 +664,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
         if($category)
         {
             $dbal
-                ->from(ProductCategory::class, 'product_category')
+                ->from(\BaksDev\Products\Product\Entity\Category\ProductCategory::class, 'product_category')
                 ->where('product_category.category = :category AND product_category.root = true')
                 ->setParameter('category', $category, ProductCategoryUid::TYPE);
 
@@ -688,7 +691,6 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
         $dbal
             ->addSelect('product_info.url')
             ->addSelect('product_info.sort')
-            //->addSelect('product_info.article')
             ->leftJoin(
                 'product',
                 ProductInfo::class,
@@ -1020,6 +1022,14 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
                 'category_info.event = category.event'
             );
 
+        $dbal
+            ->addSelect('category_trans.name AS category_name')
+            ->leftJoin(
+                'category',
+                ProductCategoryTrans::class,
+                'category_trans',
+                'category_trans.event = category.event AND category_trans.local = :local'
+            );
 
         $dbal->leftJoin(
             'category',
@@ -1098,6 +1108,30 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
 		)
 			AS category_section_field"
         );
+
+
+        /**  Вес товара  */
+
+        if(class_exists(BaksDevDeliveryTransportBundle::class))
+        {
+
+            $dbal
+                ->addSelect('product_parameter.length AS product_parameter_length')
+                ->addSelect('product_parameter.width AS product_parameter_width')
+                ->addSelect('product_parameter.height AS product_parameter_height')
+                ->addSelect('product_parameter.weight AS product_parameter_weight')
+                ->leftJoin(
+                    'product_modification',
+                    DeliveryPackageProductParameter::class,
+                    'product_parameter',
+                    'product_parameter.product = product.id AND
+            (product_parameter.offer IS NULL OR product_parameter.offer = product_offer.const) AND
+            (product_parameter.variation IS NULL OR product_parameter.variation = product_variation.const) AND
+            (product_parameter.modification IS NULL OR product_parameter.modification = product_modification.const)
+
+        ');
+        }
+
 
         $dbal->allGroupByExclude();
         $dbal->addOrderBy('product_info.sort', 'DESC');

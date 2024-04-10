@@ -51,6 +51,7 @@ final class ExportController extends AbstractController
     public function search(
         Request $request,
         SettingsMainInterface $settingsMain,
+        AllCategoryByMenuInterface $allCategory,
         AllProductsByCategoryInterface $productsByCategory
     ): Response
     {
@@ -58,10 +59,12 @@ final class ExportController extends AbstractController
         //        dd($settingsMain->getSettingsMainAssociative($request->getHost(), $request->getLocale()));
 
         $response = $this->render([
+            'category' => $allCategory->fetchAllCatalogMenuAssociative(),
             'settings' => $settingsMain->getSettingsMainAssociative($request->getHost(), $request->getLocale()),
             'products' => $productsByCategory->fetchAllProductByCategory()],
             file: 'export.html.twig'
         );
+
         $response->headers->set('Content-Type', 'text/xml');
 
         return $response;
