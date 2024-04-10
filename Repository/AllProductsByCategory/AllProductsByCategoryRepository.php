@@ -641,6 +641,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
 
         $dbal->addOrderBy('product_info.sort', 'DESC');
 
+
         return $this->paginator->fetchAllAssociative($dbal);
 
     }
