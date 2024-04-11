@@ -41,182 +41,183 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class ProductCategoryFilterForm extends AbstractType
 {
-	
-	private AllFilterFieldsByCategoryInterface $fields;
-	
-	private FieldsChoice $choice;
-	
-	private RequestStack $request;
-	
-	private OfferFieldsCategoryChoiceInterface $offerChoice;
-	
-	private VariationFieldsCategoryChoiceInterface $variationChoice;
-	
-	private ModificationFieldsCategoryChoiceInterface $modificationChoice;
-	
-	
-	public function __construct(
-		AllFilterFieldsByCategoryInterface $fields,
-		OfferFieldsCategoryChoiceInterface $offerChoice,
-		VariationFieldsCategoryChoiceInterface $variationChoice,
-		ModificationFieldsCategoryChoiceInterface $modificationChoice,
-		FieldsChoice $choice,
-		RequestStack $request,
-	)
-	{
-		$this->fields = $fields;
-		$this->choice = $choice;
-		$this->request = $request;
-		$this->offerChoice = $offerChoice;
-		$this->variationChoice = $variationChoice;
-		$this->modificationChoice = $modificationChoice;
-	}
-	
-	
-	/** Форма фильтрации товаров в разделе */
-	
-	public function buildForm(FormBuilderInterface $builder, array $options) : void
-	{
-		$data = $builder->getData();
-		
-		if($data->getCategory())
-		{
 
-			/** Торговое предложение раздела */
-			
-			$offerField = $this->offerChoice->getOfferFieldCollection($data->getCategory());
-			
-			if($offerField)
-			{
-				$inputOffer = $this->choice->getChoice($offerField->getField());
-				
-				if($inputOffer)
-				{
-					$builder->add('offer',
-						
-						$inputOffer->form(),
-						[
-							'label' => $offerField->getOption(),
-							'priority' => 200,
-							'required' => false,
-						]
-					);
-					
-					
-					/** Множественные варианты торгового предложения */
-					
-					$variationField = $this->variationChoice->getVariationFieldType($offerField);
-					
-					if($variationField)
-					{
-						
-						$inputVariation = $this->choice->getChoice($variationField->getField());
-						
-						if($inputVariation)
-						{
-							$builder->add('variation',
-								$inputVariation->form(),
-								[
-									'label' => $variationField->getOption(),
-									'priority' => 199,
-									'required' => false,
+    private AllFilterFieldsByCategoryInterface $fields;
+
+    private FieldsChoice $choice;
+
+    private RequestStack $request;
+
+    private OfferFieldsCategoryChoiceInterface $offerChoice;
+
+    private VariationFieldsCategoryChoiceInterface $variationChoice;
+
+    private ModificationFieldsCategoryChoiceInterface $modificationChoice;
+
+
+    public function __construct(
+        AllFilterFieldsByCategoryInterface $fields,
+        OfferFieldsCategoryChoiceInterface $offerChoice,
+        VariationFieldsCategoryChoiceInterface $variationChoice,
+        ModificationFieldsCategoryChoiceInterface $modificationChoice,
+        FieldsChoice $choice,
+        RequestStack $request,
+    )
+    {
+        $this->fields = $fields;
+        $this->choice = $choice;
+        $this->request = $request;
+        $this->offerChoice = $offerChoice;
+        $this->variationChoice = $variationChoice;
+        $this->modificationChoice = $modificationChoice;
+    }
+
+
+    /** Форма фильтрации товаров в разделе */
+
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $data = $builder->getData();
+
+        if($data->getCategory())
+        {
+
+            /** Торговое предложение раздела */
+
+            $offerField = $this->offerChoice->getOfferFieldCollection($data->getCategory());
+
+            if($offerField)
+            {
+                $inputOffer = $this->choice->getChoice($offerField->getField());
+
+                if($inputOffer)
+                {
+
+
+                    $builder->add('offer',
+                        method_exists($inputOffer, 'formFilterAvailable') ? $inputOffer->formFilterAvailable() : $inputOffer->form(),
+                        [
+                            'label' => $offerField->getOption(),
+                            'priority' => 200,
+                            'required' => false,
+                        ]
+                    );
+
+
+                    /** Множественные варианты торгового предложения */
+
+                    $variationField = $this->variationChoice->getVariationFieldType($offerField);
+
+                    if($variationField)
+                    {
+
+                        $inputVariation = $this->choice->getChoice($variationField->getField());
+
+                        if($inputVariation)
+                        {
+                            $builder->add('variation',
+                                method_exists($inputVariation, 'formFilterAvailable') ? $inputVariation->formFilterAvailable() : $inputVariation->form(),
+
+                                [
+                                    'label' => $variationField->getOption(),
+                                    'priority' => 199,
+                                    'required' => false,
 
                                 ]
-							);
-							
-							/** Модификации множественных вариантов торгового предложения */
-							
-							$modificationField = $this->modificationChoice->getModificationFieldType($variationField);
-							
-							
-							if($modificationField)
-							{
-								$inputModification = $this->choice->getChoice($modificationField->getField());
-								
-								if($inputModification)
-								{
-									$builder->add('modification',
-										$inputModification->form(),
-										[
-											'label' => $modificationField->getOption(),
-											'priority' => 198,
-											'required' => false,
-										]
-									);
-								}
-							}
-						}
-					}
-				}
-			}
-			
-			
+                            );
 
-			/** Свойства, участвующие в фильтре */
-			
-			$fields = $this->fields->fetchAllFilterCategoryFieldsAssociative($data->getCategory());
+                            /** Модификации множественных вариантов торгового предложения */
 
-			if($fields)
-			{
-				$session = $this->request->getSession()->get('catalog_filter');
+                            $modificationField = $this->modificationChoice->getModificationFieldType($variationField);
+
+
+                            if($modificationField)
+                            {
+                                $inputModification = $this->choice->getChoice($modificationField->getField());
+
+                                if($inputModification)
+                                {
+                                    $builder->add('modification',
+                                        method_exists($inputModification, 'formFilterAvailable') ? $inputModification->formFilterAvailable() : $inputModification->form(),
+                                        [
+                                            'label' => $modificationField->getOption(),
+                                            'priority' => 198,
+                                            'required' => false,
+                                        ]
+                                    );
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            /** Свойства, участвующие в фильтре */
+
+            $fields = $this->fields->fetchAllFilterCategoryFieldsAssociative($data->getCategory());
+
+            if($fields)
+            {
+                $session = $this->request->getSession()->get('catalog_filter');
 
                 $i = 100;
-				foreach($fields as $field)
-				{
-					$input = $this->choice->getChoice(new  InputField($field['type']));
-					
-					if($input)
-					{
-						$builder->add($field['id'],
-							$input->form(),
-							[
-								'label' => $field['name'],
-								'mapped' => false,
-								'priority' => $i,
-								'required' => false,
-								'block_name' => $field['type'],
-								'data' => isset($session[$field['type']]) ? $session[$field['type']] : null,
-							]
-						);
-					}
-					
-					$i--;
-				}
-				
-				$builder->addEventListener(
-					FormEvents::POST_SUBMIT,
-					function(FormEvent $event) {
-						
-						$data = $event->getForm()->all();
-						
-						$session = [];
-						
-						foreach($data as $datum)
-						{
-							if(!empty($datum->getViewData()))
-							{
-								if($datum->getNormData() === true)
-								{
-									$item = 'true';
-								}
-								else
-								{
-									$item = (string) $datum->getNormData();
-								}
-								
-								$session[$datum->getConfig()->getOption('block_name')] = $item;
-							}
-						}
-						
-						$this->request->getSession()->set('catalog_filter', $session);
-						
-					}
-				);
-				
+                foreach($fields as $field)
+                {
+                    $input = $this->choice->getChoice(new  InputField($field['type']));
 
-			}
-			
-		}
+                    if($input)
+                    {
+                        $builder->add($field['id'],
+                            $input->form(),
+                            [
+                                'label' => $field['name'],
+                                'mapped' => false,
+                                'priority' => $i,
+                                'required' => false,
+                                'block_name' => $field['type'],
+                                'data' => isset($session[$field['type']]) ? $session[$field['type']] : null,
+                            ]
+                        );
+                    }
+
+                    $i--;
+                }
+
+                $builder->addEventListener(
+                    FormEvents::POST_SUBMIT,
+                    function(FormEvent $event) {
+
+                        $data = $event->getForm()->all();
+
+                        $session = [];
+
+                        foreach($data as $datum)
+                        {
+                            if(!empty($datum->getViewData()))
+                            {
+                                if($datum->getNormData() === true)
+                                {
+                                    $item = 'true';
+                                }
+                                else
+                                {
+                                    $item = (string) $datum->getNormData();
+                                }
+
+                                $session[$datum->getConfig()->getOption('block_name')] = $item;
+                            }
+                        }
+
+                        $this->request->getSession()->set('catalog_filter', $session);
+
+                    }
+                );
+
+
+            }
+
+        }
 
         /* Сохранить ******************************************************/
         $builder->add(
@@ -224,15 +225,15 @@ final class ProductCategoryFilterForm extends AbstractType
             SubmitType::class,
             ['label' => 'Save', 'label_html' => true, 'attr' => ['class' => 'btn-primary']]
         );
-		
-	}
-	
-	
-	public function configureOptions(OptionsResolver $resolver) : void
-	{
-		$resolver->setDefaults([
-			'data_class' => ProductCategoryFilterDTO::class,
-		]);
-	}
-	
+
+    }
+
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => ProductCategoryFilterDTO::class,
+        ]);
+    }
+
 }

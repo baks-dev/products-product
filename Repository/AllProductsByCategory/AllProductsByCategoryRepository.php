@@ -669,17 +669,17 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
         /** Количественный учет */
         $dbal->addSelect("
 			CASE
-			    WHEN product_modification_quantity.quantity > 0 
-			    THEN product_modification_quantity.quantity
+			    WHEN SUM(product_modification_quantity.quantity) > 0 
+			    THEN SUM(product_modification_quantity.quantity)
 					
-			   WHEN product_variation_quantity.quantity > 0 
-			   THEN product_variation_quantity.quantity
+			   WHEN SUM(product_variation_quantity.quantity) > 0 
+			   THEN SUM(product_variation_quantity.quantity)
 					
-			   WHEN product_offer_quantity.quantity > 0 
-			   THEN product_offer_quantity.quantity
+			   WHEN SUM(product_offer_quantity.quantity) > 0 
+			   THEN SUM(product_offer_quantity.quantity)
 					
-			   WHEN product_price.quantity > 0 
-			   THEN product_price.quantity
+			   WHEN SUM(product_price.quantity) > 0 
+			   THEN SUM(product_price.quantity)
 			   
 			   ELSE 0
 			   

@@ -118,7 +118,6 @@ final class ProductFilterForm extends AbstractType
                 $this->request->getSession()->set(ProductFilterDTO::all, $data->getAll());
 
 
-
                 $this->request->getSession()->set(ProductFilterDTO::category, $data->getCategory());
                 $this->request->getSession()->set(ProductFilterDTO::offer, $data->getOffer());
                 $this->request->getSession()->set(ProductFilterDTO::variation, $data->getVariation());
@@ -161,7 +160,7 @@ final class ProductFilterForm extends AbstractType
                         {
                             $builder->add('offer',
 
-                                $inputOffer->form(),
+                                method_exists($inputOffer, 'formFilterExists') ? $inputOffer->formFilterExists() : $inputOffer->form(),
                                 [
                                     'label' => $offerField->getOption(),
                                     //'mapped' => false,
@@ -186,7 +185,8 @@ final class ProductFilterForm extends AbstractType
                                 if($inputVariation)
                                 {
                                     $builder->add('variation',
-                                        $inputVariation->form(),
+                                        method_exists($inputVariation, 'formFilterExists') ? $inputVariation->formFilterExists() : $inputVariation->form(),
+
                                         [
                                             'label' => $variationField->getOption(),
                                             //'mapped' => false,
@@ -210,7 +210,8 @@ final class ProductFilterForm extends AbstractType
                                         if($inputModification)
                                         {
                                             $builder->add('modification',
-                                                $inputModification->form(),
+                                                method_exists($inputModification, 'formFilterExists') ? $inputModification->formFilterExists() : $inputModification->form(),
+
                                                 [
                                                     'label' => $modificationField->getOption(),
                                                     //'mapped' => false,
