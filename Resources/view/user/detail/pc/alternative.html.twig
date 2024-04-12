@@ -55,12 +55,11 @@
 						<td>
 							<div class='d-flex gap-3 align-items-center'>
 
-
 								<a href="{{ path('products-product:user.detail', { category: alt.category_url, url: alt.product_url,
 									offer : alt.product_offer_value,
 									variation : alt.product_variation_value,
 									modification : alt.product_modification_value,
-									postfix: (alt.product_modification_postfix ?: alt.product_variation_postfix ?: alt.product_offer_postfix ?: null )
+									postfix: (alt.product_modification_postfix ?: alt.product_variation_postfix ?: alt.product_offer_postfix ?: null )|replace({ '/': '-' })
 								}) }}">
 									{{ alt.product_name }}
 								</a>
