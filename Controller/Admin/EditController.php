@@ -26,7 +26,7 @@ namespace BaksDev\Products\Product\Controller\Admin;
 use App\Kernel;
 use BaksDev\Core\Controller\AbstractController;
 use BaksDev\Core\Listeners\Event\Security\RoleSecurity;
-use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
+use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
 use BaksDev\Products\Product\Entity\Product;
@@ -64,7 +64,7 @@ final class EditController extends AbstractController
             {
                 if($category->getRoot())
                 {
-                    $category->setCategory(new ProductCategoryUid($request->get('category')));
+                    $category->setCategory(new CategoryProductUid($request->get('category')));
                 }
             }
         }

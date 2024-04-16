@@ -24,7 +24,7 @@
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Category;
 
 use BaksDev\Products\Category\Repository\CategoryChoice\CategoryChoiceInterface;
-use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
+use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -48,10 +48,10 @@ final class CategoryCollectionForm extends AbstractType
 		$builder
 			->add('category', ChoiceType::class, [
 				'choices' => $this->category->getCategoryCollection(),
-				'choice_value' => function(?ProductCategoryUid $type) {
+                'choice_value' => function(?CategoryProductUid $type) {
 					return $type?->getValue();
 				},
-				'choice_label' => function(?ProductCategoryUid $type) {
+                'choice_label' => function(?CategoryProductUid $type) {
 					return $type?->getOptions();
 				},
 				

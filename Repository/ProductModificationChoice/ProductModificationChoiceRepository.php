@@ -25,30 +25,35 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Repository\ProductModificationChoice;
 
+use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Core\Doctrine\ORMQueryBuilder;
-use BaksDev\Core\Type\Locale\Locale;
-use BaksDev\Products\Category\Entity as CategoryEntity;
-use BaksDev\Products\Product\Entity as ProductEntity;
+use BaksDev\Products\Category\Entity\Offers\Variation\Modification\CategoryProductModification;
+use BaksDev\Products\Category\Entity\Offers\Variation\Modification\Trans\CategoryProductModificationTrans;
+use BaksDev\Products\Product\Entity\Offers\ProductOffer;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Quantity\ProductModificationQuantity;
+use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
+use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
+use Generator;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class ProductModificationChoiceRepository implements ProductModificationChoiceInterface
 {
 
-    private TranslatorInterface $translator;
     private ORMQueryBuilder $ORMQueryBuilder;
+    private DBALQueryBuilder $DBALQueryBuilder;
 
     public function __construct(
         ORMQueryBuilder $ORMQueryBuilder,
-        TranslatorInterface $translator
+        DBALQueryBuilder $DBALQueryBuilder
     )
     {
-
-        $this->translator = $translator;
         $this->ORMQueryBuilder = $ORMQueryBuilder;
+        $this->DBALQueryBuilder = $DBALQueryBuilder;
     }
 
     /**
@@ -56,7 +61,9 @@ final class ProductModificationChoiceRepository implements ProductModificationCh
      */
     public function fetchProductModificationConstByVariationConst(ProductVariationConst $const): ?array
     {
-        $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
+        $qb = $this->ORMQueryBuilder
+            ->createQueryBuilder(self::class)
+            ->bindLocal();
 
         $select = sprintf('new %s(
             modification.const, 
@@ -67,24 +74,26 @@ final class ProductModificationChoiceRepository implements ProductModificationCh
 
         $qb->select($select);
 
-        $qb->from(ProductEntity\Offers\Variation\ProductVariation::class, 'variation');
+        $qb->from(ProductVariation::class, 'variation');
+        $qb->where('variation.const = :const');
+        $qb->setParameter('const', $const, ProductVariationConst::TYPE);
 
         $qb->join(
-            ProductEntity\Offers\ProductOffer::class,
+            ProductOffer::class,
             'offer',
             'WITH',
             'offer.id = variation.offer'
         );
 
         $qb->join(
-            ProductEntity\Product::class,
+            Product::class,
             'product',
             'WITH',
             'product.event = offer.event'
         );
 
         $qb->join(
-            ProductEntity\Offers\Variation\Modification\ProductModification::class,
+            ProductModification::class,
             'modification',
             'WITH',
             'modification.variation = variation.id'
@@ -93,22 +102,19 @@ final class ProductModificationChoiceRepository implements ProductModificationCh
         // Тип торгового предложения
 
         $qb->join(
-            CategoryEntity\Offers\Variation\Modification\ProductCategoryModification::class,
+            CategoryProductModification::class,
             'category_modification',
             'WITH',
             'category_modification.id = modification.categoryModification'
         );
 
         $qb->leftJoin(
-            CategoryEntity\Offers\Variation\Modification\Trans\ProductCategoryModificationTrans::class,
+            CategoryProductModificationTrans::class,
             'trans',
             'WITH',
             'trans.modification = category_modification.id AND trans.local = :local'
         );
-        $qb->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
 
-        $qb->where('variation.const = :const');
-        $qb->setParameter('const', $const, ProductVariationConst::TYPE);
 
         /* Кешируем результат ORM */
         return $qb->enableCache('products-product', 86400)->getResult();
@@ -121,7 +127,9 @@ final class ProductModificationChoiceRepository implements ProductModificationCh
      */
     public function fetchProductModificationByVariation(ProductVariationUid $variation): ?array
     {
-        $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
+        $qb = $this->ORMQueryBuilder
+            ->createQueryBuilder(self::class)
+            ->bindLocal();
 
         $select = sprintf('new %s(
             modification.id, 
@@ -132,17 +140,19 @@ final class ProductModificationChoiceRepository implements ProductModificationCh
 
         $qb->select($select);
 
-        $qb->from(ProductEntity\Offers\Variation\ProductVariation::class, 'variation');
+        $qb->from(ProductVariation::class, 'variation');
+        $qb->where('variation.id = :variation');
+        $qb->setParameter('variation', $variation, ProductVariationUid::TYPE);
 
         $qb->join(
-            ProductEntity\Offers\ProductOffer::class,
+            ProductOffer::class,
             'offer',
             'WITH',
             'offer.id = variation.offer'
         );
 
         $qb->join(
-            ProductEntity\Product::class,
+            Product::class,
             'product',
             'WITH',
             'product.event = offer.event'
@@ -150,7 +160,7 @@ final class ProductModificationChoiceRepository implements ProductModificationCh
 
 
         $qb->join(
-            ProductEntity\Offers\Variation\Modification\ProductModification::class,
+            ProductModification::class,
             'modification',
             'WITH',
             'modification.variation = variation.id'
@@ -159,27 +169,119 @@ final class ProductModificationChoiceRepository implements ProductModificationCh
         // Тип торгового предложения
 
         $qb->join(
-            CategoryEntity\Offers\Variation\Modification\ProductCategoryModification::class,
+            CategoryProductModification::class,
             'category_modification',
             'WITH',
             'category_modification.id = modification.categoryModification'
         );
 
         $qb->leftJoin(
-            CategoryEntity\Offers\Variation\Modification\Trans\ProductCategoryModificationTrans::class,
+            CategoryProductModificationTrans::class,
             'trans',
             'WITH',
             'trans.modification = category_modification.id AND trans.local = :local'
         );
 
-        $qb->where('variation.id = :variation');
-
-        $qb->setParameter('variation', $variation, ProductVariationUid::TYPE);
-        $qb->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
-
-
         /* Кешируем результат ORM */
         return $qb->enableCache('products-product', 86400)->getResult();
 
     }
+
+
+    /**
+     * Метод возвращает все идентификаторы модификаций множественных вариантов торговых предложений продукта
+     */
+    public function fetchProductModificationExistsByVariation(ProductVariationUid|string $variation): Generator
+    {
+        if(is_string($variation))
+        {
+            $variation = new ProductVariationUid($variation);
+        }
+
+        $dbal = $this->DBALQueryBuilder
+            ->createQueryBuilder(self::class)
+            ->bindLocal();
+
+
+        $dbal
+            ->from(ProductVariation::class, 'variation')
+            ->where('variation.id = :variation')
+            ->setParameter('variation', $variation, ProductVariationUid::TYPE);
+
+        $dbal->join(
+            'variation',
+            ProductOffer::class,
+            'offer',
+            'offer.id = variation.offer'
+        );
+
+        $dbal->join(
+            'offer',
+            Product::class,
+            'product',
+            'product.event = offer.event'
+        );
+
+
+        $dbal->join(
+            'variation',
+            ProductModification::class,
+            'modification',
+            'modification.variation = variation.id'
+        );
+
+        // Тип торгового предложения
+
+        $dbal->join(
+            'modification',
+            CategoryProductModification::class,
+            'category_modification',
+            'category_modification.id = modification.category_modification'
+        );
+
+        $dbal->leftJoin(
+            'category_modification',
+            CategoryProductModificationTrans::class,
+            'category_modification_trans',
+            'category_modification_trans.modification = category_modification.id
+             AND category_modification_trans.local = :local'
+        );
+
+
+        $dbal
+            ->addSelect('SUM(modification_quantity.quantity - modification_quantity.reserve) AS option')
+            ->join(
+                'modification',
+                ProductModificationQuantity::class,
+                'modification_quantity',
+                'modification_quantity.modification = modification.id AND modification_quantity.quantity > 0 '
+            );
+
+
+        $dbal->addSelect('modification.id AS value');
+        $dbal->addSelect("CONCAT(modification.value, ' ', modification.postfix) AS attr");
+
+        $dbal->addSelect('category_modification_trans.name AS property');
+        $dbal->addSelect('category_modification.reference AS characteristic');
+
+        $dbal->allGroupByExclude();
+
+
+        //        $select = sprintf('new %s(
+        //            modification.id,
+        //            modification.value,
+        //            trans.name,
+        //            category_modification.reference
+        //        )', ProductModificationUid::class);
+
+        //        $dbal->select($select);
+
+        /* Кешируем результат ORM */
+        //return $qb->enableCache('products-product', 86400)->getResult();
+
+        return $dbal->fetchAllHydrate(ProductModificationUid::class);
+
+    }
+
+
 }

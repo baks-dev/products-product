@@ -18,7 +18,7 @@
 
 namespace BaksDev\Products\Product\Forms\ProductFilter\Admin;
 
-use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
+use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Forms\ProductFilter\ProductFilterInterface;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,7 +37,7 @@ final class ProductFilterDTO implements ProductFilterInterface
     /**
      * Категория
      */
-    private ?ProductCategoryUid $category = null;
+    private ?CategoryProductUid $category = null;
 
     /**
      * Торговое предложение
@@ -71,7 +71,7 @@ final class ProductFilterDTO implements ProductFilterInterface
     /**
      * Категория
      */
-    public function setCategory(ProductCategoryUid|string|null $category): void
+    public function setCategory(CategoryProductUid|string|null $category): void
     {
         if(empty($category))
         {
@@ -80,7 +80,7 @@ final class ProductFilterDTO implements ProductFilterInterface
 
         if(is_string($category))
         {
-            $category = new ProductCategoryUid($category);
+            $category = new CategoryProductUid($category);
         }
 
         $this->category = $category;
@@ -96,7 +96,7 @@ final class ProductFilterDTO implements ProductFilterInterface
     }
 
 
-    public function getCategory(bool $readonly = false): ?ProductCategoryUid
+    public function getCategory(bool $readonly = false): ?CategoryProductUid
     {
         if($readonly)
         {

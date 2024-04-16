@@ -30,18 +30,19 @@ use BaksDev\Core\Type\Locale\Locale;
 
 //use BaksDev\Products\Category\Entity as CategoryEntity;
 //use BaksDev\Products\Product\Entity as ProductEntity;
-use BaksDev\Products\Category\Entity\Cover\ProductCategoryCover;
-use BaksDev\Products\Category\Entity\Info\ProductCategoryInfo;
-use BaksDev\Products\Category\Entity\Offers\ProductCategoryOffers;
-use BaksDev\Products\Category\Entity\Offers\Trans\ProductCategoryOffersTrans;
-use BaksDev\Products\Category\Entity\Offers\Variation\Modification\ProductCategoryModification;
-use BaksDev\Products\Category\Entity\Offers\Variation\Modification\Trans\ProductCategoryModificationTrans;
-use BaksDev\Products\Category\Entity\Offers\Variation\ProductCategoryVariation;
-use BaksDev\Products\Category\Entity\Offers\Variation\Trans\ProductCategoryVariationTrans;
-use BaksDev\Products\Category\Entity\Section\Field\ProductCategorySectionField;
-use BaksDev\Products\Category\Entity\Section\Field\Trans\ProductCategorySectionFieldTrans;
-use BaksDev\Products\Category\Entity\Section\ProductCategorySection;
-use BaksDev\Products\Category\Entity\Trans\ProductCategoryTrans;
+use BaksDev\Products\Category\Entity\CategoryProduct;
+use BaksDev\Products\Category\Entity\Cover\CategoryProductCover;
+use BaksDev\Products\Category\Entity\Info\CategoryProductInfo;
+use BaksDev\Products\Category\Entity\Offers\CategoryProductOffers;
+use BaksDev\Products\Category\Entity\Offers\Trans\CategoryProductOffersTrans;
+use BaksDev\Products\Category\Entity\Offers\Variation\Modification\CategoryProductModification;
+use BaksDev\Products\Category\Entity\Offers\Variation\Modification\Trans\CategoryProductModificationTrans;
+use BaksDev\Products\Category\Entity\Offers\Variation\CategoryProductVariation;
+use BaksDev\Products\Category\Entity\Offers\Variation\Trans\CategoryProductVariationTrans;
+use BaksDev\Products\Category\Entity\Section\Field\CategoryProductSectionField;
+use BaksDev\Products\Category\Entity\Section\Field\Trans\CategoryProductSectionFieldTrans;
+use BaksDev\Products\Category\Entity\Section\CategoryProductSection;
+use BaksDev\Products\Category\Entity\Trans\CategoryProductTrans;
 use BaksDev\Products\Product\Entity\Active\ProductActive;
 use BaksDev\Products\Product\Entity\Category\ProductCategory;
 use BaksDev\Products\Product\Entity\Description\ProductDescription;
@@ -182,7 +183,7 @@ final class ProductModelRepository implements ProductModelInterface
             ->addSelect('category_offer.reference AS product_offer_reference')
             ->leftJoin(
                 'product_offer',
-                ProductCategoryOffers::class,
+                CategoryProductOffers::class,
                 'category_offer',
                 'category_offer.id = product_offer.category_offer'
             );
@@ -191,7 +192,7 @@ final class ProductModelRepository implements ProductModelInterface
         $dbal
             ->leftJoin(
                 'category_offer',
-                ProductCategoryOffersTrans::class,
+                CategoryProductOffersTrans::class,
                 'category_offer_trans',
                 'category_offer_trans.offer = category_offer.id AND category_offer_trans.local = :local'
             );
@@ -231,7 +232,7 @@ final class ProductModelRepository implements ProductModelInterface
         $dbal
             ->leftJoin(
                 'product_variation',
-                ProductCategoryVariation::class,
+                CategoryProductVariation::class,
                 'category_variation',
                 'category_variation.id = product_variation.category_variation'
             );
@@ -240,7 +241,7 @@ final class ProductModelRepository implements ProductModelInterface
         $dbal
             ->leftJoin(
                 'category_variation',
-                ProductCategoryVariationTrans::class,
+                CategoryProductVariationTrans::class,
                 'category_variation_trans',
                 'category_variation_trans.variation = category_variation.id AND category_variation_trans.local = :local'
             );
@@ -280,7 +281,7 @@ final class ProductModelRepository implements ProductModelInterface
         $dbal
             ->leftJoin(
                 'category_modification',
-                ProductCategoryModificationTrans::class,
+                CategoryProductModificationTrans::class,
                 'category_modification_trans',
                 'category_modification_trans.modification = category_modification.id AND category_modification_trans.local = :local'
             );
@@ -288,7 +289,7 @@ final class ProductModelRepository implements ProductModelInterface
         $dbal
             ->leftJoin(
                 'product_modification',
-                ProductCategoryModification::class,
+                CategoryProductModification::class,
                 'category_modification',
                 'category_modification.id = product_modification.category_modification'
             );
@@ -514,7 +515,7 @@ final class ProductModelRepository implements ProductModelInterface
 
         $dbal->join(
             'product_event_category',
-            \BaksDev\Products\Category\Entity\ProductCategory::class,
+            CategoryProduct::class,
             'category',
             'category.id = product_event_category.category'
         );
@@ -523,7 +524,7 @@ final class ProductModelRepository implements ProductModelInterface
 
         $dbal->leftJoin(
             'category',
-            ProductCategoryTrans::class,
+            CategoryProductTrans::class,
             'category_trans',
             'category_trans.event = category.event AND category_trans.local = :local'
         );
@@ -531,14 +532,14 @@ final class ProductModelRepository implements ProductModelInterface
         $dbal->addSelect('category_info.url AS category_url');
         $dbal->leftJoin(
             'category',
-            ProductCategoryInfo::class,
+            CategoryProductInfo::class,
             'category_info',
             'category_info.event = category.event'
         );
 
         $dbal->leftJoin(
             'category',
-            ProductCategorySection::class,
+            CategoryProductSection::class,
             'category_section',
             'category_section.event = category.event'
         );
@@ -551,7 +552,7 @@ final class ProductModelRepository implements ProductModelInterface
         $dbal->addSelect("
 			CASE
 			 WHEN category_cover.name IS NOT NULL THEN
-					CONCAT ( '/upload/".$dbal->table(ProductCategoryCover::class)."' , '/', category_cover.name)
+					CONCAT ( '/upload/".$dbal->table(CategoryProductCover::class)."' , '/', category_cover.name)
 			   		ELSE NULL
 			END AS category_cover_dir
 		"
@@ -560,7 +561,7 @@ final class ProductModelRepository implements ProductModelInterface
 
         $dbal->leftJoin(
             'category',
-            ProductCategoryCover::class,
+            CategoryProductCover::class,
             'category_cover',
             'category_cover.event = category.event'
         );
@@ -570,14 +571,14 @@ final class ProductModelRepository implements ProductModelInterface
 
         $dbal->leftJoin(
             'category_section',
-            ProductCategorySectionField::class,
+            CategoryProductSectionField::class,
             'category_section_field',
             'category_section_field.section = category_section.id AND (category_section_field.public = TRUE OR category_section_field.name = TRUE )'
         );
 
         $dbal->leftJoin(
             'category_section_field',
-            ProductCategorySectionFieldTrans::class,
+            CategoryProductSectionFieldTrans::class,
             'category_section_field_trans',
             'category_section_field_trans.field = category_section_field.id AND category_section_field_trans.local = :local'
         );

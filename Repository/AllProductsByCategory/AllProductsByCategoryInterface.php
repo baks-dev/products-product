@@ -24,14 +24,14 @@
 namespace BaksDev\Products\Product\Repository\AllProductsByCategory;
 
 use BaksDev\Core\Services\Paginator\PaginatorInterface;
-use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
+use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Forms\ProductCategoryFilter\User\ProductCategoryFilterDTO;
 use Symfony\Component\Form\Form;
 
 interface AllProductsByCategoryInterface
 {
     public function fetchAllProductByCategoryAssociative(
-        ProductCategoryUid $category,
+        CategoryProductUid $category,
         ProductCategoryFilterDTO $filter,
         ?array $property,
         string $expr = 'AND'
@@ -40,7 +40,7 @@ interface AllProductsByCategoryInterface
 
     /** Метод возвращает все товары в категории */
     public function fetchAllProductByCategory(
-        ProductCategoryUid $category
+        CategoryProductUid $category
     ): array;
 
 }

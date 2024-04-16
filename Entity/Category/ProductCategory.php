@@ -24,7 +24,7 @@
 namespace BaksDev\Products\Product\Entity\Category;
 
 use BaksDev\Core\Entity\EntityEvent;
-use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
+use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -48,10 +48,10 @@ class ProductCategory extends EntityEvent
 	/** ID Category */
     #[Assert\NotBlank]
     #[Assert\Uuid]
-    #[Assert\Type(ProductCategoryUid::class)]
+    #[Assert\Type(CategoryProductUid::class)]
 	#[ORM\Id]
-	#[ORM\Column(type: ProductCategoryUid::TYPE, nullable: false)]
-	private ProductCategoryUid $category;
+    #[ORM\Column(type: CategoryProductUid::TYPE, nullable: false)]
+    private CategoryProductUid $category;
 	
 	/** Корневая категория */
     #[Assert\Type('bool')]
@@ -67,8 +67,8 @@ class ProductCategory extends EntityEvent
     {
         return (string) $this->event;
     }
-	
-	public function getCategory() : ProductCategoryUid
+
+    public function getCategory(): CategoryProductUid
 	{
 		return $this->category;
 	}

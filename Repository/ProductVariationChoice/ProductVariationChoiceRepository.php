@@ -25,28 +25,38 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Repository\ProductVariationChoice;
 
+use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Core\Doctrine\ORMQueryBuilder;
-use BaksDev\Core\Type\Locale\Locale;
-use BaksDev\Products\Category\Entity as CategoryEntity;
-use BaksDev\Products\Product\Entity as ProductEntity;
+use BaksDev\Products\Category\Entity\Offers\CategoryProductOffers;
+use BaksDev\Products\Category\Entity\Offers\Trans\CategoryProductOffersTrans;
+use BaksDev\Products\Category\Entity\Offers\Variation\CategoryProductVariation;
+use BaksDev\Products\Category\Entity\Offers\Variation\Trans\CategoryProductVariationTrans;
+use BaksDev\Products\Product\Entity\Offers\ProductOffer;
+use BaksDev\Products\Product\Entity\Offers\Quantity\ProductOfferQuantity;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Quantity\ProductModificationQuantity;
+use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
+use BaksDev\Products\Product\Entity\Offers\Variation\Quantity\ProductVariationQuantity;
+use BaksDev\Products\Product\Entity\Product;
+use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
-use Symfony\Contracts\Translation\TranslatorInterface;
+use Generator;
 
 final class ProductVariationChoiceRepository implements ProductVariationChoiceInterface
 {
-    private TranslatorInterface $translator;
     private ORMQueryBuilder $ORMQueryBuilder;
+    private DBALQueryBuilder $DBALQueryBuilder;
 
     public function __construct(
         ORMQueryBuilder $ORMQueryBuilder,
-        TranslatorInterface $translator
+        DBALQueryBuilder $DBALQueryBuilder,
     )
     {
-        $this->translator = $translator;
         $this->ORMQueryBuilder = $ORMQueryBuilder;
+        $this->DBALQueryBuilder = $DBALQueryBuilder;
     }
 
     /**
@@ -54,7 +64,9 @@ final class ProductVariationChoiceRepository implements ProductVariationChoiceIn
      */
     public function fetchProductVariationByOfferConst(ProductOfferConst $const): ?array
     {
-        $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
+        $qb = $this->ORMQueryBuilder
+            ->createQueryBuilder(self::class)
+            ->bindLocal();
 
         $select = sprintf('new %s(
             variation.const, 
@@ -65,11 +77,11 @@ final class ProductVariationChoiceRepository implements ProductVariationChoiceIn
 
         $qb->select($select);
 
-        $qb->from(ProductEntity\Offers\ProductOffer::class, 'offer');
+        $qb->from(ProductOffer::class, 'offer');
 
 
         $qb->join(
-            ProductEntity\Product::class,
+            Product::class,
             'product',
             'WITH',
             'product.event = offer.event'
@@ -77,7 +89,7 @@ final class ProductVariationChoiceRepository implements ProductVariationChoiceIn
 
 
         $qb->join(
-            ProductEntity\Offers\Variation\ProductVariation::class,
+            ProductVariation::class,
             'variation',
             'WITH',
             'variation.offer = offer.id'
@@ -86,14 +98,14 @@ final class ProductVariationChoiceRepository implements ProductVariationChoiceIn
         // Тип торгового предложения
 
         $qb->join(
-            CategoryEntity\Offers\Variation\ProductCategoryVariation::class,
+            CategoryProductVariation::class,
             'category_variation',
             'WITH',
             'category_variation.id = variation.categoryVariation'
         );
 
         $qb->leftJoin(
-            CategoryEntity\Offers\Variation\Trans\ProductCategoryVariationTrans::class,
+            CategoryProductVariationTrans::class,
             'trans',
             'WITH',
             'trans.variation = category_variation.id AND trans.local = :local'
@@ -102,7 +114,6 @@ final class ProductVariationChoiceRepository implements ProductVariationChoiceIn
         $qb->where('offer.const = :const');
 
         $qb->setParameter('const', $const, ProductOfferConst::TYPE);
-        $qb->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
 
 
         /* Кешируем результат ORM */
@@ -113,7 +124,9 @@ final class ProductVariationChoiceRepository implements ProductVariationChoiceIn
 
     public function fetchProductVariationByOffer(ProductOfferUid $offer): ?array
     {
-        $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
+        $qb = $this->ORMQueryBuilder
+            ->createQueryBuilder(self::class)
+            ->bindLocal();
 
         $select = sprintf('new %s(
             variation.id, 
@@ -124,11 +137,11 @@ final class ProductVariationChoiceRepository implements ProductVariationChoiceIn
 
         $qb->select($select);
 
-        $qb->from(ProductEntity\Offers\ProductOffer::class, 'offer');
+        $qb->from(ProductOffer::class, 'offer');
 
 
         $qb->join(
-            ProductEntity\Product::class,
+            Product::class,
             'product',
             'WITH',
             'product.event = offer.event'
@@ -136,7 +149,7 @@ final class ProductVariationChoiceRepository implements ProductVariationChoiceIn
 
 
         $qb->join(
-            ProductEntity\Offers\Variation\ProductVariation::class,
+            ProductVariation::class,
             'variation',
             'WITH',
             'variation.offer = offer.id'
@@ -145,14 +158,14 @@ final class ProductVariationChoiceRepository implements ProductVariationChoiceIn
         // Тип торгового предложения
 
         $qb->join(
-            CategoryEntity\Offers\Variation\ProductCategoryVariation::class,
+            CategoryProductVariation::class,
             'category_variation',
             'WITH',
             'category_variation.id = variation.categoryVariation'
         );
 
         $qb->leftJoin(
-            CategoryEntity\Offers\Variation\Trans\ProductCategoryVariationTrans::class,
+            CategoryProductVariationTrans::class,
             'trans',
             'WITH',
             'trans.variation = category_variation.id AND trans.local = :local'
@@ -161,12 +174,138 @@ final class ProductVariationChoiceRepository implements ProductVariationChoiceIn
         $qb->where('offer.id = :offer');
 
         $qb->setParameter('offer', $offer, ProductOfferUid::TYPE);
-        $qb->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
-
 
         /* Кешируем результат ORM */
         return $qb->enableCache('products-product', 86400)->getResult();
 
     }
+
+
+    /**
+     * Метод возвращает все идентификаторы множественных вариантов торговых предложений продукта имеющиеся в доступе
+     */
+    public function fetchProductVariationExistsByOffer(ProductOfferUid|string $offer): Generator
+    {
+        if(is_string($offer))
+        {
+            $offer = new ProductOfferUid($offer);
+        }
+
+        $dbal = $this->DBALQueryBuilder
+            ->createQueryBuilder(self::class)
+            ->bindLocal();
+
+        $dbal
+            ->from(ProductOffer::class, 'product_offer')
+            ->where('product_offer.id = :offer')
+            ->setParameter('offer', $offer, ProductOfferUid::TYPE);
+
+        $dbal->join(
+            'product_offer',
+            Product::class,
+            'product',
+            'product.event = product_offer.event'
+        );
+
+        $dbal->join(
+            'product_offer',
+            ProductVariation::class,
+            'product_variation',
+            'product_variation.offer = product_offer.id'
+        );
+
+        // Тип множественного варианта предложения
+
+        $dbal->join(
+            'product_variation',
+            CategoryProductVariation::class,
+            'category_variation',
+            'category_variation.id = product_variation.category_variation'
+        );
+
+        $dbal->leftJoin(
+            'category_variation',
+            CategoryProductVariationTrans::class,
+            'category_variation_trans',
+            'category_variation_trans.variation = category_variation.id AND category_variation_trans.local = :local'
+        );
+
+
+        $dbal->leftJoin(
+            'product_variation',
+            ProductModification::class,
+            'product_modification',
+            'product_modification.variation = product_variation.id'
+        );
+
+        /**
+         * Quantity
+         */
+
+        $dbal->leftJoin(
+            'product_offer',
+            ProductOfferQuantity::class,
+            'product_offer_quantity',
+            'product_offer_quantity.offer = product_offer.id'
+        );
+
+        $dbal->leftJoin(
+            'product_variation',
+            ProductVariationQuantity::class,
+            'product_variation_quantity',
+            'product_variation_quantity.variation = product_variation.id'
+        );
+
+        $dbal->leftJoin(
+            'product_modification',
+            ProductModificationQuantity::class,
+            'product_modification_quantity',
+            'product_modification_quantity.modification = product_modification.id'
+        );
+
+
+        //        $select = sprintf('new %s(
+        //            offer.id,
+        //            offer.value,
+        //            trans.name,
+        //            category_offer.reference
+        //        )', ProductOfferUid::class);
+        //
+        //        $dbal->select($select);
+
+        $dbal->addSelect('product_variation.id AS value');
+        $dbal->addSelect("CONCAT(product_variation.value, ' ', product_variation.postfix) AS attr");
+
+
+        $dbal->addSelect('
+
+            CASE
+               WHEN SUM(product_modification_quantity.quantity - product_modification_quantity.reserve) > 0
+               THEN SUM(product_modification_quantity.quantity - product_modification_quantity.reserve)
+
+               WHEN SUM(product_variation_quantity.quantity - product_variation_quantity.reserve) > 0
+               THEN SUM(product_variation_quantity.quantity - product_variation_quantity.reserve)
+
+               ELSE 0
+            END
+
+        AS option');
+
+
+        $dbal->addSelect('category_variation_trans.name AS property');
+        $dbal->addSelect('category_variation.reference AS characteristic');
+
+        $dbal->allGroupByExclude();
+
+        $dbal->andWhere('
+            product_modification_quantity.quantity > 0 OR 
+            product_variation_quantity.quantity > 0 
+        ');
+
+        return $dbal->fetchAllHydrate(ProductVariationUid::class);
+
+
+    }
+
 
 }

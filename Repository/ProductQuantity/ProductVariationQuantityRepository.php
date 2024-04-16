@@ -25,7 +25,7 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Repository\ProductQuantity;
 
-use BaksDev\Products\Category\Entity\Offers\Variation\ProductCategoryVariation;
+use BaksDev\Products\Category\Entity\Offers\Variation\CategoryProductVariation;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
@@ -100,7 +100,7 @@ final class ProductVariationQuantityRepository implements ProductVariationQuanti
         // Только если у модификации указан количественный учет
 
         $qb->join(
-            ProductCategoryVariation::class,
+            CategoryProductVariation::class,
             'category_variation',
             'WITH',
             'category_variation.id = variation.categoryVariation AND category_variation.quantitative = true'

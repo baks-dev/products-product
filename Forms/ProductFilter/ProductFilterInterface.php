@@ -18,12 +18,12 @@
 
 namespace BaksDev\Products\Product\Forms\ProductFilter;
 
-use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
+use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 
 interface ProductFilterInterface
 {
-	
-	public function getCategory() : ?ProductCategoryUid;
+
+    public function getCategory(): ?CategoryProductUid;
 
 	
 }

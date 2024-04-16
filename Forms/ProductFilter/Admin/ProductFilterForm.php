@@ -23,7 +23,7 @@ use BaksDev\Products\Category\Repository\CategoryChoice\CategoryChoiceInterface;
 use BaksDev\Products\Category\Repository\ModificationFieldsCategoryChoice\ModificationFieldsCategoryChoiceInterface;
 use BaksDev\Products\Category\Repository\OfferFieldsCategoryChoice\OfferFieldsCategoryChoiceInterface;
 use BaksDev\Products\Category\Repository\VariationFieldsCategoryChoice\VariationFieldsCategoryChoiceInterface;
-use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
+use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -93,10 +93,10 @@ final class ProductFilterForm extends AbstractType
 
                 $builder->add('category', ChoiceType::class, [
                     'choices' => $this->categoryChoice->getCategoryCollection(),
-                    'choice_value' => function(?ProductCategoryUid $category) {
+                    'choice_value' => function(?CategoryProductUid $category) {
                         return $category?->getValue();
                     },
-                    'choice_label' => function(ProductCategoryUid $category) {
+                    'choice_label' => function(CategoryProductUid $category) {
                         return $category->getOptions();
                     },
                     'label' => false,
@@ -142,7 +142,7 @@ final class ProductFilterForm extends AbstractType
                 if(isset($this->request->getMainRequest()?->get($builder->getName())['category']))
                 {
                     $Category = !empty($this->request->getMainRequest()?->get($builder->getName())['category']) ?
-                        new ProductCategoryUid($this->request->getMainRequest()?->get($builder->getName())['category']) : null;
+                        new CategoryProductUid($this->request->getMainRequest()?->get($builder->getName())['category']) : null;
 
                 }
 
@@ -150,7 +150,7 @@ final class ProductFilterForm extends AbstractType
                 {
                     /** Торговое предложение раздела */
 
-                    $offerField = $this->offerChoice->getOfferFieldCollection($Category);
+                    $offerField = $this->offerChoice->findByCategory($Category);
 
                     if($offerField)
                     {
@@ -200,7 +200,7 @@ final class ProductFilterForm extends AbstractType
 
                                     /** Модификации множественных вариантов торгового предложения */
 
-                                    $modificationField = $this->modificationChoice->getModificationFieldType($variationField);
+                                    $modificationField = $this->modificationChoice->findByVariation($variationField);
 
 
                                     if($modificationField)

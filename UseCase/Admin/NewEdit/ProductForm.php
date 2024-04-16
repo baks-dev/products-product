@@ -179,9 +179,9 @@ final class ProductForm extends AbstractType
 		$categories = $options['data']->getCategory();
 		/* @var CategoryCollectionDTO $category */
 		$category = $categories->current();
-		
-		$propertyCategory = $category->getCategory() ? $this->categoryProperty->get($category->getCategory()) : null;
-		
+
+        $propertyCategory = $category->getCategory() ? $this->categoryProperty->findByCategory($category->getCategory()) : null;
+
 		/* CollectionType */
 		$builder->add('property', CollectionType::class, [
 			'entry_type' => Property\PropertyCollectionForm::class,
@@ -268,13 +268,13 @@ final class ProductForm extends AbstractType
 		/** Создаем торговое предложение  */
 		
 		/* Получаем Торговые предложения категории */
-		$offersCategory = $category->getCategory() ? $this->categoryOffers->get($category->getCategory()) : null;
+        $offersCategory = $category->getCategory() ? $this->categoryOffers->findByCategory($category->getCategory()) : null;
 		
 		/* Получаем множественные варианты ТП */
-		$variationCategory = $offersCategory ? $this->categoryVariation->get($offersCategory->id) : null;
-		
+        $variationCategory = $offersCategory ? $this->categoryVariation->findByOffer($offersCategory->id) : null;
+
 		/* Получаем модификации мноественных вариантов */
-		$modificationCategory = $variationCategory ? $this->categoryModification->get($variationCategory->id) : null;
+        $modificationCategory = $variationCategory ? $this->categoryModification->findByVariation($variationCategory->id) : null;
 
 		$builder->add('offer', CollectionType::class, [
 			'entry_type' => Offers\ProductOffersCollectionForm::class,

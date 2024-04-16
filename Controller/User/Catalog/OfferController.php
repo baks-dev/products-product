@@ -27,7 +27,7 @@ use BaksDev\Core\Controller\AbstractController;
 use BaksDev\Core\Form\Search\SearchDTO;
 use BaksDev\Core\Form\Search\SearchForm;
 use BaksDev\Products\Category\Repository\CategoryByUrl\CategoryByUrlInterface;
-use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
+use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Forms\ProductCategoryFilter\User\ProductCategoryFilterDTO;
 use BaksDev\Products\Product\Forms\ProductCategoryFilter\User\ProductCategoryFilterForm;
 use BaksDev\Products\Product\Repository\AllProductsByCategory\AllProductsByCategoryInterface;
@@ -57,15 +57,15 @@ final class OfferController extends AbstractController
 		
 		//dump($info->getCategory());
 		//dump($productsByCategory->fetchAllProductByCategoryAssociative($info->getCategory()));
-		
-		$info = $categoryByUrl->fetchCategoryAssociative($category);
+
+        $info = $categoryByUrl->findByUrl($category);
 		
 		if(!$info)
 		{
 			throw new RouteNotFoundException('Page Not Found');
 		}
-		
-		$CategoryUid = new ProductCategoryUid($info['category_id']);
+
+        $CategoryUid = new CategoryProductUid($info['category_id']);
 		
 		
 		//$ProductCategoryFilterDTO = new ProductCategoryFilterDTO($info->getCategory());

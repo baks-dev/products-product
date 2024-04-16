@@ -23,7 +23,7 @@
 
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Property;
 
-use BaksDev\Products\Category\Type\Section\Field\Id\ProductCategorySectionFieldUid;
+use BaksDev\Products\Category\Type\Section\Field\Id\CategoryProductSectionFieldUid;
 use BaksDev\Products\Product\Entity\Property\ProductPropertyInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -31,7 +31,7 @@ final class PropertyCollectionDTO implements ProductPropertyInterface
 {
 	/** Связь на поле из категории */
 	#[Assert\Uuid]
-	private ?ProductCategorySectionFieldUid $field = null;
+    private ?CategoryProductSectionFieldUid $field = null;
 	
 	/** Заполненное значение */
 	private ?string $value = null;
@@ -59,15 +59,15 @@ final class PropertyCollectionDTO implements ProductPropertyInterface
 	{
 		$this->value = $value;
 	}
-	
-	
-	public function getField() : ?ProductCategorySectionFieldUid
+
+
+    public function getField(): ?CategoryProductSectionFieldUid
 	{
 		return $this->field;
 	}
-	
-	
-	public function setField(ProductCategorySectionFieldUid $field) : void
+
+
+    public function setField(CategoryProductSectionFieldUid $field): void
 	{
 		$this->field = $field;
 	}

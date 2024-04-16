@@ -24,7 +24,7 @@
 namespace BaksDev\Products\Product\Entity\Offers\Variation\Modification;
 
 use BaksDev\Core\Entity\EntityEvent;
-use BaksDev\Products\Category\Type\Offers\Modification\ProductCategoryModificationUid;
+use BaksDev\Products\Category\Type\Offers\Modification\CategoryProductModificationUid;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Product\Type\Barcode\ProductBarcode;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
@@ -66,8 +66,8 @@ class ProductModification extends EntityEvent
 
     /** ID модификации категории */
     #[Assert\Uuid]
-    #[ORM\Column(name: 'category_modification', type: ProductCategoryModificationUid::TYPE, nullable: true)]
-    private ?ProductCategoryModificationUid $categoryModification = null;
+    #[ORM\Column(name: 'category_modification', type: CategoryProductModificationUid::TYPE, nullable: true)]
+    private ?CategoryProductModificationUid $categoryModification = null;
 
     /** Заполненное значение */
     #[ORM\Column(type: Types::TEXT, nullable: true)]

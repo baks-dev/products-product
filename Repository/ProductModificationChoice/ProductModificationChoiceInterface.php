@@ -25,6 +25,7 @@ namespace BaksDev\Products\Product\Repository\ProductModificationChoice;
 
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
+use Generator;
 
 interface ProductModificationChoiceInterface
 {
@@ -37,4 +38,9 @@ interface ProductModificationChoiceInterface
      * Метод возвращает все идентификаторы модификаций множественных вариантов торговых предложений продукта
      */
     public function fetchProductModificationByVariation(ProductVariationUid $variation): ?array;
+
+    /**
+     * Метод возвращает все идентификаторы модификаций множественных вариантов торговых предложений продукта
+     */
+    public function fetchProductModificationExistsByVariation(ProductVariationUid|string $variation): Generator;
 }

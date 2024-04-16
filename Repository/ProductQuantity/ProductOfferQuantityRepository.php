@@ -25,7 +25,7 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Repository\ProductQuantity;
 
-use BaksDev\Products\Category\Entity\Offers\ProductCategoryOffers;
+use BaksDev\Products\Category\Entity\Offers\CategoryProductOffers;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\Quantity\ProductOfferQuantity;
@@ -87,7 +87,7 @@ final class ProductOfferQuantityRepository implements ProductOfferQuantityInterf
         // Только если у оргового предложения указан количественный учет
 
         $qb->join(
-            ProductCategoryOffers::class,
+            CategoryProductOffers::class,
             'category_offer',
             'WITH',
             'category_offer.id = offer.categoryOffer AND category_offer.quantitative = true'

@@ -27,17 +27,18 @@ namespace BaksDev\Products\Product\Repository\ProductDetail;
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Core\Type\Locale\Locale;
-use BaksDev\Products\Category\Entity\Info\ProductCategoryInfo;
-use BaksDev\Products\Category\Entity\Offers\ProductCategoryOffers;
-use BaksDev\Products\Category\Entity\Offers\Trans\ProductCategoryOffersTrans;
-use BaksDev\Products\Category\Entity\Offers\Variation\Modification\ProductCategoryModification;
-use BaksDev\Products\Category\Entity\Offers\Variation\Modification\Trans\ProductCategoryModificationTrans;
-use BaksDev\Products\Category\Entity\Offers\Variation\ProductCategoryVariation;
-use BaksDev\Products\Category\Entity\Offers\Variation\Trans\ProductCategoryVariationTrans;
-use BaksDev\Products\Category\Entity\Section\Field\ProductCategorySectionField;
-use BaksDev\Products\Category\Entity\Section\Field\Trans\ProductCategorySectionFieldTrans;
-use BaksDev\Products\Category\Entity\Section\ProductCategorySection;
-use BaksDev\Products\Category\Entity\Trans\ProductCategoryTrans;
+use BaksDev\Products\Category\Entity\CategoryProduct;
+use BaksDev\Products\Category\Entity\Info\CategoryProductInfo;
+use BaksDev\Products\Category\Entity\Offers\CategoryProductOffers;
+use BaksDev\Products\Category\Entity\Offers\Trans\CategoryProductOffersTrans;
+use BaksDev\Products\Category\Entity\Offers\Variation\Modification\CategoryProductModification;
+use BaksDev\Products\Category\Entity\Offers\Variation\Modification\Trans\CategoryProductModificationTrans;
+use BaksDev\Products\Category\Entity\Offers\Variation\CategoryProductVariation;
+use BaksDev\Products\Category\Entity\Offers\Variation\Trans\CategoryProductVariationTrans;
+use BaksDev\Products\Category\Entity\Section\Field\CategoryProductSectionField;
+use BaksDev\Products\Category\Entity\Section\Field\Trans\CategoryProductSectionFieldTrans;
+use BaksDev\Products\Category\Entity\Section\CategoryProductSection;
+use BaksDev\Products\Category\Entity\Trans\CategoryProductTrans;
 use BaksDev\Products\Product\Entity\Active\ProductActive;
 use BaksDev\Products\Product\Entity\Category\ProductCategory;
 use BaksDev\Products\Product\Entity\Description\ProductDescription;
@@ -238,7 +239,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
         $qb->addSelect('category_offer.reference AS product_offer_reference')->addGroupBy('category_offer.reference');
         $qb->leftJoin(
             'product_offer',
-            ProductCategoryOffers::TABLE,
+            CategoryProductOffers::TABLE,
             'category_offer',
             'category_offer.id = product_offer.category_offer'
         );
@@ -248,7 +249,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
         $qb->addSelect('category_offer_trans.postfix as product_offer_name_postfix')->addGroupBy('category_offer_trans.postfix');
         $qb->leftJoin(
             'category_offer',
-            ProductCategoryOffersTrans::TABLE,
+            CategoryProductOffersTrans::TABLE,
             'category_offer_trans',
             'category_offer_trans.offer = category_offer.id AND category_offer_trans.local = :local'
         );
@@ -299,7 +300,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
             ->addGroupBy('category_offer_variation.reference');
         $qb->leftJoin(
             'product_offer_variation',
-            ProductCategoryVariation::TABLE,
+            CategoryProductVariation::TABLE,
             'category_offer_variation',
             'category_offer_variation.id = product_offer_variation.category_variation'
         );
@@ -312,7 +313,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
             ->addGroupBy('category_offer_variation_trans.postfix');
         $qb->leftJoin(
             'category_offer_variation',
-            ProductCategoryVariationTrans::TABLE,
+            CategoryProductVariationTrans::TABLE,
             'category_offer_variation_trans',
             'category_offer_variation_trans.variation = category_offer_variation.id AND category_offer_variation_trans.local = :local'
         );
@@ -362,7 +363,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
             ->addGroupBy('category_offer_modification.reference');
         $qb->leftJoin(
             'product_offer_modification',
-            ProductCategoryModification::TABLE,
+            CategoryProductModification::TABLE,
             'category_offer_modification',
             'category_offer_modification.id = product_offer_modification.category_modification'
         );
@@ -375,7 +376,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
             ->addGroupBy('category_offer_modification_trans.postfix');
         $qb->leftJoin(
             'category_offer_modification',
-            ProductCategoryModificationTrans::TABLE,
+            CategoryProductModificationTrans::TABLE,
             'category_offer_modification_trans',
             'category_offer_modification_trans.modification = category_offer_modification.id AND category_offer_modification_trans.local = :local'
         );
@@ -556,12 +557,10 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
             'product_event_category.event = product_event.id AND product_event_category.root = true'
         );
 
-        //$qb->andWhere('product_event_category.category = :category');
-        //$qb->setParameter('category', $category, ProductCategoryUid::TYPE);
 
         $qb->join(
             'product_event_category',
-            \BaksDev\Products\Category\Entity\ProductCategory::TABLE,
+            CategoryProduct::TABLE,
             'category',
             'category.id = product_event_category.category'
         );
@@ -570,7 +569,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
 
         $qb->leftJoin(
             'category',
-            ProductCategoryTrans::TABLE,
+            CategoryProductTrans::TABLE,
             'category_trans',
             'category_trans.event = category.event AND category_trans.local = :local'
         );
@@ -578,14 +577,14 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
         $qb->addSelect('category_info.url AS category_url')->addGroupBy('category_info.url');
         $qb->leftJoin(
             'category',
-            ProductCategoryInfo::TABLE,
+            CategoryProductInfo::TABLE,
             'category_info',
             'category_info.event = category.event'
         );
 
         $qb->leftJoin(
             'category',
-            ProductCategorySection::TABLE,
+            CategoryProductSection::TABLE,
             'category_section',
             'category_section.event = category.event'
         );
@@ -594,14 +593,14 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
 
         $qb->leftJoin(
             'category_section',
-            ProductCategorySectionField::TABLE,
+            CategoryProductSectionField::TABLE,
             'category_section_field',
             'category_section_field.section = category_section.id AND (category_section_field.public = TRUE OR category_section_field.name = TRUE )'
         );
 
         $qb->leftJoin(
             'category_section_field',
-            ProductCategorySectionFieldTrans::TABLE,
+            CategoryProductSectionFieldTrans::TABLE,
             'category_section_field_trans',
             'category_section_field_trans.field = category_section_field.id AND category_section_field_trans.local = :local'
         );

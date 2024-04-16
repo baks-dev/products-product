@@ -26,9 +26,36 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Repository\ProductAlternative;
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
-use BaksDev\Products\Category\Entity as CategoryEntity;
-use BaksDev\Products\Category\Type\Section\Field\Id\ProductCategorySectionFieldUid;
-use BaksDev\Products\Product\Entity as ProductEntity;
+use BaksDev\Products\Category\Entity\CategoryProduct;
+use BaksDev\Products\Category\Entity\Info\CategoryProductInfo;
+use BaksDev\Products\Category\Entity\Offers\CategoryProductOffers;
+use BaksDev\Products\Category\Entity\Offers\Trans\CategoryProductOffersTrans;
+use BaksDev\Products\Category\Entity\Offers\Variation\CategoryProductVariation;
+use BaksDev\Products\Category\Entity\Offers\Variation\Modification\CategoryProductModification;
+use BaksDev\Products\Category\Entity\Offers\Variation\Modification\Trans\CategoryProductModificationTrans;
+use BaksDev\Products\Category\Entity\Offers\Variation\Trans\CategoryProductVariationTrans;
+use BaksDev\Products\Category\Entity\Section\CategoryProductSection;
+use BaksDev\Products\Category\Entity\Section\Field\CategoryProductSectionField;
+use BaksDev\Products\Category\Entity\Section\Field\Trans\CategoryProductSectionFieldTrans;
+use BaksDev\Products\Category\Entity\Trans\CategoryProductTrans;
+use BaksDev\Products\Category\Type\Section\Field\Id\CategoryProductSectionFieldUid;
+use BaksDev\Products\Product\Entity\Active\ProductActive;
+use BaksDev\Products\Product\Entity\Category\ProductCategory;
+use BaksDev\Products\Product\Entity\Event\ProductEvent;
+use BaksDev\Products\Product\Entity\Info\ProductInfo;
+use BaksDev\Products\Product\Entity\Offers\Price\ProductOfferPrice;
+use BaksDev\Products\Product\Entity\Offers\ProductOffer;
+use BaksDev\Products\Product\Entity\Offers\Quantity\ProductOfferQuantity;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Price\ProductModificationPrice;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Quantity\ProductModificationQuantity;
+use BaksDev\Products\Product\Entity\Offers\Variation\Price\ProductVariationPrice;
+use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
+use BaksDev\Products\Product\Entity\Offers\Variation\Quantity\ProductVariationQuantity;
+use BaksDev\Products\Product\Entity\Price\ProductPrice;
+use BaksDev\Products\Product\Entity\Product;
+use BaksDev\Products\Product\Entity\Property\ProductProperty;
+use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use stdClass;
 
 final class ProductAlternativeRepository implements ProductAlternativeInterface
@@ -65,7 +92,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
         $qb->addSelect('product_offer.id as product_offer_uid')//->addGroupBy('product_offer.id')
         ;
 
-        $qb->from(ProductEntity\Offers\ProductOffer::TABLE, 'product_offer');
+        $qb->from(ProductOffer::TABLE, 'product_offer');
 
         $qb->addSelect('product.id')//->addGroupBy('product.id ')
         ;
@@ -73,7 +100,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
         ;
         $qb->join(
             'product_offer',
-            ProductEntity\Product::TABLE,
+            Product::TABLE,
             'product',
             'product.event = product_offer.event'
         );
@@ -83,7 +110,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
         // $qb->addSelect('product_offer_price.currency');
         $qb->leftJoin(
             'product_offer',
-            ProductEntity\Offers\Price\ProductOfferPrice::TABLE,
+            ProductOfferPrice::TABLE,
             'product_offer_price',
             'product_offer_price.offer = product_offer.id'
         )
@@ -95,7 +122,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
         ;
         $qb->leftJoin(
             'product_offer',
-            CategoryEntity\Offers\ProductCategoryOffers::TABLE,
+            CategoryProductOffers::TABLE,
             'category_offer',
             'category_offer.id = product_offer.category_offer'
         );
@@ -105,7 +132,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
         ;
         $qb->leftJoin(
             'category_offer',
-            CategoryEntity\Offers\Trans\ProductCategoryOffersTrans::TABLE,
+            CategoryProductOffersTrans::TABLE,
             'category_offer_trans',
             'category_offer_trans.offer = category_offer.id AND category_offer_trans.local = :local'
         );
@@ -115,7 +142,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
         // $qb->addSelect('product_offer_quantity.reserve');
         $qb->leftJoin(
             'product_offer',
-            ProductEntity\Offers\Quantity\ProductOfferQuantity::TABLE,
+            ProductOfferQuantity::TABLE,
             'product_offer_quantity',
             'product_offer_quantity.offer = product_offer.id'
         )
@@ -139,7 +166,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 
         $qb->{$variationMethod}(
             'product_offer',
-            ProductEntity\Offers\Variation\ProductVariation::TABLE,
+            ProductVariation::TABLE,
             'product_variation',
             'product_variation.offer = product_offer.id '.(empty($variation) ? '' : 'AND product_variation.value = :variation')
         );
@@ -152,7 +179,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
         // Цена множественного варианта
         $qb->leftJoin(
             'product_variation',
-            ProductEntity\Offers\Variation\Price\ProductVariationPrice::TABLE,
+            ProductVariationPrice::TABLE,
             'product_variation_price',
             'product_variation_price.variation = product_variation.id'
         )
@@ -164,7 +191,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
         ;
         $qb->leftJoin(
             'product_variation',
-            CategoryEntity\Offers\Variation\ProductCategoryVariation::TABLE,
+            CategoryProductVariation::TABLE,
             'category_offer_variation',
             'category_offer_variation.id = product_variation.category_variation'
         );
@@ -174,7 +201,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
         ;
         $qb->leftJoin(
             'category_offer_variation',
-            CategoryEntity\Offers\Variation\Trans\ProductCategoryVariationTrans::TABLE,
+            CategoryProductVariationTrans::TABLE,
             'category_offer_variation_trans',
             'category_offer_variation_trans.variation = category_offer_variation.id AND category_offer_variation_trans.local = :local'
         );
@@ -182,7 +209,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
         // Наличие и резерв множественного варианта
         $qb->leftJoin(
             'category_offer_variation',
-            ProductEntity\Offers\Variation\Quantity\ProductVariationQuantity::TABLE,
+            ProductVariationQuantity::TABLE,
             'product_variation_quantity',
             'product_variation_quantity.variation = product_variation.id'
         )
@@ -204,7 +231,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 
         $qb->{$modificationMethod}(
             'product_variation',
-            ProductEntity\Offers\Variation\Modification\ProductModification::TABLE,
+            ProductModification::TABLE,
             'product_modification',
             'product_modification.variation = product_variation.id '.(empty($modification) ? '' : 'AND product_modification.value = :modification')
         );
@@ -217,7 +244,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
         // Цена модификации множественного варианта
         $qb->leftJoin(
             'product_modification',
-            ProductEntity\Offers\Variation\Modification\Price\ProductModificationPrice::TABLE,
+            ProductModificationPrice::TABLE,
             'product_modification_price',
             'product_modification_price.modification = product_modification.id'
         )
@@ -229,7 +256,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
         ;
         $qb->leftJoin(
             'product_modification',
-            CategoryEntity\Offers\Variation\Modification\ProductCategoryModification::TABLE,
+            CategoryProductModification::TABLE,
             'category_offer_modification',
             'category_offer_modification.id = product_modification.category_modification'
         );
@@ -239,7 +266,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
         ;
         $qb->leftJoin(
             'category_offer_modification',
-            CategoryEntity\Offers\Variation\Modification\Trans\ProductCategoryModificationTrans::TABLE,
+            CategoryProductModificationTrans::TABLE,
             'category_offer_modification_trans',
             'category_offer_modification_trans.modification = category_offer_modification.id AND category_offer_modification_trans.local = :local'
         );
@@ -247,7 +274,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
         // Наличие и резерв модификации множественного варианта
         $qb->leftJoin(
             'category_offer_modification',
-            ProductEntity\Offers\Variation\Modification\Quantity\ProductModificationQuantity::TABLE,
+            ProductModificationQuantity::TABLE,
             'product_modification_quantity',
             'product_modification_quantity.modification = product_modification.id'
         )
@@ -337,15 +364,15 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 
                 $qb->join(
                     'product_offer',
-                    ProductEntity\Property\ProductProperty::TABLE,
+                    ProductProperty::TABLE,
                     'product_property_'.$alias,
                     'product_property_'.$alias.'.event = product_offer.event AND product_property_'.$alias.'.field = :field_'.$alias.' AND product_property_'.$alias.'.value = :props_'.$alias
                 );
 
                 $qb->setParameter(
                     'field_'.$alias,
-                    new ProductCategorySectionFieldUid($props->field_uid),
-                    ProductCategorySectionFieldUid::TYPE
+                    new CategoryProductSectionFieldUid($props->field_uid),
+                    CategoryProductSectionFieldUid::TYPE
                 );
 
 
@@ -356,7 +383,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 
         $qb->join(
             'product',
-            ProductEntity\Event\ProductEvent::TABLE,
+            ProductEvent::TABLE,
             'product_event',
             'product_event.id = product.event'
         );
@@ -367,7 +394,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 
         $qb->join(
             'product',
-            ProductEntity\Active\ProductActive::TABLE,
+            ProductActive::TABLE,
             'product_active',
             'product_active.event = product.event AND product_active.active = true AND product_active.active_from < NOW()
 			
@@ -386,7 +413,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 
         $qb->leftJoin(
             'product_event',
-            ProductEntity\Trans\ProductTrans::TABLE,
+            ProductTrans::TABLE,
             'product_trans',
             'product_trans.event = product_event.id AND product_trans.local = :local'
         );
@@ -394,7 +421,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
         // Базовая Цена товара
         $qb->leftJoin(
             'product_event',
-            ProductEntity\Price\ProductPrice::TABLE,
+            ProductPrice::TABLE,
             'product_price',
             'product_price.event = product_event.id'
         )
@@ -410,7 +437,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 
         $qb->leftJoin(
             'product_event',
-            ProductEntity\Info\ProductInfo::TABLE,
+            ProductInfo::TABLE,
             'product_info',
             'product_info.product = product.id '
         );
@@ -418,17 +445,15 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
         // Категория
         $qb->join(
             'product_event',
-            ProductEntity\Category\ProductCategory::TABLE,
+            ProductCategory::TABLE,
             'product_event_category',
             'product_event_category.event = product_event.id AND product_event_category.root = true'
         );
 
-        // $qb->andWhere('product_event_category.category = :category');
-        // $qb->setParameter('category', $category, ProductCategoryUid::TYPE);
 
         $qb->join(
             'product_event_category',
-            CategoryEntity\ProductCategory::TABLE,
+            CategoryProduct::TABLE,
             'category',
             'category.id = product_event_category.category'
         );
@@ -438,7 +463,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 
         $qb->leftJoin(
             'category',
-            CategoryEntity\Trans\ProductCategoryTrans::TABLE,
+            CategoryProductTrans::TABLE,
             'category_trans',
             'category_trans.event = category.event AND category_trans.local = :local'
         );
@@ -447,14 +472,14 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
         ;
         $qb->leftJoin(
             'category',
-            CategoryEntity\Info\ProductCategoryInfo::TABLE,
+            CategoryProductInfo::TABLE,
             'category_info',
             'category_info.event = category.event'
         );
 
         $qb->leftJoin(
             'category',
-            CategoryEntity\Section\ProductCategorySection::TABLE,
+            CategoryProductSection::TABLE,
             'category_section',
             'category_section.event = category.event'
         );
@@ -463,21 +488,21 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 
         $qb->leftJoin(
             'category_section',
-            CategoryEntity\Section\Field\ProductCategorySectionField::TABLE,
+            CategoryProductSectionField::TABLE,
             'category_section_field',
             'category_section_field.section = category_section.id AND category_section_field.card = TRUE'
         );
 
         $qb->leftJoin(
             'category_section_field',
-            CategoryEntity\Section\Field\Trans\ProductCategorySectionFieldTrans::TABLE,
+            CategoryProductSectionFieldTrans::TABLE,
             'category_section_field_trans',
             'category_section_field_trans.field = category_section_field.id AND category_section_field_trans.local = :local'
         );
 
         $qb->leftJoin(
             'category_section_field',
-            ProductEntity\Property\ProductProperty::TABLE,
+            ProductProperty::TABLE,
             'category_product_property',
             'category_product_property.event = product.event AND category_product_property.field = category_section_field.id'
         );

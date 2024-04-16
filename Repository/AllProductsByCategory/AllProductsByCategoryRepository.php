@@ -33,18 +33,19 @@ use BaksDev\Core\Type\Locale\Locale;
 use BaksDev\Delivery\BaksDevDeliveryBundle;
 use BaksDev\DeliveryTransport\BaksDevDeliveryTransportBundle;
 use BaksDev\DeliveryTransport\Entity\ProductParameter\DeliveryPackageProductParameter;
-use BaksDev\Products\Category\Entity\Event\ProductCategoryEvent;
-use BaksDev\Products\Category\Entity\Info\ProductCategoryInfo;
-use BaksDev\Products\Category\Entity\Offers\ProductCategoryOffers;
-use BaksDev\Products\Category\Entity\Offers\Variation\Modification\ProductCategoryModification;
-use BaksDev\Products\Category\Entity\Offers\Variation\ProductCategoryVariation;
-use BaksDev\Products\Category\Entity\ProductCategory;
-use BaksDev\Products\Category\Entity\Section\Field\ProductCategorySectionField;
-use BaksDev\Products\Category\Entity\Section\Field\Trans\ProductCategorySectionFieldTrans;
-use BaksDev\Products\Category\Entity\Section\ProductCategorySection;
-use BaksDev\Products\Category\Entity\Trans\ProductCategoryTrans;
-use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
-use BaksDev\Products\Category\Type\Section\Field\Id\ProductCategorySectionFieldUid;
+use BaksDev\Products\Category\Entity\Event\CategoryProductEvent;
+use BaksDev\Products\Category\Entity\Info\CategoryProductInfo;
+use BaksDev\Products\Category\Entity\Offers\CategoryProductOffers;
+use BaksDev\Products\Category\Entity\Offers\Variation\Modification\CategoryProductModification;
+use BaksDev\Products\Category\Entity\Offers\Variation\CategoryProductVariation;
+use BaksDev\Products\Category\Entity\CategoryProduct;
+use BaksDev\Products\Category\Entity\Section\Field\CategoryProductSectionField;
+use BaksDev\Products\Category\Entity\Section\Field\Trans\CategoryProductSectionFieldTrans;
+use BaksDev\Products\Category\Entity\Section\CategoryProductSection;
+use BaksDev\Products\Category\Entity\Trans\CategoryProductTrans;
+use BaksDev\Products\Category\Type\Id\CategoryProductUid;
+use BaksDev\Products\Category\Type\Section\Field\Id\CategoryProductSectionFieldUid;
+use BaksDev\Products\Product\Entity\Category\ProductCategory;
 use BaksDev\Products\Product\Entity\Description\ProductDescription;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
@@ -92,7 +93,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
 
 
     public function fetchAllProductByCategoryAssociative(
-        ProductCategoryUid $category,
+        CategoryProductUid $category,
         ProductCategoryFilterDTO $filter,
         ?array $property,
         string $expr = 'AND',
@@ -106,13 +107,13 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
 
 
         $dbal
-            ->from(ProductCategory::class, 'category')
+            ->from(CategoryProduct::class, 'category')
             ->where('category.id = :category')
-            ->setParameter('category', $category, ProductCategoryUid::TYPE);
+            ->setParameter('category', $category, CategoryProductUid::TYPE);
 
         $dbal->join(
             'category',
-            ProductCategoryEvent::class,
+            CategoryProductEvent::class,
             'category_event',
             'category_event.id = category.event OR category_event.parent = category.id'
         );
@@ -122,7 +123,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
             ->addSelect('category_info.url AS category_url')
             ->leftJoin(
                 'category_event',
-                ProductCategoryInfo::class,
+                CategoryProductInfo::class,
                 'category_info',
                 'category_info.event = category_event.id'
             );
@@ -132,14 +133,14 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
             ->addSelect('category_trans.name AS category_name')
             ->leftJoin(
                 'category_event',
-                ProductCategoryTrans::class,
+                CategoryProductTrans::class,
                 'category_trans',
                 'category_trans.event = category_event.id AND category_trans.local = :local'
             );
 
         $dbal->leftJoin(
             'category',
-            ProductCategorySection::class,
+            CategoryProductSection::class,
             'category_section',
             'category_section.event = category.event'
         );
@@ -150,14 +151,14 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
 
         $dbal->leftJoin(
             'category_section',
-            ProductCategorySectionField::class,
+            CategoryProductSectionField::class,
             'category_section_field',
             'category_section_field.section = category_section.id AND (category_section_field.card = TRUE OR category_section_field.photo = TRUE OR category_section_field.name = TRUE )'
         );
 
         $dbal->leftJoin(
             'category_section_field',
-            ProductCategorySectionFieldTrans::class,
+            CategoryProductSectionFieldTrans::class,
             'category_section_field_trans',
             'category_section_field_trans.field = category_section_field.id AND category_section_field_trans.local = :local'
         );
@@ -168,7 +169,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
         $dbal
             ->leftJoin(
                 'category',
-                \BaksDev\Products\Product\Entity\Category\ProductCategory::class,
+                ProductCategory::class,
                 'product_category',
                 'product_category.category = category_event.category'
             );
@@ -206,12 +207,12 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
                     $prepareValue = uniqid('val_', false);
                     $aliase = uniqid('aliase', false);
 
-                    $ProductCategorySectionFieldUid = new ProductCategorySectionFieldUid($type);
+                    $ProductCategorySectionFieldUid = new CategoryProductSectionFieldUid($type);
                     $ProductPropertyJoin = $aliase.'.field = :'.$prepareKey.' AND '.$aliase.'.value = :'.$prepareValue;
 
                     $dbal->setParameter($prepareKey,
                         $ProductCategorySectionFieldUid,
-                        ProductCategorySectionFieldUid::TYPE
+                        CategoryProductSectionFieldUid::TYPE
                     );
                     $dbal->setParameter($prepareValue, $item);
 
@@ -236,12 +237,12 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
                     $prepareKey = uniqid('', false);
                     $prepareValue = uniqid('', false);
 
-                    $ProductCategorySectionFieldUid = new ProductCategorySectionFieldUid($type);
+                    $ProductCategorySectionFieldUid = new CategoryProductSectionFieldUid($type);
                     $ProductPropertyJoin[] = 'product_property_filter.field = :'.$prepareKey.' AND product_property_filter.value = :'.$prepareValue;
 
                     $dbal->setParameter($prepareKey,
                         $ProductCategorySectionFieldUid,
-                        ProductCategorySectionFieldUid::TYPE
+                        CategoryProductSectionFieldUid::TYPE
                     );
                     $dbal->setParameter($prepareValue, $item);
 
@@ -323,7 +324,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
         /*  тип торгового предложения */
         $dbal->leftJoin(
             'product_offer',
-            ProductCategoryOffers::class,
+            CategoryProductOffers::class,
             'category_offer',
             'category_offer.id = product_offer.category_offer'
         );
@@ -373,7 +374,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
 
         $dbal->leftJoin(
             'product_variation',
-            ProductCategoryVariation::class,
+            CategoryProductVariation::class,
             'category_variation',
             'category_variation.id = product_variation.category_variation'
         );
@@ -421,7 +422,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
 
         $dbal->leftJoin(
             'product_modification',
-            ProductCategoryModification::class,
+            CategoryProductModification::class,
             'category_modification',
             'category_modification.id = product_modification.category_modification'
         );
@@ -725,7 +726,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
 
     /** Метод возвращает все товары в категории */
     public function fetchAllProductByCategory(
-        ProductCategoryUid $category = null
+        CategoryProductUid $category = null
     ): array
     {
         $dbal = $this->DBALQueryBuilder
@@ -737,9 +738,9 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
         if($category)
         {
             $dbal
-                ->from(\BaksDev\Products\Product\Entity\Category\ProductCategory::class, 'product_category')
+                ->from(ProductCategory::class, 'product_category')
                 ->where('product_category.category = :category AND product_category.root = true')
-                ->setParameter('category', $category, ProductCategoryUid::TYPE);
+                ->setParameter('category', $category, CategoryProductUid::TYPE);
 
             $dbal->join('product_category',
                 Product::class,
@@ -752,7 +753,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
             $dbal->from(Product::class, 'product');
 
             $dbal->leftJoin('product',
-                \BaksDev\Products\Product\Entity\Category\ProductCategory::class,
+                ProductCategory::class,
                 'product_category',
                 'product_category.event = product.event AND product_category.root = true'
             );
@@ -831,7 +832,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
             ->addSelect('category_offer.reference as offer_reference')
             ->leftJoin(
                 'product_offer',
-                ProductCategoryOffers::class,
+                CategoryProductOffers::class,
                 'category_offer',
                 'category_offer.id = product_offer.category_offer'
             );
@@ -867,7 +868,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
             ->addSelect('category_variation.reference as variation_reference')
             ->leftJoin(
                 'product_variation',
-                ProductCategoryVariation::class,
+                CategoryProductVariation::class,
                 'category_variation',
                 'category_variation.id = product_variation.category_variation'
             );
@@ -904,7 +905,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
             ->addSelect('category_modification.reference as modification_reference')
             ->leftJoin(
                 'product_modification',
-                ProductCategoryModification::class,
+                CategoryProductModification::class,
                 'category_modification',
                 'category_modification.id = product_modification.category_modification'
             );
@@ -1080,7 +1081,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
 
         $dbal->leftJoin(
             'product_category',
-            ProductCategory::class,
+            CategoryProduct::class,
             'category',
             'category.id = product_category.category'
         );
@@ -1090,7 +1091,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
             ->addSelect('category_info.url AS category_url')
             ->leftJoin(
                 'category',
-                ProductCategoryInfo::class,
+                CategoryProductInfo::class,
                 'category_info',
                 'category_info.event = category.event'
             );
@@ -1100,14 +1101,14 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
             ->addSelect('category_trans.description AS category_desc')
             ->leftJoin(
                 'category',
-                ProductCategoryTrans::class,
+                CategoryProductTrans::class,
                 'category_trans',
                 'category_trans.event = category.event AND category_trans.local = :local'
             );
 
         $dbal->leftJoin(
             'category',
-            ProductCategorySection::class,
+            CategoryProductSection::class,
             'category_section',
             'category_section.event = category.event'
         );
@@ -1115,14 +1116,14 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
 
         $dbal->leftJoin(
             'category_section',
-            ProductCategorySectionField::class,
+            CategoryProductSectionField::class,
             'category_section_field',
             'category_section_field.section = category_section.id AND category_section_field.card = TRUE'
         );
 
         $dbal->leftJoin(
             'category_section_field',
-            ProductCategorySectionFieldTrans::class,
+            CategoryProductSectionFieldTrans::class,
             'category_section_field_trans',
             'category_section_field_trans.field = category_section_field.id AND category_section_field_trans.local = :local'
         );

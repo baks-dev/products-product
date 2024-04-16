@@ -25,7 +25,7 @@ namespace BaksDev\Products\Product\Entity\Event;
 
 use BaksDev\Core\Entity\EntityEvent;
 use BaksDev\Core\Type\Locale\Locale;
-use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
+use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Entity\Active\ProductActive;
 use BaksDev\Products\Product\Entity\Category\ProductCategory;
 use BaksDev\Products\Product\Entity\Description\ProductDescription;
@@ -212,7 +212,7 @@ class ProductEvent extends EntityEvent
     /**
      * Метод возвращает идентификатор корневой категории продукта
      */
-    public function getRootCategory() : ?ProductCategoryUid
+    public function getRootCategory(): ?CategoryProductUid
     {
         $filter = $this->category->filter(function(ProductCategory $category) {
             return $category->isRoot();

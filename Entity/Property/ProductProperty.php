@@ -24,7 +24,7 @@
 namespace BaksDev\Products\Product\Entity\Property;
 
 use BaksDev\Core\Entity\EntityEvent;
-use BaksDev\Products\Category\Type\Section\Field\Id\ProductCategorySectionFieldUid;
+use BaksDev\Products\Category\Type\Section\Field\Id\CategoryProductSectionFieldUid;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -48,8 +48,8 @@ class ProductProperty extends EntityEvent
 	
 	/** Связь на поле в категории */
 	#[ORM\Id]
-	#[ORM\Column(type: ProductCategorySectionFieldUid::TYPE)]
-	private ProductCategorySectionFieldUid $field;
+    #[ORM\Column(type: CategoryProductSectionFieldUid::TYPE)]
+    private CategoryProductSectionFieldUid $field;
 	
 	/** Заполненное значение */
 	#[ORM\Column(type: Types::TEXT, nullable: true)]

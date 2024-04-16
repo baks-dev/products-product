@@ -25,7 +25,7 @@ namespace BaksDev\Products\Product\Controller\Admin;
 
 use BaksDev\Core\Controller\AbstractController;
 use BaksDev\Core\Listeners\Event\Security\RoleSecurity;
-use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
+use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
@@ -73,7 +73,7 @@ final class NewController extends AbstractController
         if ($request->get('category')) {
             $CategoryCollectionDTO = new CategoryCollectionDTO();
             $CategoryCollectionDTO->rootCategory();
-            $CategoryCollectionDTO->setCategory(new ProductCategoryUid($request->get('category')));
+            $CategoryCollectionDTO->setCategory(new CategoryProductUid($request->get('category')));
             $ProductDTO->addCategory($CategoryCollectionDTO);
         }
 

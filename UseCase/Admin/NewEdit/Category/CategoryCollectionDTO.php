@@ -18,7 +18,7 @@
 
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Category;
 
-use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
+use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Entity\Category\ProductCategoryInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -27,22 +27,22 @@ final class CategoryCollectionDTO implements ProductCategoryInterface
 	
 	/** ID категории продукта */
 	#[Assert\Uuid]
-	private ?ProductCategoryUid $category = null;
+    private ?CategoryProductUid $category = null;
 	
 	private bool $root = false;
-	
-	
-	public function getCategory() : ?ProductCategoryUid
+
+
+    public function getCategory(): ?CategoryProductUid
 	{
 		return $this->category;
 	}
-	
-	
-	public function setCategory(ProductCategoryUid|string $category) : void
+
+
+    public function setCategory(CategoryProductUid|string $category): void
 	{
         if(is_string($category))
         {
-            $category = new ProductCategoryUid($category);
+            $category = new CategoryProductUid($category);
         }
         
 		$this->category = $category;

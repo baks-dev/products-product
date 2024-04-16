@@ -24,7 +24,7 @@
 namespace BaksDev\Products\Product\Entity\Offers;
 
 use BaksDev\Core\Entity\EntityEvent;
-use BaksDev\Products\Category\Type\Offers\Id\ProductCategoryOffersUid;
+use BaksDev\Products\Category\Type\Offers\Id\CategoryProductOffersUid;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Type\Barcode\ProductBarcode;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
@@ -60,9 +60,9 @@ class ProductOffer extends EntityEvent
 
     /** ID торгового предложения категории */
     #[Assert\Uuid]
-    #[Assert\Type(ProductCategoryOffersUid::class)]
-    #[ORM\Column(name: 'category_offer', type: ProductCategoryOffersUid::TYPE, nullable: true)]
-    private ?ProductCategoryOffersUid $categoryOffer = null;
+    #[Assert\Type(CategoryProductOffersUid::class)]
+    #[ORM\Column(name: 'category_offer', type: CategoryProductOffersUid::TYPE, nullable: true)]
+    private ?CategoryProductOffersUid $categoryOffer = null;
 
     /** Постоянный уникальный идентификатор ТП */
     #[Assert\NotBlank]

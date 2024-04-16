@@ -26,9 +26,9 @@ namespace BaksDev\Products\Product\Controller;
 use BaksDev\Core\Controller\AbstractController;
 use BaksDev\Core\Listeners\Event\Security\RoleSecurity;
 use BaksDev\Core\Type\UidType\ParamConverter;
-use BaksDev\Products\Category\Entity\ProductCategory;
+use BaksDev\Products\Category\Entity\CategoryProduct;
 use BaksDev\Products\Category\Repository\AllCategoryByMenu\AllCategoryByMenuInterface;
-use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
+use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Repository\AllProductsByCategory\AllProductsByCategoryInterface;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use ReflectionAttribute;
@@ -51,7 +51,7 @@ final class SitemapController extends AbstractController
      */
     #[Route('/sitemap/products/{category}/urls.xml', name: 'sitemap', methods: ['GET'])]
     public function urls(
-        #[ParamConverter(ProductCategoryUid::class)] $category,
+        #[ParamConverter(CategoryProductUid::class)] $category,
         AllProductsByCategoryInterface $productsByCategory
     ): Response
     {

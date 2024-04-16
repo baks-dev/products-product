@@ -28,11 +28,12 @@ use BaksDev\Core\Form\Search\SearchDTO;
 use BaksDev\Core\Services\Paginator\PaginatorInterface;
 
 //use BaksDev\Products\Category\Entity as CategoryEntity;
-use BaksDev\Products\Category\Entity\Offers\ProductCategoryOffers;
-use BaksDev\Products\Category\Entity\Offers\Variation\Modification\ProductCategoryModification;
-use BaksDev\Products\Category\Entity\Offers\Variation\ProductCategoryVariation;
-use BaksDev\Products\Category\Entity\Trans\ProductCategoryTrans;
-use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
+use BaksDev\Products\Category\Entity\CategoryProduct;
+use BaksDev\Products\Category\Entity\Offers\CategoryProductOffers;
+use BaksDev\Products\Category\Entity\Offers\Variation\Modification\CategoryProductModification;
+use BaksDev\Products\Category\Entity\Offers\Variation\CategoryProductVariation;
+use BaksDev\Products\Category\Entity\Trans\CategoryProductTrans;
+use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Entity\Category\ProductCategory;
 use BaksDev\Products\Product\Entity\Description\ProductDescription;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
@@ -208,7 +209,7 @@ final class AllExistsProductsRepository implements AllExistsProductsInterface
 
         $qb->leftJoin(
             'product_offer',
-            ProductCategoryOffers::TABLE,
+            CategoryProductOffers::TABLE,
             'category_offer',
             'category_offer.id = product_offer.category_offer'
         );
@@ -265,7 +266,7 @@ final class AllExistsProductsRepository implements AllExistsProductsInterface
         $qb->addSelect('category_variation.reference as product_variation_reference');
         $qb->leftJoin(
             'product_variation',
-            ProductCategoryVariation::TABLE,
+            CategoryProductVariation::TABLE,
             'category_variation',
             'category_variation.id = product_variation.category_variation'
         );
@@ -302,7 +303,7 @@ final class AllExistsProductsRepository implements AllExistsProductsInterface
         $qb->addSelect('category_modification.reference as product_modification_reference');
         $qb->leftJoin(
             'product_modification',
-            ProductCategoryModification::TABLE,
+            CategoryProductModification::TABLE,
             'category_modification',
             'category_modification.id = product_modification.category_modification'
         );
@@ -399,12 +400,12 @@ final class AllExistsProductsRepository implements AllExistsProductsInterface
         if($this->filter->getCategory())
         {
             $qb->andWhere('product_event_category.category = :category');
-            $qb->setParameter('category', $this->filter->getCategory(), ProductCategoryUid::TYPE);
+            $qb->setParameter('category', $this->filter->getCategory(), CategoryProductUid::TYPE);
         }
 
         $qb->join(
             'product_event_category',
-            \BaksDev\Products\Category\Entity\ProductCategory::TABLE,
+            CategoryProduct::TABLE,
             'category',
             'category.id = product_event_category.category'
         );
@@ -413,7 +414,7 @@ final class AllExistsProductsRepository implements AllExistsProductsInterface
 
         $qb->leftJoin(
             'category',
-            ProductCategoryTrans::TABLE,
+            CategoryProductTrans::TABLE,
             'category_trans',
             'category_trans.event = category.event AND category_trans.local = :local'
         );

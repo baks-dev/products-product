@@ -27,9 +27,9 @@ use BaksDev\Core\Controller\AbstractController;
 use BaksDev\Core\Listeners\Event\Security\RoleSecurity;
 use BaksDev\Core\Repository\SettingsMain\SettingsMainInterface;
 use BaksDev\Core\Type\UidType\ParamConverter;
-use BaksDev\Products\Category\Entity\ProductCategory;
+use BaksDev\Products\Category\Entity\CategoryProduct;
 use BaksDev\Products\Category\Repository\AllCategoryByMenu\AllCategoryByMenuInterface;
-use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
+use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Repository\AllProductsByCategory\AllProductsByCategoryInterface;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use ReflectionAttribute;
@@ -59,7 +59,7 @@ final class ExportController extends AbstractController
         //        dd($settingsMain->getSettingsMainAssociative($request->getHost(), $request->getLocale()));
 
         $response = $this->render([
-            'category' => $allCategory->fetchAllCatalogMenuAssociative(),
+            'category' => $allCategory->findAll(),
             'settings' => $settingsMain->getSettingsMainAssociative($request->getHost(), $request->getLocale()),
             'products' => $productsByCategory->fetchAllProductByCategory()],
             file: 'export.html.twig'
@@ -84,7 +84,7 @@ final class ExportController extends AbstractController
 
         $response = $this->render([
             'settings' => $settingsMain->getSettingsMainAssociative($request->getHost(), $request->getLocale()),
-            'category' => $allCategory->fetchAllCatalogMenuAssociative(),
+            'category' => $allCategory->findAll(),
             'products' => $productsByCategory->fetchAllProductByCategory()],
             file: 'catalog.html.twig'
         );
@@ -117,7 +117,7 @@ final class ExportController extends AbstractController
 
     #[Route('/export.json', name: 'export.json', methods: ['GET'])]
     public function export(
-        #[ParamConverter(ProductCategoryUid::class)] $category,
+        #[ParamConverter(CategoryProductUid::class)] $category,
         AllProductsByCategoryInterface $productsByCategory
     ): Response
     {

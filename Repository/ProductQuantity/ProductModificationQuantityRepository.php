@@ -26,7 +26,7 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Repository\ProductQuantity;
 
 
-use BaksDev\Products\Category\Entity\Offers\Variation\Modification\ProductCategoryModification;
+use BaksDev\Products\Category\Entity\Offers\Variation\Modification\CategoryProductModification;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
@@ -50,11 +50,12 @@ final class ProductModificationQuantityRepository implements ProductModification
 
     /** Метод возвращает количественный учет модификации множественного варианта */
     public function getProductModificationQuantity(
-        ProductUid               $product,
-        ProductOfferConst        $offer,
-        ProductVariationConst    $variation,
+        ProductUid $product,
+        ProductOfferConst $offer,
+        ProductVariationConst $variation,
         ProductModificationConst $modification
-    ): ?ProductModificationQuantity {
+    ): ?ProductModificationQuantity
+    {
         $qb = $this->entityManager->createQueryBuilder();
 
         $qb->select('quantity');
@@ -114,7 +115,7 @@ final class ProductModificationQuantityRepository implements ProductModification
         // Только если у модификации указан количественный учет
 
         $qb->join(
-            ProductCategoryModification::class,
+            CategoryProductModification::class,
             'category_modification',
             'WITH',
             'category_modification.id = modification.categoryModification AND category_modification.quantitative = true'

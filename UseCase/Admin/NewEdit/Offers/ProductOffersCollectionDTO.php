@@ -23,7 +23,7 @@
 
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers;
 
-use BaksDev\Products\Category\Type\Offers\Id\ProductCategoryOffersUid;
+use BaksDev\Products\Category\Type\Offers\Id\CategoryProductOffersUid;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\ProductOffersInterface;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
@@ -36,7 +36,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 final class ProductOffersCollectionDTO implements ProductOffersInterface
 {
 	/** ID торгового предложения категории */
-	private ?ProductCategoryOffersUid $categoryOffer;
+    private ?CategoryProductOffersUid $categoryOffer;
 	
 	/** Постоянный уникальный идентификатор ТП */
     #[Assert\NotBlank]
@@ -219,13 +219,13 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
 	
 	
 	/** ID торгового предложения категории */
-	public function getCategoryOffer() : ?ProductCategoryOffersUid
+    public function getCategoryOffer(): ?CategoryProductOffersUid
 	{
 		return $this->categoryOffer;
 	}
-	
 
-	public function setCategoryOffer(?ProductCategoryOffersUid $categoryOffer) : void
+
+    public function setCategoryOffer(?CategoryProductOffersUid $categoryOffer): void
 	{
 		$this->categoryOffer = $categoryOffer;
 	}

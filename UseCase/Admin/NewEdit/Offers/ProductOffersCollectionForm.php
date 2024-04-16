@@ -27,7 +27,7 @@ namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers;
 //use App\Module\Product\Handler\Admin\Product\NewEdit\Offers\OfferForm;
 //use App\Module\Product\Repository\Category\Offers\CategoryOffersFormRepository;
 use BaksDev\Core\Services\Reference\ReferenceChoice;
-use BaksDev\Products\Category\Type\Offers\Id\ProductCategoryOffersUid;
+use BaksDev\Products\Category\Type\Offers\Id\CategoryProductOffersUid;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Offer\OfferForm;
 use BaksDev\Reference\Color\Type\Color;
@@ -68,10 +68,10 @@ final class ProductOffersCollectionForm extends AbstractType
 		$builder->get('categoryOffer')->addModelTransformer(
 			new CallbackTransformer(
 				function($categoryOffer) {
-					return $categoryOffer instanceof ProductCategoryOffersUid ? $categoryOffer->getValue() : $categoryOffer;
+                    return $categoryOffer instanceof CategoryProductOffersUid ? $categoryOffer->getValue() : $categoryOffer;
 				},
 				function($categoryOffer) {
-					return new ProductCategoryOffersUid($categoryOffer);
+                    return new CategoryProductOffersUid($categoryOffer);
 				}
 			)
 		);

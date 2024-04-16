@@ -26,7 +26,19 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Repository\ProductDetail;
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
-use BaksDev\Products\Category\Entity as CategoryEntity;
+
+use BaksDev\Products\Category\Entity\CategoryProduct;
+use BaksDev\Products\Category\Entity\Info\CategoryProductInfo;
+use BaksDev\Products\Category\Entity\Offers\CategoryProductOffers;
+use BaksDev\Products\Category\Entity\Offers\Trans\CategoryProductOffersTrans;
+use BaksDev\Products\Category\Entity\Offers\Variation\CategoryProductVariation;
+use BaksDev\Products\Category\Entity\Offers\Variation\Modification\CategoryProductModification;
+use BaksDev\Products\Category\Entity\Offers\Variation\Modification\Trans\CategoryProductModificationTrans;
+use BaksDev\Products\Category\Entity\Offers\Variation\Trans\CategoryProductVariationTrans;
+use BaksDev\Products\Category\Entity\Section\CategoryProductSection;
+use BaksDev\Products\Category\Entity\Section\Field\CategoryProductSectionField;
+use BaksDev\Products\Category\Entity\Section\Field\Trans\CategoryProductSectionFieldTrans;
+use BaksDev\Products\Category\Entity\Trans\CategoryProductTrans;
 use BaksDev\Products\Product\Entity\Active\ProductActive;
 use BaksDev\Products\Product\Entity\Category\ProductCategory;
 use BaksDev\Products\Product\Entity\Description\ProductDescription;
@@ -182,7 +194,7 @@ final class ProductDetailByConstRepository implements ProductDetailByConstInterf
             ->addSelect('category_offer.reference AS product_offer_reference')
             ->leftJoin(
                 'product_offer',
-                CategoryEntity\Offers\ProductCategoryOffers::class,
+                CategoryProductOffers::class,
                 'category_offer',
                 'category_offer.id = product_offer.category_offer'
             );
@@ -193,7 +205,7 @@ final class ProductDetailByConstRepository implements ProductDetailByConstInterf
             ->addSelect('category_offer_trans.postfix as product_offer_name_postfix')
             ->leftJoin(
                 'category_offer',
-                CategoryEntity\Offers\Trans\ProductCategoryOffersTrans::class,
+                CategoryProductOffersTrans::class,
                 'category_offer_trans',
                 'category_offer_trans.offer = category_offer.id AND category_offer_trans.local = :local'
             );
@@ -245,7 +257,7 @@ final class ProductDetailByConstRepository implements ProductDetailByConstInterf
             ->addSelect('category_offer_variation.reference as product_variation_reference')
             ->leftJoin(
                 'product_offer_variation',
-                CategoryEntity\Offers\Variation\ProductCategoryVariation::class,
+                CategoryProductVariation::class,
                 'category_offer_variation',
                 'category_offer_variation.id = product_offer_variation.category_variation'
             );
@@ -260,7 +272,7 @@ final class ProductDetailByConstRepository implements ProductDetailByConstInterf
             //->addGroupBy('category_offer_variation_trans.postfix');
             ->leftJoin(
                 'category_offer_variation',
-                CategoryEntity\Offers\Variation\Trans\ProductCategoryVariationTrans::class,
+                CategoryProductVariationTrans::class,
                 'category_offer_variation_trans',
                 'category_offer_variation_trans.variation = category_offer_variation.id AND category_offer_variation_trans.local = :local'
             );
@@ -311,7 +323,7 @@ final class ProductDetailByConstRepository implements ProductDetailByConstInterf
             //->addGroupBy('category_offer_modification.reference');
             ->leftJoin(
                 'product_offer_modification',
-                CategoryEntity\Offers\Variation\Modification\ProductCategoryModification::class,
+                CategoryProductModification::class,
                 'category_offer_modification',
                 'category_offer_modification.id = product_offer_modification.category_modification'
             );
@@ -324,7 +336,7 @@ final class ProductDetailByConstRepository implements ProductDetailByConstInterf
             //->addGroupBy('category_offer_modification_trans.postfix');
             ->leftJoin(
                 'category_offer_modification',
-                CategoryEntity\Offers\Variation\Modification\Trans\ProductCategoryModificationTrans::class,
+                CategoryProductModificationTrans::class,
                 'category_offer_modification_trans',
                 'category_offer_modification_trans.modification = category_offer_modification.id AND category_offer_modification_trans.local = :local'
             );
@@ -493,7 +505,7 @@ final class ProductDetailByConstRepository implements ProductDetailByConstInterf
 
         $dbal->join(
             'product_event_category',
-            CategoryEntity\ProductCategory::class,
+            CategoryProduct::class,
             'category',
             'category.id = product_event_category.category'
         );
@@ -502,7 +514,7 @@ final class ProductDetailByConstRepository implements ProductDetailByConstInterf
             ->addSelect('category_trans.name AS category_name')
             ->leftJoin(
                 'category',
-                CategoryEntity\Trans\ProductCategoryTrans::class,
+                CategoryProductTrans::class,
                 'category_trans',
                 'category_trans.event = category.event AND category_trans.local = :local'
             );
@@ -511,14 +523,14 @@ final class ProductDetailByConstRepository implements ProductDetailByConstInterf
             ->addSelect('category_info.url AS category_url')
             ->leftJoin(
                 'category',
-                CategoryEntity\Info\ProductCategoryInfo::class,
+                CategoryProductInfo::class,
                 'category_info',
                 'category_info.event = category.event'
             );
 
         $dbal->leftJoin(
             'category',
-            CategoryEntity\Section\ProductCategorySection::class,
+            CategoryProductSection::class,
             'category_section',
             'category_section.event = category.event'
         );
@@ -527,14 +539,14 @@ final class ProductDetailByConstRepository implements ProductDetailByConstInterf
 
         $dbal->leftJoin(
             'category_section',
-            CategoryEntity\Section\Field\ProductCategorySectionField::class,
+            CategoryProductSectionField::class,
             'category_section_field',
             'category_section_field.section = category_section.id AND (category_section_field.public = TRUE OR category_section_field.name = TRUE )'
         );
 
         $dbal->leftJoin(
             'category_section_field',
-            CategoryEntity\Section\Field\Trans\ProductCategorySectionFieldTrans::class,
+            CategoryProductSectionFieldTrans::class,
             'category_section_field_trans',
             'category_section_field_trans.field = category_section_field.id AND category_section_field_trans.local = :local'
         );

@@ -30,11 +30,19 @@ use BaksDev\Core\Doctrine\ORMQueryBuilder;
 use BaksDev\Core\Type\Locale\Locale;
 use BaksDev\Products\Product\Entity\Active\ProductActive;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
+use BaksDev\Products\Product\Entity\Offers\Price\ProductOfferPrice;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
+use BaksDev\Products\Product\Entity\Offers\Quantity\ProductOfferQuantity;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Quantity\ProductModificationQuantity;
+use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
+use BaksDev\Products\Product\Entity\Offers\Variation\Quantity\ProductVariationQuantity;
+use BaksDev\Products\Product\Entity\Price\ProductPrice;
 use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
+use Generator;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class ProductChoiceRepository implements ProductChoiceInterface
@@ -119,11 +127,13 @@ final class ProductChoiceRepository implements ProductChoiceInterface
      */
     public function fetchAllProductEvent(): ?array
     {
-        $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
+        $qb = $this->ORMQueryBuilder
+            ->createQueryBuilder(self::class)
+            ->bindLocal();
 
-        $select = sprintf('new %s(product.event, trans.name, info.article)', ProductEventUid::class);
+        //$select = sprintf('new %s(product.event, trans.name, info.article)', ProductEventUid::class);
 
-        $qb->select($select);
+        //$qb->select($select);
 
         $qb->from(Product::class, 'product');
 
@@ -152,11 +162,129 @@ final class ProductChoiceRepository implements ProductChoiceInterface
             'trans.event = product.event AND trans.local = :local'
         );
 
-        $qb->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
-
 
         /* Кешируем результат ORM */
         return $qb->enableCache('products-product', 86400)->getResult();
+
+    }
+
+
+    /**
+     * Метод возвращает идентификаторы событий (ProductEventUid) доступной для продажи продукции
+     */
+    public function fetchAllProductEventByExists(): Generator
+    {
+        $dbal = $this->DBALQueryBuilder
+            ->createQueryBuilder(self::class)
+            ->bindLocal();
+
+        //$select = sprintf('new %s(product.event, trans.name)', ProductEventUid::class);
+
+        //$qb->select($select);
+
+        $dbal->from(Product::class, 'product');
+
+        $dbal->leftJoin(
+            'product',
+            ProductTrans::class,
+            'trans',
+            'trans.event = product.event AND trans.local = :local'
+        );
+
+        $dbal->leftJoin(
+            'product',
+            ProductPrice::class,
+            'product_price',
+            'product_price.event = product.event'
+        );
+
+        $dbal->leftJoin(
+            'product',
+            ProductOffer::class,
+            'product_offer',
+            'product_offer.event = product.event'
+        );
+
+        $dbal->leftJoin(
+            'product_offer',
+            ProductVariation::class,
+            'product_variation',
+            'product_variation.offer = product_offer.id'
+        );
+
+        $dbal->leftJoin(
+            'product_variation',
+            ProductModification::class,
+            'product_modification',
+            'product_modification.variation = product_variation.id'
+        );
+
+        /**
+         * Quantity
+         */
+
+        $dbal
+            ->leftJoin(
+                'product_offer',
+                ProductOfferQuantity::class,
+                'product_offer_quantity',
+                'product_offer_quantity.offer = product_offer.id'
+            );
+
+        $dbal
+            ->leftJoin(
+                'product_variation',
+                ProductVariationQuantity::class,
+                'product_variation_quantity',
+                'product_variation_quantity.variation = product_variation.id'
+            );
+
+        $dbal
+            ->leftJoin(
+                'product_modification',
+                ProductModificationQuantity::class,
+                'product_modification_quantity',
+                'product_modification_quantity.modification = product_modification.id'
+            );
+
+
+        $dbal->addSelect('product.event AS value');
+        $dbal->addSelect('trans.name AS attr');
+
+
+        $dbal->addSelect('
+
+            CASE
+               WHEN SUM(product_modification_quantity.quantity - product_modification_quantity.reserve) > 0
+               THEN SUM(product_modification_quantity.quantity - product_modification_quantity.reserve)
+
+               WHEN SUM(product_variation_quantity.quantity - product_variation_quantity.reserve) > 0
+               THEN SUM(product_variation_quantity.quantity - product_variation_quantity.reserve)
+
+               WHEN SUM(product_offer_quantity.quantity - product_offer_quantity.reserve) > 0
+               THEN SUM(product_offer_quantity.quantity - product_offer_quantity.reserve)
+
+               WHEN SUM(product_price.quantity - product_price.reserve) > 0
+               THEN SUM(product_price.quantity - product_price.reserve)
+
+               ELSE 0
+            END
+
+        AS option');
+
+        $dbal->allGroupByExclude();
+
+        $dbal->andWhere('
+            product_modification_quantity.quantity > 0 OR 
+            product_variation_quantity.quantity > 0 OR 
+            product_offer_quantity.quantity > 0 OR
+            product_price.quantity > 0 
+        ');
+
+
+        $data = $dbal->fetchAllHydrate(ProductEventUid::class);
+
+        return $dbal->fetchAllHydrate(ProductEventUid::class);
 
     }
 

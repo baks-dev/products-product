@@ -23,7 +23,7 @@
 
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation;
 
-use BaksDev\Products\Category\Type\Offers\Variation\ProductCategoryVariationUid;
+use BaksDev\Products\Category\Type\Offers\Variation\CategoryProductVariationUid;
 use BaksDev\Products\Product\Entity\Offers\OffersInterface;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariationInterface;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
@@ -37,7 +37,7 @@ final class ProductOffersVariationCollectionDTO implements ProductVariationInter
 {
 
     /** ID множественного варианта торгового предложения категории */
-    private ?ProductCategoryVariationUid $categoryVariation;
+    private ?CategoryProductVariationUid $categoryVariation;
 
     /** Постоянный уникальный идентификатор варианта */
     #[Assert\NotBlank]
@@ -209,13 +209,13 @@ final class ProductOffersVariationCollectionDTO implements ProductVariationInter
 
     /** ID множественного варианта торгового предложения категории */
 
-    public function getCategoryVariation(): ?ProductCategoryVariationUid
+    public function getCategoryVariation(): ?CategoryProductVariationUid
     {
         return $this->categoryVariation;
     }
 
 
-    public function setCategoryVariation(?ProductCategoryVariationUid $categoryVariation): void
+    public function setCategoryVariation(?CategoryProductVariationUid $categoryVariation): void
     {
         $this->categoryVariation = $categoryVariation;
     }

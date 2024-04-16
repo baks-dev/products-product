@@ -25,6 +25,7 @@ namespace BaksDev\Products\Product\Repository\ProductOfferChoice;
 
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
+use Generator;
 
 interface ProductOfferChoiceInterface
 {
@@ -37,4 +38,10 @@ interface ProductOfferChoiceInterface
      * Метод возвращает все идентификаторы торговых предложений продукта по событию
      */
     public function fetchProductOfferByProductEvent(ProductEventUid $product): ?array;
+
+
+    /**
+     * Метод возвращает все идентификаторы торговых предложений продукта по событию имеющиеся в доступе
+     */
+    public function fetchProductOfferExistsByProductEvent(ProductEventUid $product): Generator;
 }

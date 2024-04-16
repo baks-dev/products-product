@@ -84,7 +84,7 @@ final class ProductCategoryFilterForm extends AbstractType
 
             /** Торговое предложение раздела */
 
-            $offerField = $this->offerChoice->getOfferFieldCollection($data->getCategory());
+            $offerField = $this->offerChoice->findByCategory($data->getCategory());
 
             if($offerField)
             {
@@ -128,7 +128,7 @@ final class ProductCategoryFilterForm extends AbstractType
 
                             /** Модификации множественных вариантов торгового предложения */
 
-                            $modificationField = $this->modificationChoice->getModificationFieldType($variationField);
+                            $modificationField = $this->modificationChoice->findByVariation($variationField);
 
 
                             if($modificationField)
@@ -155,7 +155,7 @@ final class ProductCategoryFilterForm extends AbstractType
 
             /** Свойства, участвующие в фильтре */
 
-            $fields = $this->fields->fetchAllFilterCategoryFieldsAssociative($data->getCategory());
+            $fields = $this->fields->findAllByCategory($data->getCategory());
 
             if($fields)
             {

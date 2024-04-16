@@ -24,7 +24,7 @@
 
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification;
 
-use BaksDev\Products\Category\Type\Offers\Modification\ProductCategoryModificationUid;
+use BaksDev\Products\Category\Type\Offers\Modification\CategoryProductModificationUid;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModificationInterface;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -34,7 +34,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 final class ProductOffersVariationModificationCollectionDTO implements ProductModificationInterface
 {
 	/** ID множественного варианта торгового предложения категории */
-	private ProductCategoryModificationUid $categoryModification;
+    private CategoryProductModificationUid $categoryModification;
 	
 	/** Постоянный уникальный идентификатор модификации */
     #[Assert\NotBlank]
@@ -173,12 +173,12 @@ final class ProductOffersVariationModificationCollectionDTO implements ProductMo
 		$this->image->removeElement($image);
 	}
 
-	public function getCategoryModification() : ProductCategoryModificationUid
+    public function getCategoryModification(): CategoryProductModificationUid
 	{
 		return $this->categoryModification;
 	}
 
-	public function setCategoryModification(ProductCategoryModificationUid $categoryModification) : void
+    public function setCategoryModification(CategoryProductModificationUid $categoryModification): void
 	{
 		$this->categoryModification = $categoryModification;
 	}

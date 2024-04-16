@@ -25,7 +25,7 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Forms\ProductCategoryFilter\User;
 
-use BaksDev\Products\Category\Type\Id\ProductCategoryUid;
+use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 final class ProductCategoryFilterDTO
@@ -51,18 +51,19 @@ final class ProductCategoryFilterDTO
      * Идентификатор категории
      */
 	#[Assert\Uuid]
-	private ?ProductCategoryUid $category;
-	
-	
-	public function __construct(?ProductCategoryUid $category) {
+    private ?CategoryProductUid $category;
+
+
+    public function __construct(?CategoryProductUid $category)
+    {
 		$this->category = $category;
 	}
 
     /**
      * Идентификатор категории
      */
-	
-	public function getCategory() : ?ProductCategoryUid
+
+    public function getCategory(): ?CategoryProductUid
 	{
 		return $this->category;
 	}

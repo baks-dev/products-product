@@ -18,7 +18,7 @@
 
 namespace BaksDev\Products\Product\Controller\User\Catalog\Tests;
 
-use BaksDev\Products\Category\Entity\Info\ProductCategoryInfo;
+use BaksDev\Products\Category\Entity\Info\CategoryProductInfo;
 use BaksDev\Users\User\Tests\TestUserAccount;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -37,7 +37,7 @@ final class CategoryControllerTest extends WebTestCase
     public static function setUpBeforeClass(): void
     {
         $em = self::getContainer()->get(EntityManagerInterface::class);
-        self::$identifier = $em->getRepository(ProductCategoryInfo::class)->findOneBy([], ['event' => 'DESC'])?->getUrl();
+        self::$identifier = $em->getRepository(CategoryProductInfo::class)->findOneBy([], ['event' => 'DESC'])?->getUrl();
 
         $em->clear();
         //$em->close();
