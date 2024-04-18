@@ -75,31 +75,46 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
 
     private PaginatorInterface $paginator;
 
-    private TranslatorInterface $translator;
     private DBALQueryBuilder $DBALQueryBuilder;
+
+    private ?ProductCategoryFilterDTO $filter = null;
+
+    private ?array $property = null;
 
 
     public function __construct(
         DBALQueryBuilder $DBALQueryBuilder,
-        TranslatorInterface $translator,
         PaginatorInterface $paginator,
     )
     {
-
         $this->paginator = $paginator;
-        $this->translator = $translator;
         $this->DBALQueryBuilder = $DBALQueryBuilder;
     }
 
+    public function filter(ProductCategoryFilterDTO $filter): self
+    {
+        $this->filter = $filter;
+        return $this;
+    }
+
+
+    public function property(?array $property): self
+    {
+        if(empty($property))
+        {
+            return $this;
+        }
+
+        $this->property = $property;
+
+        return $this;
+    }
 
     public function fetchAllProductByCategoryAssociative(
         CategoryProductUid $category,
-        ProductCategoryFilterDTO $filter,
-        ?array $property,
         string $expr = 'AND',
     ): PaginatorInterface
     {
-
 
         $dbal = $this->DBALQueryBuilder
             ->createQueryBuilder(self::class)
@@ -148,7 +163,6 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
 
         /** Свойства, участвующие в карточке */
 
-
         $dbal->leftJoin(
             'category_section',
             CategoryProductSectionField::class,
@@ -192,11 +206,12 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
         );
 
         /** ФИЛЬТР СВОЙСТВ */
-        if($property)
+        if($this->property)
         {
+
             if($expr === 'AND')
             {
-                foreach($property as $type => $item)
+                foreach($this->property as $type => $item)
                 {
                     if($item === true)
                     {
@@ -227,7 +242,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
             else
             {
 
-                foreach($property as $type => $item)
+                foreach($this->property as $type => $item)
                 {
                     if($item === true)
                     {
@@ -257,6 +272,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
                 );
             }
         }
+
 
         $dbal
             ->addSelect('product_trans.name AS product_name')
@@ -307,18 +323,17 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
 
         $method = 'leftJoin';
 
-        if($filter->getOffer())
+        if($this->filter?->getOffer())
         {
             $method = 'join';
-            $dbal->setParameter('offer', $filter->getOffer());
+            $dbal->setParameter('offer', $this->filter->getOffer());
         }
-
 
         $dbal->{$method}(
             'product_event',
             ProductOffer::class,
             'product_offer',
-            'product_offer.event = product_event.id '.($filter->getOffer() ? ' AND product_offer.value = :offer' : '').' '
+            'product_offer.event = product_event.id '.($this->filter?->getOffer() ? ' AND product_offer.value = :offer' : '').' '
         );
 
         /*  тип торгового предложения */
@@ -356,10 +371,10 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
          */
 
         $method = 'leftJoin';
-        if($filter->getVariation())
+        if($this->filter?->getVariation())
         {
             $method = 'join';
-            $dbal->setParameter('variation', $filter->getVariation());
+            $dbal->setParameter('variation', $this->filter->getVariation());
         }
 
 
@@ -367,7 +382,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
             'product_offer',
             ProductVariation::class,
             'product_variation',
-            'product_variation.offer = product_offer.id '.($filter->getVariation() ? ' AND product_variation.value = :variation' : '').' '
+            'product_variation.offer = product_offer.id '.($this->filter?->getVariation() ? ' AND product_variation.value = :variation' : '').' '
         );
 
         /* тип множественного варианта */
@@ -405,17 +420,17 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
          */
 
         $method = 'leftJoin';
-        if($filter->getModification())
+        if($this->filter?->getModification())
         {
             $method = 'join';
-            $dbal->setParameter('modification', $filter->getModification());
+            $dbal->setParameter('modification', $this->filter->getModification());
         }
 
         $dbal->{$method}(
             'product_variation',
             ProductModification::class,
             'product_modification',
-            'product_modification.variation = product_variation.id '.($filter->getModification() ? ' AND product_modification.value = :modification' : '').' '
+            'product_modification.variation = product_variation.id '.($this->filter?->getModification() ? ' AND product_modification.value = :modification' : '').' '
         );
 
         /* тип модификации множественного варианта */

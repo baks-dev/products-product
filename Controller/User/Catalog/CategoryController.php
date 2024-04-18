@@ -41,118 +41,86 @@ use Symfony\Component\Routing\Exception\RouteNotFoundException;
 #[AsController]
 final class CategoryController extends AbstractController
 {
-	#[Route('/catalog/{category}/{page<\d+>}', name: 'user.catalog.category')]
-	public function index(
-		Request $request,
-		//#[MapEntity(mapping: ['url' => 'url', 'active' => true])] ProductCategoryInfo $info,
-		AllProductsByCategoryInterface $productsByCategory,
-		CategoryByUrlInterface $categoryByUrl,
-		string $category,
-		int $page = 0,
-	) : Response
-	{
-		
-		/* Получаем информацию о разделе */
+    #[Route('/catalog/{category}/{page<\d+>}', name: 'user.catalog.category')]
+    public function index(
+        Request $request,
+        //#[MapEntity(mapping: ['url' => 'url', 'active' => true])] ProductCategoryInfo $info,
+        AllProductsByCategoryInterface $productsByCategory,
+        CategoryByUrlInterface $categoryByUrl,
+        string $category,
+        int $page = 0,
+    ): Response
+    {
+
+        /* Получаем информацию о разделе */
         $info = $categoryByUrl->findByUrl($category);
-		
-		if(!$info)
-		{
-			throw new RouteNotFoundException('Page Not Found');
-		}
+
+        if(!$info)
+        {
+            throw new RouteNotFoundException('Page Not Found');
+        }
 
         $CategoryUid = new CategoryProductUid($info['category_id']);
 
 
-		/* ФИЛЬТР */
-		$ProductCategoryFilterDTO = new ProductCategoryFilterDTO($CategoryUid);
-		$filterForm = $this->createForm(ProductCategoryFilterForm::class,
-			$ProductCategoryFilterDTO,
-			['action' => $this->generateUrl('products-product:user.catalog.category', ['category' => $category])]
-		);
-		$filterForm->handleRequest($request);
-		
+        /* ФИЛЬТР */
+        $ProductCategoryFilterDTO = new ProductCategoryFilterDTO($CategoryUid);
+        $filterForm = $this->createForm(ProductCategoryFilterForm::class,
+            $ProductCategoryFilterDTO,
+            ['action' => $this->generateUrl('products-product:user.catalog.category', ['category' => $category])]
+        );
+        $filterForm->handleRequest($request);
 
-	
-		/* Если присутствуют фильтр значений торговых предложений */
-		if($filterForm->isSubmitted() && $filterForm->isValid())
-		{
-			if($ProductCategoryFilterDTO->getModification())
-			{
-				return $this->redirectToRoute('products-product:user.catalog.modification',
-					[
-						'category' => $category,
-						'offer' => $ProductCategoryFilterDTO->getOffer() ?: 'all',
-						'variation' => $ProductCategoryFilterDTO->getVariation() ?: 'all',
-						'modification' => $ProductCategoryFilterDTO->getModification(),
-					]
-				);
-			}
-			
-			if($ProductCategoryFilterDTO->getVariation())
-			{
-				return $this->redirectToRoute('products-product:user.catalog.variation',
-					[
-						'category' => $category,
-						'offer' => $ProductCategoryFilterDTO->getOffer() ?: 'all',
-						'variation' => $ProductCategoryFilterDTO->getVariation(),
-					]
-				);
-			}
-			
-			if($ProductCategoryFilterDTO->getOffer() && $ProductCategoryFilterDTO->getOffer() !== 'all')
-			{
-				return $this->redirectToRoute('products-product:user.catalog.offer',
-					[
-						'category' => $category,
-						'offer' => $ProductCategoryFilterDTO->getOffer(),
-					]
-				);
-			}
-		}
-		
-		
-		/* Перебираем все свойства товара, учавствтующие в фильтре */
-		$property = null;
-		$fields = null;
-		foreach($filterForm->all() as $item)
-		{
-			if($item instanceof Form && !empty($item->getViewData()))
-			{
-				
-				if($item->getConfig()->getMapped())
-				{
-					continue;
-				}
-				
-				$property[$item->getName()] = $item->getNormData();
-				
-				
-				
-				$fields[] = [
-					'field_name' => $item->getConfig()->getOption('label'),
-					'field_value' => $item->getNormData(),
-					'field_type' => $item->getConfig()->getOption('block_name'),
-				];
-			}
-		}
-		
-		
-		/* Список товаров в категории */
-		$Products = $productsByCategory->fetchAllProductByCategoryAssociative($CategoryUid, $ProductCategoryFilterDTO, $property);
-		
-		
-		/* Если список пуст - пробуем предложить другие варианты */
-		$otherProducts = false;
-		if(!$Products->getData())
-		{
-			/* Список аналогичных товаров */
-			$Products = $productsByCategory->fetchAllProductByCategoryAssociative($CategoryUid, $ProductCategoryFilterDTO, $property, 'OR');
-			
-			//if($Products->getData())
-			//{
-				$otherProducts = true;
-			//}
-		}
+        /**
+         * Перебираем все свойства товара, участвующие в фильтре
+         * (без торговых предложений)
+         */
+        $property = null;
+        $fields = null;
+
+        if($filterForm->isSubmitted() && $filterForm->isValid())
+        {
+            foreach($filterForm->all() as $item)
+            {
+                if($item instanceof Form && !empty($item->getViewData()))
+                {
+                    if($item->getConfig()->getMapped())
+                    {
+                        continue;
+                    }
+
+                    $property[$item->getName()] = $item->getNormData();
+
+                    $fields[] = [
+                        'field_name' => $item->getConfig()->getOption('label'),
+                        'field_value' => $item->getNormData(),
+                        'field_type' => $item->getConfig()->getOption('block_name'),
+                    ];
+                }
+            }
+
+            $productsByCategory
+                ->filter($ProductCategoryFilterDTO)
+                ->property($property);
+        }
+
+
+        /* Список товаров в категории */
+        $Products = $productsByCategory
+            ->fetchAllProductByCategoryAssociative($CategoryUid, 'AND');
+
+
+        /* Если список пуст - пробуем предложить другие варианты */
+        $otherProducts = false;
+
+        if(!$Products->getData())
+        {
+            /* Список аналогичных товаров */
+            $Products = $productsByCategory
+                ->fetchAllProductByCategoryAssociative($CategoryUid, 'OR');
+
+            $otherProducts = true;
+        }
 
         // Поиск по всему сайту
         $allSearch = new SearchDTO($request);
@@ -161,14 +129,14 @@ final class CategoryController extends AbstractController
         ]);
 
 
-		return $this->render([
-			'category' => $info,
-			'products' => $Products,
-			'filter' => $filterForm->createView(),
-			'other' => $otherProducts,
-			'fields' => $fields,
+        return $this->render([
+            'category' => $info,
+            'products' => $Products,
+            'filter' => $filterForm->createView(),
+            'other' => $otherProducts,
+            'fields' => $fields,
             'all_search' => $allSearchForm->createView(),
-		]);
-	}
-	
+        ]);
+    }
+
 }

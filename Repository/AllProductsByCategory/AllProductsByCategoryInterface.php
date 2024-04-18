@@ -30,10 +30,13 @@ use Symfony\Component\Form\Form;
 
 interface AllProductsByCategoryInterface
 {
+    public function filter(ProductCategoryFilterDTO $filter): self;
+
+    public function property(?array $property): self;
+
+
     public function fetchAllProductByCategoryAssociative(
         CategoryProductUid $category,
-        ProductCategoryFilterDTO $filter,
-        ?array $property,
         string $expr = 'AND'
     ): PaginatorInterface;
 
