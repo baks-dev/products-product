@@ -48,19 +48,21 @@ final class ModificationController extends AbstractController
 		AllProductsByCategoryInterface $productsByCategory,
 		CategoryByUrlInterface $categoryByUrl,
 		string $category,
-		string $offer,
-		string $variation,
-		string $modification,
+        string $offer = 'all',
+        string $variation = 'all',
+        string $modification = 'all',
 		int $page = 0,
 	) : Response
 	{
-		
-		//dd('Каталог с модификацией торговых предложений');
+
+
+        //dd('Каталог с модификацией торговых предложений');
 		
 		//dump($info->getCategory());
 		//dump($productsByCategory->fetchAllProductByCategoryAssociative($info->getCategory()));
 
         $info = $categoryByUrl->findByUrl($category);
+
 		
 		if(!$info)
 		{
@@ -75,9 +77,9 @@ final class ModificationController extends AbstractController
 		$ProductCategoryFilterDTO->setOffer($offer !== 'all' ? $offer : null);
 		$ProductCategoryFilterDTO->setVariation($variation !== 'all' ? $variation : null);
 		$ProductCategoryFilterDTO->setModification($modification);
-		
-		
-		$filterForm = $this->createForm(ProductCategoryFilterForm::class, $ProductCategoryFilterDTO,
+
+
+        $filterForm = $this->createForm(ProductCategoryFilterForm::class, $ProductCategoryFilterDTO,
             ['action' => $this->generateUrl('products-product:user.catalog.category', ['category' => $category])]);
 		$filterForm->handleRequest($request);
 		
@@ -102,6 +104,8 @@ final class ModificationController extends AbstractController
 				];
 			}
 		}
+
+        dump($filterForm->all());
 		
 		$otherProducts = false;
 		$Products = $productsByCategory->fetchAllProductByCategoryAssociative($CategoryUid, $ProductCategoryFilterDTO, $property);
