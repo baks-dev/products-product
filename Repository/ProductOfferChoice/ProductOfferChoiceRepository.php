@@ -69,7 +69,7 @@ final class ProductOfferChoiceRepository implements ProductOfferChoiceInterface
         $select = sprintf('new %s(
             offer.const, 
             offer.value, 
-            trans.name, 
+            category_offer_trans.name, 
             category_offer.reference
         )', ProductOfferConst::class);
 
@@ -127,7 +127,7 @@ final class ProductOfferChoiceRepository implements ProductOfferChoiceInterface
         $select = sprintf('new %s(
             offer.id, 
             offer.value, 
-            trans.name, 
+            category_offer_trans.name, 
             category_offer.reference
         )', ProductOfferUid::class);
 
