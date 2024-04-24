@@ -59,65 +59,73 @@ final class ProductModificationChoiceRepository implements ProductModificationCh
     /**
      * Метод возвращает все постоянные идентификаторы CONST модификаций множественных вариантов торговых предложений продукта
      */
-    public function fetchProductModificationConstByVariationConst(ProductVariationConst $const): ?array
+    public function fetchProductModificationConstByVariationConst(ProductVariationConst|string $const): Generator
     {
-        $qb = $this->ORMQueryBuilder
+        if(is_string($const))
+        {
+            $const = new ProductVariationConst($const);
+        }
+
+
+        $dbal = $this->DBALQueryBuilder
             ->createQueryBuilder(self::class)
             ->bindLocal();
 
-        $select = sprintf('new %s(
-            modification.const, 
-            modification.value, 
-            trans.name, 
-            category_modification.reference
-        )', ProductModificationConst::class);
 
-        $qb->select($select);
+        $dbal
+            ->from(ProductVariation::class, 'variation')
+            ->where('variation.const = :const')
+            ->setParameter('const', $const, ProductVariationConst::TYPE);
 
-        $qb->from(ProductVariation::class, 'variation');
-        $qb->where('variation.const = :const');
-        $qb->setParameter('const', $const, ProductVariationConst::TYPE);
-
-        $qb->join(
+        $dbal->join(
+            'variation',
             ProductOffer::class,
             'offer',
-            'WITH',
             'offer.id = variation.offer'
         );
 
-        $qb->join(
+        $dbal->join(
+            'offer',
             Product::class,
             'product',
-            'WITH',
             'product.event = offer.event'
         );
 
-        $qb->join(
+        $dbal->join(
+            'variation',
             ProductModification::class,
             'modification',
-            'WITH',
             'modification.variation = variation.id'
         );
 
         // Тип торгового предложения
 
-        $qb->join(
+        $dbal->join(
+            'modification',
             CategoryProductModification::class,
             'category_modification',
-            'WITH',
-            'category_modification.id = modification.categoryModification'
+            'category_modification.id = modification.category_modification'
         );
 
-        $qb->leftJoin(
+        $dbal->leftJoin(
+            'category_modification',
             CategoryProductModificationTrans::class,
-            'trans',
-            'WITH',
-            'trans.modification = category_modification.id AND trans.local = :local'
+            'category_modification_trans',
+            'category_modification_trans.modification = category_modification.id AND category_modification_trans.local = :local'
         );
 
+        $dbal->addSelect('modification.const AS value');
+        $dbal->addSelect('modification.value AS attr');
 
-        /* Кешируем результат ORM */
-        return $qb->enableCache('products-product', 86400)->getResult();
+        $dbal->addSelect('category_modification_trans.name AS option');
+        $dbal->addSelect('category_modification.reference AS property');
+
+        $dbal->addSelect('modification.postfix AS characteristic');
+
+
+        return $dbal
+            ->enableCache('products-product', 86400)
+            ->fetchAllHydrate(ProductModificationConst::class);
 
     }
 
@@ -186,7 +194,6 @@ final class ProductModificationChoiceRepository implements ProductModificationCh
         return $qb->enableCache('products-product', 86400)->getResult();
 
     }
-
 
     /**
      * Метод возвращает все идентификаторы модификаций множественных вариантов торговых предложений продукта

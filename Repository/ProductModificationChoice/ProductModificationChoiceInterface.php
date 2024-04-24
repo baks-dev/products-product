@@ -32,7 +32,7 @@ interface ProductModificationChoiceInterface
     /**
      * Метод возвращает все постоянные идентификаторы CONST модификаций множественных вариантов торговых предложений продукта
      */
-    public function fetchProductModificationConstByVariationConst(ProductVariationConst $const): ?array;
+    public function fetchProductModificationConstByVariationConst(ProductVariationConst $const): Generator;
 
     /**
      * Метод возвращает все идентификаторы модификаций множественных вариантов торговых предложений продукта

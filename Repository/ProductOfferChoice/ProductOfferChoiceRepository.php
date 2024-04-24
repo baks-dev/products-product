@@ -60,57 +60,61 @@ final class ProductOfferChoiceRepository implements ProductOfferChoiceInterface
     /**
      * Метод возвращает все постоянные идентификаторы CONST торговых предложений продукта
      */
-    public function fetchProductOfferByProduct(ProductUid $product): ?array
+    public function fetchProductOfferByProduct(ProductUid|string $product): Generator
     {
-        $qb = $this->ORMQueryBuilder
+        if(is_string($product))
+        {
+            $product = new ProductUid($product);
+        }
+
+        $dbal = $this->DBALQueryBuilder
             ->createQueryBuilder(self::class)
             ->bindLocal();
 
-        $select = sprintf('new %s(
-            offer.const, 
-            offer.value, 
-            category_offer_trans.name, 
-            category_offer.reference
-        )', ProductOfferConst::class);
 
-        $qb->select($select);
-
-        $qb
+        $dbal
             ->from(Product::class, 'product')
             ->where('product.id = :product')
             ->setParameter('product', $product, ProductUid::TYPE);
 
-        $qb
+
+        $dbal
             ->join(
+                'product',
                 ProductOffer::class,
-            'offer',
-            'WITH',
-            'offer.event = product.event'
-        );
+                'offer',
+                'offer.event = product.event'
+            );
 
-        // Тип торгового предложения
-
-        $qb
+        $dbal
             ->join(
+                'offer',
                 CategoryProductOffers::class,
-            'category_offer',
-            'WITH',
-            'category_offer.id = offer.categoryOffer'
-        );
+                'category_offer',
+                'category_offer.id = offer.category_offer'
+            );
 
 
-        $qb
+        $dbal
             ->leftJoin(
+                'category_offer',
                 CategoryProductOffersTrans::class,
                 'category_offer_trans',
-            'WITH',
                 'category_offer_trans.offer = category_offer.id AND category_offer_trans.local = :local'
-        );
+            );
 
 
-        /* Кешируем результат ORM */
-        return $qb->enableCache('products-product', 86400)->getResult();
+        $dbal->addSelect('offer.const AS value');
+        $dbal->addSelect("offer.value AS attr");
 
+        $dbal->addSelect('category_offer_trans.name AS option');
+        $dbal->addSelect('category_offer.reference AS property');
+        $dbal->addSelect('offer.postfix AS characteristic');
+
+
+        return $dbal
+            ->enableCache('products-product', 86400)
+            ->fetchAllHydrate(ProductOfferConst::class);
     }
 
 

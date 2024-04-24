@@ -62,62 +62,79 @@ final class ProductVariationChoiceRepository implements ProductVariationChoiceIn
     /**
      * Метод возвращает все постоянные идентификаторы CONST множественных вариантов торговых предложений продукта
      */
-    public function fetchProductVariationByOfferConst(ProductOfferConst $const): ?array
+    public function fetchProductVariationByOfferConst(ProductOfferConst|string $const): Generator
     {
-        $qb = $this->ORMQueryBuilder
+
+        if(is_string($const))
+        {
+            $const = new ProductOfferConst($const);
+        }
+
+
+        $dbal = $this->DBALQueryBuilder
             ->createQueryBuilder(self::class)
             ->bindLocal();
 
-        $select = sprintf('new %s(
-            variation.const, 
-            variation.value, 
-            trans.name, 
-            category_variation.reference
-        )', ProductVariationConst::class);
 
-        $qb->select($select);
+        $dbal
+            ->from(ProductOffer::class, 'offer')
+            ->where('offer.const = :const')
+            ->setParameter('const', $const, ProductOfferConst::TYPE);
 
-        $qb->from(ProductOffer::class, 'offer');
-
-
-        $qb->join(
+        $dbal->join(
+            'offer',
             Product::class,
             'product',
-            'WITH',
             'product.event = offer.event'
         );
 
-
-        $qb->join(
+        $dbal->join(
+            'offer',
             ProductVariation::class,
             'variation',
-            'WITH',
             'variation.offer = offer.id'
         );
 
         // Тип торгового предложения
 
-        $qb->join(
+        $dbal->join(
+            'variation',
             CategoryProductVariation::class,
             'category_variation',
-            'WITH',
-            'category_variation.id = variation.categoryVariation'
+            'category_variation.id = variation.category_variation'
         );
 
-        $qb->leftJoin(
+        $dbal->leftJoin(
+            'category_variation',
             CategoryProductVariationTrans::class,
-            'trans',
-            'WITH',
-            'trans.variation = category_variation.id AND trans.local = :local'
+            'category_variation_trans',
+            'category_variation_trans.variation = category_variation.id AND category_variation_trans.local = :local'
         );
 
-        $qb->where('offer.const = :const');
 
-        $qb->setParameter('const', $const, ProductOfferConst::TYPE);
+        //        $select = sprintf('new %s(
+        //            variation.const,
+        //            variation.value,
+        //            trans.name,
+        //            category_variation.reference
+        //        )', ProductVariationConst::class);
+        //
+        //        $qb->select($select);
 
 
-        /* Кешируем результат ORM */
-        return $qb->enableCache('products-product', 86400)->getResult();
+        $dbal->addSelect('variation.const AS value');
+        $dbal->addSelect('variation.value AS attr');
+
+        $dbal->addSelect('category_variation_trans.name AS option');
+        $dbal->addSelect('category_variation.reference AS property');
+
+        $dbal->addSelect('variation.postfix AS characteristic');
+
+
+        return $dbal
+            ->enableCache('products-product', 86400)
+            ->fetchAllHydrate(ProductVariationConst::class);
+
 
     }
 

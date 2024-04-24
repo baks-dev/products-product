@@ -41,14 +41,24 @@ final class ProductModificationConst extends Uid
 
     private mixed $property;
 
+    private mixed $characteristic;
+
     private mixed $reference;
 
-
+    /*
+           $dbal->addSelect(' AS value');
+           $dbal->addSelect(' AS attr');
+           $dbal->addSelect(' AS option');
+           $dbal->addSelect(' AS property');
+           $dbal->addSelect(' AS characteristic');
+           $dbal->addSelect(' AS reference');
+    */
     public function __construct(
         AbstractUid|self|string|null $value = null,
         mixed $attr = null,
         mixed $option = null,
         mixed $property = null,
+        mixed $characteristic = null,
         mixed $reference = null,
     )
     {
@@ -57,6 +67,7 @@ final class ProductModificationConst extends Uid
         $this->attr = $attr;
         $this->option = $option;
         $this->property = $property;
+        $this->characteristic = $characteristic;
         $this->reference = $reference;
     }
 
@@ -78,9 +89,23 @@ final class ProductModificationConst extends Uid
         return $this->property;
     }
 
+    public function getCharacteristic(): mixed
+    {
+        return $this->characteristic;
+    }
+
+    /**
+     * Reference
+     */
     public function getReference(): mixed
     {
         return $this->reference;
+    }
+
+    public function setReference(mixed $reference): self
+    {
+        $this->reference = $reference;
+        return $this;
     }
     
 }
