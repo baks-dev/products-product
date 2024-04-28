@@ -587,7 +587,7 @@ final class ProductModelRepository implements ProductModelInterface
             'category_section_field',
             ProductProperty::class,
             'product_property',
-            'product_property.event = product.event AND product_property.field = category_section_field.id'
+            'product_property.event = product.event AND product_property.field = category_section_field.const'
         );
 
         $dbal->addSelect("JSON_AGG

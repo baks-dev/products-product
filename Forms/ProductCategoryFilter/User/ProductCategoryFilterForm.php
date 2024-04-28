@@ -164,11 +164,11 @@ final class ProductCategoryFilterForm extends AbstractType
                 $i = 100;
                 foreach($fields as $field)
                 {
-                    $input = $this->choice->getChoice(new  InputField($field['type']));
+                    $input = $this->choice->getChoice(new InputField($field['type']));
 
                     if($input)
                     {
-                        $builder->add($field['id'],
+                        $builder->add($field['const'],
                             $input->form(),
                             [
                                 'label' => $field['name'],

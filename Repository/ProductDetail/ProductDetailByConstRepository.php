@@ -554,7 +554,7 @@ final class ProductDetailByConstRepository implements ProductDetailByConstInterf
             'category_section_field',
             ProductProperty::class,
             'product_property',
-            'product_property.event = product.event AND product_property.field = category_section_field.id'
+            'product_property.event = product.event AND product_property.field = category_section_field.const'
         );
 
         $dbal->addSelect(
@@ -566,6 +566,7 @@ final class ProductDetailByConstRepository implements ProductDetailByConstInterf
                         '0', category_section_field.sort, /* сортировка  */
                     
                         'field_uid', category_section_field.id,
+                        'field_const', category_section_field.const,
                         'field_name', category_section_field.name,
                         'field_alternative', category_section_field.alternative,
                         'field_public', category_section_field.public,

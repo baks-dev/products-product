@@ -638,7 +638,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             'category_section_field',
             ProductProperty::class,
             'product_property',
-            'product_property.event = product.event AND product_property.field = category_section_field.id'
+            'product_property.event = product.event AND product_property.field = category_section_field.const'
         );
 
         $dbal->addSelect(
@@ -651,6 +651,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
 					'0', category_section_field.sort, /* сортирвока */
 				
 					'field_uid', category_section_field.id,
+					'field_const', category_section_field.const,
 					'field_name', category_section_field.name,
 					'field_alternative', category_section_field.alternative,
 					'field_public', category_section_field.public,
@@ -1173,7 +1174,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             'category_section_field',
             ProductProperty::class,
             'product_property',
-            'product_property.event = product.event AND product_property.field = category_section_field.id'
+            'product_property.event = product.event AND product_property.field = category_section_field.const'
         );
 
         $dbal->addSelect(
@@ -1186,6 +1187,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
 					'0', category_section_field.sort, /* сортирвока */
 				
 					'field_uid', category_section_field.id,
+					'field_const', category_section_field.const,
 					'field_name', category_section_field.name,
 					'field_alternative', category_section_field.alternative,
 					'field_public', category_section_field.public,

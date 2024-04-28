@@ -208,7 +208,6 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
         /** ФИЛЬТР СВОЙСТВ */
         if($this->property)
         {
-
             if($expr === 'AND')
             {
                 foreach($this->property as $type => $item)
@@ -707,7 +706,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
             'product',
             ProductProperty::class,
             'product_property',
-            'product_property.event = product.event AND product_property.field = category_section_field.id'
+            'product_property.event = product.event AND product_property.field = category_section_field.const'
         );
 
 
@@ -1149,7 +1148,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
             'category_section_field',
             ProductProperty::class,
             'product_property',
-            'product_property.event = product.event AND product_property.field = category_section_field.id'
+            'product_property.event = product.event AND product_property.field = category_section_field.const'
         );
 
 
@@ -1189,6 +1188,8 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
 				JSONB_BUILD_OBJECT
 				(
 					'0', category_section_field.sort,
+					'field_uid', category_section_field.id,
+					'field_const', category_section_field.const,
 					'field_name', category_section_field.name,
 					'field_card', category_section_field.card,
 					'field_type', category_section_field.type,

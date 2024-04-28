@@ -364,7 +364,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 
                 $qb->join(
                     'product_offer',
-                    ProductProperty::TABLE,
+                    ProductProperty::class,
                     'product_property_'.$alias,
                     'product_property_'.$alias.'.event = product_offer.event AND product_property_'.$alias.'.field = :field_'.$alias.' AND product_property_'.$alias.'.value = :props_'.$alias
                 );
@@ -488,7 +488,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 
         $qb->leftJoin(
             'category_section',
-            CategoryProductSectionField::TABLE,
+            CategoryProductSectionField::class,
             'category_section_field',
             'category_section_field.section = category_section.id AND category_section_field.card = TRUE'
         );
@@ -502,9 +502,9 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 
         $qb->leftJoin(
             'category_section_field',
-            ProductProperty::TABLE,
+            ProductProperty::class,
             'category_product_property',
-            'category_product_property.event = product.event AND category_product_property.field = category_section_field.id'
+            'category_product_property.event = product.event AND category_product_property.field = category_section_field.const'
         );
 
         $qb->addSelect(

@@ -592,7 +592,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
 
         $qb->leftJoin(
             'category_section',
-            CategoryProductSectionField::TABLE,
+            CategoryProductSectionField::class,
             'category_section_field',
             'category_section_field.section = category_section.id AND (category_section_field.public = TRUE OR category_section_field.name = TRUE )'
         );
@@ -606,9 +606,9 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
 
         $qb->leftJoin(
             'category_section_field',
-            ProductProperty::TABLE,
+            ProductProperty::class,
             'product_property',
-            'product_property.event = product_event.id AND product_property.field = category_section_field.id'
+            'product_property.event = product_event.id AND product_property.field = category_section_field.const'
         );
 
         $qb->addSelect(
@@ -621,6 +621,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
 					'0', category_section_field.sort, /* сортировка  */
 				
 					'field_uid', category_section_field.id,
+					'field_const', category_section_field.const,
 					'field_name', category_section_field.name,
 					'field_alternative', category_section_field.alternative,
 					'field_public', category_section_field.public,
