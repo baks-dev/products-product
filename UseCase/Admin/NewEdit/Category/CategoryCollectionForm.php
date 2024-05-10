@@ -47,7 +47,7 @@ final class CategoryCollectionForm extends AbstractType
 	{
 		$builder
 			->add('category', ChoiceType::class, [
-				'choices' => $this->category->getCategoryCollection(),
+                'choices' => $this->category->findAll(), // все категории, включая неактивные
                 'choice_value' => function(?CategoryProductUid $type) {
 					return $type?->getValue();
 				},
