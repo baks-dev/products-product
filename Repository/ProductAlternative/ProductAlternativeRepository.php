@@ -545,9 +545,8 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
         $qb->where('product_offer.value = :offer');
         $qb->setParameter('offer', $offer);
         $qb->setMaxResults(1000);
+
         $qb->allGroupByExclude();
-
-
 
         return $qb
             ->enableCache('products-product', 86400)

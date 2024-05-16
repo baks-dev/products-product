@@ -745,11 +745,9 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
 			AS category_section_field"
         );
 
-        $dbal->allGroupByExclude();
-
         $dbal->addOrderBy('product_info.sort', 'DESC');
 
-
+        $dbal->allGroupByExclude();
         return $this->paginator->fetchAllAssociative($dbal);
 
     }
@@ -1294,9 +1292,9 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
         ');
         }
 
+        $dbal->addOrderBy('product_info.sort', 'DESC');
 
         $dbal->allGroupByExclude();
-        $dbal->addOrderBy('product_info.sort', 'DESC');
 
         return $dbal->enableCache('products-product', 86400)->fetchAllAssociative();
 

@@ -781,10 +781,9 @@ final class AllProductsRepository implements AllProductsInterface
 
         }
 
+        $dbal->orderBy('product.event', 'DESC');
 
         $dbal->allGroupByExclude();
-
-        $dbal->orderBy('product.event', 'DESC');
 
         return $this->paginator->fetchAllAssociative($dbal);
 

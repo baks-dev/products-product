@@ -590,9 +590,9 @@ final class ProductModelRepository implements ProductModelInterface
         $dbal->where('product.id = :product');
         $dbal->setParameter('product', $product, ProductUid::TYPE);
 
-        $dbal->allGroupByExclude();
-
         //dd($dbal->analyze());
+
+        $dbal->allGroupByExclude();
 
         return $dbal
             ->enableCache('products-product', 86400)

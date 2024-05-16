@@ -266,7 +266,7 @@ final class ProductModificationChoiceRepository implements ProductModificationCh
                 'modification_quantity.modification = modification.id AND modification_quantity.quantity > 0 '
             );
 
-        $dbal->allGroupByExclude();
+
 
         /** Свойства конструктора объекта гидрации */
 
@@ -275,6 +275,8 @@ final class ProductModificationChoiceRepository implements ProductModificationCh
 
         $dbal->addSelect('category_modification_trans.name AS property');
         $dbal->addSelect('category_modification.reference AS characteristic');
+
+        $dbal->allGroupByExclude();
 
         return $dbal->fetchAllHydrate(ProductModificationUid::class);
 

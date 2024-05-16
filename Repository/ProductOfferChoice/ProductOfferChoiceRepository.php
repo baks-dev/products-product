@@ -297,18 +297,17 @@ final class ProductOfferChoiceRepository implements ProductOfferChoiceInterface
 
         AS option');
 
-        $dbal->allGroupByExclude();
-
-
-        /** Свойства конструктора объекта гидрации */
-        $dbal->addSelect('category_offer_trans.name AS property');
-        $dbal->addSelect('category_offer.reference AS characteristic');
-
         $dbal->andWhere('
             product_modification_quantity.quantity > 0 OR 
             product_variation_quantity.quantity > 0 OR 
             product_offer_quantity.quantity > 0 
         ');
+
+        /** Свойства конструктора объекта гидрации */
+        $dbal->addSelect('category_offer_trans.name AS property');
+        $dbal->addSelect('category_offer.reference AS characteristic');
+
+        $dbal->allGroupByExclude();
 
         return $dbal->fetchAllHydrate(ProductOfferUid::class);
 

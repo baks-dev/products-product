@@ -265,7 +265,7 @@ final class ProductChoiceRepository implements ProductChoiceInterface
 
         AS option');
 
-        $dbal->allGroupByExclude();
+
 
         $dbal->andWhere('
             product_modification_quantity.quantity > 0 OR 
@@ -275,7 +275,7 @@ final class ProductChoiceRepository implements ProductChoiceInterface
         ');
 
 
-        //$data = $dbal->fetchAllHydrate(ProductEventUid::class);
+        $dbal->allGroupByExclude();
 
         return $dbal->fetchAllHydrate(ProductEventUid::class);
 

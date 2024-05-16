@@ -292,15 +292,15 @@ final class ProductVariationChoiceRepository implements ProductVariationChoiceIn
 
         AS option');
 
-        $dbal->addSelect('category_variation_trans.name AS property');
-        $dbal->addSelect('category_variation.reference AS characteristic');
-
-        $dbal->allGroupByExclude();
-
         $dbal->andWhere('
             product_modification_quantity.quantity > 0 OR 
             product_variation_quantity.quantity > 0 
         ');
+
+        $dbal->addSelect('category_variation_trans.name AS property');
+        $dbal->addSelect('category_variation.reference AS characteristic');
+
+        $dbal->allGroupByExclude();
 
         return $dbal->fetchAllHydrate(ProductVariationUid::class);
 
