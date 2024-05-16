@@ -47,23 +47,27 @@ final class CurrentQuantityByEventRepository implements CurrentQuantityByEventIn
     {
         $qb = $this->entityManager->createQueryBuilder();
 
-        $qb->select('quantity');
+        $qb
+            ->from(ProductEvent::class, 'event')
+            ->where('event.id = :event')
+            ->setParameter('event', $event, ProductEventUid::TYPE);
 
-        $qb->from(ProductEvent::class, 'event');
-
-
-        $qb->join(Product::class,
-            'product', 'WITH', 'product.id = event.main'
+        $qb->join(
+            Product::class,
+            'product',
+            'WITH',
+            'product.id = event.main'
         );
 
         /** Текущее наличие */
-        $qb->leftJoin(ProductPrice::class,
-            'quantity', 'WITH', 'quantity.event = product.event'
-        );
-
-
-        $qb->where('event.id = :event');
-        $qb->setParameter('event', $event, ProductEventUid::TYPE);
+        $qb
+            ->select('quantity')
+            ->leftJoin(
+                ProductPrice::class,
+                'quantity',
+                'WITH',
+                'quantity.event = product.event'
+            );
 
         return $qb->getQuery()->getOneOrNullResult();
     }

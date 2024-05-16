@@ -53,33 +53,48 @@ final class CurrentQuantityByOfferRepository implements CurrentQuantityByOfferIn
 
         $qb->select('quantity');
 
-        $qb->from(ProductEvent::class, 'event');
+        $qb
+            ->from(ProductEvent::class, 'event')
+            ->where('event.id = :event')
+            ->setParameter('event', $event, ProductEventUid::TYPE);
 
-
-        $qb->join(Product::class,
-            'product', 'WITH', 'product.id = event.main'
+        $qb->join(
+            Product::class,
+            'product',
+            'WITH',
+            'product.id = event.main'
         );
 
         /** Торговое предложение */
 
-        $qb->join(ProductOffer::class,
-            'offer', 'WITH', 'offer.id = :offer AND offer.event = event.id'
-        );
-        $qb->setParameter('offer', $offer, ProductOfferUid::TYPE);
+        $qb->join(
+            ProductOffer::class,
+            'offer',
+            'WITH',
+            'offer.id = :offer AND offer.event = event.id'
+        )
+            ->setParameter(
+                'offer',
+                $offer,
+                ProductOfferUid::TYPE
+            );
 
-        $qb->leftJoin(ProductOffer::class,
-            'current_offer', 'WITH', 'current_offer.const = offer.const AND current_offer.event = product.event'
+        $qb->leftJoin(
+            ProductOffer::class,
+            'current_offer',
+            'WITH',
+            'current_offer.const = offer.const AND current_offer.event = product.event'
         );
 
 
         /** Текущее наличие */
-        $qb->leftJoin(ProductOfferQuantity::class,
-            'quantity', 'WITH', 'quantity.offer = current_offer.id'
+        $qb->leftJoin(
+            ProductOfferQuantity::class,
+            'quantity',
+            'WITH',
+            'quantity.offer = current_offer.id'
         );
 
-
-        $qb->where('event.id = :event');
-        $qb->setParameter('event', $event, ProductEventUid::TYPE);
 
         return $qb->getQuery()->getOneOrNullResult();
     }

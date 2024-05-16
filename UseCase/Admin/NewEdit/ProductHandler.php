@@ -88,7 +88,8 @@ final class ProductHandler extends AbstractHandler
 
         /** Проверяем уникальность семантической ссылки продукта */
         $infoDTO = $command->getInfo();
-        $uniqProductUrl = $this->uniqProductUrl->get($infoDTO->getUrl(), $this->main->getId());
+        $uniqProductUrl = $this->uniqProductUrl->isExists($infoDTO->getUrl(), $this->main->getId());
+
         if($uniqProductUrl)
         {
             $this->event->getInfo()->updateUrlUniq(); // Обновляем URL на уникальный с префиксом

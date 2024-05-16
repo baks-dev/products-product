@@ -86,34 +86,24 @@ final class ProductModelRepository implements ProductModelInterface
             ->createQueryBuilder(self::class)
             ->bindLocal();
 
-        //$dbal->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
-
-        //$dbal->select('product.id');
-        //$dbal->addSelect('product.event');
 
         $dbal
             ->select('product.id')
             ->addSelect('product.event')
             ->from(Product::class, 'product');
 
-        //        $dbal->join('product',
-        //            ProductEvent::class,
-        //            'product_event',
-        //            'product_event.id = product.event'
-        //        );
 
-
-        $dbal->addSelect('product_active.active');
-        $dbal->addSelect('product_active.active_from');
-        $dbal->addSelect('product_active.active_to');
-
-        $dbal->join('product',
-            ProductActive::class,
-            'product_active',
-            '
+        $dbal
+            ->addSelect('product_active.active')
+            ->addSelect('product_active.active_from')
+            ->addSelect('product_active.active_to')
+            ->join('product',
+                ProductActive::class,
+                'product_active',
+                '
 			product_active.event = product.event
 			'
-        );
+            );
 
         $dbal
             ->addSelect('product_seo.title AS seo_title')
@@ -385,15 +375,12 @@ final class ProductModelRepository implements ProductModelInterface
 
         /** Фото модификаций */
 
-        $dbal
-            ->leftJoin(
-                'product_modification',
-                ProductModificationImage::class,
-                'product_modification_image',
-                '
-			product_modification_image.modification = product_modification.id
-			'
-            );
+        $dbal->leftJoin(
+            'product_modification',
+            ProductModificationImage::class,
+            'product_modification_image',
+            ' product_modification_image.modification = product_modification.id'
+        );
 
         $dbal->addSelect("JSON_AGG
 		( DISTINCT
@@ -414,14 +401,11 @@ final class ProductModelRepository implements ProductModelInterface
 
         /* Фото вариантов */
 
-        $dbal
-            ->leftJoin(
+        $dbal->leftJoin(
             'product_offer',
-                ProductVariationImage::class,
-                'product_variation_image',
-            '
-			product_variation_image.variation = product_variation.id
-			'
+            ProductVariationImage::class,
+            'product_variation_image',
+            'product_variation_image.variation = product_variation.id'
         );
 
         $dbal
@@ -435,25 +419,19 @@ final class ProductModelRepository implements ProductModelInterface
 						'product_img_ext', product_variation_image.ext,
 						'product_img_cdn', product_variation_image.cdn
 						
-
 					) END
 			) AS product_variation_image
 	"
-        );
+            );
 
 
         /* Фот оторговых предложений */
 
-        $dbal
-            ->leftJoin(
+        $dbal->leftJoin(
             'product_offer',
-                ProductOfferImage::class,
+            ProductOfferImage::class,
             'product_offer_images',
-            '
-			
-			product_offer_images.offer = product_offer.id
-			
-		'
+            'product_offer_images.offer = product_offer.id'
         );
 
         $dbal->addSelect("JSON_AGG
@@ -466,7 +444,6 @@ final class ProductModelRepository implements ProductModelInterface
 						'product_img_ext', product_offer_images.ext,
 						'product_img_cdn', product_offer_images.cdn
 						
-
 					) END
 
 				 /*ORDER BY product_photo.root DESC, product_photo.id*/
@@ -478,11 +455,11 @@ final class ProductModelRepository implements ProductModelInterface
 
         $dbal
             ->leftJoin(
-            'product_offer',
+                'product_offer',
                 ProductPhoto::class,
-            'product_photo',
+                'product_photo',
                 'product_photo.event = product.event'
-        );
+            );
 
         $dbal->addSelect("JSON_AGG
 		( DISTINCT
@@ -520,22 +497,23 @@ final class ProductModelRepository implements ProductModelInterface
             'category.id = product_event_category.category'
         );
 
-        $dbal->addSelect('category_trans.name AS category_name');
+        $dbal
+            ->addSelect('category_trans.name AS category_name')
+            ->leftJoin(
+                'category',
+                CategoryProductTrans::class,
+                'category_trans',
+                'category_trans.event = category.event AND category_trans.local = :local'
+            );
 
-        $dbal->leftJoin(
-            'category',
-            CategoryProductTrans::class,
-            'category_trans',
-            'category_trans.event = category.event AND category_trans.local = :local'
-        );
-
-        $dbal->addSelect('category_info.url AS category_url');
-        $dbal->leftJoin(
-            'category',
-            CategoryProductInfo::class,
-            'category_info',
-            'category_info.event = category.event'
-        );
+        $dbal
+            ->addSelect('category_info.url AS category_url')
+            ->leftJoin(
+                'category',
+                CategoryProductInfo::class,
+                'category_info',
+                'category_info.event = category.event'
+            );
 
         $dbal->leftJoin(
             'category',
@@ -546,17 +524,17 @@ final class ProductModelRepository implements ProductModelInterface
 
         /** Обложка */
 
-        $dbal->addSelect('category_cover.ext AS category_cover_ext');
-        $dbal->addSelect('category_cover.cdn AS category_cover_cdn');
-
-        $dbal->addSelect("
+        $dbal
+            ->addSelect('category_cover.ext AS category_cover_ext')
+            ->addSelect('category_cover.cdn AS category_cover_cdn')
+            ->addSelect("
 			CASE
-			 WHEN category_cover.name IS NOT NULL THEN
-					CONCAT ( '/upload/".$dbal->table(CategoryProductCover::class)."' , '/', category_cover.name)
-			   		ELSE NULL
+                 WHEN category_cover.name IS NOT NULL 
+                 THEN CONCAT ( '/upload/".$dbal->table(CategoryProductCover::class)."' , '/', category_cover.name)
+                 ELSE NULL
 			END AS category_cover_dir
 		"
-        );
+            );
 
 
         $dbal->leftJoin(

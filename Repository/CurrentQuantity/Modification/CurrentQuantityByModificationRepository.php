@@ -57,12 +57,11 @@ final class CurrentQuantityByModificationRepository implements CurrentQuantityBy
     {
         $qb = $this->entityManager->createQueryBuilder();
 
-        $qb->select('quantity');
 
-
-        $qb->from(ProductEvent::class, 'event');
-        $qb->where('event.id = :event');
-        $qb->setParameter('event', $event, ProductEventUid::TYPE);
+        $qb
+            ->from(ProductEvent::class, 'event')
+            ->where('event.id = :event')
+            ->setParameter('event', $event, ProductEventUid::TYPE);
 
 
         $qb->join(Product::class,
@@ -72,44 +71,79 @@ final class CurrentQuantityByModificationRepository implements CurrentQuantityBy
 
         /** Торговое предложение */
 
-        $qb->join(ProductOffer::class,
-            'offer', 'WITH', 'offer.id = :offer AND offer.event = event.id'
-        );
-        $qb->setParameter('offer', $offer, ProductOfferUid::TYPE);
+        $qb->join(
+            ProductOffer::class,
+            'offer',
+            'WITH',
+            'offer.id = :offer AND offer.event = event.id'
+        )
+            ->setParameter(
+                'offer',
+                $offer,
+                ProductOfferUid::TYPE
+            );
 
-        $qb->leftJoin(ProductOffer::class,
-            'current_offer', 'WITH', 'current_offer.const = offer.const AND current_offer.event = product.event'
+        $qb->leftJoin(
+            ProductOffer::class,
+            'current_offer',
+            'WITH',
+            'current_offer.const = offer.const AND current_offer.event = product.event'
         ); //
 
 
         /** Множественный вариант торгового предложения */
 
-        $qb->join(ProductVariation::class,
-            'variation', 'WITH', 'variation.id = :variation AND variation.offer = offer.id'
-        );
-        $qb->setParameter('variation', $variation, ProductVariationUid::TYPE);
+        $qb->join(
+            ProductVariation::class,
+            'variation',
+            'WITH',
+            'variation.id = :variation AND variation.offer = offer.id'
+        )
+            ->setParameter(
+                'variation',
+                $variation,
+                ProductVariationUid::TYPE
+            );
 
-        $qb->leftJoin(ProductVariation::class,
-            'current_variation', 'WITH', 'current_variation.const = variation.const AND current_variation.offer = current_offer.id'
+        $qb->leftJoin(
+            ProductVariation::class,
+            'current_variation',
+            'WITH',
+            'current_variation.const = variation.const AND current_variation.offer = current_offer.id'
         );
 
 
         /** Модификация множественного варианта торгового предложения */
 
-        $qb->join(ProductModification::class,
-            'modification', 'WITH', 'modification.id = :modification AND modification.variation = variation.id'
-        );
-        $qb->setParameter('modification', $modification, ProductModificationUid::TYPE);
+        $qb->join(
+            ProductModification::class,
+            'modification',
+            'WITH',
+            'modification.id = :modification AND modification.variation = variation.id'
+        )
+            ->setParameter(
+                'modification',
+                $modification,
+                ProductModificationUid::TYPE
+            );
 
-        $qb->leftJoin(ProductModification::class,
-            'current_modification', 'WITH', 'current_modification.const = modification.const AND current_modification.variation = current_variation.id'
+        $qb->leftJoin(
+            ProductModification::class,
+            'current_modification',
+            'WITH',
+            'current_modification.const = modification.const AND current_modification.variation = current_variation.id'
         );
 
 
         /** Текущее наличие */
-        $qb->leftJoin(ProductModificationQuantity::class,
-            'quantity', 'WITH', 'quantity.modification = current_modification.id'
-        );
+        $qb
+            ->select('quantity')
+            ->leftJoin(
+                ProductModificationQuantity::class,
+                'quantity',
+                'WITH',
+                'quantity.modification = current_modification.id'
+            );
 
 
         return $qb->getQuery()->getOneOrNullResult();

@@ -114,6 +114,8 @@ final class ProductModificationChoiceRepository implements ProductModificationCh
             'category_modification_trans.modification = category_modification.id AND category_modification_trans.local = :local'
         );
 
+        /** Свойства конструктора объекта гидрации */
+
         $dbal->addSelect('modification.const AS value');
         $dbal->addSelect('modification.value AS attr');
 
@@ -264,27 +266,15 @@ final class ProductModificationChoiceRepository implements ProductModificationCh
                 'modification_quantity.modification = modification.id AND modification_quantity.quantity > 0 '
             );
 
+        $dbal->allGroupByExclude();
+
+        /** Свойства конструктора объекта гидрации */
 
         $dbal->addSelect('modification.id AS value');
         $dbal->addSelect("CONCAT(modification.value, ' ', modification.postfix) AS attr");
 
         $dbal->addSelect('category_modification_trans.name AS property');
         $dbal->addSelect('category_modification.reference AS characteristic');
-
-        $dbal->allGroupByExclude();
-
-
-        //        $select = sprintf('new %s(
-        //            modification.id,
-        //            modification.value,
-        //            trans.name,
-        //            category_modification.reference
-        //        )', ProductModificationUid::class);
-
-        //        $dbal->select($select);
-
-        /* Кешируем результат ORM */
-        //return $qb->enableCache('products-product', 86400)->getResult();
 
         return $dbal->fetchAllHydrate(ProductModificationUid::class);
 

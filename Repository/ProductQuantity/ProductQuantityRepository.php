@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Repository\ProductQuantity;
 
 
+use BaksDev\Core\Doctrine\ORMQueryBuilder;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Price\ProductPrice;
 use BaksDev\Products\Product\Entity\Product;
@@ -34,11 +35,11 @@ use Doctrine\ORM\EntityManagerInterface;
 
 final class ProductQuantityRepository implements ProductQuantityInterface
 {
-    private EntityManagerInterface $entityManager;
+    private ORMQueryBuilder $ORMQueryBuilder;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(ORMQueryBuilder $ORMQueryBuilder)
     {
-        $this->entityManager = $entityManager;
+        $this->ORMQueryBuilder = $ORMQueryBuilder;
     }
 
     /** Метод возвращает количественный учет продукта */
@@ -46,13 +47,12 @@ final class ProductQuantityRepository implements ProductQuantityInterface
         ProductUid $product
     ): ?ProductPrice
     {
-        $qb = $this->entityManager->createQueryBuilder();
+        $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
 
-        $qb->select('price');
-
-        $qb->from(Product::class, 'product');
-        $qb->where('product.id = :product');
-        $qb->setParameter('product', $product, ProductUid::TYPE);
+        $qb
+            ->from(Product::class, 'product')
+            ->where('product.id = :product')
+            ->setParameter('product', $product, ProductUid::TYPE);
 
         $qb->join(
             ProductEvent::class,
@@ -61,13 +61,15 @@ final class ProductQuantityRepository implements ProductQuantityInterface
             'event.id = product.event'
         );
 
-        $qb->join(
-            ProductPrice::class,
-            'price',
-            'WITH',
-            'price.event = product.event'
-        );
+        $qb
+            ->select('price')
+            ->join(
+                ProductPrice::class,
+                'price',
+                'WITH',
+                'price.event = product.event'
+            );
 
-        return $qb->getQuery()->getOneOrNullResult();
+        return $qb->getOneOrNullResult();
     }
 }

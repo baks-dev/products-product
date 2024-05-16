@@ -59,6 +59,8 @@ final class ProductModificationConstRepository implements ProductModificationCon
             ->where('modification.id = :modification')
             ->setParameter('modification', $modification, ProductModificationUid::TYPE);
 
+        /** Свойства конструктора объекта гидрации */
+
         $dbal
             ->addSelect('modification.const AS value');
 

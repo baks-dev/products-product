@@ -112,15 +112,7 @@ final class ProductVariationChoiceRepository implements ProductVariationChoiceIn
         );
 
 
-        //        $select = sprintf('new %s(
-        //            variation.const,
-        //            variation.value,
-        //            trans.name,
-        //            category_variation.reference
-        //        )', ProductVariationConst::class);
-        //
-        //        $qb->select($select);
-
+        /** Свойства конструктора объекта гидрации */
 
         $dbal->addSelect('variation.const AS value');
         $dbal->addSelect('variation.value AS attr');
@@ -281,18 +273,10 @@ final class ProductVariationChoiceRepository implements ProductVariationChoiceIn
         );
 
 
-        //        $select = sprintf('new %s(
-        //            offer.id,
-        //            offer.value,
-        //            trans.name,
-        //            category_offer.reference
-        //        )', ProductOfferUid::class);
-        //
-        //        $dbal->select($select);
+        /** Свойства конструктора объекта гидрации */
 
         $dbal->addSelect('product_variation.id AS value');
         $dbal->addSelect("CONCAT(product_variation.value, ' ', product_variation.postfix) AS attr");
-
 
         $dbal->addSelect('
 
@@ -307,7 +291,6 @@ final class ProductVariationChoiceRepository implements ProductVariationChoiceIn
             END
 
         AS option');
-
 
         $dbal->addSelect('category_variation_trans.name AS property');
         $dbal->addSelect('category_variation.reference AS characteristic');

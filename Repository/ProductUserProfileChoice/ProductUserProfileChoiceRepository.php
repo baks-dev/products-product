@@ -23,94 +23,93 @@
 
 namespace BaksDev\Products\Product\Repository\ProductUserProfileChoice;
 
-use BaksDev\Auth\Email\Entity as AccountEntity;
+
+use BaksDev\Auth\Email\Entity\Account;
+use BaksDev\Auth\Email\Entity\Status\AccountStatus;
 use BaksDev\Auth\Email\Type\EmailStatus\EmailStatus;
 use BaksDev\Auth\Email\Type\EmailStatus\Status\EmailStatusActive;
-use BaksDev\Users\Profile\UserProfile\Entity as UserProfileEntity;
+use BaksDev\Core\Doctrine\DBALQueryBuilder;
+use BaksDev\Users\Profile\UserProfile\Entity\Info\UserProfileInfo;
+use BaksDev\Users\Profile\UserProfile\Entity\Personal\UserProfilePersonal;
+use BaksDev\Users\Profile\UserProfile\Entity\UserProfile;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use BaksDev\Users\Profile\UserProfile\Type\UserProfileStatus\Status\UserProfileStatusActive;
 use BaksDev\Users\Profile\UserProfile\Type\UserProfileStatus\UserProfileStatus;
-use Doctrine\ORM\EntityManagerInterface;
+use Generator;
 
 final class ProductUserProfileChoiceRepository implements ProductUserProfileChoiceInterface
 {
-
-    private EntityManagerInterface $entityManager;
 
     private EmailStatus $account_status;
 
     private UserProfileStatus $status;
 
+    private DBALQueryBuilder $DBALQueryBuilder;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(DBALQueryBuilder $DBALQueryBuilder)
     {
-        $this->entityManager = $entityManager;
         $this->account_status = new EmailStatus(EmailStatusActive::class);
         $this->status = new UserProfileStatus(UserProfileStatusActive::class);
+        $this->DBALQueryBuilder = $DBALQueryBuilder;
     }
 
 
-    /** Получаем список профилей пользователей, доступных к созданию карточек */
-
-    public function getProfileCollection(): ?array
+    /**
+     * Возвращает список профилей пользователей, доступных к созданию карточек
+     */
+    public function getProfileCollection(): Generator
     {
 
-        $qb = $this->entityManager->createQueryBuilder();
+        $dbal = $this->DBALQueryBuilder->createQueryBuilder(self::class);
 
-        $select = sprintf('new %s(user_profile.id, personal.username)', UserProfileUid::class);
-        $qb->select($select);
+        $dbal->from(UserProfile::class, 'user_profile');
 
-        $qb->from(UserProfileEntity\UserProfile::class, 'user_profile');
-
-        $qb->join(
-            UserProfileEntity\Info\UserProfileInfo::class,
+        $dbal->join(
+            'user_profile',
+            UserProfileInfo::class,
             'info',
-            'WITH',
             'info.profile = user_profile.id AND info.status = :status',
-        );
+        )
+            ->setParameter(
+                'status',
+                $this->status,
+                UserProfileStatus::TYPE
+            );
 
-        $qb->setParameter('status', $this->status, UserProfileStatus::TYPE);
-
-        $qb->join(
-            UserProfileEntity\Event\UserProfileEvent::class,
-            'event',
-            'WITH',
-            'event.id = user_profile.event AND event.profile = user_profile.id',
-        );
-
-        $qb->join(
-            UserProfileEntity\Personal\UserProfilePersonal::class,
+        $dbal->join(
+            'user_profile',
+            UserProfilePersonal::class,
             'personal',
-            'WITH',
-            'personal.event = event.id',
+            'personal.event = user_profile.event',
         );
 
-        /* Тип профиля, имеющий доступ к созданию карточек */
-
-        //		$qb->join(
-        //			ProductSettings::class,
-        //			'profile',
-        //			'WITH',
-        //			'profile.profile = event.type'
-        //		);
-
-        $qb->join(
-            AccountEntity\Account::class,
+        $dbal->join(
+            'info',
+            Account::class,
             'account',
-            'WITH',
             'account.id = info.usr',
         );
 
-        $qb->join(
-            AccountEntity\Status\AccountStatus::class,
+        $dbal->join(
+            'account',
+            AccountStatus::class,
             'status',
-            'WITH',
             'status.event = account.event AND status.status = :account_status',
-        );
+        )
+            ->setParameter(
+                'account_status',
+                $this->account_status,
+                EmailStatus::TYPE
+            );
 
-        $qb->setParameter('account_status', $this->account_status, EmailStatus::TYPE);
 
-        return $qb->getQuery()->getResult();
+        /** Свойства конструктора объекта гидрации */
+
+        $dbal->addSelect('user_profile.id AS value');
+        $dbal->addSelect('personal.username AS attr');
+
+        return $dbal->fetchAllHydrate(UserProfileUid::class);
+
     }
 
 }

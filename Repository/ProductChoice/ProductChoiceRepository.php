@@ -48,16 +48,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 final class ProductChoiceRepository implements ProductChoiceInterface
 {
     private ORMQueryBuilder $ORMQueryBuilder;
-    private TranslatorInterface $translator;
     private DBALQueryBuilder $DBALQueryBuilder;
 
     public function __construct(
         ORMQueryBuilder $ORMQueryBuilder,
         DBALQueryBuilder $DBALQueryBuilder,
-        TranslatorInterface $translator
     )
     {
-        $this->translator = $translator;
         $this->ORMQueryBuilder = $ORMQueryBuilder;
         $this->DBALQueryBuilder = $DBALQueryBuilder;
     }
@@ -69,28 +66,29 @@ final class ProductChoiceRepository implements ProductChoiceInterface
     public function fetchAllProduct(): ?array
     {
 
+        $qb = $this->DBALQueryBuilder
+            ->createQueryBuilder(self::class)
+            ->bindLocal();
 
-        $qb = $this->DBALQueryBuilder->createQueryBuilder(self::class)->bindLocal();
-
-        $qb->from(Product::TABLE, 'product');
+        $qb->from(Product::class, 'product');
 
         $qb->join(
             'product',
-            ProductInfo::TABLE,
+            ProductInfo::class,
             'info',
             'info.product = product.id'
         );
 
         $qb->leftJoin(
             'product',
-            ProductOffer::TABLE,
+            ProductOffer::class,
             'offer',
             'offer.event = product.event'
         );
 
         $qb->join(
             'product',
-            ProductActive::TABLE,
+            ProductActive::class,
             'active',
             '
             active.event = product.event AND
@@ -102,7 +100,7 @@ final class ProductChoiceRepository implements ProductChoiceInterface
 
         $qb->join(
             'product',
-            ProductTrans::TABLE,
+            ProductTrans::class,
             'trans',
             'trans.event = product.event AND trans.local = :local'
         );
@@ -112,7 +110,6 @@ final class ProductChoiceRepository implements ProductChoiceInterface
         $qb->addSelect('trans.name AS attr');
         $qb->addSelect('offer.article AS option');
 
-        //dd($qb->fetchAllAssociativeIndexed(ProductUid::class));
 
         /* Кешируем результат ORM */
         return $qb
@@ -130,10 +127,6 @@ final class ProductChoiceRepository implements ProductChoiceInterface
         $qb = $this->ORMQueryBuilder
             ->createQueryBuilder(self::class)
             ->bindLocal();
-
-        //$select = sprintf('new %s(product.event, trans.name, info.article)', ProductEventUid::class);
-
-        //$qb->select($select);
 
         $qb->from(Product::class, 'product');
 
@@ -282,7 +275,7 @@ final class ProductChoiceRepository implements ProductChoiceInterface
         ');
 
 
-        $data = $dbal->fetchAllHydrate(ProductEventUid::class);
+        //$data = $dbal->fetchAllHydrate(ProductEventUid::class);
 
         return $dbal->fetchAllHydrate(ProductEventUid::class);
 

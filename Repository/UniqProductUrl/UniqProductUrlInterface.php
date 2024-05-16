@@ -18,7 +18,11 @@
 
 namespace BaksDev\Products\Product\Repository\UniqProductUrl;
 
+use BaksDev\Products\Product\Type\Id\ProductUid;
+
 interface UniqProductUrlInterface
 {
-	
+    /** Метод проверяет, имеется ли указанный URL карточки, и что он не принадлежит новой (редактируемой)  */
+
+    public function isExists(string $url, ProductUid|string $product): bool;
 }

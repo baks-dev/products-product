@@ -71,17 +71,12 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class ProductDetailByValueRepository implements ProductDetailByValueInterface
 {
-
-    private TranslatorInterface $translator;
     private DBALQueryBuilder $DBALQueryBuilder;
 
     public function __construct(
-        TranslatorInterface $translator,
         DBALQueryBuilder $DBALQueryBuilder,
     )
     {
-
-        $this->translator = $translator;
         $this->DBALQueryBuilder = $DBALQueryBuilder;
     }
 
@@ -115,12 +110,6 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             ->addSelect('product.event')
             ->from(Product::class, 'product');
 
-        //        $dbal->join(
-        //            'product',
-        //            ProductEvent::class,
-        //            'product_event',
-        //            'product_event.id = product.event'
-        //        );
 
         $dbal
             ->addSelect('product_active.active')
@@ -379,10 +368,18 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
         $dbal->addSelect(
             '
 			CASE
-			   WHEN product_modification.article IS NOT NULL THEN product_modification.article
-			   WHEN product_variation.article IS NOT NULL THEN product_variation.article
-			   WHEN product_offer.article IS NOT NULL THEN product_offer.article
-			   WHEN product_info.article IS NOT NULL THEN product_info.article
+			   WHEN product_modification.article IS NOT NULL 
+			   THEN product_modification.article
+			   
+			   WHEN product_variation.article IS NOT NULL 
+			   THEN product_variation.article
+			   
+			   WHEN product_offer.article IS NOT NULL 
+			   THEN product_offer.article
+			   
+			   WHEN product_info.article IS NOT NULL 
+			   THEN product_info.article
+			   
 			   ELSE NULL
 			END AS product_article
 		'
@@ -513,10 +510,18 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
         $dbal->addSelect(
             '
 			CASE
-			   WHEN product_modification_price.price IS NOT NULL AND product_modification_price.price > 0 THEN product_modification_price.price
-			   WHEN product_variation_price.price IS NOT NULL AND product_variation_price.price > 0 THEN product_variation_price.price
-			   WHEN product_offer_price.price IS NOT NULL AND product_offer_price.price > 0 THEN product_offer_price.price
-			   WHEN product_price.price IS NOT NULL AND product_price.price > 0 THEN product_price.price
+			   WHEN product_modification_price.price IS NOT NULL AND product_modification_price.price > 0 
+			   THEN product_modification_price.price
+			   
+			   WHEN product_variation_price.price IS NOT NULL AND product_variation_price.price > 0 
+			   THEN product_variation_price.price
+			   
+			   WHEN product_offer_price.price IS NOT NULL AND product_offer_price.price > 0 
+			   THEN product_offer_price.price
+			   
+			   WHEN product_price.price IS NOT NULL AND product_price.price > 0 
+			   THEN product_price.price
+			   
 			   ELSE NULL
 			END AS product_price
 		'
@@ -527,10 +532,18 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
         $dbal->addSelect(
             '
 			CASE
-			   WHEN product_modification_price.price IS NOT NULL AND product_modification_price.price > 0 THEN product_modification_price.currency
-			   WHEN product_variation_price.price IS NOT NULL AND product_variation_price.price > 0 THEN product_variation_price.currency
-			   WHEN product_offer_price.price IS NOT NULL AND product_offer_price.price > 0 THEN product_offer_price.currency
-			   WHEN product_price.price IS NOT NULL AND product_price.price > 0 THEN product_price.currency
+			   WHEN product_modification_price.price IS NOT NULL AND product_modification_price.price > 0 
+			   THEN product_modification_price.currency
+			   
+			   WHEN product_variation_price.price IS NOT NULL AND product_variation_price.price > 0 
+			   THEN product_variation_price.currency
+			   
+			   WHEN product_offer_price.price IS NOT NULL AND product_offer_price.price > 0 
+			   THEN product_offer_price.currency
+			   
+			   WHEN product_price.price IS NOT NULL AND product_price.price > 0 
+			   THEN product_price.currency
+			   
 			   ELSE NULL
 			END AS product_currency
 		'
@@ -541,9 +554,8 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
         $dbal->addSelect(
             '
 			CASE
-			
-			
-			WHEN product_modification_quantity.quantity > 0 AND product_modification_quantity.quantity > product_modification_quantity.reserve 
+		
+			    WHEN product_modification_quantity.quantity > 0 AND product_modification_quantity.quantity > product_modification_quantity.reserve 
 			   THEN (product_modification_quantity.quantity - product_modification_quantity.reserve)
 
 			   WHEN product_variation_quantity.quantity > 0 AND product_variation_quantity.quantity > product_variation_quantity.reserve  
@@ -927,10 +939,18 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
         $dbal->addSelect(
             '
 			CASE
-			   WHEN product_modification.article IS NOT NULL THEN product_modification.article
-			   WHEN product_variation.article IS NOT NULL THEN product_variation.article
-			   WHEN product_offer.article IS NOT NULL THEN product_offer.article
-			   WHEN product_info.article IS NOT NULL THEN product_info.article
+			   WHEN product_modification.article IS NOT NULL 
+			   THEN product_modification.article
+			   
+			   WHEN product_variation.article IS NOT NULL 
+			   THEN product_variation.article
+			   
+			   WHEN product_offer.article IS NOT NULL 
+			   THEN product_offer.article
+			   
+			   WHEN product_info.article IS NOT NULL 
+			   THEN product_info.article
+			   
 			   ELSE NULL
 			END AS product_article
 		'
@@ -1061,10 +1081,18 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
         $dbal->addSelect(
             '
 			CASE
-			   WHEN product_modification_price.price IS NOT NULL AND product_modification_price.price > 0 THEN product_modification_price.price
-			   WHEN product_variation_price.price IS NOT NULL AND product_variation_price.price > 0 THEN product_variation_price.price
-			   WHEN product_offer_price.price IS NOT NULL AND product_offer_price.price > 0 THEN product_offer_price.price
-			   WHEN product_price.price IS NOT NULL AND product_price.price > 0 THEN product_price.price
+			   WHEN product_modification_price.price IS NOT NULL AND product_modification_price.price > 0 
+			   THEN product_modification_price.price
+			   
+			   WHEN product_variation_price.price IS NOT NULL AND product_variation_price.price > 0 
+			   THEN product_variation_price.price
+			   
+			   WHEN product_offer_price.price IS NOT NULL AND product_offer_price.price > 0 
+			   THEN product_offer_price.price
+			   
+			   WHEN product_price.price IS NOT NULL AND product_price.price > 0 
+			   THEN product_price.price
+			   
 			   ELSE NULL
 			END AS product_price
 		'
@@ -1075,10 +1103,18 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
         $dbal->addSelect(
             '
 			CASE
-			   WHEN product_modification_price.price IS NOT NULL AND product_modification_price.price > 0 THEN product_modification_price.currency
-			   WHEN product_variation_price.price IS NOT NULL AND product_variation_price.price > 0 THEN product_variation_price.currency
-			   WHEN product_offer_price.price IS NOT NULL AND product_offer_price.price > 0 THEN product_offer_price.currency
-			   WHEN product_price.price IS NOT NULL AND product_price.price > 0 THEN product_price.currency
+			   WHEN product_modification_price.price IS NOT NULL AND product_modification_price.price > 0 
+			   THEN product_modification_price.currency
+			   
+			   WHEN product_variation_price.price IS NOT NULL AND product_variation_price.price > 0 
+			   THEN product_variation_price.currency
+			   
+			   WHEN product_offer_price.price IS NOT NULL AND product_offer_price.price > 0 
+			   THEN product_offer_price.currency
+			   
+			   WHEN product_price.price IS NOT NULL AND product_price.price > 0 
+			   THEN product_price.currency
+			   
 			   ELSE NULL
 			END AS product_currency
 		'

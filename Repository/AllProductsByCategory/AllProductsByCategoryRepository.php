@@ -29,19 +29,17 @@ use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Core\Services\Paginator\PaginatorInterface;
 use BaksDev\Core\Type\Device\Device;
 use BaksDev\Core\Type\Device\Devices\Desktop;
-use BaksDev\Core\Type\Locale\Locale;
-use BaksDev\Delivery\BaksDevDeliveryBundle;
 use BaksDev\DeliveryTransport\BaksDevDeliveryTransportBundle;
 use BaksDev\DeliveryTransport\Entity\ProductParameter\DeliveryPackageProductParameter;
+use BaksDev\Products\Category\Entity\CategoryProduct;
 use BaksDev\Products\Category\Entity\Event\CategoryProductEvent;
 use BaksDev\Products\Category\Entity\Info\CategoryProductInfo;
 use BaksDev\Products\Category\Entity\Offers\CategoryProductOffers;
-use BaksDev\Products\Category\Entity\Offers\Variation\Modification\CategoryProductModification;
 use BaksDev\Products\Category\Entity\Offers\Variation\CategoryProductVariation;
-use BaksDev\Products\Category\Entity\CategoryProduct;
+use BaksDev\Products\Category\Entity\Offers\Variation\Modification\CategoryProductModification;
+use BaksDev\Products\Category\Entity\Section\CategoryProductSection;
 use BaksDev\Products\Category\Entity\Section\Field\CategoryProductSectionField;
 use BaksDev\Products\Category\Entity\Section\Field\Trans\CategoryProductSectionFieldTrans;
-use BaksDev\Products\Category\Entity\Section\CategoryProductSection;
 use BaksDev\Products\Category\Entity\Trans\CategoryProductTrans;
 use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Category\Type\Section\Field\Id\CategoryProductSectionFieldUid;
@@ -68,7 +66,7 @@ use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Entity\Property\ProductProperty;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Forms\ProductCategoryFilter\User\ProductCategoryFilterDTO;
-use Symfony\Contracts\Translation\TranslatorInterface;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 
 final class AllProductsByCategoryRepository implements AllProductsByCategoryInterface
 {
@@ -111,10 +109,15 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
     }
 
     public function fetchAllProductByCategoryAssociative(
-        CategoryProductUid $category,
+        CategoryProductUid|string $category,
         string $expr = 'AND',
     ): PaginatorInterface
     {
+
+        if(is_string($category))
+        {
+            $category = new CategoryProductUid($category);
+        }
 
         $dbal = $this->DBALQueryBuilder
             ->createQueryBuilder(self::class)
@@ -547,14 +550,18 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
 
         $dbal->addSelect("
 			CASE
-			 WHEN product_modification_image.name IS NOT NULL THEN
-					CONCAT ( '/upload/".$dbal->table(ProductModificationImage::class)."' , '/', product_modification_image.name)
-			   WHEN product_variation_image.name IS NOT NULL THEN
-					CONCAT ( '/upload/".$dbal->table(ProductVariationImage::class)."' , '/', product_variation_image.name)
-			   WHEN product_offer_images.name IS NOT NULL THEN
-					CONCAT ( '/upload/".$dbal->table(ProductOfferImage::class)."' , '/', product_offer_images.name)
-			   WHEN product_photo.name IS NOT NULL THEN
-					CONCAT ( '/upload/".$dbal->table(ProductPhoto::class)."' , '/', product_photo.name)
+			 WHEN product_modification_image.name IS NOT NULL 
+			 THEN CONCAT ( '/upload/".$dbal->table(ProductModificationImage::class)."' , '/', product_modification_image.name)
+					
+			   WHEN product_variation_image.name IS NOT NULL 
+			   THEN CONCAT ( '/upload/".$dbal->table(ProductVariationImage::class)."' , '/', product_variation_image.name)
+					
+			   WHEN product_offer_images.name IS NOT NULL 
+			   THEN CONCAT ( '/upload/".$dbal->table(ProductOfferImage::class)."' , '/', product_offer_images.name)
+					
+			   WHEN product_photo.name IS NOT NULL 
+			   THEN CONCAT ( '/upload/".$dbal->table(ProductPhoto::class)."' , '/', product_photo.name)
+					
 			   ELSE NULL
 			END AS product_image
 		"
@@ -563,14 +570,18 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
         /** Флаг загрузки файла CDN */
         $dbal->addSelect("
 			CASE
-			WHEN product_modification_image.name IS NOT NULL THEN
-					product_modification_image.ext
-			   WHEN product_variation_image.name IS NOT NULL THEN
-					product_variation_image.ext
-			   WHEN product_offer_images.name IS NOT NULL THEN
-					product_offer_images.ext
-			   WHEN product_photo.name IS NOT NULL THEN
-					product_photo.ext
+                WHEN product_modification_image.name IS NOT NULL 
+                THEN product_modification_image.ext
+					
+			   WHEN product_variation_image.name IS NOT NULL 
+			   THEN product_variation_image.ext
+					
+			   WHEN product_offer_images.name IS NOT NULL 
+			   THEN product_offer_images.ext
+					
+			   WHEN product_photo.name IS NOT NULL 
+			   THEN product_photo.ext
+					
 			   ELSE NULL
 			END AS product_image_ext
 		"
@@ -579,12 +590,15 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
         /** Флаг загрузки файла CDN */
         $dbal->addSelect("
 			CASE
-			   WHEN product_variation_image.name IS NOT NULL THEN
-					product_variation_image.cdn
-			   WHEN product_offer_images.name IS NOT NULL THEN
-					product_offer_images.cdn
-			   WHEN product_photo.name IS NOT NULL THEN
-					product_photo.cdn
+			   WHEN product_variation_image.name IS NOT NULL 
+			   THEN product_variation_image.cdn
+					
+			   WHEN product_offer_images.name IS NOT NULL 
+			   THEN product_offer_images.cdn
+					
+			   WHEN product_photo.name IS NOT NULL 
+			   THEN product_photo.cdn
+					
 			   ELSE NULL
 			END AS product_image_cdn
 		"
@@ -626,7 +640,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
                          )
                      )[1] > 0 
                      
-                     THEN (ARRAY_AGG(
+         THEN (ARRAY_AGG(
                             DISTINCT product_variation_price.price ORDER BY product_variation_price.price
                          ) 
                          FILTER 
@@ -634,6 +648,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
                             WHERE  product_variation_price.price > 0
                          )
                      )[1]
+         
          
          /* СТОИМОСТЬ ТП */
             WHEN (ARRAY_AGG(
@@ -645,7 +660,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
                          )
                      )[1] > 0 
                      
-                     THEN (ARRAY_AGG(
+            THEN (ARRAY_AGG(
                             DISTINCT product_offer_price.price ORDER BY product_offer_price.price
                          ) 
                          FILTER 
@@ -655,7 +670,9 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
                      )[1]
          
 			  
-			   WHEN product_price.price IS NOT NULL THEN product_price.price
+			   WHEN product_price.price IS NOT NULL 
+			   THEN product_price.price
+			   
 			   ELSE NULL
 			END AS product_price
 		");
@@ -937,9 +954,15 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
         /** Идентификатор */
         $dbal->addSelect("
 			CASE
-			   WHEN product_modification.const IS NOT NULL THEN product_modification.const
-			   WHEN product_variation.const IS NOT NULL THEN product_variation.const
-			   WHEN product_offer.const IS NOT NULL THEN product_offer.const
+			   WHEN product_modification.const IS NOT NULL 
+			   THEN product_modification.const
+			   
+			   WHEN product_variation.const IS NOT NULL 
+			   THEN product_variation.const
+			   
+			   WHEN product_offer.const IS NOT NULL 
+			   THEN product_offer.const
+			   
 			   ELSE product.id
 			END AS product_id
 		"
@@ -949,10 +972,18 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
         /** Стоимость */
         $dbal->addSelect("
 			CASE
-			   WHEN product_modification_price.price IS NOT NULL AND product_modification_price.price > 0 THEN product_modification_price.price
-			   WHEN product_variation_price.price IS NOT NULL AND product_variation_price.price > 0  THEN product_variation_price.price
-			   WHEN product_offer_price.price IS NOT NULL AND product_offer_price.price > 0 THEN product_offer_price.price
-			   WHEN product_price.price IS NOT NULL THEN product_price.price
+			   WHEN product_modification_price.price IS NOT NULL AND product_modification_price.price > 0 
+			   THEN product_modification_price.price
+			   
+			   WHEN product_variation_price.price IS NOT NULL AND product_variation_price.price > 0  
+			   THEN product_variation_price.price
+			   
+			   WHEN product_offer_price.price IS NOT NULL AND product_offer_price.price > 0 
+			   THEN product_offer_price.price
+			   
+			   WHEN product_price.price IS NOT NULL 
+			   THEN product_price.price
+			   
 			   ELSE NULL
 			END AS product_price
 		"
@@ -961,10 +992,18 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
         /** Валюта продукта */
         $dbal->addSelect("
 			CASE
-			   WHEN product_modification_price.price IS NOT NULL AND product_modification_price.price > 0 THEN product_modification_price.currency
-			   WHEN product_variation_price.price IS NOT NULL AND product_variation_price.price > 0  THEN product_variation_price.currency
-			   WHEN product_offer_price.price IS NOT NULL AND product_offer_price.price > 0 THEN product_offer_price.currency
-			   WHEN product_price.price IS NOT NULL THEN product_price.currency
+			   WHEN product_modification_price.price IS NOT NULL AND product_modification_price.price > 0 
+			   THEN product_modification_price.currency
+			   
+			   WHEN product_variation_price.price IS NOT NULL AND product_variation_price.price > 0  
+			   THEN product_variation_price.currency
+			   
+			   WHEN product_offer_price.price IS NOT NULL AND product_offer_price.price > 0 
+			   THEN product_offer_price.currency
+			   
+			   WHEN product_price.price IS NOT NULL 
+			   THEN product_price.currency
+			   
 			   ELSE NULL
 			END AS product_currency
 		"
@@ -1046,14 +1085,18 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
 
         $dbal->addSelect("
 			CASE
-			 WHEN product_modification_image.name IS NOT NULL THEN
-					CONCAT ( '/upload/".$dbal->table(ProductModificationImage::class)."' , '/', product_modification_image.name)
-			   WHEN product_variation_image.name IS NOT NULL THEN
-					CONCAT ( '/upload/".$dbal->table(ProductVariationImage::class)."' , '/', product_variation_image.name)
-			   WHEN product_offer_images.name IS NOT NULL THEN
-					CONCAT ( '/upload/".$dbal->table(ProductOfferImage::class)."' , '/', product_offer_images.name)
-			   WHEN product_photo.name IS NOT NULL THEN
-					CONCAT ( '/upload/".$dbal->table(ProductPhoto::class)."' , '/', product_photo.name)
+			 WHEN product_modification_image.name IS NOT NULL 
+			 THEN CONCAT ( '/upload/".$dbal->table(ProductModificationImage::class)."' , '/', product_modification_image.name)
+					
+			   WHEN product_variation_image.name IS NOT NULL 
+			   THEN CONCAT ( '/upload/".$dbal->table(ProductVariationImage::class)."' , '/', product_variation_image.name)
+					
+			   WHEN product_offer_images.name IS NOT NULL 
+			   THEN CONCAT ( '/upload/".$dbal->table(ProductOfferImage::class)."' , '/', product_offer_images.name)
+					
+			   WHEN product_photo.name IS NOT NULL 
+			   THEN CONCAT ( '/upload/".$dbal->table(ProductPhoto::class)."' , '/', product_photo.name)
+					
 			   ELSE NULL
 			END AS product_image
 		"
@@ -1062,14 +1105,18 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
         /** Расширение файла */
         $dbal->addSelect("
 			CASE
-			WHEN product_modification_image.ext IS NOT NULL AND product_modification_image.name IS NOT NULL THEN
-					product_modification_image.ext
-			   WHEN product_variation_image.ext IS NOT NULL AND product_variation_image.name IS NOT NULL THEN
-					product_variation_image.ext
-			   WHEN product_offer_images.ext IS NOT NULL AND product_offer_images.name IS NOT NULL THEN
-					product_offer_images.ext
-			   WHEN product_photo.ext IS NOT NULL AND product_photo.name IS NOT NULL THEN
-					product_photo.ext
+                WHEN product_modification_image.ext IS NOT NULL AND product_modification_image.name IS NOT NULL 
+                THEN product_modification_image.ext
+					
+			   WHEN product_variation_image.ext IS NOT NULL AND product_variation_image.name IS NOT NULL 
+			   THEN product_variation_image.ext
+					
+			   WHEN product_offer_images.ext IS NOT NULL AND product_offer_images.name IS NOT NULL 
+			   THEN product_offer_images.ext
+					
+			   WHEN product_photo.ext IS NOT NULL AND product_photo.name IS NOT NULL 
+			   THEN product_photo.ext
+					
 			   ELSE NULL
 			END AS product_image_ext
 		"
@@ -1078,14 +1125,18 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
         /** Флаг загрузки файла CDN */
         $dbal->addSelect("
 			CASE
-			    WHEN product_modification_image.cdn IS NOT NULL AND product_modification_image.name IS NOT NULL THEN
-					product_modification_image.cdn
-			   WHEN product_variation_image.cdn IS NOT NULL AND product_variation_image.name IS NOT NULL THEN
-					product_variation_image.cdn
-			   WHEN product_offer_images.cdn IS NOT NULL AND product_offer_images.name IS NOT NULL THEN
-					product_offer_images.cdn
-			   WHEN product_photo.cdn IS NOT NULL AND product_photo.name IS NOT NULL THEN
-					product_photo.cdn
+			    WHEN product_modification_image.cdn IS NOT NULL AND product_modification_image.name IS NOT NULL 
+			    THEN product_modification_image.cdn
+					
+			   WHEN product_variation_image.cdn IS NOT NULL AND product_variation_image.name IS NOT NULL 
+			   THEN product_variation_image.cdn
+					
+			   WHEN product_offer_images.cdn IS NOT NULL AND product_offer_images.name IS NOT NULL 
+			   THEN product_offer_images.cdn
+					
+			   WHEN product_photo.cdn IS NOT NULL AND product_photo.name IS NOT NULL 
+			   THEN product_photo.cdn
+					
 			   ELSE NULL
 			END AS product_image_cdn
 		"
@@ -1133,14 +1184,16 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
             'category_section',
             CategoryProductSectionField::class,
             'category_section_field',
-            'category_section_field.section = category_section.id AND category_section_field.card = TRUE'
+            'category_section_field.section = category_section.id 
+            AND category_section_field.card = TRUE'
         );
 
         $dbal->leftJoin(
             'category_section_field',
             CategoryProductSectionFieldTrans::class,
             'category_section_field_trans',
-            'category_section_field_trans.field = category_section_field.id AND category_section_field_trans.local = :local'
+            'category_section_field_trans.field = category_section_field.id 
+            AND category_section_field_trans.local = :local'
         );
 
 
@@ -1148,7 +1201,8 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
             'category_section_field',
             ProductProperty::class,
             'product_property',
-            'product_property.event = product.event AND product_property.field = category_section_field.const'
+            'product_property.event = product.event 
+            AND product_property.field = category_section_field.const'
         );
 
 
@@ -1157,10 +1211,18 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
         $dbal->addSelect(
             '
 			CASE
-			   WHEN product_modification.article IS NOT NULL THEN product_modification.article
-			   WHEN product_variation.article IS NOT NULL THEN product_variation.article
-			   WHEN product_offer.article IS NOT NULL THEN product_offer.article
-			   WHEN product_info.article IS NOT NULL THEN product_info.article
+			   WHEN product_modification.article IS NOT NULL 
+			   THEN product_modification.article
+			   
+			   WHEN product_variation.article IS NOT NULL 
+			   THEN product_variation.article
+			   
+			   WHEN product_offer.article IS NOT NULL 
+			   THEN product_offer.article
+			   
+			   WHEN product_info.article IS NOT NULL 
+			   THEN product_info.article
+			   
 			   ELSE NULL
 			END AS product_article
 		'
@@ -1172,10 +1234,18 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
         $dbal->addSelect(
             '
 			CASE
-			   WHEN product_modification.barcode IS NOT NULL THEN product_modification.barcode
-			   WHEN product_variation.barcode IS NOT NULL THEN product_variation.barcode
-			   WHEN product_offer.barcode IS NOT NULL THEN product_offer.barcode
-			   WHEN product_info.barcode IS NOT NULL THEN product_info.barcode
+			   WHEN product_modification.barcode IS NOT NULL 
+			   THEN product_modification.barcode
+			   
+			   WHEN product_variation.barcode IS NOT NULL 
+			   THEN product_variation.barcode
+			   
+			   WHEN product_offer.barcode IS NOT NULL 
+			   THEN product_offer.barcode
+			   
+			   WHEN product_info.barcode IS NOT NULL 
+			   THEN product_info.barcode
+			   
 			   ELSE NULL
 			END AS product_barcode
 		'

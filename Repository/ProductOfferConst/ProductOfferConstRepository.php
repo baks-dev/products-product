@@ -58,6 +58,7 @@ final class ProductOfferConstRepository implements ProductOfferConstInterface
             ->where('offer.id = :offer')
             ->setParameter('offer', $offer, ProductOfferUid::TYPE);
 
+        /** Свойства конструктора объекта гидрации */
         $dbal
             ->addSelect('offer.const AS value');
 

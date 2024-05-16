@@ -27,5 +27,5 @@ use BaksDev\Products\Product\Type\Id\ProductUid;
 
 interface ProductDetailOfferInterface
 {
-	public function fetchProductOfferAssociative(ProductUid $product) : array|bool;
+    public function fetchProductOfferAssociative(ProductUid|string $product): array|bool;
 }

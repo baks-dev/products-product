@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Repository\ProductQuantity;
 
 
+use BaksDev\Core\Doctrine\ORMQueryBuilder;
 use BaksDev\Products\Category\Entity\Offers\Variation\Modification\CategoryProductModification;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
@@ -41,11 +42,11 @@ use Doctrine\ORM\EntityManagerInterface;
 
 final class ProductModificationQuantityRepository implements ProductModificationQuantityInterface
 {
-    private EntityManagerInterface $entityManager;
+    private ORMQueryBuilder $ORMQueryBuilder;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(ORMQueryBuilder $ORMQueryBuilder)
     {
-        $this->entityManager = $entityManager;
+        $this->ORMQueryBuilder = $ORMQueryBuilder;
     }
 
     /** Метод возвращает количественный учет модификации множественного варианта */
@@ -56,14 +57,13 @@ final class ProductModificationQuantityRepository implements ProductModification
         ProductModificationConst $modification
     ): ?ProductModificationQuantity
     {
-        $qb = $this->entityManager->createQueryBuilder();
+        $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
 
-        $qb->select('quantity');
 
-        $qb->from(Product::class, 'product');
-
-        $qb->where('product.id = :product');
-        $qb->setParameter('product', $product, ProductUid::TYPE);
+        $qb
+            ->from(Product::class, 'product')
+            ->where('product.id = :product')
+            ->setParameter('product', $product, ProductUid::TYPE);
 
         $qb->join(
             ProductEvent::class,
@@ -74,43 +74,58 @@ final class ProductModificationQuantityRepository implements ProductModification
 
         // Торговое предложение
 
-        $qb->join(
-            ProductOffer::class,
-            'offer',
-            'WITH',
-            'offer.event = event.id AND offer.const = :offer_const'
-        );
-
-        $qb->setParameter('offer_const', $offer, ProductOfferConst::TYPE);
+        $qb
+            ->join(
+                ProductOffer::class,
+                'offer',
+                'WITH',
+                'offer.event = event.id AND offer.const = :offer_const'
+            )
+            ->setParameter(
+                'offer_const',
+                $offer,
+                ProductOfferConst::TYPE
+            );
 
         // Множественный вариант
 
-        $qb->join(
-            ProductVariation::class,
-            'variation',
-            'WITH',
-            'variation.offer = offer.id AND variation.const = :variation_const'
-        );
-
-        $qb->setParameter('variation_const', $variation, ProductVariationConst::TYPE);
+        $qb
+            ->join(
+                ProductVariation::class,
+                'variation',
+                'WITH',
+                'variation.offer = offer.id AND variation.const = :variation_const'
+            )
+            ->setParameter(
+                'variation_const',
+                $variation,
+                ProductVariationConst::TYPE
+            );
 
         // Модификация множественного варианта
 
-        $qb->join(
-            ProductModification::class,
-            'modification',
-            'WITH',
-            'modification.variation = variation.id AND modification.const = :modification_const'
-        );
+        $qb
+            ->join(
+                ProductModification::class,
+                'modification',
+                'WITH',
+                'modification.variation = variation.id AND modification.const = :modification_const'
+            )
+            ->setParameter(
+                'modification_const',
+                $modification,
+                ProductModificationConst::TYPE
+            );
 
-        $qb->leftJoin(
-            ProductModificationQuantity::class,
-            'quantity',
-            'WITH',
-            'quantity.modification = modification.id'
-        );
+        $qb
+            ->select('quantity')
+            ->leftJoin(
+                ProductModificationQuantity::class,
+                'quantity',
+                'WITH',
+                'quantity.modification = modification.id'
+            );
 
-        $qb->setParameter('modification_const', $modification, ProductModificationConst::TYPE);
 
         // Только если у модификации указан количественный учет
 
@@ -121,6 +136,6 @@ final class ProductModificationQuantityRepository implements ProductModification
             'category_modification.id = modification.categoryModification AND category_modification.quantitative = true'
         );
 
-        return $qb->getQuery()->getOneOrNullResult();
+        return $qb->getOneOrNullResult();
     }
 }

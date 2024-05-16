@@ -25,56 +25,76 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Repository\ProductByArticle;
 
+use BaksDev\Core\Doctrine\ORMQueryBuilder;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Product\Entity\Product;
-use Doctrine\ORM\EntityManagerInterface;
 
 final class ProductEventByArticleRepository implements ProductEventByArticleInterface
 {
+    private ORMQueryBuilder $ORMQueryBuilder;
 
-    private EntityManagerInterface $entityManager;
-
-
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(ORMQueryBuilder $ORMQueryBuilder)
     {
-        $this->entityManager = $entityManager;
+        $this->ORMQueryBuilder = $ORMQueryBuilder;
     }
-
 
     /**
      * Метод возвращает по артикулу событие продукта
      */
     public function findProductEventByArticle(string $article): ?ProductEvent
     {
-        $qb = $this->entityManager->createQueryBuilder();
+        $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
 
-        $qb->select('product');
-        $qb->from(ProductInfo::class, 'info');
-        $qb->where('info.article = :article');
-        $qb->join(Product::class, 'product', 'WITH', 'product.id = info.product');
-        $qb->setParameter('article', $article);
+        $qb
+            ->from(ProductInfo::class, 'info')
+            ->where('info.article = :article');
+
+        $qb->join(
+            Product::class,
+            'product',
+            'WITH',
+            'product.id = info.product')
+            ->setParameter('article', $article);
+
+        $qb
+            ->select('event')
+            ->join(
+                ProductEvent::class,
+                'event',
+                'WITH',
+                'event.id = product.event');
 
         /** @var Product $Product */
-        $Product = $qb->getQuery()->getOneOrNullResult();
+        $ProductEvent = $qb->getQuery()->getOneOrNullResult();
 
-        if($Product)
+        if($ProductEvent)
         {
-            return $this->entityManager->getRepository(ProductEvent::class)->find($Product->getEvent());
+            return $ProductEvent;
         }
 
-        /** Поиск по артикулу в торговом предложении */
-        $qb = $this->entityManager->createQueryBuilder();
 
-        $qb->select('event');
-        $qb->from(ProductOffer::class, 'offer');
-        $qb->where('offer.article = :article');
-        $qb->setParameter('article', $article);
+        /**
+         * Поиск по артикулу в торговом предложении
+         */
 
-        $qb->join(ProductEvent::class, 'event', 'WITH', 'event.id = offer.event');
+        $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
+
+        $qb
+            ->from(ProductOffer::class, 'offer')
+            ->where('offer.article = :article')
+            ->setParameter('article', $article);
+
+        $qb
+            ->select('event')
+            ->join(ProductEvent::class,
+                'event',
+                'WITH',
+                'event.id = offer.event'
+            );
 
         $qb->join(Product::class, 'product', 'WITH', 'product.event = event.id');
 
@@ -86,17 +106,27 @@ final class ProductEventByArticleRepository implements ProductEventByArticleInte
             return $ProductEvent;
         }
 
-        /** Поиск по артикулу в множественном варианте торгового предложения */
-        $qb = $this->entityManager->createQueryBuilder();
 
-        $qb->select('event');
-        $qb->from(ProductVariation::class, 'variation');
-        $qb->where('variation.article = :article');
-        $qb->setParameter('article', $article);
+        /**
+         * Поиск по артикулу в множественном варианте торгового предложения
+         */
+
+        $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
+
+        $qb
+            ->from(ProductVariation::class, 'variation')
+            ->where('variation.article = :article')
+            ->setParameter('article', $article);
 
         $qb->join(ProductOffer::class, 'offer', 'WITH', 'offer.id = variation.offer');
 
-        $qb->join(ProductEvent::class, 'event', 'WITH', 'event.id = offer.event');
+        $qb
+            ->select('event')
+            ->join(ProductEvent::class,
+                'event',
+                'WITH',
+                'event.id = offer.event'
+            );
 
         $qb->join(Product::class, 'product', 'WITH', 'product.event = event.id');
 
@@ -108,19 +138,29 @@ final class ProductEventByArticleRepository implements ProductEventByArticleInte
             return $ProductEvent;
         }
 
-        /** Поиск по артикулу в множественном варианте торгового предложения */
-        $qb = $this->entityManager->createQueryBuilder();
+        /**
+         * Поиск по артикулу в множественном варианте торгового предложения
+         */
 
-        $qb->select('event');
+        $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
 
-        $qb->from(ProductModification::class, 'modification');
-        $qb->where('modification.article = :article');
-        $qb->setParameter('article', $article);
+
+        $qb
+            ->from(ProductModification::class, 'modification')
+            ->where('modification.article = :article')
+            ->setParameter('article', $article);
 
         $qb->join(ProductVariation::class, 'variation', 'WITH', 'variation.id = modification.variation');
         $qb->join(ProductOffer::class, 'offer', 'WITH', 'offer.id = variation.offer');
 
-        $qb->join(ProductEvent::class, 'event', 'WITH', 'event.id = offer.event');
+        $qb
+            ->select('event')
+            ->join(
+                ProductEvent::class,
+                'event',
+                'WITH',
+                'event.id = offer.event'
+            );
 
         $qb->join(Product::class, 'product', 'WITH', 'product.event = event.id');
 

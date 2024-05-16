@@ -90,7 +90,9 @@ final class ProductDetailByConstRepository implements ProductDetailByConstInterf
     ): array|bool
     {
 
-        $dbal = $this->DBALQueryBuilder->createQueryBuilder(self::class)->bindLocal();
+        $dbal = $this->DBALQueryBuilder
+            ->createQueryBuilder(self::class)
+            ->bindLocal();
 
         $dbal
             ->select('product.id')
@@ -243,12 +245,13 @@ final class ProductDetailByConstRepository implements ProductDetailByConstInterf
         }
 
         /* Цена множественного варианта */
-        $dbal->leftJoin(
-            'product_offer_variation',
-            ProductVariationPrice::class,
-            'product_variation_price',
-            'product_variation_price.variation = product_offer_variation.id'
-        )
+        $dbal
+            ->leftJoin(
+                'product_offer_variation',
+                ProductVariationPrice::class,
+                'product_variation_price',
+                'product_variation_price.variation = product_offer_variation.id'
+            )
             ->addGroupBy('product_variation_price.price')
             ->addGroupBy('product_variation_price.currency');
 
@@ -265,11 +268,7 @@ final class ProductDetailByConstRepository implements ProductDetailByConstInterf
         /* Получаем название множественного варианта */
         $dbal
             ->addSelect('category_offer_variation_trans.name as product_variation_name')
-            //->addGroupBy('category_offer_variation_trans.name');
-
-
             ->addSelect('category_offer_variation_trans.postfix as product_variation_name_postfix')
-            //->addGroupBy('category_offer_variation_trans.postfix');
             ->leftJoin(
                 'category_offer_variation',
                 CategoryProductVariationTrans::class,
@@ -319,8 +318,8 @@ final class ProductDetailByConstRepository implements ProductDetailByConstInterf
             ->addGroupBy('product_modification_price.currency');
 
         /* Получаем тип модификации множественного варианта */
-        $dbal->addSelect('category_offer_modification.reference as product_modification_reference')
-            //->addGroupBy('category_offer_modification.reference');
+        $dbal
+            ->addSelect('category_offer_modification.reference as product_modification_reference')
             ->leftJoin(
                 'product_offer_modification',
                 CategoryProductModification::class,
@@ -329,11 +328,9 @@ final class ProductDetailByConstRepository implements ProductDetailByConstInterf
             );
 
         /* Получаем название типа модификации */
-        $dbal->addSelect('category_offer_modification_trans.name as product_modification_name')
-            //->addGroupBy('category_offer_modification_trans.name');
-
+        $dbal
+            ->addSelect('category_offer_modification_trans.name as product_modification_name')
             ->addSelect('category_offer_modification_trans.postfix as product_modification_name_postfix')
-            //->addGroupBy('category_offer_modification_trans.postfix');
             ->leftJoin(
                 'category_offer_modification',
                 CategoryProductModificationTrans::class,
@@ -357,10 +354,18 @@ final class ProductDetailByConstRepository implements ProductDetailByConstInterf
         $dbal->addSelect(
             '
 			CASE
-			   WHEN product_offer_modification.article IS NOT NULL THEN product_offer_modification.article
-			   WHEN product_offer_variation.article IS NOT NULL THEN product_offer_variation.article
-			   WHEN product_offer.article IS NOT NULL THEN product_offer.article
-			   WHEN product_info.article IS NOT NULL THEN product_info.article
+			   WHEN product_offer_modification.article IS NOT NULL 
+			   THEN product_offer_modification.article
+			   
+			   WHEN product_offer_variation.article IS NOT NULL 
+			   THEN product_offer_variation.article
+			   
+			   WHEN product_offer.article IS NOT NULL 
+			   THEN product_offer.article
+			   
+			   WHEN product_info.article IS NOT NULL 
+			   THEN product_info.article
+			   
 			   ELSE NULL
 			END AS product_article
 		'
@@ -402,12 +407,15 @@ final class ProductDetailByConstRepository implements ProductDetailByConstInterf
         $dbal->addSelect(
             "
 			CASE
-			   WHEN product_offer_variation_image.name IS NOT NULL THEN
-					CONCAT ( '/upload/".$dbal->table(ProductVariationImage::class)."' , '/', product_offer_variation_image.name)
-			   WHEN product_offer_images.name IS NOT NULL THEN
-					CONCAT ( '/upload/".$dbal->table(ProductOfferImage::class)."' , '/', product_offer_images.name)
-			   WHEN product_photo.name IS NOT NULL THEN
-					CONCAT ( '/upload/".$dbal->table(ProductPhoto::class)."' , '/', product_photo.name)
+			   WHEN product_offer_variation_image.name IS NOT NULL 
+			   THEN CONCAT ( '/upload/".$dbal->table(ProductVariationImage::class)."' , '/', product_offer_variation_image.name)
+					
+			   WHEN product_offer_images.name IS NOT NULL 
+			   THEN CONCAT ( '/upload/".$dbal->table(ProductOfferImage::class)."' , '/', product_offer_images.name)
+					
+			   WHEN product_photo.name IS NOT NULL 
+			   THEN CONCAT ( '/upload/".$dbal->table(ProductPhoto::class)."' , '/', product_photo.name)
+					
 			   ELSE NULL
 			END AS product_image
 		"
@@ -416,12 +424,15 @@ final class ProductDetailByConstRepository implements ProductDetailByConstInterf
         /* Флаг загрузки файла CDN */
         $dbal->addSelect('
 			CASE
-			   WHEN product_offer_variation_image.name IS NOT NULL THEN
-					product_offer_variation_image.ext
-			   WHEN product_offer_images.name IS NOT NULL THEN
-					product_offer_images.ext
-			   WHEN product_photo.name IS NOT NULL THEN
-					product_photo.ext
+			   WHEN product_offer_variation_image.name IS NOT NULL 
+			   THEN product_offer_variation_image.ext
+					
+			   WHEN product_offer_images.name IS NOT NULL 
+			   THEN product_offer_images.ext
+					
+			   WHEN product_photo.name IS NOT NULL 
+			   THEN product_photo.ext
+					
 			   ELSE NULL
 			END AS product_image_ext
 		');
@@ -429,12 +440,15 @@ final class ProductDetailByConstRepository implements ProductDetailByConstInterf
         /* Флаг загрузки файла CDN */
         $dbal->addSelect('
 			CASE
-			   WHEN product_offer_variation_image.name IS NOT NULL THEN
-					product_offer_variation_image.cdn
-			   WHEN product_offer_images.name IS NOT NULL THEN
-					product_offer_images.cdn
-			   WHEN product_photo.name IS NOT NULL THEN
-					product_photo.cdn
+			   WHEN product_offer_variation_image.name IS NOT NULL 
+			   THEN product_offer_variation_image.cdn
+					
+			   WHEN product_offer_images.name IS NOT NULL 
+			   THEN product_offer_images.cdn
+					
+			   WHEN product_photo.name IS NOT NULL 
+			   THEN product_photo.cdn
+					
 			   ELSE NULL
 			END AS product_image_cdn
 		');
@@ -445,10 +459,18 @@ final class ProductDetailByConstRepository implements ProductDetailByConstInterf
         $dbal->addSelect(
             '
 			CASE
-			   WHEN product_modification_price.price IS NOT NULL AND product_modification_price.price > 0 THEN product_modification_price.price
-			   WHEN product_variation_price.price IS NOT NULL AND product_variation_price.price > 0 THEN product_variation_price.price
-			   WHEN product_offer_price.price IS NOT NULL AND product_offer_price.price > 0 THEN product_offer_price.price
-			   WHEN product_price.price IS NOT NULL AND product_price.price > 0 THEN product_price.price
+			   WHEN product_modification_price.price IS NOT NULL AND product_modification_price.price > 0 
+			   THEN product_modification_price.price
+			   
+			   WHEN product_variation_price.price IS NOT NULL AND product_variation_price.price > 0 
+			   THEN product_variation_price.price
+			   
+			   WHEN product_offer_price.price IS NOT NULL AND product_offer_price.price > 0 
+			   THEN product_offer_price.price
+			   
+			   WHEN product_price.price IS NOT NULL AND product_price.price > 0 
+			   THEN product_price.price
+			   
 			   ELSE NULL
 			END AS product_price
 		'
@@ -459,10 +481,18 @@ final class ProductDetailByConstRepository implements ProductDetailByConstInterf
         $dbal->addSelect(
             '
 			CASE
-			   WHEN product_modification_price.price IS NOT NULL AND product_modification_price.price > 0 THEN product_modification_price.currency
-			   WHEN product_variation_price.price IS NOT NULL AND product_variation_price.price > 0 THEN product_variation_price.currency
-			   WHEN product_offer_price.price IS NOT NULL AND product_offer_price.price > 0 THEN product_offer_price.currency
-			   WHEN product_price.price IS NOT NULL AND product_price.price > 0 THEN product_price.currency
+			   WHEN product_modification_price.price IS NOT NULL AND product_modification_price.price > 0 
+			   THEN product_modification_price.currency
+			   
+			   WHEN product_variation_price.price IS NOT NULL AND product_variation_price.price > 0 
+			   THEN product_variation_price.currency
+			   
+			   WHEN product_offer_price.price IS NOT NULL AND product_offer_price.price > 0 
+			   THEN product_offer_price.currency
+			   
+			   WHEN product_price.price IS NOT NULL AND product_price.price > 0 
+			   THEN product_price.currency
+			   
 			   ELSE NULL
 			END AS product_currency
 		'

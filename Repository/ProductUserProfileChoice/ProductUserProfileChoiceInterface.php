@@ -18,7 +18,12 @@
 
 namespace BaksDev\Products\Product\Repository\ProductUserProfileChoice;
 
+use Generator;
+
 interface ProductUserProfileChoiceInterface
 {
-    public function getProfileCollection(): ?array;
+    /**
+     * Возвращает список профилей пользователей, доступных к созданию карточек
+     */
+    public function getProfileCollection(): Generator;
 }

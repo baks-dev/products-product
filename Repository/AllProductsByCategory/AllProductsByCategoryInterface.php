@@ -36,7 +36,7 @@ interface AllProductsByCategoryInterface
 
 
     public function fetchAllProductByCategoryAssociative(
-        CategoryProductUid $category,
+        CategoryProductUid|string $category,
         string $expr = 'AND'
     ): PaginatorInterface;
 

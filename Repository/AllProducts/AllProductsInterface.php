@@ -30,7 +30,7 @@ interface AllProductsInterface
 
     public function filter(ProductFilterDTO $filter): self;
 
-    public function getAllProductsOffers(UserProfileUid $profile): PaginatorInterface;
+    public function getAllProductsOffers(UserProfileUid|string $profile): PaginatorInterface;
 
-    public function getAllProducts(UserProfileUid $profile): PaginatorInterface;
+    public function getAllProducts(UserProfileUid|string $profile): PaginatorInterface;
 }

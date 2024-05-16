@@ -92,7 +92,6 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
     ): ?array
     {
 
-
         if($event instanceof ProductEvent)
         {
             $event = $event->getId();
@@ -135,14 +134,21 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
             $modification = new ProductModificationUid($modification);
         }
 
-        $qb = $this->DBALQueryBuilder->createQueryBuilder(self::class);
+        $qb = $this->DBALQueryBuilder
+            ->createQueryBuilder(self::class)
+            ->bindLocal();
 
         $qb->select('product_event.main')->groupBy('product_event.main');
         $qb->addSelect('product_event.id')->addGroupBy('product_event.id');
 
-        $qb->from(ProductEvent::TABLE, 'product_event');
-        $qb->where('product_event.id = :event');
-        $qb->setParameter('event', $event, ProductEventUid::TYPE);
+        $qb
+            ->from(ProductEvent::class, 'product_event')
+            ->where('product_event.id = :event')
+            ->setParameter(
+                'event',
+                $event,
+                ProductEventUid::TYPE
+            );
 
 
         $qb->addSelect('product_active.active')->addGroupBy('product_active.active');
@@ -151,7 +157,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
 
         $qb->join(
             'product_event',
-            ProductActive::TABLE,
+            ProductActive::class,
             'product_active',
             '
 			product_active.event = product_event.id
@@ -163,7 +169,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
 
         $qb->leftJoin(
             'product_event',
-            ProductTrans::TABLE,
+            ProductTrans::class,
             'product_trans',
             'product_trans.event = product_event.id AND product_trans.local = :local'
         );
@@ -175,7 +181,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
         $qb
             ->leftJoin(
                 'product_event',
-                ProductDescription::TABLE,
+                ProductDescription::class,
                 'product_desc',
                 'product_desc.event = product_event.id AND product_desc.device = :device '
 
@@ -184,7 +190,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
         /* Базовая Цена товара */
         $qb->leftJoin(
             'product_event',
-            ProductPrice::TABLE,
+            ProductPrice::class,
             'product_price',
             'product_price.event = product_event.id'
         )
@@ -200,7 +206,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
 
         $qb->leftJoin(
             'product_event',
-            ProductInfo::TABLE,
+            ProductInfo::class,
             'product_info',
             'product_info.product = product_event.main '
         )->addGroupBy('product_info.article');
@@ -214,7 +220,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
 
         $qb->{$offer ? 'join' : 'leftJoin'}(
             'product_event',
-            ProductOffer::TABLE,
+            ProductOffer::class,
             'product_offer',
             'product_offer.event = product_event.id '.($offer ? ' AND product_offer.id = :product_offer' : '').' '
         )
@@ -228,7 +234,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
         /* Цена торгового предо жения */
         $qb->leftJoin(
             'product_offer',
-            ProductOfferPrice::TABLE,
+            ProductOfferPrice::class,
             'product_offer_price',
             'product_offer_price.offer = product_offer.id'
         )
@@ -239,7 +245,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
         $qb->addSelect('category_offer.reference AS product_offer_reference')->addGroupBy('category_offer.reference');
         $qb->leftJoin(
             'product_offer',
-            CategoryProductOffers::TABLE,
+            CategoryProductOffers::class,
             'category_offer',
             'category_offer.id = product_offer.category_offer'
         );
@@ -249,7 +255,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
         $qb->addSelect('category_offer_trans.postfix as product_offer_name_postfix')->addGroupBy('category_offer_trans.postfix');
         $qb->leftJoin(
             'category_offer',
-            CategoryProductOffersTrans::TABLE,
+            CategoryProductOffersTrans::class,
             'category_offer_trans',
             'category_offer_trans.offer = category_offer.id AND category_offer_trans.local = :local'
         );
@@ -257,7 +263,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
         /* Наличие и резерв торгового предложения */
         $qb->leftJoin(
             'product_offer',
-            ProductOfferQuantity::TABLE,
+            ProductOfferQuantity::class,
             'product_offer_quantity',
             'product_offer_quantity.offer = product_offer.id'
         )
@@ -274,7 +280,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
 
         $qb->{$variation ? 'join' : 'leftJoin'}(
             'product_offer',
-            ProductVariation::TABLE,
+            ProductVariation::class,
             'product_offer_variation',
             'product_offer_variation.offer = product_offer.id'.($variation ? ' AND product_offer_variation.id = :product_variation' : '').' '
         )
@@ -288,7 +294,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
         /* Цена множественного варианта */
         $qb->leftJoin(
             'product_offer_variation',
-            ProductVariationPrice::TABLE,
+            ProductVariationPrice::class,
             'product_variation_price',
             'product_variation_price.variation = product_offer_variation.id'
         )
@@ -300,7 +306,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
             ->addGroupBy('category_offer_variation.reference');
         $qb->leftJoin(
             'product_offer_variation',
-            CategoryProductVariation::TABLE,
+            CategoryProductVariation::class,
             'category_offer_variation',
             'category_offer_variation.id = product_offer_variation.category_variation'
         );
@@ -313,7 +319,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
             ->addGroupBy('category_offer_variation_trans.postfix');
         $qb->leftJoin(
             'category_offer_variation',
-            CategoryProductVariationTrans::TABLE,
+            CategoryProductVariationTrans::class,
             'category_offer_variation_trans',
             'category_offer_variation_trans.variation = category_offer_variation.id AND category_offer_variation_trans.local = :local'
         );
@@ -322,7 +328,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
         /* Наличие и резерв множественного варианта */
         $qb->leftJoin(
             'category_offer_variation',
-            ProductVariationQuantity::TABLE,
+            ProductVariationQuantity::class,
             'product_variation_quantity',
             'product_variation_quantity.variation = product_offer_variation.id'
         )
@@ -337,7 +343,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
 
         $qb->{$modification ? 'join' : 'leftJoin'}(
             'product_offer_variation',
-            ProductModification::TABLE,
+            ProductModification::class,
             'product_offer_modification',
             'product_offer_modification.variation = product_offer_variation.id'.($modification ? ' AND product_offer_modification.id = :product_modification' : '').' '
         )
@@ -351,7 +357,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
         /* Цена модификации множественного варианта */
         $qb->leftJoin(
             'product_offer_modification',
-            ProductModificationPrice::TABLE,
+            ProductModificationPrice::class,
             'product_modification_price',
             'product_modification_price.modification = product_offer_modification.id'
         )
@@ -363,7 +369,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
             ->addGroupBy('category_offer_modification.reference');
         $qb->leftJoin(
             'product_offer_modification',
-            CategoryProductModification::TABLE,
+            CategoryProductModification::class,
             'category_offer_modification',
             'category_offer_modification.id = product_offer_modification.category_modification'
         );
@@ -376,7 +382,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
             ->addGroupBy('category_offer_modification_trans.postfix');
         $qb->leftJoin(
             'category_offer_modification',
-            CategoryProductModificationTrans::TABLE,
+            CategoryProductModificationTrans::class,
             'category_offer_modification_trans',
             'category_offer_modification_trans.modification = category_offer_modification.id AND category_offer_modification_trans.local = :local'
         );
@@ -384,14 +390,13 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
         /* Наличие и резерв модификации множественного варианта */
         $qb->leftJoin(
             'category_offer_modification',
-            ProductModificationQuantity::TABLE,
+            ProductModificationQuantity::class,
             'product_modification_quantity',
             'product_modification_quantity.modification = product_offer_modification.id'
         )
             ->addGroupBy('product_modification_quantity.quantity')
             ->addGroupBy('product_modification_quantity.reserve');
 
-        //$qb->addSelect("'".Entity\Offers\Variation\Image\ProductOfferVariationImage::TABLE."' AS upload_image_dir ");
 
         /* Артикул продукта */
 
@@ -412,14 +417,14 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
 
         $qb->leftJoin(
             'product_event',
-            ProductPhoto::TABLE,
+            ProductPhoto::class,
             'product_photo',
             'product_photo.event = product_event.id AND product_photo.root = true'
         );
 
         $qb->leftJoin(
             'product_offer',
-            ProductVariationImage::TABLE,
+            ProductVariationImage::class,
             'product_offer_variation_image',
             'product_offer_variation_image.variation = product_offer_variation.id AND product_offer_variation_image.root = true'
         )
@@ -435,7 +440,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
 
         $qb->leftJoin(
             'product_offer',
-            ProductOfferImage::TABLE,
+            ProductOfferImage::class,
             'product_offer_images',
             'product_offer_images.offer = product_offer.id AND product_offer_images.root = true'
         );
@@ -443,12 +448,15 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
         $qb->addSelect(
             "
 			CASE
-			   WHEN product_offer_variation_image.name IS NOT NULL THEN
-					CONCAT ( '/upload/".ProductVariationImage::TABLE."' , '/', product_offer_variation_image.name)
-			   WHEN product_offer_images.name IS NOT NULL THEN
-					CONCAT ( '/upload/".ProductOfferImage::TABLE."' , '/', product_offer_images.name)
-			   WHEN product_photo.name IS NOT NULL THEN
-					CONCAT ( '/upload/".ProductPhoto::TABLE."' , '/', product_photo.name)
+			   WHEN product_offer_variation_image.name IS NOT NULL 
+			   THEN CONCAT ( '/upload/".$qb->table(ProductVariationImage::class)."' , '/', product_offer_variation_image.name)
+			   
+			   WHEN product_offer_images.name IS NOT NULL 
+			   THEN CONCAT ( '/upload/".$qb->table(ProductOfferImage::class)."' , '/', product_offer_images.name)
+			   
+			   WHEN product_photo.name IS NOT NULL 
+			   THEN CONCAT ( '/upload/".$qb->table(ProductPhoto::class)."' , '/', product_photo.name)
+					
 			   ELSE NULL
 			END AS product_image
 		"
@@ -457,12 +465,15 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
         /* Флаг загрузки файла CDN */
         $qb->addSelect('
 			CASE
-			   WHEN product_offer_variation_image.name IS NOT NULL THEN
-					product_offer_variation_image.ext
-			   WHEN product_offer_images.name IS NOT NULL THEN
-					product_offer_images.ext
-			   WHEN product_photo.name IS NOT NULL THEN
-					product_photo.ext
+			   WHEN product_offer_variation_image.name IS NOT NULL 
+			   THEN product_offer_variation_image.ext
+					
+			   WHEN product_offer_images.name IS NOT NULL 
+			   THEN product_offer_images.ext
+					
+			   WHEN product_photo.name IS NOT NULL 
+			   THEN product_photo.ext
+					
 			   ELSE NULL
 			END AS product_image_ext
 		');
@@ -470,12 +481,15 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
         /* Флаг загрузки файла CDN */
         $qb->addSelect('
 			CASE
-			   WHEN product_offer_variation_image.name IS NOT NULL THEN
-					product_offer_variation_image.cdn
-			   WHEN product_offer_images.name IS NOT NULL THEN
-					product_offer_images.cdn
-			   WHEN product_photo.name IS NOT NULL THEN
-					product_photo.cdn
+			   WHEN product_offer_variation_image.name IS NOT NULL 
+			   THEN product_offer_variation_image.cdn
+					
+			   WHEN product_offer_images.name IS NOT NULL 
+			   THEN product_offer_images.cdn
+					
+			   WHEN product_photo.name IS NOT NULL 
+			   THEN product_photo.cdn
+					
 			   ELSE NULL
 			END AS product_image_cdn
 		');
@@ -486,10 +500,18 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
         $qb->addSelect(
             '
 			CASE
-			   WHEN product_modification_price.price IS NOT NULL AND product_modification_price.price > 0 THEN product_modification_price.price
-			   WHEN product_variation_price.price IS NOT NULL AND product_variation_price.price > 0 THEN product_variation_price.price
-			   WHEN product_offer_price.price IS NOT NULL AND product_offer_price.price > 0 THEN product_offer_price.price
-			   WHEN product_price.price IS NOT NULL AND product_price.price > 0 THEN product_price.price
+			   WHEN product_modification_price.price IS NOT NULL AND product_modification_price.price > 0 
+			   THEN product_modification_price.price
+			   
+			   WHEN product_variation_price.price IS NOT NULL AND product_variation_price.price > 0 
+			   THEN product_variation_price.price
+			   
+			   WHEN product_offer_price.price IS NOT NULL AND product_offer_price.price > 0 
+			   THEN product_offer_price.price
+			   
+			   WHEN product_price.price IS NOT NULL AND product_price.price > 0 
+			   THEN product_price.price
+			   
 			   ELSE NULL
 			END AS product_price
 		'
@@ -500,10 +522,18 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
         $qb->addSelect(
             '
 			CASE
-			   WHEN product_modification_price.price IS NOT NULL AND product_modification_price.price > 0 THEN product_modification_price.currency
-			   WHEN product_variation_price.price IS NOT NULL AND product_variation_price.price > 0 THEN product_variation_price.currency
-			   WHEN product_offer_price.price IS NOT NULL AND product_offer_price.price > 0 THEN product_offer_price.currency
-			   WHEN product_price.price IS NOT NULL AND product_price.price > 0 THEN product_price.currency
+			   WHEN product_modification_price.price IS NOT NULL AND product_modification_price.price > 0 
+			   THEN product_modification_price.currency
+			   
+			   WHEN product_variation_price.price IS NOT NULL AND product_variation_price.price > 0 
+			   THEN product_variation_price.currency
+			   
+			   WHEN product_offer_price.price IS NOT NULL AND product_offer_price.price > 0 
+			   THEN product_offer_price.currency
+			   
+			   WHEN product_price.price IS NOT NULL AND product_price.price > 0 
+			   THEN product_price.currency
+			   
 			   ELSE NULL
 			END AS product_currency
 		'
@@ -515,8 +545,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
             '
 			CASE
 			
-			
-			    WHEN product_modification_quantity.quantity > 0 AND product_modification_quantity.quantity > product_modification_quantity.reserve 
+			   WHEN product_modification_quantity.quantity > 0 AND product_modification_quantity.quantity > product_modification_quantity.reserve 
 			   THEN (product_modification_quantity.quantity - product_modification_quantity.reserve)
 
 			   WHEN product_variation_quantity.quantity > 0 AND product_variation_quantity.quantity > product_variation_quantity.reserve  
@@ -533,25 +562,11 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
 		'
         );
 
-        //		->addGroupBy('product_modification_quantity.quantity')
-        //		->addGroupBy('product_modification_quantity.reserve')
-
-        /* Наличие */
-        //		$qb->addSelect("
-        //			CASE
-        //			   WHEN product_modification_price.price IS NOT NULL THEN product_modification_price.price
-        //			   WHEN product_variation_price.price IS NOT NULL THEN product_variation_price.price
-        //			   WHEN product_offer_price.price IS NOT NULL THEN product_offer_price.price
-        //			   WHEN product_price.price IS NOT NULL THEN product_price.price
-        //			   ELSE NULL
-        //			END AS product_price
-        //		"
-        //		);
 
         /* Категория */
         $qb->join(
             'product_event',
-            ProductCategory::TABLE,
+            ProductCategory::class,
             'product_event_category',
             'product_event_category.event = product_event.id AND product_event_category.root = true'
         );
@@ -559,7 +574,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
 
         $qb->join(
             'product_event_category',
-            CategoryProduct::TABLE,
+            CategoryProduct::class,
             'category',
             'category.id = product_event_category.category'
         );
@@ -568,7 +583,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
 
         $qb->leftJoin(
             'category',
-            CategoryProductTrans::TABLE,
+            CategoryProductTrans::class,
             'category_trans',
             'category_trans.event = category.event AND category_trans.local = :local'
         );
@@ -576,14 +591,14 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
         $qb->addSelect('category_info.url AS category_url')->addGroupBy('category_info.url');
         $qb->leftJoin(
             'category',
-            CategoryProductInfo::TABLE,
+            CategoryProductInfo::class,
             'category_info',
             'category_info.event = category.event'
         );
 
         $qb->leftJoin(
             'category',
-            CategoryProductSection::TABLE,
+            CategoryProductSection::class,
             'category_section',
             'category_section.event = category.event'
         );
@@ -599,7 +614,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
 
         $qb->leftJoin(
             'category_section_field',
-            CategoryProductSectionFieldTrans::TABLE,
+            CategoryProductSectionFieldTrans::class,
             'category_section_field_trans',
             'category_section_field_trans.field = category_section_field.id AND category_section_field_trans.local = :local'
         );
@@ -634,9 +649,6 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
 		)
 			AS category_section_field"
         );
-
-        $qb->setParameter('local', new Locale($this->translator->getLocale()), Locale::TYPE);
-
 
         /* Кешируем результат DBAL */
         return $qb

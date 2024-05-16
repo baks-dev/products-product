@@ -104,6 +104,8 @@ final class ProductOfferChoiceRepository implements ProductOfferChoiceInterface
             );
 
 
+        /** Свойства конструктора объекта гидрации */
+
         $dbal->addSelect('offer.const AS value');
         $dbal->addSelect("offer.value AS attr");
 
@@ -295,11 +297,12 @@ final class ProductOfferChoiceRepository implements ProductOfferChoiceInterface
 
         AS option');
 
+        $dbal->allGroupByExclude();
 
+
+        /** Свойства конструктора объекта гидрации */
         $dbal->addSelect('category_offer_trans.name AS property');
         $dbal->addSelect('category_offer.reference AS characteristic');
-
-        $dbal->allGroupByExclude();
 
         $dbal->andWhere('
             product_modification_quantity.quantity > 0 OR 

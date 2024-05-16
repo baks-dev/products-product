@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Repository\ProductQuantity;
 
+use BaksDev\Core\Doctrine\ORMQueryBuilder;
 use BaksDev\Products\Category\Entity\Offers\CategoryProductOffers;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
@@ -36,11 +37,11 @@ use Doctrine\ORM\EntityManagerInterface;
 
 final class ProductOfferQuantityRepository implements ProductOfferQuantityInterface
 {
-    private EntityManagerInterface $entityManager;
+    private ORMQueryBuilder $ORMQueryBuilder;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(ORMQueryBuilder $ORMQueryBuilder)
     {
-        $this->entityManager = $entityManager;
+        $this->ORMQueryBuilder = $ORMQueryBuilder;
     }
 
     /** Метод возвращает количественный учет торгового предложения */
@@ -49,13 +50,12 @@ final class ProductOfferQuantityRepository implements ProductOfferQuantityInterf
         ProductOfferConst $offer
     ): ?ProductOfferQuantity
     {
-        $qb = $this->entityManager->createQueryBuilder();
+        $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
 
-        $qb->select('quantity');
-
-        $qb->from(Product::class, 'product');
-        $qb->where('product.id = :product');
-        $qb->setParameter('product', $product, ProductUid::TYPE);
+        $qb
+            ->from(Product::class, 'product')
+            ->where('product.id = :product')
+            ->setParameter('product', $product, ProductUid::TYPE);
 
         $qb->join(
             ProductEvent::class,
@@ -71,17 +71,22 @@ final class ProductOfferQuantityRepository implements ProductOfferQuantityInterf
             'offer',
             'WITH',
             'offer.event = event.id AND offer.const = :offer_const'
-        );
+        )
+            ->setParameter(
+                'offer_const',
+                $offer,
+                ProductOfferConst::TYPE
+            );
 
-        $qb->setParameter('offer_const', $offer, ProductOfferConst::TYPE);
 
-
-        $qb->leftJoin(
-            ProductOfferQuantity::class,
-            'quantity',
-            'WITH',
-            'quantity.offer = offer.id'
-        );
+        $qb
+            ->select('quantity')
+            ->leftJoin(
+                ProductOfferQuantity::class,
+                'quantity',
+                'WITH',
+                'quantity.offer = offer.id'
+            );
 
 
         // Только если у оргового предложения указан количественный учет
@@ -93,6 +98,6 @@ final class ProductOfferQuantityRepository implements ProductOfferQuantityInterf
             'category_offer.id = offer.categoryOffer AND category_offer.quantitative = true'
         );
 
-        return $qb->getQuery()->getOneOrNullResult();
+        return $qb->getOneOrNullResult();
     }
 }

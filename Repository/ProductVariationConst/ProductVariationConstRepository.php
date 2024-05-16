@@ -58,6 +58,8 @@ final class ProductVariationConstRepository implements ProductVariationConstInte
             ->where('variation.id = :variation')
             ->setParameter('variation', $variation, ProductVariationUid::TYPE);
 
+        /** Свойства конструктора объекта гидрации */
+
         $dbal
             ->addSelect('variation.const AS value');
 

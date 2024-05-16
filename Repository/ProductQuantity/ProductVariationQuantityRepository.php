@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Repository\ProductQuantity;
 
+use BaksDev\Core\Doctrine\ORMQueryBuilder;
 use BaksDev\Products\Category\Entity\Offers\Variation\CategoryProductVariation;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
@@ -38,11 +39,12 @@ use Doctrine\ORM\EntityManagerInterface;
 
 final class ProductVariationQuantityRepository implements ProductVariationQuantityInterface
 {
-    private EntityManagerInterface $entityManager;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    private ORMQueryBuilder $ORMQueryBuilder;
+
+    public function __construct(ORMQueryBuilder $ORMQueryBuilder)
     {
-        $this->entityManager = $entityManager;
+        $this->ORMQueryBuilder = $ORMQueryBuilder;
     }
 
     /** Метод возвращает количественный учет множественного варианта */
@@ -50,10 +52,10 @@ final class ProductVariationQuantityRepository implements ProductVariationQuanti
         ProductUid $product,
         ProductOfferConst $offer,
         ProductVariationConst $variation
-    ): ?ProductVariationQuantity {
-        $qb = $this->entityManager->createQueryBuilder();
+    ): ?ProductVariationQuantity
+    {
+        $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
 
-        $qb->select('quantity');
 
         $qb->from(Product::class, 'product');
         $qb->where('product.id = :product');
@@ -68,33 +70,43 @@ final class ProductVariationQuantityRepository implements ProductVariationQuanti
 
         // Торговое предложение
 
-        $qb->join(
-            ProductOffer::class,
-            'offer',
-            'WITH',
-            'offer.event = event.id AND offer.const = :offer_const'
-        );
-
-        $qb->setParameter('offer_const', $offer, ProductOfferConst::TYPE);
+        $qb
+            ->join(
+                ProductOffer::class,
+                'offer',
+                'WITH',
+                'offer.event = event.id AND offer.const = :offer_const'
+            )
+            ->setParameter(
+                'offer_const',
+                $offer,
+                ProductOfferConst::TYPE
+            );
 
         // Множественный вариант
 
-        $qb->join(
-            ProductVariation::class,
-            'variation',
-            'WITH',
-            'variation.offer = offer.id AND variation.const = :variation_const'
-        );
+        $qb
+            ->join(
+                ProductVariation::class,
+                'variation',
+                'WITH',
+                'variation.offer = offer.id AND variation.const = :variation_const'
+            )
+            ->setParameter(
+                'variation_const',
+                $variation,
+                ProductVariationConst::TYPE
+            );
 
-        $qb->setParameter('variation_const', $variation, ProductVariationConst::TYPE);
 
-
-        $qb->leftJoin(
-            ProductVariationQuantity::class,
-            'quantity',
-            'WITH',
-            'quantity.variation = variation.id'
-        );
+        $qb
+            ->select('quantity')
+            ->leftJoin(
+                ProductVariationQuantity::class,
+                'quantity',
+                'WITH',
+                'quantity.variation = variation.id'
+            );
 
 
         // Только если у модификации указан количественный учет

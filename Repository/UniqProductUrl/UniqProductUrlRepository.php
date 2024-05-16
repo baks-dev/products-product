@@ -23,6 +23,7 @@
 
 namespace BaksDev\Products\Product\Repository\UniqProductUrl;
 
+use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use Doctrine\DBAL\Connection;
@@ -30,31 +31,50 @@ use Doctrine\DBAL\Connection;
 final class UniqProductUrlRepository implements UniqProductUrlInterface
 {
 
-    private Connection $connection;
+    private DBALQueryBuilder $DBALQueryBuilder;
 
-
-    public function __construct(Connection $connection)
+    public function __construct(DBALQueryBuilder $DBALQueryBuilder)
     {
-        $this->connection = $connection;
+        $this->DBALQueryBuilder = $DBALQueryBuilder;
     }
 
-
-    /** Метод проверяет, имееется ли указанный URL карточки, и что он не пренадлежить новой (редактируемой)  */
-
-    public function get(string $url, ProductUid $product): mixed
+    /**
+     * Метод проверяет, имеется ли указанный URL карточки, и что он не принадлежит новой (редактируемой)
+     */
+    public function isExists(string $url, ProductUid|string $product): bool
     {
-        $qbSub = $this->connection->createQueryBuilder();
-        $qbSub->select('1');
-        $qbSub->from(ProductInfo::TABLE, 'info');
-        $qbSub->where('info.url = :url');
-        $qbSub->andWhere('info.product != :product');
+        if(is_string($product))
+        {
+            $product = new ProductUid($product);
+        }
 
-        $qb = $this->connection->createQueryBuilder();
-        $qb->select('EXISTS('.$qbSub->getSQL().')');
-        $qb->setParameter('url', $url);
-        $qb->setParameter('product', $product);
+        $dbal = $this->DBALQueryBuilder->createQueryBuilder(self::class);
 
-        return $qb->executeQuery()->fetchOne();
+        $dbal->from(ProductInfo::class, 'info');
+
+        $dbal->where('info.url = :url')
+            ->setParameter('url', $url);
+
+        $dbal
+            ->andWhere('info.product != :product')
+            ->setParameter('product', $product, ProductUid::TYPE);
+
+
+        return $dbal->fetchExist();
+
+
+        //        $qbSub = $this->connection->createQueryBuilder();
+        //        $qbSub->select('1');
+        //        $qbSub->from(ProductInfo::TABLE, 'info');
+        //        $qbSub->where('info.url = :url');
+        //        $qbSub->andWhere('info.product != :product');
+        //
+        //        $qb = $this->connection->createQueryBuilder();
+        //        $qb->select('EXISTS('.$qbSub->getSQL().')');
+        //        $qb->setParameter('url', $url);
+        //        $qb->setParameter('product', $product);
+        //
+        //        return $qb->executeQuery()->fetchOne();
     }
 
 }

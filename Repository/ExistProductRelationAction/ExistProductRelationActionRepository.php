@@ -47,17 +47,18 @@ final class ExistProductRelationActionRepository implements ExistProductRelation
     {
         $qb = $this->DBALQueryBuilder->createQueryBuilder(self::class);
 
-        $qb->from(UsersTableActionsProduct::TABLE, 'product');
+        $qb
+            ->from(UsersTableActionsProduct::class, 'product')
+            ->where('product.product = :product')
+            ->setParameter('product', $product, ProductUid::TYPE);
 
         $qb->join(
             'product',
-            UsersTableActions::TABLE,
+            UsersTableActions::class,
             'action',
             'action.event = product.event'
         );
 
-        $qb->where('product.product = :product');
-        $qb->setParameter('product', $product, ProductUid::TYPE);
 
         return $qb->fetchExist();
     }
