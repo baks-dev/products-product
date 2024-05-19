@@ -152,7 +152,7 @@ final class ProductDetailByConstRepository implements ProductDetailByConstInterf
         /* ProductInfo */
 
         $dbal
-            ->addSelect('product_info.url')
+            ->addSelect('product_info.url AS product_url')
             ->leftJoin(
                 'product',
                 ProductInfo::class,
