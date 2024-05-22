@@ -97,17 +97,24 @@ class ProductModificationQuantity extends EntityEvent
         throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
     }
 
-
     /** Добавляем в резерв указанное количество */
-    public function addReserve(int $reserve): void
+    public function addReserve(int $reserve): bool
     {
         $this->reserve += $reserve;
+        return $this->reserve <= $this->quantity;
     }
 
     /** Удаляем из резерва указанное количество */
-    public function subReserve(?int $reserve): void
+    public function subReserve(?int $reserve): bool
     {
+        if(empty($this->reserve) || $reserve > $this->reserve)
+        {
+            return false;
+        }
+
         $this->reserve -= $reserve;
+
+        return true;
     }
 
     /** Присваиваем резерву указанное количество */
@@ -118,9 +125,16 @@ class ProductModificationQuantity extends EntityEvent
 
 
     /** Удаляем из наличия указанное количество */
-    public function subQuantity(?int $quantity): void
+    public function subQuantity(?int $quantity): bool
     {
+        if(empty($this->quantity) || $quantity > $this->quantity)
+        {
+            return false;
+        }
+
         $this->quantity -= $quantity;
+
+        return true;
     }
 
     /** Добавляем в наличие указанное количество */
