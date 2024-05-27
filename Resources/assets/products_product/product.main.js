@@ -20,17 +20,33 @@
  *  THE SOFTWARE.
  */
 
+
 /** Символьный код */
 /* Получаем поле, Согласно выбранной локали */
 let $name = document.querySelector("input[data-lang='product_form_trans_" + $lang + "']");
 
-if ($name) {
+if($name)
+{
 
-    setTimeout(function initCatUrl() {
+    setTimeout(function initCatUrl()
+    {
 
-        if (typeof catUrl.debounce == 'function') {
+        if(typeof catUrl.debounce == 'function')
+        {
 
             $name.addEventListener('input', catUrl.debounce(500));
+
+            document
+                .getElementById("product_form_product")
+                .addEventListener("keydown", function(event)
+                {
+                    if(event.key === "Enter")
+                    {
+                        event.preventDefault();
+                    }
+                });
+
+
             return;
         }
 
@@ -38,35 +54,47 @@ if ($name) {
 
     }, 100);
 
-    function catUrl() {
+    function catUrl()
+    {
         /* Заполняем транслитом URL */
         document.getElementById('product_form_info_url').value = translitRuEn(this.value).toLowerCase();
     }
 }
 
 
+document.addEventListener("keydown", function(event)
+{
+    if(event.key === "Enter")
+    {
+        event.preventDefault();
+    }
+});
+
+
 const allOffers = document.getElementById('allOffers');
 
-if (allOffers)
+if(allOffers)
 {
-    allOffers.addEventListener("change", (event) => {
-        if (allOffers.checked)
+    allOffers.addEventListener("change", (event) =>
+    {
+        if(allOffers.checked)
         {
-            document.querySelectorAll('.offers').forEach(function (item) {
+            document.querySelectorAll('.offers').forEach(function(item)
+            {
 
-                if (item.classList.contains('d-none'))
+                if(item.classList.contains('d-none'))
                 {
                     item.classList.remove('d-none');
                     item.classList.add('d-block');
                 }
 
             });
-        }
-        else
+        } else
         {
-            document.querySelectorAll('.offers').forEach(function (item) {
+            document.querySelectorAll('.offers').forEach(function(item)
+            {
 
-                if (item.classList.contains('d-block'))
+                if(item.classList.contains('d-block'))
                 {
                     item.classList.remove('d-block');
                     item.classList.add('d-none');
@@ -79,38 +107,42 @@ if (allOffers)
 
 const searcOffer = document.getElementById('searcherOffer');
 
-if (searcOffer)
+if(searcOffer)
 {
     let $ul = document.getElementById("searcher-offer");
 
     searcOffer.addEventListener('keyup', searcherOffer);
     searcOffer.addEventListener('focus', searcherOffer);
 
-    document.addEventListener("click", function (event) {
+    document.addEventListener("click", function(event)
+    {
 
         var isClickInsideBlock1 = $ul.contains(event.target);
         var isClickInsideBlock2 = searcOffer.contains(event.target);
 
-        if (!isClickInsideBlock1 && !isClickInsideBlock2) {
+        if(!isClickInsideBlock1 && !isClickInsideBlock2)
+        {
             $ul.classList.remove('show');
         }
     });
 
 
-    $ul.querySelectorAll('li').forEach(function (item) {
+    $ul.querySelectorAll('li').forEach(function(item)
+    {
 
         searcOffer.classList.remove('d-none');
 
-        item.addEventListener('click', function () {
+        item.addEventListener('click', function()
+        {
             let inpt = document.getElementById(item.dataset.href);
             inpt.scrollIntoView({block: "center", inline: "center", behavior: "smooth"});
             $ul.classList.remove('show');
-            setTimeout(function () {
+            setTimeout(function()
+            {
                 inpt.focus();
             }, 200);
         });
     });
-
 
 
     // searcOffer.addEventListener("focusout", (event) => {
@@ -119,27 +151,33 @@ if (searcOffer)
 
 }
 
-function searcherOffer() {
+function searcherOffer()
+{
 
     let $filter = this.value.toUpperCase();
     let $counter = 0;
 
     let $ul = document.getElementById("searcher-offer");
 
-    $ul.querySelectorAll('li').forEach(function (item) {
+    $ul.querySelectorAll('li').forEach(function(item)
+    {
 
         let txtValue = item.textContent || item.innerText;
 
-        if (txtValue.toUpperCase().indexOf($filter) > -1) {
+        if(txtValue.toUpperCase().indexOf($filter) > -1)
+        {
             item.style.display = "";
             $counter++;
-        } else {
+        } else
+        {
             item.style.display = "none";
         }
 
-        if ($filter.length < 2 || $counter === 0) {
+        if($filter.length < 2 || $counter === 0)
+        {
             $ul.classList.remove('show');
-        } else {
+        } else
+        {
             $ul.classList.add('show');
         }
     });
