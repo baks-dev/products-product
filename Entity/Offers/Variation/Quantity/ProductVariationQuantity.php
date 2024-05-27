@@ -135,6 +135,7 @@ class ProductVariationQuantity extends EntityEvent
 	/** Добавляем в наличие указанное количество */
 	public function addQuantity(?int $quantity) : void
 	{
+        $this->quantity ?: $this->quantity = 0;
 		$this->quantity += $quantity;
 	}
 

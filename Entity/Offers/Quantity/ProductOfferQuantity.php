@@ -121,6 +121,7 @@ class ProductOfferQuantity extends EntityEvent
     /** Присваиваем резерву указанное количество */
     public function setReserve(?int $reserve): void
     {
+        $this->quantity ?: $this->quantity = 0;
         $this->reserve = $reserve ?: 0;
     }
 
@@ -141,6 +142,7 @@ class ProductOfferQuantity extends EntityEvent
 	/** Добавляем в наличие указанное количество */
 	public function addQuantity(?int $quantity) : void
 	{
+        $this->quantity ?: $this->quantity = 0;
 		$this->quantity += $quantity;
 	}
 
