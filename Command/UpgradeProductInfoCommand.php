@@ -83,7 +83,7 @@ class UpgradeProductInfoCommand extends Command implements ProjectUpgradeInterfa
         /** @var ProductInfo $ProductInfo */
         foreach($ProductsInfo as $i => $ProductInfo)
         {
-            $ProductEvent = $this->currentProductEvent->getProductEvent($ProductInfo->getProduct());
+            $ProductEvent = $this->currentProductEvent->findByProduct($ProductInfo->getProduct());
 
             if(!$ProductEvent)
             {

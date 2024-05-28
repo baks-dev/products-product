@@ -24,11 +24,19 @@
 namespace BaksDev\Products\Product\Repository\CurrentProductEvent;
 
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
+use BaksDev\Products\Product\Entity\Product;
+use BaksDev\Products\Product\Type\Event\ProductEventUid;
+use BaksDev\Products\Product\Type\Id\ProductUid;
 
 interface CurrentProductEventInterface
 {
     /**
      * Метод возвращает активное событие продукции
      */
-    public function getProductEvent(mixed $product): ?ProductEvent;
+    public function findByProduct(Product|ProductUid|string $product): ?ProductEvent;
+
+    /**
+     * Метод возвращает активное событие продукции по идентификатору события
+     */
+    public function findByEvent(ProductEvent|ProductEventUid|string $last): ?ProductEvent;
 }

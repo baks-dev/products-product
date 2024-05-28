@@ -67,6 +67,8 @@ final class RenameController extends AbstractController
 
         if($form->isSubmitted() && $form->isValid() && $form->has('rename_product'))
         {
+            $this->refreshTokenForm($form);
+
             $handle = $renameProductHandler->handle($RenameProductDTO);
 
             $this->addFlash

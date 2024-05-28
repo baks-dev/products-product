@@ -41,7 +41,7 @@ final class ProductOfferQuantityDTO implements ProductOfferQuantityInterface
 	
 	public function getQuantity() : ?int
 	{
-		return $this->quantity;
+		return $this->quantity ?: 0;
 	}
 	
 	

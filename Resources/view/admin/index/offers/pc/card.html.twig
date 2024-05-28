@@ -35,7 +35,6 @@
             {% endif %}
 
 
-
             <div class="d-flex flex-column small gap-1 p-2 bg-cover lazy col-2 w-100"
                  style=" height: 280px;"
                  data-bg="{{ image_path }}"
@@ -103,7 +102,7 @@
                         </form>
                     </div>
 
-                    {#<span
+                    {# <span
                             data-bs-toggle="tooltip"
                             data-bs-placement="bottom"
                             data-bs-delay='{"show":600,"hide":100}'
@@ -128,9 +127,26 @@
                                 <path d="M7 12h1v3h4v1H7v-4Zm9 2v2h-3v-1h2v-1h1Z"/>
                             </svg>
                         </a>
-                    </span>#}
+                    </span> #}
                 </div>
 
+                <div class="d-flex align-items-center">
+
+                    {% if item.product_price %}
+
+                        {{ money(item.product_price, item.product_currency,) }}
+
+                        {% if item.product_quantity %}
+                            ({{ item.product_quantity }})
+                        {% else %}
+                            &nbsp; <span class="small text-danger fw-bold">нет в наличии</span>
+                        {% endif %}
+
+                    {% else %}
+                        <span class="badge text-bg-danger">Цена не указана</span>
+                    {% endif %}
+
+                </div>
 
             </div>
         </div>

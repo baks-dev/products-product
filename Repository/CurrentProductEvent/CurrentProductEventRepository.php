@@ -28,6 +28,7 @@ namespace BaksDev\Products\Product\Repository\CurrentProductEvent;
 use BaksDev\Core\Doctrine\ORMQueryBuilder;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Product;
+use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 
 final class CurrentProductEventRepository implements CurrentProductEventInterface
@@ -43,9 +44,17 @@ final class CurrentProductEventRepository implements CurrentProductEventInterfac
     /**
      * Метод возвращает активное событие продукции
      */
-    public function getProductEvent(mixed $product): ?ProductEvent
+    public function findByProduct(Product|ProductUid|string $product): ?ProductEvent
     {
-        $product = new ProductUid((string) $product);
+        if(is_string($product))
+        {
+            $product = new ProductUid($product);
+        }
+
+        if($product instanceof Product)
+        {
+            $product = $product->getId();
+        }
 
         $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
 
@@ -65,4 +74,48 @@ final class CurrentProductEventRepository implements CurrentProductEventInterfac
 
         return $qb->getOneOrNullResult();
     }
+
+    /**
+     * Метод возвращает активное событие продукции по идентификатору события
+     */
+    public function findByEvent(ProductEvent|ProductEventUid|string $last): ?ProductEvent
+    {
+        if(is_string($last))
+        {
+            $last = new ProductEventUid($last);
+        }
+
+        if($last instanceof ProductEvent)
+        {
+            $last = $last->getId();
+        }
+
+        $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
+
+        $qb
+            ->from(ProductEvent::class, 'last')
+            ->where('last.id = :last')
+            ->setParameter('last', $last, ProductEventUid::TYPE);
+
+        $qb
+            ->join(
+                Product::class,
+                'product',
+                'WITH',
+                'product.id = last.main'
+            );
+
+        $qb
+            ->select('event')
+            ->join(
+                ProductEvent::class,
+                'event',
+                'WITH',
+                'event.id = product.event'
+            );
+
+
+        return $qb->getOneOrNullResult();
+    }
+
 }

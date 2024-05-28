@@ -81,7 +81,9 @@ final class NewController extends AbstractController
         $form = $this->createForm(ProductForm::class, $ProductDTO);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid() && $form->has('product')) {
+        if ($form->isSubmitted() && $form->isValid() && $form->has('product'))
+        {
+            $this->refreshTokenForm($form);
 
             $handle = $productHandler->handle($ProductDTO);
 

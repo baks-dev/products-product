@@ -101,7 +101,7 @@ final class PriceDTO implements ProductPriceInterface
 
 	public function getQuantity() : ?int
 	{
-		return $this->quantity;
+		return $this->quantity ?: 0;
 	}
 
 
