@@ -23,21 +23,44 @@
 
 namespace BaksDev\Products\Product\Twig;
 
+use BaksDev\Core\Cache\AppCacheInterface;
 use BaksDev\Products\Product\Type\Barcode\ProductBarcode;
+use DateInterval;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
 final class ProductBarcodeExtension extends AbstractExtension
 {
-	public function getFunctions() : array
-	{
-		return [
-			new TwigFunction('barcode', [$this, 'call']),
-		];
-	}
+    private AppCacheInterface $cache;
 
-	public function call(?string $article) : string
-	{
-        return (new ProductBarcode())->barcode($article);
-	}
+    public function __construct(AppCacheInterface $cache)
+    {
+        $this->cache = $cache;
+    }
+
+    public function getFunctions(): array
+    {
+        return [
+            new TwigFunction('barcode', [$this, 'call']),
+        ];
+    }
+
+    public function call(?string $article): string
+    {
+        $cache = $this->cache->init('products-product');
+        $item = $cache->getItem('barcode-'.$article);
+
+        if($item->isHit())
+        {
+            return $item->get();
+        }
+
+        $barcode = (new ProductBarcode())->barcode($article);
+
+        $item->set($barcode);
+        $item->expiresAfter(DateInterval::createFromDateString('1 years'));
+        $cache->save($item);
+
+        return $barcode;
+    }
 }
