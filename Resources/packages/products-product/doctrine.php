@@ -23,6 +23,7 @@
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use BaksDev\Products\Product\BaksDevProductsProductBundle;
 use BaksDev\Products\Product\Type\Barcode\ProductBarcode;
 use BaksDev\Products\Product\Type\Barcode\ProductBarcodeType;
 use BaksDev\Products\Product\Type\Event\ProductEventType;
@@ -103,11 +104,10 @@ return static function(ContainerConfigurator $container, DoctrineConfig $doctrin
 
     $emDefault = $doctrine->orm()->entityManager('default')->autoMapping(true);
 
-    $MODULE = substr(__DIR__, 0, strpos(__DIR__, "Resources"));
 
     $emDefault->mapping('products-product')
 		->type('attribute')
-		->dir($MODULE.'Entity')
+		->dir(BaksDevProductsProductBundle::PATH.'Entity')
 		->isBundle(false)
 		->prefix('BaksDev\Products\Product\Entity')
 		->alias('products-product')

@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2023.  Baks.dev <admin@baks.dev>
+ *  Copyright 2024.  Baks.dev <admin@baks.dev>
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -23,27 +23,16 @@
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-// use App\Module\Product\Type\Category\Id\CategoryUidConverter;
-// use BaksDev\Users\Entity\User;
-// use App\Module\Product\Entity;
-// use App\Module\Product\EntityListeners;
+use BaksDev\Products\Product\BaksDevProductsProductBundle;
+use Symfony\Config\FrameworkConfig;
 
-return static function (ContainerConfigurator $configurator) {
-    $services = $configurator->services()
-        ->defaults()
-        ->autowire()
-        ->autoconfigure()
-    ;
+return static function(FrameworkConfig $config) {
 
-    $NAMESPACE = 'BaksDev\Products\Product\\';
+    $config
+        ->translator()
+        ->paths([BaksDevProductsProductBundle::PATH.'Resources/translations/']);
 
-    $MODULE = substr(__DIR__, 0, strpos(__DIR__, "Resources"));
-
-    $services->load($NAMESPACE, $MODULE)
-        ->exclude([
-            $MODULE.'{Entity,Resources,Type}',
-            $MODULE.'**/*Message.php',
-            $MODULE.'**/*DTO.php',
-        ])
-    ;
 };
+
+
+
