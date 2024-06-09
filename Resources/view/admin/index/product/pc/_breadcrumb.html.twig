@@ -14,22 +14,23 @@
 				<path d="m8 3.293 6 6V13.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5V9.293l6-6Z" />
 			</svg>
 		</li>
-		
+
+
 		<li class="breadcrumb-item">
 			<a href="{{ path('core:user.homepage') }}"
 					class="text-decoration-none"
-					aria-label="{{ 'breadcrumb.homepage.user'|trans }}"
-					title="{{ 'breadcrumb.homepage.user'|trans }}">
-				{{ 'breadcrumb.homepage.user'|trans }}
+					aria-label="{{ 'breadcrumb.homepage.user'|trans({}, 'core') }}"
+					title="{{ 'breadcrumb.homepage.user'|trans({}, 'core') }}">
+				{{ 'breadcrumb.homepage.user'|trans({}, 'core') }}
 			</a>
 		</li>
 		
 		<li class="breadcrumb-item">
             <a href="{{ path('core:admin.homepage') }}"
             class="text-decoration-none"
-               aria-label="{{ 'breadcrumb.homepage.admin'|trans({}, 'core') }}"
-               title="{{ 'breadcrumb.homepage.admin'|trans({}, 'core') }}">
-                {{ 'breadcrumb.homepage.admin'|trans({}, 'core') }}
+               aria-label="{{ 'breadcrumb.homepage.index'|trans({}, 'core') }}"
+               title="{{ 'breadcrumb.homepage.index'|trans({}, 'core') }}">
+                {{ 'breadcrumb.homepage.index'|trans({}, 'core') }}
             </a>
         </li>
 		
