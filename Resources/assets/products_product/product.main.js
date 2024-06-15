@@ -23,7 +23,7 @@
 
 /** Символьный код */
 /* Получаем поле, Согласно выбранной локали */
-let $name = document.querySelector("input[data-lang='product_form_trans_" + $lang + "']");
+let $name = document.querySelector("input[data-lang='product_form_trans_" + $locale + "']");
 
 if($name)
 {

@@ -133,8 +133,8 @@
 
 {% block javascript %}
 
-<script nonce='{{ csp_nonce() }}' async  data-src="/assets/order_orders/orders_basket.min.js?v={{ version }}" class='lazy'></script>
-<script nonce='{{ csp_nonce() }}' async  data-src="/assets/order_orders/modal_basket.min.js?v={{ version }}" class='lazy'></script>
+<script nonce='{{ csp_nonce() }}' async  data-src="/assets/orders-order/orders_basket.min.js?v={{ version }}" class='lazy'></script>
+<script nonce='{{ csp_nonce() }}' async  data-src="/assets/orders-order/modal_basket.min.js?v={{ version }}" class='lazy'></script>
 
 <script nonce="{{ csp_nonce() }}">
 document.querySelectorAll('.img-product').forEach((el) => el.addEventListener('click', () => document.getElementById('img-product').style.backgroundImage = el.style.backgroundImage ));
