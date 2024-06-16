@@ -8,11 +8,12 @@
 ## Установка
 
 ``` bash
-composer require baks-dev/products-category
-composer require baks-dev/reference-money
-composer require baks-dev/reference-currency
-composer require baks-dev/reference-measurement
-composer require baks-dev/products-product
+composer require \
+baks-dev/products-category \
+baks-dev/reference-money \
+baks-dev/reference-currency \
+baks-dev/reference-measurement \
+baks-dev/products-product
 ```
 
 ## Дополнительно
