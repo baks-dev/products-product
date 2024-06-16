@@ -1,6 +1,6 @@
 # BaksDev Product
 
-[![Version](https://img.shields.io/badge/version-7.1.7-blue)](https://github.com/baks-dev/products-product/releases)
+[![Version](https://img.shields.io/badge/version-7.1.8-blue)](https://github.com/baks-dev/products-product/releases)
 ![php 8.3+](https://img.shields.io/badge/php-min%208.3-red.svg)
 
 Модуль Продукции
@@ -8,7 +8,11 @@
 ## Установка
 
 ``` bash
-$ composer require baks-dev/products-product
+composer require baks-dev/products-category
+composer require baks-dev/reference-money
+composer require baks-dev/reference-currency
+composer require baks-dev/reference-measurement
+composer require baks-dev/products-product
 ```
 
 ## Дополнительно
@@ -16,21 +20,20 @@ $ composer require baks-dev/products-product
 Установка конфигурации и файловых ресурсов:
 
 ``` bash
-$ php bin/console baks:assets:install
+php bin/console baks:assets:install
 ```
 
 Изменения в схеме базы данных с помощью миграции
 
 ``` bash
-$ php bin/console doctrine:migrations:diff
-
-$ php bin/console doctrine:migrations:migrate
+php bin/console doctrine:migrations:diff
+php bin/console doctrine:migrations:migrate
 ```
 
 ## Тестирование
 
 ``` bash
-$ php bin/phpunit --group=products-product
+php bin/phpunit --group=products-product
 ```
 
 
