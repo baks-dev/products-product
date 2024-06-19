@@ -1,17 +1,17 @@
 <?php
 /*
  *  Copyright 2023.  Baks.dev <admin@baks.dev>
- *  
+ *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *  
+ *
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *  
+ *
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -37,31 +37,31 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: 'product_offer_quantity')]
 class ProductOfferQuantity extends EntityEvent
 {
-	public const TABLE = 'product_offer_quantity';
-	
-	/** ID торгового предложения */
+    public const TABLE = 'product_offer_quantity';
+
+    /** ID торгового предложения */
     #[Assert\NotBlank]
     #[Assert\Type(ProductOffer::class)]
-	#[ORM\Id]
-	#[ORM\OneToOne(inversedBy: 'quantity', targetEntity: ProductOffer::class)]
-	#[ORM\JoinColumn(name: 'offer', referencedColumnName: "id")]
-	private ProductOffer $offer;
+    #[ORM\Id]
+    #[ORM\OneToOne(targetEntity: ProductOffer::class, inversedBy: 'quantity')]
+    #[ORM\JoinColumn(name: 'offer', referencedColumnName: "id")]
+    private ProductOffer $offer;
 
     /** В наличии */
     #[Assert\Type('integer')]
-	#[ORM\Column(type: Types::INTEGER, options: ['default' => 0])]
+    #[ORM\Column(type: Types::INTEGER, options: ['default' => 0])]
     private ?int $quantity = 0; // 0 - нет в наличии
-	
-	/** Резерв */
+
+    /** Резерв */
     #[Assert\Type('integer')]
-	#[ORM\Column(type: Types::INTEGER, options: ['default' => 0])]
-	private ?int $reserve = 0;
-	
-	
-	public function __construct(ProductOffer $offer)
-	{
-		$this->offer = $offer;
-	}
+    #[ORM\Column(type: Types::INTEGER, options: ['default' => 0])]
+    private ?int $reserve = 0;
+
+
+    public function __construct(ProductOffer $offer)
+    {
+        $this->offer = $offer;
+    }
 
 
     public function __toString(): string
@@ -70,32 +70,32 @@ class ProductOfferQuantity extends EntityEvent
     }
 
     public function getDto($dto): mixed
-	{
+    {
         $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
 
-		if($dto instanceof ProductOfferQuantityInterface)
-		{
-			return parent::getDto($dto);
-		}
-		
-		throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
-	}
-	
-	
-	public function setEntity($dto): mixed
-	{
-		if($dto instanceof ProductOfferQuantityInterface || $dto instanceof self)
-		{
-			if(empty($dto->getQuantity()) && empty($dto->getReserve()))
-			{
-				return false;
-			}
-			
-			return parent::setEntity($dto);
-		}
-		
-		throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
-	}
+        if($dto instanceof ProductOfferQuantityInterface)
+        {
+            return parent::getDto($dto);
+        }
+
+        throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
+    }
+
+
+    public function setEntity($dto): mixed
+    {
+        if($dto instanceof ProductOfferQuantityInterface || $dto instanceof self)
+        {
+            if(empty($dto->getQuantity()) && empty($dto->getReserve()))
+            {
+                return false;
+            }
+
+            return parent::setEntity($dto);
+        }
+
+        throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
+    }
 
     /** Добавляем в резерв указанное количество */
     public function addReserve(int $reserve): bool
@@ -125,8 +125,8 @@ class ProductOfferQuantity extends EntityEvent
         $this->reserve = $reserve ?: 0;
     }
 
-	
-	/** Удаляем из наличия указанное количество */
+
+    /** Удаляем из наличия указанное количество */
     public function subQuantity(?int $quantity): bool
     {
         if(empty($this->quantity) || $quantity > $this->quantity)
@@ -137,19 +137,19 @@ class ProductOfferQuantity extends EntityEvent
         $this->quantity -= $quantity;
 
         return true;
-	}
-	
-	/** Добавляем в наличие указанное количество */
-	public function addQuantity(?int $quantity) : void
-	{
+    }
+
+    /** Добавляем в наличие указанное количество */
+    public function addQuantity(?int $quantity): void
+    {
         $this->quantity ?: $this->quantity = 0;
-		$this->quantity += $quantity;
-	}
+        $this->quantity += $quantity;
+    }
 
     /** Присваиваем наличию указанное количество */
     public function setQuantity(?int $quantity): void
     {
         $this->quantity = $quantity ?: 0;
     }
-	
+
 }

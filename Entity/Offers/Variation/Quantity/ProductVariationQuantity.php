@@ -1,17 +1,17 @@
 <?php
 /*
  *  Copyright 2023.  Baks.dev <admin@baks.dev>
- *  
+ *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *  
+ *
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *  
+ *
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -36,60 +36,60 @@ use InvalidArgumentException;
 #[ORM\Table(name: 'product_variation_quantity')]
 class ProductVariationQuantity extends EntityEvent
 {
-	public const TABLE = 'product_variation_quantity';
-	
-	/** ID события */
-	#[ORM\Id]
+    public const TABLE = 'product_variation_quantity';
+
+    /** ID события */
+    #[ORM\Id]
     #[ORM\OneToOne(targetEntity: ProductVariation::class, inversedBy: 'quantity')]
-	#[ORM\JoinColumn(name: 'variation', referencedColumnName: "id")]
-	private ProductVariation $variation;
+    #[ORM\JoinColumn(name: 'variation', referencedColumnName: "id")]
+    private ProductVariation $variation;
 
     /** В наличии */
-	#[ORM\Column(type: Types::INTEGER, options: ['default' => 0])]
+    #[ORM\Column(type: Types::INTEGER, options: ['default' => 0])]
     private ?int $quantity = 0; // 0 - нет в наличии
-	
-	/** Резерв */
-	#[ORM\Column(type: Types::INTEGER, options: ['default' => 0])]
-	private ?int $reserve = 0;
-	
-	
-	public function __construct(ProductVariation $variation)
-	{
-		$this->variation = $variation;
-	}
+
+    /** Резерв */
+    #[ORM\Column(type: Types::INTEGER, options: ['default' => 0])]
+    private ?int $reserve = 0;
+
+
+    public function __construct(ProductVariation $variation)
+    {
+        $this->variation = $variation;
+    }
 
     public function __toString(): string
     {
         return (string) $this->variation;
     }
-	
-	public function getDto($dto): mixed
-	{
+
+    public function getDto($dto): mixed
+    {
         $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
 
-		if($dto instanceof ProductVariationQuantityInterface)
-		{
-			return parent::getDto($dto);
-		}
-		
-		throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
-	}
-	
-	
-	public function setEntity($dto): mixed
-	{
-		if($dto instanceof ProductVariationQuantityInterface || $dto instanceof self)
-		{
-			if(empty($dto->getQuantity()) && empty($dto->getReserve()))
-			{
-				return false;
-			}
-			
-			return parent::setEntity($dto);
-		}
-		
-		throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
-	}
+        if($dto instanceof ProductVariationQuantityInterface)
+        {
+            return parent::getDto($dto);
+        }
+
+        throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
+    }
+
+
+    public function setEntity($dto): mixed
+    {
+        if($dto instanceof ProductVariationQuantityInterface || $dto instanceof self)
+        {
+            if(empty($dto->getQuantity()) && empty($dto->getReserve()))
+            {
+                return false;
+            }
+
+            return parent::setEntity($dto);
+        }
+
+        throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
+    }
 
     /** Добавляем в резерв указанное количество */
     public function addReserve(int $reserve): bool
@@ -131,13 +131,13 @@ class ProductVariationQuantity extends EntityEvent
 
         return true;
     }
-	
-	/** Добавляем в наличие указанное количество */
-	public function addQuantity(?int $quantity) : void
-	{
+
+    /** Добавляем в наличие указанное количество */
+    public function addQuantity(?int $quantity): void
+    {
         $this->quantity ?: $this->quantity = 0;
-		$this->quantity += $quantity;
-	}
+        $this->quantity += $quantity;
+    }
 
     /** Присваиваем наличию указанное количество */
     public function setQuantity(?int $quantity): void

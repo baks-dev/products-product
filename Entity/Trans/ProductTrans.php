@@ -32,26 +32,25 @@ use InvalidArgumentException;
 #[ORM\Table(name: 'product_trans')]
 class ProductTrans extends EntityEvent
 {
-	public const TABLE = 'product_trans';
-	
-	/** Связь на событие */
-	#[ORM\Id]
-	#[ORM\ManyToOne(targetEntity: ProductEvent::class, inversedBy: "translate")]
-	#[ORM\JoinColumn(name: 'event', referencedColumnName: "id", nullable: false)]
-	private ProductEvent $event;
-	
-	/** Локаль */
-	#[ORM\Id]
-	#[ORM\Column(type: Locale::TYPE, length: 2, nullable: false)]
-	private Locale $local;
-	
-	/** Название */
-	#[ORM\Column(type: Types::STRING, length: 100, nullable: false)]
-	private string $name;
-	
+    public const TABLE = 'product_trans';
 
-	
-	public function __construct(ProductEvent $event)
+    /** Связь на событие */
+    #[ORM\Id]
+    #[ORM\ManyToOne(targetEntity: ProductEvent::class, inversedBy: "translate")]
+    #[ORM\JoinColumn(name: 'event', referencedColumnName: "id", nullable: false)]
+    private ProductEvent $event;
+
+    /** Локаль */
+    #[ORM\Id]
+    #[ORM\Column(type: Locale::TYPE, length: 2, nullable: false)]
+    private Locale $local;
+
+    /** Название */
+    #[ORM\Column(type: Types::STRING, length: 100, nullable: false)]
+    private string $name;
+
+
+    public function __construct(ProductEvent $event)
     {
         $this->event = $event;
     }
@@ -60,45 +59,45 @@ class ProductTrans extends EntityEvent
     {
         return (string) $this->event;
     }
-	
-	public function getDto($dto): mixed
-	{
+
+    public function getDto($dto): mixed
+    {
         $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
 
-		if($dto instanceof ProductTransInterface)
-		{
-			return parent::getDto($dto);
-		}
-		
-		throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
-	}
-	
-	
-	public function setEntity($dto): mixed
-	{
-		if($dto instanceof ProductTransInterface || $dto instanceof self)
-		{
-			return parent::setEntity($dto);
-		}
-		
-		throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
-	}
-	
-	
-	public function getNameByLocal(Locale $locale) : ?string
-	{
-		if($this->local->getLocalValue() === $locale->getLocalValue())
-		{
-			return $this->name;
-		}
-		
-		return null;
-	}
-	
-	
-	public function setName(string $name) : void
-	{
-		$this->name = $name;
-	}
-	
+        if($dto instanceof ProductTransInterface)
+        {
+            return parent::getDto($dto);
+        }
+
+        throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
+    }
+
+
+    public function setEntity($dto): mixed
+    {
+        if($dto instanceof ProductTransInterface || $dto instanceof self)
+        {
+            return parent::setEntity($dto);
+        }
+
+        throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
+    }
+
+
+    public function getNameByLocal(Locale $locale): ?string
+    {
+        if($this->local->getLocalValue() === $locale->getLocalValue())
+        {
+            return $this->name;
+        }
+
+        return null;
+    }
+
+
+    public function setName(string $name): void
+    {
+        $this->name = $name;
+    }
+
 }

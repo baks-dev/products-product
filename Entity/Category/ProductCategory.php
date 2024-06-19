@@ -35,33 +35,33 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: 'product_categories_product')]
 class ProductCategory extends EntityEvent
 {
-	public const TABLE = "product_categories_product";
-	
-	/** ID события */
+    public const TABLE = "product_categories_product";
+
+    /** ID события */
     #[Assert\NotBlank]
     #[Assert\Type(ProductEvent::class)]
-	#[ORM\Id]
-	#[ORM\ManyToOne(targetEntity: ProductEvent::class, inversedBy: "category")]
-	#[ORM\JoinColumn(name: 'event', referencedColumnName: "id")]
-	private ProductEvent $event;
-	
-	/** ID Category */
+    #[ORM\Id]
+    #[ORM\ManyToOne(targetEntity: ProductEvent::class, inversedBy: "category")]
+    #[ORM\JoinColumn(name: 'event', referencedColumnName: "id")]
+    private ProductEvent $event;
+
+    /** ID Category */
     #[Assert\NotBlank]
     #[Assert\Uuid]
     #[Assert\Type(CategoryProductUid::class)]
-	#[ORM\Id]
+    #[ORM\Id]
     #[ORM\Column(type: CategoryProductUid::TYPE, nullable: false)]
     private CategoryProductUid $category;
-	
-	/** Корневая категория */
-    #[Assert\Type('bool')]
-	#[ORM\Column(type: Types::BOOLEAN, nullable: false)]
-	private bool $root = false;
 
-	public function __construct(ProductEvent $event)
-	{
-		$this->event = $event;
-	}
+    /** Корневая категория */
+    #[Assert\Type('bool')]
+    #[ORM\Column(type: Types::BOOLEAN, nullable: false)]
+    private bool $root = false;
+
+    public function __construct(ProductEvent $event)
+    {
+        $this->event = $event;
+    }
 
     public function __toString(): string
     {
@@ -69,9 +69,9 @@ class ProductCategory extends EntityEvent
     }
 
     public function getCategory(): CategoryProductUid
-	{
-		return $this->category;
-	}
+    {
+        return $this->category;
+    }
 
     /**
      * Root
@@ -81,26 +81,26 @@ class ProductCategory extends EntityEvent
         return $this->root;
     }
 
-	public function getDto($dto): mixed
-	{
+    public function getDto($dto): mixed
+    {
         $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
 
-		if($dto instanceof ProductCategoryInterface)
-		{
-			return parent::getDto($dto);
-		}
+        if($dto instanceof ProductCategoryInterface)
+        {
+            return parent::getDto($dto);
+        }
 
-		throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
-	}
-	
-	
-	public function setEntity($dto): mixed
-	{
-		if($dto instanceof ProductCategoryInterface || $dto instanceof self)
-		{
-			return parent::setEntity($dto);
-		}
-		throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
-	}
-	
+        throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
+    }
+
+
+    public function setEntity($dto): mixed
+    {
+        if($dto instanceof ProductCategoryInterface || $dto instanceof self)
+        {
+            return parent::setEntity($dto);
+        }
+        throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
+    }
+
 }

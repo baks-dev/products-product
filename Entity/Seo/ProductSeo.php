@@ -34,33 +34,33 @@ use InvalidArgumentException;
 #[ORM\Table(name: 'product_seo')]
 class ProductSeo extends EntityEvent
 {
-	public const TABLE = "product_seo";
-	
-	/** Связь на событие */
-	#[ORM\Id]
-	#[ORM\ManyToOne(targetEntity: ProductEvent::class, inversedBy: "seo")]
-	#[ORM\JoinColumn(name: 'event', referencedColumnName: "id")]
-	private ProductEvent $event;
-	
-	/** Локаль */
-	#[ORM\Id]
-	#[ORM\Column(type: Locale::TYPE, length: 2, nullable: false)]
-	private Locale $local;
-	
-	/** Шаблон META TITLE */
-	#[ORM\Column(type: Types::TEXT, nullable: true)]
-	private ?string $title;
-	
-	/** Шаблон META KEYWORDS */
-	#[ORM\Column(type: Types::TEXT, nullable: true)]
-	private ?string $keywords;
-	
-	/** Шаблон META DESCRIPTION */
-	#[ORM\Column(type: Types::TEXT, nullable: true)]
-	private ?string $description;
-	
-	
-	public function __construct(ProductEvent $event)
+    public const TABLE = "product_seo";
+
+    /** Связь на событие */
+    #[ORM\Id]
+    #[ORM\ManyToOne(targetEntity: ProductEvent::class, inversedBy: "seo")]
+    #[ORM\JoinColumn(name: 'event', referencedColumnName: "id")]
+    private ProductEvent $event;
+
+    /** Локаль */
+    #[ORM\Id]
+    #[ORM\Column(type: Locale::TYPE, length: 2, nullable: false)]
+    private Locale $local;
+
+    /** Шаблон META TITLE */
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $title;
+
+    /** Шаблон META KEYWORDS */
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $keywords;
+
+    /** Шаблон META DESCRIPTION */
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $description;
+
+
+    public function __construct(ProductEvent $event)
     {
         $this->event = $event;
     }
@@ -69,33 +69,33 @@ class ProductSeo extends EntityEvent
     {
         return (string) $this->event;
     }
-	
-	public function getDto($dto): mixed
-	{
+
+    public function getDto($dto): mixed
+    {
         $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
 
-		if($dto instanceof ProductSeoInterface)
-		{
-			return parent::getDto($dto);
-		}
-		
-		throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
-	}
-	
-	
-	public function setEntity($dto): mixed
-	{
-		if(empty($dto->getTitle()) && empty($dto->getDescription()) && empty($dto->getKeywords()))
-		{
-			return false;
-		}
-		
-		if($dto instanceof ProductSeoInterface || $dto instanceof self)
-		{
-			return parent::setEntity($dto);
-		}
-		
-		throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
-	}
-	
+        if($dto instanceof ProductSeoInterface)
+        {
+            return parent::getDto($dto);
+        }
+
+        throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
+    }
+
+
+    public function setEntity($dto): mixed
+    {
+        if(empty($dto->getTitle()) && empty($dto->getDescription()) && empty($dto->getKeywords()))
+        {
+            return false;
+        }
+
+        if($dto instanceof ProductSeoInterface || $dto instanceof self)
+        {
+            return parent::setEntity($dto);
+        }
+
+        throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
+    }
+
 }

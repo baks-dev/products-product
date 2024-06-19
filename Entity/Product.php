@@ -31,47 +31,49 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: 'product')]
 class Product //extends Event
 {
-	
-	public const TABLE = 'product';
-	
-	/** ID */
+    public const TABLE = 'product';
+
+    /** ID */
     #[Assert\NotBlank]
     #[Assert\Uuid]
-	#[ORM\Id]
-	#[ORM\Column(type: ProductUid::TYPE)]
-	private ProductUid $id;
-	
-	/** ID События */
+    #[ORM\Id]
+    #[ORM\Column(type: ProductUid::TYPE)]
+    private ProductUid $id;
+
+    /** ID События */
     #[Assert\NotBlank]
     #[Assert\Uuid]
-	#[ORM\Column(type: ProductEventUid::TYPE, unique: true)]
-	private ProductEventUid $event;
-	
-	
-	public function __construct() { $this->id = new ProductUid(); }
-	
-	
-	public function getId() : ProductUid
-	{
-		return $this->id;
-	}
-	
-	
-	public function restore(ProductUid $id) : void
-	{
-		$this->id = $id;
-	}
-	
-	
-	public function getEvent() : ProductEventUid
-	{
-		return $this->event;
-	}
-	
-	
-	public function setEvent(ProductEventUid|Event\ProductEvent $event) : void
-	{
-		$this->event = $event instanceof Event\ProductEvent ? $event->getId() : $event;
-	}
-	
+    #[ORM\Column(type: ProductEventUid::TYPE, unique: true)]
+    private ProductEventUid $event;
+
+
+    public function __construct()
+    {
+        $this->id = new ProductUid();
+    }
+
+
+    public function getId(): ProductUid
+    {
+        return $this->id;
+    }
+
+
+    public function restore(ProductUid $id): void
+    {
+        $this->id = $id;
+    }
+
+
+    public function getEvent(): ProductEventUid
+    {
+        return $this->event;
+    }
+
+
+    public function setEvent(ProductEventUid|Event\ProductEvent $event): void
+    {
+        $this->event = $event instanceof Event\ProductEvent ? $event->getId() : $event;
+    }
+
 }

@@ -39,99 +39,99 @@ use InvalidArgumentException;
 #[ORM\Index(columns: ['action'])]
 class ProductModify extends EntityEvent
 {
-	public const TABLE = 'product_modify';
-	
-	/** ID события */
-	#[ORM\Id]
-	#[ORM\OneToOne(inversedBy: 'modify', targetEntity: ProductEvent::class)]
-	#[ORM\JoinColumn(name: 'event', referencedColumnName: 'id')]
-	private ProductEvent $event;
-	
-	/** Модификатор */
-	#[ORM\Column(type: ModifyAction::TYPE, nullable: false)]
-	private ModifyAction $action;
-	
-	/** Дата */
-	#[ORM\Column(name: 'mod_date', type: Types::DATETIME_IMMUTABLE, nullable: false)]
-	private DateTimeImmutable $modDate;
-	
-	/** ID пользователя  */
-	#[ORM\Column(type: UserUid::TYPE, nullable: true)]
-	private ?UserUid $usr = null;
-	
-	/** Ip адрес */
-	#[ORM\Column(type: IpAddress::TYPE, nullable: false)]
-	private IpAddress $ip;
-	
-	/** User-agent */
-	#[ORM\Column(type: Types::TEXT, nullable: false)]
-	private string $agent;
-	
-	
-	public function __construct(ProductEvent $event)
-	{
-		$this->event = $event;
-		$this->modDate = new DateTimeImmutable();
-		
-		$this->action = new ModifyAction(ModifyActionNew::class);
-		$this->ip = new IpAddress('127.0.0.1');
-		$this->agent = 'console';
-		
-	}
+    public const TABLE = 'product_modify';
 
-	public function __clone() : void
-	{
-		$this->modDate = new DateTimeImmutable();
-		$this->action = new ModifyAction(ModifyActionUpdate::class);
-		$this->ip = new IpAddress('127.0.0.1');
-		$this->agent = 'console';
-	}
+    /** ID события */
+    #[ORM\Id]
+    #[ORM\OneToOne(inversedBy: 'modify', targetEntity: ProductEvent::class)]
+    #[ORM\JoinColumn(name: 'event', referencedColumnName: 'id')]
+    private ProductEvent $event;
+
+    /** Модификатор */
+    #[ORM\Column(type: ModifyAction::TYPE, nullable: false)]
+    private ModifyAction $action;
+
+    /** Дата */
+    #[ORM\Column(name: 'mod_date', type: Types::DATETIME_IMMUTABLE, nullable: false)]
+    private DateTimeImmutable $modDate;
+
+    /** ID пользователя  */
+    #[ORM\Column(type: UserUid::TYPE, nullable: true)]
+    private ?UserUid $usr = null;
+
+    /** Ip адрес */
+    #[ORM\Column(type: IpAddress::TYPE, nullable: false)]
+    private IpAddress $ip;
+
+    /** User-agent */
+    #[ORM\Column(type: Types::TEXT, nullable: false)]
+    private string $agent;
+
+
+    public function __construct(ProductEvent $event)
+    {
+        $this->event = $event;
+        $this->modDate = new DateTimeImmutable();
+
+        $this->action = new ModifyAction(ModifyActionNew::class);
+        $this->ip = new IpAddress('127.0.0.1');
+        $this->agent = 'console';
+
+    }
+
+    public function __clone(): void
+    {
+        $this->modDate = new DateTimeImmutable();
+        $this->action = new ModifyAction(ModifyActionUpdate::class);
+        $this->ip = new IpAddress('127.0.0.1');
+        $this->agent = 'console';
+    }
 
     public function __toString(): string
     {
         return (string) $this->event;
     }
 
-	public function getDto($dto): mixed
-	{
+    public function getDto($dto): mixed
+    {
         $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
 
-		if($dto instanceof ProductModifyInterface)
-		{
-			return parent::getDto($dto);
-		}
-		
-		throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
-	}
-	
-	
-	public function setEntity($dto): mixed
-	{
-		if($dto instanceof ProductModifyInterface || $dto instanceof self)
-		{
-			return parent::setEntity($dto);
-		}
-		
-		throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
-	}
-	
-	
-	public function upModifyAgent(IpAddress $ip, ?string $agent) : void
-	{
-		$this->ip = $ip;
-		$this->agent = $agent ?: 'console';
-		$this->modDate = new DateTimeImmutable();
-	}
-	
-	
-	public function setUsr(UserUid|User|null $usr) : void
-	{
-		$this->usr = $usr instanceof User ? $usr->getId() : $usr;
-	}
-	
-	public function equals(mixed $action) : bool
-	{
-		return $this->action->equals($action);
-	}
-	
+        if($dto instanceof ProductModifyInterface)
+        {
+            return parent::getDto($dto);
+        }
+
+        throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
+    }
+
+
+    public function setEntity($dto): mixed
+    {
+        if($dto instanceof ProductModifyInterface || $dto instanceof self)
+        {
+            return parent::setEntity($dto);
+        }
+
+        throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
+    }
+
+
+    public function upModifyAgent(IpAddress $ip, ?string $agent): void
+    {
+        $this->ip = $ip;
+        $this->agent = $agent ?: 'console';
+        $this->modDate = new DateTimeImmutable();
+    }
+
+
+    public function setUsr(UserUid|User|null $usr): void
+    {
+        $this->usr = $usr instanceof User ? $usr->getId() : $usr;
+    }
+
+    public function equals(mixed $action): bool
+    {
+        return $this->action->equals($action);
+    }
+
 }

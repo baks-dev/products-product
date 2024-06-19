@@ -1,17 +1,17 @@
 <?php
 /*
  *  Copyright 2023.  Baks.dev <admin@baks.dev>
- *  
+ *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *  
+ *
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *  
+ *
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -70,7 +70,6 @@ use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 
 final class AllProductsByCategoryRepository implements AllProductsByCategoryInterface
 {
-
     private PaginatorInterface $paginator;
 
     private DBALQueryBuilder $DBALQueryBuilder;
@@ -83,8 +82,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
     public function __construct(
         DBALQueryBuilder $DBALQueryBuilder,
         PaginatorInterface $paginator,
-    )
-    {
+    ) {
         $this->paginator = $paginator;
         $this->DBALQueryBuilder = $DBALQueryBuilder;
     }
@@ -111,8 +109,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
     public function fetchAllProductByCategoryAssociative(
         CategoryProductUid|string $category,
         string $expr = 'AND',
-    ): PaginatorInterface
-    {
+    ): PaginatorInterface {
 
         if(is_string($category))
         {
@@ -195,14 +192,16 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
         $dbal
             ->addSelect('product.id')
             ->addSelect('product.event')
-            ->join('product_category',
+            ->join(
+                'product_category',
                 Product::class,
                 'product',
                 'product.event = product_category.event'
             );
 
 
-        $dbal->join('product',
+        $dbal->join(
+            'product',
             ProductEvent::class,
             'product_event',
             'product_event.id = product.event'
@@ -227,7 +226,8 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
                     $ProductCategorySectionFieldUid = new CategoryProductSectionFieldUid($type);
                     $ProductPropertyJoin = $aliase.'.field = :'.$prepareKey.' AND '.$aliase.'.value = :'.$prepareValue;
 
-                    $dbal->setParameter($prepareKey,
+                    $dbal->setParameter(
+                        $prepareKey,
                         $ProductCategorySectionFieldUid,
                         CategoryProductSectionFieldUid::TYPE
                     );
@@ -257,7 +257,8 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
                     $ProductCategorySectionFieldUid = new CategoryProductSectionFieldUid($type);
                     $ProductPropertyJoin[] = 'product_property_filter.field = :'.$prepareKey.' AND product_property_filter.value = :'.$prepareValue;
 
-                    $dbal->setParameter($prepareKey,
+                    $dbal->setParameter(
+                        $prepareKey,
                         $ProductCategorySectionFieldUid,
                         CategoryProductSectionFieldUid::TYPE
                     );
@@ -270,7 +271,6 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
                     ProductProperty::class,
                     'product_property_filter',
                     'product_property_filter.event = product.event AND '.implode(' '.$expr.' ', $ProductPropertyJoin)
-
                 );
             }
         }
@@ -294,7 +294,6 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
                 ProductDescription::class,
                 'product_desc',
                 'product_desc.event = product.event AND product_desc.device = :device '
-
             )->setParameter('device', 'pc');
 
         /** Цена товара */
@@ -466,7 +465,8 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
             ->addGroupBy('product_modification_price.currency');
 
 
-        $dbal->addSelect("JSON_AGG
+        $dbal->addSelect(
+            "JSON_AGG
 			( DISTINCT
 				
 					JSONB_BUILD_OBJECT
@@ -548,7 +548,8 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
 			'
         );
 
-        $dbal->addSelect("
+        $dbal->addSelect(
+            "
 			CASE
 			 WHEN product_modification_image.name IS NOT NULL 
 			 THEN CONCAT ( '/upload/".$dbal->table(ProductModificationImage::class)."' , '/', product_modification_image.name)
@@ -568,7 +569,8 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
         );
 
         /** Флаг загрузки файла CDN */
-        $dbal->addSelect("
+        $dbal->addSelect(
+            "
 			CASE
                 WHEN product_modification_image.name IS NOT NULL 
                 THEN product_modification_image.ext
@@ -588,7 +590,8 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
         );
 
         /** Флаг загрузки файла CDN */
-        $dbal->addSelect("
+        $dbal->addSelect(
+            "
 			CASE
 			   WHEN product_variation_image.name IS NOT NULL 
 			   THEN product_variation_image.cdn
@@ -678,7 +681,8 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
 		");
 
         /** Валюта продукта */
-        $dbal->addSelect("
+        $dbal->addSelect(
+            "
 			CASE
 			   WHEN MIN(product_modification_price.price) IS NOT NULL AND MIN(product_modification_price.price) > 0 
 			   THEN product_modification_price.currency
@@ -727,7 +731,8 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
         );
 
 
-        $dbal->addSelect("JSON_AGG
+        $dbal->addSelect(
+            "JSON_AGG
 		( DISTINCT
 			
 				JSONB_BUILD_OBJECT
@@ -756,8 +761,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
     /** Метод возвращает все товары в категории */
     public function fetchAllProductByCategory(
         CategoryProductUid $category = null
-    ): array
-    {
+    ): array {
         $dbal = $this->DBALQueryBuilder
             ->createQueryBuilder(self::class)
             ->bindLocal();
@@ -771,7 +775,8 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
                 ->where('product_category.category = :category AND product_category.root = true')
                 ->setParameter('category', $category, CategoryProductUid::TYPE);
 
-            $dbal->join('product_category',
+            $dbal->join(
+                'product_category',
                 Product::class,
                 'product',
                 'product.event = product_category.event'
@@ -781,7 +786,8 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
         {
             $dbal->from(Product::class, 'product');
 
-            $dbal->leftJoin('product',
+            $dbal->leftJoin(
+                'product',
                 ProductCategory::class,
                 'product_category',
                 'product_category.event = product.event AND product_category.root = true'
@@ -821,7 +827,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
             )->setParameter('device', new Device(Desktop::class), Device::TYPE);
 
         $dbal
-            ->addSelect('product_modify.mod_date AS modify',)
+            ->addSelect('product_modify.mod_date AS modify', )
             ->leftJoin(
                 'product',
                 ProductModify::class,
@@ -832,8 +838,8 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
 
         /** Торговое предложение */
         $dbal
-            ->addSelect('product_offer.value AS offer_value',)
-            ->addSelect('product_offer.postfix AS offer_postfix',)
+            ->addSelect('product_offer.value AS offer_value', )
+            ->addSelect('product_offer.postfix AS offer_postfix', )
             ->leftJoin(
                 'product',
                 ProductOffer::class,
@@ -950,7 +956,8 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
 
 
         /** Идентификатор */
-        $dbal->addSelect("
+        $dbal->addSelect(
+            "
 			CASE
 			   WHEN product_modification.const IS NOT NULL 
 			   THEN product_modification.const
@@ -968,7 +975,8 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
 
 
         /** Стоимость */
-        $dbal->addSelect("
+        $dbal->addSelect(
+            "
 			CASE
 			   WHEN product_modification_price.price IS NOT NULL AND product_modification_price.price > 0 
 			   THEN product_modification_price.price
@@ -988,7 +996,8 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
         );
 
         /** Валюта продукта */
-        $dbal->addSelect("
+        $dbal->addSelect(
+            "
 			CASE
 			   WHEN product_modification_price.price IS NOT NULL AND product_modification_price.price > 0 
 			   THEN product_modification_price.currency
@@ -1081,7 +1090,8 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
 			'
         );
 
-        $dbal->addSelect("
+        $dbal->addSelect(
+            "
 			CASE
 			 WHEN product_modification_image.name IS NOT NULL 
 			 THEN CONCAT ( '/upload/".$dbal->table(ProductModificationImage::class)."' , '/', product_modification_image.name)
@@ -1101,7 +1111,8 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
         );
 
         /** Расширение файла */
-        $dbal->addSelect("
+        $dbal->addSelect(
+            "
 			CASE
                 WHEN product_modification_image.ext IS NOT NULL AND product_modification_image.name IS NOT NULL 
                 THEN product_modification_image.ext
@@ -1121,7 +1132,8 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
         );
 
         /** Флаг загрузки файла CDN */
-        $dbal->addSelect("
+        $dbal->addSelect(
+            "
 			CASE
 			    WHEN product_modification_image.cdn IS NOT NULL AND product_modification_image.name IS NOT NULL 
 			    THEN product_modification_image.cdn
@@ -1250,7 +1262,8 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
         );
 
 
-        $dbal->addSelect("JSON_AGG
+        $dbal->addSelect(
+            "JSON_AGG
 		( DISTINCT
 
 				JSONB_BUILD_OBJECT
@@ -1289,7 +1302,8 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
             (product_parameter.variation IS NULL OR product_parameter.variation = product_variation.const) AND
             (product_parameter.modification IS NULL OR product_parameter.modification = product_modification.const)
 
-        ');
+        '
+                );
         }
 
         $dbal->addOrderBy('product_info.sort', 'DESC');

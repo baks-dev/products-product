@@ -137,7 +137,6 @@ class ProductEvent extends EntityEvent
     private Collection $property;
 
 
-
     public function __construct()
     {
         $this->id = new ProductEventUid();
@@ -214,7 +213,7 @@ class ProductEvent extends EntityEvent
      */
     public function getRootCategory(): ?CategoryProductUid
     {
-        $filter = $this->category->filter(function(ProductCategory $category) {
+        $filter = $this->category->filter(function (ProductCategory $category) {
             return $category->isRoot();
 
         });
@@ -268,7 +267,6 @@ class ProductEvent extends EntityEvent
     {
         return $this->info;
     }
-
 
 
 }

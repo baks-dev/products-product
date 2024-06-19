@@ -25,31 +25,33 @@ use Doctrine\ORM\Mapping as ORM;
 
 /* Настройки сущности Product */
 
-
 #[ORM\Entity]
 #[ORM\Table(name: 'product_settings')]
 class ProductSettings
 {
-	public const TABLE = 'product_settings';
-	
-	/** ID */
-	#[ORM\Id]
-	#[ORM\Column(type: ProductSettingsIdentifier::TYPE)]
-	private ProductSettingsIdentifier $id;
-	
-	/** Очищать корзину старше n дней */
-	#[ORM\Column(name: 'settings_truncate', type: Types::SMALLINT, length: 3, nullable: false)]
-	private int $settingsTruncate = 365;
-	
-	/** Очищать события старше n дней */
-	#[ORM\Column(name: 'settings_history', type: Types::SMALLINT, length: 3, nullable: false)]
-	private int $settingsHistory = 365;
-	
-	/** Тип профиля, доступный к cозданию карточек */
-	#[ORM\Column(type: TypeProfileUid::TYPE, nullable: true)]
-	private ?TypeProfileUid $profile = null;
-	
-	
-	public function __construct() { $this->id = new ProductSettingsIdentifier(); }
-	
+    public const TABLE = 'product_settings';
+
+    /** ID */
+    #[ORM\Id]
+    #[ORM\Column(type: ProductSettingsIdentifier::TYPE)]
+    private ProductSettingsIdentifier $id;
+
+    /** Очищать корзину старше n дней */
+    #[ORM\Column(name: 'settings_truncate', type: Types::SMALLINT, length: 3, nullable: false)]
+    private int $settingsTruncate = 365;
+
+    /** Очищать события старше n дней */
+    #[ORM\Column(name: 'settings_history', type: Types::SMALLINT, length: 3, nullable: false)]
+    private int $settingsHistory = 365;
+
+    /** Тип профиля, доступный к cозданию карточек */
+    #[ORM\Column(type: TypeProfileUid::TYPE, nullable: true)]
+    private ?TypeProfileUid $profile = null;
+
+
+    public function __construct()
+    {
+        $this->id = new ProductSettingsIdentifier();
+    }
+
 }

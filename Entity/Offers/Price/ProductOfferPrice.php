@@ -1,17 +1,17 @@
 <?php
 /*
  *  Copyright 2023.  Baks.dev <admin@baks.dev>
- *  
+ *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *  
+ *
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *  
+ *
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -38,64 +38,64 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: 'product_offer_price')]
 class ProductOfferPrice extends EntityEvent
 {
-	public const TABLE = 'product_offer_price';
-	
-	/** ID торгового предложения */
+    public const TABLE = 'product_offer_price';
+
+    /** ID торгового предложения */
     #[Assert\NotBlank]
     #[Assert\Type(ProductOffer::class)]
-	#[ORM\Id]
-	#[ORM\OneToOne(inversedBy: 'price', targetEntity: ProductOffer::class)]
-	#[ORM\JoinColumn(name: 'offer', referencedColumnName: "id")]
-	private ProductOffer $offer;
-	
-	/** Стоимость */
+    #[ORM\Id]
+    #[ORM\OneToOne(targetEntity: ProductOffer::class, inversedBy: 'price')]
+    #[ORM\JoinColumn(name: 'offer', referencedColumnName: "id")]
+    private ProductOffer $offer;
+
+    /** Стоимость */
     #[Assert\Type(Money::class)]
-	#[ORM\Column(name: 'price', type: Money::TYPE, nullable: true)]
-	private ?Money $price;
-	
-	/** Валюта */
+    #[ORM\Column(name: 'price', type: Money::TYPE, nullable: true)]
+    private ?Money $price;
+
+    /** Валюта */
     #[Assert\Type(Currency::class)]
-	#[ORM\Column(name: 'currency', type: Currency::TYPE, length: 3, nullable: false)]
-	private Currency $currency;
-	
-	
-	public function __construct(ProductOffer $offer)
-	{
-		$this->offer = $offer;
-		$this->currency = new Currency();
-	}
+    #[ORM\Column(name: 'currency', type: Currency::TYPE, length: 3, nullable: false)]
+    private Currency $currency;
+
+
+    public function __construct(ProductOffer $offer)
+    {
+        $this->offer = $offer;
+        $this->currency = new Currency();
+    }
 
     public function __toString(): string
     {
         return (string) $this->offer;
     }
-	
-	public function getDto($dto): mixed
-	{
+
+    public function getDto($dto): mixed
+    {
         $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
 
-		if($dto instanceof ProductOfferPriceInterface)
-		{
-			return parent::getDto($dto);
-		}
-		
-		throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
-	}
-	
-	
-	public function setEntity($dto): mixed
-	{
-		if($dto instanceof ProductOfferPriceInterface || $dto instanceof self)
-		{
-			if(empty($dto->getPrice()?->getValue()))
-			{
-				return false;
-			}
-			
-			return parent::setEntity($dto);
-		}
-		
-		throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
-	}
-	
+        if($dto instanceof ProductOfferPriceInterface)
+        {
+            return parent::getDto($dto);
+        }
+
+        throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
+    }
+
+
+    public function setEntity($dto): mixed
+    {
+        if($dto instanceof ProductOfferPriceInterface || $dto instanceof self)
+        {
+            if(empty($dto->getPrice()?->getValue()))
+            {
+                return false;
+            }
+
+            return parent::setEntity($dto);
+        }
+
+        throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
+    }
+
 }

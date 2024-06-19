@@ -41,77 +41,77 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Index(columns: ['active_from', 'active_to'])]
 class ProductActive extends EntityEvent
 {
-	public const TABLE = 'product_active';
-	
-	/** ID события */
+    public const TABLE = 'product_active';
+
+    /** ID события */
     #[Assert\NotBlank]
     #[Assert\Type(ProductEvent::class)]
-	#[ORM\Id]
-	#[ORM\OneToOne(inversedBy: 'active', targetEntity: ProductEvent::class)]
-	#[ORM\JoinColumn(name: 'event', referencedColumnName: 'id')]
-	private ProductEvent $event;
-	
-	/** Статус активности товара */
+    #[ORM\Id]
+    #[ORM\OneToOne(inversedBy: 'active', targetEntity: ProductEvent::class)]
+    #[ORM\JoinColumn(name: 'event', referencedColumnName: 'id')]
+    private ProductEvent $event;
+
+    /** Статус активности товара */
     #[Assert\Type('bool')]
-	#[ORM\Column(name: 'active', type: Types::BOOLEAN, nullable: false)]
-	private bool $active = true;
-	
-	/** Начало активности */
+    #[ORM\Column(name: 'active', type: Types::BOOLEAN, nullable: false)]
+    private bool $active = true;
+
+    /** Начало активности */
     #[Assert\NotBlank]
-	#[ORM\Column(name: 'active_from', type: Types::DATETIME_IMMUTABLE, nullable: false)]
-	private DateTimeImmutable $activeFrom;
-	
-	/** Окончание активности */
-	#[ORM\Column(name: 'active_to', type: Types::DATETIME_IMMUTABLE, nullable: true)]
-	private ?DateTimeImmutable $activeTo = null;
-	
-	
-	public function __construct(ProductEvent $event)
-	{
-		$this->event = $event;
-		$this->activeFrom = new DateTimeImmutable();
-	}
+    #[ORM\Column(name: 'active_from', type: Types::DATETIME_IMMUTABLE, nullable: false)]
+    private DateTimeImmutable $activeFrom;
+
+    /** Окончание активности */
+    #[ORM\Column(name: 'active_to', type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?DateTimeImmutable $activeTo = null;
+
+
+    public function __construct(ProductEvent $event)
+    {
+        $this->event = $event;
+        $this->activeFrom = new DateTimeImmutable();
+    }
 
     public function __toString(): string
     {
         return (string) $this->event;
     }
 
-	public function getDto($dto): mixed
-	{
+    public function getDto($dto): mixed
+    {
         $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
 
-		if($dto instanceof ProductActiveInterface)
-		{
-			return parent::getDto($dto);
-		}
-		throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
-	}
+        if($dto instanceof ProductActiveInterface)
+        {
+            return parent::getDto($dto);
+        }
+        throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
+    }
 
-	public function setEntity($dto): mixed
-	{
-		$format = "H:i";
-		
-		if($dto->activeFromTime())
-		{
-			$time = date_parse_from_format($format, $dto->activeFromTime()->format($format)); /* парсим время */
-			$getActiveFrom = $dto->getActiveFrom()->setTime($time['hour'], $time['minute']);
-			$dto->setActiveFrom($getActiveFrom);
-		}
-		
-		if($dto->getActiveTo() && $dto->activeToTime())
-		{
-			$time = date_parse_from_format($format, $dto->activeToTime()->format($format)); /* парсим время */
-			$getActiveTo = $dto->getActiveTo()->setTime($time['hour'], $time['minute']);
-			$dto->setActiveTo($getActiveTo);
-		}
-		
-		if($dto instanceof ProductActiveInterface || $dto instanceof self)
-		{
-			return parent::setEntity($dto);
-		}
-		
-		throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
-	}
-	
+    public function setEntity($dto): mixed
+    {
+        $format = "H:i";
+
+        if($dto->activeFromTime())
+        {
+            $time = date_parse_from_format($format, $dto->activeFromTime()->format($format)); /* парсим время */
+            $getActiveFrom = $dto->getActiveFrom()->setTime($time['hour'], $time['minute']);
+            $dto->setActiveFrom($getActiveFrom);
+        }
+
+        if($dto->getActiveTo() && $dto->activeToTime())
+        {
+            $time = date_parse_from_format($format, $dto->activeToTime()->format($format)); /* парсим время */
+            $getActiveTo = $dto->getActiveTo()->setTime($time['hour'], $time['minute']);
+            $dto->setActiveTo($getActiveTo);
+        }
+
+        if($dto instanceof ProductActiveInterface || $dto instanceof self)
+        {
+            return parent::setEntity($dto);
+        }
+
+        throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
+    }
+
 }

@@ -33,35 +33,35 @@ use InvalidArgumentException;
 #[ORM\Table(name: 'product_description')]
 class ProductDescription extends EntityEvent
 {
-	public const TABLE = 'product_description';
-	
-	/** Связь на событие */
-	#[ORM\Id]
-	#[ORM\ManyToOne(targetEntity: ProductEvent::class, inversedBy: "description")]
-	#[ORM\JoinColumn(name: 'event', referencedColumnName: "id", nullable: false)]
-	private ProductEvent $event;
+    public const TABLE = 'product_description';
+
+    /** Связь на событие */
+    #[ORM\Id]
+    #[ORM\ManyToOne(targetEntity: ProductEvent::class, inversedBy: "description")]
+    #[ORM\JoinColumn(name: 'event', referencedColumnName: "id", nullable: false)]
+    private ProductEvent $event;
 
     /** Девайс (pc, mobile, tablet) */
     #[ORM\Id]
-    #[ORM\Column(type: Device::TYPE, nullable: false, options: ['default' => 'pc'] )]
+    #[ORM\Column(type: Device::TYPE, nullable: false, options: ['default' => 'pc'])]
     private Device $device;
-	
-	/** Локаль */
-	#[ORM\Id]
-	#[ORM\Column(type: Locale::TYPE, length: 2, nullable: false)]
-	private Locale $local;
+
+    /** Локаль */
+    #[ORM\Id]
+    #[ORM\Column(type: Locale::TYPE, length: 2, nullable: false)]
+    private Locale $local;
 
 
-	/** Краткое описание */
-	#[ORM\Column(type: Types::TEXT, nullable: true)]
-	private ?string $preview;
-	
-	/** Краткое описание */
-	#[ORM\Column(type: Types::TEXT, nullable: true)]
-	private ?string $description;
-	
-	
-	public function __construct(ProductEvent $event)
+    /** Краткое описание */
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $preview;
+
+    /** Краткое описание */
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $description;
+
+
+    public function __construct(ProductEvent $event)
     {
         $this->event = $event;
     }
@@ -70,27 +70,27 @@ class ProductDescription extends EntityEvent
     {
         return (string) $this->event;
     }
-	
-	public function getDto($dto): mixed
-	{
+
+    public function getDto($dto): mixed
+    {
         $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
 
-		if($dto instanceof ProductDescriptionInterface)
-		{
-			return parent::getDto($dto);
-		}
-		
-		throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
-	}
+        if($dto instanceof ProductDescriptionInterface)
+        {
+            return parent::getDto($dto);
+        }
 
-	public function setEntity($dto): mixed
-	{
-		if($dto instanceof ProductDescriptionInterface || $dto instanceof self)
-		{
-			return parent::setEntity($dto);
-		}
-		
-		throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
-	}
+        throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
+    }
+
+    public function setEntity($dto): mixed
+    {
+        if($dto instanceof ProductDescriptionInterface || $dto instanceof self)
+        {
+            return parent::setEntity($dto);
+        }
+
+        throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
+    }
 
 }

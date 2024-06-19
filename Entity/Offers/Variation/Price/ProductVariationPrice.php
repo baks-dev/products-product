@@ -1,17 +1,17 @@
 <?php
 /*
  *  Copyright 2023.  Baks.dev <admin@baks.dev>
- *  
+ *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *  
+ *
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *  
+ *
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -22,7 +22,6 @@
  */
 
 namespace BaksDev\Products\Product\Entity\Offers\Variation\Price;
-
 
 use BaksDev\Core\Entity\EntityEvent;
 use BaksDev\Products\Product\Entity\Offers\Offer\Offer;
@@ -36,27 +35,27 @@ use InvalidArgumentException;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'product_variation_price')]
-
 class ProductVariationPrice extends EntityEvent
 {
     public const TABLE = 'product_variation_price';
-    
+
     /** ID события */
     #[ORM\Id]
-    #[ORM\OneToOne(inversedBy: 'price', targetEntity: ProductVariation::class)]
-	#[ORM\JoinColumn(name: 'variation', referencedColumnName: "id")]
+    #[ORM\OneToOne(targetEntity: ProductVariation::class, inversedBy: 'price')]
+    #[ORM\JoinColumn(name: 'variation', referencedColumnName: "id")]
     private ProductVariation $variation;
-    
+
     /** Стоимость */
     #[ORM\Column(name: 'price', type: Money::TYPE, nullable: true)]
     private ?Money $price;
-    
+
     /** Валюта */
     #[ORM\Column(name: 'currency', type: Currency::TYPE, length: 3, nullable: false)]
     private Currency $currency;
-    
 
-    public function __construct(ProductVariation $variation) {
+
+    public function __construct(ProductVariation $variation)
+    {
         $this->variation = $variation;
         $this->currency = new Currency();
     }
@@ -74,22 +73,22 @@ class ProductVariationPrice extends EntityEvent
         {
             return parent::getDto($dto);
         }
-        
+
         throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
     }
-    
+
     public function setEntity($dto): mixed
     {
         if($dto instanceof ProductVariationPriceInterface || $dto instanceof self)
         {
-			if(empty($dto->getPrice()?->getValue()))
-			{
-				return false;
-			}
-			
+            if(empty($dto->getPrice()?->getValue()))
+            {
+                return false;
+            }
+
             return parent::setEntity($dto);
         }
-        
+
         throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
     }
 }

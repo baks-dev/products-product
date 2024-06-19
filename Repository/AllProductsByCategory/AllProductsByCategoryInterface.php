@@ -43,7 +43,7 @@ interface AllProductsByCategoryInterface
 
     /** Метод возвращает все товары в категории */
     public function fetchAllProductByCategory(
-        CategoryProductUid $category
+        ?CategoryProductUid $category = null
     ): array;
 
 }
