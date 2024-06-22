@@ -28,66 +28,63 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class ActiveForm extends AbstractType
 {
-	
-	public function buildForm(FormBuilderInterface $builder, array $options) : void
-	{
-		/* TextType */
-		$builder->add('active', CheckboxType::class, ['label' => false, 'required' => false]);
-		
-		/** Начало активности */
-		$builder->add('activeFrom', DateType::class, [
-			'widget' => 'single_text',
-			'html5' => false,
-			'label' => false,
-			'required' => true,
-			'format' => 'dd.MM.yyyy',
-			'input' => 'datetime_immutable',
-			'attr' => ['class' => 'js-datepicker'],
-		]);
-		
-		$builder->add
-		(
-			'activeFromTime',
-			TimeType::class,
-			[
-				'widget' => 'single_text',
-				'required' => false,
-				'label' => false,
-				'input' => 'datetime_immutable',
-			]
-		);
-		
-		/** Окончание активности */
-		$builder->add('activeTo', DateType::class, [
-			'widget' => 'single_text',
-			'html5' => false,
-			'label' => false,
-			'required' => false,
-			'format' => 'dd.MM.yyyy',
-			'input' => 'datetime_immutable',
-			'attr' => ['class' => 'js-datepicker'],
-		]);
-		
-		$builder->add
-		(
-			'activeToTime',
-			TimeType::class,
-			[
-				'widget' => 'single_text',
-				'required' => false,
-				'label' => false,
-				'input' => 'datetime_immutable',
-			]
-		);
-		
-	}
-	
-	
-	public function configureOptions(OptionsResolver $resolver) : void
-	{
-		$resolver->setDefaults([
-			'data_class' => ActiveDTO::class,
-		]);
-	}
-	
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        /* TextType */
+        $builder->add('active', CheckboxType::class, ['label' => false, 'required' => false]);
+
+        /** Начало активности */
+        $builder->add('activeFrom', DateType::class, [
+            'widget' => 'single_text',
+            'html5' => false,
+            'label' => false,
+            'required' => true,
+            'format' => 'dd.MM.yyyy',
+            'input' => 'datetime_immutable',
+            'attr' => ['class' => 'js-datepicker'],
+        ]);
+
+        $builder->add(
+            'activeFromTime',
+            TimeType::class,
+            [
+                'widget' => 'single_text',
+                'required' => false,
+                'label' => false,
+                'input' => 'datetime_immutable',
+            ]
+        );
+
+        /** Окончание активности */
+        $builder->add('activeTo', DateType::class, [
+            'widget' => 'single_text',
+            'html5' => false,
+            'label' => false,
+            'required' => false,
+            'format' => 'dd.MM.yyyy',
+            'input' => 'datetime_immutable',
+            'attr' => ['class' => 'js-datepicker'],
+        ]);
+
+        $builder->add(
+            'activeToTime',
+            TimeType::class,
+            [
+                'widget' => 'single_text',
+                'required' => false,
+                'label' => false,
+                'input' => 'datetime_immutable',
+            ]
+        );
+
+    }
+
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => ActiveDTO::class,
+        ]);
+    }
+
 }

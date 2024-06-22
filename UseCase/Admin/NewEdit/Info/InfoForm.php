@@ -1,17 +1,17 @@
 <?php
 /*
  *  Copyright 2023.  Baks.dev <admin@baks.dev>
- *  
+ *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *  
+ *
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *  
+ *
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -38,32 +38,30 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class InfoForm extends AbstractType
 {
-	
-	private ProductUserProfileChoiceInterface $profileChoice;
+    private ProductUserProfileChoiceInterface $profileChoice;
     private Security $security;
 
     public function __construct(
         ProductUserProfileChoiceInterface $profileChoice,
         Security $security
-    )
-	{
-		$this->profileChoice = $profileChoice;
+    ) {
+        $this->profileChoice = $profileChoice;
         $this->security = $security;
     }
-	
-	
-	public function buildForm(FormBuilderInterface $builder, array $options) : void
-	{
+
+
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
 
         if($this->security->isGranted('ROLE_ADMIN'))
         {
             $builder
                 ->add('profile', ChoiceType::class, [
                     'choices' => $this->profileChoice->getProfileCollection(),
-                    'choice_value' => function(?UserProfileUid $profile) {
+                    'choice_value' => function (?UserProfileUid $profile) {
                         return $profile?->getValue();
                     },
-                    'choice_label' => function(UserProfileUid $profile) {
+                    'choice_label' => function (UserProfileUid $profile) {
                         return $profile->getAttr();
                     },
                     'label' => false,
@@ -71,28 +69,26 @@ final class InfoForm extends AbstractType
                     'multiple' => false,
                     'required' => false,
                     'attr' => ['data-select' => 'select2',],
-                ])
-            ;
+                ]);
         }
 
         /* TextType */
         $builder->add('sort', IntegerType::class);
 
-		$builder->add('url', TextType::class);
-		
-		$builder->add('article', TextType::class, ['required' => false]);
-		
-	}
-	
-	
-	public function configureOptions(OptionsResolver $resolver) : void
-	{
-		$resolver->setDefaults
-		(
-			[
-				'data_class' => InfoDTO::class,
-			]
-		);
-	}
-	
+        $builder->add('url', TextType::class);
+
+        $builder->add('article', TextType::class, ['required' => false]);
+
+    }
+
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults(
+            [
+                'data_class' => InfoDTO::class,
+            ]
+        );
+    }
+
 }
