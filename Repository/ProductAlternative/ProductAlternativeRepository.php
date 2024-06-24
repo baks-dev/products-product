@@ -60,22 +60,14 @@ use stdClass;
 
 final class ProductAlternativeRepository implements ProductAlternativeInterface
 {
-
-    private DBALQueryBuilder $DBALQueryBuilder;
-
-    public function __construct(DBALQueryBuilder $DBALQueryBuilder)
-    {
-
-        $this->DBALQueryBuilder = $DBALQueryBuilder;
-    }
+    public function __construct(private readonly DBALQueryBuilder $DBALQueryBuilder) {}
 
     public function fetchAllAlternativeAssociative(
         string $offer,
         ?string $variation,
         ?string $modification,
         ?array $property = null
-    ): ?array
-    {
+    ): ?array {
 
         $qb = $this->DBALQueryBuilder
             ->createQueryBuilder(self::class)
@@ -158,7 +150,8 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 				   ELSE TRUE
 				END
 			)
-		');
+		'
+            );
 
 
         // Название твоара

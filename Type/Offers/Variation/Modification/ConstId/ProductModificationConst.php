@@ -60,8 +60,7 @@ final class ProductModificationConst extends Uid
         mixed $property = null,
         mixed $characteristic = null,
         mixed $reference = null,
-    )
-    {
+    ) {
         parent::__construct($value);
 
         $this->attr = $attr;
@@ -107,5 +106,5 @@ final class ProductModificationConst extends Uid
         $this->reference = $reference;
         return $this;
     }
-    
+
 }

@@ -22,16 +22,15 @@ use BaksDev\Core\Type\UidType\UidType;
 
 final class ProductOfferConstType extends UidType
 {
-	
-	public function getClassType(): string
-	{
-		return ProductOfferConst::class;
-	}
-	
-	
-	public function getName(): string
-	{
-		return ProductOfferConst::TYPE;
-	}
-	
+    public function getClassType(): string
+    {
+        return ProductOfferConst::class;
+    }
+
+
+    public function getName(): string
+    {
+        return ProductOfferConst::TYPE;
+    }
+
 }

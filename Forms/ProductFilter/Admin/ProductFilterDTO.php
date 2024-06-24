@@ -20,12 +20,10 @@ namespace BaksDev\Products\Product\Forms\ProductFilter\Admin;
 
 use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Forms\ProductFilter\ProductFilterInterface;
-use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Symfony\Component\HttpFoundation\Request;
 
 final class ProductFilterDTO implements ProductFilterInterface
 {
-
     public const category = 'vKmDiRWOPq';
     public const offer = 'nOuksvfLiZ';
     public const variation = 'AItZEGxyrY';
@@ -84,14 +82,6 @@ final class ProductFilterDTO implements ProductFilterInterface
         }
 
         $this->category = $category;
-
-        //        $this->request->getSession()->remove(self::offer);
-        //        $this->request->getSession()->remove(self::variation);
-        //        $this->request->getSession()->remove(self::modification);
-        //
-        //        $this->offer = null;
-        //        $this->variation = null;
-        //        $this->modification = null;
 
     }
 
@@ -200,4 +190,3 @@ final class ProductFilterDTO implements ProductFilterInterface
     }
 
 }
-

@@ -26,7 +26,6 @@ namespace BaksDev\Products\Product\Entity\Files;
 use BaksDev\Core\Entity\EntityEvent;
 use BaksDev\Files\Resources\Upload\UploadEntityInterface;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
-use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\File\ProductFileUid;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -135,18 +134,6 @@ class ProductFiles extends EntityEvent implements UploadEntityInterface
     }
 
 
-    //    public function getUploadDir(): object
-    //    {
-    //        return $this->event->getId();
-    //    }
-    //
-    //
-    //    public static function getDirName(): string
-    //    {
-    //        return ProductEventUid::class;
-    //    }
-
-
     public function updFile(string $name, string $ext, int $size): void
     {
 
@@ -174,12 +161,5 @@ class ProductFiles extends EntityEvent implements UploadEntityInterface
     {
         return $this->ext;
     }
-
-
-
-    //    public function getDir(): ProductEventUid
-    //    {
-    //        return $this->dir;
-    //    }
 
 }

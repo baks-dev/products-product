@@ -47,17 +47,10 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class ProductChoiceRepository implements ProductChoiceInterface
 {
-    private ORMQueryBuilder $ORMQueryBuilder;
-    private DBALQueryBuilder $DBALQueryBuilder;
-
     public function __construct(
-        ORMQueryBuilder $ORMQueryBuilder,
-        DBALQueryBuilder $DBALQueryBuilder,
-    )
-    {
-        $this->ORMQueryBuilder = $ORMQueryBuilder;
-        $this->DBALQueryBuilder = $DBALQueryBuilder;
-    }
+        private readonly ORMQueryBuilder $ORMQueryBuilder,
+        private readonly DBALQueryBuilder $DBALQueryBuilder,
+    ) {}
 
     /**
      * Метод возвращает все идентификаторы продуктов (ProductUid) с названием
@@ -146,7 +139,8 @@ final class ProductChoiceRepository implements ProductChoiceInterface
             active.active = true AND
             active.activeFrom < CURRENT_TIMESTAMP() AND
             (active.activeTo IS NULL OR active.activeTo > CURRENT_TIMESTAMP())
-		');
+		'
+        );
 
         $qb->join(
             ProductTrans::class,
@@ -264,7 +258,6 @@ final class ProductChoiceRepository implements ProductChoiceInterface
             END
 
         AS option');
-
 
 
         $dbal->andWhere('

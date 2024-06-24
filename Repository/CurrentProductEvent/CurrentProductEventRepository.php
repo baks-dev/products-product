@@ -31,15 +31,9 @@ use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 
-final class CurrentProductEventRepository implements CurrentProductEventInterface
+final readonly class CurrentProductEventRepository implements CurrentProductEventInterface
 {
-
-    private ORMQueryBuilder $ORMQueryBuilder;
-
-    public function __construct(ORMQueryBuilder $ORMQueryBuilder)
-    {
-        $this->ORMQueryBuilder = $ORMQueryBuilder;
-    }
+    public function __construct(private ORMQueryBuilder $ORMQueryBuilder) {}
 
     /**
      * Метод возвращает активное событие продукции

@@ -22,6 +22,5 @@ use BaksDev\Core\Type\Locale\Locale;
 
 interface ProductTransInterface
 {
-	public function setLocal(Locale $local) : void;
-	
+    public function setLocal(Locale $local): void;
 }

@@ -35,25 +35,17 @@ use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
-use Doctrine\ORM\EntityManagerInterface;
 
 final class ProductVariationQuantityRepository implements ProductVariationQuantityInterface
 {
-
-    private ORMQueryBuilder $ORMQueryBuilder;
-
-    public function __construct(ORMQueryBuilder $ORMQueryBuilder)
-    {
-        $this->ORMQueryBuilder = $ORMQueryBuilder;
-    }
+    public function __construct(private readonly ORMQueryBuilder $ORMQueryBuilder) {}
 
     /** Метод возвращает количественный учет множественного варианта */
     public function getProductVariationQuantity(
         ProductUid $product,
         ProductOfferConst $offer,
         ProductVariationConst $variation
-    ): ?ProductVariationQuantity
-    {
+    ): ?ProductVariationQuantity {
         $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
 
 

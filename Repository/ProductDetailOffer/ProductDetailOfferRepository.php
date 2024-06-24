@@ -26,14 +26,12 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Repository\ProductDetailOffer;
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
-
 use BaksDev\Products\Category\Entity\Offers\CategoryProductOffers;
 use BaksDev\Products\Category\Entity\Offers\Trans\CategoryProductOffersTrans;
 use BaksDev\Products\Category\Entity\Offers\Variation\CategoryProductVariation;
 use BaksDev\Products\Category\Entity\Offers\Variation\Modification\CategoryProductModification;
 use BaksDev\Products\Category\Entity\Offers\Variation\Modification\Trans\CategoryProductModificationTrans;
 use BaksDev\Products\Category\Entity\Offers\Variation\Trans\CategoryProductVariationTrans;
-use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Offers\Price\ProductOfferPrice;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Price\ProductModificationPrice;
@@ -56,8 +54,7 @@ final class ProductDetailOfferRepository implements ProductDetailOfferInterface
     /** Метод возвращает торговые предложения продукта */
     public function fetchProductOfferAssociative(
         ProductUid|string $product,
-    ): array|bool
-    {
+    ): array|bool {
         if(is_string($product))
         {
             $product = new ProductUid($product);
@@ -84,15 +81,16 @@ final class ProductDetailOfferRepository implements ProductDetailOfferInterface
 
         /* Торговое предложение */
 
-        $qb->addSelect('product_offer.value as product_offer_value');
-        $qb->addSelect('product_offer.postfix as product_offer_postfix');
-        $qb->addSelect('product_offer.category_offer as category_offer');
-        $qb->leftJoin(
-            'product',
-            ProductOffer::class,
-            'product_offer',
-            'product_offer.event = product.event'
-        );
+        $qb
+            ->addSelect('product_offer.value as product_offer_value')
+            ->addSelect('product_offer.postfix as product_offer_postfix')
+            ->addSelect('product_offer.category_offer as category_offer')
+            ->leftJoin(
+                'product',
+                ProductOffer::class,
+                'product_offer',
+                'product_offer.event = product.event'
+            );
 
         /* Цена торгового предложения */
         $qb->leftJoin(
@@ -106,22 +104,22 @@ final class ProductDetailOfferRepository implements ProductDetailOfferInterface
         $qb
             ->addSelect('category_offer.reference AS product_offer_reference')
             ->leftJoin(
-            'product_offer',
+                'product_offer',
                 CategoryProductOffers::class,
-            'category_offer',
-            'category_offer.id = product_offer.category_offer'
-        );
+                'category_offer',
+                'category_offer.id = product_offer.category_offer'
+            );
 
         /* Получаем название торгового предложения */
         $qb
             ->addSelect('category_offer_trans.name as product_offer_name')
             ->addSelect('category_offer_trans.postfix as product_offer_name_postfix')
             ->leftJoin(
-            'category_offer',
+                'category_offer',
                 CategoryProductOffersTrans::class,
-            'category_offer_trans',
-            'category_offer_trans.offer = category_offer.id AND category_offer_trans.local = :local'
-        );
+                'category_offer_trans',
+                'category_offer_trans.offer = category_offer.id AND category_offer_trans.local = :local'
+            );
 
         /* Множественные варианты торгового предложения */
 
@@ -129,11 +127,11 @@ final class ProductDetailOfferRepository implements ProductDetailOfferInterface
             ->addSelect('product_offer_variation.value as product_variation_value')
             ->addSelect('product_offer_variation.postfix as product_variation_postfix')
             ->leftJoin(
-            'product_offer',
+                'product_offer',
                 ProductVariation::class,
-            'product_offer_variation',
-            'product_offer_variation.offer = product_offer.id'
-        );
+                'product_offer_variation',
+                'product_offer_variation.offer = product_offer.id'
+            );
 
         /* Цена множественного варианта */
         $qb->leftJoin(
@@ -147,22 +145,22 @@ final class ProductDetailOfferRepository implements ProductDetailOfferInterface
         $qb
             ->addSelect('category_offer_variation.reference as product_variation_reference')
             ->leftJoin(
-            'product_offer_variation',
+                'product_offer_variation',
                 CategoryProductVariation::class,
-            'category_offer_variation',
-            'category_offer_variation.id = product_offer_variation.category_variation'
-        );
+                'category_offer_variation',
+                'category_offer_variation.id = product_offer_variation.category_variation'
+            );
 
         /* Получаем название множественного варианта */
         $qb
             ->addSelect('category_offer_variation_trans.name as product_variation_name')
             ->addSelect('category_offer_variation_trans.postfix as product_variation_name_postfix')
             ->leftJoin(
-            'category_offer_variation',
+                'category_offer_variation',
                 CategoryProductVariationTrans::class,
-            'category_offer_variation_trans',
-            'category_offer_variation_trans.variation = category_offer_variation.id AND category_offer_variation_trans.local = :local'
-        );
+                'category_offer_variation_trans',
+                'category_offer_variation_trans.variation = category_offer_variation.id AND category_offer_variation_trans.local = :local'
+            );
 
         /* Модификация множественного варианта торгового предложения */
 
@@ -170,11 +168,11 @@ final class ProductDetailOfferRepository implements ProductDetailOfferInterface
             ->addSelect('product_offer_modification.value as product_modification_value')
             ->addSelect('product_offer_modification.postfix as product_modification_postfix')
             ->leftJoin(
-            'product_offer_variation',
+                'product_offer_variation',
                 ProductModification::class,
-            'product_offer_modification',
-            'product_offer_modification.variation = product_offer_variation.id'
-        );
+                'product_offer_modification',
+                'product_offer_modification.variation = product_offer_variation.id'
+            );
 
         /* Цена Модификации множественного варианта */
         $qb->leftJoin(
@@ -188,22 +186,22 @@ final class ProductDetailOfferRepository implements ProductDetailOfferInterface
         $qb
             ->addSelect('category_offer_modification.reference as product_modification_reference')
             ->leftJoin(
-            'product_offer_modification',
+                'product_offer_modification',
                 CategoryProductModification::class,
-            'category_offer_modification',
-            'category_offer_modification.id = product_offer_modification.category_modification'
-        );
+                'category_offer_modification',
+                'category_offer_modification.id = product_offer_modification.category_modification'
+            );
 
         /* Получаем название типа */
         $qb
             ->addSelect('category_offer_modification_trans.name as product_modification_name')
             ->addSelect('category_offer_modification_trans.postfix as product_modification_name_postfix')
             ->leftJoin(
-            'category_offer_modification',
+                'category_offer_modification',
                 CategoryProductModificationTrans::class,
-            'category_offer_modification_trans',
-            'category_offer_modification_trans.modification = category_offer_modification.id AND category_offer_modification_trans.local = :local'
-        );
+                'category_offer_modification_trans',
+                'category_offer_modification_trans.modification = category_offer_modification.id AND category_offer_modification_trans.local = :local'
+            );
 
 
         /* Стоимость продукта */
@@ -251,10 +249,6 @@ final class ProductDetailOfferRepository implements ProductDetailOfferInterface
 			END AS product_currency
 		'
         );
-
-
-        //$qb->select('id');
-        //$qb->from(ClasssName::TABLE, 'wb_order');
 
         return $qb->enableCache('products-product', 86400)->fetchAllAssociative();
     }

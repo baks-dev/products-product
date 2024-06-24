@@ -26,35 +26,34 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class FilesCollectionForm extends AbstractType
 {
-	public function buildForm(FormBuilderInterface $builder, array $options) : void
-	{
-		$builder
-			->add(
-				'file', FileType::class,
-				[
-					'label' => false,
-					'required' => false,
-					'attr' => ['accept' => ".doc, .docx, .xls, .xlsx, .csv, .pdf, .zip, .rar"],
-				]
-			)
-		;
-		
-		$builder->add
-		(
-			'DeleteFile',
-			ButtonType::class,
-			[
-				'label_html' => true,
-			]
-		);
-	}
-	
-	
-	public function configureOptions(OptionsResolver $resolver) : void
-	{
-		$resolver->setDefaults([
-			'data_class' => FilesCollectionDTO::class,
-		]);
-	}
-	
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $builder
+            ->add(
+                'file',
+                FileType::class,
+                [
+                    'label' => false,
+                    'required' => false,
+                    'attr' => ['accept' => ".doc, .docx, .xls, .xlsx, .csv, .pdf, .zip, .rar"],
+                ]
+            );
+
+        $builder->add(
+            'DeleteFile',
+            ButtonType::class,
+            [
+                'label_html' => true,
+            ]
+        );
+    }
+
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => FilesCollectionDTO::class,
+        ]);
+    }
+
 }

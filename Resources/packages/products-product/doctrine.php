@@ -1,17 +1,17 @@
 <?php
 /*
  *  Copyright 2023.  Baks.dev <admin@baks.dev>
- *  
+ *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *  
+ *
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *  
+ *
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -58,58 +58,56 @@ use BaksDev\Products\Product\Type\Video\ProductVideoType;
 use BaksDev\Products\Product\Type\Video\ProductVideoUid;
 use Symfony\Config\DoctrineConfig;
 
-return static function(ContainerConfigurator $container, DoctrineConfig $doctrine) {
-	
-	/* ProductUid */
-	
-	$doctrine->dbal()->type(ProductUid::TYPE)->class(ProductType::class);
-	$doctrine->dbal()->type(ProductEventUid::TYPE)->class(ProductEventType::class);
-	$doctrine->dbal()->type(ProductOfferConst::TYPE)->class(ProductOfferConstType::class);
-	$doctrine->dbal()->type(ProductFileUid::TYPE)->class(ProductFileType::class);
-	$doctrine->dbal()->type(ProductOfferUid::TYPE)->class(ProductOfferType::class);
-	$doctrine->dbal()->type(ProductSettingsIdentifier::TYPE)->class(ProductSettingsType::class);
-	$doctrine->dbal()->type(ProductPhotoUid::TYPE)->class(ProductPhotoType::class);
-	$doctrine->dbal()->type(ProductVideoUid::TYPE)->class(ProductVideoType::class);
-	$doctrine->dbal()->type(ProductOfferImageUid::TYPE)->class(ProductOfferImageType::class);
-	
-	$doctrine->dbal()->type(ProductOfferVariationImageUid::TYPE)->class(ProductOfferVariationImageType::class);
-	$doctrine->dbal()->type(ProductVariationConst::TYPE)->class(ProductVariationConstType::class);
-	$doctrine->dbal()->type(ProductVariationUid::TYPE)->class(ProductVariationType::class);
-	
-	$doctrine->dbal()->type(ProductOfferVariationModificationImageUid::TYPE)->class(ProductOfferVariationModificationImageType::class);
-	$doctrine->dbal()->type(ProductModificationConst::TYPE)->class(ProductModificationConstType::class);
-	$doctrine->dbal()->type(ProductModificationUid::TYPE)->class(ProductModificationType::class);
-	$doctrine->dbal()->type(ProductBarcode::TYPE)->class(ProductBarcodeType::class);
+return static function (ContainerConfigurator $container, DoctrineConfig $doctrine) {
 
-	$services = $container->services()
-		->defaults()
-		->autowire()
-		->autoconfigure()
-	;
-	
-	/** Value Resolver */
+    /* ProductUid */
 
-	$services->set(ProductUid::class)->class(ProductUid::class);
-	$services->set(ProductEventUid::class)->class(ProductEventUid::class);
-    
-	$services->set(ProductOfferUid::class)->class(ProductOfferUid::class);
-	$services->set(ProductOfferConst::class)->class(ProductOfferConst::class);
+    $doctrine->dbal()->type(ProductUid::TYPE)->class(ProductType::class);
+    $doctrine->dbal()->type(ProductEventUid::TYPE)->class(ProductEventType::class);
+    $doctrine->dbal()->type(ProductOfferConst::TYPE)->class(ProductOfferConstType::class);
+    $doctrine->dbal()->type(ProductFileUid::TYPE)->class(ProductFileType::class);
+    $doctrine->dbal()->type(ProductOfferUid::TYPE)->class(ProductOfferType::class);
+    $doctrine->dbal()->type(ProductSettingsIdentifier::TYPE)->class(ProductSettingsType::class);
+    $doctrine->dbal()->type(ProductPhotoUid::TYPE)->class(ProductPhotoType::class);
+    $doctrine->dbal()->type(ProductVideoUid::TYPE)->class(ProductVideoType::class);
+    $doctrine->dbal()->type(ProductOfferImageUid::TYPE)->class(ProductOfferImageType::class);
 
-	$services->set(ProductVariationUid::class)->class(ProductVariationUid::class);
-	$services->set(ProductVariationConst::class)->class(ProductVariationConst::class);
+    $doctrine->dbal()->type(ProductOfferVariationImageUid::TYPE)->class(ProductOfferVariationImageType::class);
+    $doctrine->dbal()->type(ProductVariationConst::TYPE)->class(ProductVariationConstType::class);
+    $doctrine->dbal()->type(ProductVariationUid::TYPE)->class(ProductVariationType::class);
 
-	$services->set(ProductModificationUid::class)->class(ProductModificationUid::class);
-	$services->set(ProductModificationConst::class)->class(ProductModificationConst::class);
+    $doctrine->dbal()->type(ProductOfferVariationModificationImageUid::TYPE)->class(ProductOfferVariationModificationImageType::class);
+    $doctrine->dbal()->type(ProductModificationConst::TYPE)->class(ProductModificationConstType::class);
+    $doctrine->dbal()->type(ProductModificationUid::TYPE)->class(ProductModificationType::class);
+    $doctrine->dbal()->type(ProductBarcode::TYPE)->class(ProductBarcodeType::class);
+
+    $services = $container->services()
+        ->defaults()
+        ->autowire()
+        ->autoconfigure();
+
+    /** Value Resolver */
+
+    $services->set(ProductUid::class)->class(ProductUid::class);
+    $services->set(ProductEventUid::class)->class(ProductEventUid::class);
+
+    $services->set(ProductOfferUid::class)->class(ProductOfferUid::class);
+    $services->set(ProductOfferConst::class)->class(ProductOfferConst::class);
+
+    $services->set(ProductVariationUid::class)->class(ProductVariationUid::class);
+    $services->set(ProductVariationConst::class)->class(ProductVariationConst::class);
+
+    $services->set(ProductModificationUid::class)->class(ProductModificationUid::class);
+    $services->set(ProductModificationConst::class)->class(ProductModificationConst::class);
 
 
     $emDefault = $doctrine->orm()->entityManager('default')->autoMapping(true);
 
 
     $emDefault->mapping('products-product')
-		->type('attribute')
-		->dir(BaksDevProductsProductBundle::PATH.'Entity')
-		->isBundle(false)
-		->prefix('BaksDev\Products\Product\Entity')
-		->alias('products-product')
-	;
+        ->type('attribute')
+        ->dir(BaksDevProductsProductBundle::PATH.'Entity')
+        ->isBundle(false)
+        ->prefix('BaksDev\Products\Product\Entity')
+        ->alias('products-product');
 };

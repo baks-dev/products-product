@@ -67,13 +67,7 @@ use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductM
 
 final class ProductDetailByConstRepository implements ProductDetailByConstInterface
 {
-
-    private DBALQueryBuilder $DBALQueryBuilder;
-
-    public function __construct(DBALQueryBuilder $DBALQueryBuilder)
-    {
-        $this->DBALQueryBuilder = $DBALQueryBuilder;
-    }
+    public function __construct(private readonly DBALQueryBuilder $DBALQueryBuilder) {}
 
     /**
      * Метод возвращает детальную информацию о продукте по его неизменяемым идентификаторам Const ТП, вариантов и модификаций.
@@ -87,8 +81,7 @@ final class ProductDetailByConstRepository implements ProductDetailByConstInterf
         ?ProductOfferConst $offer = null,
         ?ProductVariationConst $variation = null,
         ?ProductModificationConst $modification = null,
-    ): array|bool
-    {
+    ): array|bool {
 
         $dbal = $this->DBALQueryBuilder
             ->createQueryBuilder(self::class)
@@ -131,7 +124,6 @@ final class ProductDetailByConstRepository implements ProductDetailByConstInterf
                 ProductDescription::class,
                 'product_desc',
                 'product_desc.event = product.event AND product_desc.device = :device '
-
             )
             ->setParameter('device', 'pc');
 

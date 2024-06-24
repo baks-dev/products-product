@@ -25,26 +25,26 @@ use Doctrine\DBAL\Types\Type;
 final class ProductSettingsType extends Type
 {
     public function convertToDatabaseValue($value, AbstractPlatform $platform): string
-	{
-		return $value instanceof ProductSettingsIdentifier ? $value->getValue() : $value;
-	}
+    {
+        return $value instanceof ProductSettingsIdentifier ? $value->getValue() : $value;
+    }
 
     public function convertToPHPValue($value, AbstractPlatform $platform): ?ProductSettingsIdentifier
-	{
-		return !empty($value) ? new ProductSettingsIdentifier() : $value;
-	}
-	
-	
-	public function getName(): string
-	{
-		return ProductSettingsIdentifier::TYPE;
-	}
-	
-	
-	public function requiresSQLCommentHint(AbstractPlatform $platform) : bool
-	{
-		return true;
-	}
+    {
+        return !empty($value) ? new ProductSettingsIdentifier() : $value;
+    }
+
+
+    public function getName(): string
+    {
+        return ProductSettingsIdentifier::TYPE;
+    }
+
+
+    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
+    {
+        return true;
+    }
 
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {

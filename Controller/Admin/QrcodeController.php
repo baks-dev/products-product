@@ -25,7 +25,6 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Controller\Admin;
 
-
 use BaksDev\Core\Controller\AbstractController;
 use BaksDev\Core\Listeners\Event\Security\RoleSecurity;
 use BaksDev\Core\Type\UidType\ParamConverter;
@@ -51,9 +50,7 @@ final class QrcodeController extends AbstractController
         #[ParamConverter(ProductOfferUid::class)] $offer = null,
         #[ParamConverter(ProductVariationUid::class)] $variation = null,
         #[ParamConverter(ProductModificationUid::class)] $modification = null,
-
-    ): Response
-    {
+    ): Response {
 
         $info = $productInfo->fetchProductDetailByEventAssociative(
             $product,
@@ -91,13 +88,11 @@ final class QrcodeController extends AbstractController
         }
 
 
-
-
         return $this->render(
-        [
-            'qrcode' => (new QRCode())->render($data),
-            'item' => $info
-        ]
-    );
+            [
+                'qrcode' => (new QRCode())->render($data),
+                'item' => $info
+            ]
+        );
     }
 }

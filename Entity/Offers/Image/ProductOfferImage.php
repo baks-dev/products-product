@@ -26,7 +26,6 @@ namespace BaksDev\Products\Product\Entity\Offers\Image;
 use BaksDev\Core\Entity\EntityEvent;
 use BaksDev\Files\Resources\Upload\UploadEntityInterface;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
-use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Products\Product\Type\Offers\Image\ProductOfferImageUid;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -107,7 +106,7 @@ class ProductOfferImage extends EntityEvent implements UploadEntityInterface
     {
         $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
 
-        if ($dto instanceof ProductOfferImageInterface)
+        if($dto instanceof ProductOfferImageInterface)
         {
             return parent::getDto($dto);
         }
@@ -118,15 +117,18 @@ class ProductOfferImage extends EntityEvent implements UploadEntityInterface
     public function setEntity($dto): mixed
     {
         // Если размер файла нулевой - не заполняем сущность
-        if (empty($dto->file) && empty($dto->getName())) {
+        if(empty($dto->file) && empty($dto->getName()))
+        {
             return false;
         }
 
-        if (!empty($dto->file)) {
+        if(!empty($dto->file))
+        {
             $dto->setEntityUpload($this);
         }
 
-        if ($dto instanceof ProductOfferImageInterface || $dto instanceof self) {
+        if($dto instanceof ProductOfferImageInterface || $dto instanceof self)
+        {
             return parent::setEntity($dto);
         }
 

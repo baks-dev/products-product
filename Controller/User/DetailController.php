@@ -28,7 +28,7 @@ use BaksDev\Core\Form\Search\SearchDTO;
 use BaksDev\Core\Form\Search\SearchForm;
 use BaksDev\Orders\Order\UseCase\User\Basket\Add\OrderProductDTO;
 use BaksDev\Orders\Order\UseCase\User\Basket\Add\OrderProductForm;
-use BaksDev\Products\Product\Entity;
+use BaksDev\Products\Product\Entity\Info\ProductInfo;
 use BaksDev\Products\Product\Repository\ProductAlternative\ProductAlternativeInterface;
 use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailByValueInterface;
 use BaksDev\Products\Product\Repository\ProductDetailOffer\ProductDetailOfferInterface;
@@ -45,7 +45,7 @@ final class DetailController extends AbstractController
     #[Route('/catalog/{category}/{url}/{offer}/{variation}/{modification}/{postfix}', name: 'user.detail')]
     public function index(
         Request $request,
-        #[MapEntity(mapping: ['url' => 'url'])] Entity\Info\ProductInfo $info,
+        #[MapEntity(mapping: ['url' => 'url'])] ProductInfo $info,
         ProductDetailByValueInterface $productDetail,
         ProductDetailOfferInterface $productDetailOffer,
         ProductAlternativeInterface $productAlternative,
@@ -53,8 +53,8 @@ final class DetailController extends AbstractController
         ?string $variation = null,
         ?string $modification = null,
         ?string $postfix = null,
-    ): Response
-    {
+    ): Response {
+
         $productCard = $productDetail->fetchProductAssociative(
             $info->getProduct(),
             $offer,
@@ -73,29 +73,29 @@ final class DetailController extends AbstractController
 
         if(
             !$productCard ||
-            ($offer !== null && $productCard['product_offer_value'] === null) ||
+            ($productCard['product_offer_value'] === null) ||
             ($variation !== null && $productCard['product_variation_value'] === null) ||
             ($modification !== null && $productCard['product_modification_value'] === null) ||
             $productCard['active'] === false ||
             (!empty($productCard['active_from']) && new DateTimeImmutable($productCard['active_from']) > $NOW) ||
             (!empty($productCard['active_to']) && new DateTimeImmutable($productCard['active_to']) < $NOW)
 
-        )
-        {
+        ) {
             $status = 404;
         }
 
 
         if($status === 404)
         {
-            return $this->render([
-                'card' => $productCard,
-                'offers' => $productOffer,
+            return $this->render(
+                [
+                    'card' => $productCard,
+                    'offers' => $productOffer,
 
-                'offer' => $offer,
-                'variation' => $variation,
-                'modification' => $modification,
-            ],
+                    'offer' => $offer,
+                    'variation' => $variation,
+                    'modification' => $modification,
+                ],
                 //fileName: 'notfound/template.html.twig',
                 routingName: 'user.detail.notfound',
                 response: new Response(status: $status)
@@ -107,12 +107,12 @@ final class DetailController extends AbstractController
 
         /** Список альтернатив  */
         $alternativeProperty = json_decode($productCard['category_section_field'], false, 512, JSON_THROW_ON_ERROR);
+
         /* получаем свойства, учавствующие в фильтре альтернатив */
-        $alternativeField = array_filter($alternativeProperty, function($v) {
+        $alternativeField = array_filter($alternativeProperty, function ($v) {
             return $v->field_alternative === true;
         }, ARRAY_FILTER_USE_BOTH);
 
-        //dump($alternativeField);
 
         $alternative = null;
         if(!empty($productCard['product_offer_value']))

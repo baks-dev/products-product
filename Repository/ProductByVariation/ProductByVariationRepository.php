@@ -36,12 +36,7 @@ use Doctrine\ORM\EntityManagerInterface;
 
 final class ProductByVariationRepository implements ProductByVariationInterface
 {
-    private ORMQueryBuilder $ORMQueryBuilder;
-
-    public function __construct(ORMQueryBuilder $ORMQueryBuilder)
-    {
-        $this->ORMQueryBuilder = $ORMQueryBuilder;
-    }
+    public function __construct(private readonly ORMQueryBuilder $ORMQueryBuilder) {}
 
     /**
      * Метод возвращает массив идентификаторов продукта
@@ -67,7 +62,8 @@ final class ProductByVariationRepository implements ProductByVariationInterface
                 ->setParameter('variation', $variation, ProductVariationUid::TYPE);
 
             $qb
-                ->join(ProductVariation::class,
+                ->join(
+                    ProductVariation::class,
                     'variation',
                     'WITH',
                     'variation.const = var.const'
@@ -76,7 +72,8 @@ final class ProductByVariationRepository implements ProductByVariationInterface
 
         $qb
             ->addSelect('offer.id AS offer_id')
-            ->join(ProductOffer::class,
+            ->join(
+                ProductOffer::class,
                 'offer',
                 'WITH',
                 'offer.id = variation.offer'
@@ -84,7 +81,8 @@ final class ProductByVariationRepository implements ProductByVariationInterface
 
         $qb
             ->addSelect('event.id AS event_id')
-            ->join(ProductEvent::class,
+            ->join(
+                ProductEvent::class,
                 'event',
                 'WITH',
                 'event.id = offer.event'
@@ -92,7 +90,8 @@ final class ProductByVariationRepository implements ProductByVariationInterface
 
         $qb
             ->addSelect('product.id AS product_id')
-            ->join(Product::class,
+            ->join(
+                Product::class,
                 'product',
                 'WITH',
                 'product.event = event.id'

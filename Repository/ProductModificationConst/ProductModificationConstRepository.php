@@ -32,14 +32,9 @@ use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModifi
 
 final class ProductModificationConstRepository implements ProductModificationConstInterface
 {
-    private DBALQueryBuilder $DBALQueryBuilder;
-
     public function __construct(
-        DBALQueryBuilder $DBALQueryBuilder,
-    )
-    {
-        $this->DBALQueryBuilder = $DBALQueryBuilder;
-    }
+        private readonly DBALQueryBuilder $DBALQueryBuilder,
+    ) {}
 
 
     /**

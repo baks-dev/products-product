@@ -18,15 +18,6 @@
 
 namespace BaksDev\Products\Product\Controller\Admin;
 
-
-//use App\Module\Products\Category\Repository\CategoryPropertyById\CategoryPropertyByIdInterface;
-//use App\Module\Products\Product\Entity as ProductEntity;
-//use App\Module\Products\Product\UseCase\Admin\NewEdit\ProductDTO;
-//use App\Module\Products\Product\UseCase\Admin\NewEdit\ProductForm;
-//use App\Module\Products\Product\UseCase\Admin\Rename\RenameProductDTO;
-//use App\Module\Products\Product\UseCase\Admin\Rename\RenameProductForm;
-//use App\Module\Products\Product\UseCase\Admin\Rename\RenameProductHandler;
-//use App\Module\Products\Product\UseCase\ProductAggregate;
 use BaksDev\Core\Controller\AbstractController;
 use BaksDev\Core\Listeners\Event\Security\RoleSecurity;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
@@ -40,7 +31,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Annotation\Route;
 
-
 #[AsController]
 #[RoleSecurity('ROLE_PRODUCT_RENAME')]
 final class RenameController extends AbstractController
@@ -53,14 +43,15 @@ final class RenameController extends AbstractController
         #[MapEntity] ProductEvent $Event,
         Request $request,
         RenameProductHandler $renameProductHandler
-    ): Response
-    {
+    ): Response {
 
         $RenameProductDTO = new RenameProductDTO();
         $Event->getDto($RenameProductDTO);
 
         /* Форма переименования */
-        $form = $this->createForm(RenameProductForm::class, $RenameProductDTO,
+        $form = $this->createForm(
+            RenameProductForm::class,
+            $RenameProductDTO,
             ['action' => $this->generateUrl('products-product:admin.rename', ['id' => $RenameProductDTO->getEvent()])]
         );
         $form->handleRequest($request);
@@ -71,8 +62,7 @@ final class RenameController extends AbstractController
 
             $handle = $renameProductHandler->handle($RenameProductDTO);
 
-            $this->addFlash
-            (
+            $this->addFlash(
                 'admin.page.edit',
                 $handle instanceof Product ? 'admin.success.rename' : 'admin.danger.rename',
                 'admin.products.product',

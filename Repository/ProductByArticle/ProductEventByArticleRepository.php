@@ -35,12 +35,7 @@ use BaksDev\Products\Product\Entity\Product;
 
 final class ProductEventByArticleRepository implements ProductEventByArticleInterface
 {
-    private ORMQueryBuilder $ORMQueryBuilder;
-
-    public function __construct(ORMQueryBuilder $ORMQueryBuilder)
-    {
-        $this->ORMQueryBuilder = $ORMQueryBuilder;
-    }
+    public function __construct(private readonly ORMQueryBuilder $ORMQueryBuilder) {}
 
     /**
      * Метод возвращает по артикулу событие продукта
@@ -57,7 +52,8 @@ final class ProductEventByArticleRepository implements ProductEventByArticleInte
             Product::class,
             'product',
             'WITH',
-            'product.id = info.product')
+            'product.id = info.product'
+        )
             ->setParameter('article', $article);
 
         $qb
@@ -66,7 +62,8 @@ final class ProductEventByArticleRepository implements ProductEventByArticleInte
                 ProductEvent::class,
                 'event',
                 'WITH',
-                'event.id = product.event');
+                'event.id = product.event'
+            );
 
         /** @var Product $Product */
         $ProductEvent = $qb->getQuery()->getOneOrNullResult();
@@ -90,7 +87,8 @@ final class ProductEventByArticleRepository implements ProductEventByArticleInte
 
         $qb
             ->select('event')
-            ->join(ProductEvent::class,
+            ->join(
+                ProductEvent::class,
                 'event',
                 'WITH',
                 'event.id = offer.event'
@@ -122,7 +120,8 @@ final class ProductEventByArticleRepository implements ProductEventByArticleInte
 
         $qb
             ->select('event')
-            ->join(ProductEvent::class,
+            ->join(
+                ProductEvent::class,
                 'event',
                 'WITH',
                 'event.id = offer.event'

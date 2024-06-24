@@ -47,17 +47,10 @@ use Generator;
 
 final class ProductVariationChoiceRepository implements ProductVariationChoiceInterface
 {
-    private ORMQueryBuilder $ORMQueryBuilder;
-    private DBALQueryBuilder $DBALQueryBuilder;
-
     public function __construct(
-        ORMQueryBuilder $ORMQueryBuilder,
-        DBALQueryBuilder $DBALQueryBuilder,
-    )
-    {
-        $this->ORMQueryBuilder = $ORMQueryBuilder;
-        $this->DBALQueryBuilder = $DBALQueryBuilder;
-    }
+        private readonly ORMQueryBuilder $ORMQueryBuilder,
+        private readonly DBALQueryBuilder $DBALQueryBuilder,
+    ) {}
 
     /**
      * Метод возвращает все постоянные идентификаторы CONST множественных вариантов торговых предложений продукта

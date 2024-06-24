@@ -30,11 +30,10 @@ use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 
 interface CurrentQuantityByVariationInterface
 {
-	public function getVariationQuantity(
-        ProductEventUid     $event,
-        ProductOfferUid     $offer,
+    public function getVariationQuantity(
+        ProductEventUid $event,
+        ProductOfferUid $offer,
         ProductVariationUid $variation,
-	
-	) : ?ProductVariationQuantity;
-	
+    ): ?ProductVariationQuantity;
+
 }

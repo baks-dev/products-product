@@ -31,11 +31,11 @@ use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModifi
 
 interface CurrentQuantityByModificationInterface
 {
-	public function getModificationQuantity(
-        ProductEventUid        $event,
-        ProductOfferUid        $offer,
-        ProductVariationUid    $variation,
+    public function getModificationQuantity(
+        ProductEventUid $event,
+        ProductOfferUid $offer,
+        ProductVariationUid $variation,
         ProductModificationUid $modification,
-	) : ?ProductModificationQuantity;
-	
+    ): ?ProductModificationQuantity;
+
 }

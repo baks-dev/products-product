@@ -29,77 +29,76 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 final class PropertyCollectionDTO implements ProductPropertyInterface
 {
-	/** Связь на поле из категории */
-	#[Assert\Uuid]
+    /** Связь на поле из категории */
+    #[Assert\Uuid]
     private ?CategoryProductSectionFieldUid $field = null;
-	
-	/** Заполненное значение */
-	private ?string $value = null;
-	
-	/* Вспомогательные свойства */
-	private ?string $section = null;
-	
-	/* Сортировка полей в форме */
-	private int $sort = 0;
-	
-	
-	/**
-	 * @return string|null
-	 */
-	public function getValue() : ?string
-	{
-		return $this->value;
-	}
-	
-	
-	/**
-	 * @param string|null $value
-	 */
-	public function setValue(?string $value) : void
-	{
-		$this->value = $value;
-	}
+
+    /** Заполненное значение */
+    private ?string $value = null;
+
+    /* Вспомогательные свойства */
+    private ?string $section = null;
+
+    /* Сортировка полей в форме */
+    private int $sort = 0;
+
+
+    /**
+     * @return string|null
+     */
+    public function getValue(): ?string
+    {
+        return $this->value;
+    }
+
+
+    /**
+     * @param string|null $value
+     */
+    public function setValue(?string $value): void
+    {
+        $this->value = $value;
+    }
 
 
     public function getField(): ?CategoryProductSectionFieldUid
-	{
-		return $this->field;
-	}
+    {
+        return $this->field;
+    }
 
 
     public function setField(CategoryProductSectionFieldUid $field): void
-	{
-		$this->field = $field;
-	}
-	
-	
-	public function setSection(string $section) : void
-	{
-		$this->section = $section;
-	}
-	
-	
-	/**
-	 * @return string|null
-	 */
-	public function getSection() : ?string
-	{
-		return $this->section;
-	}
-	
-	
-	/* Сортировка полей в форме */
-	public function getSort() : int
-	{
-		return $this->sort;
-	}
-	
+    {
+        $this->field = $field;
+    }
 
-	public function setSort(int $sort) : void
-	{
-		$this->sort = $sort;
-	}
-	
-	
-	
+
+    public function setSection(string $section): void
+    {
+        $this->section = $section;
+    }
+
+
+    /**
+     * @return string|null
+     */
+    public function getSection(): ?string
+    {
+        return $this->section;
+    }
+
+
+    /* Сортировка полей в форме */
+    public function getSort(): int
+    {
+        return $this->sort;
+    }
+
+
+    public function setSort(int $sort): void
+    {
+        $this->sort = $sort;
+    }
+
+
 }

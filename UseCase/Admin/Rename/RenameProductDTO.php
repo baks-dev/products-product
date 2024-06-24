@@ -34,7 +34,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 /** @see ProductEvent */
 final class RenameProductDTO implements ProductEventInterface
 {
-
     /** Идентификатор */
     #[Assert\Uuid]
     #[Assert\NotBlank]
@@ -44,16 +43,17 @@ final class RenameProductDTO implements ProductEventInterface
     private ArrayCollection $translate;
 
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->translate = new ArrayCollection();
     }
 
-    public function getEvent() : ?ProductEventUid
+    public function getEvent(): ?ProductEventUid
     {
         return $this->id;
     }
 
-    public function setId(ProductEventUid $id) : void
+    public function setId(ProductEventUid $id): void
     {
         $this->id = $id;
     }

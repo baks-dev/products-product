@@ -35,7 +35,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /* Статусы активности Продукта */
 
 
-#[ORM\Entity()]
+#[ORM\Entity]
 #[ORM\Table(name: 'product_active')]
 #[ORM\Index(columns: ['active'])]
 #[ORM\Index(columns: ['active_from', 'active_to'])]
@@ -47,7 +47,7 @@ class ProductActive extends EntityEvent
     #[Assert\NotBlank]
     #[Assert\Type(ProductEvent::class)]
     #[ORM\Id]
-    #[ORM\OneToOne(inversedBy: 'active', targetEntity: ProductEvent::class)]
+    #[ORM\OneToOne(targetEntity: ProductEvent::class, inversedBy: 'active')]
     #[ORM\JoinColumn(name: 'event', referencedColumnName: 'id')]
     private ProductEvent $event;
 

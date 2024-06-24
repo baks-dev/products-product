@@ -28,33 +28,33 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class ProductTransForm extends AbstractType
 {
-	
-	public function buildForm(FormBuilderInterface $builder, array $options) : void
-	{
-		$builder->add('local', HiddenType::class);
-		
-		$builder->get('local')->addModelTransformer(
-			new CallbackTransformer(
-				function($price) {
-					return $price instanceof Locale ? $price->getLocalValue() : $price;
-				},
-				function($price) {
-					return new Locale($price);
-				}
-			)
-		);
-		
-		$builder->add('name', TextType::class);
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $builder->add('local', HiddenType::class);
 
-	}
-	
-	
-	public function configureOptions(OptionsResolver $resolver) : void
-	{
-		$resolver->setDefaults([
-				'data_class' => ProductTransDTO::class,
-			]
-		);
-	}
-	
+        $builder->get('local')->addModelTransformer(
+            new CallbackTransformer(
+                function ($price) {
+                    return $price instanceof Locale ? $price->getLocalValue() : $price;
+                },
+                function ($price) {
+                    return new Locale($price);
+                }
+            )
+        );
+
+        $builder->add('name', TextType::class);
+
+    }
+
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults(
+            [
+                'data_class' => ProductTransDTO::class,
+            ]
+        );
+    }
+
 }

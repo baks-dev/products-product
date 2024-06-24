@@ -24,52 +24,51 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 final class CategoryCollectionDTO implements ProductCategoryInterface
 {
-	
-	/** ID категории продукта */
-	#[Assert\Uuid]
+    /** ID категории продукта */
+    #[Assert\Uuid]
     private ?CategoryProductUid $category = null;
-	
-	private bool $root = false;
+
+    private bool $root = false;
 
 
     public function getCategory(): ?CategoryProductUid
-	{
-		return $this->category;
-	}
+    {
+        return $this->category;
+    }
 
 
     public function setCategory(CategoryProductUid|string $category): void
-	{
+    {
         if(is_string($category))
         {
             $category = new CategoryProductUid($category);
         }
-        
-		$this->category = $category;
-	}
-	
-	
-	/**
-	 * @return bool
-	 */
-	public function getRoot() : bool
-	{
-		return $this->root;
-	}
-	
-	
-	/**
-	 * @param bool $root
-	 */
-	public function setRoot(bool $root) : void
-	{
-		$this->root = $root;
-	}
-	
-	
-	public function rootCategory() : void
-	{
-		$this->root = true;
-	}
-	
+
+        $this->category = $category;
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function getRoot(): bool
+    {
+        return $this->root;
+    }
+
+
+    /**
+     * @param bool $root
+     */
+    public function setRoot(bool $root): void
+    {
+        $this->root = $root;
+    }
+
+
+    public function rootCategory(): void
+    {
+        $this->root = true;
+    }
+
 }

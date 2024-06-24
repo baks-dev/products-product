@@ -44,7 +44,6 @@ final class CategoryController extends AbstractController
     #[Route('/catalog/{category}/{page<\d+>}', name: 'user.catalog.category')]
     public function index(
         Request $request,
-        //#[MapEntity(mapping: ['url' => 'url', 'active' => true])] ProductCategoryInfo $info,
         AllProductsByCategoryInterface $productsByCategory,
         CategoryByUrlInterface $categoryByUrl,
         string $category,

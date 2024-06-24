@@ -26,21 +26,17 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Repository\ProductDetail;
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
-use BaksDev\Core\Type\Locale\Locale;
-
-//use BaksDev\Products\Category\Entity as CategoryEntity;
-//use BaksDev\Products\Product\Entity as ProductEntity;
 use BaksDev\Products\Category\Entity\CategoryProduct;
 use BaksDev\Products\Category\Entity\Info\CategoryProductInfo;
 use BaksDev\Products\Category\Entity\Offers\CategoryProductOffers;
 use BaksDev\Products\Category\Entity\Offers\Trans\CategoryProductOffersTrans;
+use BaksDev\Products\Category\Entity\Offers\Variation\CategoryProductVariation;
 use BaksDev\Products\Category\Entity\Offers\Variation\Modification\CategoryProductModification;
 use BaksDev\Products\Category\Entity\Offers\Variation\Modification\Trans\CategoryProductModificationTrans;
-use BaksDev\Products\Category\Entity\Offers\Variation\CategoryProductVariation;
 use BaksDev\Products\Category\Entity\Offers\Variation\Trans\CategoryProductVariationTrans;
+use BaksDev\Products\Category\Entity\Section\CategoryProductSection;
 use BaksDev\Products\Category\Entity\Section\Field\CategoryProductSectionField;
 use BaksDev\Products\Category\Entity\Section\Field\Trans\CategoryProductSectionFieldTrans;
-use BaksDev\Products\Category\Entity\Section\CategoryProductSection;
 use BaksDev\Products\Category\Entity\Trans\CategoryProductTrans;
 use BaksDev\Products\Product\Entity\Active\ProductActive;
 use BaksDev\Products\Product\Entity\Category\ProductCategory;
@@ -67,18 +63,13 @@ use BaksDev\Products\Product\Entity\Seo\ProductSeo;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
-use Symfony\Contracts\Translation\TranslatorInterface;
+
+//use BaksDev\Products\Category\Entity as CategoryEntity;
+//use BaksDev\Products\Product\Entity as ProductEntity;
 
 final class ProductDetailByValueRepository implements ProductDetailByValueInterface
 {
-    private DBALQueryBuilder $DBALQueryBuilder;
-
-    public function __construct(
-        DBALQueryBuilder $DBALQueryBuilder,
-    )
-    {
-        $this->DBALQueryBuilder = $DBALQueryBuilder;
-    }
+    public function __construct(private readonly DBALQueryBuilder $DBALQueryBuilder) {}
 
     /**
      * Метод возвращает детальную информацию о продукте и его заполненному значению ТП, вариантов и модификаций.
@@ -93,8 +84,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
         ?string $variation = null,
         ?string $modification = null,
         ?string $postfix = null,
-    ): array|bool
-    {
+    ): array|bool {
 
         if($postfix)
         {
@@ -155,7 +145,6 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 ProductDescription::class,
                 'product_desc',
                 'product_desc.event = product.event AND product_desc.device = :device '
-
             )->setParameter('device', 'pc');
 
 
@@ -703,8 +692,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
         string $offer = null,
         string $variation = null,
         string $modification = null,
-    ): array|bool
-    {
+    ): array|bool {
         $dbal = $this->DBALQueryBuilder->createQueryBuilder(self::class);
 
         $dbal
@@ -722,7 +710,8 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'product',
                 ProductActive::class,
                 'product_active',
-                'product_active.event = product.event');
+                'product_active.event = product.event'
+            );
 
         $dbal
             ->addSelect('product_trans.name AS product_name')
@@ -742,7 +731,6 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 ProductDescription::class,
                 'product_desc',
                 'product_desc.event = product_event.id AND product_desc.device = :device '
-
             )->setParameter('device', 'pc');
 
 
@@ -1143,7 +1131,8 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
 			   
 			END AS product_quantity
             
-		')
+		'
+        )
             ->addGroupBy('product_modification_quantity.reserve')
             ->addGroupBy('product_variation_quantity.reserve')
             ->addGroupBy('product_offer_quantity.reserve')

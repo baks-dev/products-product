@@ -44,18 +44,10 @@ use Generator;
 
 final class ProductOfferChoiceRepository implements ProductOfferChoiceInterface
 {
-
-    private ORMQueryBuilder $ORMQueryBuilder;
-    private DBALQueryBuilder $DBALQueryBuilder;
-
     public function __construct(
-        ORMQueryBuilder $ORMQueryBuilder,
-        DBALQueryBuilder $DBALQueryBuilder
-    )
-    {
-        $this->ORMQueryBuilder = $ORMQueryBuilder;
-        $this->DBALQueryBuilder = $DBALQueryBuilder;
-    }
+        private readonly ORMQueryBuilder $ORMQueryBuilder,
+        private readonly DBALQueryBuilder $DBALQueryBuilder
+    ) {}
 
     /**
      * Метод возвращает все постоянные идентификаторы CONST торговых предложений продукта

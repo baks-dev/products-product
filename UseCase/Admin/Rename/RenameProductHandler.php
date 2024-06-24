@@ -32,26 +32,12 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 final class RenameProductHandler
 {
-    private EntityManagerInterface $entityManager;
-
-    private ValidatorInterface $validator;
-
-    private LoggerInterface $logger;
-
-    private MessageDispatchInterface $messageDispatch;
-
     public function __construct(
-        EntityManagerInterface $entityManager,
-        ValidatorInterface $validator,
-        LoggerInterface $logger,
-        MessageDispatchInterface $messageDispatch,
-    )
-    {
-        $this->entityManager = $entityManager;
-        $this->validator = $validator;
-        $this->logger = $logger;
-        $this->messageDispatch = $messageDispatch;
-    }
+        private readonly EntityManagerInterface $entityManager,
+        private readonly ValidatorInterface $validator,
+        private readonly LoggerInterface $logger,
+        private readonly MessageDispatchInterface $messageDispatch,
+    ) {}
 
 
     public function handle(RenameProductDTO $command): Entity\Product|string
@@ -88,7 +74,8 @@ final class RenameProductHandler
         {
             $uniqid = uniqid('', false);
 
-            $this->logger->error(sprintf('%s: Событие ProductEvent не найдено (event: %s)',
+            $this->logger->error(sprintf(
+                '%s: Событие ProductEvent не найдено (event: %s)',
                 $uniqid,
                 $command->getEvent()
             ), [__FILE__.':'.__LINE__]);
@@ -99,8 +86,8 @@ final class RenameProductHandler
         $EventRepo->setEntity($command);
         $EventRepo->setEntityManager($this->entityManager);
         $Event = $EventRepo->cloneEntity();
-//        $this->entityManager->clear();
-//        $this->entityManager->persist($Event);
+        //        $this->entityManager->clear();
+        //        $this->entityManager->persist($Event);
 
         // Получаем продукт
         $Product = $this->entityManager->getRepository(Entity\Product::class)
@@ -111,7 +98,8 @@ final class RenameProductHandler
         {
             $uniqid = uniqid('', false);
 
-            $this->logger->error(sprintf('%s: Агрегат Product не найден, либо был изменен (event: %s)',
+            $this->logger->error(sprintf(
+                '%s: Агрегат Product не найден, либо был изменен (event: %s)',
                 $uniqid,
                 $command->getEvent()
             ), [__FILE__.':'.__LINE__]);

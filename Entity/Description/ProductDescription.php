@@ -29,7 +29,7 @@ use InvalidArgumentException;
 /* Перевод Product */
 
 
-#[ORM\Entity()]
+#[ORM\Entity]
 #[ORM\Table(name: 'product_description')]
 class ProductDescription extends EntityEvent
 {

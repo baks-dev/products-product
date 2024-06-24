@@ -29,15 +29,14 @@ use BaksDev\Core\Type\UidType\UidType;
 
 final class ProductModificationType extends UidType
 {
-	public function getClassType(): string
-	{
-		return ProductModificationUid::class;
-	}
-	
-	
-	public function getName(): string
-	{
-		return ProductModificationUid::TYPE;
-	}
-	
+    public function getClassType(): string
+    {
+        return ProductModificationUid::class;
+    }
+
+    public function getName(): string
+    {
+        return ProductModificationUid::TYPE;
+    }
+
 }

@@ -35,20 +35,13 @@ use Doctrine\ORM\EntityManagerInterface;
 
 final class CurrentQuantityByOfferRepository implements CurrentQuantityByOfferInterface
 {
-    private EntityManagerInterface $entityManager;
-
-
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
-    }
-
+    public function __construct(private readonly EntityManagerInterface $entityManager) {}
 
     public function getOfferQuantity(
         ProductEventUid $event,
         ProductOfferUid $offer
-    ): ?ProductOfferQuantity
-    {
+    ): ?ProductOfferQuantity {
+
         $qb = $this->entityManager->createQueryBuilder();
 
         $qb->select('quantity');

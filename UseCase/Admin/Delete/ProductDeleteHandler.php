@@ -45,8 +45,7 @@ final class ProductDeleteHandler
         ValidatorInterface $validator,
         LoggerInterface $logger,
         MessageDispatchInterface $messageDispatch
-    )
-    {
+    ) {
         $this->entityManager = $entityManager;
         $this->validator = $validator;
         $this->logger = $logger;
@@ -55,8 +54,7 @@ final class ProductDeleteHandler
 
     public function handle(
         ProductDeleteDTO $command
-    ): Product|string
-    {
+    ): Product|string {
 
         /**
          *  Валидация WbBarcodeDTO

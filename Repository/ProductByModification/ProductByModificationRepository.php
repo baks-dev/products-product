@@ -46,16 +46,9 @@ use InvalidArgumentException;
  */
 final class ProductByModificationRepository implements ProductByModificationInterface
 {
-    private DBALQueryBuilder $DBALQueryBuilder;
-
     private ?array $data = null;
 
-    public function __construct(
-        DBALQueryBuilder $DBALQueryBuilder,
-    )
-    {
-        $this->DBALQueryBuilder = $DBALQueryBuilder;
-    }
+    public function __construct(private readonly DBALQueryBuilder $DBALQueryBuilder) {}
 
     /**
      * Класс возвращает идентификаторы продукции по модификации

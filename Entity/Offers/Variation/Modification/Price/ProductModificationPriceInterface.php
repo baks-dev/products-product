@@ -27,5 +27,5 @@ use BaksDev\Reference\Money\Type\Money;
 
 interface ProductModificationPriceInterface
 {
-	public function getPrice() : ?Money;
+    public function getPrice(): ?Money;
 }

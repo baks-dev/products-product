@@ -39,22 +39,13 @@ use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
 use Generator;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class ProductModificationChoiceRepository implements ProductModificationChoiceInterface
 {
-
-    private ORMQueryBuilder $ORMQueryBuilder;
-    private DBALQueryBuilder $DBALQueryBuilder;
-
     public function __construct(
-        ORMQueryBuilder $ORMQueryBuilder,
-        DBALQueryBuilder $DBALQueryBuilder
-    )
-    {
-        $this->ORMQueryBuilder = $ORMQueryBuilder;
-        $this->DBALQueryBuilder = $DBALQueryBuilder;
-    }
+        private readonly ORMQueryBuilder $ORMQueryBuilder,
+        private readonly DBALQueryBuilder $DBALQueryBuilder
+    ) {}
 
     /**
      * Метод возвращает все постоянные идентификаторы CONST модификаций множественных вариантов торговых предложений продукта
@@ -265,7 +256,6 @@ final class ProductModificationChoiceRepository implements ProductModificationCh
                 'modification_quantity',
                 'modification_quantity.modification = modification.id AND modification_quantity.quantity > 0 '
             );
-
 
 
         /** Свойства конструктора объекта гидрации */

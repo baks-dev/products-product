@@ -50,7 +50,6 @@ use DomainException;
 
 final class ProductHandler extends AbstractHandler
 {
-
     private UniqProductUrlInterface $uniqProductUrl;
 
     public function __construct(
@@ -60,10 +59,8 @@ final class ProductHandler extends AbstractHandler
         ImageUploadInterface $imageUpload,
         FileUploadInterface $fileUpload,
         UniqProductUrlInterface $uniqProductUrl,
-    )
-    {
+    ) {
         parent::__construct($entityManager, $messageDispatch, $validatorCollection, $imageUpload, $fileUpload);
-
 
         $this->uniqProductUrl = $uniqProductUrl;
     }

@@ -24,14 +24,8 @@
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Property;
 
 use BaksDev\Core\Services\Fields\FieldsChoice;
-use BaksDev\Core\Services\Fields\FieldsChoiceInterface;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -42,78 +36,68 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class PropertyCollectionForm extends AbstractType
 {
-	
-	private FieldsChoice $fieldsChoice;
-	
-	public function __construct(FieldsChoice $fieldsChoice) {
-		
-		$this->fieldsChoice = $fieldsChoice;
-	}
-	
-	
-	public function buildForm(FormBuilderInterface $builder, array $options) : void
-	{
+    public function __construct(private readonly FieldsChoice $fieldsChoice) {}
 
-		$builder->addEventListener(
-			FormEvents::PRE_SET_DATA,
-			function(FormEvent $event) use ($options)
-			{
-				$data = $event->getData();
-				$form = $event->getForm();
-				
-				if($data)
-				{
-					$propertyCategory = $options['properties'];
-					$id = (string) $data->getField();
-					
-					if(empty($id) || !isset($propertyCategory[$id]))
-					{
-						return;
-					}
-					
-					$propCat = $propertyCategory[$id];
-					
-					/* СЕКЦИЯ */
-					$form->add(
-						'section',
-						HiddenType::class,
-						[
-							//'mapped' => false,
-							//'data' => (string) $propCat->sectionUid,
-							'label' => $propCat->sectionTrans,
-						]
-					);
-					
-					$fieldType = $this->fieldsChoice->getChoice($propCat->fieldType);
 
-					$form->add
-					(
-						'value',
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+
+        $builder->addEventListener(
+            FormEvents::PRE_SET_DATA,
+            function (FormEvent $event) use ($options) {
+                $data = $event->getData();
+                $form = $event->getForm();
+
+                if($data)
+                {
+                    $propertyCategory = $options['properties'];
+                    $id = (string) $data->getField();
+
+                    if(empty($id) || !isset($propertyCategory[$id]))
+                    {
+                        return;
+                    }
+
+                    $propCat = $propertyCategory[$id];
+
+                    /* СЕКЦИЯ */
+                    $form->add(
+                        'section',
+                        HiddenType::class,
+                        [
+                            //'mapped' => false,
+                            //'data' => (string) $propCat->sectionUid,
+                            'label' => $propCat->sectionTrans,
+                        ]
+                    );
+
+                    $fieldType = $this->fieldsChoice->getChoice($propCat->fieldType);
+
+                    $form->add(
+                        'value',
                         $fieldType ? $fieldType->form() : HiddenType::class,
-						[
-							'label' => $propCat->fieldTrans,
-							'required' => $propCat->fieldRequired,
-						]
-					);
+                        [
+                            'label' => $propCat->fieldTrans,
+                            'required' => $propCat->fieldRequired,
+                        ]
+                    );
 
 
+                }
+            }
+        );
 
-				}
-			}
-		);
-		
-	}
-	
-	
-	public function configureOptions(OptionsResolver $resolver) : void
-	{
-		$resolver->setDefaults
-		(
-			[
-				'data_class' => PropertyCollectionDTO::class,
-				'properties' => null,
-			]
-		);
-	}
-	
+    }
+
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults(
+            [
+                'data_class' => PropertyCollectionDTO::class,
+                'properties' => null,
+            ]
+        );
+    }
+
 }

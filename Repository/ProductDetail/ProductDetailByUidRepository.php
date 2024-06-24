@@ -67,19 +67,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class ProductDetailByUidRepository implements ProductDetailByUidInterface
 {
-
-    private TranslatorInterface $translator;
-    private DBALQueryBuilder $DBALQueryBuilder;
-
-    public function __construct(
-        DBALQueryBuilder $DBALQueryBuilder,
-        TranslatorInterface $translator,
-    )
-    {
-
-        $this->translator = $translator;
-        $this->DBALQueryBuilder = $DBALQueryBuilder;
-    }
+    public function __construct(private readonly DBALQueryBuilder $DBALQueryBuilder) {}
 
     /**
      * Метод возвращает детальную информацию о продукте по его идентификаторам события, ТП, вариантов и модификаций.
@@ -89,8 +77,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
         ProductOffer|ProductOfferUid|string|null $offer = null,
         ProductVariation|ProductVariationUid|string|null $variation = null,
         ProductModification|ProductModificationUid|string|null $modification = null,
-    ): ?array
-    {
+    ): ?array {
 
         if($event instanceof ProductEvent)
         {
@@ -184,7 +171,6 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
                 ProductDescription::class,
                 'product_desc',
                 'product_desc.event = product_event.id AND product_desc.device = :device '
-
             )->setParameter('device', 'pc');
 
         /* Базовая Цена товара */

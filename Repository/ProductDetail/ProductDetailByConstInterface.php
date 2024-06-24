@@ -33,8 +33,8 @@ interface ProductDetailByConstInterface
     /**
      * Метод возвращает детальную информацию о продукте по его неизменяемым идентификаторам Const ТП, вариантов и модификаций.
      *
-     * @param ?ProductOfferConst        $offer        - значение торгового предложения
-     * @param ?ProductVariationConst    $variation    - значение множественного варианта ТП
+     * @param ?ProductOfferConst $offer - значение торгового предложения
+     * @param ?ProductVariationConst $variation - значение множественного варианта ТП
      * @param ?ProductModificationConst $modification - значение модификации множественного варианта ТП
      */
     public function fetchProductDetailByConstAssociative(

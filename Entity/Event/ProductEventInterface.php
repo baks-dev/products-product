@@ -22,9 +22,8 @@ use BaksDev\Products\Product\Type\Event\ProductEventUid;
 
 interface ProductEventInterface
 {
-	public function getEvent() : ?ProductEventUid;
-	
-	
-	public function setId(ProductEventUid $id) : void;
-	
+    public function getEvent(): ?ProductEventUid;
+
+    public function setId(ProductEventUid $id): void;
+
 }

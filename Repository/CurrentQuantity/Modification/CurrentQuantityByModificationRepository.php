@@ -39,13 +39,7 @@ use Doctrine\ORM\EntityManagerInterface;
 
 final class CurrentQuantityByModificationRepository implements CurrentQuantityByModificationInterface
 {
-    private EntityManagerInterface $entityManager;
-
-
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
-    }
+    public function __construct(private readonly EntityManagerInterface $entityManager) {}
 
 
     public function getModificationQuantity(
@@ -53,8 +47,8 @@ final class CurrentQuantityByModificationRepository implements CurrentQuantityBy
         ProductOfferUid $offer,
         ProductVariationUid $variation,
         ProductModificationUid $modification,
-    ): ?ProductModificationQuantity
-    {
+    ): ?ProductModificationQuantity {
+
         $qb = $this->entityManager->createQueryBuilder();
 
 
@@ -64,8 +58,11 @@ final class CurrentQuantityByModificationRepository implements CurrentQuantityBy
             ->setParameter('event', $event, ProductEventUid::TYPE);
 
 
-        $qb->join(Product::class,
-            'product', 'WITH', 'product.id = event.main'
+        $qb->join(
+            Product::class,
+            'product',
+            'WITH',
+            'product.id = event.main'
         );
 
 

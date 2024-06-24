@@ -25,15 +25,13 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Controller\User\Catalog;
 
-
+use BaksDev\Core\Controller\AbstractController;
 use BaksDev\Core\Form\Search\SearchDTO;
 use BaksDev\Core\Form\Search\SearchForm;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use BaksDev\Core\Controller\AbstractController;
-use Symfony\Component\Routing\Annotation\Route;
-use BaksDev\Core\Listeners\Event\Security\RoleSecurity;
 use Symfony\Component\HttpKernel\Attribute\AsController;
+use Symfony\Component\Routing\Annotation\Route;
 
 #[AsController]
 final class CatalogController extends AbstractController
@@ -43,8 +41,7 @@ final class CatalogController extends AbstractController
         Request $request,
         //AllProductInterface $allProduct,
         int $page = 0,
-    ): Response
-    {
+    ): Response {
 
         return $this->redirectToRoute('core:user.homepage');
 
@@ -52,7 +49,6 @@ final class CatalogController extends AbstractController
         $search = new SearchDTO();
         $searchForm = $this->createForm(SearchForm::class, $search);
         $searchForm->handleRequest($request);
-
 
         // Фильтр
         // $filter = new ProductsStocksFilterDTO($request, $ROLE_ADMIN ? null : $this->getProfileUid());

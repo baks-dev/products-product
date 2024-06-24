@@ -60,8 +60,7 @@ final class ProductOfferConst extends Uid
         mixed $property = null,
         mixed $characteristic = null,
         mixed $reference = null,
-    )
-    {
+    ) {
         parent::__construct($value);
 
         $this->attr = $attr;

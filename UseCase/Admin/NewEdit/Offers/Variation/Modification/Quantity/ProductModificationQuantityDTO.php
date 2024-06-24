@@ -32,38 +32,38 @@ final class ProductModificationQuantityDTO implements ProductModificationQuantit
     /** В наличии */
     private ?int $quantity = null; // 0 - нет в наличии
 
-	/** Резерв */
-	#[Assert\NotBlank]
+    /** Резерв */
+    #[Assert\NotBlank]
     #[Assert\Range(min: 0)]
-	private ?int $reserve = 0;
+    private ?int $reserve = 0;
 
 
     /** В наличии */
 
-	public function getQuantity() : ?int
-	{
-		return $this->quantity;
-	}
+    public function getQuantity(): ?int
+    {
+        return $this->quantity;
+    }
 
 
-	public function setQuantity(?int $quantity) : void
-	{
-		$this->quantity = $quantity;
-	}
+    public function setQuantity(?int $quantity): void
+    {
+        $this->quantity = $quantity;
+    }
 
 
-	/** Резерв */
+    /** Резерв */
 
-	public function getReserve() : ?int
-	{
+    public function getReserve(): ?int
+    {
         $this->reserve = $this->reserve && $this->reserve >= 0 ? $this->reserve : 0;
 
         return $this->reserve;
-	}
+    }
 
 
-	public function setReserve(?int $reserve) : void
-	{
-		$this->reserve = $reserve ?: 0;
-	}
+    public function setReserve(?int $reserve): void
+    {
+        $this->reserve = $reserve ?: 0;
+    }
 }

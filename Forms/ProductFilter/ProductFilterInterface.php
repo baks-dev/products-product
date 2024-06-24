@@ -22,8 +22,5 @@ use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 
 interface ProductFilterInterface
 {
-
     public function getCategory(): ?CategoryProductUid;
-
-	
 }

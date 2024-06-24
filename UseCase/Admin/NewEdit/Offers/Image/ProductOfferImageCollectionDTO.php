@@ -1,17 +1,17 @@
 <?php
 /*
  *  Copyright 2023.  Baks.dev <admin@baks.dev>
- *  
+ *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *  
+ *
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *  
+ *
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -32,33 +32,31 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 final class ProductOfferImageCollectionDTO implements ProductOfferImageInterface
 {
-	
-	/** Обложка категории */
-	public ?File $file = null;
-	
-	/** Название файла */
-	private ?string $name = null;
-	
-	/** Расширение */
-	private ?string $ext = null;
-	
-	/** Флаг загрузки CDN */
-	private bool $cdn = false;
-	
-	/** Главное фото */
-	private bool $root = false;
-	
-	/** Размер файла */
-	private ?int $size = null;
+    /** Обложка категории */
+    public ?File $file = null;
+
+    /** Название файла */
+    private ?string $name = null;
+
+    /** Расширение */
+    private ?string $ext = null;
+
+    /** Флаг загрузки CDN */
+    private bool $cdn = false;
+
+    /** Главное фото */
+    private bool $root = false;
+
+    /** Размер файла */
+    private ?int $size = null;
 
 
-	
-	/** Название файла */
-	
-	public function getName() : ?string
-	{
-		return $this->name;
-	}
+    /** Название файла */
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
 
     public function setName(?string $name): self
     {
@@ -67,13 +65,12 @@ final class ProductOfferImageCollectionDTO implements ProductOfferImageInterface
     }
 
 
+    /** Расширение */
 
-	/** Расширение */
-	
-	public function getExt() : ?string
-	{
-		return $this->ext;
-	}
+    public function getExt(): ?string
+    {
+        return $this->ext;
+    }
 
     public function setExt(?string $ext): self
     {
@@ -82,35 +79,33 @@ final class ProductOfferImageCollectionDTO implements ProductOfferImageInterface
     }
 
 
+    /** Флаг загрузки CDN */
 
-	/** Флаг загрузки CDN */
-	
-	public function getCdn() : bool
-	{
-		return $this->cdn;
-	}
+    public function getCdn(): bool
+    {
+        return $this->cdn;
+    }
 
 
-	
-	/** Главное фото */
-	
-	public function getRoot() : bool
-	{
-		return $this->root;
-	}
-	
-	
-	public function setRoot(bool $root) : void
-	{
-		$this->root = $root;
-	}
-	
-	/** Размер файла */
-	
-	public function getSize() : ?int
-	{
-		return $this->size;
-	}
+    /** Главное фото */
+
+    public function getRoot(): bool
+    {
+        return $this->root;
+    }
+
+
+    public function setRoot(bool $root): void
+    {
+        $this->root = $root;
+    }
+
+    /** Размер файла */
+
+    public function getSize(): ?int
+    {
+        return $this->size;
+    }
 
     public function setSize(?int $size): self
     {
@@ -119,6 +114,4 @@ final class ProductOfferImageCollectionDTO implements ProductOfferImageInterface
     }
 
 
-	
 }
-

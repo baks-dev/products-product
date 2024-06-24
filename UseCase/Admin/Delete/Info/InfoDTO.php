@@ -29,11 +29,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 /** @see ProductSignCodeRepository */
 final class InfoDTO implements ProductInfoInterface
 {
-	/** Семантическая ссылка на товар */
-	#[Assert\NotBlank]
-	private readonly string $url;
+    /** Семантическая ссылка на товар */
+    #[Assert\NotBlank]
+    private readonly string $url;
 
-    public function __construct() {
+    public function __construct()
+    {
         /** Сбрасываем семантическую ссылку */
         $this->url = uniqid('', false);
     }

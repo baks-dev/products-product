@@ -30,31 +30,30 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class ProductDescriptionForm extends AbstractType
 {
-	
-	public function buildForm(FormBuilderInterface $builder, array $options) : void
-	{
-		$builder->add('local', HiddenType::class);
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $builder->add('local', HiddenType::class);
 
-		$builder->get('local')->addModelTransformer(
-			new CallbackTransformer(
-				function($local) {
-					return $local instanceof Locale ? $local->getLocalValue() : $local;
-				},
-				function($price) {
-					return new Locale($price);
-				}
-			)
-		);
+        $builder->get('local')->addModelTransformer(
+            new CallbackTransformer(
+                function ($local) {
+                    return $local instanceof Locale ? $local->getLocalValue() : $local;
+                },
+                function ($price) {
+                    return new Locale($price);
+                }
+            )
+        );
 
 
         $builder->add('device', HiddenType::class);
 
         $builder->get('device')->addModelTransformer(
             new CallbackTransformer(
-                function($device) {
+                function ($device) {
                     return $device instanceof Device ? $device->getDevice() : $device;
                 },
-                function($device) {
+                function ($device) {
                     return new Device($device);
                 }
             )
@@ -62,16 +61,17 @@ final class ProductDescriptionForm extends AbstractType
 
         $builder->add('preview', TextareaType::class, ['required' => false]);
 
-		$builder->add('description', TextareaType::class, ['required' => false]);
-	}
-	
-	
-	public function configureOptions(OptionsResolver $resolver) : void
-	{
-		$resolver->setDefaults([
-				'data_class' => ProductDescriptionDTO::class,
-			]
-		);
-	}
-	
+        $builder->add('description', TextareaType::class, ['required' => false]);
+    }
+
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults(
+            [
+                'data_class' => ProductDescriptionDTO::class,
+            ]
+        );
+    }
+
 }

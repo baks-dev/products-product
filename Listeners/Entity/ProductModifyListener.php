@@ -66,7 +66,7 @@ final class ProductModifyListener
         }
 
         /* Если пользователь не из консоли */
-        if ($this->request->getCurrentRequest())
+        if($this->request->getCurrentRequest())
         {
             $data->upModifyAgent(
                 new IpAddress($this->request->getCurrentRequest()->getClientIp()), /* Ip */

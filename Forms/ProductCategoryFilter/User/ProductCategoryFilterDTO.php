@@ -30,83 +30,80 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 final class ProductCategoryFilterDTO
 {
-	
-	/**
+    /**
      * Торговое предложение
      */
-	private ?string $offer = null;
-	
-	/**
+    private ?string $offer = null;
+
+    /**
      * Множественный вариант торгового предложения
      */
-	private ?string $variation = null;
-	
-	/**
+    private ?string $variation = null;
+
+    /**
      * Модификатор множественного варианта торгового предложения
      */
-	private ?string $modification = null;
-	
-	
-	/**
+    private ?string $modification = null;
+
+
+    /**
      * Идентификатор категории
      */
-	#[Assert\Uuid]
+    #[Assert\Uuid]
     private ?CategoryProductUid $category;
 
 
     public function __construct(?CategoryProductUid $category)
     {
-		$this->category = $category;
-	}
+        $this->category = $category;
+    }
 
     /**
      * Идентификатор категории
      */
 
     public function getCategory(): ?CategoryProductUid
-	{
-		return $this->category;
-	}
+    {
+        return $this->category;
+    }
 
 
-	
-	
-	/** Торговое предложение */
-	
-	public function getOffer() : ?string
-	{
-		return $this->offer;
-	}
+    /** Торговое предложение */
 
-	public function setOffer(?string $offer) : void
-	{
-		$this->offer = $offer;
-	}
-	
-	
-	/** Множественный вариант торгового предложения */
-	
-	public function getVariation() : ?string
-	{
-		return $this->variation;
-	}
+    public function getOffer(): ?string
+    {
+        return $this->offer;
+    }
 
-	public function setVariation(?string $variation) : void
-	{
-		$this->variation = $variation;
-	}
-	
-	
-	/** Модификатор множественного варианта торгового предложения */
-	
-	public function getModification() : ?string
-	{
-		return $this->modification;
-	}
-	
-	public function setModification(?string $modification) : void
-	{
-		$this->modification = $modification;
-	}
-    
+    public function setOffer(?string $offer): void
+    {
+        $this->offer = $offer;
+    }
+
+
+    /** Множественный вариант торгового предложения */
+
+    public function getVariation(): ?string
+    {
+        return $this->variation;
+    }
+
+    public function setVariation(?string $variation): void
+    {
+        $this->variation = $variation;
+    }
+
+
+    /** Модификатор множественного варианта торгового предложения */
+
+    public function getModification(): ?string
+    {
+        return $this->modification;
+    }
+
+    public function setModification(?string $modification): void
+    {
+        $this->modification = $modification;
+    }
+
 }

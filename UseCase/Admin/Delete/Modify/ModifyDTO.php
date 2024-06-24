@@ -47,6 +47,5 @@ final class ModifyDTO implements ProductModifyInterface
     {
         return $this->action;
     }
-	
-}
 
+}

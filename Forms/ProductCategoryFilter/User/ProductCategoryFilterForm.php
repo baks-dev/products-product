@@ -41,36 +41,14 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class ProductCategoryFilterForm extends AbstractType
 {
-
-    private AllFilterFieldsByCategoryInterface $fields;
-
-    private FieldsChoice $choice;
-
-    private RequestStack $request;
-
-    private OfferFieldsCategoryChoiceInterface $offerChoice;
-
-    private VariationFieldsCategoryChoiceInterface $variationChoice;
-
-    private ModificationFieldsCategoryChoiceInterface $modificationChoice;
-
-
     public function __construct(
-        AllFilterFieldsByCategoryInterface $fields,
-        OfferFieldsCategoryChoiceInterface $offerChoice,
-        VariationFieldsCategoryChoiceInterface $variationChoice,
-        ModificationFieldsCategoryChoiceInterface $modificationChoice,
-        FieldsChoice $choice,
-        RequestStack $request,
-    )
-    {
-        $this->fields = $fields;
-        $this->choice = $choice;
-        $this->request = $request;
-        $this->offerChoice = $offerChoice;
-        $this->variationChoice = $variationChoice;
-        $this->modificationChoice = $modificationChoice;
-    }
+        private readonly AllFilterFieldsByCategoryInterface $fields,
+        private readonly OfferFieldsCategoryChoiceInterface $offerChoice,
+        private readonly VariationFieldsCategoryChoiceInterface $variationChoice,
+        private readonly ModificationFieldsCategoryChoiceInterface $modificationChoice,
+        private readonly FieldsChoice $choice,
+        private readonly RequestStack $request,
+    ) {}
 
 
     /** Форма фильтрации товаров в разделе */
@@ -94,7 +72,8 @@ final class ProductCategoryFilterForm extends AbstractType
                 {
 
 
-                    $builder->add('offer',
+                    $builder->add(
+                        'offer',
                         method_exists($inputOffer, 'formFilterAvailable') ? $inputOffer->formFilterAvailable() : $inputOffer->form(),
                         [
                             'label' => $offerField->getOption(),
@@ -115,9 +94,9 @@ final class ProductCategoryFilterForm extends AbstractType
 
                         if($inputVariation)
                         {
-                            $builder->add('variation',
+                            $builder->add(
+                                'variation',
                                 method_exists($inputVariation, 'formFilterAvailable') ? $inputVariation->formFilterAvailable() : $inputVariation->form(),
-
                                 [
                                     'label' => $variationField->getOption(),
                                     'priority' => 199,
@@ -137,7 +116,8 @@ final class ProductCategoryFilterForm extends AbstractType
 
                                 if($inputModification)
                                 {
-                                    $builder->add('modification',
+                                    $builder->add(
+                                        'modification',
                                         method_exists($inputModification, 'formFilterAvailable') ? $inputModification->formFilterAvailable() : $inputModification->form(),
                                         [
                                             'label' => $modificationField->getOption(),
@@ -168,7 +148,8 @@ final class ProductCategoryFilterForm extends AbstractType
 
                     if($input)
                     {
-                        $builder->add($field['const'],
+                        $builder->add(
+                            $field['const'],
                             $input->form(),
                             [
                                 'label' => $field['name'],
@@ -176,7 +157,7 @@ final class ProductCategoryFilterForm extends AbstractType
                                 'priority' => $i,
                                 'required' => false,
                                 'block_name' => $field['type'],
-                                'data' => isset($session[$field['type']]) ? $session[$field['type']] : null,
+                                'data' => $session[$field['type']] ?? null,
                             ]
                         );
                     }
@@ -186,7 +167,7 @@ final class ProductCategoryFilterForm extends AbstractType
 
                 $builder->addEventListener(
                     FormEvents::POST_SUBMIT,
-                    function(FormEvent $event) {
+                    function (FormEvent $event) {
 
                         $data = $event->getForm()->all();
 

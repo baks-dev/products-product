@@ -59,18 +59,20 @@ final class NewController extends AbstractController
         }
 
         // Если передан идентификатор события - копируем
-        if ($id)
+        if($id)
         {
             $Event = $entityManager->getRepository(ProductEvent::class)->find($id);
 
-            if ($Event) {
+            if($Event)
+            {
                 $Event->getDto($ProductDTO);
                 $ProductDTO->setId(new ProductEventUid());
             }
         }
 
         // Если передана категория - присваиваем для настроек (свойства, ТП)
-        if ($request->get('category')) {
+        if($request->get('category'))
+        {
             $CategoryCollectionDTO = new CategoryCollectionDTO();
             $CategoryCollectionDTO->rootCategory();
             $CategoryCollectionDTO->setCategory(new CategoryProductUid($request->get('category')));
@@ -81,14 +83,13 @@ final class NewController extends AbstractController
         $form = $this->createForm(ProductForm::class, $ProductDTO);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid() && $form->has('product'))
+        if($form->isSubmitted() && $form->isValid() && $form->has('product'))
         {
             $this->refreshTokenForm($form);
 
             $handle = $productHandler->handle($ProductDTO);
 
-            $this->addFlash
-            (
+            $this->addFlash(
                 'admin.page.new',
                 $handle instanceof Product ? 'admin.success.new' : 'admin.danger.new',
                 'admin.products.product',

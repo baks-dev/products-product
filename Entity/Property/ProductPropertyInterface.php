@@ -18,7 +18,4 @@
 
 namespace BaksDev\Products\Product\Entity\Property;
 
-interface ProductPropertyInterface
-{
-	
-}
+interface ProductPropertyInterface {}

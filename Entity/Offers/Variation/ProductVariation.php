@@ -107,12 +107,9 @@ class ProductVariation extends EntityEvent
     public function __construct(ProductOffer $offer)
     {
         $this->id = new ProductVariationUid();
-        // $this->const = new ProductVariationConst();
         $this->offer = $offer;
-
         $this->price = new Price\ProductVariationPrice($this);
         $this->quantity = new Quantity\ProductVariationQuantity($this);
-        // $this->images = new ArrayCollection();
     }
 
     public function __clone()
@@ -152,7 +149,7 @@ class ProductVariation extends EntityEvent
     {
         $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
 
-        if ($dto instanceof ProductVariationInterface)
+        if($dto instanceof ProductVariationInterface)
         {
             return parent::getDto($dto);
         }
@@ -162,7 +159,7 @@ class ProductVariation extends EntityEvent
 
     public function setEntity($dto): mixed
     {
-        if ($dto instanceof ProductVariationInterface || $dto instanceof self)
+        if($dto instanceof ProductVariationInterface || $dto instanceof self)
         {
             return parent::setEntity($dto);
         }

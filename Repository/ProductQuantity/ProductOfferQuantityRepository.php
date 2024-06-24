@@ -37,19 +37,13 @@ use Doctrine\ORM\EntityManagerInterface;
 
 final class ProductOfferQuantityRepository implements ProductOfferQuantityInterface
 {
-    private ORMQueryBuilder $ORMQueryBuilder;
-
-    public function __construct(ORMQueryBuilder $ORMQueryBuilder)
-    {
-        $this->ORMQueryBuilder = $ORMQueryBuilder;
-    }
+    public function __construct(private readonly ORMQueryBuilder $ORMQueryBuilder) {}
 
     /** Метод возвращает количественный учет торгового предложения */
     public function getProductOfferQuantity(
         ProductUid $product,
         ProductOfferConst $offer
-    ): ?ProductOfferQuantity
-    {
+    ): ?ProductOfferQuantity {
         $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
 
         $qb

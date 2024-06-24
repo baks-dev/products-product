@@ -25,145 +25,145 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 final class SeoCollectionDTO implements ProductSeoInterface
 {
-	/** Локаль */
-	#[Assert\NotBlank]
-	private Locale $local;
-	
-	/** Шаблон META TITLE (строка с точкой, запятой, нижнее подчеркивание тире процент скобки) */
-	#[Assert\Regex(pattern: '/^[\w \.\,\_\-\(\)\%]+$/iu')]
-	private ?string $title = null;
-	
-	/** Шаблон META DESCRIPTION (строка с точкой, запятой, нижнее подчеркивание тире процент скобки) */
-	#[Assert\Regex(pattern: '/^[\w \.\,\_\-\(\)\%]+$/iu')]
-	private ?string $description = null;
-	
-	/** Шаблон META KEYWORDS (строка с точкой, запятой, нижнее подчеркивание тире процент скобки) */
-	#[Assert\Regex(pattern: '/^[\w \.\,\_\-\(\)\%]+$/iu')]
-	private ?string $keywords = null;
-	
-	
-	/**
-	 * @return Locale
-	 */
-	public function getLocal() : Locale
-	{
-		return $this->local;
-	}
-	
-	
-	/** Локаль */
+    /** Локаль */
+    #[Assert\NotBlank]
+    private Locale $local;
 
-    public function setLocal(Locale|string $local) : void
+    /** Шаблон META TITLE (строка с точкой, запятой, нижнее подчеркивание тире процент скобки) */
+    #[Assert\Regex(pattern: '/^[\w \.\,\_\-\(\)\%]+$/iu')]
+    private ?string $title = null;
+
+    /** Шаблон META DESCRIPTION (строка с точкой, запятой, нижнее подчеркивание тире процент скобки) */
+    #[Assert\Regex(pattern: '/^[\w \.\,\_\-\(\)\%]+$/iu')]
+    private ?string $description = null;
+
+    /** Шаблон META KEYWORDS (строка с точкой, запятой, нижнее подчеркивание тире процент скобки) */
+    #[Assert\Regex(pattern: '/^[\w \.\,\_\-\(\)\%]+$/iu')]
+    private ?string $keywords = null;
+
+
+    /**
+     * @return Locale
+     */
+    public function getLocal(): Locale
+    {
+        return $this->local;
+    }
+
+
+    /** Локаль */
+
+    public function setLocal(Locale|string $local): void
     {
         if(!(new ReflectionProperty(self::class, 'local'))->isInitialized($this))
         {
             $this->local = $local instanceof Locale ? $local : new Locale($local);
         }
     }
-	
-	
-	/**
-	 * @return string|null
-	 */
-	public function getTitle() : ?string
-	{
-		return $this->title;
-	}
-	
-	
-	/**
-	 * @param string|null $title
-	 */
-	public function setTitle(?string $title) : void
-	{
-		$this->title = $title;
-	}
-	
-	
-	/**
-	 * @return string|null
-	 */
-	public function getKeywords() : ?string
-	{
-		return $this->keywords;
-	}
-	
-	
-	/**
-	 * @param string|null $keywords
-	 */
-	public function setKeywords(?string $keywords) : void
-	{
-		$this->keywords = $keywords;
-	}
-	
-	
-	/**
-	 * @return string|null
-	 */
-	public function getDescription() : ?string
-	{
-		return $this->description;
-	}
-	
-	
-	/**
-	 * @param string|null $description
-	 */
-	public function setDescription(?string $description) : void
-	{
-		$this->description = $description;
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	//
-	//    /**
-	//     * @return Locale
-	//     */
-	//    public function getLocal() : Locale
-	//    {
-	//        return $this->local;
-	//    }
-	//
-	//    /**
-	//     * @return string
-	//     */
-	//    public function getTitle(): string
-	//    {
-	//        return $this->title;
-	//    }
-	//
-	//    /**
-	//     * @return string
-	//     */
-	//    public function getKeywords(): string
-	//    {
-	//        return $this->keywords;
-	//    }
-	//
-	//    /**
-	//     * @return string
-	//     */
-	//    public function getDescription(): string
-	//    {
-	//        return $this->description;
-	//    }
-	//
-	
+
+
+    /**
+     * @return string|null
+     */
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+
+    /**
+     * @param string|null $title
+     */
+    public function setTitle(?string $title): void
+    {
+        $this->title = $title;
+    }
+
+
+    /**
+     * @return string|null
+     */
+    public function getKeywords(): ?string
+    {
+        return $this->keywords;
+    }
+
+
+    /**
+     * @param string|null $keywords
+     */
+    public function setKeywords(?string $keywords): void
+    {
+        $this->keywords = $keywords;
+    }
+
+
+    /**
+     * @return string|null
+     */
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+
+    /**
+     * @param string|null $description
+     */
+    public function setDescription(?string $description): void
+    {
+        $this->description = $description;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //
+    //    /**
+    //     * @return Locale
+    //     */
+    //    public function getLocal() : Locale
+    //    {
+    //        return $this->local;
+    //    }
+    //
+    //    /**
+    //     * @return string
+    //     */
+    //    public function getTitle(): string
+    //    {
+    //        return $this->title;
+    //    }
+    //
+    //    /**
+    //     * @return string
+    //     */
+    //    public function getKeywords(): string
+    //    {
+    //        return $this->keywords;
+    //    }
+    //
+    //    /**
+    //     * @return string
+    //     */
+    //    public function getDescription(): string
+    //    {
+    //        return $this->description;
+    //    }
+    //
+
 }

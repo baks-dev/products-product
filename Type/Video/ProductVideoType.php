@@ -11,15 +11,14 @@ use Symfony\Component\Uid\Uuid;
 
 final class ProductVideoType extends UidType
 {
-	public function getClassType(): string
-	{
-		return ProductVideoUid::class;
-	}
-	
-	
-	public function getName(): string
-	{
-		return ProductVideoUid::TYPE;
-	}
-	
+    public function getClassType(): string
+    {
+        return ProductVideoUid::class;
+    }
+
+    public function getName(): string
+    {
+        return ProductVideoUid::TYPE;
+    }
+
 }

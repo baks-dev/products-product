@@ -25,28 +25,20 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Repository\ProductQuantity;
 
-
 use BaksDev\Core\Doctrine\ORMQueryBuilder;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Price\ProductPrice;
 use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Type\Id\ProductUid;
-use Doctrine\ORM\EntityManagerInterface;
 
 final class ProductQuantityRepository implements ProductQuantityInterface
 {
-    private ORMQueryBuilder $ORMQueryBuilder;
-
-    public function __construct(ORMQueryBuilder $ORMQueryBuilder)
-    {
-        $this->ORMQueryBuilder = $ORMQueryBuilder;
-    }
+    public function __construct(private readonly ORMQueryBuilder $ORMQueryBuilder) {}
 
     /** Метод возвращает количественный учет продукта */
     public function getProductQuantity(
         ProductUid $product
-    ): ?ProductPrice
-    {
+    ): ?ProductPrice {
         $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
 
         $qb

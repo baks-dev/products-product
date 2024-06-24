@@ -32,14 +32,7 @@ use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 
 final class ProductOfferConstRepository implements ProductOfferConstInterface
 {
-    private DBALQueryBuilder $DBALQueryBuilder;
-
-    public function __construct(
-        DBALQueryBuilder $DBALQueryBuilder,
-    )
-    {
-        $this->DBALQueryBuilder = $DBALQueryBuilder;
-    }
+    public function __construct(private readonly DBALQueryBuilder $DBALQueryBuilder) {}
 
     /**
      * Метод возвращает идентификатор константы торгового предложения

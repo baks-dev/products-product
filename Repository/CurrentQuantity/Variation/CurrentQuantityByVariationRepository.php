@@ -37,22 +37,13 @@ use Doctrine\ORM\EntityManagerInterface;
 
 final class CurrentQuantityByVariationRepository implements CurrentQuantityByVariationInterface
 {
-    private EntityManagerInterface $entityManager;
-
-
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
-    }
-
+    public function __construct(private readonly EntityManagerInterface $entityManager) {}
 
     public function getVariationQuantity(
         ProductEventUid $event,
         ProductOfferUid $offer,
         ProductVariationUid $variation
-
-    ): ?ProductVariationQuantity
-    {
+    ): ?ProductVariationQuantity {
         $qb = $this->entityManager->createQueryBuilder();
 
         $qb->select('quantity');
@@ -60,37 +51,55 @@ final class CurrentQuantityByVariationRepository implements CurrentQuantityByVar
         $qb->from(ProductEvent::class, 'event');
 
 
-        $qb->join(Product::class,
-            'product', 'WITH', 'product.id = event.main'
+        $qb->join(
+            Product::class,
+            'product',
+            'WITH',
+            'product.id = event.main'
         );
 
         /** Торговое предложение */
 
-        $qb->join(ProductOffer::class,
-            'offer', 'WITH', 'offer.id = :offer AND offer.event = event.id'
+        $qb->join(
+            ProductOffer::class,
+            'offer',
+            'WITH',
+            'offer.id = :offer AND offer.event = event.id'
         );
         $qb->setParameter('offer', $offer, ProductOfferUid::TYPE);
 
-        $qb->leftJoin(ProductOffer::class,
-            'current_offer', 'WITH', 'current_offer.const = offer.const AND current_offer.event = product.event'
+        $qb->leftJoin(
+            ProductOffer::class,
+            'current_offer',
+            'WITH',
+            'current_offer.const = offer.const AND current_offer.event = product.event'
         );
 
 
         /** Множественный вариант торгового предложения */
 
-        $qb->join(ProductVariation::class,
-            'variation', 'WITH', 'variation.id = :variation AND variation.offer = offer.id'
+        $qb->join(
+            ProductVariation::class,
+            'variation',
+            'WITH',
+            'variation.id = :variation AND variation.offer = offer.id'
         );
         $qb->setParameter('variation', $variation, ProductVariationUid::TYPE);
 
-        $qb->leftJoin(ProductVariation::class,
-            'current_variation', 'WITH', 'current_variation.const = variation.const AND current_variation.offer = current_offer.id'
+        $qb->leftJoin(
+            ProductVariation::class,
+            'current_variation',
+            'WITH',
+            'current_variation.const = variation.const AND current_variation.offer = current_offer.id'
         );
 
 
         /** Текущее наличие */
-        $qb->leftJoin(ProductVariationQuantity::class,
-            'quantity', 'WITH', 'quantity.variation = current_variation.id'
+        $qb->leftJoin(
+            ProductVariationQuantity::class,
+            'quantity',
+            'WITH',
+            'quantity.variation = current_variation.id'
         );
 
 

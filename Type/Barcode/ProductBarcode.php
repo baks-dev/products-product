@@ -54,7 +54,8 @@ final class ProductBarcode
         $length = 10;
         $barcode = '460';
 
-        for ($i = 0; $i < $length; $i++) {
+        for($i = 0; $i < $length; $i++)
+        {
             $char = mb_substr($article, $i, 1);
             $index = ord($char) % 10;
             $barcode .= $index;
@@ -69,7 +70,7 @@ final class ProductBarcode
 
         $barcode = '';
 
-        for ($i = 0; $i < 13; $i++)
+        for($i = 0; $i < 13; $i++)
         {
             $barcode .= $characters[random_int(0, strlen($characters) - 1)];
         }

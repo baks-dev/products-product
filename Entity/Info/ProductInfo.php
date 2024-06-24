@@ -23,10 +23,8 @@
 
 namespace BaksDev\Products\Product\Entity\Info;
 
-use BaksDev\Core\Entity\EntityEvent;
 use BaksDev\Core\Entity\EntityReadonly;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
-use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Type\Barcode\ProductBarcode;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
@@ -36,7 +34,6 @@ use InvalidArgumentException;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /* Неизменяемые данные Продукта */
-
 
 #[ORM\Entity]
 #[ORM\Table(name: 'product_info')]

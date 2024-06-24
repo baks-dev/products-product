@@ -18,7 +18,4 @@
 
 namespace BaksDev\Products\Product\Entity\Price;
 
-interface ProductPriceInterface
-{
-	
-}
+interface ProductPriceInterface {}

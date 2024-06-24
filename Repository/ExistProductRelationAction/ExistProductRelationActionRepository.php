@@ -32,12 +32,7 @@ use BaksDev\Users\UsersTable\Entity\Actions\UsersTableActions;
 
 final class ExistProductRelationActionRepository implements ExistProductRelationActionInterface
 {
-    private DBALQueryBuilder $DBALQueryBuilder;
-
-    public function __construct(DBALQueryBuilder $DBALQueryBuilder,)
-    {
-        $this->DBALQueryBuilder = $DBALQueryBuilder;
-    }
+    public function __construct(private readonly DBALQueryBuilder $DBALQueryBuilder) {}
 
 
     /**

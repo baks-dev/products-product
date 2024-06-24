@@ -23,7 +23,4 @@
 
 namespace BaksDev\Products\Product\Entity\Offers\Variation\Modification;
 
-interface ProductModificationInterface
-{
-	
-}
+interface ProductModificationInterface {}

@@ -27,6 +27,5 @@ use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 
 interface ProductProfileFilterInterface
 {
-
     public function getProfile(): ?UserProfileUid;
 }

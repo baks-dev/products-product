@@ -50,11 +50,10 @@ final class EditController extends AbstractController
         #[MapEntity] ProductEvent $Event,
         Request $request,
         ProductHandler $productHandler
-    ): Response
-    {
+    ): Response {
 
-        //$ProductDTO = new ProductDTO();
-        $ProductDTO = $Event->getDto(ProductDTO::class);
+        $ProductDTO = new ProductDTO();
+        $ProductDTO = $Event->getDto($ProductDTO);
 
         // Если передана категория - присваиваем для подгрузки настроект (свойства, ТП)
         if($request->get('category'))
@@ -79,8 +78,7 @@ final class EditController extends AbstractController
 
             $handle = $productHandler->handle($ProductDTO);
 
-            $this->addFlash
-            (
+            $this->addFlash(
                 'admin.page.edit',
                 $handle instanceof Product ? 'admin.success.edit' : 'admin.danger.edit',
                 'admin.products.product',

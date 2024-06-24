@@ -39,9 +39,7 @@ return static function (FrameworkConfig $framework) {
         ->delay(1000)
         ->maxDelay(0)
         ->multiplier(3) // увеличиваем задержку перед каждой повторной попыткой
-        ->service(null)
-
-    ;
+        ->service(null);
 
     $failure = $framework->messenger();
 

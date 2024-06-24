@@ -33,32 +33,23 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
-	name: 'baks:products-product:webp',
-	description: 'Сжатие обложек карточек товаров которые не пережаты')
+    name: 'baks:products-product:webp',
+    description: 'Сжатие обложек карточек товаров которые не пережаты'
+)
 ]
 class ProductsRepackWebpCdnCommand extends Command
 {
-	private EntityManagerInterface $entityManager;
-
-    private CDNUploadImage $CDNUploadImage;
-
     public function __construct(
-
-        EntityManagerInterface $entityManager,
-        CDNUploadImage $CDNUploadImage
-	)
-	{
-        //$this->upload = $upload;
-        $this->CDNUploadImage = $CDNUploadImage;
-        $this->entityManager = $entityManager;
-
+        private readonly EntityManagerInterface $entityManager,
+        private readonly CDNUploadImage $CDNUploadImage
+    ) {
         parent::__construct();
     }
-	
-	
-	protected function execute(InputInterface $input, OutputInterface $output) : int
-	{
-		$io = new SymfonyStyle($input, $output);
+
+
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
+        $io = new SymfonyStyle($input, $output);
 
 
         $progressBar = new ProgressBar($output);
@@ -86,23 +77,23 @@ class ProductsRepackWebpCdnCommand extends Command
 
 
         /** Торговые предложения */
-		
-		$offerImages = $this->entityManager->getRepository(ProductOfferImage::class)->findBy(['cdn' => false]);
+
+        $offerImages = $this->entityManager->getRepository(ProductOfferImage::class)->findBy(['cdn' => false]);
         $this->entityManager->clear();
-		
-		/** @var $offerImage ProductOfferImage */
-		foreach($offerImages as $offerImage)
-		{
-			$message = new CDNUploadImageMessage(
+
+        /** @var $offerImage ProductOfferImage */
+        foreach($offerImages as $offerImage)
+        {
+            $message = new CDNUploadImageMessage(
                 $offerImage->getId(),
                 ProductOfferImage::class,
                 $offerImage->getPathDir()
-			);
+            );
 
             ($this->CDNUploadImage)($message);
 
             $progressBar->advance();
-		}
+        }
 
 
         /** Множественные варианты  */
@@ -125,7 +116,6 @@ class ProductsRepackWebpCdnCommand extends Command
         }
 
 
-
         /** Модификации множественных вариантов */
 
         $modificationImages = $this->entityManager->getRepository(ProductModificationImage::class)->findBy(['cdn' => false]);
@@ -146,11 +136,10 @@ class ProductsRepackWebpCdnCommand extends Command
         }
 
 
+        $progressBar->finish();
+        $io->success('Команда успешно завершена');
 
-		$progressBar->finish();
-		$io->success('Команда успешно завершена');
-		
-		return Command::SUCCESS;
-	}
-	
+        return Command::SUCCESS;
+    }
+
 }

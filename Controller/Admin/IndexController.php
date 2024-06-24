@@ -39,17 +39,12 @@ use Symfony\Component\Routing\Annotation\Route;
 #[RoleSecurity('ROLE_PRODUCT')]
 final class IndexController extends AbstractController
 {
-    #[Route('/admin/products/{page<\d+>}', name: 'admin.index', methods: [
-        'GET',
-        'POST',
-    ])]
+    #[Route('/admin/products/{page<\d+>}', name: 'admin.index', methods: ['GET', 'POST',])]
     public function index(
         Request $request,
         AllProductsInterface $getAllProduct,
         int $page = 0,
-    ): Response
-    {
-
+    ): Response {
 
         /**
          * Фильтр продукции по ТП
@@ -87,10 +82,6 @@ final class IndexController extends AbstractController
             // Получаем список продукции
             $query = $getAllProduct->getAllProducts($this->getProfileUid());
         }
-
-
-        // Получаем список оп фильтру
-        //$query = $getAllProduct->getAllProducts($search, $filter, $this->getAdminFilterProfile());
 
 
         return $this->render(

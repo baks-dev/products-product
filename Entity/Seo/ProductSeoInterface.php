@@ -18,7 +18,4 @@
 
 namespace BaksDev\Products\Product\Entity\Seo;
 
-interface ProductSeoInterface
-{
-	
-}
+interface ProductSeoInterface {}

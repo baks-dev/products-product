@@ -18,7 +18,4 @@
 
 namespace BaksDev\Products\Product\Entity\Category;
 
-interface ProductCategoryInterface
-{
-	
-}
+interface ProductCategoryInterface {}

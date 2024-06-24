@@ -45,8 +45,7 @@ final class DeleteController extends AbstractController
         Request $request,
         ProductDeleteHandler $productDeleteHandler,
         #[MapEntity] ProductEvent $Event
-    ): Response
-    {
+    ): Response {
 
         $ProductDeleteDTO = new ProductDeleteDTO();
         $Event->getDto($ProductDeleteDTO);
@@ -63,8 +62,7 @@ final class DeleteController extends AbstractController
 
             $handle = $productDeleteHandler->handle($ProductDeleteDTO);
 
-            $this->addFlash
-            (
+            $this->addFlash(
                 'admin.page.delete',
                 $handle instanceof Product ? 'admin.success.delete' : 'admin.danger.delete',
                 'admin.products.product',

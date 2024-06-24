@@ -1,17 +1,17 @@
 <?php
 /*
  *  Copyright 2023.  Baks.dev <admin@baks.dev>
- *  
+ *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *  
+ *
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *  
+ *
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,17 +26,14 @@ namespace BaksDev\Products\Product\Repository\AllExistsProducts;
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Core\Form\Search\SearchDTO;
 use BaksDev\Core\Services\Paginator\PaginatorInterface;
-
-//use BaksDev\Products\Category\Entity as CategoryEntity;
 use BaksDev\Products\Category\Entity\CategoryProduct;
 use BaksDev\Products\Category\Entity\Offers\CategoryProductOffers;
-use BaksDev\Products\Category\Entity\Offers\Variation\Modification\CategoryProductModification;
 use BaksDev\Products\Category\Entity\Offers\Variation\CategoryProductVariation;
+use BaksDev\Products\Category\Entity\Offers\Variation\Modification\CategoryProductModification;
 use BaksDev\Products\Category\Entity\Trans\CategoryProductTrans;
 use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Entity\Category\ProductCategory;
 use BaksDev\Products\Product\Entity\Description\ProductDescription;
-use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
 use BaksDev\Products\Product\Entity\Offers\Image\ProductOfferImage;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
@@ -54,24 +51,17 @@ use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Forms\ProductFilter\Admin\ProductFilterDTO;
 use BaksDev\Users\Profile\UserProfile\Entity\Personal\UserProfilePersonal;
 use BaksDev\Users\Profile\UserProfile\Entity\UserProfile;
-use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 
 final class AllExistsProductsRepository implements AllExistsProductsInterface
 {
-    private PaginatorInterface $paginator;
-    private DBALQueryBuilder $DBALQueryBuilder;
-
     private ?SearchDTO $search = null;
+
     private ?ProductFilterDTO $filter = null;
 
     public function __construct(
-        DBALQueryBuilder $DBALQueryBuilder,
-        PaginatorInterface $paginator,
-    )
-    {
-        $this->paginator = $paginator;
-        $this->DBALQueryBuilder = $DBALQueryBuilder;
-    }
+        private readonly DBALQueryBuilder $DBALQueryBuilder,
+        private readonly PaginatorInterface $paginator,
+    ) {}
 
     public function search(SearchDTO $search): self
     {
@@ -94,10 +84,10 @@ final class AllExistsProductsRepository implements AllExistsProductsInterface
             ->bindLocal();
 
 
-        $dbal->select('product.id');
-        $dbal->addSelect('product.event');
-
-        $dbal->from(Product::class, 'product');
+        $dbal
+            ->select('product.id')
+            ->addSelect('product.event')
+            ->from(Product::class, 'product');
 
         $dbal
             ->addSelect('product_trans.name AS product_name')
@@ -117,7 +107,6 @@ final class AllExistsProductsRepository implements AllExistsProductsInterface
                 ProductDescription::class,
                 'product_desc',
                 'product_desc.event = product.event AND product_desc.device = :device '
-
             )->setParameter('device', 'pc');
 
 
@@ -181,16 +170,15 @@ final class AllExistsProductsRepository implements AllExistsProductsInterface
         }
 
 
-
         /* Тип торгового предложения */
         $dbal
             ->addSelect('category_offer.reference as product_offer_reference')
             ->leftJoin(
-            'product_offer',
+                'product_offer',
                 CategoryProductOffers::class,
-            'category_offer',
-            'category_offer.id = product_offer.category_offer'
-        );
+                'category_offer',
+                'category_offer.id = product_offer.category_offer'
+            );
 
 
         /* Наличие и резерв торгового предложения */
@@ -209,11 +197,11 @@ final class AllExistsProductsRepository implements AllExistsProductsInterface
             ->addSelect('product_variation.value as product_variation_value')
             ->addSelect('product_variation.postfix as product_variation_postfix')
             ->leftJoin(
-            'product_offer',
+                'product_offer',
                 ProductVariation::class,
-            'product_variation',
-            'product_variation.offer = product_offer.id'
-        );
+                'product_variation',
+                'product_variation.offer = product_offer.id'
+            );
 
         /* Наличие и резерв множественного варианта */
         $dbal->leftJoin(
@@ -244,11 +232,11 @@ final class AllExistsProductsRepository implements AllExistsProductsInterface
         $dbal
             ->addSelect('category_variation.reference as product_variation_reference')
             ->leftJoin(
-            'product_variation',
+                'product_variation',
                 CategoryProductVariation::class,
-            'category_variation',
-            'category_variation.id = product_variation.category_variation'
-        );
+                'category_variation',
+                'category_variation.id = product_variation.category_variation'
+            );
 
 
         /** Модификация множественного варианта */
@@ -257,11 +245,11 @@ final class AllExistsProductsRepository implements AllExistsProductsInterface
             ->addSelect('product_modification.value as product_modification_value')
             ->addSelect('product_modification.postfix as product_modification_postfix')
             ->leftJoin(
-            'product_variation',
+                'product_variation',
                 ProductModification::class,
-            'product_modification',
-            'product_modification.variation = product_variation.id '
-        );
+                'product_modification',
+                'product_modification.variation = product_variation.id '
+            );
 
         /* Наличие и резерв модификации множественного варианта */
         $dbal->leftJoin(
@@ -282,17 +270,17 @@ final class AllExistsProductsRepository implements AllExistsProductsInterface
         $dbal
             ->addSelect('category_modification.reference as product_modification_reference')
             ->leftJoin(
-            'product_modification',
+                'product_modification',
                 CategoryProductModification::class,
-            'category_modification',
-            'category_modification.id = product_modification.category_modification'
-        );
-
+                'category_modification',
+                'category_modification.id = product_modification.category_modification'
+            );
 
 
         /** Артикул продукта */
 
-        $dbal->addSelect("
+        $dbal->addSelect(
+            "
 					CASE
 					   WHEN product_modification.article IS NOT NULL 
 					   THEN product_modification.article
@@ -337,7 +325,8 @@ final class AllExistsProductsRepository implements AllExistsProductsInterface
             AND product_offer_images.root = true'
         );
 
-        $dbal->addSelect("
+        $dbal->addSelect(
+            "
 			CASE
 			   WHEN product_variation_image.name IS NOT NULL
 			   THEN CONCAT ( '/upload/".$dbal->table(ProductVariationImage::class)."' , '/', product_variation_image.name)

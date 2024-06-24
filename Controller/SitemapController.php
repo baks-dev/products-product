@@ -41,11 +41,9 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 
-
 #[AsController]
 final class SitemapController extends AbstractController
 {
-
     /**
      * Ссылки на товары в категории
      */
@@ -53,17 +51,13 @@ final class SitemapController extends AbstractController
     public function urls(
         #[ParamConverter(CategoryProductUid::class)] $category,
         AllProductsByCategoryInterface $productsByCategory
-    ): Response
-    {
-        //dd($productsByCategory->fetchAllProductByCategory($category));
+    ): Response {
 
-        $response = $this->render(
-            [
-                'urls' => $productsByCategory->fetchAllProductByCategory($category)
-            ]
-        );
+        $response = $this->render([
+            'urls' => $productsByCategory->fetchAllProductByCategory($category)
+        ]);
+
         $response->headers->set('Content-Type', 'text/xml');
-
         return $response;
     }
 

@@ -42,33 +42,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class ProductForm extends AbstractType
 {
-    private CategoryPropertyByIdInterface $categoryProperty;
-
-    private CategoryOffersFormInterface $categoryOffers;
-
-    private CategoryVariationFormInterface $categoryVariation;
-
-    private CategoryModificationFormInterface $categoryModification;
-
-    private ReferenceChoice $reference;
-
-
     public function __construct(
-        CategoryPropertyByIdInterface $categoryProperty,
-        CategoryOffersFormInterface $categoryOffers,
-        CategoryVariationFormInterface $categoryVariation,
-        CategoryModificationFormInterface $categoryModification,
-        ReferenceChoice $reference,
-    ) {
-
-        $this->categoryProperty = $categoryProperty;
-        $this->categoryOffers = $categoryOffers;
-        $this->categoryVariation = $categoryVariation;
-        $this->categoryModification = $categoryModification;
-
-        $this->reference = $reference;
-
-    }
+        private readonly CategoryPropertyByIdInterface $categoryProperty,
+        private readonly CategoryOffersFormInterface $categoryOffers,
+        private readonly CategoryVariationFormInterface $categoryVariation,
+        private readonly CategoryModificationFormInterface $categoryModification,
+        private readonly ReferenceChoice $reference,
+    ) {}
 
 
     public function buildForm(FormBuilderInterface $builder, array $options): void

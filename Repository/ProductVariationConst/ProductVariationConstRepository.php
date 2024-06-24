@@ -32,14 +32,7 @@ use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 
 final class ProductVariationConstRepository implements ProductVariationConstInterface
 {
-    private DBALQueryBuilder $DBALQueryBuilder;
-
-    public function __construct(
-        DBALQueryBuilder $DBALQueryBuilder,
-    )
-    {
-        $this->DBALQueryBuilder = $DBALQueryBuilder;
-    }
+    public function __construct(private readonly DBALQueryBuilder $DBALQueryBuilder) {}
 
     /**
      * Метод возвращает идентификатор константу множественного варианта торгового предложения

@@ -34,7 +34,6 @@ interface AllProductsByCategoryInterface
 
     public function property(?array $property): self;
 
-
     public function fetchAllProductByCategoryAssociative(
         CategoryProductUid|string $category,
         string $expr = 'AND'

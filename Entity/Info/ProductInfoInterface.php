@@ -23,6 +23,4 @@
 
 namespace BaksDev\Products\Product\Entity\Info;
 
-interface ProductInfoInterface
-{
-}
+interface ProductInfoInterface {}

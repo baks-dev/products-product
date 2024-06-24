@@ -29,9 +29,9 @@ use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 
 interface CurrentQuantityByOfferInterface
 {
-	public function getOfferQuantity(
-		ProductEventUid $event,
-		ProductOfferUid $offer,
-	) : ?ProductOfferQuantity;
-	
+    public function getOfferQuantity(
+        ProductEventUid $event,
+        ProductOfferUid $offer,
+    ): ?ProductOfferQuantity;
+
 }

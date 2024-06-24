@@ -26,7 +26,7 @@ namespace BaksDev\Products\Product\Controller\User;
 use BaksDev\Core\Controller\AbstractController;
 use BaksDev\Core\Form\Search\SearchDTO;
 use BaksDev\Core\Form\Search\SearchForm;
-use BaksDev\Products\Product\Entity;
+use BaksDev\Products\Product\Entity\Info\ProductInfo;
 use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailByValueInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,10 +40,9 @@ final class ProductController extends AbstractController
     #[Route('/catalog/triangle/{url}/detail', name: 'user.product')]
     public function index(
         Request $request,
-        #[MapEntity(mapping: ['url' => 'url'])] Entity\Info\ProductInfo $info,
+        #[MapEntity(mapping: ['url' => 'url'])] ProductInfo $info,
         ProductDetailByValueInterface $productDetail,
-    ): Response
-    {
+    ): Response {
 
         $productCard = $productDetail->fetchProductAssociative(
             $info->getProduct()

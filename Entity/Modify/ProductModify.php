@@ -43,7 +43,7 @@ class ProductModify extends EntityEvent
 
     /** ID события */
     #[ORM\Id]
-    #[ORM\OneToOne(inversedBy: 'modify', targetEntity: ProductEvent::class)]
+    #[ORM\OneToOne(targetEntity: ProductEvent::class, inversedBy: 'modify')]
     #[ORM\JoinColumn(name: 'event', referencedColumnName: 'id')]
     private ProductEvent $event;
 

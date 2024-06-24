@@ -23,9 +23,14 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\Forms\ProductCategoryFilter;
+namespace BaksDev\Products\Product\Messenger;
 
-final class ProductCategoryFilter
+use BaksDev\Core\Cache\AppCacheInterface;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+
+#[AsMessageHandler(priority: -100)]
+final class ProductNullHandler
 {
-	
+    public function __invoke(ProductMessage $message): void {}
 }

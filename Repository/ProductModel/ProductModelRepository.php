@@ -1,17 +1,17 @@
 <?php
 /*
  *  Copyright 2023.  Baks.dev <admin@baks.dev>
- *  
+ *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *  
+ *
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *  
+ *
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,27 +26,22 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Repository\ProductModel;
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
-use BaksDev\Core\Type\Locale\Locale;
-
-//use BaksDev\Products\Category\Entity as CategoryEntity;
-//use BaksDev\Products\Product\Entity as ProductEntity;
 use BaksDev\Products\Category\Entity\CategoryProduct;
 use BaksDev\Products\Category\Entity\Cover\CategoryProductCover;
 use BaksDev\Products\Category\Entity\Info\CategoryProductInfo;
 use BaksDev\Products\Category\Entity\Offers\CategoryProductOffers;
 use BaksDev\Products\Category\Entity\Offers\Trans\CategoryProductOffersTrans;
+use BaksDev\Products\Category\Entity\Offers\Variation\CategoryProductVariation;
 use BaksDev\Products\Category\Entity\Offers\Variation\Modification\CategoryProductModification;
 use BaksDev\Products\Category\Entity\Offers\Variation\Modification\Trans\CategoryProductModificationTrans;
-use BaksDev\Products\Category\Entity\Offers\Variation\CategoryProductVariation;
 use BaksDev\Products\Category\Entity\Offers\Variation\Trans\CategoryProductVariationTrans;
+use BaksDev\Products\Category\Entity\Section\CategoryProductSection;
 use BaksDev\Products\Category\Entity\Section\Field\CategoryProductSectionField;
 use BaksDev\Products\Category\Entity\Section\Field\Trans\CategoryProductSectionFieldTrans;
-use BaksDev\Products\Category\Entity\Section\CategoryProductSection;
 use BaksDev\Products\Category\Entity\Trans\CategoryProductTrans;
 use BaksDev\Products\Product\Entity\Active\ProductActive;
 use BaksDev\Products\Product\Entity\Category\ProductCategory;
 use BaksDev\Products\Product\Entity\Description\ProductDescription;
-use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
 use BaksDev\Products\Product\Entity\Offers\Image\ProductOfferImage;
 use BaksDev\Products\Product\Entity\Offers\Price\ProductOfferPrice;
@@ -67,18 +62,10 @@ use BaksDev\Products\Product\Entity\Property\ProductProperty;
 use BaksDev\Products\Product\Entity\Seo\ProductSeo;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Type\Id\ProductUid;
-use Doctrine\DBAL\Connection;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class ProductModelRepository implements ProductModelInterface
 {
-
-    private DBALQueryBuilder $DBALQueryBuilder;
-
-    public function __construct(DBALQueryBuilder $DBALQueryBuilder)
-    {
-        $this->DBALQueryBuilder = $DBALQueryBuilder;
-    }
+    public function __construct(private readonly DBALQueryBuilder $DBALQueryBuilder) {}
 
     public function fetchModelAssociative(ProductUid $product): array|bool
     {
@@ -97,7 +84,8 @@ final class ProductModelRepository implements ProductModelInterface
             ->addSelect('product_active.active')
             ->addSelect('product_active.active_from')
             ->addSelect('product_active.active_to')
-            ->join('product',
+            ->join(
+                'product',
                 ProductActive::class,
                 'product_active',
                 '
@@ -134,7 +122,6 @@ final class ProductModelRepository implements ProductModelInterface
                 ProductDescription::class,
                 'product_desc',
                 'product_desc.event = product.event AND product_desc.device = :device '
-
             )
             ->setParameter('device', 'pc');
 
@@ -305,7 +292,8 @@ final class ProductModelRepository implements ProductModelInterface
             );
 
 
-        $dbal->addSelect("JSON_AGG
+        $dbal->addSelect(
+            "JSON_AGG
 			( DISTINCT
 
 					JSONB_BUILD_OBJECT
@@ -382,7 +370,8 @@ final class ProductModelRepository implements ProductModelInterface
             ' product_modification_image.modification = product_modification.id'
         );
 
-        $dbal->addSelect("JSON_AGG
+        $dbal->addSelect(
+            "JSON_AGG
 		( DISTINCT
 				CASE WHEN product_modification_image.ext IS NOT NULL THEN
 					JSONB_BUILD_OBJECT
@@ -409,7 +398,8 @@ final class ProductModelRepository implements ProductModelInterface
         );
 
         $dbal
-            ->addSelect("JSON_AGG
+            ->addSelect(
+                "JSON_AGG
 		( DISTINCT
 				CASE WHEN product_variation_image.ext IS NOT NULL THEN
 					JSONB_BUILD_OBJECT
@@ -434,7 +424,8 @@ final class ProductModelRepository implements ProductModelInterface
             'product_offer_images.offer = product_offer.id'
         );
 
-        $dbal->addSelect("JSON_AGG
+        $dbal->addSelect(
+            "JSON_AGG
 		( DISTINCT
 				CASE WHEN product_offer_images.ext IS NOT NULL THEN
 					JSONB_BUILD_OBJECT
@@ -461,7 +452,8 @@ final class ProductModelRepository implements ProductModelInterface
                 'product_photo.event = product.event'
             );
 
-        $dbal->addSelect("JSON_AGG
+        $dbal->addSelect(
+            "JSON_AGG
 		( DISTINCT
 
 					CASE WHEN product_photo.ext IS NOT NULL THEN
@@ -527,7 +519,8 @@ final class ProductModelRepository implements ProductModelInterface
         $dbal
             ->addSelect('category_cover.ext AS category_cover_ext')
             ->addSelect('category_cover.cdn AS category_cover_cdn')
-            ->addSelect("
+            ->addSelect(
+                "
 			CASE
                  WHEN category_cover.name IS NOT NULL 
                  THEN CONCAT ( '/upload/".$dbal->table(CategoryProductCover::class)."' , '/', category_cover.name)
@@ -568,7 +561,8 @@ final class ProductModelRepository implements ProductModelInterface
             'product_property.event = product.event AND product_property.field = category_section_field.const'
         );
 
-        $dbal->addSelect("JSON_AGG
+        $dbal->addSelect(
+            "JSON_AGG
 		( DISTINCT
 			
 				JSONB_BUILD_OBJECT

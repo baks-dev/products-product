@@ -25,7 +25,6 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Repository\ProductQuantity;
 
-
 use BaksDev\Core\Doctrine\ORMQueryBuilder;
 use BaksDev\Products\Category\Entity\Offers\Variation\Modification\CategoryProductModification;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
@@ -38,16 +37,10 @@ use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
-use Doctrine\ORM\EntityManagerInterface;
 
 final class ProductModificationQuantityRepository implements ProductModificationQuantityInterface
 {
-    private ORMQueryBuilder $ORMQueryBuilder;
-
-    public function __construct(ORMQueryBuilder $ORMQueryBuilder)
-    {
-        $this->ORMQueryBuilder = $ORMQueryBuilder;
-    }
+    public function __construct(private readonly ORMQueryBuilder $ORMQueryBuilder) {}
 
     /** Метод возвращает количественный учет модификации множественного варианта */
     public function getProductModificationQuantity(
@@ -55,8 +48,7 @@ final class ProductModificationQuantityRepository implements ProductModification
         ProductOfferConst $offer,
         ProductVariationConst $variation,
         ProductModificationConst $modification
-    ): ?ProductModificationQuantity
-    {
+    ): ?ProductModificationQuantity {
         $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
 
 
