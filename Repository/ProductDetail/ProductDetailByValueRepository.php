@@ -109,10 +109,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'product',
                 ProductActive::class,
                 'product_active',
-                '
-			product_active.event = product.event
-			
-			'
+                'product_active.event = product.event'
             );
 
         $dbal
