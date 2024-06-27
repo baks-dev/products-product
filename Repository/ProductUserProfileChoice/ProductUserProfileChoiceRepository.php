@@ -58,7 +58,7 @@ final class ProductUserProfileChoiceRepository implements ProductUserProfileChoi
         )
             ->setParameter(
                 'status',
-                new UserProfileStatus(UserProfileStatusActive::class),
+                UserProfileStatusActive::class,
                 UserProfileStatus::TYPE
             );
 
