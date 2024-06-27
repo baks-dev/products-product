@@ -914,9 +914,7 @@ function articleGenerate() {
     result = document.getElementById(this.dataset.id);
 
     if (result) {
-        result.value = generate;
+        result.value = generate.replace(/[^a-zA-Z0-9]/g, '-');
     }
 
-
-    console.log(this);
 }

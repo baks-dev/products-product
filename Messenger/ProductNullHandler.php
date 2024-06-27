@@ -26,11 +26,14 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Messenger;
 
 use BaksDev\Core\Cache\AppCacheInterface;
+use BaksDev\Products\Product\Repository\CurrentProductByArticle\ProductConstByArticleInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler(priority: -100)]
 final class ProductNullHandler
 {
+    public function __construct(private readonly ProductConstByArticleInterface $productConstByArticle) {}
+
     public function __invoke(ProductMessage $message): void {}
 }
