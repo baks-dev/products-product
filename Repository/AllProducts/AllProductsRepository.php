@@ -57,6 +57,7 @@ use BaksDev\Products\Product\Forms\ProductFilter\Admin\ProductFilterDTO;
 use BaksDev\Users\Profile\UserProfile\Entity\Personal\UserProfilePersonal;
 use BaksDev\Users\Profile\UserProfile\Entity\UserProfile;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
+use Override;
 
 //use BaksDev\Products\Category\Entity as CategoryEntity;
 
@@ -83,7 +84,7 @@ final class AllProductsRepository implements AllProductsInterface
         return $this;
     }
 
-
+    #[Override]
     public function getAllProductsOffers(UserProfileUid|string $profile): PaginatorInterface
     {
         if(is_string($profile))
@@ -561,7 +562,7 @@ final class AllProductsRepository implements AllProductsInterface
 
     }
 
-
+    #[Override]
     public function getAllProducts(UserProfileUid|string $profile): PaginatorInterface
     {
         if(is_string($profile))
