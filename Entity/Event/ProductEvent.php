@@ -136,9 +136,6 @@ class ProductEvent extends EntityEvent
     private Collection $property;
 
 
-
-
-
     public function __construct()
     {
         $this->id = new ProductEventUid();

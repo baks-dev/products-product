@@ -26,6 +26,7 @@ namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modifi
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Image\ProductModificationImageInterface;
 use Symfony\Component\HttpFoundation\File\File;
 
+/** @see ProductModificationImage */
 final class ProductModificationImageCollectionDTO implements ProductModificationImageInterface
 {
     public ?File $file = null;

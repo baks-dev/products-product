@@ -24,12 +24,9 @@
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Image;
 
 use BaksDev\Products\Product\Entity\Offers\Image\ProductOfferImageInterface;
-use BaksDev\Products\Product\Entity\Offers\ProductOffer;
-use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\Uid\Ulid;
-use Symfony\Component\Validator\Constraints as Assert;
 
+/** @see ProductOfferImage */
 final class ProductOfferImageCollectionDTO implements ProductOfferImageInterface
 {
     /** Обложка категории */

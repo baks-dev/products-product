@@ -29,6 +29,7 @@ use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Price\ProductM
 use BaksDev\Reference\Currency\Type\Currency;
 use BaksDev\Reference\Money\Type\Money;
 
+/** @see ProductModificationPrice */
 final class ProductModificationPriceDTO implements ProductModificationPriceInterface
 {
     /** Стоимость */

@@ -29,6 +29,7 @@ use BaksDev\Products\Product\Entity\Offers\Price\ProductOfferPriceInterface;
 use BaksDev\Reference\Currency\Type\Currency;
 use BaksDev\Reference\Money\Type\Money;
 
+/** @see ProductOfferPrice */
 final class ProductOfferPriceDTO implements ProductOfferPriceInterface
 {
     /** Стоимость */

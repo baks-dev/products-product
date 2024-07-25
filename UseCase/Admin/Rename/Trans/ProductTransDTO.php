@@ -28,6 +28,7 @@ use BaksDev\Products\Product\Entity\Trans\ProductTransInterface;
 use ReflectionProperty;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/** @see ProductTrans */
 final class ProductTransDTO implements ProductTransInterface
 {
     /** Локаль */

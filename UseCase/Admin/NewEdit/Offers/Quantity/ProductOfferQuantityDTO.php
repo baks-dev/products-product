@@ -26,6 +26,7 @@ namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Quantity;
 use BaksDev\Products\Product\Entity\Offers\Quantity\ProductOfferQuantityInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/** @see ProductOfferQuantity */
 final class ProductOfferQuantityDTO implements ProductOfferQuantityInterface
 {
     /** В наличии */

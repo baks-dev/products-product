@@ -30,6 +30,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use ReflectionProperty;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/** @see ProductModification */
 final class ProductOffersVariationModificationCollectionDTO implements ProductModificationInterface
 {
     /** ID множественного варианта торгового предложения категории */

@@ -40,6 +40,7 @@ use BaksDev\Products\Product\UseCase\Admin\NewEdit\Video\VideoCollectionDTO;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/** @see ProductEvent */
 final class ProductDTO implements ProductEventInterface
 {
     /** Идентификатор */

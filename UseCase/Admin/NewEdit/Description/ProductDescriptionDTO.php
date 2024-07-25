@@ -26,7 +26,6 @@ namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Description;
 use BaksDev\Core\Type\Device\Device;
 use BaksDev\Core\Type\Locale\Locale;
 use BaksDev\Products\Product\Entity\Description\ProductDescriptionInterface;
-use BaksDev\Products\Product\Entity\Trans\ProductTransInterface;
 use ReflectionProperty;
 use Symfony\Component\Validator\Constraints as Assert;
 

@@ -25,7 +25,6 @@ namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Info;
 
 use BaksDev\Products\Product\Entity\Info\ProductInfoInterface;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
-use Doctrine\DBAL\Types\Types;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /** @see ProductInfo */

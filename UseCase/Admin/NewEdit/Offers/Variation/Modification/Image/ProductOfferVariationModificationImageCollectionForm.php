@@ -30,6 +30,7 @@ use Symfony\Component\Form\Extension\Core\Type\RadioType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+
 final class ProductOfferVariationModificationImageCollectionForm extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void

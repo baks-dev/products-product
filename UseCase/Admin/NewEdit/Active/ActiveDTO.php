@@ -23,6 +23,7 @@ use DateTimeImmutable;
 use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/** @see ProductActive */
 final class ActiveDTO implements ProductActiveInterface
 {
     /**

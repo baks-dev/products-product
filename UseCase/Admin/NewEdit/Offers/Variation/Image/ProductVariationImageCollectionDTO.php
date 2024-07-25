@@ -26,6 +26,7 @@ namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Image;
 use BaksDev\Products\Product\Entity\Offers\Variation\Image\ProductVariationImageInterface;
 use Symfony\Component\HttpFoundation\File\File;
 
+/** @see ProductVariationImage */
 final class ProductVariationImageCollectionDTO implements ProductVariationImageInterface
 {
     /** Обложка категории */

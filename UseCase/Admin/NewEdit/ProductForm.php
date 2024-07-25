@@ -464,7 +464,6 @@ final class ProductForm extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => ProductDTO::class,
-                'method' => 'POST',
                 'attr' => ['class' => 'w-100'],
             ]
         );

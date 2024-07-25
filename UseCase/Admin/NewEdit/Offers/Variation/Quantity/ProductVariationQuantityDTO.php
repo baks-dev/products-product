@@ -27,6 +27,7 @@ use BaksDev\Products\Product\Entity\Offers\Quantity\ProductOfferQuantityInterfac
 use BaksDev\Products\Product\Entity\Offers\Variation\Quantity\ProductVariationQuantityInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/** @see ProductVariationQuantity */
 final class ProductVariationQuantityDTO implements ProductVariationQuantityInterface
 {
     /** В наличии */

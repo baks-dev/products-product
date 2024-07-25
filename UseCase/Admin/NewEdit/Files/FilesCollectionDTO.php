@@ -26,6 +26,7 @@ namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Files;
 use BaksDev\Products\Product\Entity\Files\ProductFilesInterface;
 use Symfony\Component\HttpFoundation\File\File;
 
+/** @see ProductFiles */
 final class FilesCollectionDTO implements ProductFilesInterface
 {
     public ?File $file = null;

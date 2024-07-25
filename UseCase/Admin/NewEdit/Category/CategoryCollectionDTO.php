@@ -22,6 +22,7 @@ use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Entity\Category\ProductCategoryInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/** @see ProductCategory */
 final class CategoryCollectionDTO implements ProductCategoryInterface
 {
     /** ID категории продукта */

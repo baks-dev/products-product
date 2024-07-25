@@ -27,6 +27,7 @@ use BaksDev\Products\Category\Type\Section\Field\Id\CategoryProductSectionFieldU
 use BaksDev\Products\Product\Entity\Property\ProductPropertyInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/** @see ProductProperty */
 final class PropertyCollectionDTO implements ProductPropertyInterface
 {
     /** Связь на поле из категории */
