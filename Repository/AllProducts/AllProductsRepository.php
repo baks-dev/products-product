@@ -52,8 +52,10 @@ use BaksDev\Products\Product\Entity\Offers\Variation\Quantity\ProductVariationQu
 use BaksDev\Products\Product\Entity\Photo\ProductPhoto;
 use BaksDev\Products\Product\Entity\Price\ProductPrice;
 use BaksDev\Products\Product\Entity\Product;
+use BaksDev\Products\Product\Entity\Property\ProductProperty;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Forms\ProductFilter\Admin\ProductFilterDTO;
+use BaksDev\Products\Product\Forms\ProductFilter\Admin\Property\ProductFilterPropertyDTO;
 use BaksDev\Users\Profile\UserProfile\Entity\Personal\UserProfilePersonal;
 use BaksDev\Users\Profile\UserProfile\Entity\UserProfile;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
@@ -517,6 +519,29 @@ final class AllProductsRepository implements AllProductsInterface
         );
 
 
+        if($this->filter->getProperty())
+        {
+            $filterProperty = null;
+
+            /** @var ProductFilterPropertyDTO $property */
+            foreach($this->filter->getProperty() as $property)
+            {
+                if($property->getValue())
+                {
+                    $filterProperty = ['(product_property.field = :'.$property->getType().'_const AND product_property.value = :'.$property->getType().'_value )'];
+                    $dbal->setParameter($property->getType().'_const', $property->getConst());
+                    $dbal->setParameter($property->getType().'_value', $property->getValue());
+                }
+            }
+
+            $dbal->join(
+                'product',
+                ProductProperty::class,
+                'product_property',
+                'product_property.event = product.event '.($filterProperty ? ' AND '.implode(' AND ', $filterProperty) : '')
+            );
+        }
+
         if($this->search->getQuery())
         {
 
@@ -859,6 +884,30 @@ final class AllProductsRepository implements AllProductsInterface
 			)
 			AS product_offers"
         );
+
+
+        if($this->filter->getProperty())
+        {
+            $filterProperty = null;
+
+            /** @var ProductFilterPropertyDTO $property */
+            foreach($this->filter->getProperty() as $property)
+            {
+                if($property->getValue())
+                {
+                    $filterProperty = ['(product_property.field = :'.$property->getType().'_const AND product_property.value = :'.$property->getType().'_value )'];
+                    $dbal->setParameter($property->getType().'_const', $property->getConst());
+                    $dbal->setParameter($property->getType().'_value', $property->getValue());
+                }
+            }
+
+            $dbal->join(
+                'product',
+                ProductProperty::class,
+                'product_property',
+                'product_property.event = product.event '.($filterProperty ? ' AND '.implode(' AND ', $filterProperty) : '')
+            );
+        }
 
         if($this->search->getQuery())
         {

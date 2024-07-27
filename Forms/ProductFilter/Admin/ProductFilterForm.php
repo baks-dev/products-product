@@ -19,6 +19,8 @@
 namespace BaksDev\Products\Product\Forms\ProductFilter\Admin;
 
 use BaksDev\Core\Services\Fields\FieldsChoice;
+use BaksDev\Core\Type\Field\InputField;
+use BaksDev\Products\Category\Repository\AllFilterFieldsByCategory\AllFilterFieldsByCategoryInterface;
 use BaksDev\Products\Category\Repository\CategoryChoice\CategoryChoiceInterface;
 use BaksDev\Products\Category\Repository\ModificationFieldsCategoryChoice\ModificationFieldsCategoryChoiceInterface;
 use BaksDev\Products\Category\Repository\OfferFieldsCategoryChoice\OfferFieldsCategoryChoiceInterface;
@@ -27,6 +29,7 @@ use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -42,6 +45,7 @@ final class ProductFilterForm extends AbstractType
         private readonly OfferFieldsCategoryChoiceInterface $offerChoice,
         private readonly VariationFieldsCategoryChoiceInterface $variationChoice,
         private readonly ModificationFieldsCategoryChoiceInterface $modificationChoice,
+        private readonly AllFilterFieldsByCategoryInterface $fields,
         private readonly FieldsChoice $choice,
     ) {}
 
@@ -57,6 +61,7 @@ final class ProductFilterForm extends AbstractType
         $builder->add('category', HiddenType::class);
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event): void {
+
             /** @var ProductFilterDTO $data */
             $data = $event->getData();
             $builder = $event->getForm();
@@ -100,6 +105,24 @@ final class ProductFilterForm extends AbstractType
                 $this->request->getSession()->set(ProductFilterDTO::variation, $data->getVariation());
                 $this->request->getSession()->set(ProductFilterDTO::modification, $data->getModification());
 
+
+                $session = [];
+
+                if($data->getProperty())
+                {
+                    /** @var Property\ProductFilterPropertyDTO $property */
+                    foreach($data->getProperty() as $property)
+                    {
+                        if(!empty($property->getValue()) && $property->getValue() !== 'false')
+                        {
+                            $session[$property->getConst()] = $property->getValue();
+                        }
+                    }
+
+                }
+
+
+                $this->request->getSession()->set('catalog_filter', $session);
             }
         );
 
@@ -107,6 +130,7 @@ final class ProductFilterForm extends AbstractType
         $builder->addEventListener(
             FormEvents::PRE_SET_DATA,
             function (FormEvent $event): void {
+
                 // this would be your entity, i.e. SportMeetup
 
                 /** @var ProductFilterDTO $data */
@@ -144,6 +168,7 @@ final class ProductFilterForm extends AbstractType
                                     'label' => $offerField->getOption(),
                                     'priority' => 200,
                                     'required' => false,
+                                    'translation_domain' => $inputOffer->domain()
                                 ]
                             );
 
@@ -199,12 +224,53 @@ final class ProductFilterForm extends AbstractType
                             }
                         }
                     }
+
+                    $fields = $this->fields
+                        ->category($Category)
+                        ->findAll();
+
+                    if($fields)
+                    {
+                        foreach($fields as $field)
+                        {
+                            if(empty($field['const']))
+                            {
+                                continue;
+                            }
+
+                            $ProductFilterPropertyDTO = new Property\ProductFilterPropertyDTO();
+
+                            $ProductFilterPropertyDTO->setConst($field['const']);
+                            $ProductFilterPropertyDTO->setLabel($field['name']);
+                            $ProductFilterPropertyDTO->setType($field['type']);
+
+                            $data->addProperty($ProductFilterPropertyDTO);
+
+
+                        }
+                    }
+
+                    $session = $this->request->getSession()->get('catalog_filter');
+
+                    /* TRANS CollectionType */
+                    $builder->add('property', CollectionType::class, [
+                        'entry_type' => Property\ProductFilterPropertyForm::class,
+                        'entry_options' => ['label' => false, 'session' => $session],
+                        'label' => false,
+                        'by_reference' => false,
+                        'allow_delete' => false,
+                        'allow_add' => false,
+                        'prototype_name' => '__property__',
+                    ]);
+
+
                 }
                 else
                 {
                     $data->setOffer(null);
                     $data->setVariation(null);
                     $data->setModification(null);
+                    $data->setProperty(null);
                 }
             }
         );

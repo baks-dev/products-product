@@ -20,6 +20,7 @@ namespace BaksDev\Products\Product\Forms\ProductFilter\Admin;
 
 use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Forms\ProductFilter\ProductFilterInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\Request;
 
 final class ProductFilterDTO implements ProductFilterInterface
@@ -52,6 +53,10 @@ final class ProductFilterDTO implements ProductFilterInterface
      */
     private ?string $modification = null;
 
+    /**
+     * Свойства, участвующие в фильтре
+     */
+    private ?ArrayCollection $property = null;
 
     /**
      * Показать все профили
@@ -63,6 +68,7 @@ final class ProductFilterDTO implements ProductFilterInterface
 
     public function __construct(Request $request)
     {
+        $this->property = new ArrayCollection();
         $this->request = $request;
     }
 
@@ -187,6 +193,40 @@ final class ProductFilterDTO implements ProductFilterInterface
         $this->all = $this->visible ? null : false;
 
         return $this->visible;
+    }
+
+    /**
+     * Property
+     */
+    public function getProperty(): ?ArrayCollection
+    {
+        return $this->property;
+    }
+
+    public function setProperty(?ArrayCollection $property): self
+    {
+        $this->property = $property;
+        return $this;
+    }
+
+    public function addProperty(Property\ProductFilterPropertyDTO $property): self
+    {
+        //        if($this->property === null)
+        //        {
+        //            $this->property = new ArrayCollection();
+        //        }
+
+        $filter = $this->property->filter(function (Property\ProductFilterPropertyDTO $element) use ($property) {
+            return $element->getType() === $property->getType();
+        });
+
+        if($filter->isEmpty())
+        {
+            $this->property->add($property);
+        }
+
+
+        return $this;
     }
 
 }
