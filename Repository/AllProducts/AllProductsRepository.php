@@ -519,27 +519,29 @@ final class AllProductsRepository implements AllProductsInterface
         );
 
 
+        /**
+         * Фильтр по свойства продукта
+         */
         if($this->filter->getProperty())
         {
-            $filterProperty = null;
-
             /** @var ProductFilterPropertyDTO $property */
             foreach($this->filter->getProperty() as $property)
             {
                 if($property->getValue())
                 {
-                    $filterProperty = ['(product_property.field = :'.$property->getType().'_const AND product_property.value = :'.$property->getType().'_value )'];
+                    $dbal->join(
+                        'product',
+                        ProductProperty::class,
+                        'product_property_'.$property->getType(),
+                        'product_property_'.$property->getType().'.event = product.event AND 
+                        product_property_'.$property->getType().'.field = :'.$property->getType().'_const AND 
+                        product_property_'.$property->getType().'.value = :'.$property->getType().'_value'
+                    );
+
                     $dbal->setParameter($property->getType().'_const', $property->getConst());
                     $dbal->setParameter($property->getType().'_value', $property->getValue());
                 }
             }
-
-            $dbal->join(
-                'product',
-                ProductProperty::class,
-                'product_property',
-                'product_property.event = product.event '.($filterProperty ? ' AND '.implode(' AND ', $filterProperty) : '')
-            );
         }
 
         if($this->search->getQuery())
@@ -885,28 +887,29 @@ final class AllProductsRepository implements AllProductsInterface
 			AS product_offers"
         );
 
-
+        /**
+         * Фильтр по свойства продукта
+         */
         if($this->filter->getProperty())
         {
-            $filterProperty = null;
-
             /** @var ProductFilterPropertyDTO $property */
             foreach($this->filter->getProperty() as $property)
             {
                 if($property->getValue())
                 {
-                    $filterProperty = ['(product_property.field = :'.$property->getType().'_const AND product_property.value = :'.$property->getType().'_value )'];
+                    $dbal->join(
+                        'product',
+                        ProductProperty::class,
+                        'product_property_'.$property->getType(),
+                        'product_property_'.$property->getType().'.event = product.event AND 
+                        product_property_'.$property->getType().'.field = :'.$property->getType().'_const AND 
+                        product_property_'.$property->getType().'.value = :'.$property->getType().'_value'
+                    );
+
                     $dbal->setParameter($property->getType().'_const', $property->getConst());
                     $dbal->setParameter($property->getType().'_value', $property->getValue());
                 }
             }
-
-            $dbal->join(
-                'product',
-                ProductProperty::class,
-                'product_property',
-                'product_property.event = product.event '.($filterProperty ? ' AND '.implode(' AND ', $filterProperty) : '')
-            );
         }
 
         if($this->search->getQuery())
