@@ -361,7 +361,7 @@ final class AllProductsRepository implements AllProductsInterface
 
 
         /* Категория */
-        $dbal->join(
+        $dbal->leftJoin(
             'product_event',
             ProductCategory::class,
             'product_event_category',
@@ -374,7 +374,7 @@ final class AllProductsRepository implements AllProductsInterface
             $dbal->setParameter('category', $this->filter->getCategory(), CategoryProductUid::TYPE);
         }
 
-        $dbal->join(
+        $dbal->leftJoin(
             'product_event_category',
             CategoryProduct::class,
             'category',
@@ -817,7 +817,7 @@ final class AllProductsRepository implements AllProductsInterface
             ->addGroupBy('product_photo.cdn');
 
         /* Категория */
-        $dbal->join(
+        $dbal->leftJoin(
             'product_event',
             ProductCategory::class,
             'product_event_category',
@@ -831,7 +831,7 @@ final class AllProductsRepository implements AllProductsInterface
             $dbal->setParameter('category', $this->filter->getCategory(), CategoryProductUid::TYPE);
         }
 
-        $dbal->join(
+        $dbal->leftJoin(
             'product_event_category',
             CategoryProduct::class,
             'category',

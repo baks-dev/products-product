@@ -50,7 +50,7 @@ final class CategoryCollectionForm extends AbstractType
                 'label' => false,
                 'expanded' => false,
                 'multiple' => false,
-                'required' => true,
+                'required' => false,
             ]);
 
         $builder->add(

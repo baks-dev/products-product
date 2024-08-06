@@ -13,9 +13,15 @@
                         {{ item.users_profile_username }}
                     </div>
 
-                    <div class="text-muted">
-                        <span class="badge text-bg-secondary">{{ item.category_name }}</span> {# {{ item.part_date|date('d.m.Y H:i') }} #}
-                    </div>
+                    {% if item.category_name %}
+                        <div class="text-muted">
+                            <span class="badge text-bg-secondary">{{ item.category_name }}</span>
+                        </div>
+                    {% else %}
+                        <div class="text-muted">
+                            <span class="badge text-bg-danger">Без категории</span>
+                        </div>
+                    {% endif %}
                 </div>
 
                 {# <div class="d-flex justify-content-between align-items-end">

@@ -98,6 +98,11 @@ class ProductCategory extends EntityEvent
     {
         if($dto instanceof ProductCategoryInterface || $dto instanceof self)
         {
+            if($dto->getCategory() === null)
+            {
+                return false;
+            }
+
             return parent::setEntity($dto);
         }
         throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));

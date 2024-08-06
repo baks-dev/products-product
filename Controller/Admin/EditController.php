@@ -63,8 +63,20 @@ final class EditController extends AbstractController
             {
                 if($category->getRoot())
                 {
+                    if($request->get('category') === 'null')
+                    {
+                        $category->setCategory(null);
+                        break;
+                    }
+
                     $category->setCategory(new CategoryProductUid($request->get('category')));
                 }
+            }
+
+            if($category->getCategory() === null && $request->get('category') !== 'null')
+            {
+                $category->setRoot(true);
+                $category->setCategory(new CategoryProductUid($request->get('category')));
             }
         }
 

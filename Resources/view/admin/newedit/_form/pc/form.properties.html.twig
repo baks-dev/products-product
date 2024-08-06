@@ -2,60 +2,44 @@
 
 
 <div class="d-flex flex-wrap gap-2">
-    {% set section = null %}
+	{% set section = null %}
 
-    {% for property in form.property %}
+	{% for property in form.property %}
 
-    {% if section != property.section.vars.data %}
+	{% if property.section is defined and section != property.section.vars.data %}
 
-    {% if section %}
+	{% if section %}
 </div>
-    </div>
+	</div>
 {% endif %}
 
 
-	<div class="card flex-grow-1 border-light ">
+<div class="card flex-grow-1 border-light ">
 
-		<div class="card-header border-light bg-body">
-			<div class="card-title">
-				<h4>
-					{# Секция #}
-					{{ property.section.vars.label }}
-				</h4>
-			</div>
+	<div class="card-header border-light bg-body">
+		<div class="card-title">
+			<h4>
+				{# Секция #}
+				{{ property.section.vars.label }}
+			</h4>
 		</div>
-		<div class="card-body pb-0">
+	</div>
+	<div class="card-body pb-0">
 
-			{% set section = property.section.vars.data %}
+		{% set section = property.section.vars.data %}
 
-			{% endif %}
+		{% endif %}
 
-				{{ form_row(property.section) }}
-				{{ form_row(property.value) }}
+		{% if property.section is defined %}
+			{{ form_row(property.section) }}
+			{{ form_row(property.value) }}
+		{% endif %}
 
-			{% endfor %}
-
-		</div>
+		{% endfor %}
 
 	</div>
-
 
 </div>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+</div>

@@ -38,7 +38,7 @@ final class CategoryCollectionDTO implements ProductCategoryInterface
     }
 
 
-    public function setCategory(CategoryProductUid|string $category): void
+    public function setCategory(CategoryProductUid|string|null $category): void
     {
         if(is_string($category))
         {

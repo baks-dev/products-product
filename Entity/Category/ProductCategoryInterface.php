@@ -18,4 +18,9 @@
 
 namespace BaksDev\Products\Product\Entity\Category;
 
-interface ProductCategoryInterface {}
+use BaksDev\Products\Category\Type\Id\CategoryProductUid;
+
+interface ProductCategoryInterface {
+
+    public function getCategory(): ?CategoryProductUid;
+}

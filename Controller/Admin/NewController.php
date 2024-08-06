@@ -95,6 +95,8 @@ final class NewController extends AbstractController
                 'admin.products.product',
                 $handle
             );
+
+            return $this->redirectToRoute('products-product:admin.index');
         }
 
         return $this->render(['form' => $form->createView()]);
