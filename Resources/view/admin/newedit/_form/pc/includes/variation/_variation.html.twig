@@ -37,7 +37,7 @@
 	</div>
 
 	{% if variation.postfix is defined %}
-		<div class='w-75'>
+		<div class='w-50'>
 			{{ form_row(variation.postfix,  { label : variation.postfix.vars.data ? variation.postfix.vars.attr.placeholder : false } ) }}
 		</div>
 	{% endif %}
@@ -103,7 +103,7 @@
 	{% endif %}
 	
 	
-	{% if variation.quantity is defined %}
+	{#{% if variation.quantity is defined %}
 		<div class="w-75">
 
 
@@ -122,7 +122,7 @@
 
 		</div>
 	
-	{% endif %}
+	{% endif %}#}
 
 
 </div>

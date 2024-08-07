@@ -90,7 +90,7 @@ final class ProductOffersVariationCollectionForm extends AbstractType
 
         $builder->add('price', Price\ProductOfferVariationPriceForm::class, ['label' => false]);
 
-        $builder->add('quantity', Quantity\ProductOfferVariationQuantityForm::class, ['label' => false]);
+        //$builder->add('quantity', Quantity\ProductOfferVariationQuantityForm::class, ['label' => false]);
 
         /** Торговые предложения */
         $builder->add('image', CollectionType::class, [

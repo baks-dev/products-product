@@ -55,7 +55,7 @@
 
 
 					{% if (form.offer|first).postfix is defined %}
-						<div class='w-75'>
+						<div class='w-50'>
 							{{ form_row(form.offer.vars.prototype.postfix, {
 								label : false,
 								attr : { placeholder: (form.offer|first).postfix.vars.attr.placeholder }
@@ -120,7 +120,7 @@
 
 
 					
-					{% if (form.offer.children|first).quantity is defined %}
+					{#{% if (form.offer.children|first).quantity is defined %}
 						
 						<div class="w-75 mb-3">
 							
@@ -132,7 +132,7 @@
 							
 						</div>
 					
-					{% endif %}
+					{% endif %}#}
 				
 				</div>
 				

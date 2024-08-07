@@ -54,7 +54,7 @@
 					</div>
 
 					{% if offer.postfix is defined %}
-						<div class='w-75'>
+						<div class='w-50'>
 							{{ form_row(offer.postfix, { label : offer.postfix.vars.data ? offer.postfix.vars.attr.placeholder : false }) }}
 						</div>
 					{% endif %}
@@ -115,7 +115,7 @@
 					{% endif %}
 
 
-					{% if offer.quantity is defined %}
+					{#{% if offer.quantity is defined %}
 						<div class="w-75">
 
 							{{ form_row(offer.quantity.quantity, offer.quantity.quantity.vars.data ? { label : 'Наличие', attr: { min: 0 } } : { label : false, attr : { placeholder : 'Наличие', min: 0 }} ) }}
@@ -126,7 +126,7 @@
 							{{ form_row(offer.quantity.reserve, offer.quantity.reserve.vars.data ? { label : 'Резерв', attr: { min: 0 } } : { label : false, attr : { placeholder : 'Резерв', min: 0 }} ) }}
 						</div>
 
-					{% endif %}
+					{% endif %}#}
 
 				</div>
 

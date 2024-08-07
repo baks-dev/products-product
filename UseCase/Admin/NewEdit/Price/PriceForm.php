@@ -73,13 +73,13 @@ final class PriceForm extends AbstractType
         $builder->add('request', CheckboxType::class, ['label' => false, 'required' => false]);
 
         /* Количество В наличии */
-        $builder->add('quantity', IntegerType::class, ['required' => false]);
+        //$builder->add('quantity', IntegerType::class, ['required' => false]);
 
         /* Зарезервирован */
-        $builder->add('reserve', IntegerType::class, ['required' => false]);
+        //$builder->add('reserve', IntegerType::class, ['required' => false]);
 
         /* Единица измерения */
-        $builder
+        /*$builder
             ->add('measurement', ChoiceType::class, [
                 'choices' => Measurement::cases(),
                 'choice_value' => function (?Measurement $measurement) {
@@ -94,7 +94,7 @@ final class PriceForm extends AbstractType
                 'expanded' => false,
                 'multiple' => false,
                 'required' => true,
-            ]);
+            ]);*/
 
     }
 

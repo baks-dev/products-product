@@ -34,7 +34,7 @@
 
 
 	{% if modification.postfix is defined %}
-		<div class='w-75'>
+		<div class='w-50'>
 			{{ form_row(modification.postfix,
 				modification.postfix.vars.data and loop.first ? { label : modification.postfix.vars.attr.placeholder } : { label : false }
 			) }}
@@ -106,7 +106,7 @@
 	{% endif %}
 
 
-	{% if modification.quantity is defined %}
+	{#{% if modification.quantity is defined %}
 		<div class="w-75">
 			{{ form_row(modification.quantity.quantity,
 				loop.first ? { label : 'Наличие', attr: { min: 0 } } : { label : false, attr : { placeholder : 'Наличие', min: 0 }}
@@ -119,7 +119,7 @@
 			) }}
 		</div>
 
-	{% endif %}
+	{% endif %}#}
 
 </div>
 

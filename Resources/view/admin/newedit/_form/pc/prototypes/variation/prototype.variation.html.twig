@@ -32,7 +32,7 @@
 	</div>
 
 	{% if variation_first.postfix is defined %}
-		<div class='w-75'>
+		<div class='w-50'>
 			{{ form_row(form.offer.vars.prototype.variation.vars.prototype.postfix, {
 				label : false,
 				attr : { placeholder: variation_first.postfix.vars.attr.placeholder }
@@ -99,7 +99,7 @@
 	{% endif %}
 
 
-	{% if variation_first.quantity is defined %}
+	{#{% if variation_first.quantity is defined %}
 		<div class="w-75">
 			{{ form_row(form.offer.vars.prototype.variation.vars.prototype.quantity.quantity, { attr: { placeholder: 'Наличие'|trans, min: 0 } }) }}
 		</div>
@@ -108,7 +108,7 @@
 			{{ form_row(form.offer.vars.prototype.variation.vars.prototype.quantity.reserve, { attr: { placeholder: 'Резерв'|trans, min: 0 } }) }}
 		</div>
 
-	{% endif %}
+	{% endif %}#}
 
 </div>
 
