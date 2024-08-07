@@ -42,5 +42,5 @@ interface ProductDetailByUidInterface
         ProductOffer|ProductOfferUid|string|null $offer = null,
         ProductVariation|ProductVariationUid|string|null $variation = null,
         ProductModification|ProductModificationUid|string|null $modification = null,
-    ): ?array;
+    ): false|array;
 }
