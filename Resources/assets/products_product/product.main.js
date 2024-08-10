@@ -116,7 +116,6 @@ if(searcOffer)
 
     document.addEventListener("click", function(event)
     {
-
         var isClickInsideBlock1 = $ul.contains(event.target);
         var isClickInsideBlock2 = searcOffer.contains(event.target);
 

@@ -42,21 +42,21 @@ final class PriceDTO implements ProductPriceInterface
     /** Цена по запросу */
     private bool $request = false;
 
-//    /** В наличии */
-//    #[Assert\Range(min: 0)]
-//    private ?int $quantity = 0; // 0 - нет в наличии
+    /** В наличии */
+    #[Assert\Range(min: 0)]
+    private ?int $quantity = 0; // 0 - нет в наличии
 
-//    /** Резерв */
-//    #[Assert\Range(min: 0)]
-//    private ?int $reserve = 0;
+    /** Резерв */
+    #[Assert\Range(min: 0)]
+    private ?int $reserve = 0;
 
-//    /** Единица измерения: */
-//    private Measurement $measurement;
+    /** Единица измерения: */
+    private Measurement $measurement;
 
     public function __construct()
     {
         $this->currency = new Currency();
-        //$this->measurement = new Measurement(MeasurementStunt::class);
+        $this->measurement = new Measurement(MeasurementStunt::class);
     }
 
     public function getPrice(): ?Money
@@ -98,35 +98,35 @@ final class PriceDTO implements ProductPriceInterface
     }
 
 
-//    public function getQuantity(): ?int
-//    {
-//        return $this->quantity ?: 0;
-//    }
-//
-//
+    public function getQuantity(): ?int
+    {
+        return $this->quantity ?: 0;
+    }
+
+
 //    public function setQuantity(?int $quantity): void
 //    {
 //        $this->quantity = $quantity;
 //    }
-//
-//
-//    public function getReserve(): ?int
-//    {
-//        return $this->reserve;
-//    }
-//
-//
+
+
+    public function getReserve(): ?int
+    {
+        return $this->reserve;
+    }
+
+
 //    public function setReserve(?int $reserve): void
 //    {
 //        $this->reserve = $reserve;
 //    }
-//
-//
-//    public function getMeasurement(): Measurement
-//    {
-//        return $this->measurement;
-//    }
-//
+
+
+    public function getMeasurement(): Measurement
+    {
+        return $this->measurement;
+    }
+
 //    public function setMeasurement(Measurement $measurement): void
 //    {
 //        $this->measurement = $measurement;

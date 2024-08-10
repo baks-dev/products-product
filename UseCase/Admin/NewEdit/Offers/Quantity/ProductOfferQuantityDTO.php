@@ -46,10 +46,10 @@ final class ProductOfferQuantityDTO implements ProductOfferQuantityInterface
     }
 
 
-    public function setQuantity(?int $quantity): void
-    {
-        $this->quantity = $quantity;
-    }
+//    public function setQuantity(?int $quantity): void
+//    {
+//        $this->quantity = $quantity;
+//    }
 
 
     /** Резерв */
@@ -62,10 +62,10 @@ final class ProductOfferQuantityDTO implements ProductOfferQuantityInterface
     }
 
 
-    public function setReserve(?int $reserve): void
-    {
-
-        $this->reserve = $reserve ?: 0;
-    }
+//    public function setReserve(?int $reserve): void
+//    {
+//
+//        $this->reserve = $reserve ?: 0;
+//    }
 
 }

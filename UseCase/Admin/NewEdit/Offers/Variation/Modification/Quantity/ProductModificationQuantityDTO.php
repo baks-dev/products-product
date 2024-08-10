@@ -30,7 +30,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 final class ProductModificationQuantityDTO implements ProductModificationQuantityInterface
 {
     /** В наличии */
-    private ?int $quantity = null; // 0 - нет в наличии
+    private ?int $quantity = 0; // 0 - нет в наличии
 
     /** Резерв */
     #[Assert\NotBlank]
@@ -46,10 +46,10 @@ final class ProductModificationQuantityDTO implements ProductModificationQuantit
     }
 
 
-    public function setQuantity(?int $quantity): void
-    {
-        $this->quantity = $quantity;
-    }
+//    public function setQuantity(?int $quantity): void
+//    {
+//        $this->quantity = $quantity;
+//    }
 
 
     /** Резерв */
@@ -62,8 +62,8 @@ final class ProductModificationQuantityDTO implements ProductModificationQuantit
     }
 
 
-    public function setReserve(?int $reserve): void
-    {
-        $this->reserve = $reserve ?: 0;
-    }
+//    public function setReserve(?int $reserve): void
+//    {
+//        $this->reserve = $reserve ?: 0;
+//    }
 }
