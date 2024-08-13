@@ -66,7 +66,7 @@ class ProductVideo extends EntityEvent implements UploadEntityInterface
 
     /** Размер файла */
     #[Assert\NotBlank]
-    #[Assert\Range(max: 2097152)] // 1024 * 1024 * 2
+    #[Assert\Range(max: 10485760)] // 1024 * 1024 * 10
     #[ORM\Column(type: Types::INTEGER)]
     private int $size = 0;
 

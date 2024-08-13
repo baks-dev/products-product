@@ -43,8 +43,8 @@ final class CategoryCollectionForm extends AbstractType
                 'choice_value' => function (?CategoryProductUid $type) {
                     return $type?->getValue();
                 },
-                'choice_label' => function (?CategoryProductUid $type) {
-                    return $type?->getOptions();
+                'choice_label' => function (CategoryProductUid $type) {
+                    return ($type->getAttr() ? ' - ' : '').$type->getOptions();
                 },
 
                 'label' => false,

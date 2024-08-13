@@ -69,7 +69,7 @@ class ProductOfferImage extends EntityEvent implements UploadEntityInterface
 
     /** Размер файла */
     #[Assert\NotBlank]
-    #[Assert\Range(max: 1048576)] // 1024 * 1024
+    #[Assert\Range(max: 10485760)] // 1024 * 1024 * 10
     #[ORM\Column(type: Types::INTEGER)]
     private int $size = 0;
 

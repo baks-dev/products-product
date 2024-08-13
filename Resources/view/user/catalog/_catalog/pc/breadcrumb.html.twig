@@ -23,10 +23,10 @@
 						{{ 'breadcrumb.homepage.user'|trans({}, 'core') }}
 					</a>
 				</li>
-				
+
 				{% if category.parent_category_name %}
 					<li class="breadcrumb-item">
-						
+
 						<a href="{{ path('products-product:user.catalog.category', { category : category.parent_category_url }) }}"
 								class="text-muted"
 								aria-label="{{ category.parent_category_name }}"
@@ -35,8 +35,8 @@
 						</a>
 					</li>
 				{% endif %}
-				
-				
+
+
 
 				<li class="breadcrumb-item active text-primary"
 					aria-current="page" aria-label="{{ category.category_name }}"
