@@ -18,6 +18,8 @@
 
 namespace BaksDev\Products\Product\Controller\User\Catalog\Tests;
 
+use BaksDev\Core\Doctrine\DBALQueryBuilder;
+use BaksDev\Products\Category\Entity\CategoryProduct;
 use BaksDev\Products\Category\Entity\Info\CategoryProductInfo;
 use BaksDev\Users\User\Tests\TestUserAccount;
 use Doctrine\ORM\EntityManagerInterface;
@@ -36,21 +38,34 @@ final class CategoryControllerTest extends WebTestCase
 
     public static function setUpBeforeClass(): void
     {
-        $em = self::getContainer()->get(EntityManagerInterface::class);
-        self::$identifier = $em->getRepository(CategoryProductInfo::class)->findOneBy([], ['event' => 'DESC'])?->getUrl();
+        /** @var DBALQueryBuilder $qb */
+        $qb = self::getContainer()->get(DBALQueryBuilder::class);
 
-        $em->clear();
-        //$em->close();
+        /** @var DBALQueryBuilder $dbal */
+        $dbal = $qb->createQueryBuilder(self::class);
+
+        $dbal->select('info.url');
+        $dbal->from(CategoryProduct::class, 'category');
+        $dbal->leftJoin(
+            'category',
+            CategoryProductInfo::class,
+            'info',
+            'info.event = category.event'
+        );
+
+        $dbal->orderBy('category.event', 'DESC');
+
+        self::$identifier = $dbal->fetchOne();
     }
 
     public function testSuccessful(): void
     {
-        if (self::$identifier)
+        if(self::$identifier)
         {
             self::ensureKernelShutdown();
             $client = static::createClient();
 
-            foreach (TestUserAccount::getDevice() as $device)
+            foreach(TestUserAccount::getDevice() as $device)
             {
                 $client->setServerParameter('HTTP_USER_AGENT', $device);
                 $client->request('GET', sprintf(self::URL, self::$identifier));

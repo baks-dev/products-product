@@ -52,6 +52,7 @@ final class ModificationController extends AbstractController
         string $modification = 'all',
         int $page = 0,
     ): Response {
+
         $info = $categoryByUrl->findByUrl($category);
 
         if(!$info)
