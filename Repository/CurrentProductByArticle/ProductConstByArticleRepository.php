@@ -37,7 +37,7 @@ final class ProductConstByArticleRepository implements ProductConstByArticleInte
     public function __construct(private readonly DBALQueryBuilder $DBALQueryBuilder) {}
 
     /** Метод возвращает активные идентификаторы продукции */
-    public function find(string $article): ?CurrentProductDTO
+    public function find(string $article): CurrentProductDTO|false
     {
         $dbal = $this->DBALQueryBuilder->createQueryBuilder(self::class);
 

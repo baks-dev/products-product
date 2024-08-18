@@ -37,7 +37,7 @@ final class ProductOfferConstRepository implements ProductOfferConstInterface
     /**
      * Метод возвращает идентификатор константы торгового предложения
      */
-    public function getConst(ProductOfferUid|string $offer): ?ProductOfferConst
+    public function getConst(ProductOfferUid|string $offer): ProductOfferConst|false
     {
         if(is_string($offer))
         {

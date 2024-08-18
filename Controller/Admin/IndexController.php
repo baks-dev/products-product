@@ -33,7 +33,7 @@ use BaksDev\Products\Product\Repository\AllProducts\AllProductsInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[AsController]
 #[RoleSecurity('ROLE_PRODUCT')]
@@ -53,8 +53,10 @@ final class IndexController extends AbstractController
         $filterForm = $this->createForm(ProductFilterForm::class, $filter, [
             'action' => $this->generateUrl('products-product:admin.index'),
         ]);
+
         $filterForm->handleRequest($request);
-        !$filterForm->isSubmitted() ?: $this->redirectToReferer();
+
+        //!$filterForm->isSubmitted() ?: $this->redirectToReferer();
 
 
         // Поиск

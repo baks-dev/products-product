@@ -29,5 +29,5 @@ interface ProductConstByArticleInterface
      * Метод возвращает идентификаторы продукции по артикулу
      * @see CurrentProductDTO
      */
-    public function find(string $article): ?CurrentProductDTO;
+    public function find(string $article): CurrentProductDTO|false;
 }

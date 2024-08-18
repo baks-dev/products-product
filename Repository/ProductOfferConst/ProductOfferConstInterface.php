@@ -32,5 +32,5 @@ interface ProductOfferConstInterface
     /**
      * Метод возвращает идентификатор константы торгового предложения
      */
-    public function getConst(ProductOfferUid|string $offer): ?ProductOfferConst;
+    public function getConst(ProductOfferUid|string $offer): ProductOfferConst|false;
 }

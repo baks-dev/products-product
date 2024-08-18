@@ -52,7 +52,7 @@ final class RenameProductHandler
         {
             /** Ошибка валидации */
             $uniqid = uniqid('', false);
-            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__FILE__.':'.__LINE__]);
+            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [self::class.':'.__LINE__]);
 
             return $uniqid;
         }
@@ -60,7 +60,7 @@ final class RenameProductHandler
         if(!$command->getEvent())
         {
             $uniqid = uniqid('', false);
-            $this->logger->error(sprintf('%s: Не указан идентификатор события', $uniqid), [__FILE__.':'.__LINE__]);
+            $this->logger->error(sprintf('%s: Не указан идентификатор события', $uniqid), [self::class.':'.__LINE__]);
 
             return $uniqid;
         }
@@ -78,7 +78,7 @@ final class RenameProductHandler
                 '%s: Событие ProductEvent не найдено (event: %s)',
                 $uniqid,
                 $command->getEvent()
-            ), [__FILE__.':'.__LINE__]);
+            ), [self::class.':'.__LINE__]);
 
             return $uniqid;
         }
@@ -102,7 +102,7 @@ final class RenameProductHandler
                 '%s: Агрегат Product не найден, либо был изменен (event: %s)',
                 $uniqid,
                 $command->getEvent()
-            ), [__FILE__.':'.__LINE__]);
+            ), [self::class.':'.__LINE__]);
 
             return $uniqid;
         }
@@ -117,7 +117,7 @@ final class RenameProductHandler
         {
             /** Ошибка валидации */
             $uniqid = uniqid('', false);
-            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__FILE__.':'.__LINE__]);
+            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [self::class.':'.__LINE__]);
 
             return $uniqid;
         }
@@ -130,7 +130,7 @@ final class RenameProductHandler
         {
             /** Ошибка валидации */
             $uniqid = uniqid('', false);
-            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__FILE__.':'.__LINE__]);
+            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [self::class.':'.__LINE__]);
 
             return $uniqid;
         }

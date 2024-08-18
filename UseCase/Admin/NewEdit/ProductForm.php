@@ -164,6 +164,9 @@ final class ProductForm extends AbstractType
                 ->findAllProperty() :
             null;
 
+
+        //dd($propertyCategory);
+
         /* CollectionType */
         $builder->add('property', CollectionType::class, [
             'entry_type' => Property\PropertyCollectionForm::class,

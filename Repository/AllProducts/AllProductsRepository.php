@@ -546,7 +546,6 @@ final class AllProductsRepository implements AllProductsInterface
 
         if($this->search->getQuery())
         {
-
             /** Поиск по модификации */
             $result = $this->elasticGetIndex ? $this->elasticGetIndex->handle(ProductModification::class, $this->search->getQuery(), 1) : false;
 
@@ -859,33 +858,60 @@ final class AllProductsRepository implements AllProductsInterface
         );
 
 
-        $dbal->addSelect(
-            "JSON_AGG
-			( DISTINCT
-				
-					JSONB_BUILD_OBJECT
-					(
-						/* свойства для сортирвоки JSON */
-						'0', CONCAT(product_offer.value, product_variation.value, product_modification.value),
-						
-						
-						'offer_value', product_offer.value, /* значение торгового предложения */
-						'offer_reference', category_offer.reference, /* тип (field) торгового предложения */
-						'offer_article', product_offer.article, /* артикул торгового предложения */
+        //        $dbal->addSelect(
+        //            "JSON_AGG
+        //			( DISTINCT
+        //
+        //					JSONB_BUILD_OBJECT
+        //					(
+        //						/* свойства для сортирвоки JSON */
+        //						'0', CONCAT(product_offer.value, product_variation.value, product_modification.value),
+        //
+        //
+        //						'offer_value', product_offer.value, /* значение торгового предложения */
+        //						'offer_reference', category_offer.reference, /* тип (field) торгового предложения */
+        //						'offer_article', product_offer.article, /* артикул торгового предложения */
+        //
+        //						'variation_value', product_variation.value, /* значение множественного варианта */
+        //						'variation_reference', category_variation.reference, /* тип (field) множественного варианта */
+        //						'variation_article', category_variation.article, /* валюта множественного варианта */
+        //
+        //						'modification_value', product_modification.value, /* значение модификации */
+        //						'modification_reference', category_modification.reference, /* тип (field) модификации */
+        //						'modification_article', category_modification.article /* артикул модификации */
+        //
+        //					)
+        //
+        //			)
+        //			AS product_offers"
+        //        );
 
-						'variation_value', product_variation.value, /* значение множественного варианта */
-						'variation_reference', category_variation.reference, /* тип (field) множественного варианта */
-						'variation_article', category_variation.article, /* валюта множественного варианта */
 
-						'modification_value', product_modification.value, /* значение модификации */
-						'modification_reference', category_modification.reference, /* тип (field) модификации */
-						'modification_article', category_modification.article /* артикул модификации */
+        //        $dbal->addSelect("
+        //			CASE
+        //			   WHEN COUNT(product_offer) > 0
+        //			   THEN COUNT(product_offer)
+        //
+        //			   WHEN COUNT(product_variation) > 0
+        //			   THEN COUNT(product_variation)
+        //
+        //			   WHEN COUNT(product_modification) > 0
+        //			   THEN COUNT(product_modification)
+        //
+        //			   ELSE 0
+        //			END AS offers_count
+        //		");
 
-					)
-				
-			)
-			AS product_offers"
-        );
+
+        $dbal->addSelect("
+			COALESCE(
+                NULLIF(COUNT(product_offer), 0),
+                NULLIF(COUNT(product_variation), 0),
+                NULLIF(COUNT(product_modification), 0),
+                0
+            ) AS offer_count
+		");
+
 
         /**
          * Фильтр по свойства продукта
@@ -955,8 +981,9 @@ final class AllProductsRepository implements AllProductsInterface
 
         $dbal->allGroupByExclude();
 
+        //$dbal->enableCache('products-product')->fetchAllAssociative();
+
         return $this->paginator->fetchAllAssociative($dbal);
 
     }
-
 }

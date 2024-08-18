@@ -29,7 +29,11 @@ executeFunc(function()
 
     const form = document.forms.product_filter_form;
 
-    const inputFields = document.querySelectorAll('input, select, textarea');
+
+   if(typeof form === 'undefined')
+   {
+       return false;
+   }
 
     form.addEventListener('click', () =>
     {
@@ -41,6 +45,8 @@ executeFunc(function()
 
         lastFormDebounce = idFormDebounce;
     });
+
+    const inputFields = form.querySelectorAll('input, select, textarea');
 
     // Добавляем обработчик изменения для каждого поля ввода
     inputFields.forEach(field =>

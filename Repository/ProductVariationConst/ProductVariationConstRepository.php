@@ -37,7 +37,7 @@ final class ProductVariationConstRepository implements ProductVariationConstInte
     /**
      * Метод возвращает идентификатор константу множественного варианта торгового предложения
      */
-    public function getConst(ProductVariationUid|string $variation): ?ProductVariationConst
+    public function getConst(ProductVariationUid|string $variation): ProductVariationConst|false
     {
         if(is_string($variation))
         {

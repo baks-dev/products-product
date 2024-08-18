@@ -40,7 +40,7 @@ final class ProductModificationConstRepository implements ProductModificationCon
     /**
      * Метод возвращает идентификатор константы модификации множественного варианта торгового предложения
      */
-    public function getConst(ProductModificationUid|string $modification): ?ProductModificationConst
+    public function getConst(ProductModificationUid|string $modification): ProductModificationConst|false
     {
         if(is_string($modification))
         {
