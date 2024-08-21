@@ -60,7 +60,7 @@ final class PropertyCollectionForm extends AbstractType
 
                     $propCat = $propertyCategory[$id];
 
-                    /* СЕКЦИЯ */
+                    /* СЕКЦИЯ для определения названии в рендере */
                     $form->add(
                         'section',
                         HiddenType::class,
@@ -81,7 +81,6 @@ final class PropertyCollectionForm extends AbstractType
                             'required' => $propCat->fieldRequired,
                         ]
                     );
-
 
                 }
             }

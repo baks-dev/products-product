@@ -33,7 +33,9 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 #[AsMessageHandler(priority: -100)]
 final class ProductNullHandler
 {
-    public function __construct(private readonly ProductConstByArticleInterface $productConstByArticle) {}
+    public function __construct() {}
 
-    public function __invoke(ProductMessage $message): void {}
+    public function __invoke(ProductMessage $message): void {
+        // ....
+    }
 }
