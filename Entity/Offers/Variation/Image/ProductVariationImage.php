@@ -126,10 +126,10 @@ class ProductVariationImage extends EntityEvent implements UploadEntityInterface
             return false;
         }
 
-        if(!empty($dto->file))
-        {
-            $dto->setEntityUpload($this);
-        }
+//        if(!empty($dto->file))
+//        {
+//            $dto->setEntityUpload($this);
+//        }
 
         if($dto instanceof ProductVariationImageInterface || $dto instanceof self)
         {
