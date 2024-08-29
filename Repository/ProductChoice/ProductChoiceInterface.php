@@ -23,6 +23,7 @@
 
 namespace BaksDev\Products\Product\Repository\ProductChoice;
 
+use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use Generator;
 
 interface ProductChoiceInterface
@@ -30,7 +31,7 @@ interface ProductChoiceInterface
     /**
      * Метод возвращает все идентификаторы продуктов (ProductUid) с названием
      */
-    public function fetchAllProduct(): ?array;
+    public function fetchAllProduct(CategoryProductUid|false $category = false): ?array;
 
     /**
      * Метод возвращает активные идентификаторы событий (ProductEventUid) продукции
@@ -40,5 +41,5 @@ interface ProductChoiceInterface
     /**
      * Метод возвращает идентификаторы событий (ProductEventUid) доступной для продажи продукции
      */
-    public function fetchAllProductEventByExists(): Generator;
+    public function fetchAllProductEventByExists(CategoryProductUid|false $category = false): Generator;
 }

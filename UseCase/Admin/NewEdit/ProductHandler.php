@@ -104,6 +104,10 @@ final class ProductHandler extends AbstractHandler
             }
         }
 
+
+
+
+
         // Загрузка файлов PDF галереи
         foreach($this->event->getFile() as $ProductFile)
         {

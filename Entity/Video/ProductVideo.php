@@ -91,6 +91,14 @@ class ProductVideo extends EntityEvent implements UploadEntityInterface
         return (string) $this->id;
     }
 
+    /**
+     * Id
+     */
+    public function getId(): ProductVideoUid
+    {
+        return $this->id;
+    }
+
 
     public function getUploadDir(): object
     {

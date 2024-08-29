@@ -20,7 +20,7 @@
  *  THE SOFTWARE.
  */
 
-executeFunc(function()
+executeFunc(function productFilter()
 {
     if(typeof formDebounce !== 'function')
     {

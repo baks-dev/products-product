@@ -40,9 +40,8 @@
                 {% set image_path = img_host ~ img_dir ~ img_file %}
             {% endif %}
 
-
             <div class="d-flex flex-column small gap-1 p-2 bg-cover lazy col-2 w-100"
-                 style=" height: 200px;"
+                 style="height: 200px;"
                  data-bg="{{ image_path }}"
             >
                 <div
@@ -51,7 +50,6 @@
                 >
                     {{ include(_self|replace({ "card.html.twig": "_usecase.html.twig" })) }}
                 </div>
-
             </div>
 
 
@@ -108,16 +106,62 @@
                     {{ item.product_article }}
                 </div>
 
-                <div class="d-flex align-items-center">
+                <div class="d-flex align-items-center justify-content-between">
 
                     {% if item.product_price %}
 
                         {{ money(item.product_price, item.product_currency,) }}
 
                         {% if item.product_quantity %}
-                            ({{ item.product_quantity }})
+
+                            {% if item.product_reserve %}
+                                <div class="text-muted">
+                                <span class="small fw-bolder text-primary pointer"
+                                      style="cursor: default;"
+                                      data-bs-toggle="tooltip"
+                                      data-bs-placement="bottom"
+                                      data-bs-delay='{"show":100,"hide":300}'
+                                      title="Наличие"
+                                >{{ item.product_quantity }}
+                                </span>
+
+                                    &nbsp;|&nbsp;
+
+                                    <span class="small fw-bolder text-danger"
+                                          style="cursor: default;"
+                                          data-bs-toggle="tooltip"
+                                          data-bs-placement="bottom"
+                                          data-bs-delay='{"show":100,"hide":300}'
+                                          title="Резерв"
+                                    >{{ item.product_reserve }}</span>
+
+                                    &nbsp;|&nbsp;
+
+                                    <span class="small fw-bolder text-success"
+                                          style="cursor: default;"
+                                          data-bs-toggle="tooltip"
+                                          data-bs-placement="bottom"
+                                          data-bs-delay='{"show":100,"hide":300}'
+                                          title="Доступно"
+                                    >{{ item.product_quantity - item.product_reserve }}</span>
+                                </div>
+                            {% else %}
+
+                                <span class="small fw-bolder text-success"
+                                      style="cursor: default;"
+                                      data-bs-toggle="tooltip"
+                                      data-bs-placement="bottom"
+                                      data-bs-delay='{"show":100,"hide":300}'
+                                      title="Доступно"
+                                ><small class="text-muted">доступно </small> &nbsp; {{ item.product_quantity }}</span>
+
+                            {% endif %}
+
+
+
                         {% else %}
-                            &nbsp; <span class="small text-danger fw-bold">нет в наличии</span>
+                            &nbsp; <span class="small text-danger fw-bold">
+                            <small>нет в наличии</small></span>
                         {% endif %}
 
                     {% else %}

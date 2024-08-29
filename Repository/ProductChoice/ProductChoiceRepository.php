@@ -28,7 +28,9 @@ namespace BaksDev\Products\Product\Repository\ProductChoice;
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Core\Doctrine\ORMQueryBuilder;
 use BaksDev\Core\Type\Locale\Locale;
+use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Entity\Active\ProductActive;
+use BaksDev\Products\Product\Entity\Category\ProductCategory;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
 use BaksDev\Products\Product\Entity\Offers\Price\ProductOfferPrice;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
@@ -53,12 +55,10 @@ final class ProductChoiceRepository implements ProductChoiceInterface
     ) {}
 
     /**
-     * Метод возвращает все идентификаторы продуктов (ProductUid) с названием
+     * Метод возвращает все идентификаторы продуктов (ProductUid) с названием указанной категории
      */
-
-    public function fetchAllProduct(): ?array
+    public function fetchAllProduct(CategoryProductUid|false $category = false): ?array
     {
-
         $qb = $this->DBALQueryBuilder
             ->createQueryBuilder(self::class)
             ->bindLocal();
@@ -72,12 +72,29 @@ final class ProductChoiceRepository implements ProductChoiceInterface
             'info.product = product.id'
         );
 
-        $qb->leftJoin(
+        if($category)
+        {
+            $qb
+                ->join(
+                    'product',
+                    ProductCategory::class,
+                    'category',
+                    'category.event = product.event AND category.category = :category'
+                )
+                ->setParameter(
+                    'category',
+                    $category,
+                    CategoryProductUid::TYPE
+                );
+        }
+
+
+        /*$qb->leftJoin(
             'product',
             ProductOffer::class,
             'offer',
             'offer.event = product.event'
-        );
+        );*/
 
         $qb->join(
             'product',
@@ -101,7 +118,7 @@ final class ProductChoiceRepository implements ProductChoiceInterface
 
         $qb->addSelect('product.id AS value');
         $qb->addSelect('trans.name AS attr');
-        $qb->addSelect('offer.article AS option');
+        $qb->addSelect('info.article AS option');
 
 
         /* Кешируем результат ORM */
@@ -159,7 +176,7 @@ final class ProductChoiceRepository implements ProductChoiceInterface
     /**
      * Метод возвращает идентификаторы событий (ProductEventUid) доступной для продажи продукции
      */
-    public function fetchAllProductEventByExists(): Generator
+    public function fetchAllProductEventByExists(CategoryProductUid|false $category = false): Generator
     {
         $dbal = $this->DBALQueryBuilder
             ->createQueryBuilder(self::class)
@@ -170,6 +187,18 @@ final class ProductChoiceRepository implements ProductChoiceInterface
         //$qb->select($select);
 
         $dbal->from(Product::class, 'product');
+
+        if($category)
+        {
+            $dbal->join(
+                'product',
+                ProductCategory::class,
+                'category',
+                'category.event = product.event AND category.category = :category AND category.root = TRUE'
+            )
+                ->setParameter('category', $category, CategoryProductUid::TYPE);
+        }
+
 
         $dbal->leftJoin(
             'product',
@@ -270,7 +299,7 @@ final class ProductChoiceRepository implements ProductChoiceInterface
 
         $dbal->allGroupByExclude();
 
-        return $dbal->fetchAllHydrate(ProductEventUid::class);
+        return $dbal->enableCache('products-product', 60)->fetchAllHydrate(ProductEventUid::class);
 
     }
 

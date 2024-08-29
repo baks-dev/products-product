@@ -21,6 +21,7 @@ namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Files;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -28,6 +29,8 @@ final class FilesCollectionForm extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $builder->add('name', HiddenType::class);
+
         $builder
             ->add(
                 'file',

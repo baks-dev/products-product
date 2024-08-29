@@ -487,36 +487,61 @@ final class AllProductsRepository implements AllProductsInterface
             'product_variation_quantity.variation = product_variation.id'
         );
 
-        $dbal->leftJoin(
-            'category_modification',
-            ProductModificationQuantity::class,
-            'product_modification_quantity',
-            'product_modification_quantity.modification = product_modification.id'
-        );
+        $dbal
+            ->leftJoin(
+                'category_modification',
+                ProductModificationQuantity::class,
+                'product_modification_quantity',
+                'product_modification_quantity.modification = product_modification.id'
+            );
 
-        $dbal->addSelect(
-            '
-            
-            
-            CASE
-			   WHEN product_modification_quantity.quantity > 0 AND product_modification_quantity.quantity > product_modification_quantity.reserve 
-			   THEN (product_modification_quantity.quantity - product_modification_quantity.reserve)
-			
-			   WHEN product_variation_quantity.quantity > 0 AND product_variation_quantity.quantity > product_variation_quantity.reserve 
-			   THEN (product_variation_quantity.quantity - product_variation_quantity.reserve)
-			
-			   WHEN product_offer_quantity.quantity > 0 AND product_offer_quantity.quantity > product_offer_quantity.reserve 
-			   THEN (product_offer_quantity.quantity - product_offer_quantity.reserve)
-			  
-			   WHEN product_price.quantity > 0 AND product_price.quantity > product_price.reserve 
-			   THEN (product_price.quantity - product_price.reserve)
-			 
-			   ELSE 0
-			   
-			END AS product_quantity
-            
-		'
-        );
+
+        $dbal->addSelect("
+			COALESCE(
+                NULLIF(product_modification_quantity.quantity, 0),
+                NULLIF(product_variation_quantity.quantity, 0),
+                NULLIF(product_offer_quantity.quantity, 0),
+                NULLIF(product_price.quantity, 0),
+                0
+            ) AS product_quantity
+		");
+
+        $dbal->addSelect("
+			COALESCE(
+                NULLIF(product_modification_quantity.reserve, 0),
+                NULLIF(product_variation_quantity.reserve, 0),
+                NULLIF(product_offer_quantity.reserve, 0),
+                NULLIF(product_price.reserve, 0),
+                0
+            ) AS product_reserve
+		");
+
+
+//        $dbal->addSelect(
+//            '
+//
+//
+//            CASE
+//
+//
+//			   WHEN product_modification_quantity.quantity > 0 AND product_modification_quantity.quantity > product_modification_quantity.reserve
+//			   THEN (product_modification_quantity.quantity - product_modification_quantity.reserve)
+//
+//			   WHEN product_variation_quantity.quantity > 0 AND product_variation_quantity.quantity > product_variation_quantity.reserve
+//			   THEN (product_variation_quantity.quantity - product_variation_quantity.reserve)
+//
+//			   WHEN product_offer_quantity.quantity > 0 AND product_offer_quantity.quantity > product_offer_quantity.reserve
+//			   THEN (product_offer_quantity.quantity - product_offer_quantity.reserve)
+//
+//			   WHEN product_price.quantity > 0 AND product_price.quantity > product_price.reserve
+//			   THEN (product_price.quantity - product_price.reserve)
+//
+//			   ELSE 0
+//
+//			END AS product_quantity
+//
+//		'
+//        );
 
 
         /**
@@ -905,9 +930,9 @@ final class AllProductsRepository implements AllProductsInterface
 
         $dbal->addSelect("
 			COALESCE(
-                NULLIF(COUNT(product_offer), 0),
-                NULLIF(COUNT(product_variation), 0),
                 NULLIF(COUNT(product_modification), 0),
+                NULLIF(COUNT(product_variation), 0),
+                NULLIF(COUNT(product_offer), 0),
                 0
             ) AS offer_count
 		");

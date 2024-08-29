@@ -2,6 +2,7 @@
 <div class="flex-grow-1">
 	{{ form_row(form.file.vars.prototype.file) }}
 </div>
+
 {{ form_row(form.file.vars.prototype.DeleteFile, {
 	label: '<span class="svg-icon svg-icon-2">
 						<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25" fill="none">
@@ -11,3 +12,5 @@
 					</span>',
 	attr: { class: 'btn-outline-danger btn-sm del-item-section border-0 del-item-file' }
 }) }}
+
+{{ form_widget(form.file.vars.prototype.name) }}
