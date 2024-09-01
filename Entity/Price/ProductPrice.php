@@ -50,6 +50,10 @@ class ProductPrice extends EntityEvent
     #[ORM\Column(type: Money::TYPE, nullable: true)]
     private ?Money $price;
 
+    /** Стоимость */
+    #[ORM\Column(type: Money::TYPE, nullable: true)]
+    private ?Money $old;
+    
     /** Валюта */
     #[ORM\Column(type: Currency::TYPE, length: 3, nullable: false)]
     private Currency $currency;

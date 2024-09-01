@@ -50,8 +50,13 @@ class ProductOfferPrice extends EntityEvent
 
     /** Стоимость */
     #[Assert\Type(Money::class)]
-    #[ORM\Column(name: 'price', type: Money::TYPE, nullable: true)]
+    #[ORM\Column(type: Money::TYPE, nullable: true)]
     private ?Money $price;
+
+    /** Стоимость */
+    #[Assert\Type(Money::class)]
+    #[ORM\Column(type: Money::TYPE, nullable: true)]
+    private ?Money $old;
 
     /** Валюта */
     #[Assert\Type(Currency::class)]

@@ -83,6 +83,7 @@ final class ProductHandler extends AbstractHandler
             return $errorUniqid->getMessage();
         }
 
+
         /** Проверяем уникальность семантической ссылки продукта */
         $infoDTO = $command->getInfo();
         $uniqProductUrl = $this->uniqProductUrl->isExists($infoDTO->getUrl(), $this->main->getId());
@@ -189,6 +190,7 @@ final class ProductHandler extends AbstractHandler
                 }
             }
         }
+
 
         /* Валидация всех объектов */
         if($this->validatorCollection->isInvalid())

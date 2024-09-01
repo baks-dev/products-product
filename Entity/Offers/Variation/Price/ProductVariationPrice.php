@@ -46,11 +46,15 @@ class ProductVariationPrice extends EntityEvent
     private ProductVariation $variation;
 
     /** Стоимость */
-    #[ORM\Column(name: 'price', type: Money::TYPE, nullable: true)]
+    #[ORM\Column(type: Money::TYPE, nullable: true)]
     private ?Money $price;
 
+    /** Стоимость */
+    #[ORM\Column(type: Money::TYPE, nullable: true)]
+    private ?Money $old;
+
     /** Валюта */
-    #[ORM\Column(name: 'currency', type: Currency::TYPE, length: 3, nullable: false)]
+    #[ORM\Column(type: Currency::TYPE, length: 3, nullable: false)]
     private Currency $currency;
 
 
