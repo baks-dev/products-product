@@ -21,7 +21,7 @@
  *  THE SOFTWARE.
  */
 
-namespace BaksDev\Products\Product\Repository\UpdateProductQuantity;
+namespace BaksDev\Products\Product\Repository\CurrentProductIdentifier;
 
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
@@ -32,25 +32,18 @@ use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
 
-interface AddProductQuantityInterface
+interface CurrentProductIdentifierInterface
 {
-    /** Указываем количество добавленного резерва */
-    public function addReserve(int $reserve): self;
-
-    /** Указываем количество добавленного остатка */
-    public function addQuantity(int $quantity): self;
-
     public function forEvent(ProductEvent|ProductEventUid|string $event): self;
 
-    public function forOffer(ProductOffer|ProductOfferUid|string|null $offer): self;
+    public function forOffer(ProductOffer|ProductOfferUid|string|null|false $offer): self;
 
-    public function forVariation(ProductVariation|ProductVariationUid|string|null $variation): self;
+    public function forVariation(ProductVariation|ProductVariationUid|string|null|false $variation): self;
 
-    public function forModification(ProductModification|ProductModificationUid|string|null $modification): self;
+    public function forModification(ProductModification|ProductModificationUid|string|null|false $modification): self;
 
     /**
-     * Метод обновляет указанное количество резерва либо остатка к продукции
+     * Метод возвращает активные идентификаторы продукта
      */
-    public function update(): int|false;
-
+    public function find(): array|false;
 }

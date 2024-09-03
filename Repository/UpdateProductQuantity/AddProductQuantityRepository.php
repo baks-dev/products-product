@@ -35,6 +35,7 @@ use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Product\Entity\Offers\Variation\Quantity\ProductVariationQuantity;
 use BaksDev\Products\Product\Entity\Price\ProductPrice;
 use BaksDev\Products\Product\Entity\Product;
+use BaksDev\Products\Product\Repository\CurrentProductIdentifier\CurrentProductIdentifierInterface;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
@@ -59,7 +60,10 @@ final class AddProductQuantityRepository implements AddProductQuantityInterface
     private ProductModificationUid|false $modification = false;
 
 
-    public function __construct(private readonly DBALQueryBuilder $DBALQueryBuilder) {}
+    public function __construct(
+        private readonly DBALQueryBuilder $DBALQueryBuilder,
+        private readonly CurrentProductIdentifierInterface $currentProductIdentifier
+    ) {}
 
     /** Указываем количество добавленного резерва */
     public function addReserve(int|false $reserve): self
@@ -165,7 +169,7 @@ final class AddProductQuantityRepository implements AddProductQuantityInterface
     /**
      * Метод обновляет указанное количество резерва либо остатка к продукции
      */
-    public function update(): int
+    public function update(): int|false
     {
         if(!$this->event instanceof ProductEventUid)
         {
@@ -177,114 +181,20 @@ final class AddProductQuantityRepository implements AddProductQuantityInterface
             throw new InvalidArgumentException('Необходимо вызвать метод addQuantity || addReserve передав количество');
         }
 
-        /**
-         * Определяем активное событие продукции
-         */
 
-        $current = $this->DBALQueryBuilder->createQueryBuilder(self::class);
-
-        $current
-            ->from(ProductEvent::class, 'event')
-            ->where('event.id = :event')
-            ->setParameter(
-                'event',
-                $this->event,
-                ProductEventUid::TYPE
-            );
-
-        $current
-            ->addSelect('product.event')
-            ->join(
-                'event',
-                Product::class,
-                'product',
-                'product.id = event.main'
-            );
-
-        if($this->offer)
-        {
-            $current->leftJoin(
-                'product',
-                ProductOffer::class,
-                'offer',
-                'offer.id = :offer AND offer.event = product.event'
-            )
-                ->setParameter(
-                    'offer',
-                    $this->offer,
-                    ProductOfferUid::TYPE
-                );
-
-
-            $current
-                ->addSelect('current_offer.id AS offer')
-                ->leftJoin(
-                    'offer',
-                    ProductOffer::class,
-                    'current_offer',
-                    'current_offer.const = offer.const AND current_offer.event = :event'
-                );
-
-            if($this->variation)
-            {
-
-                $current->leftJoin(
-                    'offer',
-                    ProductVariation::class,
-                    'variation',
-                    'variation.id = :variation AND variation.offer = offer.id'
-                )
-                    ->setParameter(
-                        'variation',
-                        $this->variation,
-                        ProductVariationUid::TYPE
-                    );
-
-                $current
-                    ->addSelect('current_variation.id AS variation')
-                    ->leftJoin(
-                        'variation',
-                        ProductVariation::class,
-                        'current_variation',
-                        'current_variation.const = variation.const AND current_variation.offer = current_offer.id'
-                    );
-
-
-                if($this->modification)
-                {
-                    $current
-                        ->leftJoin(
-                            'variation',
-                            ProductModification::class,
-                            'modification',
-                            'modification.id = :modification AND modification.variation = variation.id'
-                        )
-                        ->setParameter(
-                            'modification',
-                            $this->modification,
-                            ProductModificationUid::TYPE
-                        );
-
-                    $current
-                        ->addSelect('current_modification.id AS modification')
-                        ->leftJoin(
-                            'modification',
-                            ProductModification::class,
-                            'current_modification',
-                            'current_modification.const = modification.const AND current_modification.variation = current_variation.id'
-                        );
-                }
-            }
-        }
-
-        $result = $current->fetchAssociative();
+        $result = $this->currentProductIdentifier
+            ->forEvent($this->event)
+            ->forOffer($this->offer)
+            ->forVariation($this->variation)
+            ->forModification($this->modification)
+            ->find()
+        ;
 
         /** Если идентификатор события не определен - не выполняем обновление (продукт не найден) */
         if(!isset($result['event']))
         {
-            return 0;
+            return false;
         }
-
 
         $dbal = $this->DBALQueryBuilder->createQueryBuilder(self::class);
 
@@ -354,8 +264,6 @@ final class AddProductQuantityRepository implements AddProductQuantityInterface
             /** @note !!! Добавить резерв можно только если имеются остатки */
             $dbal->andWhere('(quantity - reserve) > 0');
         }
-
-        //dd($dbal->getSQL());
 
         return (int) $dbal->executeStatement();
     }

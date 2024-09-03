@@ -51,5 +51,5 @@ interface SubProductQuantityInterface
     /**
      * Метод обновляет указанное количество резерва либо остатка к продукции
      */
-    public function update(): int;
+    public function update(): int|false;
 }
