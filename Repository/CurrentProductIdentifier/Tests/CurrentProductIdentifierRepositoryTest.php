@@ -82,15 +82,18 @@ class CurrentProductIdentifierRepositoryTest extends KernelTestCase
 
         $dbal
             ->addSelect('offer.id AS offer')
+            ->addSelect('offer.const AS offer_const')
             ->join('product', ProductOffer::class, 'offer', 'offer.event = product.event');
 
         $dbal
             ->addSelect('variation.id AS variation')
+            ->addSelect('variation.const AS variation_const')
             ->join('offer', ProductVariation::class, 'variation', 'variation.offer = offer.id');
 
 
         $dbal
             ->addSelect('modification.id AS modification')
+            ->addSelect('modification.const AS modification_const')
             ->join('variation', ProductModification::class, 'modification', 'modification.variation = variation.id');
 
 

@@ -30,5 +30,5 @@ interface ProductEventByArticleInterface
     /**
      * Метод возвращает по артикулу событие продукта
      */
-    public function findProductEventByArticle(string $article): ?ProductEvent;
+    public function findProductEventByArticle(string $article): ProductEvent|false;
 }

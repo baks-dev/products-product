@@ -40,7 +40,7 @@ final class ProductEventByArticleRepository implements ProductEventByArticleInte
     /**
      * Метод возвращает по артикулу событие продукта
      */
-    public function findProductEventByArticle(string $article): ?ProductEvent
+    public function findProductEventByArticle(string $article): ProductEvent|false
     {
         $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
 
@@ -163,6 +163,6 @@ final class ProductEventByArticleRepository implements ProductEventByArticleInte
 
         $qb->join(Product::class, 'product', 'WITH', 'product.event = event.id');
 
-        return $qb->getQuery()->getOneOrNullResult();
+        return $qb->getQuery()->getOneOrNullResult() ?: false;
     }
 }

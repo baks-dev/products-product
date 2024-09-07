@@ -138,7 +138,7 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
 
 
     /**
-     * Метод возвращает активные идентификаторы продукта
+     * Метод возвращает активные идентификаторы продукта по событию и идентификаторов торгового предложения
      */
     public function find(): array|false
     {
@@ -163,6 +163,7 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
             );
 
         $current
+            ->addSelect('product.id')
             ->addSelect('product.event')
             ->join(
                 'event',
@@ -188,6 +189,7 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
 
             $current
                 ->addSelect('current_offer.id AS offer')
+                ->addSelect('current_offer.const AS offer_const')
                 ->leftJoin(
                     'offer',
                     ProductOffer::class,
@@ -212,6 +214,7 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
 
                 $current
                     ->addSelect('current_variation.id AS variation')
+                    ->addSelect('current_variation.const AS variation_const')
                     ->leftJoin(
                         'variation',
                         ProductVariation::class,
@@ -237,6 +240,7 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
 
                     $current
                         ->addSelect('current_modification.id AS modification')
+                        ->addSelect('current_modification.const AS modification_const')
                         ->leftJoin(
                             'modification',
                             ProductModification::class,
@@ -247,6 +251,8 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
             }
         }
 
-        return $current->fetchAssociative();
+        return $current
+            ->enableCache('products-product', 60)
+            ->fetchAssociative();
     }
 }
