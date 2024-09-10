@@ -481,7 +481,7 @@ final class AllProductsRepository implements AllProductsInterface
 
         /* Наличие и резерв множественного варианта */
         $dbal->leftJoin(
-            'category_variation',
+            'product_variation',
             ProductVariationQuantity::class,
             'product_variation_quantity',
             'product_variation_quantity.variation = product_variation.id'
@@ -489,7 +489,7 @@ final class AllProductsRepository implements AllProductsInterface
 
         $dbal
             ->leftJoin(
-                'category_modification',
+                'product_modification',
                 ProductModificationQuantity::class,
                 'product_modification_quantity',
                 'product_modification_quantity.modification = product_modification.id'
