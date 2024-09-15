@@ -25,10 +25,14 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product;
 
+use BaksDev\Products\Product\DependencyInjection\RoutingCompilerPass;
 use DirectoryIterator;
+use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
+use Symfony\Component\Routing\Loader\PhpFileLoader;
+use Symfony\Component\Routing\RouteCollection;
 
 class BaksDevProductsProductBundle extends AbstractBundle
 {
@@ -36,18 +40,25 @@ class BaksDevProductsProductBundle extends AbstractBundle
 
     public const PATH = __DIR__.DIRECTORY_SEPARATOR;
 
-    public function loadExtension(array $config, ContainerConfigurator $container, ContainerBuilder $builder): void
-    {
-        $services = $container->services()
-            ->defaults()
-            ->autowire()
-            ->autoconfigure();
 
-        $services->load(self::NAMESPACE, self::PATH)
-            ->exclude([
-                self::PATH.'{Entity,Resources,Type}',
-                self::PATH.'**/*Message.php',
-                self::PATH.'**/*DTO.php',
-            ]);
-    }
+//    public function prependExtension(ContainerConfigurator $container, ContainerBuilder $builder): void
+//    {
+//
+//        $path = self::PATH.implode(DIRECTORY_SEPARATOR, ['Resources', 'config']);
+//
+//        $configs = new \RegexIterator(new \DirectoryIterator($path), '/\.php$/');
+//
+//        foreach($configs as $config)
+//        {
+//            if($config->isDot() || $config->isDir())
+//            {
+//                continue;
+//            }
+//
+//            if($config->getFilename() !== 'routes.php')
+//            {
+//                $container->import($config->getPathname());
+//            }
+//        }
+//    }
 }

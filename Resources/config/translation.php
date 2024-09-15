@@ -30,6 +30,6 @@ return static function (FrameworkConfig $config) {
 
     $config
         ->translator()
-        ->paths([BaksDevProductsProductBundle::PATH.'Resources/translations/']);
+        ->paths([BaksDevProductsProductBundle::PATH.implode(DIRECTORY_SEPARATOR, ['Resources', 'translations', ''])]); // .'Resources/translations/']);
 
 };

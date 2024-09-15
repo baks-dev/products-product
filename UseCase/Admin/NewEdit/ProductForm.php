@@ -158,10 +158,9 @@ final class ProductForm extends AbstractType
         /* @var CategoryCollectionDTO $category */
         $category = $categories->current();
 
-
-        $propertyCategory = $this->categoryProperty
+        $propertyCategory = $category->getCategory() ? $this->categoryProperty
             ->forCategory($category->getCategory())
-            ->findAll();
+            ->findAll() : [];
 
         /* CollectionType */
         $builder->add('property', CollectionType::class, [

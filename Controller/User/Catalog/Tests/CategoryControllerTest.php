@@ -22,7 +22,6 @@ use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Products\Category\Entity\CategoryProduct;
 use BaksDev\Products\Category\Entity\Info\CategoryProductInfo;
 use BaksDev\Users\User\Tests\TestUserAccount;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
@@ -30,9 +29,7 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'test')]
 final class CategoryControllerTest extends WebTestCase
 {
-    private const URL = '/catalog/%s';
-
-    private const ROLE = 'ROLE_PRODUCT_EDIT';
+    private const string URL = '/catalog/%s';
 
     private static ?string $identifier = null;
 
@@ -40,8 +37,6 @@ final class CategoryControllerTest extends WebTestCase
     {
         /** @var DBALQueryBuilder $qb */
         $qb = self::getContainer()->get(DBALQueryBuilder::class);
-
-        /** @var DBALQueryBuilder $dbal */
         $dbal = $qb->createQueryBuilder(self::class);
 
         $dbal->select('info.url');
@@ -50,7 +45,7 @@ final class CategoryControllerTest extends WebTestCase
             'category',
             CategoryProductInfo::class,
             'info',
-            'info.event = category.event'
+            'info.event = category.event AND info.active = true'
         );
 
         $dbal->orderBy('category.event', 'DESC');
@@ -63,7 +58,7 @@ final class CategoryControllerTest extends WebTestCase
         if(self::$identifier)
         {
             self::ensureKernelShutdown();
-            $client = static::createClient();
+            $client = self::createClient();
 
             foreach(TestUserAccount::getDevice() as $device)
             {

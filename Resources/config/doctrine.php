@@ -61,7 +61,6 @@ use Symfony\Config\DoctrineConfig;
 return static function (ContainerConfigurator $container, DoctrineConfig $doctrine) {
 
     /* ProductUid */
-
     $doctrine->dbal()->type(ProductUid::TYPE)->class(ProductType::class);
     $doctrine->dbal()->type(ProductEventUid::TYPE)->class(ProductEventType::class);
     $doctrine->dbal()->type(ProductOfferConst::TYPE)->class(ProductOfferConstType::class);
@@ -108,6 +107,6 @@ return static function (ContainerConfigurator $container, DoctrineConfig $doctri
         ->type('attribute')
         ->dir(BaksDevProductsProductBundle::PATH.'Entity')
         ->isBundle(false)
-        ->prefix('BaksDev\Products\Product\Entity')
+        ->prefix(BaksDevProductsProductBundle::NAMESPACE.'\\Entity')
         ->alias('products-product');
 };

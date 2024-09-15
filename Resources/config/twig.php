@@ -29,7 +29,7 @@ use Symfony\Config\TwigConfig;
 return static function (TwigConfig $twig) {
 
     $twig->path(
-        BaksDevProductsProductBundle::PATH.'Resources/view',
+        BaksDevProductsProductBundle::PATH.implode(DIRECTORY_SEPARATOR, ['Resources', 'view', '']), // .'Resources/view',
         'products-product'
     );
 
