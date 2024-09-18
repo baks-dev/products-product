@@ -18,115 +18,82 @@
 
 namespace BaksDev\Products\Product\Controller\Admin\Tests;
 
-use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Tests\ProductsProductNewTest;
 use BaksDev\Users\User\Tests\TestUserAccount;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
-/** @group products-product */
+/**
+ * @group products-product
+ *
+ * @depends BaksDev\Products\Product\UseCase\Admin\NewEdit\Tests\ProductsProductNewTest::class
+ */
 #[When(env: 'test')]
 final class EditControllerTest extends WebTestCase
 {
     private const URL = '/admin/product/edit/%s';
     private const ROLE = 'ROLE_PRODUCT_EDIT';
 
-    private static ?ProductEventUid $identifier;
-
-    public static function setUpBeforeClass(): void
-    {
-        $em = self::getContainer()->get(EntityManagerInterface::class);
-        self::$identifier = $em->getRepository(Product::class)->findOneBy([], ['id' => 'DESC'])?->getEvent();
-
-        $em->clear();
-        //$em->close();
-    }
-
-
 
     /** Доступ по роли */
     public function testRoleSuccessful(): void
     {
-        // Получаем одно из событий
-        $Event = self::$identifier;
 
-        if ($Event) {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
 
-            self::ensureKernelShutdown();
-            $client = static::createClient();
+        $usr = TestUserAccount::getModer(self::ROLE);
 
-            $usr = TestUserAccount::getModer(self::ROLE);
+        $client->loginUser($usr, 'user');
+        $client->request('GET', sprintf(self::URL, ProductEventUid::TEST));
 
-            $client->loginUser($usr, 'user');
-            $client->request('GET', sprintf(self::URL, $Event->getValue()));
+        self::assertResponseIsSuccessful();
 
-            self::assertResponseIsSuccessful();
-        }
-
-        self::assertTrue(true);
     }
 
     // доступ по роли ROLE_ADMIN
     public function testRoleAdminSuccessful(): void
     {
 
-        // Получаем одно из событий
-        $Event = self::$identifier;
 
-        if ($Event) {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
 
-            self::ensureKernelShutdown();
-            $client = static::createClient();
+        $usr = TestUserAccount::getAdmin();
 
-            $usr = TestUserAccount::getAdmin();
+        $client->loginUser($usr, 'user');
+        $client->request('GET', sprintf(self::URL, ProductEventUid::TEST));
 
-            $client->loginUser($usr, 'user');
-            $client->request('GET', sprintf(self::URL, $Event->getValue()));
+        self::assertResponseIsSuccessful();
 
-            self::assertResponseIsSuccessful();
-        }
-
-        self::assertTrue(true);
     }
 
     // доступ по роли ROLE_USER
     public function testRoleUserDeny(): void
     {
 
-        // Получаем одно из событий
-        $Event = self::$identifier;
+        self::ensureKernelShutdown();
+        $client = static::createClient();
 
-        if ($Event) {
+        $usr = TestUserAccount::getUsr();
+        $client->loginUser($usr, 'user');
+        $client->request('GET', sprintf(self::URL, ProductEventUid::TEST));
 
-            self::ensureKernelShutdown();
-            $client = static::createClient();
+        self::assertResponseStatusCodeSame(403);
 
-            $usr = TestUserAccount::getUsr();
-            $client->loginUser($usr, 'user');
-            $client->request('GET', sprintf(self::URL, $Event->getValue()));
-
-            self::assertResponseStatusCodeSame(403);
-        }
-
-        self::assertTrue(true);
     }
 
     /** Доступ по без роли */
     public function testGuestFiled(): void
     {
-        // Получаем одно из событий
-        $Event = self::$identifier;
 
-        if ($Event) {
-            self::ensureKernelShutdown();
-            $client = static::createClient();
-            $client->request('GET', sprintf(self::URL, $Event->getValue()));
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+        $client->request('GET', sprintf(self::URL, ProductEventUid::TEST));
 
-            // Full authentication is required to access this resource
-            self::assertResponseStatusCodeSame(401);
-        }
+        // Full authentication is required to access this resource
+        self::assertResponseStatusCodeSame(401);
 
-        self::assertTrue(true);
     }
 }
