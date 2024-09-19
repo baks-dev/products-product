@@ -188,5 +188,4 @@ final class ProductFilterDTO implements ProductFilterInterface
 
         return $this;
     }
-
 }

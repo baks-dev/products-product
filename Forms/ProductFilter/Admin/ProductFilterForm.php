@@ -382,5 +382,4 @@ final class ProductFilterForm extends AbstractType
             ]
         );
     }
-
 }
