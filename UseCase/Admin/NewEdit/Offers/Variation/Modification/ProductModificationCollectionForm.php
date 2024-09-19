@@ -37,7 +37,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-final class ProductOffersVariationModificationCollectionForm extends AbstractType
+final class ProductModificationCollectionForm extends AbstractType
 {
     private ReferenceChoice $reference;
 
@@ -188,7 +188,7 @@ final class ProductOffersVariationModificationCollectionForm extends AbstractTyp
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => ProductOffersVariationModificationCollectionDTO::class,
+            'data_class' => ProductModificationCollectionDTO::class,
             'modification' => null,
             //'offers' => null,
         ]);

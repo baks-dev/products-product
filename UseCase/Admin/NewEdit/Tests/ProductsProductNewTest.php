@@ -46,15 +46,12 @@ use BaksDev\Products\Product\UseCase\Admin\NewEdit\Info\InfoDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Image\ProductOfferImageCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Price\ProductOfferPriceDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\ProductOffersCollectionDTO;
-use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Quantity\ProductOfferQuantityDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Image\ProductVariationImageCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification\Image\ProductModificationImageCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification\Price\ProductModificationPriceDTO;
-use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification\ProductOffersVariationModificationCollectionDTO;
-use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification\Quantity\ProductModificationQuantityDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification\ProductModificationCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Price\ProductVariationPriceDTO;
-use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\ProductOffersVariationCollectionDTO;
-use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Quantity\ProductVariationQuantityDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\ProductVariationCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Photo\PhotoCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Price\PriceDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\ProductDTO;
@@ -351,8 +348,6 @@ class ProductsProductNewTest extends KernelTestCase
         $ProductOffersCollectionDTO->setConst($ProductOfferConst = new ProductOfferConst());
         self::assertSame($ProductOfferConst, $ProductOffersCollectionDTO->getConst());
 
-        $ProductOffersCollectionDTO->setQuantity($ProductOfferQuantityDTO = new ProductOfferQuantityDTO());
-        self::assertSame($ProductOfferQuantityDTO, $ProductOffersCollectionDTO->getQuantity());
 
         /**
          * Создаем тестовый файл загрузки ProductVariationImage
@@ -383,7 +378,7 @@ class ProductsProductNewTest extends KernelTestCase
 
         /** ProductOffersVariationCollectionDTO */
 
-        $ProductOffersVariationCollectionDTO = new ProductOffersVariationCollectionDTO();
+        $ProductOffersVariationCollectionDTO = new ProductVariationCollectionDTO();
 
         $ProductVariationPriceDTO = new ProductVariationPriceDTO();
 
@@ -404,9 +399,6 @@ class ProductsProductNewTest extends KernelTestCase
 
         $ProductOffersVariationCollectionDTO->setArticle('Test New Variation Article');
         self::assertSame('Test New Variation Article', $ProductOffersVariationCollectionDTO->getArticle());
-
-        $ProductOffersVariationCollectionDTO->setQuantity($ProductVariationQuantityDTO = new ProductVariationQuantityDTO());
-        self::assertSame($ProductVariationQuantityDTO, $ProductOffersVariationCollectionDTO->getQuantity());
 
         $ProductOffersVariationCollectionDTO->setValue('Test New Variation Value');
         self::assertSame('Test New Variation Value', $ProductOffersVariationCollectionDTO->getValue());
@@ -451,15 +443,7 @@ class ProductsProductNewTest extends KernelTestCase
 
         /** ProductOffersVariationModificationCollectionDTO */
 
-        $ProductOffersVariationModificationCollectionDTO = new ProductOffersVariationModificationCollectionDTO();
-
-        $ProductOffersVariationModificationCollectionDTO->setQuantity(
-            $ProductModificationQuantityDTO = new ProductModificationQuantityDTO()
-        );
-        self::assertSame(
-            $ProductModificationQuantityDTO,
-            $ProductOffersVariationModificationCollectionDTO->getQuantity()
-        );
+        $ProductOffersVariationModificationCollectionDTO = new ProductModificationCollectionDTO();
 
         $ProductModificationPriceDTO = new ProductModificationPriceDTO();
 
@@ -492,13 +476,6 @@ class ProductsProductNewTest extends KernelTestCase
             $ProductOffersVariationModificationCollectionDTO->getArticle()
         );
 
-        $ProductOffersVariationModificationCollectionDTO->setQuantity(
-            $ProductModificationQuantityDTO = new ProductModificationQuantityDTO()
-        );
-        self::assertSame(
-            $ProductModificationQuantityDTO,
-            $ProductOffersVariationModificationCollectionDTO->getQuantity()
-        );
 
         $ProductOffersVariationModificationCollectionDTO->setValue('Test New Modification Value');
         self::assertSame(

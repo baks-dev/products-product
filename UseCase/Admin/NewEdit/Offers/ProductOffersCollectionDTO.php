@@ -57,8 +57,8 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
     private ?Price\ProductOfferPriceDTO $price = null;
 
     /** Количественный учет */
-    #[Assert\Valid]
-    private ?Quantity\ProductOfferQuantityDTO $quantity = null;
+    //#[Assert\Valid]
+    //private ?Quantity\ProductOfferQuantityDTO $quantity = null;
 
     /** Дополнительные фото торгового предложения */
     #[Assert\Valid]
@@ -140,18 +140,18 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
     }
 
 
-    /** Количественный учет */
-
-    public function getQuantity(): ?Quantity\ProductOfferQuantityDTO
-    {
-        return $this->quantity;
-    }
-
-
-    public function setQuantity(?Quantity\ProductOfferQuantityDTO $quantity): void
-    {
-        $this->quantity = $quantity;
-    }
+//    /** Количественный учет */
+//
+//    public function getQuantity(): ?Quantity\ProductOfferQuantityDTO
+//    {
+//        return $this->quantity;
+//    }
+//
+//
+//    public function setQuantity(?Quantity\ProductOfferQuantityDTO $quantity): void
+//    {
+//        $this->quantity = $quantity;
+//    }
 
 
     /** Дополнительные фото торгового предложения */
@@ -193,10 +193,10 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
     }
 
 
-    public function addVariation(Variation\ProductOffersVariationCollectionDTO $variation): void
+    public function addVariation(Variation\ProductVariationCollectionDTO $variation): void
     {
 
-        $filter = $this->variation->filter(function (Variation\ProductOffersVariationCollectionDTO $element) use (
+        $filter = $this->variation->filter(function (Variation\ProductVariationCollectionDTO $element) use (
             $variation
         ) {
             return $variation->getValue() === $element->getValue();
@@ -210,7 +210,7 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
     }
 
 
-    public function removeVariation(Variation\ProductOffersVariationCollectionDTO $variation): void
+    public function removeVariation(Variation\ProductVariationCollectionDTO $variation): void
     {
         $this->variation->removeElement($variation);
     }

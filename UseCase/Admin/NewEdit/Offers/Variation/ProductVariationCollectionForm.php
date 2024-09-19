@@ -37,7 +37,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-final class ProductOffersVariationCollectionForm extends AbstractType
+final class ProductVariationCollectionForm extends AbstractType
 {
     private ReferenceChoice $reference;
 
@@ -181,7 +181,7 @@ final class ProductOffersVariationCollectionForm extends AbstractType
         {
             /** Множественные варианты торгового предложения */
             $builder->add('modification', CollectionType::class, [
-                'entry_type' => Modification\ProductOffersVariationModificationCollectionForm::class,
+                'entry_type' => Modification\ProductModificationCollectionForm::class,
                 'entry_options' => [
                     'label' => false,
                     'modification' => $modification,
@@ -210,7 +210,7 @@ final class ProductOffersVariationCollectionForm extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => ProductOffersVariationCollectionDTO::class,
+            'data_class' => ProductVariationCollectionDTO::class,
             'variation' => null,
             'modification' => null,
             //'offers' => null,

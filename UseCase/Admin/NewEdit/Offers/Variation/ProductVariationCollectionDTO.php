@@ -21,25 +21,25 @@
  *  THE SOFTWARE.
  */
 
-namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification;
+namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation;
 
-use BaksDev\Products\Category\Type\Offers\Modification\CategoryProductModificationUid;
-use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModificationInterface;
-use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
+use BaksDev\Products\Category\Type\Offers\Variation\CategoryProductVariationUid;
+use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariationInterface;
+use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
 use Doctrine\Common\Collections\ArrayCollection;
 use ReflectionProperty;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/** @see ProductModification */
-final class ProductOffersVariationModificationCollectionDTO implements ProductModificationInterface
+/** @see ProductVariation */
+final class ProductVariationCollectionDTO implements ProductVariationInterface
 {
     /** ID множественного варианта торгового предложения категории */
-    private CategoryProductModificationUid $categoryModification;
+    private ?CategoryProductVariationUid $categoryVariation;
 
-    /** Постоянный уникальный идентификатор модификации */
+    /** Постоянный уникальный идентификатор варианта */
     #[Assert\NotBlank]
     #[Assert\Uuid]
-    private readonly ProductModificationConst $const;
+    private readonly ProductVariationConst $const;
 
     /** Заполненное значение */
     private ?string $value = null;
@@ -52,36 +52,41 @@ final class ProductOffersVariationModificationCollectionDTO implements ProductMo
 
     /** Стоимость торгового предложения */
     #[Assert\Valid]
-    private ?Price\ProductModificationPriceDTO $price = null;
+    private ?Price\ProductVariationPriceDTO $price = null;
 
     /** Количественный учет */
-    #[Assert\Valid]
-    private ?Quantity\ProductModificationQuantityDTO $quantity = null;
+    //#[Assert\Valid]
+    //private ?Quantity\ProductVariationQuantityDTO $quantity = null;
 
     /** Дополнительные фото торгового предложения */
     #[Assert\Valid]
     private ArrayCollection $image;
 
+    /** Модификации множественных вариантов */
+    #[Assert\Valid]
+    private ArrayCollection $modification;
+
 
     public function __construct()
     {
         $this->image = new ArrayCollection();
+        $this->modification = new ArrayCollection();
     }
 
 
-    /** Постоянный уникальный идентификатор модификации */
-
-    public function getConst(): ProductModificationConst
+    /** Постоянный уникальный идентификатор варианта */
+    public function getConst(): ProductVariationConst
     {
         if(!(new ReflectionProperty(self::class, 'const'))->isInitialized($this))
         {
-            $this->const = new ProductModificationConst();
+            $this->const = new ProductVariationConst();
         }
 
         return $this->const;
     }
 
-    public function setConst(ProductModificationConst $const): void
+
+    public function setConst(ProductVariationConst $const): void
     {
         if(!(new ReflectionProperty(self::class, 'const'))->isInitialized($this))
         {
@@ -120,30 +125,30 @@ final class ProductOffersVariationModificationCollectionDTO implements ProductMo
 
     /** Стоимость торгового предложения */
 
-    public function getPrice(): ?Price\ProductModificationPriceDTO
+    public function getPrice(): ?Price\ProductVariationPriceDTO
     {
         return $this->price;
     }
 
 
-    public function setPrice(?Price\ProductModificationPriceDTO $price): void
+    public function setPrice(?Price\ProductVariationPriceDTO $price): void
     {
         $this->price = $price;
     }
 
 
-    /** Количественный учет */
-
-    public function getQuantity(): ?Quantity\ProductModificationQuantityDTO
-    {
-        return $this->quantity;
-    }
-
-
-    public function setQuantity(?Quantity\ProductModificationQuantityDTO $quantity): void
-    {
-        $this->quantity = $quantity;
-    }
+//    /** Количественный учет */
+//
+//    public function getQuantity(): ?Quantity\ProductVariationQuantityDTO
+//    {
+//        return $this->quantity;
+//    }
+//
+//
+//    public function setQuantity(?Quantity\ProductVariationQuantityDTO $quantity): void
+//    {
+//        $this->quantity = $quantity;
+//    }
 
 
     /** Дополнительные фото торгового предложения */
@@ -154,9 +159,10 @@ final class ProductOffersVariationModificationCollectionDTO implements ProductMo
     }
 
 
-    public function addImage(Image\ProductModificationImageCollectionDTO $image): void
+    public function addImage(Image\ProductVariationImageCollectionDTO $image): void
     {
-        $filter = $this->image->filter(function (Image\ProductModificationImageCollectionDTO $element) use ($image) {
+
+        $filter = $this->image->filter(function (Image\ProductVariationImageCollectionDTO $element) use ($image) {
             return !$image->file && $image->getName() === $element->getName();
         });
 
@@ -164,23 +170,52 @@ final class ProductOffersVariationModificationCollectionDTO implements ProductMo
         {
             $this->image->add($image);
         }
+
     }
 
 
-    public function removeImage(Image\ProductModificationImageCollectionDTO $image): void
+    public function removeImage(Image\ProductVariationImageCollectionDTO $image): void
     {
         $this->image->removeElement($image);
     }
 
-    public function getCategoryModification(): CategoryProductModificationUid
+
+    /** Модификации множественных вариантов */
+
+    public function getModification(): ArrayCollection
     {
-        return $this->categoryModification;
+        return $this->modification;
     }
 
-    public function setCategoryModification(CategoryProductModificationUid $categoryModification): void
+
+    public function addModification(Modification\ProductModificationCollectionDTO $modification): void
     {
-        $this->categoryModification = $categoryModification;
+        if(!$this->modification->contains($modification))
+        {
+            $this->modification->add($modification);
+        }
     }
+
+
+    public function removeModification(Modification\ProductModificationCollectionDTO $modification): void
+    {
+        $this->modification->removeElement($modification);
+    }
+
+
+    /** ID множественного варианта торгового предложения категории */
+
+    public function getCategoryVariation(): ?CategoryProductVariationUid
+    {
+        return $this->categoryVariation;
+    }
+
+
+    public function setCategoryVariation(?CategoryProductVariationUid $categoryVariation): void
+    {
+        $this->categoryVariation = $categoryVariation;
+    }
+
 
     /** Постфикс */
 
@@ -188,6 +223,7 @@ final class ProductOffersVariationModificationCollectionDTO implements ProductMo
     {
         return $this->postfix;
     }
+
 
     public function setPostfix(?string $postfix): void
     {

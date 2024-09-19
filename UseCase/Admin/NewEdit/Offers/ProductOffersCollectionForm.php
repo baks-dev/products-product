@@ -178,7 +178,7 @@ final class ProductOffersCollectionForm extends AbstractType
         {
             /** Множественные варианты торгового предложения */
             $builder->add('variation', CollectionType::class, [
-                'entry_type' => Variation\ProductOffersVariationCollectionForm::class,
+                'entry_type' => Variation\ProductVariationCollectionForm::class,
                 'entry_options' => [
                     'label' => false,
                     'variation' => $variation,

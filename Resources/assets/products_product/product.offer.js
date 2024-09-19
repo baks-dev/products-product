@@ -23,17 +23,18 @@
 /* кнопка Добавить торговое предложение */
 let $btnAddOffer = document.getElementById('offer_addCollection');
 
-
-if ($btnAddOffer) {
+if($btnAddOffer)
+{
 
     let $blockCollectionOffers = document.getElementById('collection-offer');
 
     /* Добавляем новую коллекцию торгового предложения */
-    $btnAddOffer.addEventListener('click', function () {
+    $btnAddOffer.addEventListener('click', function()
+    {
 
         /* получаем прототип коллекции  */
         /*let newForm = this.dataset.prototype;*/
-        let newForm =  document.getElementById(this.dataset.prototype).dataset.prototype;
+        let newForm = document.getElementById(this.dataset.prototype).dataset.prototype;
 
         let index = this.dataset.index * 1;
 
@@ -72,12 +73,13 @@ if ($btnAddOffer) {
         //let $categoryOffer = div.querySelector('#product_form_offer_' + index + '_categoryOffer').value = valueCategoryOffer;
 
         /* document.querySelectorAll('[class^="change-root-"]').forEach(function (item) {
-             item.addEventListener('change', chanheOfferImageRoot);
+         item.addEventListener('change', chanheOfferImageRoot);
          });*/
 
 
         let $changeRoot = div.querySelector('[class^="change-root-"]');
-        if ($changeRoot) {
+        if($changeRoot)
+        {
             $changeRoot.checked = true;
             $changeRoot.addEventListener('change', chanheOfferImageRoot);
         }
@@ -113,7 +115,8 @@ if ($btnAddOffer) {
 
         /* События change-root image ВАРИАНТА */
         let changeRadio = div.querySelector('.change-variation-product_form_offer_' + index + '_variation_0');
-        if (changeRadio) {
+        if(changeRadio)
+        {
             changeRadio.checked = true;
             changeRadio.addEventListener('change', chanheVariationImageRoot);
         }
@@ -143,7 +146,8 @@ if ($btnAddOffer) {
 
         /* События change-root image */
         let changeRadioModification = div.querySelector('.change-modification-product_form_offer_' + index + '_variation_0_modification_0');
-        if (changeRadioModification) {
+        if(changeRadioModification)
+        {
             changeRadioModification.checked = true;
             changeRadioModification.addEventListener('change', chanheModificationImageRoot);
         }
@@ -159,44 +163,63 @@ if ($btnAddOffer) {
 
          inputElement.addEventListener('change', function (e) {
 
-             var file = inputElement.files[0];
-             var reader = new FileReader();
-             let image = div.querySelector('.image-input');
+         var file = inputElement.files[0];
+         var reader = new FileReader();
+         let image = div.querySelector('.image-input');
 
-             reader.onloadend = function () {
+         reader.onloadend = function () {
 
-                 image.style.setProperty("background-image", "url(" + reader.result + ")", "important")
-             }
+         image.style.setProperty("background-image", "url(" + reader.result + ")", "important")
+         }
 
-             if (file) {
-                 reader.readAsDataURL(file);
-             } else {
-                 image.style.setProperty("background-image", "url(/img/blank.svg)", "important")
+         if (file) {
+         reader.readAsDataURL(file);
+         } else {
+         image.style.setProperty("background-image", "url(/img/blank.svg)", "important")
 
-             }
+         }
          });*/
 
     });
 }
 
+
 /** Удаляем  торговое предложение */
+executeFunc(function initDeleteOffer()
+{
 
-document.querySelectorAll('.del-item-offer').forEach(function (item) {
-    item.addEventListener('click', deleteOffer);
-});
+    let offers = document.querySelectorAll('.del-item-offers');
 
-function deleteOffer() {
+    if(offers.length === 0)
+    {
+        return false;
+    }
+
+    offers.forEach(function(item)
+    {
+        item.addEventListener('click', deleteOffer);
+    });
+
+    return true;
+
+}, 100, 1, 1000);
+
+
+function deleteOffer()
+{
     document.getElementById('item-collection-offer-' + this.dataset.index).remove();
 }
 
 
 /** Добавить фото торгового предложения */
 
-document.querySelectorAll('.offer-image-add-collection').forEach(function (item) {
+document.querySelectorAll('.offer-image-add-collection').forEach(function(item)
+{
     item.addEventListener('click', addOfferImage);
 });
 
-function addOfferImage() {
+function addOfferImage()
+{
 
 
     /* Получаем прототип формы */
@@ -231,20 +254,24 @@ function addOfferImage() {
 
     let inputElement = div.querySelector('input[type="file"]');
 
-    inputElement.addEventListener('change', function (e) {
+    inputElement.addEventListener('change', function(e)
+    {
 
         var file = inputElement.files[0];
         var reader = new FileReader();
         let image = div.querySelector('.image-input');
 
-        reader.onloadend = function () {
+        reader.onloadend = function()
+        {
 
             image.style.setProperty("background-image", "url(" + reader.result + ")", "important")
         }
 
-        if (file) {
+        if(file)
+        {
             reader.readAsDataURL(file);
-        } else {
+        } else
+        {
             image.style.setProperty("background-image", "url(/img/blank.svg)", "important")
 
         }
@@ -255,11 +282,13 @@ function addOfferImage() {
 
 /** Удалить фото торгового предложения */
 
-document.querySelectorAll('.del-item-offer-image').forEach(function (item) {
+document.querySelectorAll('.del-item-offer-image').forEach(function(item)
+{
     item.addEventListener('click', deleteOfferImage);
 });
 
-function deleteOfferImage() {
+function deleteOfferImage()
+{
 
     /* Если удаляется фото ROOT - выделяем следующую кнопку */
 
@@ -271,11 +300,14 @@ function deleteOfferImage() {
 
     photoBlock.remove();
 
-    if (btnRoot) {
-        if (btnRoot.checked == true) {
+    if(btnRoot)
+    {
+        if(btnRoot.checked == true)
+        {
             /* Выделяем первый элемент в родительском блоке */
             let nextChaecked = parentElement.querySelector('[class^="change-root-"]');
-            if (nextChaecked) {
+            if(nextChaecked)
+            {
                 nextChaecked.checked = true;
             }
         }
@@ -287,15 +319,18 @@ function deleteOfferImage() {
 
 /** Меняем CHACKED изображений радио-кнопок Root */
 
-document.querySelectorAll('[class^="change-root-"]').forEach(function (item) {
+document.querySelectorAll('[class^="change-root-"]').forEach(function(item)
+{
     item.addEventListener('change', chanheOfferImageRoot);
 });
 
-function chanheOfferImageRoot() {
+function chanheOfferImageRoot()
+{
 
     let offer_photo_collection = document.getElementById('offer_image_collection-' + this.dataset.index);
 
-    offer_photo_collection.querySelectorAll('.change-root-' + this.dataset.index).forEach(function (rootChack, i, arr) {
+    offer_photo_collection.querySelectorAll('.change-root-' + this.dataset.index).forEach(function(rootChack, i, arr)
+    {
         rootChack.checked = false;
     });
 
@@ -308,11 +343,13 @@ function chanheOfferImageRoot() {
 /** Добавить множественный вариант */
 
 
-document.querySelectorAll('.offer-variation-add-collection').forEach(function (item) {
+document.querySelectorAll('.offer-variation-add-collection').forEach(function(item)
+{
     item.addEventListener('click', addVariation);
 });
 
-function addVariation() {
+function addVariation()
+{
 
     /* Получаем прототип формы */
     //let newForm = this.dataset.prototype;
@@ -350,7 +387,8 @@ function addVariation() {
 
     /* События change-root image */
     let changeRadio = div.querySelector('.change-variation-product_form_offer_' + offer + '_variation_' + index);
-    if (changeRadio) {
+    if(changeRadio)
+    {
         changeRadio.checked = true;
         changeRadio.addEventListener('change', chanheVariationImageRoot);
     }
@@ -378,7 +416,8 @@ function addVariation() {
 
     /* События change-root image */
     let changeRadioModification = div.querySelector('.change-modification-product_form_offer_' + offer + '_variation_' + index + '_modification_0');
-    if (changeRadioModification) {
+    if(changeRadioModification)
+    {
         changeRadioModification.checked = true;
         changeRadioModification.addEventListener('change', chanheModificationImageRoot);
     }
@@ -386,8 +425,10 @@ function addVariation() {
 
     /* Выделяем Root если элемент добавлен новый */
     let $chanheModificationImageRoot = div.querySelectorAll('[class^="change-modification-"]');
-    if ($chanheModificationImageRoot.length === 1) {
-        $chanheModificationImageRoot.forEach(function (item) {
+    if($chanheModificationImageRoot.length === 1)
+    {
+        $chanheModificationImageRoot.forEach(function(item)
+        {
             item.checked = true;
         });
     }
@@ -411,23 +452,40 @@ function addVariation() {
 
 
 /** Удаляем  множественный вариант  */
+executeFunc(function initDeleteVariation()
+{
+    let variation = document.querySelectorAll('.del-item-variation');
 
-document.querySelectorAll('.del-item-variation').forEach(function (item) {
-    item.addEventListener('click', deleteVariation);
-});
+    if(variation.length === 0)
+    {
+        return false;
+    }
 
-function deleteVariation() {
+    variation.forEach(function(item)
+    {
+        item.addEventListener('click', deleteVariation);
+    });
+
+    return true;
+
+}, 100, 1, 1000);
+
+
+function deleteVariation()
+{
     document.getElementById(this.dataset.index).remove();
 }
 
 
 /** Добавить фото множественного варианта */
 
-document.querySelectorAll('.variation-image-add-collection').forEach(function (item) {
+document.querySelectorAll('.variation-image-add-collection').forEach(function(item)
+{
     item.addEventListener('click', addVariationImage);
 });
 
-function addVariationImage() {
+function addVariationImage()
+{
 
 
     /* Получаем прототип формы */
@@ -469,35 +527,37 @@ function addVariationImage() {
 
     /*let inputElement = div.querySelector('input[type="file"]');
 
-    inputElement.addEventListener('change', function (e) {
+     inputElement.addEventListener('change', function (e) {
 
-        var file = inputElement.files[0];
-        var reader = new FileReader();
-        let image = div.querySelector('.image-input');
+     var file = inputElement.files[0];
+     var reader = new FileReader();
+     let image = div.querySelector('.image-input');
 
-        reader.onloadend = function () {
+     reader.onloadend = function () {
 
-            image.style.setProperty("background-image", "url(" + reader.result + ")", "important")
-        }
+     image.style.setProperty("background-image", "url(" + reader.result + ")", "important")
+     }
 
-        if (file) {
-            reader.readAsDataURL(file);
-        } else {
-            image.style.setProperty("background-image", "url(/img/blank.svg)", "important")
+     if (file) {
+     reader.readAsDataURL(file);
+     } else {
+     image.style.setProperty("background-image", "url(/img/blank.svg)", "important")
 
-        }
-    });*/
+     }
+     });*/
 
 }
 
 
 /** Удалить фото множественного варианта */
 
-document.querySelectorAll('.del-item-variation-image').forEach(function (item) {
+document.querySelectorAll('.del-item-variation-image').forEach(function(item)
+{
     item.addEventListener('click', deleteVariationImage);
 });
 
-function deleteVariationImage() {
+function deleteVariationImage()
+{
 
     /* Если удаляется фото ROOT  - выделяем следующую кнопку */
 
@@ -510,12 +570,15 @@ function deleteVariationImage() {
 
     photoBlock.remove();
 
-    if (btnRoot) {
-        if (btnRoot.checked == true) {
+    if(btnRoot)
+    {
+        if(btnRoot.checked == true)
+        {
 
             /* Выделяем первый элемент в родительском блоке */
             let nextChaecked = parentElement.querySelector('[class^="change-variation-"]');
-            if (nextChaecked) {
+            if(nextChaecked)
+            {
                 nextChaecked.checked = true;
             }
         }
@@ -527,15 +590,19 @@ function deleteVariationImage() {
 
 /** Меняем CHACKED изображений множественных вариантов радио-кнопок Root */
 
-document.querySelectorAll('[class^="change-variation-"]').forEach(function (item) {
+document.querySelectorAll('[class^="change-variation-"]').forEach(function(item)
+{
     item.addEventListener('change', chanheVariationImageRoot);
 });
 
-function chanheVariationImageRoot() {
+function chanheVariationImageRoot()
+{
 
     let variation_photo_collection = document.getElementById('collection_' + this.dataset.index);
 
-    variation_photo_collection.querySelectorAll('.change-variation-' + this.dataset.index).forEach(function (rootChack, i, arr) {
+    variation_photo_collection.querySelectorAll('.change-variation-' + this.dataset.index).forEach(function(rootChack,
+        i, arr)
+    {
         rootChack.checked = false;
     });
 
@@ -544,24 +611,16 @@ function chanheVariationImageRoot() {
 }
 
 
-
-
-
-
-
-
-
-
-
-
 /* MODIFICATION *********************************************************************************************************  **/
 
 
-document.querySelectorAll('.variation-modification-add-collection').forEach(function (item) {
+document.querySelectorAll('.variation-modification-add-collection').forEach(function(item)
+{
     item.addEventListener('click', addModification);
 });
 
-function addModification() {
+function addModification()
+{
 
     /* Получаем прототип формы */
     //let newForm = this.dataset.prototype;
@@ -602,7 +661,8 @@ function addModification() {
 
     /* События change-root image */
     let changeRadio = div.querySelector('.change-modification-product_form_offer_' + offer + '_variation_' + variation + '_modification_' + index);
-    if (changeRadio) {
+    if(changeRadio)
+    {
         changeRadio.checked = true;
         changeRadio.addEventListener('change', chanheModificationImageRoot);
     }
@@ -626,21 +686,41 @@ function addModification() {
 
 /** Удаляем  модификацию  */
 
-document.querySelectorAll('.del-item-modification').forEach(function (item) {
-    item.addEventListener('click', deleteModification);
-});
 
-function deleteModification() {
+/** Удаляем  множественный вариант  */
+executeFunc(function initDeleteModification()
+{
+    let modification = document.querySelectorAll('.del-item-modification');
+
+    if(modification.length === 0)
+    {
+        return false;
+    }
+
+    modification.forEach(function(item)
+    {
+        item.addEventListener('click', deleteModification);
+    });
+
+    return true;
+
+}, 100, 1, 1000);
+
+
+function deleteModification()
+{
     document.getElementById(this.dataset.index).remove();
 }
 
 /** Добавить фото модификацию */
 
-document.querySelectorAll('.modification-image-add-collection').forEach(function (item) {
+document.querySelectorAll('.modification-image-add-collection').forEach(function(item)
+{
     item.addEventListener('click', addModificationImage);
 });
 
-function addModificationImage() {
+function addModificationImage()
+{
 
     /* Получаем прототип формы */
     //let newForm = this.dataset.prototype;
@@ -678,11 +758,11 @@ function addModificationImage() {
     /* Выделяем Root если элемент добавлен новый */
     /*$chanheModificationImageRoot = div.querySelectorAll('[class^="change-modification-"]');
 
-    if ($chanheModificationImageRoot.length === 1) {
-        $chanheModificationImageRoot.forEach(function (item) {
-            item.checked = true;
-        });
-    }*/
+     if ($chanheModificationImageRoot.length === 1) {
+     $chanheModificationImageRoot.forEach(function (item) {
+     item.checked = true;
+     });
+     }*/
 
     //console.log(document.querySelectorAll('[class^="change-modification-"]').length);
 
@@ -695,35 +775,37 @@ function addModificationImage() {
 
     /*let inputElement = div.querySelector('input[type="file"]');
 
-    inputElement.addEventListener('change', function (e) {
+     inputElement.addEventListener('change', function (e) {
 
-        var file = inputElement.files[0];
-        var reader = new FileReader();
-        let image = div.querySelector('.image-input');
+     var file = inputElement.files[0];
+     var reader = new FileReader();
+     let image = div.querySelector('.image-input');
 
-        reader.onloadend = function () {
+     reader.onloadend = function () {
 
-            image.style.setProperty("background-image", "url(" + reader.result + ")", "important")
-        }
+     image.style.setProperty("background-image", "url(" + reader.result + ")", "important")
+     }
 
-        if (file) {
-            reader.readAsDataURL(file);
-        } else {
-            image.style.setProperty("background-image", "url(/img/blank.svg)", "important")
+     if (file) {
+     reader.readAsDataURL(file);
+     } else {
+     image.style.setProperty("background-image", "url(/img/blank.svg)", "important")
 
-        }
-    });*/
+     }
+     });*/
 
 }
 
 
 /** Удалить фото модификации */
 
-document.querySelectorAll('.del-item-modification-image').forEach(function (item) {
+document.querySelectorAll('.del-item-modification-image').forEach(function(item)
+{
     item.addEventListener('click', deleteModificationImage);
 });
 
-function deleteModificationImage() {
+function deleteModificationImage()
+{
 
     /* Если удаляется фото ROOT  - выделяем следующую кнопку */
 
@@ -736,12 +818,15 @@ function deleteModificationImage() {
 
     photoBlock.remove();
 
-    if (btnRoot) {
-        if (btnRoot.checked == true) {
+    if(btnRoot)
+    {
+        if(btnRoot.checked == true)
+        {
 
             /* Выделяем первый элемент в родительском блоке */
             let nextChaecked = parentElement.querySelector('[class^="change-modification-"]');
-            if (nextChaecked) {
+            if(nextChaecked)
+            {
                 nextChaecked.checked = true;
             }
         }
@@ -751,15 +836,19 @@ function deleteModificationImage() {
 
 /** Меняем CHACKED изображений модификации радио-кнопок Root */
 
-document.querySelectorAll('[class^="change-modification-"]').forEach(function (item) {
+document.querySelectorAll('[class^="change-modification-"]').forEach(function(item)
+{
     item.addEventListener('change', chanheModificationImageRoot);
 });
 
-function chanheModificationImageRoot() {
+function chanheModificationImageRoot()
+{
 
     let modification_photo_collection = document.getElementById('collection_' + this.dataset.index);
 
-    modification_photo_collection.querySelectorAll('.change-modification-' + this.dataset.index).forEach(function (rootChack, i, arr) {
+    modification_photo_collection.querySelectorAll('.change-modification-' + this.dataset.index).forEach(function(rootChack,
+        i, arr)
+    {
         rootChack.checked = false;
     });
 
@@ -768,12 +857,15 @@ function chanheModificationImageRoot() {
 }
 
 
-function offerPreloadPhoto(div) {
+function offerPreloadPhoto(div)
+{
     //let inputElement = div.querySelector('input[type="file"]');
     let inputElements = div.querySelectorAll('input[type="file"]');
 
-    inputElements.forEach(function (inputElement, i, arr) {
-        inputElement.addEventListener('change', function (e) {
+    inputElements.forEach(function(inputElement, i, arr)
+    {
+        inputElement.addEventListener('change', function(e)
+        {
 
             var file = this.files[0];
             var reader = new FileReader();
@@ -781,13 +873,16 @@ function offerPreloadPhoto(div) {
 
             let image = this.closest('.image-input')
 
-            reader.onloadend = function () {
+            reader.onloadend = function()
+            {
                 image.style.setProperty("background-image", "url(" + reader.result + ")", "important")
             }
 
-            if (file) {
+            if(file)
+            {
                 reader.readAsDataURL(file);
-            } else {
+            } else
+            {
                 image.style.setProperty("background-image", "url(/img/blank.svg)", "important")
 
             }
@@ -799,18 +894,21 @@ function offerPreloadPhoto(div) {
 
 
 /** Метод делает замену справочника  */
-function replaceReference($replace, $id) {
+function replaceReference($replace, $id)
+{
 
     // product_form_data-variation-reference
 
     /* Получаем дефолтное поле для заполнения  */
     let $reference = document.getElementById($id);
 
-    if ($reference === null || $reference.tagName != 'SELECT') {
+    if($reference === null || $reference.tagName != 'SELECT')
+    {
         return;
     }
 
-    if ($reference) {
+    if($reference)
+    {
 
         // $searchBlock.querySelectorAll('[data-reference]').forEach(function (item) {
 
@@ -821,13 +919,15 @@ function replaceReference($replace, $id) {
         cloneNode.value = "";
         //cloneNode.removeAttribute('style');
 
-        if (cloneNode.options !== undefined) {
+        if(cloneNode.options !== undefined)
+        {
             cloneNode.options[0].selected = true;
             cloneNode.options[0].selected = 'selected';
             cloneNode.selectedIndex = 0;
 
             /* Сбрасываем select */
-            for (let i = 0, l = cloneNode.options.length; i < l; i++) {
+            for(let i = 0, l = cloneNode.options.length; i < l; i++)
+            {
                 cloneNode.options[i].removeAttribute('selected');
                 cloneNode.options[i].selected = false;
             }
@@ -844,68 +944,83 @@ function replaceReference($replace, $id) {
     }
 }
 
-document.querySelectorAll('.article-generate').forEach(function (item) {
+document.querySelectorAll('.article-generate').forEach(function(item)
+{
     item.addEventListener('click', articleGenerate);
 });
 
-function articleGenerate() {
+function articleGenerate()
+{
 
     let generate = '';
 
     /**Получаем артикул товара */
     product = document.getElementById('product_form_info_article');
-    if (product) {
+    if(product)
+    {
         generate += product.value;
     }
 
-    if (this.dataset.offer) {
+    if(this.dataset.offer)
+    {
         let article = document.getElementById(this.dataset.offer);
 
-        if (article && article.value.length) {
+        if(article && article.value.length)
+        {
             generate += (generate.length ? '-' : '') + article.value;
         }
 
     }
 
 
-    if (this.dataset.offerpostfix) {
+    if(this.dataset.offerpostfix)
+    {
         article = document.getElementById(this.dataset.offerpostfix);
 
-        if (article && article.value.length) {
+        if(article && article.value.length)
+        {
             generate += (generate.length ? '-' : '') + article.value;
         }
     }
 
-    if (this.dataset.variation) {
+    if(this.dataset.variation)
+    {
         article = document.getElementById(this.dataset.variation);
 
-        if (article && article.value.length) {
+        if(article && article.value.length)
+        {
             generate += (generate.length ? '-' : '') + article.value;
         }
     }
 
-    if (this.dataset.variationpostfix) {
+    if(this.dataset.variationpostfix)
+    {
         article = document.getElementById(this.dataset.variationpostfix);
 
-        if (article && article.value.length) {
+        if(article && article.value.length)
+        {
             generate += (generate.length ? '-' : '') + article.value;
         }
     }
 
 
-    if (this.dataset.modification) {
+    if(this.dataset.modification)
+    {
         article = document.getElementById(this.dataset.modification);
 
-        if (article && article.value.length) {
+        if(article && article.value.length)
+        {
             generate += (generate.length ? '-' : '') + article.value;
         }
     }
 
 
-    if (this.dataset.modificationpostfix) {
+    if(this.dataset.modificationpostfix)
+    {
         article = document.getElementById(this.dataset.modificationpostfix);
 
-        if (article && article.value.length) {
+        if(article && article.value.length)
+        {
             generate += (generate.length ? '-' : '') + article.value;
         }
     }
@@ -913,7 +1028,8 @@ function articleGenerate() {
 
     result = document.getElementById(this.dataset.id);
 
-    if (result) {
+    if(result)
+    {
         result.value = generate.replace(/[^a-zA-Z0-9]/g, '-');
     }
 

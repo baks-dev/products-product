@@ -409,7 +409,7 @@ final class ProductForm extends AbstractType
                         if($variationCategory)
                         {
 
-                            $ProductOffersVariationCollectionDTO = new Offers\Variation\ProductOffersVariationCollectionDTO();
+                            $ProductOffersVariationCollectionDTO = new Offers\Variation\ProductVariationCollectionDTO();
                             $ProductOffersVariationCollectionDTO->setCategoryVariation($variationCategory->id);
 
                             if($variationCategory->image)
@@ -428,7 +428,7 @@ final class ProductForm extends AbstractType
                             if($modificationCategory)
                             {
                                 $ProductOffersVariationModificationCollectionDTO =
-                                    new Offers\Variation\Modification\ProductOffersVariationModificationCollectionDTO();
+                                    new Offers\Variation\Modification\ProductModificationCollectionDTO();
                                 $ProductOffersVariationModificationCollectionDTO
                                     ->setCategoryModification($modificationCategory->id);
 

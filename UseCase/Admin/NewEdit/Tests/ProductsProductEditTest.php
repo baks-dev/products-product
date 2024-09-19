@@ -42,8 +42,8 @@ use BaksDev\Products\Product\UseCase\Admin\NewEdit\Category\CategoryCollectionDT
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Description\ProductDescriptionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Info\InfoDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\ProductOffersCollectionDTO;
-use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification\ProductOffersVariationModificationCollectionDTO;
-use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\ProductOffersVariationCollectionDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification\ProductModificationCollectionDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\ProductVariationCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Photo\PhotoCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Price\PriceDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\ProductDTO;
@@ -328,11 +328,6 @@ class ProductsProductEditTest extends KernelTestCase
 
             self::assertTrue($ProductOffersCollectionDTO->getConst()->equals(ProductOfferConst::TEST));
 
-            /** Остатки и резервы в карточке не управляются из UseCase товара! Управление только через заказы и склад! */
-            $ProductOfferQuantityDTO = $ProductOffersCollectionDTO->getQuantity();
-            self::assertEquals(0, $ProductOfferQuantityDTO->getQuantity());
-            self::assertEquals(0, $ProductOfferQuantityDTO->getReserve());
-
 
             ///////////////////////////////////////////
             ///////////////// Variation ///////////////
@@ -342,7 +337,7 @@ class ProductsProductEditTest extends KernelTestCase
 
             $ProductOffersVariationCollection = $ProductOffersCollectionDTO->getVariation();
 
-            /** @var ProductOffersVariationCollectionDTO $ProductOffersVariationCollectionDTO */
+            /** @var ProductVariationCollectionDTO $ProductOffersVariationCollectionDTO */
             foreach($ProductOffersVariationCollection as $ProductOffersVariationCollectionDTO)
             {
                 $ProductVariationPriceDTO = $ProductOffersVariationCollectionDTO->getPrice();
@@ -376,13 +371,6 @@ class ProductsProductEditTest extends KernelTestCase
                     'Test Edit Variation Article',
                     $ProductOffersVariationCollectionDTO->getArticle()
                 );
-
-
-                /** Остатки и резервы в карточке не управляются из UseCase товара! Управление только через заказы и склад! */
-                $ProductVariationQuantityDTO = $ProductOffersVariationCollectionDTO->getQuantity();
-                self::assertEquals(0, $ProductVariationQuantityDTO->getQuantity());
-                self::assertEquals(0, $ProductVariationQuantityDTO->getReserve());
-
 
                 self::assertSame(
                     'Test New Variation Value',
@@ -419,7 +407,7 @@ class ProductsProductEditTest extends KernelTestCase
 
                 /** ProductOffersVariationModificationCollectionDTO */
 
-                /** @var ProductOffersVariationModificationCollectionDTO $ProductOffersVariationModificationCollectionDTO */
+                /** @var ProductModificationCollectionDTO $ProductOffersVariationModificationCollectionDTO */
                 $ProductOffersVariationModificationCollection = $ProductOffersVariationCollectionDTO->getModification();
 
                 foreach($ProductOffersVariationModificationCollection as $ProductOffersVariationModificationCollectionDTO)
@@ -462,12 +450,6 @@ class ProductsProductEditTest extends KernelTestCase
                         'Test Edit Modification Article',
                         $ProductOffersVariationModificationCollectionDTO->getArticle()
                     );
-
-                    /** Остатки и резервы в карточке не управляются из UseCase товара! Управление только через заказы и склад! */
-                    $ProductModificationQuantityDTO = $ProductOffersVariationModificationCollectionDTO->getQuantity();
-                    self::assertEquals(0, $ProductModificationQuantityDTO->getQuantity());
-                    self::assertEquals(0, $ProductModificationQuantityDTO->getReserve());
-
 
                     self::assertSame(
                         'Test New Modification Value',
