@@ -132,6 +132,152 @@ final class ProductFilterForm extends AbstractType
                     'required' => false,
                 ]);
             }
+
+
+            // this would be your entity, i.e. SportMeetup
+
+            /** @var ProductFilterDTO $data */
+
+            $data = $event->getData();
+            $builder = $event->getForm();
+
+            $Category = $data->getCategory();
+            $dataRequest = $this->request->getMainRequest()?->get($builder->getName());
+
+            if(isset($dataRequest['category']))
+            {
+                $Category = empty($dataRequest['category']) ? null : new CategoryProductUid($dataRequest['category']);
+            }
+
+            if($Category)
+            {
+                /** Торговое предложение раздела */
+
+                $offerField = $this->offerChoice
+                    ->category($Category)
+                    ->findAllCategoryProductOffers();
+
+                if($offerField)
+                {
+                    $inputOffer = $this->choice->getChoice($offerField->getField());
+
+                    if($inputOffer)
+                    {
+                        $builder->add(
+                            'offer',
+                            method_exists($inputOffer, 'formFilterExists') ? $inputOffer->formFilterExists() : $inputOffer->form(),
+                            [
+                                'label' => $offerField->getOption(),
+                                'priority' => 200,
+                                'required' => false,
+                                'translation_domain' => $inputOffer->domain()
+                            ]
+                        );
+
+
+                        /** Множественные варианты торгового предложения */
+
+                        $variationField = $this->variationChoice
+                            ->offer($offerField)
+                            ->findCategoryProductVariation();
+
+                        if($variationField)
+                        {
+
+                            $inputVariation = $this->choice->getChoice($variationField->getField());
+
+                            if($inputVariation)
+                            {
+                                $builder->add(
+                                    'variation',
+                                    method_exists($inputVariation, 'formFilterExists') ? $inputVariation->formFilterExists() : $inputVariation->form(),
+                                    [
+                                        'label' => $variationField->getOption(),
+                                        'priority' => 199,
+                                        'required' => false,
+                                    ]
+                                );
+
+                                /** Модификации множественных вариантов торгового предложения */
+
+                                $modificationField = $this->modificationChoice
+                                    ->variation($variationField)
+                                    ->findAllModification();
+
+
+                                if($modificationField)
+                                {
+                                    $inputModification = $this->choice->getChoice($modificationField->getField());
+
+                                    if($inputModification)
+                                    {
+                                        $builder->add(
+                                            'modification',
+                                            method_exists($inputModification, 'formFilterExists') ? $inputModification->formFilterExists() : $inputModification->form(),
+                                            [
+                                                'label' => $modificationField->getOption(),
+                                                'priority' => 198,
+                                                'required' => false,
+                                            ]
+                                        );
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                $fields = $this->fields
+                    ->category($Category)
+                    ->findAll();
+
+                if($fields)
+                {
+                    foreach($fields as $field)
+                    {
+                        if(empty($field['const']))
+                        {
+                            continue;
+                        }
+
+                        $ProductFilterPropertyDTO = new Property\ProductFilterPropertyDTO();
+
+                        $ProductFilterPropertyDTO->setConst($field['const']);
+                        $ProductFilterPropertyDTO->setLabel($field['name']);
+                        $ProductFilterPropertyDTO->setType($field['type']);
+
+                        $ProductFilterPropertyDTO->setValue($sessionArray['properties'][$field['const']] ?? null);
+
+
+                        $data->addProperty($ProductFilterPropertyDTO);
+
+
+                    }
+                }
+
+
+                /* TRANS CollectionType */
+                $builder->add('property', CollectionType::class, [
+                    'entry_type' => Property\ProductFilterPropertyForm::class,
+                    'entry_options' => ['label' => false],
+                    'label' => false,
+                    'by_reference' => false,
+                    'allow_delete' => false,
+                    'allow_add' => false,
+                    'prototype_name' => '__property__',
+                ]);
+
+
+            }
+            else
+            {
+                $data->setOffer(null);
+                $data->setVariation(null);
+                $data->setModification(null);
+                $data->setProperty(null);
+            }
+
+
         });
 
 
@@ -166,7 +312,7 @@ final class ProductFilterForm extends AbstractType
                         $data->getModification() ? $sessionArray['modification'] = (string) $data->getModification() : false;
                     }
 
-                    $session = [];
+                    $properties = [];
 
                     if($data->getProperty())
                     {
@@ -175,13 +321,13 @@ final class ProductFilterForm extends AbstractType
                         {
                             if(!empty($property->getValue()) && $property->getValue() !== 'false')
                             {
-                                $session[$property->getConst()] = $property->getValue();
+                                $properties[$property->getConst()] = $property->getValue();
                             }
                         }
 
                     }
 
-                    !empty($session) ? $sessionArray['property'] = $session : false;
+                    !empty($properties) ? $sessionArray['properties'] = $properties : false;
 
 
                     if($sessionArray)
@@ -194,16 +340,6 @@ final class ProductFilterForm extends AbstractType
 
                     $this->session->remove($this->sessionKey);
                 }
-
-
-                //                $this->request->getSession()->remove(ProductFilterDTO::category);
-                //
-                //                $this->request->getSession()->set(ProductFilterDTO::all, $data->getAll());
-                //
-                //                $this->request->getSession()->set(ProductFilterDTO::category, $data->getCategory());
-                //                $this->request->getSession()->set(ProductFilterDTO::offer, $data->getOffer());
-                //                $this->request->getSession()->set(ProductFilterDTO::variation, $data->getVariation());
-                //                $this->request->getSession()->set(ProductFilterDTO::modification, $data->getModification());
 
 
                 //                $session = [];
@@ -229,149 +365,7 @@ final class ProductFilterForm extends AbstractType
 
         $builder->addEventListener(
             FormEvents::PRE_SET_DATA,
-            function (FormEvent $event): void {
-
-                // this would be your entity, i.e. SportMeetup
-
-                /** @var ProductFilterDTO $data */
-
-                $data = $event->getData();
-                $builder = $event->getForm();
-
-                $Category = $data->getCategory();
-                $dataRequest = $this->request->getMainRequest()?->get($builder->getName());
-
-                if(isset($dataRequest['category']))
-                {
-                    $Category = empty($dataRequest['category']) ? null : new CategoryProductUid($dataRequest['category']);
-                }
-
-                if($Category)
-                {
-                    /** Торговое предложение раздела */
-
-                    $offerField = $this->offerChoice
-                        ->category($Category)
-                        ->findAllCategoryProductOffers();
-
-                    if($offerField)
-                    {
-                        $inputOffer = $this->choice->getChoice($offerField->getField());
-
-                        if($inputOffer)
-                        {
-                            $builder->add(
-                                'offer',
-                                method_exists($inputOffer, 'formFilterExists') ? $inputOffer->formFilterExists() : $inputOffer->form(),
-                                [
-                                    'label' => $offerField->getOption(),
-                                    'priority' => 200,
-                                    'required' => false,
-                                    'translation_domain' => $inputOffer->domain()
-                                ]
-                            );
-
-
-                            /** Множественные варианты торгового предложения */
-
-                            $variationField = $this->variationChoice
-                                ->offer($offerField)
-                                ->findCategoryProductVariation();
-
-                            if($variationField)
-                            {
-
-                                $inputVariation = $this->choice->getChoice($variationField->getField());
-
-                                if($inputVariation)
-                                {
-                                    $builder->add(
-                                        'variation',
-                                        method_exists($inputVariation, 'formFilterExists') ? $inputVariation->formFilterExists() : $inputVariation->form(),
-                                        [
-                                            'label' => $variationField->getOption(),
-                                            'priority' => 199,
-                                            'required' => false,
-                                        ]
-                                    );
-
-                                    /** Модификации множественных вариантов торгового предложения */
-
-                                    $modificationField = $this->modificationChoice
-                                        ->variation($variationField)
-                                        ->findAllModification();
-
-
-                                    if($modificationField)
-                                    {
-                                        $inputModification = $this->choice->getChoice($modificationField->getField());
-
-                                        if($inputModification)
-                                        {
-                                            $builder->add(
-                                                'modification',
-                                                method_exists($inputModification, 'formFilterExists') ? $inputModification->formFilterExists() : $inputModification->form(),
-                                                [
-                                                    'label' => $modificationField->getOption(),
-                                                    'priority' => 198,
-                                                    'required' => false,
-                                                ]
-                                            );
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    $fields = $this->fields
-                        ->category($Category)
-                        ->findAll();
-
-                    if($fields)
-                    {
-                        foreach($fields as $field)
-                        {
-                            if(empty($field['const']))
-                            {
-                                continue;
-                            }
-
-                            $ProductFilterPropertyDTO = new Property\ProductFilterPropertyDTO();
-
-                            $ProductFilterPropertyDTO->setConst($field['const']);
-                            $ProductFilterPropertyDTO->setLabel($field['name']);
-                            $ProductFilterPropertyDTO->setType($field['type']);
-
-                            $data->addProperty($ProductFilterPropertyDTO);
-
-
-                        }
-                    }
-
-                    $session = $this->request->getSession()->get('catalog_filter');
-
-                    /* TRANS CollectionType */
-                    $builder->add('property', CollectionType::class, [
-                        'entry_type' => Property\ProductFilterPropertyForm::class,
-                        'entry_options' => ['label' => false, 'session' => $session],
-                        'label' => false,
-                        'by_reference' => false,
-                        'allow_delete' => false,
-                        'allow_add' => false,
-                        'prototype_name' => '__property__',
-                    ]);
-
-
-                }
-                else
-                {
-                    $data->setOffer(null);
-                    $data->setVariation(null);
-                    $data->setModification(null);
-                    $data->setProperty(null);
-                }
-            }
+            function (FormEvent $event): void {}
         );
 
 

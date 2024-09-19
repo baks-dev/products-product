@@ -25,14 +25,6 @@ use Symfony\Component\HttpFoundation\Request;
 
 final class ProductFilterDTO implements ProductFilterInterface
 {
-    public const category = 'vKmDiRWOPq';
-    public const offer = 'nOuksvfLiZ';
-    public const variation = 'AItZEGxyrY';
-    public const modification = 'FxCmFxVZxk';
-    public const all = 'zQWwZXxhf';
-
-    private Request $request;
-
     /**
      * Категория
      */
@@ -66,10 +58,9 @@ final class ProductFilterDTO implements ProductFilterInterface
     private ?bool $all = null;
 
 
-    public function __construct(Request $request)
+    public function __construct()
     {
         $this->property = new ArrayCollection();
-        $this->request = $request;
     }
 
     /**
@@ -77,18 +68,12 @@ final class ProductFilterDTO implements ProductFilterInterface
      */
     public function setCategory(CategoryProductUid|string|null $category): void
     {
-        //        if(empty($category))
-        //        {
-        //            $this->request->getSession()->remove(self::category);
-        //        }
-
         if(is_string($category))
         {
             $category = new CategoryProductUid($category);
         }
 
         $this->category = $category;
-
     }
 
 
@@ -98,11 +83,8 @@ final class ProductFilterDTO implements ProductFilterInterface
         {
             return $this->category;
         }
-        //
-        //        return $this->category ?: $this->request->getSession()->get(self::category);
 
         return $this->category;
-
     }
 
 
@@ -112,17 +94,11 @@ final class ProductFilterDTO implements ProductFilterInterface
 
     public function getOffer(): ?string
     {
-        //return $this->offer ?: $this->request->getSession()->get(self::offer);
         return $this->offer;
     }
 
     public function setOffer(?string $offer): void
     {
-        //        if(empty($offer) || empty($this->category))
-        //        {
-        //            $this->request->getSession()->remove(self::offer);
-        //        }
-
         $this->offer = $offer;
     }
 
@@ -133,17 +109,11 @@ final class ProductFilterDTO implements ProductFilterInterface
 
     public function getVariation(): ?string
     {
-        // return $this->variation ?: $this->request->getSession()->get(self::variation);
         return $this->variation;
     }
 
     public function setVariation(?string $variation): void
     {
-        //        if(empty($variation) || empty($this->category) || empty($this->offer))
-        //        {
-        //            $this->request->getSession()->remove(self::variation);
-        //        }
-
         $this->variation = $variation;
     }
 
@@ -154,17 +124,11 @@ final class ProductFilterDTO implements ProductFilterInterface
 
     public function getModification(): ?string
     {
-        //return $this->modification ?: $this->request->getSession()->get(self::modification);
         return $this->modification;
     }
 
     public function setModification(?string $modification): void
     {
-        //        if(empty($modification) || empty($this->category) || empty($this->offer) || empty($this->variation))
-        //        {
-        //            $this->request->getSession()->remove(self::modification);
-        //        }
-
         $this->modification = $modification;
     }
 
@@ -173,13 +137,6 @@ final class ProductFilterDTO implements ProductFilterInterface
      */
     public function getAll(): bool
     {
-        //        if($this->all === null && $this->request->getSession()->get(self::all) === false)
-        //        {
-        //            return false;
-        //        }
-
-
-
         return $this->all === true;
     }
 
@@ -219,11 +176,6 @@ final class ProductFilterDTO implements ProductFilterInterface
 
     public function addProperty(Property\ProductFilterPropertyDTO $property): self
     {
-        //        if($this->property === null)
-        //        {
-        //            $this->property = new ArrayCollection();
-        //        }
-
         $filter = $this->property->filter(function (Property\ProductFilterPropertyDTO $element) use ($property) {
             return $element->getType() === $property->getType();
         });

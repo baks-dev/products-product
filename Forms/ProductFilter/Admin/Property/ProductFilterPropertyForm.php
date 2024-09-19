@@ -40,28 +40,16 @@ final class ProductFilterPropertyForm extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        //$builder->add('id', TextType::class, ['required' => false]);
-
-
         $builder->addEventListener(
             FormEvents::PRE_SET_DATA,
-            function (FormEvent $event) use ($options): void {
+            function (FormEvent $event): void {
 
                 $builder = $event->getForm();
-                $session = $options['session'];
-
 
                 /** @var ProductFilterPropertyDTO $data */
                 $data = $event->getData();
-                $data->setValue($session[$data->getConst()] ?? null);
-
-                //dump($session[$data->getConst()] ?? null);
-
 
                 $input = $this->choice->getChoice(new InputField($data->getType()));
-
-
-                ///dump($input->domain());
 
                 if($input)
                 {
@@ -72,27 +60,20 @@ final class ProductFilterPropertyForm extends AbstractType
                         $input->form(),
                         [
                             'label' => $data->getLabel(),
-                            // 'mapped' => false,
-                            //'priority' => $i,
                             'required' => false,
-                            'block_name' => $data->getType(),
-                            //'translation_domain' => $input->domain(),
-                            //'data' => $session[$data->getConst()] ?? null,
+                            'block_name' => $data->getType()
                         ]
                     );
                 }
-
             }
         );
-
-
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => ProductFilterPropertyDTO::class,
-            'session' => null
+            'properties' => null
         ]);
     }
 }
