@@ -43,10 +43,12 @@ final class PriceDTO implements ProductPriceInterface
     private bool $request = false;
 
     /** В наличии */
+    #[Assert\NotBlank]
     #[Assert\Range(min: 0)]
-    private ?int $quantity = 0; // 0 - нет в наличии
+    private ?int $quantity = 0;
 
     /** Резерв */
+    #[Assert\NotBlank]
     #[Assert\Range(min: 0)]
     private ?int $reserve = 0;
 
@@ -100,26 +102,30 @@ final class PriceDTO implements ProductPriceInterface
 
     public function getQuantity(): ?int
     {
-        return $this->quantity ?: 0;
+        $this->quantity = $this->quantity && $this->quantity >= 0 ? $this->quantity : 0;
+
+        return $this->quantity;
     }
 
 
-//    public function setQuantity(?int $quantity): void
-//    {
-//        $this->quantity = $quantity;
-//    }
+    //    public function setQuantity(?int $quantity): void
+    //    {
+    //        $this->quantity = $quantity;
+    //    }
 
 
     public function getReserve(): ?int
     {
+        $this->reserve = $this->reserve && $this->reserve >= 0 ? $this->reserve : 0;
+
         return $this->reserve;
     }
 
 
-//    public function setReserve(?int $reserve): void
-//    {
-//        $this->reserve = $reserve;
-//    }
+    //    public function setReserve(?int $reserve): void
+    //    {
+    //        $this->reserve = $reserve;
+    //    }
 
 
     public function getMeasurement(): Measurement
@@ -127,9 +133,9 @@ final class PriceDTO implements ProductPriceInterface
         return $this->measurement;
     }
 
-//    public function setMeasurement(Measurement $measurement): void
-//    {
-//        $this->measurement = $measurement;
-//    }
+    //    public function setMeasurement(Measurement $measurement): void
+    //    {
+    //        $this->measurement = $measurement;
+    //    }
 
 }

@@ -55,8 +55,8 @@ final class ProductModificationCollectionDTO implements ProductModificationInter
     private ?Price\ProductModificationPriceDTO $price = null;
 
     /** Количественный учет */
-    //#[Assert\Valid]
-    //private ?Quantity\ProductModificationQuantityDTO $quantity = null;
+    #[Assert\Valid]
+    private Quantity\ProductModificationQuantityDTO $quantity;
 
     /** Дополнительные фото торгового предложения */
     #[Assert\Valid]
@@ -66,6 +66,7 @@ final class ProductModificationCollectionDTO implements ProductModificationInter
     public function __construct()
     {
         $this->image = new ArrayCollection();
+        $this->quantity = new Quantity\ProductModificationQuantityDTO();
     }
 
 
@@ -132,19 +133,12 @@ final class ProductModificationCollectionDTO implements ProductModificationInter
     }
 
 
-//    /** Количественный учет */
-//
-//    public function getQuantity(): ?Quantity\ProductModificationQuantityDTO
-//    {
-//        return $this->quantity;
-//    }
-//
-//
-//    public function setQuantity(?Quantity\ProductModificationQuantityDTO $quantity): void
-//    {
-//        $this->quantity = $quantity;
-//    }
+    /** Количественный учет */
 
+    public function getQuantity(): Quantity\ProductModificationQuantityDTO
+    {
+        return $this->quantity;
+    }
 
     /** Дополнительные фото торгового предложения */
 

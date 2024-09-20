@@ -55,8 +55,8 @@ final class ProductVariationCollectionDTO implements ProductVariationInterface
     private ?Price\ProductVariationPriceDTO $price = null;
 
     /** Количественный учет */
-    //#[Assert\Valid]
-    //private ?Quantity\ProductVariationQuantityDTO $quantity = null;
+    #[Assert\Valid]
+    private Quantity\ProductVariationQuantityDTO $quantity;
 
     /** Дополнительные фото торгового предложения */
     #[Assert\Valid]
@@ -71,6 +71,7 @@ final class ProductVariationCollectionDTO implements ProductVariationInterface
     {
         $this->image = new ArrayCollection();
         $this->modification = new ArrayCollection();
+        $this->quantity = new Quantity\ProductVariationQuantityDTO();
     }
 
 
@@ -137,19 +138,12 @@ final class ProductVariationCollectionDTO implements ProductVariationInterface
     }
 
 
-//    /** Количественный учет */
-//
-//    public function getQuantity(): ?Quantity\ProductVariationQuantityDTO
-//    {
-//        return $this->quantity;
-//    }
-//
-//
-//    public function setQuantity(?Quantity\ProductVariationQuantityDTO $quantity): void
-//    {
-//        $this->quantity = $quantity;
-//    }
+    /** Количественный учет */
 
+    public function getQuantity(): Quantity\ProductVariationQuantityDTO
+    {
+        return $this->quantity;
+    }
 
     /** Дополнительные фото торгового предложения */
 
@@ -161,7 +155,6 @@ final class ProductVariationCollectionDTO implements ProductVariationInterface
 
     public function addImage(Image\ProductVariationImageCollectionDTO $image): void
     {
-
         $filter = $this->image->filter(function (Image\ProductVariationImageCollectionDTO $element) use ($image) {
             return !$image->file && $image->getName() === $element->getName();
         });
@@ -170,7 +163,6 @@ final class ProductVariationCollectionDTO implements ProductVariationInterface
         {
             $this->image->add($image);
         }
-
     }
 
 

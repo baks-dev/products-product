@@ -57,8 +57,8 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
     private ?Price\ProductOfferPriceDTO $price = null;
 
     /** Количественный учет */
-    //#[Assert\Valid]
-    //private ?Quantity\ProductOfferQuantityDTO $quantity = null;
+    #[Assert\Valid]
+    private Quantity\ProductOfferQuantityDTO $quantity;
 
     /** Дополнительные фото торгового предложения */
     #[Assert\Valid]
@@ -71,9 +71,9 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
 
     public function __construct()
     {
-
         $this->image = new ArrayCollection();
         $this->variation = new ArrayCollection();
+        $this->quantity = new Quantity\ProductOfferQuantityDTO();
     }
 
 
@@ -140,18 +140,12 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
     }
 
 
-//    /** Количественный учет */
-//
-//    public function getQuantity(): ?Quantity\ProductOfferQuantityDTO
-//    {
-//        return $this->quantity;
-//    }
-//
-//
-//    public function setQuantity(?Quantity\ProductOfferQuantityDTO $quantity): void
-//    {
-//        $this->quantity = $quantity;
-//    }
+    /** Количественный учет */
+
+    public function getQuantity(): Quantity\ProductOfferQuantityDTO
+    {
+        return $this->quantity;
+    }
 
 
     /** Дополнительные фото торгового предложения */
@@ -185,7 +179,7 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
     }
 
 
-    /** Коллекция орговых предложений */
+    /** Коллекция торговых предложений */
 
     public function getVariation(): ArrayCollection
     {
