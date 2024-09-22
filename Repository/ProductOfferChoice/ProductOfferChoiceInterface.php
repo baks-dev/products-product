@@ -32,16 +32,10 @@ interface ProductOfferChoiceInterface
     /**
      * Метод возвращает все постоянные идентификаторы CONST торговых предложений продукта
      */
-    public function fetchProductOfferByProduct(ProductUid|string $product): Generator;
-
-    /**
-     * Метод возвращает все идентификаторы торговых предложений продукта по событию
-     */
-    public function fetchProductOfferByProductEvent(ProductEventUid $product): ?array;
-
+    public function findByProduct(ProductUid|string $product): Generator;
 
     /**
      * Метод возвращает все идентификаторы торговых предложений продукта по событию имеющиеся в доступе
      */
-    public function fetchProductOfferExistsByProductEvent(ProductEventUid $product): Generator;
+    public function findOnlyExistsByProductEvent(ProductEventUid $product): Generator;
 }

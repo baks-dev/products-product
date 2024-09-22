@@ -173,6 +173,8 @@ final class ProductChoiceRepository implements ProductChoiceInterface
     }
 
 
+
+
     /**
      * Метод возвращает идентификаторы событий (ProductEventUid) доступной для продажи продукции
      */

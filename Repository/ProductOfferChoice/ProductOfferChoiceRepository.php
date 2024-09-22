@@ -42,17 +42,14 @@ use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use Generator;
 
-final class ProductOfferChoiceRepository implements ProductOfferChoiceInterface
+final readonly class ProductOfferChoiceRepository implements ProductOfferChoiceInterface
 {
-    public function __construct(
-        private readonly ORMQueryBuilder $ORMQueryBuilder,
-        private readonly DBALQueryBuilder $DBALQueryBuilder
-    ) {}
+    public function __construct(private DBALQueryBuilder $DBALQueryBuilder) {}
 
     /**
      * Метод возвращает все постоянные идентификаторы CONST торговых предложений продукта
      */
-    public function fetchProductOfferByProduct(ProductUid|string $product): Generator
+    public function findByProduct(ProductUid|string $product): Generator
     {
         if(is_string($product))
         {
@@ -113,71 +110,9 @@ final class ProductOfferChoiceRepository implements ProductOfferChoiceInterface
 
 
     /**
-     * Метод возвращает все идентификаторы торговых предложений продукта по событию
-     */
-    public function fetchProductOfferByProductEvent(ProductEventUid $product): ?array
-    {
-
-        $qb = $this->ORMQueryBuilder
-            ->createQueryBuilder(self::class)
-            ->bindLocal();
-
-        $select = sprintf('new %s(
-            offer.id, 
-            offer.value, 
-            category_offer_trans.name, 
-            category_offer.reference
-        )', ProductOfferUid::class);
-
-        $qb->select($select);
-
-        $qb
-            ->from(Product::class, 'product')
-            ->where('product.event = :product')
-            ->setParameter('product', $product, ProductEventUid::TYPE);
-
-        //        $qb->join(
-        //            ProductEvent::class,
-        //            'event',
-        //            'WITH',
-        //            'event.id = product.event'
-        //        );
-
-        $qb->join(
-            ProductOffer::class,
-            'offer',
-            'WITH',
-            'offer.event = product.event'
-        );
-
-        // Тип торгового предложения
-
-        $qb->join(
-            CategoryProductOffers::class,
-            'category_offer',
-            'WITH',
-            'category_offer.id = offer.categoryOffer'
-        );
-
-
-        $qb->leftJoin(
-            CategoryProductOffersTrans::class,
-            'category_offer_trans',
-            'WITH',
-            'category_offer_trans.offer = category_offer.id AND category_offer_trans.local = :local'
-        );
-
-
-        /* Кешируем результат ORM */
-        return $qb->enableCache('products-product', 86400)->getResult();
-
-    }
-
-
-    /**
      * Метод возвращает все идентификаторы торговых предложений продукта по событию имеющиеся в доступе
      */
-    public function fetchProductOfferExistsByProductEvent(ProductEventUid|string $product): Generator
+    public function findOnlyExistsByProductEvent(ProductEventUid|string $product): Generator
     {
         if(is_string($product))
         {
