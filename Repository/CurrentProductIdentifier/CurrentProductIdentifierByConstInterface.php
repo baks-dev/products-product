@@ -21,36 +21,33 @@
  *  THE SOFTWARE.
  */
 
-namespace BaksDev\Products\Product\Repository\UpdateProductQuantity;
+namespace BaksDev\Products\Product\Repository\CurrentProductIdentifier;
 
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
+use BaksDev\Products\Product\Type\Id\ProductUid;
+use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
+use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
+use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
 
-interface AddProductQuantityInterface
+interface CurrentProductIdentifierByConstInterface
 {
-    /** Указываем количество добавленного резерва */
-    public function addReserve(int|false $reserve): self;
+    public function forProduct(ProductUid|string $product): self;
 
-    /** Указываем количество добавленного остатка */
-    public function addQuantity(int|false $quantity): self;
+    public function forOfferConst(ProductOfferConst|string|null|false $offer): self;
 
-    public function forEvent(ProductEvent|ProductEventUid|string $event): self;
+    public function forVariationConst(ProductVariationConst|string|null|false $variation): self;
 
-    public function forOffer(ProductOffer|ProductOfferUid|string|null $offer): self;
-
-    public function forVariation(ProductVariation|ProductVariationUid|string|null $variation): self;
-
-    public function forModification(ProductModification|ProductModificationUid|string|null $modification): self;
+    public function forModificationConst(ProductModificationConst|string|null|false $modification): self;
 
     /**
-     * Метод обновляет указанное количество резерва либо остатка к продукции
+     * Метод возвращает активные идентификаторы продукта
      */
-    public function update(): int|false;
-
+    public function execute(): CurrentProductDTO|false;
 }

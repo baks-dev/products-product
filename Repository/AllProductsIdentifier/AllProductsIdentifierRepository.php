@@ -99,7 +99,11 @@ final class AllProductsIdentifierRepository implements AllProductsIdentifierInte
         {
             $dbal
                 ->where('product.id = :product')
-                ->setParameter('product', $this->product, ProductUid::TYPE);
+                ->setParameter(
+                    'product',
+                    $this->product,
+                    ProductUid::TYPE
+                );
         }
 
 
@@ -115,7 +119,11 @@ final class AllProductsIdentifierRepository implements AllProductsIdentifierInte
                 'offer',
                 'offer.event = product.event AND offer.const = :offer_const'
             )
-                ->setParameter('offer_const', $this->offerConst, ProductOfferConst::TYPE);
+                ->setParameter(
+                    'offer_const',
+                    $this->offerConst,
+                    ProductOfferConst::TYPE
+                );
         }
         else
         {
@@ -170,7 +178,11 @@ final class AllProductsIdentifierRepository implements AllProductsIdentifierInte
                     'modification',
                     'modification.variation = variation.id AND modification.const = :modification_const'
                 )
-                ->setParameter('modification_const', $this->offerModification, ProductModificationConst::TYPE);
+                ->setParameter(
+                    'modification_const',
+                    $this->offerModification,
+                    ProductModificationConst::TYPE
+                );
         }
         else
         {
