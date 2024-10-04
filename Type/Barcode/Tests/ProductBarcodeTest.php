@@ -26,8 +26,10 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Type\Barcode\Tests;
 
 use BaksDev\Products\Product\Type\Barcode\ProductBarcode;
+use BaksDev\Products\Product\Type\Id\ProductUid;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
+use Symfony\Component\Uid\UuidV7;
 
 /**
  * @group products-product
@@ -35,7 +37,6 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'test')]
 final class ProductBarcodeTest extends TestCase
 {
-
     public function testBarcodeGeneration()
     {
         $barcode = new ProductBarcode();
@@ -44,6 +45,45 @@ final class ProductBarcodeTest extends TestCase
         $customValue = '0123456789012';
         $barcode = new ProductBarcode($customValue);
         $this->assertEquals($customValue, $barcode->getValue());
+    }
+
+
+    public function testUidBarcodeEncoding()
+    {
+        $count = 0;
+
+        $barcodes = null;
+
+        while(true)
+        {
+            $barcode = ProductBarcode::generate();
+            self::assertFalse(isset($barcodes[$barcode]), $barcode.' - '.$count);
+
+            $barcodes[$barcode] = true;
+
+            $count++;
+
+            if($count > 100)
+            {
+                break;
+            }
+        }
+    }
+
+    public function testRandomGeneration()
+    {
+        $barcode = ProductBarcode::generate(new UuidV7());
+        self::assertNotEmpty($barcode);
+
+        $barcodeNull = ProductBarcode::generate();
+        self::assertNotEmpty($barcodeNull);
+
+        $barcodeString = ProductBarcode::generate('35eca90b-5331-728a-9222-d051a59a7941');
+        $this->assertEquals('2929056464568', $barcodeString);
+
+        $barcodeUid = ProductBarcode::generate(new ProductUid(ProductUid::TEST));
+        $this->assertEquals('2686472941966', $barcodeUid);
+
     }
 
     public function testBarcodeEncoding()
@@ -57,13 +97,5 @@ final class ProductBarcodeTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testRandomGeneration()
-    {
-        $barcode1 = ProductBarcode::generate();
-        $barcode2 = ProductBarcode::generate();
 
-        $this->assertNotEquals($barcode1, $barcode2);
-        $this->assertMatchesRegularExpression('/^[A-Z0-9]{13}$/', $barcode1);
-        $this->assertMatchesRegularExpression('/^[A-Z0-9]{13}$/', $barcode2);
-    }
 }

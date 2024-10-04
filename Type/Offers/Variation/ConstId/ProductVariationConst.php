@@ -63,6 +63,16 @@ final class ProductVariationConst extends Uid
         mixed $characteristic = null,
         mixed $reference = null,
     ) {
+
+        /**
+         * Добавляем задержка выполнения для генератора Brcode
+         * @see ProductBarcode
+         */
+        if(is_null($value))
+        {
+            usleep(12000);
+        }
+
         parent::__construct($value);
 
         $this->attr = $attr;
