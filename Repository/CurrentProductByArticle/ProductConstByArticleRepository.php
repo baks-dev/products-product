@@ -32,9 +32,9 @@ use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModific
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Product\Entity\Product;
 
-final class ProductConstByArticleRepository implements ProductConstByArticleInterface
+final readonly class ProductConstByArticleRepository implements ProductConstByArticleInterface
 {
-    public function __construct(private readonly DBALQueryBuilder $DBALQueryBuilder) {}
+    public function __construct(private DBALQueryBuilder $DBALQueryBuilder) {}
 
     /** Метод возвращает активные идентификаторы продукции */
     public function find(string $article): CurrentProductDTO|false

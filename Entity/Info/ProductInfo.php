@@ -37,6 +37,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'product_info')]
+#[ORM\Index(columns: ['article'])]
 class ProductInfo extends EntityReadonly
 {
     public const TABLE = 'product_info';

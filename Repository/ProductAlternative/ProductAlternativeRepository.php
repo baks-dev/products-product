@@ -463,11 +463,9 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 
         if($property)
         {
-
             /** @var stdClass $props */
             foreach($property as $props)
             {
-
                 if(empty($props->field_uid))
                 {
                     continue;
@@ -479,15 +477,8 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                     'product_offer',
                     ProductProperty::class,
                     'product_property_'.$alias,
-                    'product_property_'.$alias.'.event = product_offer.event AND product_property_'.$alias.'.field = :field_'.$alias.' AND product_property_'.$alias.'.value = :props_'.$alias
+                    'product_property_'.$alias.'.event = product_offer.event AND product_property_'.$alias.'.value = :props_'.$alias
                 );
-
-                $qb->setParameter(
-                    'field_'.$alias,
-                    new CategoryProductSectionFieldUid($props->field_uid),
-                    CategoryProductSectionFieldUid::TYPE
-                );
-
 
                 $qb->setParameter('props_'.$alias, $props->field_value);
             }
@@ -540,6 +531,8 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
         $qb->setMaxResults(1000);
 
         $qb->allGroupByExclude();
+
+        $qb->orderBy('quantity', 'DESC');
 
         return $qb
             ->enableCache('products-product', 86400)
