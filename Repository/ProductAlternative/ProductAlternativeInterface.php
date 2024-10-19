@@ -25,5 +25,10 @@ namespace BaksDev\Products\Product\Repository\ProductAlternative;
 
 interface ProductAlternativeInterface
 {
-	public function fetchAllAlternativeAssociative(string $offer, ?string $variation, ?string $modification, ?array $property) : ?array;
+    public function fetchAllAlternativeAssociative(
+        string $offer,
+        ?string $variation,
+        ?string $modification,
+        ?array $property
+    ): ?array;
 }
