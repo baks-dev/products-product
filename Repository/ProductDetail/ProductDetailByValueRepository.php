@@ -687,9 +687,9 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
      */
     public function fetchProductEventAssociative(
         ProductEventUid $event,
-        string $offer = null,
-        string $variation = null,
-        string $modification = null,
+        ?string $offer = null,
+        ?string $variation = null,
+        ?string $modification = null,
     ): array|bool
     {
         $dbal = $this->DBALQueryBuilder->createQueryBuilder(self::class);

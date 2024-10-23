@@ -754,7 +754,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
 
     /** Метод возвращает все товары в категории */
     public function fetchAllProductByCategory(
-        CategoryProductUid $category = null
+        ?CategoryProductUid $category = null
     ): array
     {
         $dbal = $this->DBALQueryBuilder

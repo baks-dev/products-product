@@ -34,7 +34,7 @@ final class ProductBarcode
 
     private string $value;
 
-    public function __construct(string $value = null)
+    public function __construct(?string $value = null)
     {
         if($value)
         {
