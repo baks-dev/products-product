@@ -1,17 +1,17 @@
 <?php
 /*
- *  Copyright 2023.  Baks.dev <admin@baks.dev>
- *
+ *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *
+ *  
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *
+ *  
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -134,7 +134,7 @@ final class ProductDTO implements ProductEventInterface
 
     public function addCategory(CategoryCollectionDTO $category): void
     {
-        $filter = $this->category->filter(function (CategoryCollectionDTO $element) use ($category) {
+        $filter = $this->category->filter(function(CategoryCollectionDTO $element) use ($category) {
             return $category->getCategory()?->equals($element->getCategory());
         });
 
@@ -143,13 +143,6 @@ final class ProductDTO implements ProductEventInterface
             $this->category[] = $category;
         }
     }
-
-
-    public function removeCategory(CategoryCollectionDTO $category): void
-    {
-        $this->category->removeElement($category);
-    }
-
 
     /**
      * @return ArrayCollection
@@ -163,6 +156,11 @@ final class ProductDTO implements ProductEventInterface
         }
 
         return $this->category;
+    }
+
+    public function removeCategory(CategoryCollectionDTO $category): void
+    {
+        $this->category->removeElement($category);
     }
 
 
@@ -234,7 +232,7 @@ final class ProductDTO implements ProductEventInterface
     public function addOffer(Offers\ProductOffersCollectionDTO $offer): void
     {
 
-        $filter = $this->offer->filter(function (Offers\ProductOffersCollectionDTO $element) use ($offer) {
+        $filter = $this->offer->filter(function(Offers\ProductOffersCollectionDTO $element) use ($offer) {
             return $offer->getValue() === $element->getValue();
         });
 
@@ -270,7 +268,7 @@ final class ProductDTO implements ProductEventInterface
 
     public function addPhoto(PhotoCollectionDTO $photo): void
     {
-        $filter = $this->photo->filter(function (PhotoCollectionDTO $element) use ($photo) {
+        $filter = $this->photo->filter(function(PhotoCollectionDTO $element) use ($photo) {
             return !$photo->file && $photo->getName() === $element->getName();
         });
 
@@ -340,7 +338,7 @@ final class ProductDTO implements ProductEventInterface
 
         $iterator = $this->property->getIterator();
 
-        $iterator->uasort(function ($first, $second) {
+        $iterator->uasort(function($first, $second) {
 
             return $first->getSort() > $second->getSort() ? 1 : -1;
         });
@@ -352,7 +350,7 @@ final class ProductDTO implements ProductEventInterface
     public function addProperty(PropertyCollectionDTO $property): void
     {
 
-        $filter = $this->property->filter(function (PropertyCollectionDTO $element) use ($property) {
+        $filter = $this->property->filter(function(PropertyCollectionDTO $element) use ($property) {
             return $property->getField()?->equals($element->getField());
         });
 
@@ -372,25 +370,10 @@ final class ProductDTO implements ProductEventInterface
 
     /* SEO  */
 
-    public function addSeo(SeoCollectionDTO $seo): void
-    {
-        if(empty($seo->getLocal()->getLocalValue()))
-        {
-            return;
-        }
-
-        if(!$this->seo->contains($seo))
-        {
-            $this->seo->add($seo);
-        }
-    }
-
-
     public function removeSeo(SeoCollectionDTO $seo): void
     {
         $this->seo->removeElement($seo);
     }
-
 
     public function getSeo(): ArrayCollection
     {
@@ -405,14 +388,21 @@ final class ProductDTO implements ProductEventInterface
         return $this->seo;
     }
 
-
-    /* TRANS */
-
-    public function setTranslate(ArrayCollection $trans): void
+    public function addSeo(SeoCollectionDTO $seo): void
     {
-        $this->translate = $trans;
+        if(empty($seo->getLocal()->getLocalValue()))
+        {
+            return;
+        }
+
+        if(!$this->seo->contains($seo))
+        {
+            $this->seo->add($seo);
+        }
     }
 
+
+    /* TRANS */
 
     public function getTranslate(): ArrayCollection
     {
@@ -427,6 +417,10 @@ final class ProductDTO implements ProductEventInterface
         return $this->translate;
     }
 
+    public function setTranslate(ArrayCollection $trans): void
+    {
+        $this->translate = $trans;
+    }
 
     public function addTranslate(Trans\ProductTransDTO $trans): void
     {
@@ -443,12 +437,6 @@ final class ProductDTO implements ProductEventInterface
 
 
     /* DESCRIPTION */
-
-    public function setDescription(ArrayCollection $description): void
-    {
-        $this->description = $description;
-    }
-
 
     public function getDescription(): ArrayCollection
     {
@@ -469,6 +457,10 @@ final class ProductDTO implements ProductEventInterface
         return $this->description;
     }
 
+    public function setDescription(ArrayCollection $description): void
+    {
+        $this->description = $description;
+    }
 
     public function addDescription(Description\ProductDescriptionDTO $description): void
     {

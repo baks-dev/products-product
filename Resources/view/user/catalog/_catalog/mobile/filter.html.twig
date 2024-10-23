@@ -1,4 +1,3 @@
-
 <div class="accordion accordion-flush mt-3" id="catalogFilter">
     <div class="accordion-item rounded-4 shadow">
 
@@ -30,12 +29,11 @@
 
 
 
-                            <div class="d-flex gap-3">
+                        <div class="d-flex gap-3">
 
-                                {{ form_widget(field, { label: 'Подобрать '~((products.data|first).category_name is defined ? (products.data|first).category_name) , attr: { class : 'btn-danger w-100 rounded-4 text-uppercase fw-bolder shadow' } }) }}
+                            {{ form_widget(field, { label: 'Подобрать '~((products.data|first).category_name is defined ? (products.data|first).category_name) , attr: { class : 'btn-danger w-100 rounded-4 text-uppercase fw-bolder shadow' } }) }}
 
-                                {# TODO: RESET #}
-                                {# <button type="reset" class="btn btn-light rounded-4" aria-label="Сбросить">
+                            {# <button type="reset" class="btn btn-light rounded-4" aria-label="Сбросить">
 						<span class="small text-uppercase fw-bolder">
 							<svg xmlns="http://www.w3.org/2000/svg"
 									width="16"
@@ -48,7 +46,7 @@
 							</svg>
 						</span>
 					</button> #}
-                            </div>
+                        </div>
 
 
 

@@ -1,7 +1,6 @@
 {% trans_default_domain 'admin.products.product' %}
 
 
-
 <div class="d-flex gap-3">
     <div class="w-25">
         {{ form_row(form.info.sort, { label : 'Приоритет'|trans } ) }}
@@ -47,7 +46,7 @@
     </div>
 </div>
 
-{#<div class="d-flex gap-3 align-items-end">
+{# <div class="d-flex gap-3 align-items-end">
     {{ form_row(form.price.quantity, form.price.quantity.vars.data ? { label : 'Наличие', attr: { min: 0 } } : { label : false, attr : { placeholder : 'Наличие', min: 0 }} ) }}
 
     <div class="w-50">
@@ -56,6 +55,6 @@
     <div class="w-100">
         {{ form_row(form.price.reserve, form.price.reserve.vars.data ? { label : 'Резерв', attr: { min: 0 } } : { label : false, attr : { placeholder : 'Резерв' }} ) }}
     </div>
-</div>#}
+</div> #}
 
 

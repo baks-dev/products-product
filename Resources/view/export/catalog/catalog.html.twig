@@ -7,12 +7,13 @@
         <url>{{ absolute_url(path('core:user.homepage')) }}</url>
         <platform>Symfony</platform>
         <version>1.0</version>
-       {# <agency>Технологичные решения</agency>#}
-        {#<email>example-email@gmail.com</email>#}
+        {# <agency>Технологичные решения</agency> #}
+        {# <email>example-email@gmail.com</email> #}
 
         <categories>
             {% for id, cat in category %}
-                <category id='{{ id }}'{#{{ cat.parent_category ? " parentId='"~cat.parent_category~"'":"" }}#}>{{ cat.category_name }}</category>
+                <category
+                        id='{{ id }}'{# {{ cat.parent_category ? " parentId='"~cat.parent_category~"'":"" }} #}>{{ cat.category_name }}</category>
             {% endfor %}
         </categories>
 
@@ -52,8 +53,8 @@
                     </description>
 
                     {# Официальная гарантия производителя #}
-                    {#<manufacturer_warranty>true</manufacturer_warranty>#}
-                    {#<country_of_origin>Китай</country_of_origin>#}
+                    {# <manufacturer_warranty>true</manufacturer_warranty> #}
+                    {# <country_of_origin>Китай</country_of_origin> #}
 
                     {% if card.product_barcode %}
                         <barcode>{{ card.product_barcode }}</barcode>
@@ -69,12 +70,12 @@
                         {% endif %}
                     {% endfor %}
 
-                    {#<weight>3.6</weight>#}
-                    {#<dimensions>20.1/20.5/22.5</dimensions>#}
-                    {#<service-life-days>P2Y</service-life-days>#}
-                    {#<comment-life-days>Использовать при температуре не ниже -10 градусов.</comment-life-days>#}
-                    {#<warranty-days>P1Y</warranty-days>#}
-                    {#<comment-warranty>Гарантия не распространяется на механические повреждения покрытия чаши.</comment-warranty>#}
+                    {# <weight>3.6</weight> #}
+                    {# <dimensions>20.1/20.5/22.5</dimensions> #}
+                    {# <service-life-days>P2Y</service-life-days> #}
+                    {# <comment-life-days>Использовать при температуре не ниже -10 градусов.</comment-life-days> #}
+                    {# <warranty-days>P1Y</warranty-days> #}
+                    {# <comment-warranty>Гарантия не распространяется на механические повреждения покрытия чаши.</comment-warranty> #}
                 </offer>
 
             {% endfor %}

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2023.  Baks.dev <admin@baks.dev>
+ *  Copyright 2024.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -28,13 +28,16 @@ let $addButtonVideo = document.getElementById('video_addCollection');
 /* Блок для новой коллекции */
 let $blockCollectionVideo = document.getElementById('video_collection');
 
-if ($addButtonVideo) {
+if($addButtonVideo)
+{
     /* добавить событие на удаление ко всем существующим элементам формы в блок с классом .del-item */
     let $delItemVideo = $blockCollectionVideo.querySelectorAll('.del-item-video');
 
     /* Удаляем при клике колекцию СЕКЦИЙ */
-    $delItemVideo.forEach(function (item) {
-        item.addEventListener('click', function () {
+    $delItemVideo.forEach(function(item)
+    {
+        item.addEventListener('click', function()
+        {
 
             item.closest('.item-collection-video').remove();
 
@@ -46,17 +49,18 @@ if ($addButtonVideo) {
 
 
     /* Добавляем новую коллекцию */
-    $addButtonVideo.addEventListener('click', function () {
+    $addButtonVideo.addEventListener('click', function()
+    {
 
         let $addButtonVideo = this;
 
         /* получаем прототип коллекции  */
         //let newForm = $addButtonVideo.dataset.prototype;
-        let newForm =  document.getElementById($addButtonVideo.dataset.prototype).dataset.prototype;
+        let newForm = document.getElementById($addButtonVideo.dataset.prototype).dataset.prototype;
         let index = $addButtonVideo.dataset.index * 1;
 
         /* Замена '__name__' в HTML-коде прототипа на
-        вместо этого будет число, основанное на том, сколько коллекций */
+         вместо этого будет число, основанное на том, сколько коллекций */
         newForm = newForm.replace(/__videos__/g, index);
 
 
@@ -73,7 +77,8 @@ if ($addButtonVideo) {
         $blockCollectionVideo.append(div);
 
         /* Удаляем при клике колекцию СЕКЦИЙ */
-        div.querySelector('.del-item-video').addEventListener('click', function () {
+        div.querySelector('.del-item-video').addEventListener('click', function()
+        {
             this.closest('.item-collection-video').remove();
             let index = $addButtonVideo.dataset.index * 1;
             $addButtonVideo.dataset.index = (index - 1).toString();

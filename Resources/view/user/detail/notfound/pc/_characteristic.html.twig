@@ -1,4 +1,3 @@
-
 {% set unique_characteristics = [] %}
 {% set open = true %}
 {% set light = true %}
@@ -8,51 +7,51 @@
 	
 	{# Свойства, учавствующие в харкатеристиках #}
 	{% for name_characteristics in  arr_property | filter(props => props.field_public is defined and props.field_public == true) %}
-	{# {{ name_property.f5|call_twig_func(name_property.f3) }} #}
-	
-	
-	{% if open == true %} <div class="d-flex w-100 gap-3"> {% endif %}
-		
-		
-		<div class="d-flex justify-content-between w-50 p-2 {{ light ? 'rounded-4 bg-light' }} ">
-			<div class="w-50">
-				{{ name_characteristics.field_trans }}
-			</div>
-			<div class="w-50">
-				{#{% set template = name_characteristics.field_value|call_twig_func(name_characteristics.field_type~'_template') %}#}
-				
-				{{ name_characteristics.field_value|call_twig_func(name_characteristics.field_type~'_template') }}
-				
-				{#{% if render %}
+        {# {{ name_property.f5|call_twig_func(name_property.f3) }} #}
+
+
+        {% if open == true %} <div class="d-flex w-100 gap-3"> {% endif %}
+
+
+        <div class="d-flex justify-content-between w-50 p-2 {{ light ? 'rounded-4 bg-light' }} ">
+            <div class="w-50">
+                {{ name_characteristics.field_trans }}
+            </div>
+            <div class="w-50">
+                {# {% set template = name_characteristics.field_value|call_twig_func(name_characteristics.field_type~'_template') %} #}
+
+                {{ name_characteristics.field_value|call_twig_func(name_characteristics.field_type~'_template') }}
+
+                {# {% if render %}
 					{{ render|raw }}
 				{% else %}
 					{{ name_characteristics.field_value|call_twig_func(name_characteristics.field_type) }}
-				{% endif %}#}
-			</div>
-		</div>
-		
-		
-				{% if open == false %}
-						</div>
-					</div>
-					<div class="d-flex gap-5 mb-3">
-						{% set open = true %}
-						{% set light = light ? false : true %}
-						
-				{% else %}
-					{% set open = false %}
-					{% if loop.last %}
-						</div>
-					{% endif %}
-				{% endif %}
-						
-						
-						
-						{% if loop.last %}
-							</div>
-						{% endif %}
-						
-	{% endfor %}
+				{% endif %} #}
+            </div>
+        </div>
+
+
+        {% if open == false %}
+            </div>
+            </div>
+            <div class="d-flex gap-5 mb-3">
+            {% set open = true %}
+            {% set light = light ? false : true %}
+
+        {% else %}
+            {% set open = false %}
+            {% if loop.last %}
+                </div>
+            {% endif %}
+        {% endif %}
+
+
+
+        {% if loop.last %}
+            </div>
+        {% endif %}
+
+    {% endfor %}
 	
 
 

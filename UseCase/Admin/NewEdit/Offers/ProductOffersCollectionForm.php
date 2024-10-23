@@ -1,17 +1,17 @@
 <?php
 /*
- *  Copyright 2023.  Baks.dev <admin@baks.dev>
- *
+ *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *
+ *  
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *
+ *  
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -58,10 +58,10 @@ final class ProductOffersCollectionForm extends AbstractType
 
         $builder->get('categoryOffer')->addModelTransformer(
             new CallbackTransformer(
-                function ($categoryOffer) {
+                function($categoryOffer) {
                     return $categoryOffer instanceof CategoryProductOffersUid ? $categoryOffer->getValue() : $categoryOffer;
                 },
-                function ($categoryOffer) {
+                function($categoryOffer) {
                     return new CategoryProductOffersUid($categoryOffer);
                 }
             )
@@ -72,10 +72,10 @@ final class ProductOffersCollectionForm extends AbstractType
 
         $builder->get('const')->addModelTransformer(
             new CallbackTransformer(
-                function ($const) {
+                function($const) {
                     return $const instanceof ProductOfferConst ? $const->getValue() : $const;
                 },
-                function ($const) {
+                function($const) {
                     return new ProductOfferConst($const);
                 }
             )
@@ -107,7 +107,7 @@ final class ProductOffersCollectionForm extends AbstractType
 
         $builder->addEventListener(
             FormEvents::PRE_SET_DATA,
-            function (FormEvent $event) use ($offer) {
+            function(FormEvent $event) use ($offer) {
                 $data = $event->getData();
                 $form = $event->getForm();
 

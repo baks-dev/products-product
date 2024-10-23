@@ -1,20 +1,25 @@
 <?php
 /*
-*  Copyright Baks.dev <admin@baks.dev>
-*
-*  Licensed under the Apache License, Version 2.0 (the "License");
-*  you may not use this file except in compliance with the License.
-*  You may obtain a copy of the License at
-*
-*  http://www.apache.org/licenses/LICENSE-2.0
-*
-*  Unless required by applicable law or agreed to in writing, software
-*  distributed under the License is distributed on an "AS IS" BASIS,
-*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*  See the License for the specific language governing permissions and
-*   limitations under the License.
-*
-*/
+ *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is furnished
+ *  to do so, subject to the following conditions:
+ *  
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
+ *  
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ *  THE SOFTWARE.
+ */
 
 namespace BaksDev\Products\Product\Type\Barcode;
 
@@ -40,14 +45,23 @@ final class ProductBarcode
         $this->value = $this->barcode(self::generate());
     }
 
-    public function __toString(): string
+    public function barcode(string $article): string
     {
-        return $this->value;
-    }
+        // Generate a random alphanumeric string
+        $article = str_replace('-', '', $article);
+        $article = strrev($article);
 
-    public function getValue(): string
-    {
-        return $this->value;
+        $length = 10;
+        $barcode = '460'; // 460 1089289353
+
+        for($i = 0; $i < $length; $i++)
+        {
+            $char = mb_substr($article, $i, 1);
+            $index = ord($char) % 10;
+            $barcode .= $index;
+        }
+
+        return $barcode;
     }
 
     public static function generate(Uid|Uuid|string|null $uuid = null): string
@@ -122,28 +136,19 @@ final class ProductBarcode
         return $barcode;
     }
 
-    public function barcode(string $article): string
+    public function getValue(): string
     {
-        // Generate a random alphanumeric string
-        $article = str_replace('-', '', $article);
-        $article = strrev($article);
-
-        $length = 10;
-        $barcode = '460'; // 460 1089289353
-
-        for($i = 0; $i < $length; $i++)
-        {
-            $char = mb_substr($article, $i, 1);
-            $index = ord($char) % 10;
-            $barcode .= $index;
-        }
-
-        return $barcode;
+        return $this->value;
     }
 
-//    public static function generate(): string
-//    {
-//        $uid = new UuidV7();
-//        return self::uuid_barcode($uid);
-//    }
+    public function __toString(): string
+    {
+        return $this->value;
+    }
+
+    //    public static function generate(): string
+    //    {
+    //        $uid = new UuidV7();
+    //        return self::uuid_barcode($uid);
+    //    }
 }

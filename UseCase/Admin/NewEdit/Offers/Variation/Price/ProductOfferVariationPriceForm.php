@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2023.  Baks.dev <admin@baks.dev>
+ *  Copyright 2024.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -34,41 +34,45 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class ProductOfferVariationPriceForm extends AbstractType
 {
-	
-	public function buildForm(FormBuilderInterface $builder, array $options) : void
-	{
-		$builder->add('price', MoneyType::class, [
-			'required' => false,
-			'currency' => false,
-		]);
-		
-		$builder->get('price')->addModelTransformer(
-			new CallbackTransformer(
-				function($price) {
-					return $price instanceof Money ? $price->getValue() : $price;
-				},
-				function($price) {
-					return new Money($price);
-				}
-			)
-		);
-		
-		$builder->add('currency', ChoiceType::class, [
-			'choices' => Currency::cases(),
-			'choice_value' => function(?Currency $currency) { return $currency?->getCurrencyValue(); },
-			'choice_label' => function(?Currency $currency) { return $currency?->getCurrencyValue(); },
-			'translation_domain' => 'reference.currency',
-			'label' => false,
-		]);
-		
-	}
-	
-	
-	public function configureOptions(OptionsResolver $resolver) : void
-	{
-		$resolver->setDefaults([
-			'data_class' => ProductVariationPriceDTO::class,
-		]);
-	}
-	
+
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $builder->add('price', MoneyType::class, [
+            'required' => false,
+            'currency' => false,
+        ]);
+
+        $builder->get('price')->addModelTransformer(
+            new CallbackTransformer(
+                function($price) {
+                    return $price instanceof Money ? $price->getValue() : $price;
+                },
+                function($price) {
+                    return new Money($price);
+                }
+            )
+        );
+
+        $builder->add('currency', ChoiceType::class, [
+            'choices' => Currency::cases(),
+            'choice_value' => function(?Currency $currency) {
+                return $currency?->getCurrencyValue();
+            },
+            'choice_label' => function(?Currency $currency) {
+                return $currency?->getCurrencyValue();
+            },
+            'translation_domain' => 'reference.currency',
+            'label' => false,
+        ]);
+
+    }
+
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => ProductVariationPriceDTO::class,
+        ]);
+    }
+
 }

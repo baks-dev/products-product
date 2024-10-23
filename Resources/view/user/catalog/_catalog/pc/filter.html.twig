@@ -1,20 +1,18 @@
-
 <div class="rounded-4 bg-light d-flex flex-column gap-3 p-3 mb-3">
-	{{ form_start(filter) }}
-	
-	
-	{% for field in filter %}
-		
-		{% if field.vars.name == 'filter' %}
-			
-			<div class="position-sticky z-index-3 w-100" style="bottom: 1rem; clear: both;">
-				
-				<div class="d-flex gap-3">
-			
-					{{ form_widget(field, { label: 'Подобрать '~((products.data|first).category_name is defined ? (products.data|first).category_name) , attr: { class : 'btn-danger w-100 rounded-4 text-uppercase fw-bolder shadow' } }) }}
-					
-					{# TODO: RESET #}
-					{# <button type="reset" class="btn btn-light rounded-4" aria-label="Сбросить">
+    {{ form_start(filter) }}
+
+
+    {% for field in filter %}
+
+        {% if field.vars.name == 'filter' %}
+
+            <div class="position-sticky z-index-3 w-100" style="bottom: 1rem; clear: both;">
+
+                <div class="d-flex gap-3">
+
+                    {{ form_widget(field, { label: 'Подобрать '~((products.data|first).category_name is defined ? (products.data|first).category_name) , attr: { class : 'btn-danger w-100 rounded-4 text-uppercase fw-bolder shadow' } }) }}
+
+                    {# <button type="reset" class="btn btn-light rounded-4" aria-label="Сбросить">
 						<span class="small text-uppercase fw-bolder">
 							<svg xmlns="http://www.w3.org/2000/svg"
 									width="16"
@@ -27,19 +25,19 @@
 							</svg>
 						</span>
 					</button> #}
-				</div>
-				
-			</div>
-		{% else %}
-			{{ form_row(field) }}
-		{% endif %}
-	
-	{% endfor %}
-	
-	
-	
-	{{ form_end(filter) }}
-	
+                </div>
+
+            </div>
+        {% else %}
+            {{ form_row(field) }}
+        {% endif %}
+
+    {% endfor %}
+
+
+
+    {{ form_end(filter) }}
+
 </div>
 
 

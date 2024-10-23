@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2023.  Baks.dev <admin@baks.dev>
+ *  Copyright 2024.  Baks.dev <admin@baks.dev>
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -58,10 +58,10 @@ final class ProductModificationCollectionForm extends AbstractType
 
         $builder->get('categoryModification')->addModelTransformer(
             new CallbackTransformer(
-                function ($categoryModification) {
+                function($categoryModification) {
                     return $categoryModification instanceof CategoryProductModificationUid ? $categoryModification->getValue() : $categoryModification;
                 },
-                function ($categoryModification) {
+                function($categoryModification) {
                     return new CategoryProductModificationUid($categoryModification);
                 }
             )
@@ -71,10 +71,10 @@ final class ProductModificationCollectionForm extends AbstractType
 
         $builder->get('const')->addModelTransformer(
             new CallbackTransformer(
-                function ($const) {
+                function($const) {
                     return $const instanceof ProductModificationConst ? $const->getValue() : $const;
                 },
-                function ($const) {
+                function($const) {
                     return new ProductModificationConst($const);
                 }
             )
@@ -106,7 +106,7 @@ final class ProductModificationCollectionForm extends AbstractType
 
         $builder->addEventListener(
             FormEvents::PRE_SET_DATA,
-            function (FormEvent $event) use ($modification) {
+            function(FormEvent $event) use ($modification) {
                 $data = $event->getData();
                 $form = $event->getForm();
 

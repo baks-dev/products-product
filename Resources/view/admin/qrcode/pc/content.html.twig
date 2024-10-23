@@ -16,11 +16,11 @@
                 <div class="w-100">{{ item.product_article }}</div>
 
                 {% if item.product_offer_value %}
-                <div class="w-100"><small class="text-muted">{{ item.product_offer_name }}: </small>
-                <span class="fw-bolder">{{ item.product_offer_value|call_twig_func(item.product_offer_reference) }}
-                    {{ item.product_offer_postfix }}
+                    <div class="w-100"><small class="text-muted">{{ item.product_offer_name }}: </small>
+                        <span class="fw-bolder">{{ item.product_offer_value|call_twig_func(item.product_offer_reference) }}
+                            {{ item.product_offer_postfix }}
                 </span>
-                </div>
+                    </div>
                 {% endif %}
 
                 {% if item.product_variation_value %}
@@ -28,7 +28,7 @@
                         <small class="text-muted">{{ item.product_variation_name }}: </small>
                         <span class="fw-bolder">
                             {{ item.product_variation_value|call_twig_func(item.product_variation_reference) }}
-                        {{ item.product_variation_postfix }}
+                            {{ item.product_variation_postfix }}
                             </span>
                     </div>
                 {% endif %}

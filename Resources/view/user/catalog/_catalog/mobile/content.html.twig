@@ -103,15 +103,15 @@
 
                     К сожалению с такими характеристиками
 
-                        {% if other == true and products.data|length %}
-                            <div class='d-flex flex-column gap-1 mt-3'>
-                                {% for field in fields %}
-                                    <div class='d-flex align-items-center gap-3'>
-                                        <strong>{{ field.field_name }}</strong> {{ field.field_value|call_twig_func(field.field_type~'_template') }}
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
+                    {% if other == true and products.data|length %}
+                        <div class='d-flex flex-column gap-1 mt-3'>
+                            {% for field in fields %}
+                                <div class='d-flex align-items-center gap-3'>
+                                    <strong>{{ field.field_name }}</strong> {{ field.field_value|call_twig_func(field.field_type~'_template') }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
 
                     нет товаров в данной категории
 

@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2023.  Baks.dev <admin@baks.dev>
+ *  Copyright 2024.  Baks.dev <admin@baks.dev>
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -49,10 +49,10 @@ final class InfoForm extends AbstractType
             $builder
                 ->add('profile', ChoiceType::class, [
                     'choices' => $this->profileChoice->getProfileCollection(),
-                    'choice_value' => function (?UserProfileUid $profile) {
+                    'choice_value' => function(?UserProfileUid $profile) {
                         return $profile?->getValue();
                     },
-                    'choice_label' => function (UserProfileUid $profile) {
+                    'choice_label' => function(UserProfileUid $profile) {
                         return $profile->getAttr();
                     },
                     'label' => false,

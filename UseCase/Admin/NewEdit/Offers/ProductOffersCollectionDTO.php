@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2023.  Baks.dev <admin@baks.dev>
+ *  Copyright 2024.  Baks.dev <admin@baks.dev>
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -97,21 +97,6 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
         }
     }
 
-
-    /** Заполненное значение */
-
-    public function getValue(): ?string
-    {
-        return $this->value;
-    }
-
-
-    public function setValue(?string $value): void
-    {
-        $this->value = $value;
-    }
-
-
     /** Артикул */
 
     public function getArticle(): ?string
@@ -119,12 +104,10 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
         return $this->article;
     }
 
-
     public function setArticle(?string $article): void
     {
         $this->article = $article;
     }
-
 
     /** Стоимость торгового предложения */
 
@@ -133,12 +116,10 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
         return $this->price;
     }
 
-
     public function setPrice(?Price\ProductOfferPriceDTO $price): void
     {
         $this->price = $price;
     }
-
 
     /** Количественный учет */
 
@@ -147,7 +128,6 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
         return $this->quantity;
     }
 
-
     /** Дополнительные фото торгового предложения */
 
     public function getImage(): ArrayCollection
@@ -155,11 +135,10 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
         return $this->image;
     }
 
-
     public function addImage(Image\ProductOfferImageCollectionDTO $image): void
     {
 
-        $filter = $this->image->filter(function (Image\ProductOfferImageCollectionDTO $element) use ($image) {
+        $filter = $this->image->filter(function(Image\ProductOfferImageCollectionDTO $element) use ($image) {
             return !$image->file && $image->getName() === $element->getName();
         });
 
@@ -172,12 +151,10 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
 
     }
 
-
     public function removeImage(Image\ProductOfferImageCollectionDTO $image): void
     {
         $this->image->removeElement($image);
     }
-
 
     /** Коллекция торговых предложений */
 
@@ -186,11 +163,10 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
         return $this->variation;
     }
 
-
     public function addVariation(Variation\ProductVariationCollectionDTO $variation): void
     {
 
-        $filter = $this->variation->filter(function (Variation\ProductVariationCollectionDTO $element) use (
+        $filter = $this->variation->filter(function(Variation\ProductVariationCollectionDTO $element) use (
             $variation
         ) {
             return $variation->getValue() === $element->getValue();
@@ -203,6 +179,17 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
 
     }
 
+    /** Заполненное значение */
+
+    public function getValue(): ?string
+    {
+        return $this->value;
+    }
+
+    public function setValue(?string $value): void
+    {
+        $this->value = $value;
+    }
 
     public function removeVariation(Variation\ProductVariationCollectionDTO $variation): void
     {

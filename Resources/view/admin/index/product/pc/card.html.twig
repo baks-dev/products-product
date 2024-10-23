@@ -1,4 +1,4 @@
-{#{% set product_offers = item.product_offers|json_decode %}#}
+{# {% set product_offers = item.product_offers|json_decode %} #}
 {% set product_offers = [] %}
 
 <div class="col-2 p-1">
@@ -54,7 +54,7 @@
                     {{ include(_self|replace({ "card.html.twig": "_usecase.html.twig" })) }}
                 </div>
 
-                {#{% set offer_count = product_offers|length %}#}
+                {# {% set offer_count = product_offers|length %} #}
 
                 {% if item.offer_count > 1 %}
                     <form method="post" action="{{ path('products-product:admin.index') }}"
