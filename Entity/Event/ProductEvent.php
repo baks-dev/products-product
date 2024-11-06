@@ -127,6 +127,7 @@ class ProductEvent extends EntityEvent
 
     /** Тоговые предложения */
     #[Assert\Valid]
+    #[ORM\OrderBy(['value' => 'ASC'])]
     #[ORM\OneToMany(targetEntity: ProductOffer::class, mappedBy: 'event', cascade: ['all'])]
     private Collection $offer;
 
