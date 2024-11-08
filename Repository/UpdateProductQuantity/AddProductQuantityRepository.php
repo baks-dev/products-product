@@ -39,8 +39,6 @@ use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
-use BaksDev\Products\Stocks\Entity\ProductStockTotal;
-use BaksDev\Products\Stocks\Type\Total\ProductStockTotalUid;
 use Doctrine\DBAL\ParameterType;
 use InvalidArgumentException;
 
@@ -260,7 +258,7 @@ final class AddProductQuantityRepository implements AddProductQuantityInterface
                 ->setParameter('reserve', $this->reserve, ParameterType::INTEGER);
 
             /** @note !!! Добавить резерв можно только если имеются остатки */
-            $dbal->andWhere('(quantity - reserve) > 0');
+            //$dbal->andWhere('(quantity - reserve) > 0');
         }
 
         return (int) $dbal->executeStatement();

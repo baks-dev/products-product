@@ -49,7 +49,7 @@ final class DetailController extends AbstractController
         ProductDetailByValueInterface $productDetail,
         ProductDetailOfferInterface $productDetailOffer,
         ProductAlternativeInterface $productAlternative,
-        string $offer,
+        ?string $offer = null,
         ?string $variation = null,
         ?string $modification = null,
         ?string $postfix = null,
