@@ -101,17 +101,14 @@ class CurrentProductIdentifierByConstRepositoryTest extends KernelTestCase
         $ProductEvent = $EntityManagerInterface->getRepository(ProductEvent::class)->find(self::$result['event']);
 
 
-        self::assertNotNull($ProductEvent);
+        //
 
         $ProductDTO = new ProductDTO();
         $ProductEvent->getDto($ProductDTO);
 
-
         /** @var ProductHandler $ProductHandler */
         $ProductHandler = self::getContainer()->get(ProductHandler::class);
         $handle = $ProductHandler->handle($ProductDTO);
-
-        self::assertTrue(($handle instanceof Product));
 
         /** Получаем новые идентификаторы */
 
@@ -120,6 +117,9 @@ class CurrentProductIdentifierByConstRepositoryTest extends KernelTestCase
 
         self::$new = $dbal->fetchAssociative();
 
+
+        self::assertNotNull($ProductEvent);
+        self::assertTrue(($handle instanceof Product));
 
     }
 
