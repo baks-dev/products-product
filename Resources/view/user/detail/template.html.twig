@@ -101,11 +101,10 @@
     <meta name="twitter:image:src" content="{{ absolute_url( image_path ) }}">
 
     <script type="application/ld+json">
-
         {
-                "@context": "https://schema.org/",
-                "@type": "Product",
-                "name": "{{ PRODUCT_NAME }}",
+            "@context": "https://schema.org/",
+            "@type": "Product",
+            "name": "{{ PRODUCT_NAME }}",
 			"image": "{{ absolute_url( image_path ) }}",
 			"description": "{{ PRODUCT_DESC }}",
 			"brand": {
@@ -119,7 +118,7 @@
 				"price": "{{ card.product_price / 100 }}",
 				"availability": "https://schema.org/InStock",
 				"itemCondition": "https://schema.org/NewCondition"
-
+			}
 		}
     </script>
 
@@ -127,70 +126,43 @@
 {% endblock %}
 
 {# ---- КОНТЕНТ-БЛОК ------------------------------------------------------------ #}
-{% block c
-    t %}
+{% block content %}
     {{ include(_self|replace({ "template.html.twig" : ( baks_settings.device ? : 'pc') ~"/content.html.twig" })) }}
 {% endblock %}
 
 
 {% block javascript %}
 
-<script nonce='{{ csp_nonce() }}' async data-src="/assets/orders-order/orders_basket.min.js?v={{ version }}"
-            class='lazy'></
-script>
-    <script nonce='{{ csp_nonce() }}' async data-src="/assets/orders-order/modal_basket.min.js?v={{ version }}
-        "
+<script nonce='{{ csp_nonce() }}' async  data-src="/assets/orders-order/orders_basket.min.js?v={{ version }}" class='lazy'></script>
+<script nonce='{{ csp_nonce() }}' async  data-src="/assets/orders-order/modal_basket.min.js?v={{ version }}" class='lazy'></script>
 
-class='lazy'></script>
+<script nonce="{{ csp_nonce() }}">
+document.querySelectorAll('.img-product').forEach((el) => el.addEventListener('click', () => document.getElementById('img-product').style.backgroundImage = el.style.backgroundImage ));
 
-    <script nonce="{{
-    csp_nonce() }}">
-        document.querySelectorAll('.img-product').forEach((el) => el.addEventListener('click', () => document.getElementById('img-product').style.backgroundImage = el.style.
+/* Счетчик */
+(document.getElementById('plus'))?.addEventListener('click', () => {
 
-    bac
-    age))
+    let price_total = document.getElementById('order_product_form_price_total');
+     let result = price_total.value * 1;
+     let max = price_total.dataset.max * 1;
 
-        /* Счетчик */
-        (document.getElementById('plus'))?.
+    if(result < max)
+    {
+        document.getElementById('order_product_form_price_total').value = result + 1;
+    }
 
-        addEventListener('click', () =>
-        {
+});
 
-            let price_total = document.
-        getElementById('order_produc
-        total');
-            let result = price_total.value
+(document.getElementById('minus'))?.addEventListener('click', () => {
 
-        * 1
-        ;
-            let max = price_total.dataset.max * 1;
+    let price_total = document.getElementById('order_product_form_price_total');
+    let result = price_total.value * 1;
+    if(result > 1)
+    {
+        document.getElementById('order_product_form_price_total').value = result - 1
+    }
+});
 
-            if(result <
-        max){
-
-    document.
-
-    getElementById('order_product_form_price_total').value = result + 1
-    ;
-}
-
-        });
-
-        (document.getElementById('minus'))?.addEventListener('click', () =>
-        {
-
-            let price_total = document
-        .
-        g
-            etElementById('order_product_form_price_total');
-            let result = pr
-        ce_total.
-
-value * 1;
-            if(result > 1){document.getElementById('order_product_form_price_total').value = result - 1
-}
-        });
-
-    </script>
+</script>
 
 {% endblock %}
