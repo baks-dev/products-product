@@ -24,39 +24,52 @@
 namespace BaksDev\Products\Product\Controller\User;
 
 use BaksDev\Core\Controller\AbstractController;
-use BaksDev\Core\Form\Search\SearchDTO;
-use BaksDev\Core\Form\Search\SearchForm;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
-use BaksDev\Products\Product\Repository\ProductModel\ProductModelInterface;
+use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailByValueInterface;
+use BaksDev\Products\Product\Repository\ProductDetailOffer\ProductDetailOfferInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[AsController]
-final class ModelController extends AbstractController
+final class NotFoundController extends AbstractController
 {
-    #[Route('/catalog/{category}/{url}/model', name: 'user.model', priority: 10)]
-    public function model(
-        Request $request,
+    /** Not Found Product */
+    #[Route('/catalog/{category}/{url}/{offer}/{variation}/{modification}/notfound',
+        name: 'user.notfound',
+        priority: 10
+    )]
+    public function notfound(
         #[MapEntity(mapping: ['url' => 'url'])] ProductInfo $info,
-        ProductModelInterface $productModel,
+        ProductDetailByValueInterface $productDetail,
+        ProductDetailOfferInterface $productDetailOffer,
+        ?string $offer = null,
+        ?string $variation = null,
+        ?string $modification = null,
+        ?string $postfix = null,
     ): Response
     {
+        $productCard = $productDetail->fetchProductAssociative(
+            $info->getProduct(),
+            $offer,
+            $variation,
+            $modification,
+            $postfix
+        );
 
-        $card = $productModel->fetchModelAssociative($info->getProduct());
+        /** Другие ТП данного продукта */
+        $productOffer = $productDetailOffer->fetchProductOfferAssociative($info->getProduct());
 
-        // Поиск по всему сайту
-        $allSearch = new SearchDTO($request);
-        $allSearchForm = $this->createForm(SearchForm::class, $allSearch, [
-            'action' => $this->generateUrl('core:search'),
-        ]);
-
-        return $this->render([
-            'card' => $card,
-            'all_search' => $allSearchForm->createView(),
-        ]);
-
+        return $this->render(
+            [
+                'card' => $productCard,
+                'offers' => $productOffer,
+                'offer' => $offer,
+                'variation' => $variation,
+                'modification' => $modification
+            ],
+            response: new Response(status: 404)
+        );
     }
 }

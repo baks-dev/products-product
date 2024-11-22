@@ -37,6 +37,7 @@ use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[AsController]
@@ -45,17 +46,17 @@ final class DetailController extends AbstractController
     #[Route('/catalog/{category}/{url}/{offer}/{variation}/{modification}/{postfix}', name: 'user.detail')]
     public function index(
         Request $request,
+        HttpKernelInterface $httpKernel,
         #[MapEntity(mapping: ['url' => 'url'])] ProductInfo $info,
         ProductDetailByValueInterface $productDetail,
         ProductDetailOfferInterface $productDetailOffer,
         ProductAlternativeInterface $productAlternative,
-        string $offer,
+        ?string $offer = null,
         ?string $variation = null,
         ?string $modification = null,
         ?string $postfix = null,
     ): Response
     {
-
         $productCard = $productDetail->fetchProductAssociative(
             $info->getProduct(),
             $offer,
@@ -67,42 +68,46 @@ final class DetailController extends AbstractController
         /** Другие ТП данного продукта */
         $productOffer = $productDetailOffer->fetchProductOfferAssociative($info->getProduct());
 
+        /** Если у продукта имеются торговые предложения - показываем модель */
+        if($offer === null && count($productOffer) > 1)
+        {
+            $path['_controller'] = ModelController::class.'::model';
+            $path['_route'] = 'products-product:user.model';
+            $path['category'] = $productCard['category_url'];
+            $path['url'] = $productCard['url'];
+
+            $subRequest = $request->duplicate([], null, $path);
+
+            return $httpKernel->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
+        }
+
         /** Статус, если товара с ТП, вариантом или модификацией не существует */
-        $status = 200;
 
         $NOW = new DateTimeImmutable();
 
         if(
             !$productCard ||
-            ($productCard['product_offer_value'] === null) ||
+            ($offer !== null && $productCard['product_offer_value'] === null) ||
             ($variation !== null && $productCard['product_variation_value'] === null) ||
             ($modification !== null && $productCard['product_modification_value'] === null) ||
             $productCard['active'] === false ||
             (!empty($productCard['active_from']) && new DateTimeImmutable($productCard['active_from']) > $NOW) ||
             (!empty($productCard['active_to']) && new DateTimeImmutable($productCard['active_to']) < $NOW)
-
         )
         {
-            $status = 404;
+            $path['_controller'] = NotFoundController::class.'::notfound';
+            $path['_route'] = 'products-product:user.notfound';
+            $path['category'] = $productCard['category_url'];
+            $path['url'] = $productCard['url'];
+            $path['offer'] = $offer;
+            $path['variation'] = $variation;
+            $path['modification'] = $modification;
+
+            $subRequest = $request->duplicate([], null, $path);
+
+            return $httpKernel->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
         }
 
-
-        if($status === 404)
-        {
-            return $this->render(
-                [
-                    'card' => $productCard,
-                    'offers' => $productOffer,
-
-                    'offer' => $offer,
-                    'variation' => $variation,
-                    'modification' => $modification,
-                ],
-                //fileName: 'notfound/template.html.twig',
-                routingName: 'user.detail.notfound',
-                response: new Response(status: $status)
-            );
-        }
 
         /* Удаляем сессию фильтра каталога */
         $request->getSession()->set('catalog_filter', null);
@@ -117,6 +122,7 @@ final class DetailController extends AbstractController
 
 
         $alternative = null;
+
         if(!empty($productCard['product_offer_value']))
         {
             $alternative = $productAlternative->fetchAllAlternativeAssociative(

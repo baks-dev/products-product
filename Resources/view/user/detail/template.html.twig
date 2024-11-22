@@ -43,7 +43,19 @@
 {% block description %}{{ PRODUCT_DESC }}{% endblock %}
 {% block keywords %}{{ PRODUCT_KEYWORDS }}{% endblock %}
 
+
+
 {% block meta %}
+
+    <link rel="canonical" href="{{ absolute_url(path('products-product:user.detail', {
+        category : card.category_url,
+        url : card.url ,
+        offer: card.product_offer_value,
+        variation: card.product_variation_value,
+        modification: card.product_modification_value,
+        postfix:  (card.product_modification_postfix ?: card.product_variation_postfix ?: card.product_offer_postfix ?: null )|replace({ '/': '-' })
+    })) }}">
+
 
     {% set product_modification_image = card.product_modification_image|json_decode %}
     {% set product_variation_image = card.product_variation_image|json_decode %}

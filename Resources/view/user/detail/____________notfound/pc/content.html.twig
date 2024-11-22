@@ -310,6 +310,7 @@
                             {% endif %}
 
                             <a href='{{ path('products-product:user.detail', {
+                                category : card.category_url ,
                                 url : card.url ,
                                 offer: offer.product_offer_value
                             }) }}' class="btn btn-link btn-sm lh-1 text-decoration-none">
@@ -317,14 +318,12 @@
 
                             </a>
 
-
                         {% endif %}
 
                         {#  Расчет минимальной стоимости  #}
                         {% if order_price is null or (offer.product_price != 0 and order_price > offer.product_price ) %}
                             {% set order_price = offer.product_price %}
                         {% endif %}
-
 
                     {% endif %}
 
@@ -435,6 +434,7 @@
                     {% else %}
                         {% if order_offer is null or order_offer != offer.product_offer_value %}
                             <a href='{{ path('products-product:user.detail', {
+                                category : card.category_url ,
                                 url : card.url ,
                                 offer: offer.product_offer_value
                             }) }}' class="btn btn-link btn-sm lh-1 text-decoration-none">

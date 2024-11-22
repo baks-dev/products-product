@@ -64,6 +64,12 @@
 
 {% block meta %}
 
+
+    <link rel="canonical" href="{{ absolute_url(path('products-product:user.model', {
+        category : card.category_url,
+        url : card.url
+    })) }}">
+
     {% set product_modification_image = card.product_modification_image|json_decode %}
     {% set product_variation_image = card.product_variation_image|json_decode %}
     {% set product_offer_images = card.product_offer_images|json_decode %}
