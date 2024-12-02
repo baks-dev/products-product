@@ -4,29 +4,39 @@
 
     <section id="card" class="container mt-4">
 
-        <h1 class="h5 text-uppercase fw-bolder">Triangle Sports TH201 195/45 R16 84W</h1>
+        <h1 class="h5 text-uppercase fw-bolder">
+            {{ card.product_name }}
+
+            {# Значение торгового предложения #}
+            {{ card.product_offer_value|call_twig_func(card.product_offer_reference~'_render') }}
+
+            {# Значение множественного варианта ТП #}
+            {{ card.product_variation_value|call_twig_func(card.product_variation_reference~'_render') }}
+
+            {# Значение модификации множественного варианта ТП #}
+            {{ card.product_modification_value|call_twig_func(card.product_modification_reference~'_render') }}
+
+            {# Свойства, учавствующие в названии #}
+            {% for name_property in arr_property | filter(props => props.field_name == true) %}
+                {{ name_property.field_name|call_twig_func(name_property.field_type) }}
+            {% endfor %}
+        </h1>
 
         <div class="d-flex align-items-end gap-2 mb-1 small">
 
-            {# РЕЙТИНГ #}
-            <div class="d-flex gap-1 align-items-center">
-                {% include '@Template/default/user/mobile/includes/rating.html.twig' %}
-                <a href="#reviews" class="small ms-2" aria-label="Отзывы" title="Отзывы">9 отзывов</a>
-            </div>
+            {# Свойства, учавствующие в превью карточки #}
+            {% for name_property in  arr_property | filter(props => props.field_card is defined and props.field_card == true) %}
+                {{ name_property.field_value|call_twig_func(name_property.field_type~'_render') }}
+            {% endfor %}
 
-            <img data-src="/temp/img/sun.png" src="/assets/img/empty.png" class="lazy" alt="..."
-                 style="width: 15px; height: 15px;">
-
-            <span class="badge bg-success rounded-2 mt-1">Новинка</span>
-            <span class="badge bg-hit rounded-2 mt-1">Хит</span>
-            <span class="badge bg-danger rounded-2 mt-1">Акция</span>
+            {# Если дата начала активности меньше 1 месяца - НОВИНКА  #}
+            {% if date() < card.active_from|date_modify("+1 month") %}
+                <span class="badge bg-success rounded-2">Новинка</span>
+            {% endif %}
         </div>
 
         <div class="d-flex align-items-end gap-2 mb-3 small">
-            <span class="small">Арт: 32123122312 </span>
-            <span class="badge bg-light text-muted rounded-2">
-				Модель производится с 1923
-			</span>
+            <span class="small">Артикул: {{ card.product_article }}</span>
         </div>
 
         {# КАРУСЕЛЬ ФОТО #}

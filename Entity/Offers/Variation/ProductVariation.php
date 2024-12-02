@@ -184,5 +184,4 @@ class ProductVariation extends EntityEvent
         return $this->modification;
     }
 
-
 }

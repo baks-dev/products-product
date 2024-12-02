@@ -34,73 +34,31 @@ use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
 
-final class CurrentProductDTO
+final readonly class CurrentProductDTO
 {
-    /** ID продукта */
-    private ProductUid $product;
-
-    /** ID события продукта */
-    private ProductEventUid $event;
-
-    /** Торговое предложение */
-    private ?ProductOfferUid $offer = null;
-    private ?ProductOfferConst $offerConst = null;
-
-    /** Множественный вариант торгового предложения */
-    private ?ProductVariationUid $variation = null;
-    private ?ProductVariationConst $variationConst = null;
-
-    /** Модификация множественного варианта торгового предложения */
-    private ?ProductModificationUid $modification = null;
-    private ?ProductModificationConst $modificationConst = null;
-
     public function __construct(
-        string $product,
-        string $event,
+        private string $product,
+        private string $event,
 
         /** Торговое предложение */
-        ?string $offer,
-        ?string $offer_const,
+        private ?string $offer,
+        private ?string $offer_const,
 
         /** Множественный вариант торгового предложения */
-        ?string $variation,
-        ?string $variation_const,
+        private ?string $variation,
+        private ?string $variation_const,
 
         /** Модификация множественного варианта торгового предложения */
-        ?string $modification,
-        ?string $modification_const,
-    )
-    {
-
-        $this->product = new ProductUid($product);
-        $this->event = new ProductEventUid($event);
-
-        if($offer)
-        {
-            $this->offer = new ProductOfferUid($offer);
-            $this->offerConst = new ProductOfferConst($offer_const);
-        }
-
-        if($variation)
-        {
-            $this->variation = new ProductVariationUid($variation);
-            $this->variationConst = new ProductVariationConst($variation_const);
-        }
-
-        if($modification)
-        {
-            $this->modification = new ProductModificationUid($modification);
-            $this->modificationConst = new ProductModificationConst($modification_const);
-        }
-
-    }
+        private ?string $modification,
+        private ?string $modification_const,
+    ) {}
 
     /**
      * Product
      */
     public function getProduct(): ProductUid
     {
-        return $this->product;
+        return new ProductUid($this->product);
     }
 
     /**
@@ -108,7 +66,7 @@ final class CurrentProductDTO
      */
     public function getEvent(): ProductEventUid
     {
-        return $this->event;
+        return new ProductEventUid($this->event);
     }
 
     /**
@@ -116,7 +74,7 @@ final class CurrentProductDTO
      */
     public function getOffer(): ?ProductOfferUid
     {
-        return $this->offer;
+        return $this->offer ? new ProductOfferUid($this->offer) : null;
     }
 
     /**
@@ -124,7 +82,7 @@ final class CurrentProductDTO
      */
     public function getOfferConst(): ?ProductOfferConst
     {
-        return $this->offerConst;
+        return $this->offer_const ? new ProductOfferConst($this->offer_const) : null;
     }
 
     /**
@@ -132,7 +90,7 @@ final class CurrentProductDTO
      */
     public function getVariation(): ?ProductVariationUid
     {
-        return $this->variation;
+        return $this->variation ? new ProductVariationUid($this->variation) : null;
     }
 
     /**
@@ -140,7 +98,7 @@ final class CurrentProductDTO
      */
     public function getVariationConst(): ?ProductVariationConst
     {
-        return $this->variationConst;
+        return $this->variation_const ? new ProductVariationConst($this->variation_const) : null;
     }
 
     /**
@@ -148,7 +106,7 @@ final class CurrentProductDTO
      */
     public function getModification(): ?ProductModificationUid
     {
-        return $this->modification;
+        return $this->modification ? new ProductModificationUid($this->modification) : null;
     }
 
     /**
@@ -156,6 +114,6 @@ final class CurrentProductDTO
      */
     public function getModificationConst(): ?ProductModificationConst
     {
-        return $this->modificationConst;
+        return $this->modification_const ? new ProductModificationConst($this->modification_const) : null;
     }
 }

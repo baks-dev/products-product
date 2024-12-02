@@ -23,44 +23,37 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\Messenger;
+namespace BaksDev\Products\Product\Repository\CurrentProductByArticle\Tests;
 
-use BaksDev\Products\Product\Type\Event\ProductEventUid;
-use BaksDev\Products\Product\Type\Id\ProductUid;
+use BaksDev\Products\Product\Repository\CurrentProductByArticle\ProductConstByArticleInterface;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\DependencyInjection\Attribute\When;
 
-final class ProductMessage
+
+/**
+ * @group products-product
+ */
+#[When(env: 'test')]
+class ProductConstByArticleTest extends KernelTestCase
 {
-    /** Идентификатор */
-    private string $id;
 
-    /** Идентификатор события */
-    private string $event;
-
-    /** Идентификатор предыдущего события */
-    private ?string $last;
-
-    public function __construct(ProductUid $id, ProductEventUid $event, ?ProductEventUid $last = null)
+    public function testUseCase(): void
     {
-        $this->id = (string) $id;
-        $this->event = (string) $event;
-        $this->last = $last ? (string) $last : null;
+        /** @var ProductConstByArticleInterface $ProductConstByArticle */
+        $ProductConstByArticle = self::getContainer()->get(ProductConstByArticleInterface::class);
+
+        $CurrentProductDTO = $ProductConstByArticle->find('TH202-16-195-45-84W');
+        self::assertNotFalse($CurrentProductDTO);
+
+        /*dd(sprintf(
+            'https://bundles.baks.dev/admin/product/edit/%s?offfer=%s&variation=%s&modification=%s',
+            $CurrentProductDTO->getEvent(),
+            $CurrentProductDTO->getOfferConst(),
+            $CurrentProductDTO->getVariationConst(),
+            $CurrentProductDTO->getModificationConst()
+        ));*/
+
     }
 
-    /** Идентификатор */
-    public function getId(): ProductUid
-    {
-        return new ProductUid($this->id);
-    }
 
-    /** Идентификатор события */
-    public function getEvent(): ProductEventUid
-    {
-        return new ProductEventUid($this->event);
-    }
-
-    /** Идентификатор предыдущего события */
-    public function getLast(): ?ProductEventUid
-    {
-        return $this->last ? new ProductEventUid($this->last) : null;
-    }
 }
