@@ -69,20 +69,20 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
     ): ?array
     {
 
-        $qb = $this->DBALQueryBuilder
+        $dbal = $this->DBALQueryBuilder
             ->createQueryBuilder(self::class)
             ->bindLocal();
 
         // ТОРГОВОЕ ПРЕДЛОЖЕНИЕ
 
-        $qb
+        $dbal
             ->addSelect('product_offer.value as product_offer_value')
             ->addSelect('product_offer.postfix as product_offer_postfix')
             ->addSelect('product_offer.id as product_offer_uid')
             ->from(ProductOffer::class, 'product_offer');
 
 
-        $qb
+        $dbal
             ->addSelect('product.id')
             ->addSelect('product.event')
             ->join(
@@ -97,7 +97,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 
         $variationMethod = empty($variation) ? 'leftJoin' : 'join';
 
-        $qb
+        $dbal
             ->addSelect('product_variation.value as product_variation_value')
             ->addSelect('product_variation.postfix as product_variation_postfix')
             ->addSelect('product_variation.id as product_variation_uid')
@@ -110,13 +110,13 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 
         if(!empty($variation))
         {
-            $qb->setParameter('variation', $variation);
+            $dbal->setParameter('variation', $variation);
         }
 
         $modificationMethod = empty($modification) ? 'leftJoin' : 'join';
 
         // МОДИФИКАЦИЯ
-        $qb
+        $dbal
             ->addSelect('product_modification.value as product_modification_value')
             ->addSelect('product_modification.postfix as product_modification_postfix')
             ->addSelect('product_modification.id as product_modification_uid')
@@ -130,12 +130,12 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 
         if(!empty($modification))
         {
-            $qb->setParameter('modification', $modification);
+            $dbal->setParameter('modification', $modification);
         }
 
 
         // Проверяем активность продукции
-        $qb
+        $dbal
             ->addSelect('product_active.active_from')
             ->join(
                 'product',
@@ -155,7 +155,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 
 
         // Название твоара
-        $qb
+        $dbal
             ->addSelect('product_trans.name AS product_name')
             ->leftJoin(
                 'product',
@@ -165,7 +165,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
             );
 
 
-        $qb
+        $dbal
             ->addSelect('product_info.url AS product_url')
             ->leftJoin(
                 'product',
@@ -176,34 +176,22 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 
         // Артикул продукта
 
-        $qb->addSelect(
-            '
-			CASE
-			   WHEN product_modification.article IS NOT NULL 
-			   THEN product_modification.article
-			   
-			   WHEN product_variation.article IS NOT NULL 
-			   THEN product_variation.article
-			   
-			   WHEN product_offer.article IS NOT NULL THEN 
-			   product_offer.article
-			   
-			   WHEN product_info.article IS NOT NULL 
-			   THEN product_info.article
-			   
-			   ELSE NULL
-			END AS article
-		'
-        );
+        $dbal->addSelect('
+            COALESCE(
+                product_modification.article, 
+                product_variation.article, 
+                product_offer.article, 
+                product_info.article
+            ) AS article
+		');
 
 
         /**
          * ТИПЫ ТОРГОВЫХ ПРЕДЛОЖЕНИЙ
          */
 
-
         // Получаем тип торгового предложения
-        $qb
+        $dbal
             ->addSelect('category_offer.reference AS product_offer_reference')
             ->leftJoin(
                 'product_offer',
@@ -213,7 +201,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
             );
 
         // Получаем название торгового предложения
-        $qb
+        $dbal
             ->addSelect('category_offer_trans.name as product_offer_name')
             ->leftJoin(
                 'category_offer',
@@ -224,7 +212,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 
 
         // Получаем тип множественного варианта
-        $qb
+        $dbal
             ->addSelect('category_offer_variation.reference as product_variation_reference')
             ->leftJoin(
                 'product_variation',
@@ -234,7 +222,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
             );
 
         // Получаем название множественного варианта
-        $qb
+        $dbal
             ->addSelect('category_offer_variation_trans.name as product_variation_name')
             ->leftJoin(
                 'category_offer_variation',
@@ -244,7 +232,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
             );
 
         // Получаем тип модификации множественного варианта
-        $qb
+        $dbal
             ->addSelect('category_offer_modification.reference as product_modification_reference')
             ->leftJoin(
                 'product_modification',
@@ -254,7 +242,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
             );
 
         // Получаем название типа модификации
-        $qb
+        $dbal
             ->addSelect('category_offer_modification_trans.name as product_modification_name')
             ->leftJoin(
                 'category_offer_modification',
@@ -268,7 +256,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
          * СТОИМОСТЬ И ВАЛЮТА ПРОДУКТА
          */
 
-        $qb->addSelect(
+        $dbal->addSelect(
             '
 			CASE
 			   WHEN product_modification_price.price IS NOT NULL AND product_modification_price.price > 0 
@@ -291,7 +279,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 
         // Валюта продукта
 
-        $qb->addSelect(
+        $dbal->addSelect(
             '
 			CASE
 			   WHEN product_modification_price.price IS NOT NULL AND product_modification_price.price > 0 
@@ -312,7 +300,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
         );
 
         // Базовая Цена товара
-        $qb
+        $dbal
             ->leftJoin(
                 'product',
                 ProductPrice::class,
@@ -322,7 +310,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
             ->addGroupBy('product_price.currency')
             ->addGroupBy('product_price.reserve');
 
-        $qb
+        $dbal
             ->leftJoin(
                 'product_offer',
                 ProductOfferPrice::class,
@@ -332,7 +320,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
             ->addGroupBy('product_offer_price.currency');
 
         // Цена множественного варианта
-        $qb
+        $dbal
             ->leftJoin(
                 'product_variation',
                 ProductVariationPrice::class,
@@ -343,7 +331,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 
 
         // Цена модификации множественного варианта
-        $qb
+        $dbal
             ->leftJoin(
                 'product_modification',
                 ProductModificationPrice::class,
@@ -357,7 +345,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
          * НАЛИЧИЕ ПРОДУКТА
          */
 
-        $qb->addSelect(
+        $dbal->addSelect(
             '
 
 			CASE
@@ -382,7 +370,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 
         // Наличие и резерв торгового предложения
 
-        $qb
+        $dbal
             ->leftJoin(
                 'product_offer',
                 ProductOfferQuantity::class,
@@ -392,7 +380,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
             ->addGroupBy('product_offer_quantity.reserve');
 
         // Наличие и резерв множественного варианта
-        $qb
+        $dbal
             ->leftJoin(
                 'category_offer_variation',
                 ProductVariationQuantity::class,
@@ -402,7 +390,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
             ->addGroupBy('product_variation_quantity.reserve');
 
         // Наличие и резерв модификации множественного варианта
-        $qb
+        $dbal
             ->leftJoin(
                 'category_offer_modification',
                 ProductModificationQuantity::class,
@@ -416,7 +404,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
          * КАТЕГОРИЯ
          */
 
-        $qb->leftJoin(
+        $dbal->leftJoin(
             'product',
             ProductCategory::class,
             'product_event_category',
@@ -424,14 +412,14 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
         );
 
 
-        $qb->leftJoin(
+        $dbal->leftJoin(
             'product_event_category',
             CategoryProduct::class,
             'category',
             'category.id = product_event_category.category'
         );
 
-        $qb
+        $dbal
             ->addSelect('category_trans.name AS category_name')
             ->leftJoin(
                 'category',
@@ -440,7 +428,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                 'category_trans.event = category.event AND category_trans.local = :local'
             );
 
-        $qb
+        $dbal
             ->addSelect('category_info.url AS category_url')
             ->join(
                 'category',
@@ -449,7 +437,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                 'category_info.event = category.event AND category_info.active = true'
             );
 
-        $qb->leftJoin(
+        $dbal->leftJoin(
             'category',
             CategoryProductSection::class,
             'category_section',
@@ -473,14 +461,14 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 
                 $alias = md5($props->field_uid);
 
-                $qb->join(
+                $dbal->join(
                     'product_offer',
                     ProductProperty::class,
                     'product_property_'.$alias,
                     'product_property_'.$alias.'.event = product_offer.event AND product_property_'.$alias.'.value = :props_'.$alias
                 );
 
-                $qb->setParameter('props_'.$alias, $props->field_value);
+                $dbal->setParameter('props_'.$alias, $props->field_value);
             }
         }
 
@@ -488,28 +476,28 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
          * СВОЙСТВА, УЧАСТВУЮЩИЕ В ПРЕВЬЮ
          */
 
-        $qb->leftJoin(
+        $dbal->leftJoin(
             'category_section',
             CategoryProductSectionField::class,
             'category_section_field',
             'category_section_field.section = category_section.id AND category_section_field.card = TRUE'
         );
 
-        $qb->leftJoin(
+        $dbal->leftJoin(
             'category_section_field',
             CategoryProductSectionFieldTrans::class,
             'category_section_field_trans',
             'category_section_field_trans.field = category_section_field.id AND category_section_field_trans.local = :local'
         );
 
-        $qb->leftJoin(
+        $dbal->leftJoin(
             'category_section_field',
             ProductProperty::class,
             'category_product_property',
             'category_product_property.event = product.event AND category_product_property.field = category_section_field.const'
         );
 
-        $qb->addSelect(
+        $dbal->addSelect(
             "JSON_AGG
 		( DISTINCT
 			
@@ -526,15 +514,15 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 			AS category_section_field"
         );
 
-        $qb->where('product_offer.value = :offer');
-        $qb->setParameter('offer', $offer);
-        $qb->setMaxResults(1000);
+        $dbal->where('product_offer.value = :offer');
+        $dbal->setParameter('offer', $offer);
+        $dbal->setMaxResults(1000);
 
-        $qb->allGroupByExclude();
+        $dbal->allGroupByExclude();
 
-        $qb->orderBy('quantity', 'DESC');
+        $dbal->orderBy('quantity', 'DESC');
 
-        return $qb
+        return $dbal
             ->enableCache('products-product', 86400)
             ->fetchAllAssociative();
     }

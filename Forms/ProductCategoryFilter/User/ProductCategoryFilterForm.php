@@ -32,7 +32,9 @@ use BaksDev\Products\Category\Repository\ModificationFieldsCategoryChoice\Modifi
 use BaksDev\Products\Category\Repository\OfferFieldsCategoryChoice\OfferFieldsCategoryChoiceInterface;
 use BaksDev\Products\Category\Repository\VariationFieldsCategoryChoice\VariationFieldsCategoryChoiceInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -51,7 +53,9 @@ final class ProductCategoryFilterForm extends AbstractType
     ) {}
 
 
-    /** Форма фильтрации товаров в разделе */
+    /**
+     * Форма фильтрации товаров в разделе
+     */
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
