@@ -1,0 +1,59 @@
+{# БЛОК "ЛИДЕР ПРОДАЖ" #}
+
+{# Главная картинка продукта #}
+{% set imagePath = '/assets/img/blank.svg' %}
+
+{% for image in bestseller.product_image|json_decode|filter(v => v != null and v.img_root == true) %}
+    {% if image.img_ext is defined and image.img_ext is not null %}
+        {% set img_host = image.img_cdn == true  ? CDN_HOST : '' %}
+        {% set img_dir = image.img %}
+        {% set img_file = (img_host is empty ? '/image.' : '/small.') ~ image.img_ext %}
+        {% set imagePath = img_host ~ img_dir ~ img_file %}
+    {% endif %}
+{% endfor %}
+
+<h3 class="fs-18 text-uppercase fw-bold mb-4">
+    лидер продаж
+</h3>
+<div class="border rounded-4 p-4 mb-3 ">
+    <div class="position-relative mb-3">
+        <img class="rounded-4 w-100 " src="{{ imagePath }}" alt="Изображение товара">
+
+        {# @TODO не нужно? #}
+        {#        <span class="position-absolute badge-position badge z-3 "> #}
+        {#        <a href="#" aria-label="Иконка добавления в избранное"> #}
+        {#        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="lightgray" class="bi bi-heart-fill" #}
+        {#             viewBox="0 0 16 16"> #}
+        {#            <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/> #}
+        {#        </svg> #}
+        {#        </a> #}
+        {#            #}
+        {#        <span class="visually-hidden">Иконка добавления в избранное</span> #}
+        {#        </span> #}
+
+    </div>
+
+    <div class="d-flex align-items-center justify-content-between mb-3 gap-3">
+
+        <a class="text-black fw-bold text-uppercase mb-0 list-group-item best-offers-item"
+           href="{{ path('products-product:user.model', {
+               category: bestseller.category_url,
+               url: bestseller.url
+           }) }}">
+            {{ bestseller.product_name }}
+        </a>
+
+        {# @TODO не нужно? #}
+        {#        <a href="#" aria-label="Иконка добавления в корзину"> #}
+        {#            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="lightgray" class="bi bi-cart-fill" #}
+        {#                 viewBox="0 0 16 16"> #}
+        {#                <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/> #}
+        {#            </svg> #}
+        {#        </a> #}
+    </div>
+
+    <p class="fs-5 fw-bold text-uppercase  mb-3 lh-1 d-flex align-items-top">
+        от {{ money(bestseller.product_price, bestseller.product_currency) }}
+    </p>
+
+</div>

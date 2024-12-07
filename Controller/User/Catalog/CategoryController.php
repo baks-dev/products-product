@@ -32,6 +32,7 @@ use BaksDev\Products\Product\Forms\ProductCategoryFilter\User\ProductCategoryFil
 use BaksDev\Products\Product\Forms\ProductCategoryFilter\User\ProductCategoryFilterForm;
 use BaksDev\Products\Product\Repository\AllProductsByCategory\AllProductsByCategoryInterface;
 use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
@@ -46,6 +47,7 @@ final class CategoryController extends AbstractController
         Request $request,
         AllProductsByCategoryInterface $productsByCategory,
         CategoryByUrlInterface $categoryByUrl,
+        FormFactoryInterface $formFactory,
         string $category,
         int $page = 0,
     ): Response
@@ -61,15 +63,17 @@ final class CategoryController extends AbstractController
 
         $CategoryUid = new CategoryProductUid($info['category_id']);
 
-
         /* ФИЛЬТР */
         $ProductCategoryFilterDTO = new ProductCategoryFilterDTO($CategoryUid);
-        $filterForm = $this->createForm(
-            ProductCategoryFilterForm::class,
-            $ProductCategoryFilterDTO,
-            ['action' => $this->generateUrl('products-product:user.catalog.category', ['category' => $category])]
-        );
-        $filterForm->handleRequest($request);
+
+        $filterForm = $formFactory
+            ->createNamed(
+                'form-'.$CategoryUid,
+                ProductCategoryFilterForm::class,
+                $ProductCategoryFilterDTO,
+                ['action' => $this->generateUrl('products-product:user.catalog.category', ['category' => $category])]
+            )
+            ->handleRequest($request);
 
         /**
          * Перебираем все свойства товара, участвующие в фильтре

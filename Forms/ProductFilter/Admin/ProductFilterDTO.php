@@ -26,7 +26,6 @@ namespace BaksDev\Products\Product\Forms\ProductFilter\Admin;
 use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Forms\ProductFilter\ProductFilterInterface;
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\HttpFoundation\Request;
 
 final class ProductFilterDTO implements ProductFilterInterface
 {
@@ -59,6 +58,13 @@ final class ProductFilterDTO implements ProductFilterInterface
      * Показать все профили
      */
     private bool $visible = false;
+
+
+    /**
+     * Скрыть выбор категории
+     */
+    private bool $invisible = false;
+
 
     private ?bool $all = null;
 
@@ -162,6 +168,19 @@ final class ProductFilterDTO implements ProductFilterInterface
     {
         return $this->visible;
     }
+
+
+    public function categoryInvisible(): self
+    {
+        $this->invisible = true;
+        return $this;
+    }
+
+    public function isInvisible(): bool
+    {
+        return $this->invisible;
+    }
+
 
     /**
      * Property

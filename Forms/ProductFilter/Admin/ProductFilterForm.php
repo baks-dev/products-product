@@ -24,7 +24,6 @@
 namespace BaksDev\Products\Product\Forms\ProductFilter\Admin;
 
 use BaksDev\Core\Services\Fields\FieldsChoice;
-use BaksDev\Core\Type\Field\InputField;
 use BaksDev\Products\Category\Repository\AllFilterFieldsByCategory\AllFilterFieldsByCategoryInterface;
 use BaksDev\Products\Category\Repository\CategoryChoice\CategoryChoiceInterface;
 use BaksDev\Products\Category\Repository\ModificationFieldsCategoryChoice\ModificationFieldsCategoryChoiceInterface;
@@ -40,7 +39,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -123,8 +121,8 @@ final class ProductFilterForm extends AbstractType
 
 
             /** Если жестко не указана категория - выводим список для выбора */
-            //if($data && !$data->getCategory(true))
-            if($data)
+
+            if($data && $data->isInvisible() === false)
             {
                 $builder->add('category', ChoiceType::class, [
                     'choices' => $this->categoryChoice->findAll(),

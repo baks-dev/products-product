@@ -1,0 +1,208 @@
+{# ФОРМА ДЛЯ ФИЛЬРАЦИИ ПО ПАРАМЕТРАМ МОДЕЛИ ПОКРЫШКИ #}
+
+{# @TODO удалить при релизу #}
+{# {{ dd(_context) }} #}
+
+<section class="container py-3 ">
+    <div class="row">
+
+        <div class="col-8">
+            <div class="rounded-4 h-100" style="background-image: url(/assets/blackdragon/img/banner-img.webp);"></div>
+        </div>
+
+        <div class="col-4">
+            <div class="border py-2 px-3 rounded-4">
+                <div class="d-flex align-items-center gap-3 p-2" id="tab" role="tablist">
+
+                    <h3 class="fs-6 m-0 fw-bold" role="tab">
+                        Подбор шин
+                    </h3>
+
+                    {# ВЛАДКА ДЛЯ ФИЛЬТРА ПО ПАРАМЕТРАМ ШИНЫ #}
+                    <button class="btn black-btn text-decoration-underline m-0 rounded-5 fw-medium active"
+                            style="font-size: 14px;" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home"
+                            type="button" role="tab" aria-controls="nav-home" aria-selected="true">
+                        По параметрам
+                    </button>
+
+                    {# ВЛАДКА ДЛЯ ФИЛЬТРА ПО МАРКЕ АВТОМОБИЛЯ #}
+                    <button class="btn black-btn text-decoration-underline m-0 rounded-5 fw-medium"
+                            style="font-size: 14px;" id="nav-profile-tab" data-bs-toggle="tab"
+                            data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile"
+                            aria-selected="false">
+                        По авто
+                    </button>
+
+                </div>
+
+                <div class="tab-content" id="tabContent">
+                    <div class="tab-pane flex-column fade show active" id="nav-home" role="tabpanel"
+                         aria-labelledby="nav-home-tab" tabindex="0">
+
+                        {# ФОРМА - ФИЛЬТР ПО ПАРАМЕТРАМ ШИНЫ #}
+                        {{ form_start(tire_select) }}
+
+                        <div class="d-flex gap-2 mb-2">
+
+                            <div class="w-50">
+                                <label class="form-label ps-2 fw-bold">Ширина</label>
+                                <select class="form-select rounded-5 fs-14 mb-1" data-select="select2"
+                                        aria-label="Значение ширины">
+                                    <option selected disabled hidden>250</option>
+
+                                    {% set total_items = 10 %}
+                                    {% for i in 0..total_items %}
+                                        <option value="{{ i + 1 }}">Значение {{ i + 1 }}</option>
+                                    {% endfor %}
+
+                                </select>
+                            </div>
+
+                            <div class="w-50">
+                                <label class="form-label ps-2 fw-bold">Профиль</label>
+                                <select class="form-select rounded-5 fs-14 mb-1" data-select="select2"
+                                        aria-label="Значение профиля">
+                                    <option selected disabled hidden>55</option>
+                                    {% set total_items = 10 %}
+                                    {% for i in 0..total_items %}
+                                        <option value="{{ i + 1 }}">Значение {{ i + 1 }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2 mb-2 align-items-center">
+
+                            {# OFFER - диаметр #}
+                            <div class="w-50">
+
+                                {{ form_label(tire_select.offer, 'Диаметр:') }}
+                                {#                                <label class="form-label ps-2 fw-bold">Диаметр</label> #}
+
+                                {{ form_widget(tire_select.offer, {
+                                    attr: { 'data-select' : 'select2', class: 'form-select rounded-5 fs-14 mb-1' } }) }}
+
+                                {# <select class="form-select rounded-5 fs-14 mb-1" data-select="select2" #}
+                                {# aria-label="Значение диаметра"> #}
+                                {# {% for i in 13..20 %} #}
+                                {# {% if loop.index == 1 %} #}
+                                {# <option selected disabled hidden>Выберите диаметр</option> #}
+                                {# {% endif %} #}
+                                {# <option value="{{ i + 1 }}">R{{ i + 1 }}</option> #}
+                                {# {% endfor %} #}
+                                {# </select> #}
+
+                            </div>
+
+                            {#  PROPERTIES - свойства категории #}
+                            <div class="d-flex align-items-center justify-content-between w-50 mt-3">
+                                <input type="radio" class="btn-check" name="sizeseason" id="sizeseasonAll">
+                                <label class="btn rounded-3 text-decoration-underline m-0 px-2  fw-medium"
+                                       for="sizeseasonAll" style="font-size: 14px;">
+                                    Все
+                                </label>
+                                <input type="radio" class="btn-check" name="sizeseason" id="sizeseason1" checked>
+                                <label class="btn rounded-circle  border-0 p-1 d-flex shadow" for="sizeseason1">
+                                    <img class="w-100" src="/assets/blackdragon/img/sun.svg" style="height: 20px;"
+                                         alt="Иконка солнца">
+                                </label>
+                                <input type="radio" class="btn-check" name="sizeseason" id="sizeseason2">
+                                <label class="btn rounded-circle  border-0 p-1  d-flex shadow" for="sizeseason2">
+                                    <img class="w-100" src="/assets/blackdragon/img/snowflake.svg" style="height: 20px;"
+                                         alt="Иконка снежинки">
+                                </label>
+                                <input type="radio" class="btn-check" name="sizeseason" id="sizeseason3">
+                                <label class="btn rounded-circle  border-0 p-1  d-flex shadow" for="sizeseason3">
+                                    <img class="w-100" src="/assets/blackdragon/img/sunsnow.svg" style="height: 20px;"
+                                         alt="Иконка снег/солнце">
+                                </label>
+                                <input type="checkbox" class="btn-check" name="sizespike" id="sizespike1">
+                                <label class="btn rounded-circle  border-0 p-1  d-flex shadow" for="sizespike1">
+                                    <img class="w-100" src="/assets/blackdragon/img/tire.svg" style="height: 20px;"
+                                         alt="Иконка шипы">
+                                </label>
+                            </div>
+                        </div>
+
+                        {{ form_end(tire_select) }}
+
+                    </div>
+
+                    {# ФОРМА - ФИЛЬТР ПО МАРКЕ АВТОМОБИЛЯ #}
+                    <div class="tab-pane flex-column fade " id="nav-profile" role="tabpanel"
+                         aria-labelledby="nav-profile-tab" tabindex="0">
+                        <div class="d-flex gap-2 mb-2">
+                            <div class="w-50">
+                                <label class="form-label ps-2 fw-bold">Марка</label>
+                                <select class="form-select rounded-5 fs-14 mb-1" data-select="select2"
+                                        aria-label="Марка">
+                                    <option selected disabled hidden>Марка</option>
+                                    {% set total_items = 10 %}
+                                    {% for i in 0..total_items %}
+                                        <option value="{{ i + 1 }}">Марка {{ i + 1 }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="w-50">
+                                <label class="form-label ps-2 fw-bold">Модель</label>
+                                <select class="form-select rounded-5 fs-14 mb-1" data-select="select2"
+                                        aria-label="Модель">
+                                    <option selected disabled hidden>Модель</option>
+                                    {% set total_items = 10 %}
+                                    {% for i in 0..total_items %}
+                                        <option value="{{ i + 1 }}">Модель {{ i + 1 }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2 mb-2 align-items-center">
+                            <div class="w-50">
+                                <label class="form-label ps-2 fw-bold">Модификация</label>
+                                <select class="form-select rounded-5 fs-14 mb-1" data-select="select2"
+                                        aria-label="Модификация">
+                                    <option selected disabled hidden>Модификация</option>
+                                    {% set total_items = 10 %}
+                                    {% for i in 0..total_items %}
+                                        <option value="{{ i + 1 }}">Модификация {{ i + 1 }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-between w-50 mt-3">
+                                <input type="radio" class="btn-check" name="season" id="seasonAll">
+                                <label class="btn rounded-3 text-decoration-underline m-0 px-2  fw-medium"
+                                       for="seasonAll" style="font-size: 14px;">
+                                    Все
+                                </label>
+                                <input type="radio" class="btn-check" name="season" id="season1" checked>
+                                <label class="btn rounded-circle  border-0 p-1 d-flex shadow" for="season1">
+                                    <img class="w-100" src="/assets/blackdragon/img/sun.svg" style="height: 20px;"
+                                         alt="Иконка солнца">
+                                </label>
+                                <input type="radio" class="btn-check" name="season" id="season2">
+                                <label class="btn rounded-circle  border-0 p-1  d-flex shadow" for="season2">
+                                    <img class="w-100" src="/assets/blackdragon/img/snowflake.svg" style="height: 20px;"
+                                         alt="Иконка снежинки">
+                                </label>
+                                <input type="radio" class="btn-check" name="season" id="season3">
+                                <label class="btn rounded-circle  border-0 p-1  d-flex shadow" for="season3">
+                                    <img class="w-100" src="/assets/blackdragon/img/sunsnow.svg" style="height: 20px;"
+                                         alt="Иконка снег/солнце">
+                                </label>
+                                <input type="checkbox" class="btn-check" name="spike" id="spike1">
+                                <label class="btn rounded-circle  border-0 p-1  d-flex shadow" for="spike1">
+                                    <img class="w-100" src="/assets/blackdragon/img/tire.svg" style="height: 20px;"
+                                         alt="Иконка шипы">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <button class="btn bg-primary fw-bold rounded-3 w-100">
+                        Подобрать шины
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

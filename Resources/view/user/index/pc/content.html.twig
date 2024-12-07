@@ -1,0 +1,89 @@
+<main>
+    {# БЛОК ДЛЯ ВЫБОРА ШИН   #}
+    {#    {{ include(_self|replace({ "content.html.twig" : "_includes/tire_select.html.twig" })) }} #}
+    {# {{ include(_self|replace({ "content.html.twig" : "_form/tire_select.html.twig" }), {tire_select}, with_context = false) }} #}
+
+    {# КАТАЛОГ ШИН #}
+    <section class="container py-3">
+        <div class="row ">
+            <div class="col-9 ">
+
+                <div class="d-flex align-items-center gap-5 mb-3">
+
+                    <h2 class="fs-18 mb-0 text-uppercase fw-bold">
+                        ВСЕ ШИНЫ
+                    </h2>
+
+                    <a href="{# {{ path('catalog:public.index') }} #}"
+                       class="text-black">
+                        <button class="btn bg-primary rounded-5 fw-medium">
+                            Каталог шин
+                        </button>
+                    </a>
+                </div>
+
+                {# КАРТОЧКИ ТОВАРОВ #}
+                <div class="row row-cols-4 gy-5">
+                    {{ all_offers(baks_settings.device) }}
+                </div>
+            </div>
+
+            <div class="col-3 ">
+                {# ЛИДЕРЫ ПРОДАЖ #}
+                {# {{ best_offers(baks_settings.device) }} #}
+
+                {# ОТЗЫВЫ #}
+                {# {{ include(_self|replace({ "content.html.twig" : "_includes/reviews.html.twig" })) }} #}
+                {# {{ include(_self|replace({ "content.html.twig" : "_includes/ad_banner.html.twig" })) }} #}
+            </div>
+
+        </div>
+        {# {{ product_categories(baks_settings.device) }} #}
+
+        {#                {% include Template('/public/'~baks_settings.device~'/_includes/brands_carousel.html.twig') %} #}
+
+        <div class="row justify-content-between mb-5">
+            <div class="col-8">
+                <h3 class="fs-18 text-uppercase fw-bold mb-4">
+                    автомобильные шины в компании black dragon
+                </h3>
+
+                <p>
+                    Примесь эллиптично индуцирует элементарный квазар. При облучении инфракрасным лазером погранслой
+                    тормозит кристалл. Квантовое состояние, в отличие от классического случая, вертикально тормозит
+                    гамма-квант. Вихрь трансформирует плазменный разрыв, и этот процесс может повторяться многократно.
+                    Примесь, при адиабатическом изменении параметров, синхронизует газ.
+                </p>
+
+                <p>
+                    Ударная волна спонтанно расщепляет взрыв. Электрон, в отличие от классического случая,
+                    пространственно
+                    представляет собой гамма-квант, даже если пока мы не можем наблюсти это непосредственно.
+                    Бозе-конденсат
+                    поглощает электронный лазер. Фонон, как и везде в пределах наблюдаемой вселенной, одномерно
+                    переворачивает экранированный луч. Сверхпроводник трансформирует плоскополяризованный электрон.
+                    Любое
+                    возмущение затухает, если экситон квантуем.
+                </p>
+
+                <p class="m-0">
+                    Сверхпроводник, несмотря на некоторую вероятность коллапса, вторично радиоактивен. Мишень
+                    экспериментально верифицируема. Атом мономолекулярно растягивает плазменный экситон. Под
+                    воздействием
+                    переменного напряжения осциллятор квазипериодично растягивает квазар как при нагреве, так и при
+                    охлаждении. Поверхность гомогенно переворачивает короткоживущий фронт, поскольку любое другое
+                    поведение нарушало бы изотропность пространства.
+                </p>
+
+            </div>
+
+            <div class="col-3 d-flex flex-column gap-3">
+                <div class="rounded-4"
+                     style="background: no-repeat center url(/assets/blackdragon/img/adBannerSm1.png); height: 50%;"></div>
+                <div class="rounded-4"
+                     style="background: no-repeat center url(/assets/blackdragon/img/adBannerSm2.png); height: 50%;"></div>
+            </div>
+        </div>
+    </section>
+</main>
+

@@ -26,8 +26,12 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Controller\User\Catalog;
 
 use BaksDev\Core\Controller\AbstractController;
-use BaksDev\Core\Form\Search\SearchDTO;
-use BaksDev\Core\Form\Search\SearchForm;
+use BaksDev\Products\Category\Repository\AllCategoryByMenu\AllCategoryByMenuInterface;
+use BaksDev\Products\Product\Forms\ProductFilter\Admin\ProductFilterDTO;
+use BaksDev\Products\Product\Forms\ProductFilter\Admin\ProductFilterForm;
+use BaksDev\Products\Product\Repository\CatalogProducts\CatalogProductsInterface;
+use BaksDev\Products\Product\Repository\LiederProducts\LiederProductsInterface;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
@@ -36,41 +40,53 @@ use Symfony\Component\Routing\Attribute\Route;
 #[AsController]
 final class CatalogController extends AbstractController
 {
-    #[Route('/catalog/{page<\d+>}', name: 'user.catalog', methods: ['GET', 'POST'])]
+    #[Route('/catalog/{page<\d+>}', name: 'user.index', methods: ['GET', 'POST'])]
     public function index(
         Request $request,
-        //AllProductInterface $allProduct,
+        CatalogProductsInterface $catalogProducts,
+        LiederProductsInterface $leaderProduct,
+        AllCategoryByMenuInterface $allCategory,
+        FormFactoryInterface $formFactory,
         int $page = 0,
     ): Response
     {
 
-        return $this->redirectToRoute('core:user.homepage');
+        $categories = $allCategory->findAll();
 
-        // Поиск
-        $search = new SearchDTO();
-        $searchForm = $this->createForm(SearchForm::class, $search);
-        $searchForm->handleRequest($request);
+        $tires = null;
+        $bestOffers = null;
 
-        // Фильтр
-        // $filter = new ProductsStocksFilterDTO($request, $ROLE_ADMIN ? null : $this->getProfileUid());
-        // $filterForm = $this->createForm(ProductsStocksFilterForm::class, $filter);
-        // $filterForm->handleRequest($request);
+        foreach($categories as $key => $category)
+        {
+            $tires[$key] = $catalogProducts->find($key);
+            $bestOffers[$key] = $leaderProduct->findAll($key);
 
-        // Получаем список
-        $Product = $allProduct->fetchAllProductAssociative($search);
+            /**
+             * Фильтр продукции по ТП
+             */
+            $filter = new ProductFilterDTO();
+            $filter
+                ->categoryInvisible()
+                ->setCategory($key);
 
-        // Поиск по всему сайту
-        $allSearch = new SearchDTO($request);
-        $allSearchForm = $this->createForm(SearchForm::class, $allSearch, [
-            'action' => $this->generateUrl('core:search'),
-        ]);
+            $filterForm = $formFactory->createNamed(
+                'form-'.$key,
+                ProductFilterForm::class, $filter, [
+                'action' => $this->generateUrl('products-product:user.catalog.category', ['category' => $category['category_url']]),
+                'attr' => ['class' => 'product_filter_form w-100']
+            ]);
+
+            $filterForm->handleRequest($request);
+            $filters[$key] = $filterForm->createView();
+        }
 
 
         return $this->render(
             [
-                'query' => $Product,
-                'search' => $searchForm->createView(),
-                'all_search' => $allSearchForm->createView(),
+                'categories' => $categories,
+                'tires' => $tires,
+                'bestOffers' => $bestOffers,
+                'filters' => $filters,
             ]
         );
     }
