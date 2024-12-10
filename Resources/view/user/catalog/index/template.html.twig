@@ -1,7 +1,8 @@
 {% extends Template('/user/base.html.twig') %}
 
-{% block title %} {# @TODO добавить файл переводов #}
-    {{ 'page.example'|trans({}, 'homepage.user') }}
+{% block title %}
+    {#    {{ 'page.example'|trans({}, 'homepage.user') }} #}
+    Каталог продукции
 {% endblock %}
 
 {% block stylesheets %}
@@ -13,11 +14,5 @@
 {% endblock %}
 
 {% block javascript %}
-
-{#<script nonce="{{ csp_nonce() }}" data-src="/assets/blackdragon/js/infinity-scroll.js" class="lazy"></script>#}
-
-{# <script nonce="{{ csp_nonce() }}" data-src="/assets/comfort/js/main.js" class="lazy"></script>
-<script nonce="{{ csp_nonce() }}" data-src="/assets/comfort/js/scroll.js" class="lazy"></script> #}
 <script nonce='{{ csp_nonce() }}'  data-src='/assets/plugins/nice-select2/nice-select2.min.js?v={{ version }}' class='lazy'></script>
-
 {% endblock %}
