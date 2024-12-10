@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\Repository\CatalogProducts;
+namespace BaksDev\Products\Product\Repository\ProductCatalog;
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Products\Category\Entity\CategoryProduct;
@@ -58,25 +58,85 @@ use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Entity\Property\ProductProperty;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 
-final class CatalogProductsRepository implements CatalogProductsInterface
+final class ProductCatalogRepository implements ProductCatalogInterface
 {
-    private DBALQueryBuilder $DBALQueryBuilder;
+    private CategoryProductUid|false $categoryUid = false;
 
-    public function __construct(DBALQueryBuilder $DBALQueryBuilder)
+    private int|false $maxResult = false;
+
+    public function __construct(
+        private readonly DBALQueryBuilder $dbal
+    ) {}
+
+    /**
+     * Максимальное количество записей в результате
+     */
+    public function maxResult(int $max): self
     {
-        $this->DBALQueryBuilder = $DBALQueryBuilder;
+        $this->maxResult = $max;
+
+        return $this;
     }
 
-    public function find(CategoryProductUid|string $category = null): array|false
+    /**
+     * Фильтр по категории
+     */
+    public function forCategory(CategoryProduct|CategoryProductUid|string $category): self
     {
-        // @TODO вынести в билдер
+        if($category instanceof CategoryProduct)
+        {
+            $category = $category->getId();
+        }
+
         if(is_string($category))
         {
             $category = new CategoryProductUid($category);
         }
 
-        $dbal = $this->DBALQueryBuilder->createQueryBuilder(self::class)->bindLocal();
+        $this->categoryUid = $category;
 
+        return $this;
+    }
+
+    /**
+     * Метод возвращает список продуктов из разных категорий
+     *
+     * @return array{
+     * "id": string,
+     * "event": string,
+     * "product_name": string,
+     * "url": string,
+     * "active_from": string,
+     * "active_to": string,
+     * "product_offer_uid": string,
+     * "product_offer_value": string,
+     * "product_offer_postfix": string,
+     * "product_offer_reference": string,
+     * "product_variation_uid": string,
+     * "product_variation_value": string,
+     * "product_variation_postfix": string,
+     * "product_variation_reference": string,
+     * "product_modification_uid": string,
+     * "product_modification_value": string,
+     * "product_modification_postfix": string,
+     * "product_modification_reference": string,
+     * "product_article": string,
+     * "product_image": string,
+     * "product_image_ext": string,
+     * "product_image_cdn": bool,
+     * "product_price": int,
+     * "product_currency": string,
+     * "category_url": string,
+     * "category_name": string,
+     * "category_section_field": string,
+     * } | false
+     */
+    public function find(): array|false
+    {
+
+        $dbal = $this->dbal
+            ->createQueryBuilder(self::class)
+            ->bindLocal();
 
         $dbal
             ->select('product.id')
@@ -111,7 +171,7 @@ final class CatalogProductsRepository implements CatalogProductsInterface
             ->addGroupBy('product_price.quantity')
             ->addGroupBy('product_price.reserve');
 
-        /** ProductInfo */
+        /* ProductInfo */
         $dbal
             ->addSelect('product_info.url')
             ->leftJoin(
@@ -135,6 +195,7 @@ final class CatalogProductsRepository implements CatalogProductsInterface
             );
 
         /** Торговое предложение */
+
         $dbal
             ->addSelect('product_offer.id as product_offer_uid')
             ->addSelect('product_offer.value as product_offer_value')
@@ -177,6 +238,8 @@ final class CatalogProductsRepository implements CatalogProductsInterface
                 'category_offer.id = product_offer.category_offer'
             );
 
+        //CategoryProductOffers
+
         /** Множественные варианты торгового предложения */
         $dbal
             ->addSelect('product_offer_variation.id as product_variation_uid')
@@ -191,6 +254,7 @@ final class CatalogProductsRepository implements CatalogProductsInterface
             ->addGroupBy('product_offer_variation.article');
 
         /** Цена множественного варианта */
+
         $dbal->leftJoin(
             'category_offer_variation',
             ProductVariationPrice::class,
@@ -223,6 +287,7 @@ final class CatalogProductsRepository implements CatalogProductsInterface
 
 
         /** Модификация множественного варианта торгового предложения */
+
         $dbal
             ->addSelect('product_offer_modification.id as product_modification_uid')
             ->addSelect('product_offer_modification.value as product_modification_value')
@@ -283,17 +348,19 @@ final class CatalogProductsRepository implements CatalogProductsInterface
 			   
 			   ELSE NULL
 			END AS product_article
-			"
+		"
         );
 
         /** Фото продукта */
+
         $dbal->leftJoin(
             'product_offer_modification',
             ProductModificationImage::class,
             'product_offer_modification_image',
             '
 			product_offer_modification_image.modification = product_offer_modification.id AND
-			product_offer_modification_image.root = true'
+			product_offer_modification_image.root = true
+			'
         )
             ->addGroupBy('product_offer_modification_image.name')
             ->addGroupBy('product_offer_modification_image.ext')
@@ -305,7 +372,8 @@ final class CatalogProductsRepository implements CatalogProductsInterface
             'product_offer_variation_image',
             '
 			product_offer_variation_image.variation = product_offer_variation.id AND
-			product_offer_variation_image.root = true'
+			product_offer_variation_image.root = true
+			'
         )
             ->addGroupBy('product_offer_variation_image.name')
             ->addGroupBy('product_offer_variation_image.ext')
@@ -318,7 +386,8 @@ final class CatalogProductsRepository implements CatalogProductsInterface
             '
 			product_offer_variation_image.name IS NULL AND
 			product_offer_images.offer = product_offer.id AND
-			product_offer_images.root = true'
+			product_offer_images.root = true
+			'
         )
             ->addGroupBy('product_offer_images.name')
             ->addGroupBy('product_offer_images.ext')
@@ -417,6 +486,18 @@ final class CatalogProductsRepository implements CatalogProductsInterface
 		"
         );
 
+        //        /** Наличие продукта */
+        //        $dbal->addSelect("
+        //			CASE
+        //			   WHEN COALESCE(product_modification_price.quantity, 0) != 0 THEN product_modification_price.quantity
+        //			   WHEN COALESCE(product_variation_price.quantity, 0) != 0 THEN product_variation_price.quantity
+        //			   WHEN COALESCE(product_offer_price.quantity, 0) != 0 THEN product_offer_price.quantity
+        //			   WHEN COALESCE(product_price.quantity, 0) != 0 THEN product_price.quantity
+        //			   ELSE NULL
+        //			END AS product_quantity
+        //		"
+        //        );
+
         /** Стоимость продукта */
         $dbal->addSelect("
 			CASE
@@ -437,25 +518,36 @@ final class CatalogProductsRepository implements CatalogProductsInterface
 		"
         );
 
-        $dbal->leftJoin(
-            'product_event',
-            ProductCategory::class,
-            'product_event_category',
-            '
-                product_event_category.event = product_event.id AND 
-                product_event_category.root = true
-            ');
-
-        if($category instanceof CategoryProductUid)
+        /** Категория */
+        if($this->categoryUid instanceof CategoryProductUid)
         {
-            /* Категория */
-            $dbal
-                ->andWhere('product_event_category.category = :category')
-                ->setParameter('category', $category, CategoryProductUid::TYPE);
+            $dbal->join(
+                'product',
+                ProductCategory::class,
+                'product_event_category',
+                '
+                product_event_category.event = product.event AND 
+                product_event_category.category = :category AND 
+                product_event_category.root = true'
+            )->setParameter(
+                'category',
+                $this->categoryUid,
+                CategoryProductUid::TYPE
+            );
+        }
+        else
+        {
+            $dbal->leftJoin(
+                'product',
+                ProductCategory::class,
+                'product_event_category',
+                '
+                product_event_category.event = product.event AND 
+                product_event_category.root = true'
+            );
         }
 
-
-        $dbal->join(
+        $dbal->leftJoin(
             'product_event_category',
             CategoryProduct::class,
             'category',
@@ -487,8 +579,7 @@ final class CatalogProductsRepository implements CatalogProductsInterface
             'category_section.event = category.event'
         );
 
-        /** Свойства, учавствующие в карточке */
-
+        /** Свойства, участвующие в карточке */
         $dbal->leftJoin(
             'category_section',
             CategoryProductSectionField::class,
@@ -510,9 +601,9 @@ final class CatalogProductsRepository implements CatalogProductsInterface
             'product_property.event = product.event AND product_property.field = category_section_field.const'
         );
 
-
         $dbal->addSelect("JSON_AGG
 		( DISTINCT
+			
 				JSONB_BUILD_OBJECT
 				(
 					'field_sort', category_section_field.sort,
@@ -522,16 +613,15 @@ final class CatalogProductsRepository implements CatalogProductsInterface
 					'field_type', category_section_field.type,
 					'field_trans', category_section_field_trans.name,
 					'field_value', product_property.value
-				
 				)
+			
 		)
 			AS category_section_field"
         );
 
-        $dbal->setMaxResults(4);
-
         /** Только с ценой */
         $dbal->andWhere("
+
  			CASE
 			   WHEN product_modification_price.price  IS NOT NULL THEN product_modification_price.price
 			   WHEN product_variation_price.price  IS NOT NULL THEN product_variation_price.price
@@ -539,11 +629,13 @@ final class CatalogProductsRepository implements CatalogProductsInterface
 			   WHEN product_price.price IS NOT NULL THEN product_price.price
 			   ELSE 0
 			END > 0
+
  		"
         );
 
         /** Только при наличии */
         $dbal->andWhere("
+ 		
  			CASE
 			   WHEN product_modification_quantity.quantity IS NOT NULL THEN (product_modification_quantity.quantity - product_modification_quantity.reserve)
 			   WHEN product_variation_quantity.quantity IS NOT NULL THEN (product_variation_quantity.quantity - product_variation_quantity.reserve)
@@ -551,7 +643,8 @@ final class CatalogProductsRepository implements CatalogProductsInterface
 			   WHEN product_price.quantity  IS NOT NULL THEN (product_price.quantity - product_price.reserve)
 			   ELSE 0
 			END > 0
-			"
+ 		
+ 		"
         );
 
         $dbal->addOrderBy('product_modification_quantity.reserve', 'DESC');
@@ -560,19 +653,18 @@ final class CatalogProductsRepository implements CatalogProductsInterface
         $dbal->addOrderBy('product_price.reserve', 'DESC');
 
         $dbal->addOrderBy('product_info.sort', 'DESC');
-        //$dbal->addOrderBy('RANDOM()');
 
         $dbal->allGroupByExclude();
 
-        $dbal->enableCache('products-product', 3600, false);
+        if(false !== $this->maxResult)
+        {
+            $dbal->setMaxResults($this->maxResult);
+        }
+
+        $dbal->enableCache('product-products', 86400, false);
 
         $result = $dbal->fetchAllAssociative();
 
-        if(true === empty($result))
-        {
-            return false;
-        }
-
-        return $result;
+        return empty($result) ? false : $result;
     }
 }

@@ -1,0 +1,59 @@
+<main>
+    {# БЛОК ДЛЯ ВЫБОРА КАТЕГОРИЙ #}
+    {{ include(_self|replace({ "content.html.twig" : "_includes/categories.html.twig" }), {'categories': categories }, with_context = false) }}
+
+    {# КАТАЛОГ ШИН #}
+    <section class="container py-3">
+
+        {% for categoryId, category in categories %}
+
+            {% if products[categoryId] and bestOffers[categoryId] %}
+
+                <div class="row ">
+
+                    <div class="col-9 ">
+                        <div class="d-flex align-items-center gap-5 mb-3">
+                            <h2 class="fs-18 mb-0 text-uppercase fw-bold">
+                                {{ category.category_name }}
+                            </h2>
+                            <a href="{{ path('products-product:user.catalog.category', { category : category.category_url }) }}"
+                               class="text-black">
+                                <button class="btn bg-primary rounded-5 fw-medium">
+                                    Все шины
+                                </button>
+                            </a>
+
+                            {% set filter = filters[categoryId] %}
+                            {% include Template('@products-product/filter/'~baks_settings.device~'/filter.html.twig') %}
+
+                        </div>
+
+                        <div class="row row-cols-4 gy-5">
+
+                            {% for product in products[categoryId] %}
+                                <div class="col p-1 px-2">
+                                    {# КАРТОЧКА ТОВАРА #}
+
+                                    {% if product %}
+
+                                        {{ include (_self|replace({ "content.html.twig" : "_includes/card.html.twig" }), { 'card': product }, with_context = false) }}
+
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+
+                        </div>
+                    </div>
+
+                    <div class="col-3 ">
+                        {# ЛИДЕРЫ ПРОДАЖ #}
+                        {{ include (_self|replace({ "content.html.twig" : "_includes/best_offers.html.twig" }), { 'bestOffers' : bestOffers[categoryId] }, with_context = false) }}
+                    </div>
+
+                </div>
+            {% endif %}
+        {% endfor %}
+
+    </section>
+</main>
+

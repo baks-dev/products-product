@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\Repository\LiederProducts;
+namespace BaksDev\Products\Product\Repository\ProductLieder;
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Products\Category\Entity\CategoryProduct;
@@ -42,24 +42,61 @@ use BaksDev\Products\Product\Entity\Price\ProductPrice;
 use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 
-final class LiederProducts implements LiederProductsInterface
+final class ProductLiederRepository implements ProductLiederInterface
 {
-    private DBALQueryBuilder $DBALQueryBuilder;
+    private CategoryProductUid|false $categoryUid = false;
 
-    public function __construct(DBALQueryBuilder $DBALQueryBuilder)
+    private int|false $maxResult = false;
+
+    public function __construct(
+        private readonly DBALQueryBuilder $dbal
+    ) {}
+
+    /**
+     * Максимальное количество записей в результате
+     */
+    public function maxResult(int $max): self
     {
-        $this->DBALQueryBuilder = $DBALQueryBuilder;
+        $this->maxResult = $max;
+
+        return $this;
     }
 
-    public function findAll(CategoryProductUid|string $category = null): array
+    /**
+     * Фильтр по категории
+     */
+    public function forCategory(CategoryProduct|CategoryProductUid|string $category): self
     {
-        // @TODO вынести в билдер
+        if($category instanceof CategoryProduct)
+        {
+            $category = $category->getId();
+        }
+
         if(is_string($category))
         {
             $category = new CategoryProductUid($category);
         }
 
-        $dbal = $this->DBALQueryBuilder
+        $this->categoryUid = $category;
+
+        return $this;
+    }
+
+    /**
+     * Метод возвращает ограниченный по количеству элементов список лидеров продаж продукции, суммируя количество резервов на продукт
+     *
+     * @return array{
+     *     "product_name": string,
+     *     "url": string,
+     *     "sort": int,
+     *     "active_from": string,
+     *     "active_to": string,
+     *     "category_url": string,
+     * } | false
+     */
+    public function find(): array|false
+    {
+        $dbal = $this->dbal
             ->createQueryBuilder(self::class)
             ->bindLocal();
 
@@ -150,24 +187,32 @@ final class LiederProducts implements LiederProductsInterface
         );
 
         /** Категория */
-        $dbal->leftJoin(
-            'product',
-            ProductCategory::class,
-            'product_event_category',
-            '
+        if($this->categoryUid instanceof CategoryProductUid)
+        {
+            $dbal->join(
+                'product',
+                ProductCategory::class,
+                'product_event_category',
+                '
+                product_event_category.event = product.event AND 
+                product_event_category.category = :category AND 
+                product_event_category.root = true'
+            )->setParameter(
+                'category',
+                $this->categoryUid,
+                CategoryProductUid::TYPE
+            );
+        }
+        else
+        {
+            $dbal->leftJoin(
+                'product',
+                ProductCategory::class,
+                'product_event_category',
+                '
                 product_event_category.event = product.event AND 
                 product_event_category.root = true'
-        );
-
-        if($category instanceof CategoryProductUid)
-        {
-            $dbal
-                ->andWhere('product_event_category.category = :category')
-                ->setParameter(
-                    'category',
-                    $category,
-                    CategoryProductUid::TYPE
-                );
+            );
         }
 
         $dbal->leftJoin(
@@ -195,7 +240,6 @@ final class LiederProducts implements LiederProductsInterface
 			   WHEN product_price.quantity  IS NOT NULL THEN (product_price.quantity - product_price.reserve)
 			   ELSE 0
 			END > 0
- 		
  		");
 
         $dbal->addOrderBy('SUM(product_modification_quantity.reserve)', 'DESC');
@@ -205,13 +249,16 @@ final class LiederProducts implements LiederProductsInterface
 
         $dbal->addOrderBy('product_info.sort', 'DESC');
 
+        if(false !== $this->maxResult)
+        {
+            $dbal->setMaxResults($this->maxResult);
+        }
 
-        $dbal->setMaxResults(10);
         $dbal->allGroupByExclude();
+        $dbal->enableCache('product-products', 86400, false);
 
-        return $dbal
-            ->enableCache('product-products', 86400, false)
-            ->fetchAllAssociative();
+        $result = $dbal->fetchAllAssociative();
 
+        return empty($result) ? false : $result;
     }
 }

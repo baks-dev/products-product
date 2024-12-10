@@ -27,6 +27,7 @@ namespace BaksDev\Products\Product\Repository\ProductDetail;
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Products\Category\Entity\CategoryProduct;
+use BaksDev\Products\Category\Entity\Cover\CategoryProductCover;
 use BaksDev\Products\Category\Entity\Info\CategoryProductInfo;
 use BaksDev\Products\Category\Entity\Offers\CategoryProductOffers;
 use BaksDev\Products\Category\Entity\Offers\Trans\CategoryProductOffersTrans;
@@ -503,6 +504,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
 		'
         );
 
+
         /* Валюта продукта */
 
         $dbal->addSelect(
@@ -565,14 +567,13 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
         //		"
         //		);
 
-        /* Категория */
+        /** Категория */
         $dbal->join(
             'product',
             ProductCategory::class,
             'product_event_category',
             'product_event_category.event = product.event AND product_event_category.root = true'
         );
-
 
         $dbal->join(
             'product_event_category',
@@ -606,8 +607,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             'category_section.event = category.event'
         );
 
-        /* Свойства, учавствующие в карточке */
-
+        /** Свойства, участвующие в карточке */
         $dbal->leftJoin(
             'category_section',
             CategoryProductSectionField::class,
@@ -620,6 +620,26 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             CategoryProductSectionFieldTrans::class,
             'category_section_field_trans',
             'category_section_field_trans.field = category_section_field.id AND category_section_field_trans.local = :local'
+        );
+
+        /** Обложка категории */
+        $dbal->addSelect('category_cover.ext AS category_cover_ext');
+        $dbal->addSelect('category_cover.cdn AS category_cover_cdn');
+        $dbal->leftJoin(
+            'category',
+            CategoryProductCover::class,
+            'category_cover',
+            'category_cover.event = category.event',
+        );
+
+        $dbal->addSelect(
+            "
+			CASE
+			   WHEN category_cover.name IS NOT NULL THEN
+					CONCAT ( '/upload/".$dbal->table(CategoryProductCover::class)."' , '/', category_cover.name)
+			   ELSE NULL
+			END AS category_cover_path
+		"
         );
 
         $dbal->leftJoin(
@@ -656,10 +676,8 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
         $dbal->where('product.id = :product');
         $dbal->setParameter('product', $product, ProductUid::TYPE);
 
-
-        /*dd($dbal->fetchAssociative());*/
-
         $dbal->allGroupByExclude(['product_modification_postfix']);
+
 
         return $dbal
             ->enableCache('products-product', 86400)
