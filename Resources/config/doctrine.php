@@ -99,11 +99,10 @@ return static function(ContainerConfigurator $container, DoctrineConfig $doctrin
     $services->set(ProductModificationUid::class)->class(ProductModificationUid::class);
     $services->set(ProductModificationConst::class)->class(ProductModificationConst::class);
 
-
     $emDefault = $doctrine->orm()->entityManager('default')->autoMapping(true);
 
-
-    $emDefault->mapping('products-product')
+    $emDefault
+        ->mapping('products-product')
         ->type('attribute')
         ->dir(BaksDevProductsProductBundle::PATH.'Entity')
         ->isBundle(false)

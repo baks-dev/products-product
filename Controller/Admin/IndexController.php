@@ -36,7 +36,7 @@ use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[AsController]
-#[RoleSecurity('ROLE_PRODUCT')]
+#[RoleSecurity(['ROLE_PRODUCT', 'ROLE_PRODUCT_INDEX'])]
 final class IndexController extends AbstractController
 {
     #[Route('/admin/products/{page<\d+>}', name: 'admin.index', methods: ['GET', 'POST',])]

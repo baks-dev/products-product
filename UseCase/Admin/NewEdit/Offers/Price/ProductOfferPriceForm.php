@@ -41,6 +41,11 @@ final class ProductOfferPriceForm extends AbstractType
             'currency' => false,
         ]);
 
+        //        $builder->add('old', MoneyType::class, [
+        //            'required' => false,
+        //            'currency' => false,
+        //        ]);
+
         $builder->get('price')->addModelTransformer(
             new CallbackTransformer(
                 function($price) {

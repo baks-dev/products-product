@@ -26,6 +26,22 @@
                 <div class="row row-cols-4 gy-5">
                     {{ all_offers(baks_settings.device) }}
                 </div>
+
+                {# {% include Template('@products-product:user/'~baks_settings.device~'/product.html.twig') %} #}
+
+                {% set cards = { name : 21132231 } %}
+                {% set cats = { name : 'Шины' } %}
+
+                {# items : query.data
+
+                {% set items = query.data %} #}
+
+                {% include Template('@products-product:user/index/'~baks_settings.device~'/_includes/ad_banner.html.twig'), { number : cards }, with_context = false %}
+
+
+                {{ }}
+                {# {{ include(_self|replace({ "content.html.twig" : "_includes/reviews.html.twig" })) }} #}Ш
+
             </div>
 
             <div class="col-3 ">

@@ -119,6 +119,7 @@ final class ProductChoiceRepository implements ProductChoiceInterface
         $qb->addSelect('trans.name AS attr');
         $qb->addSelect('info.article AS option');
 
+        $qb->orderBy('trans.name');
 
         /* Кешируем результат ORM */
         return $qb

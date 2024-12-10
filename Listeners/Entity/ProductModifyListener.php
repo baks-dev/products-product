@@ -55,7 +55,6 @@ final class ProductModifyListener
 
         if($token)
         {
-
             $data->setUsr($token->getUser());
 
             if($token instanceof SwitchUserToken)

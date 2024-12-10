@@ -195,6 +195,8 @@ final class ProductHandler extends AbstractHandler
             return $this->validatorCollection->getErrorUniqid();
         }
 
+        //dd($this->event);
+
         $this->entityManager->flush();
 
         /* Отправляем событие в шину  */
