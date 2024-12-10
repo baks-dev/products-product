@@ -21,11 +21,30 @@
  *  THE SOFTWARE.
  */
 
-namespace BaksDev\Products\Product\Repository\PageProduct;
+namespace BaksDev\Products\Product\Repository\ProductLieder;
 
+use BaksDev\Products\Category\Entity\CategoryProduct;
 use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 
-interface PageProductInterface
+interface ProductLiederInterface
 {
-    public function fetchPageProductAssociative(CategoryProductUid|string $category = null): array;
+    /** Максимальное количество в результате */
+    public function maxResult(int $max): self;
+
+    /** Фильтр по категории */
+    public function forCategory(CategoryProduct|CategoryProductUid|string $category): self;
+
+    /**
+     * Метод возвращает ограниченный по количеству элементов список лидеров продаж продукции, суммируя количество резервов на продукт
+     *
+     * @return array{
+     *     "product_name": string,
+     *     "url": string,
+     *     "sort": int,
+     *     "active_from": string,
+     *     "active_to": string,
+     *     "category_url": string,
+     * } | false
+     */
+    public function find(): array|false;
 }

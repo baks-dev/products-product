@@ -23,14 +23,14 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\Controller\User\Catalog;
+namespace BaksDev\Products\Product\Controller\User;
 
 use BaksDev\Core\Controller\AbstractController;
 use BaksDev\Products\Category\Repository\AllCategoryByMenu\AllCategoryByMenuInterface;
 use BaksDev\Products\Product\Forms\ProductFilter\Admin\ProductFilterDTO;
 use BaksDev\Products\Product\Forms\ProductFilter\Admin\ProductFilterForm;
-use BaksDev\Products\Product\Repository\CatalogProducts\CatalogProductsInterface;
-use BaksDev\Products\Product\Repository\LiederProducts\LiederProductsInterface;
+use BaksDev\Products\Product\Repository\ProductCatalog\ProductCatalogInterface;
+use BaksDev\Products\Product\Repository\ProductLieder\ProductLiederInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -40,26 +40,33 @@ use Symfony\Component\Routing\Attribute\Route;
 #[AsController]
 final class CatalogController extends AbstractController
 {
-    #[Route('/catalog/{page<\d+>}', name: 'user.index', methods: ['GET', 'POST'])]
+    #[Route('/catalog/{page<\d+>}', name: 'user.catalog.index', methods: ['GET', 'POST'])]
     public function index(
         Request $request,
-        CatalogProductsInterface $catalogProducts,
-        LiederProductsInterface $leaderProduct,
+        ProductCatalogInterface $catalogProducts,
+        ProductLiederInterface $productsLeader,
         AllCategoryByMenuInterface $allCategory,
         FormFactoryInterface $formFactory,
         int $page = 0,
     ): Response
     {
-
         $categories = $allCategory->findAll();
 
-        $tires = null;
+        $products = null;
         $bestOffers = null;
+        $filters = null;
 
-        foreach($categories as $key => $category)
+        foreach($categories as $categoryUid => $category)
         {
-            $tires[$key] = $catalogProducts->find($key);
-            $bestOffers[$key] = $leaderProduct->findAll($key);
+            $products[$categoryUid] = $catalogProducts
+                ->forCategory($categoryUid)
+                ->maxResult(4)
+                ->find();
+
+            $bestOffers[$categoryUid] = $productsLeader
+                ->forCategory($categoryUid)
+                ->maxResult(10)
+                ->find();
 
             /**
              * Фильтр продукции по ТП
@@ -67,24 +74,25 @@ final class CatalogController extends AbstractController
             $filter = new ProductFilterDTO();
             $filter
                 ->categoryInvisible()
-                ->setCategory($key);
+                ->setCategory($categoryUid);
 
             $filterForm = $formFactory->createNamed(
-                'form-'.$key,
+                $categoryUid,
                 ProductFilterForm::class, $filter, [
-                'action' => $this->generateUrl('products-product:user.catalog.category', ['category' => $category['category_url']]),
-                'attr' => ['class' => 'product_filter_form w-100']
+                'action' => $this->generateUrl('products-product:user.catalog.category',
+                    ['category' => $category['category_url']]
+                ),
+                'attr' => ['class' => 'product_filter_form']
             ]);
 
             $filterForm->handleRequest($request);
-            $filters[$key] = $filterForm->createView();
+            $filters[$categoryUid] = $filterForm->createView();
         }
-
 
         return $this->render(
             [
                 'categories' => $categories,
-                'tires' => $tires,
+                'products' => $products,
                 'bestOffers' => $bestOffers,
                 'filters' => $filters,
             ]
