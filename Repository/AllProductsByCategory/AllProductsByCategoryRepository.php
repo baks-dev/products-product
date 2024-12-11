@@ -43,6 +43,7 @@ use BaksDev\Products\Category\Entity\Section\Field\Trans\CategoryProductSectionF
 use BaksDev\Products\Category\Entity\Trans\CategoryProductTrans;
 use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Category\Type\Section\Field\Id\CategoryProductSectionFieldUid;
+use BaksDev\Products\Product\Entity\Active\ProductActive;
 use BaksDev\Products\Product\Entity\Category\ProductCategory;
 use BaksDev\Products\Product\Entity\Description\ProductDescription;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
@@ -66,7 +67,6 @@ use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Entity\Property\ProductProperty;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Forms\ProductCategoryFilter\User\ProductCategoryFilterDTO;
-use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 
 final class AllProductsByCategoryRepository implements AllProductsByCategoryInterface
 {
@@ -193,8 +193,19 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
                 'product.event = product_category.event'
             );
 
+        $dbal
+            ->addSelect('product_active.active_from')
+            ->join(
+                'product',
+                ProductActive::class,
+                'product_active',
+                '
+                    product_active.event = product.event AND 
+                    product_active.active IS TRUE AND
+                    (product_active.active_to IS NULL OR product_active.active_to > NOW())
+                ');
 
-        $dbal->join(
+        $dbal->leftJoin(
             'product',
             ProductEvent::class,
             'product_event',
@@ -325,10 +336,10 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
         }
 
         $dbal->{$method}(
-            'product_event',
+            'product',
             ProductOffer::class,
             'product_offer',
-            'product_offer.event = product_event.id '.($this->filter?->getOffer() ? ' AND product_offer.value = :offer' : '').' '
+            'product_offer.event = product.event '.($this->filter?->getOffer() ? ' AND product_offer.value = :offer' : '').' '
         );
 
         /*  тип торгового предложения */
@@ -513,10 +524,9 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
             ProductVariationImage::class,
             'product_variation_image',
             '
-			product_variation_image.variation = product_variation.id AND
-			product_variation_image.root = true
-			'
-        );
+                product_variation_image.variation = product_variation.id AND
+                product_variation_image.root = true
+			');
 
 
         $dbal->leftJoin(
@@ -524,11 +534,10 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
             ProductOfferImage::class,
             'product_offer_images',
             '
-			product_variation_image.name IS NULL AND
-			product_offer_images.offer = product_offer.id AND
-			product_offer_images.root = true
-			'
-        );
+                product_variation_image.name IS NULL AND
+                product_offer_images.offer = product_offer.id AND
+                product_offer_images.root = true
+			');
 
 
         $dbal->leftJoin(
@@ -536,28 +545,29 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
             ProductPhoto::class,
             'product_photo',
             '
-			product_offer_images.name IS NULL AND
-			product_photo.event = product_event.id AND
-			product_photo.root = true
-			'
-        );
+                product_offer_images.name IS NULL AND
+                product_photo.event = product.event AND
+                product_photo.root = true
+			');
 
         $dbal->addSelect(
             "
 			CASE
-			 WHEN product_modification_image.name IS NOT NULL 
-			 THEN CONCAT ( '/upload/".$dbal->table(ProductModificationImage::class)."' , '/', product_modification_image.name)
+			
+             WHEN product_modification_image.name IS NOT NULL 
+             THEN CONCAT ( '/upload/".$dbal->table(ProductModificationImage::class)."' , '/', product_modification_image.name)
+                
+             WHEN product_variation_image.name IS NOT NULL 
+             THEN CONCAT ( '/upload/".$dbal->table(ProductVariationImage::class)."' , '/', product_variation_image.name)
+                    
+             WHEN product_offer_images.name IS NOT NULL 
+             THEN CONCAT ( '/upload/".$dbal->table(ProductOfferImage::class)."' , '/', product_offer_images.name)
+                    
+             WHEN product_photo.name IS NOT NULL 
+             THEN CONCAT ( '/upload/".$dbal->table(ProductPhoto::class)."' , '/', product_photo.name)
 					
-			   WHEN product_variation_image.name IS NOT NULL 
-			   THEN CONCAT ( '/upload/".$dbal->table(ProductVariationImage::class)."' , '/', product_variation_image.name)
-					
-			   WHEN product_offer_images.name IS NOT NULL 
-			   THEN CONCAT ( '/upload/".$dbal->table(ProductOfferImage::class)."' , '/', product_offer_images.name)
-					
-			   WHEN product_photo.name IS NOT NULL 
-			   THEN CONCAT ( '/upload/".$dbal->table(ProductPhoto::class)."' , '/', product_photo.name)
-					
-			   ELSE NULL
+			 ELSE NULL
+			 
 			END AS product_image
 		"
         );
@@ -566,8 +576,8 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
         $dbal->addSelect(
             "
 			CASE
-                WHEN product_modification_image.name IS NOT NULL 
-                THEN product_modification_image.ext
+               WHEN product_modification_image.name IS NOT NULL 
+               THEN product_modification_image.ext
 					
 			   WHEN product_variation_image.name IS NOT NULL 
 			   THEN product_variation_image.ext
@@ -678,6 +688,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
         $dbal->addSelect(
             "
 			CASE
+			
 			   WHEN MIN(product_modification_price.price) IS NOT NULL AND MIN(product_modification_price.price) > 0 
 			   THEN product_modification_price.currency
 			   
@@ -699,8 +710,9 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
         /** Количественный учет */
         $dbal->addSelect("
 			CASE
-			    WHEN SUM(product_modification_quantity.quantity) > 0 
-			    THEN SUM(product_modification_quantity.quantity)
+			
+			   WHEN SUM(product_modification_quantity.quantity) > 0 
+			   THEN SUM(product_modification_quantity.quantity)
 					
 			   WHEN SUM(product_variation_quantity.quantity) > 0 
 			   THEN SUM(product_variation_quantity.quantity)
@@ -822,7 +834,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
             )->setParameter('device', new Device(Desktop::class), Device::TYPE);
 
         $dbal
-            ->addSelect('product_modify.mod_date AS modify',)
+            ->addSelect('product_modify.mod_date AS modify')
             ->leftJoin(
                 'product',
                 ProductModify::class,
@@ -833,8 +845,8 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
 
         /** Торговое предложение */
         $dbal
-            ->addSelect('product_offer.value AS offer_value',)
-            ->addSelect('product_offer.postfix AS offer_postfix',)
+            ->addSelect('product_offer.value AS offer_value')
+            ->addSelect('product_offer.postfix AS offer_postfix')
             ->leftJoin(
                 'product',
                 ProductOffer::class,
