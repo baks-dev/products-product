@@ -505,6 +505,18 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
         );
 
 
+        /* Предыдущая стоимость продукта */
+
+        $dbal->addSelect("
+			COALESCE(
+                NULLIF(product_modification_price.old, 0),
+                NULLIF(product_variation_price.old, 0),
+                NULLIF(product_offer_price.old, 0),
+                NULLIF(product_price.old, 0),
+                0
+            ) AS product_old_price
+		");
+
         /* Валюта продукта */
 
         $dbal->addSelect(
@@ -1081,6 +1093,18 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
 		'
         );
 
+        /* Предыдущая стоимость продукта */
+
+        $dbal->addSelect("
+			COALESCE(
+                NULLIF(product_modification_price.old, 0),
+                NULLIF(product_variation_price.old, 0),
+                NULLIF(product_offer_price.old, 0),
+                NULLIF(product_price.old, 0),
+                0
+            ) AS product_old_price
+		");
+
         /* Валюта продукта */
 
         $dbal->addSelect(
@@ -1107,8 +1131,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
 
         $dbal->addSelect(
             '
-            
-            
+
             CASE
 			   WHEN product_modification_quantity.quantity > 0 AND product_modification_quantity.quantity > product_modification_quantity.reserve 
 			   THEN (product_modification_quantity.quantity - product_modification_quantity.reserve)
