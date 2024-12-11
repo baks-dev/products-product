@@ -212,6 +212,18 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
             'product_event.id = product.event'
         );
 
+        $dbal
+            ->addSelect('product_active.active_from')
+            ->addSelect('product_active.active_to')
+            ->leftJoin(
+                'product',
+                ProductActive::class,
+                'product_active',
+                '
+                    product_active.event = product.event AND 
+                    product_active.active IS TRUE'
+            );
+
         /** ФИЛЬТР СВОЙСТВ */
         if($this->property)
         {

@@ -21,26 +21,11 @@
  *  THE SOFTWARE.
  */
 
-namespace BaksDev\Products\Product\Controller\User\Tests;
+namespace BaksDev\Products\Product\Repository\LiederProducts;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\DependencyInjection\Attribute\When;
+use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 
-/**
- * @group products-product
- */
-#[When(env: 'test')]
-final class CatalogControllerTest extends WebTestCase
+interface LiederProductsInterface
 {
-    private const URL = '/catalog';
-
-    /** Доступ по без роли */
-    public function testGuestFiled(): void
-    {
-        self::ensureKernelShutdown();
-        $client = static::createClient();
-        $client->request('GET', self::URL);
-
-        self::assertResponseIsSuccessful();
-    }
+    public function findAll(CategoryProductUid|string $category = null): array;
 }
