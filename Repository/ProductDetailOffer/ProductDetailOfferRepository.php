@@ -61,11 +61,11 @@ final class ProductDetailOfferRepository implements ProductDetailOfferInterface
             $product = new ProductUid($product);
         }
 
-        $qb = $this->DBALQueryBuilder
+        $dbal = $this->DBALQueryBuilder
             ->createQueryBuilder(self::class)
             ->bindLocal();
 
-        $qb
+        $dbal
             ->select('product.id')
             ->from(Product::class, 'product')
             ->where('product.id = :product')
@@ -73,7 +73,7 @@ final class ProductDetailOfferRepository implements ProductDetailOfferInterface
 
 
         /* Цена товара */
-        $qb->leftJoin(
+        $dbal->leftJoin(
             'product',
             ProductPrice::class,
             'product_price',
@@ -82,7 +82,7 @@ final class ProductDetailOfferRepository implements ProductDetailOfferInterface
 
         /* Торговое предложение */
 
-        $qb
+        $dbal
             ->addSelect('product_offer.value as product_offer_value')
             ->addSelect('product_offer.postfix as product_offer_postfix')
             ->addSelect('product_offer.category_offer as category_offer')
@@ -94,7 +94,7 @@ final class ProductDetailOfferRepository implements ProductDetailOfferInterface
             );
 
         /* Цена торгового предложения */
-        $qb->leftJoin(
+        $dbal->leftJoin(
             'product_offer',
             ProductOfferPrice::class,
             'product_offer_price',
@@ -102,7 +102,7 @@ final class ProductDetailOfferRepository implements ProductDetailOfferInterface
         );
 
         /* Получаем тип торгового предложения */
-        $qb
+        $dbal
             ->addSelect('category_offer.reference AS product_offer_reference')
             ->leftJoin(
                 'product_offer',
@@ -112,7 +112,7 @@ final class ProductDetailOfferRepository implements ProductDetailOfferInterface
             );
 
         /* Получаем название торгового предложения */
-        $qb
+        $dbal
             ->addSelect('category_offer_trans.name as product_offer_name')
             ->addSelect('category_offer_trans.postfix as product_offer_name_postfix')
             ->leftJoin(
@@ -124,7 +124,7 @@ final class ProductDetailOfferRepository implements ProductDetailOfferInterface
 
         /* Множественные варианты торгового предложения */
 
-        $qb
+        $dbal
             ->addSelect('product_offer_variation.value as product_variation_value')
             ->addSelect('product_offer_variation.postfix as product_variation_postfix')
             ->leftJoin(
@@ -135,7 +135,7 @@ final class ProductDetailOfferRepository implements ProductDetailOfferInterface
             );
 
         /* Цена множественного варианта */
-        $qb->leftJoin(
+        $dbal->leftJoin(
             'category_offer_variation',
             ProductVariationPrice::class,
             'product_variation_price',
@@ -143,7 +143,7 @@ final class ProductDetailOfferRepository implements ProductDetailOfferInterface
         );
 
         /* Получаем тип множественного варианта */
-        $qb
+        $dbal
             ->addSelect('category_offer_variation.reference as product_variation_reference')
             ->leftJoin(
                 'product_offer_variation',
@@ -153,7 +153,7 @@ final class ProductDetailOfferRepository implements ProductDetailOfferInterface
             );
 
         /* Получаем название множественного варианта */
-        $qb
+        $dbal
             ->addSelect('category_offer_variation_trans.name as product_variation_name')
             ->addSelect('category_offer_variation_trans.postfix as product_variation_name_postfix')
             ->leftJoin(
@@ -165,7 +165,7 @@ final class ProductDetailOfferRepository implements ProductDetailOfferInterface
 
         /* Модификация множественного варианта торгового предложения */
 
-        $qb
+        $dbal
             ->addSelect('product_offer_modification.value as product_modification_value')
             ->addSelect('product_offer_modification.postfix as product_modification_postfix')
             ->leftJoin(
@@ -176,7 +176,7 @@ final class ProductDetailOfferRepository implements ProductDetailOfferInterface
             );
 
         /* Цена Модификации множественного варианта */
-        $qb->leftJoin(
+        $dbal->leftJoin(
             'product_offer_modification',
             ProductModificationPrice::class,
             'product_modification_price',
@@ -184,7 +184,7 @@ final class ProductDetailOfferRepository implements ProductDetailOfferInterface
         );
 
         /* Получаем тип множественного варианта */
-        $qb
+        $dbal
             ->addSelect('category_offer_modification.reference as product_modification_reference')
             ->leftJoin(
                 'product_offer_modification',
@@ -194,7 +194,7 @@ final class ProductDetailOfferRepository implements ProductDetailOfferInterface
             );
 
         /* Получаем название типа */
-        $qb
+        $dbal
             ->addSelect('category_offer_modification_trans.name as product_modification_name')
             ->addSelect('category_offer_modification_trans.postfix as product_modification_name_postfix')
             ->leftJoin(
@@ -207,9 +207,9 @@ final class ProductDetailOfferRepository implements ProductDetailOfferInterface
 
         /* Стоимость продукта */
 
-        $qb->addSelect('product_variation_price.price');
+        $dbal->addSelect('product_variation_price.price');
 
-        $qb->addSelect(
+        $dbal->addSelect(
             '
 			CASE
 			   WHEN product_modification_price.price IS NOT NULL 
@@ -241,7 +241,7 @@ final class ProductDetailOfferRepository implements ProductDetailOfferInterface
 		");
 
         /* Валюта продукта */
-        $qb->addSelect(
+        $dbal->addSelect(
             '
 			CASE
 			   WHEN product_modification_price.price IS NOT NULL 
@@ -261,6 +261,6 @@ final class ProductDetailOfferRepository implements ProductDetailOfferInterface
 		'
         );
 
-        return $qb->enableCache('products-product', 86400)->fetchAllAssociative();
+        return $dbal->enableCache('products-product', 86400)->fetchAllAssociative();
     }
 }

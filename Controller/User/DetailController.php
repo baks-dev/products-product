@@ -135,18 +135,23 @@ final class DetailController extends AbstractController
 
         /* Корзина */
 
-        $AddProductBasketDTO = new OrderProductDTO();
-        $form = $this->createForm(OrderProductForm::class, $AddProductBasketDTO, [
-            'action' => $this->generateUrl(
-                'orders-order:user.add',
-                [
-                    'product' => $productCard['event'],
-                    'offer' => $productCard['product_offer_uid'],
-                    'variation' => $productCard['product_variation_uid'],
-                    'modification' => $productCard['product_modification_uid'],
-                ]
-            ),
-        ]);
+        $form = null;
+
+        if(class_exists(OrderProductDTO::class))
+        {
+            $AddProductBasketDTO = new OrderProductDTO();
+            $form = $this->createForm(OrderProductForm::class, $AddProductBasketDTO, [
+                'action' => $this->generateUrl(
+                    'orders-order:user.add',
+                    [
+                        'product' => $productCard['event'],
+                        'offer' => $productCard['product_offer_uid'],
+                        'variation' => $productCard['product_variation_uid'],
+                        'modification' => $productCard['product_modification_uid'],
+                    ]
+                ),
+            ]);
+        }
 
         // Поиск по всему сайту
         $allSearch = new SearchDTO($request);
@@ -161,7 +166,7 @@ final class DetailController extends AbstractController
             'offer' => $offer,
             'variation' => $variation,
             'modification' => $modification,
-            'basket' => $form->createView(),
+            'basket' => $form?->createView(),
             'all_search' => $allSearchForm->createView(),
         ]);
     }
