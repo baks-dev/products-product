@@ -29,7 +29,7 @@ use Symfony\Component\Uid\AbstractUid;
 
 final class ProductUid extends Uid
 {
-    public const TEST = '0188a99e-e18e-733d-9305-9e2bfaf96f09';
+    public const string TEST = '0188a99e-e18e-733d-9305-9e2bfaf96f09';
 
     public const string TYPE = 'product';
 

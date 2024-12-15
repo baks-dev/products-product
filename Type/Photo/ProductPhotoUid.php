@@ -29,7 +29,7 @@ use Symfony\Component\Uid\AbstractUid;
 
 final class ProductPhotoUid extends Uid
 {
-    public const TEST = '0188a9a0-7667-73c5-9de0-fb018d7e614c';
+    public const string TEST = '0188a9a0-7667-73c5-9de0-fb018d7e614c';
 
     public const string TYPE = 'product_photo';
 

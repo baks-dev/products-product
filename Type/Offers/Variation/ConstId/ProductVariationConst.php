@@ -31,7 +31,7 @@ use Symfony\Component\Uid\AbstractUid;
 
 final class ProductVariationConst extends Uid
 {
-    public const TEST = '0188a99f-862a-7bb9-b656-90f5ec6f7655';
+    public const string TEST = '0188a99f-862a-7bb9-b656-90f5ec6f7655';
 
     public const string TYPE = 'product_variation_const';
 
