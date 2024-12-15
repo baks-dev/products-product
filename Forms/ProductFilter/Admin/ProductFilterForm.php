@@ -64,7 +64,6 @@ final class ProductFilterForm extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-
         $builder->add('all', CheckboxType::class);
 
         /**
@@ -75,11 +74,9 @@ final class ProductFilterForm extends AbstractType
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event): void {
 
-
             /** @var ProductFilterDTO $data */
             $data = $event->getData();
             $builder = $event->getForm();
-
 
             if($this->session === false)
             {
@@ -112,7 +109,7 @@ final class ProductFilterForm extends AbstractType
                 if($sessionArray !== false)
                 {
                     isset($sessionArray['all']) ? $data->setAll($sessionArray['all'] === true) : false;
-                    isset($sessionArray['category']) ? $data->setCategory(new CategoryProductUid($sessionArray['category'], $sessionArray['category_name'])) : false;
+                    isset($sessionArray['category']) ? $data->setCategory(new CategoryProductUid($sessionArray['category'], $sessionArray['category_name'] ?? null)) : false;
                     isset($sessionArray['offer']) ? $data->setOffer($sessionArray['offer']) : false;
                     isset($sessionArray['variation']) ? $data->setVariation($sessionArray['variation']) : false;
                     isset($sessionArray['modification']) ? $data->setModification($sessionArray['modification']) : false;
@@ -252,9 +249,7 @@ final class ProductFilterForm extends AbstractType
 
                         $ProductFilterPropertyDTO->setValue($sessionArray['properties'][$field['const']] ?? null);
 
-
                         $data->addProperty($ProductFilterPropertyDTO);
-
 
                     }
                 }

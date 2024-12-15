@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\Forms\ProductFilter\Admin\Property;
+namespace BaksDev\Products\Product\Forms\ProductCategoryFilter\User\Property;
 
 use Symfony\Component\Validator\Constraints as Assert;
 

@@ -50,6 +50,7 @@ final class CatalogController extends AbstractController
         int $page = 0,
     ): Response
     {
+
         $categories = $allCategory->findAll();
 
         $products = null;
@@ -82,7 +83,7 @@ final class CatalogController extends AbstractController
                 'action' => $this->generateUrl('products-product:user.catalog.category',
                     ['category' => $category['category_url']]
                 ),
-                'attr' => ['class' => 'product_filter_form']
+                'attr' => ['class' => 'product_filter_form w-100']
             ]);
 
             $filterForm->handleRequest($request);

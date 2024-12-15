@@ -30,7 +30,7 @@ use Symfony\Component\Uid\UuidV7;
 
 final class ProductBarcode
 {
-    public const TYPE = 'product_barcode';
+    public const string TYPE = 'product_barcode';
 
     private string $value;
 

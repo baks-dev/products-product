@@ -31,7 +31,7 @@ final class ProductOfferUid extends Uid
 {
     public const TEST = '0188a99f-3b80-73b7-afe9-e00ffa1b53f2';
 
-    public const TYPE = 'product_offer';
+    public const string TYPE = 'product_offer';
 
     private mixed $attr;
 

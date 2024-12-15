@@ -31,26 +31,37 @@ use BaksDev\Products\Category\Repository\AllFilterFieldsByCategory\AllFilterFiel
 use BaksDev\Products\Category\Repository\ModificationFieldsCategoryChoice\ModificationFieldsCategoryChoiceInterface;
 use BaksDev\Products\Category\Repository\OfferFieldsCategoryChoice\OfferFieldsCategoryChoiceInterface;
 use BaksDev\Products\Category\Repository\VariationFieldsCategoryChoice\VariationFieldsCategoryChoiceInterface;
+use BaksDev\Products\Category\Type\Id\CategoryProductUid;
+use BaksDev\Products\Product\Forms\ProductFilter\Admin\ProductFilterDTO;
+use BaksDev\Products\Product\Forms\ProductFilter\Admin\ProductFilterForm;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class ProductCategoryFilterForm extends AbstractType
 {
+
+    private SessionInterface|false $session = false;
+
+    private string $sessionKey;
+
     public function __construct(
+
         private readonly AllFilterFieldsByCategoryInterface $fields,
         private readonly OfferFieldsCategoryChoiceInterface $offerChoice,
         private readonly VariationFieldsCategoryChoiceInterface $variationChoice,
         private readonly ModificationFieldsCategoryChoiceInterface $modificationChoice,
         private readonly FieldsChoice $choice,
         private readonly RequestStack $request,
-    ) {}
+    )
+    {
+        $this->sessionKey = md5(ProductFilterForm::class);
+    }
 
 
     /**
@@ -59,6 +70,163 @@ final class ProductCategoryFilterForm extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event): void {
+
+            $sessionArray = false;
+
+            /** @var ProductFilterDTO $data */
+            $data = $event->getData();
+            $builder = $event->getForm();
+
+            $Request = $this->request->getMainRequest();
+
+            if($Request && 'POST' === $Request->getMethod())
+            {
+                $sessionArray = current($Request->request->all());
+            }
+            else
+            {
+                if($this->session === false)
+                {
+                    $this->session = $this->request->getSession();
+                }
+
+                if($this->session && $this->session->get('statusCode') === 307)
+                {
+                    $this->session->remove($this->sessionKey);
+                    $this->session = false;
+                }
+
+                if($this->session && (time() - $this->session->getMetadataBag()->getLastUsed()) > 300)
+                {
+                    $this->session->remove($this->sessionKey);
+                    $this->session = false;
+                }
+
+                if($this->session)
+                {
+                    $sessionData = $this->request->getSession()->get($this->sessionKey);
+                    $sessionJson = $sessionData ? base64_decode($sessionData) : false;
+                    $sessionArray = $sessionJson !== false && json_validate($sessionJson) ? json_decode($sessionJson, true, 512, JSON_THROW_ON_ERROR) : false;
+
+
+                }
+            }
+
+            if($sessionArray !== false)
+            {
+                ///isset($sessionArray['all']) ? $data->setAll($sessionArray['all'] === true) : false;
+                isset($sessionArray['category']) ? $data->setCategory(new CategoryProductUid($sessionArray['category'], $sessionArray['category_name'] ?? null)) : false;
+                isset($sessionArray['offer']) ? $data->setOffer($sessionArray['offer']) : false;
+                isset($sessionArray['variation']) ? $data->setVariation($sessionArray['variation']) : false;
+                isset($sessionArray['modification']) ? $data->setModification($sessionArray['modification']) : false;
+
+                if($Request && 'POST' === $Request->getMethod())
+                {
+                    $sessionJson = json_encode($sessionArray, JSON_THROW_ON_ERROR);
+                    $sessionData = base64_encode($sessionJson);
+                    $this->request->getSession()->set($this->sessionKey, $sessionData);
+                }
+
+            }
+
+        });
+
+
+        $builder->addEventListener(
+            FormEvents::POST_SUBMIT,
+            function(FormEvent $event): void {
+
+
+                $Request = $this->request->getMainRequest();
+                dump('POST_SUBMIT');
+
+                dump($Request);
+
+                if('POST' === $Request?->getMethod())
+                {
+                    $postData = current($this->request->getMainRequest()->request->all());
+
+
+                }
+
+
+                if($this->session === false)
+                {
+                    $this->session = $this->request->getSession();
+                }
+
+                if($this->session)
+                {
+                    /** @var ProductFilterDTO $data */
+                    $data = $event->getData();
+
+                    $sessionArray = [];
+
+                    if($data->getCategory())
+                    {
+                        if($data->getCategory())
+                        {
+                            $sessionArray['category'] = (string) $data->getCategory();
+                            $sessionArray['category_name'] = $data->getCategory()->getOptions();
+                        }
+
+                        $data->getOffer() ? $sessionArray['offer'] = (string) $data->getOffer() : false;
+                        $data->getVariation() ? $sessionArray['variation'] = (string) $data->getVariation() : false;
+                        $data->getModification() ? $sessionArray['modification'] = (string) $data->getModification() : false;
+                    }
+
+                    $properties = [];
+
+                    if($data->getProperty())
+                    {
+                        /** @var Property\ProductFilterPropertyDTO $property */
+                        foreach($data->getProperty() as $property)
+                        {
+                            if(!empty($property->getValue()) && $property->getValue() !== 'false')
+                            {
+                                $properties[$property->getConst()] = $property->getValue();
+                            }
+                        }
+
+                    }
+
+                    !empty($properties) ? $sessionArray['properties'] = $properties : false;
+
+                    if($sessionArray)
+                    {
+                        $sessionJson = json_encode($sessionArray, JSON_THROW_ON_ERROR);
+                        $sessionData = base64_encode($sessionJson);
+                        $this->request->getSession()->set($this->sessionKey, $sessionData);
+                        return;
+                    }
+
+                    $this->session->remove($this->sessionKey);
+                }
+
+
+                //                $session = [];
+                //
+                //                if($data->getProperty())
+                //                {
+                //                    /** @var Property\ProductFilterPropertyDTO $property */
+                //                    foreach($data->getProperty() as $property)
+                //                    {
+                //                        if(!empty($property->getValue()) && $property->getValue() !== 'false')
+                //                        {
+                //                            $session[$property->getConst()] = $property->getValue();
+                //                        }
+                //                    }
+                //
+                //                }
+
+
+                // $this->request->getSession()->set('catalog_filter', $session);
+            }
+        );
+
+
         $data = $builder->getData();
 
         if($data->getCategory())
@@ -76,8 +244,6 @@ final class ProductCategoryFilterForm extends AbstractType
 
                 if($inputOffer)
                 {
-
-
                     $builder->add(
                         'offer',
                         method_exists($inputOffer, 'formFilterAvailable') ? $inputOffer->formFilterAvailable() : $inputOffer->form(),
@@ -87,7 +253,6 @@ final class ProductCategoryFilterForm extends AbstractType
                             'required' => false,
                         ]
                     );
-
 
                     /** Множественные варианты торгового предложения */
 

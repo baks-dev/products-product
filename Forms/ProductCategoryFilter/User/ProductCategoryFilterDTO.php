@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Forms\ProductCategoryFilter\User;
 
 use BaksDev\Products\Category\Type\Id\CategoryProductUid;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 
 final class ProductCategoryFilterDTO
@@ -50,6 +51,12 @@ final class ProductCategoryFilterDTO
      * Модификатор множественного варианта торгового предложения
      */
     private ?string $modification = null;
+
+
+    /**
+     * Свойства, участвующие в фильтре
+     */
+    private ?ArrayCollection $property = null;
 
 
     public function __construct(?CategoryProductUid $category)
@@ -108,6 +115,36 @@ final class ProductCategoryFilterDTO
     public function setModification(?string $modification): void
     {
         $this->modification = $modification;
+    }
+
+
+    /**
+     * Property
+     */
+    public function getProperty(): ?ArrayCollection
+    {
+        return $this->property;
+    }
+
+    public function setProperty(?ArrayCollection $property): self
+    {
+        $this->property = $property;
+        return $this;
+    }
+
+    public function addProperty(Property\ProductFilterPropertyDTO $property): self
+    {
+        $filter = $this->property->filter(function(Property\ProductFilterPropertyDTO $element) use ($property) {
+            return $element->getType() === $property->getType();
+        });
+
+        if($filter->isEmpty())
+        {
+            $this->property->add($property);
+        }
+
+
+        return $this;
     }
 
 }

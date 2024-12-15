@@ -33,7 +33,7 @@ final class ProductModificationConst extends Uid
 {
     public const TEST = '0188a99f-f8f7-753f-a8f1-62ea0ad1d29a';
 
-    public const TYPE = 'product_modification_const';
+    public const string TYPE = 'product_modification_const';
 
     private mixed $attr;
 

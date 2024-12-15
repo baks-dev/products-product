@@ -354,7 +354,7 @@
             {% if presence %}
 
 
-                <div class="tab-pane fade show active" id="pills-home" role="tabpanel" tabindex="0">
+                <div class="tab-pane fade show active flex-column" id="pills-home" role="tabpanel" tabindex="0">
 
                     <div class="d-flex justify-content-between">
 
@@ -407,7 +407,7 @@
             {% endif %}
 
 
-            <div class="tab-pane fade" id="pills-profile" role="tabpanel" tabindex="0">
+            <div class="tab-pane fade flex-column" id="pills-profile" role="tabpanel" tabindex="0">
                 <h5 class="text-uppercase fw-bolder py-3">Нет в наличии</h5>
                 {{ include(_self|replace({ "content.html.twig": "notavalible.html.twig" })) }}
             </div>

@@ -38,8 +38,6 @@ use InvalidArgumentException;
 #[ORM\Table(name: 'product_price')]
 class ProductPrice extends EntityEvent
 {
-    public const TABLE = 'product_price';
-
     /** ID события */
     #[ORM\Id]
     #[ORM\OneToOne(targetEntity: ProductEvent::class, inversedBy: 'price')]
