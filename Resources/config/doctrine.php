@@ -32,6 +32,8 @@ use BaksDev\Products\Product\Type\File\ProductFileType;
 use BaksDev\Products\Product\Type\File\ProductFileUid;
 use BaksDev\Products\Product\Type\Id\ProductType;
 use BaksDev\Products\Product\Type\Id\ProductUid;
+use BaksDev\Products\Product\Type\Invariable\ProductInvariableType;
+use BaksDev\Products\Product\Type\Invariable\ProductInvariableUid;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConstType;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferType;
@@ -79,6 +81,7 @@ return static function(ContainerConfigurator $container, DoctrineConfig $doctrin
     $doctrine->dbal()->type(ProductModificationConst::TYPE)->class(ProductModificationConstType::class);
     $doctrine->dbal()->type(ProductModificationUid::TYPE)->class(ProductModificationType::class);
     $doctrine->dbal()->type(ProductBarcode::TYPE)->class(ProductBarcodeType::class);
+    $doctrine->dbal()->type(ProductInvariableUid::TYPE)->class(ProductInvariableType::class);
 
     $services = $container->services()
         ->defaults()
