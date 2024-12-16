@@ -21,46 +21,34 @@
  *  THE SOFTWARE.
  */
 
-namespace BaksDev\Products\Product\Type\Id;
+declare(strict_types=1);
 
-use BaksDev\Core\Type\UidType\Uid;
-use Symfony\Component\Uid\AbstractUid;
+namespace BaksDev\Products\Product\Messenger\Invariable;
 
-final class ProductUid extends Uid
+
+use BaksDev\Products\Product\Messenger\ProductMessage;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+
+#[AsMessageHandler(priority: 0)]
+final class UpdateProductInvariableHandler
 {
-    public const string TEST = '0188a99e-e18e-733d-9305-9e2bfaf96f09';
 
-    public const string TYPE = 'product';
-
-    private mixed $attr;
-
-    private mixed $option;
-
-    public function __construct(
-        AbstractUid|self|string|null $value = null,
-        mixed $attr = null,
-        mixed $option = null
-    )
+    /** Метод обновляет сущность Invariable при изменении продукта */
+    public function __invoke(ProductMessage $message): void
     {
 
-        parent::__construct($value);
+        /**
+         * TODO: Обновляем ProductInvariable
+         * @see ProductInvariable
+         */
 
-        $this->attr = $attr;
-        $this->option = $option;
-    }
+        // Получаем продукт
+        // получаем коллекцию торговых предложений
+        // получаем коллекцию множественных вариантов
+        // получаем коллекцию модификаторов
 
-    public function __toString(): string
-    {
-        return $this->getValue();
-    }
+        // добавляем
 
-    public function getAttr(): mixed
-    {
-        return $this->attr;
-    }
 
-    public function getOption(): mixed
-    {
-        return $this->option;
     }
 }

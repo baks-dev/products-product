@@ -170,6 +170,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
 
         $dbal
             ->addSelect('product_offer.id as product_offer_uid')
+            ->addSelect('product_offer.const as product_offer_const')
             ->addSelect('product_offer.value as product_offer_value')
             ->addSelect('product_offer.postfix as product_offer_postfix')
             ->leftJoin(
@@ -237,6 +238,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
 
         $dbal
             ->addSelect('product_variation.id as product_variation_uid')
+            ->addSelect('product_variation.const as product_variation_const')
             ->addSelect('product_variation.value as product_variation_value')
             ->addSelect('product_variation.postfix as product_variation_postfix')
             ->leftJoin(
@@ -296,6 +298,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
 
         $dbal
             ->addSelect('product_modification.id as product_modification_uid')
+            ->addSelect('product_modification.const as product_modification_const')
             ->addSelect('product_modification.value as product_modification_value')
             ->addSelect('product_modification.postfix as product_modification_postfix')
             ->leftJoin(
