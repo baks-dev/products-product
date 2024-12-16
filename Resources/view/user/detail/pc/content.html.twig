@@ -93,14 +93,13 @@
             {% if root_image is null %}
                 {% for product_images in product_photo | filter(img => img.product_img_root is defined and img.product_img_root == true) %}
                     {% set root_image = product_images %}
-
                 {% endfor %}
             {% endif %}
 
-            {% if root_image %}
+            {# Обложка #}
+            {% set image_path = '/assets/img/blank.svg' %}
 
-                {# Обложка #}
-                {% set image_path = '/assets/img/blank.svg' %}
+            {% if root_image %}
 
                 {% if root_image.product_img_ext is defined and root_image.product_img_ext is not null %}
                     {% set img_host =  root_image.product_img_cdn == true  ? CDN_HOST : '' %}

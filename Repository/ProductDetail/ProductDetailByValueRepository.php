@@ -65,12 +65,9 @@ use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 
-//use BaksDev\Products\Category\Entity as CategoryEntity;
-//use BaksDev\Products\Product\Entity as ProductEntity;
-
-final class ProductDetailByValueRepository implements ProductDetailByValueInterface
+final readonly class ProductDetailByValueRepository implements ProductDetailByValueInterface
 {
-    public function __construct(private readonly DBALQueryBuilder $DBALQueryBuilder) {}
+    public function __construct(private DBALQueryBuilder $DBALQueryBuilder) {}
 
     /**
      * Метод возвращает детальную информацию о продукте и его заполненному значению ТП, вариантов и модификаций.

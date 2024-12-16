@@ -37,6 +37,16 @@ final class UpdateProductInvariableHandler
     public function __invoke(ProductMessage $message): void
     {
 
+        if(is_null($message->getUser()))
+        {
+
+
+            return;
+        }
+
+
+
+
         /**
          * TODO: Обновляем ProductInvariable
          * @see ProductInvariable

@@ -138,20 +138,6 @@ final class ProductCategoryFilterForm extends AbstractType
             FormEvents::POST_SUBMIT,
             function(FormEvent $event): void {
 
-
-                $Request = $this->request->getMainRequest();
-                dump('POST_SUBMIT');
-
-                dump($Request);
-
-                if('POST' === $Request?->getMethod())
-                {
-                    $postData = current($this->request->getMainRequest()->request->all());
-
-
-                }
-
-
                 if($this->session === false)
                 {
                     $this->session = $this->request->getSession();
