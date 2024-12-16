@@ -14,7 +14,7 @@ baks-dev/reference-money \
 baks-dev/reference-currency \
 baks-dev/reference-measurement \
 baks-dev/products-product
-```compo
+```
 
 ## Дополнительно
 
