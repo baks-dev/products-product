@@ -23,11 +23,9 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\Messenger\Invariable;
-
+namespace BaksDev\Products\Product\Command\Upgrade;
 
 use BaksDev\Products\Product\Entity\ProductInvariable;
-use BaksDev\Products\Product\Messenger\ProductMessage;
 use BaksDev\Products\Product\Repository\AllProductsIdentifier\AllProductsIdentifierInterface;
 use BaksDev\Products\Product\Repository\ProductInvariable\ProductInvariableInterface;
 use BaksDev\Products\Product\Type\Id\ProductUid;
@@ -36,35 +34,59 @@ use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
 use BaksDev\Products\Product\UseCase\Admin\Invariable\ProductInvariableDTO;
 use BaksDev\Products\Product\UseCase\Admin\Invariable\ProductInvariableHandler;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\ProgressIndicator;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsMessageHandler(priority: 0)]
-final readonly class UpdateProductInvariableHandler
+#[AsCommand(
+    name: 'baks:upgrade:product:invariable',
+    description: 'Обновляет Invariable всех продуктов'
+)]
+class UpgradeProductInvariableCommand extends Command
 {
     public function __construct(
-        private AllProductsIdentifierInterface $allProductsIdentifier,
-        private ProductInvariableInterface $productInvariable,
-        private ProductInvariableHandler $productInvariableHandler,
-        private LoggerInterface $logger
-    ) {}
-
-    /**
-     * Метод обновляет сущность Invariable при изменении продукта
-     */
-    public function __invoke(ProductMessage $message): void
+        private readonly AllProductsIdentifierInterface $allProductsIdentifier,
+        private readonly ProductInvariableInterface $productInvariable,
+        private readonly ProductInvariableHandler $productInvariableHandler,
+    )
     {
-        $products = $this->allProductsIdentifier
-            ->forProduct($message->getId())
-            ->findAll();
+        parent::__construct();
+    }
 
-        if(false === $products)
-        {
-            return;
-        }
+    protected function configure(): void
+    {
+        $this->addArgument('argument', InputArgument::OPTIONAL, 'Описание аргумента');
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
+        $io = new SymfonyStyle($input, $output);
+
+        $progressIndicator = new ProgressIndicator($output);
+        $progressIndicator->start('Processing...');
+
+        $products = $this->allProductsIdentifier->findAll();
+
+        /** @var array{
+         * "product_id",
+         * "product_event" ,
+         * "offer_id" ,
+         * "offer_const",
+         * "variation_id" ,
+         * "variation_const" ,
+         * "modification_id",
+         * "modification_const"
+         * } $product
+         */
 
         foreach($products as $product)
         {
+            $progressIndicator->advance();
+
             $ProductInvariableUid = $this->productInvariable
                 ->product($product['product_id'])
                 ->offer($product['offer_const'])
@@ -86,9 +108,15 @@ final readonly class UpdateProductInvariableHandler
 
                 if(false === ($handle instanceof ProductInvariable))
                 {
-                    $this->logger->critical(sprintf('%s: Ошибка при обновлении ProductInvariable', $handle));
+                    $io->error(sprintf('%s: Ошибка при обновлении ProductInvariable', $handle));
                 }
             }
         }
+
+        $progressIndicator->finish('Finished');
+
+        $io->success('Обновление успешно завершено');
+
+        return Command::SUCCESS;
     }
 }

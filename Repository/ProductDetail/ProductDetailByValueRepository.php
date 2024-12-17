@@ -690,7 +690,6 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
 
         $dbal->allGroupByExclude(['product_modification_postfix']);
 
-
         return $dbal
             ->enableCache('products-product', 86400)
             ->fetchAssociative();

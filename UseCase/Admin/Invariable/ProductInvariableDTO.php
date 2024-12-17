@@ -23,69 +23,110 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\Entity;
+namespace BaksDev\Products\Product\UseCase\Admin\Invariable;
 
-use BaksDev\Core\Entity\EntityState;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Product\Type\Invariable\ProductInvariableUid;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
-use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-
-/* ProductInvariable */
-
-#[ORM\Entity]
-#[ORM\Table(name: 'product_invariable')]
-#[ORM\UniqueConstraint(columns: ['product', 'offer', 'variation', 'modification'])]
-class ProductInvariable extends EntityState
+/** @see ProductInvariable */
+final class ProductInvariableDTO //implements ProductInvariableInterface
 {
     /**
      * Идентификатор сущности
      */
-    #[Assert\NotBlank]
     #[Assert\Uuid]
-    #[ORM\Id]
-    #[ORM\Column(type: ProductInvariableUid::TYPE)]
-    private ProductInvariableUid $id;
+    private ?ProductInvariableUid $id = null;
 
     /** ID продукта (не уникальное) */
     #[Assert\NotBlank]
     #[Assert\Uuid]
-    #[ORM\Column(type: ProductUid::TYPE)]
     private ProductUid $product;
 
     /** Константа ТП */
-    #[ORM\Column(type: ProductOfferConst::TYPE, nullable: true)]
+    #[Assert\Uuid]
     private ?ProductOfferConst $offer = null;
 
     /** Константа множественного варианта */
-    #[ORM\Column(type: ProductVariationConst::TYPE, nullable: true)]
+    #[Assert\Uuid]
     private ?ProductVariationConst $variation = null;
 
     /** Константа модификации множественного варианта */
-    #[ORM\Column(type: ProductModificationConst::TYPE, nullable: true)]
+    #[Assert\Uuid]
     private ?ProductModificationConst $modification = null;
 
-    public function __construct()
+
+    public function setId(?ProductInvariableUid $id): self
     {
-        $this->id = new ProductInvariableUid();
+        $this->id = $id;
+        return $this;
     }
 
-    public function __toString(): string
-    {
-        return (string) $this->id;
-    }
-
-    public function getId(): ProductInvariableUid
+    /**
+     * Id
+     */
+    public function getMain(): ?ProductInvariableUid
     {
         return $this->id;
     }
 
-    public function setEntity($dto): mixed
+    /**
+     * Product
+     */
+    public function getProduct(): ProductUid
     {
-        return parent::setEntity($dto);
+        return $this->product;
     }
+
+    public function setProduct(ProductUid $product): self
+    {
+        $this->product = $product;
+        return $this;
+    }
+
+    /**
+     * Offer
+     */
+    public function getOffer(): ?ProductOfferConst
+    {
+        return $this->offer;
+    }
+
+    public function setOffer(?ProductOfferConst $offer): self
+    {
+        $this->offer = $offer;
+        return $this;
+    }
+
+    /**
+     * Variation
+     */
+    public function getVariation(): ?ProductVariationConst
+    {
+        return $this->variation;
+    }
+
+    public function setVariation(?ProductVariationConst $variation): self
+    {
+        $this->variation = $variation;
+        return $this;
+    }
+
+    /**
+     * Modification
+     */
+    public function getModification(): ?ProductModificationConst
+    {
+        return $this->modification;
+    }
+
+    public function setModification(?ProductModificationConst $modification): self
+    {
+        $this->modification = $modification;
+        return $this;
+    }
+
 }
