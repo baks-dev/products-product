@@ -27,10 +27,13 @@ namespace BaksDev\Products\Product\Controller\User;
 
 use BaksDev\Core\Controller\AbstractController;
 use BaksDev\Products\Category\Repository\AllCategoryByMenu\AllCategoryByMenuInterface;
+use BaksDev\Products\Product\Forms\ProductCategoryFilter\User\ProductCategoryFilterDTO;
+use BaksDev\Products\Product\Forms\ProductCategoryFilter\User\ProductCategoryFilterForm;
 use BaksDev\Products\Product\Forms\ProductFilter\Admin\ProductFilterDTO;
 use BaksDev\Products\Product\Forms\ProductFilter\Admin\ProductFilterForm;
 use BaksDev\Products\Product\Repository\ProductCatalog\ProductCatalogInterface;
 use BaksDev\Products\Product\Repository\ProductLieder\ProductLiederInterface;
+use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -47,9 +50,33 @@ final class CatalogController extends AbstractController
         ProductLiederInterface $productsLeader,
         AllCategoryByMenuInterface $allCategory,
         FormFactoryInterface $formFactory,
+        string|null $category = null,
         int $page = 0,
     ): Response
     {
+        /** Фильтр с главной страницы */
+        $productCategoryFilterDTO = new ProductCategoryFilterDTO();
+
+        $productFilterForm = $this->createForm(ProductCategoryFilterForm::class, $productCategoryFilterDTO);
+        $productFilterForm->handleRequest($request);
+
+        /** Свойства продукции, участвующие в фильтрации */
+        $propertyFields = null;
+        if($productFilterForm->isSubmitted() && $productFilterForm->isValid())
+        {
+            foreach($productFilterForm->all() as $item)
+            {
+                if($item instanceof Form && !empty($item->getViewData()))
+                {
+                    if($item->getConfig()->getMapped())
+                    {
+                        continue;
+                    }
+
+                    $propertyFields[$item->getName()] = $item->getNormData();
+                }
+            }
+        }
 
         $categories = $allCategory->findAll();
 
@@ -59,9 +86,12 @@ final class CatalogController extends AbstractController
 
         foreach($categories as $categoryUid => $category)
         {
+            /** Продукция с фильтром с главной страницы */
             $products[$categoryUid] = $catalogProducts
                 ->forCategory($categoryUid)
                 ->maxResult(4)
+                ->property($propertyFields)
+                ->filter($productCategoryFilterDTO)
                 ->find();
 
             $bestOffers[$categoryUid] = $productsLeader
@@ -70,7 +100,7 @@ final class CatalogController extends AbstractController
                 ->find();
 
             /**
-             * Фильтр продукции по ТП
+             * Фильтр продукции для каждой категории
              */
             $filter = new ProductFilterDTO();
             $filter
