@@ -50,6 +50,7 @@ final class CatalogController extends AbstractController
         ProductLiederInterface $productsLeader,
         AllCategoryByMenuInterface $allCategory,
         FormFactoryInterface $formFactory,
+        string|null $category = null,
         int $page = 0,
     ): Response
     {
