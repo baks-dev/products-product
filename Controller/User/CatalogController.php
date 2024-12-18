@@ -83,7 +83,6 @@ final class CatalogController extends AbstractController
         $bestOffers = null;
         $filters = null;
 
-        // Variable '$category' is introduced as a method parameter and overridden here.
         foreach($categories as $categoryUid => $category)
         {
             /** Продукция с фильтром с главной страницы */
