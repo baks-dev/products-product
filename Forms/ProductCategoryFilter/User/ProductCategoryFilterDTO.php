@@ -52,14 +52,13 @@ final class ProductCategoryFilterDTO
      */
     private ?string $modification = null;
 
-
     /**
      * Свойства, участвующие в фильтре
      */
     private ?ArrayCollection $property = null;
 
 
-    public function __construct(?CategoryProductUid $category)
+    public function __construct(?CategoryProductUid $category = null)
     {
         $this->category = $category;
     }
