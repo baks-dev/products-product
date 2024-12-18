@@ -36,6 +36,7 @@ use BaksDev\Products\Category\Entity\Section\Field\CategoryProductSectionField;
 use BaksDev\Products\Category\Entity\Section\Field\Trans\CategoryProductSectionFieldTrans;
 use BaksDev\Products\Category\Entity\Trans\CategoryProductTrans;
 use BaksDev\Products\Category\Type\Id\CategoryProductUid;
+use BaksDev\Products\Category\Type\Section\Field\Id\CategoryProductSectionFieldUid;
 use BaksDev\Products\Product\Entity\Active\ProductActive;
 use BaksDev\Products\Product\Entity\Category\ProductCategory;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
@@ -57,6 +58,7 @@ use BaksDev\Products\Product\Entity\Price\ProductPrice;
 use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Entity\Property\ProductProperty;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
+use BaksDev\Products\Product\Forms\ProductCategoryFilter\User\ProductCategoryFilterDTO;
 
 final class ProductCatalogRepository implements ProductCatalogInterface
 {
@@ -64,9 +66,31 @@ final class ProductCatalogRepository implements ProductCatalogInterface
 
     private int|false $maxResult = false;
 
+    private ?ProductCategoryFilterDTO $filter = null;
+
+    private ?array $property = null;
+
     public function __construct(
         private readonly DBALQueryBuilder $dbal
     ) {}
+
+    public function filter(ProductCategoryFilterDTO $filter): self
+    {
+        $this->filter = $filter;
+        return $this;
+    }
+
+    public function property(?array $property): self
+    {
+        if(empty($property))
+        {
+            return $this;
+        }
+
+        $this->property = $property;
+
+        return $this;
+    }
 
     /**
      * Максимальное количество записей в результате
@@ -131,7 +155,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
      * "category_section_field": string,
      * } | false
      */
-    public function find(): array|false
+    public function find(string $expr = 'AND'): array|false
     {
 
         $dbal = $this->dbal
@@ -148,6 +172,73 @@ final class ProductCatalogRepository implements ProductCatalogInterface
             'product_event',
             'product_event.id = product.event'
         );
+
+        /** ФИЛЬТР СВОЙСТВ */
+        if($this->property)
+        {
+            if($expr === 'AND')
+            {
+                foreach($this->property as $type => $item)
+                {
+                    if($item === true)
+                    {
+                        $item = 'true';
+                    }
+
+                    $prepareKey = uniqid('key_', false);
+                    $prepareValue = uniqid('val_', false);
+                    $alias = uniqid('alias', false);
+
+                    $ProductCategorySectionFieldUid = new CategoryProductSectionFieldUid($type);
+                    $ProductPropertyJoin = $alias.'.field = :'.$prepareKey.' AND '.$alias.'.value = :'.$prepareValue;
+
+                    $dbal->setParameter(
+                        $prepareKey,
+                        $ProductCategorySectionFieldUid,
+                        CategoryProductSectionFieldUid::TYPE
+                    );
+                    $dbal->setParameter($prepareValue, $item);
+
+                    $dbal->join(
+                        'product',
+                        ProductProperty::class,
+                        $alias,
+                        $alias.'.event = product.event '.$expr.' '.$ProductPropertyJoin
+                    );
+                }
+            }
+            else
+            {
+                foreach($this->property as $type => $item)
+                {
+                    if($item === true)
+                    {
+                        $item = 'true';
+                    }
+
+                    $prepareKey = uniqid('', false);
+                    $prepareValue = uniqid('', false);
+
+                    $ProductCategorySectionFieldUid = new CategoryProductSectionFieldUid($type);
+                    $ProductPropertyJoin[] = 'product_property_filter.field = :'.$prepareKey.' AND product_property_filter.value = :'.$prepareValue;
+
+                    $dbal->setParameter(
+                        $prepareKey,
+                        $ProductCategorySectionFieldUid,
+                        CategoryProductSectionFieldUid::TYPE
+                    );
+                    $dbal->setParameter($prepareValue, $item);
+
+                }
+
+                $dbal->join(
+                    'product',
+                    ProductProperty::class,
+                    'product_property_filter',
+                    'product_property_filter.event = product.event AND '.implode(' '.$expr.' ', $ProductPropertyJoin)
+                );
+            }
+        }
 
         $dbal
             ->addSelect('product_trans.name AS product_name')
@@ -171,7 +262,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
             ->addGroupBy('product_price.quantity')
             ->addGroupBy('product_price.reserve');
 
-        /* ProductInfo */
+        /** ProductInfo */
         $dbal
             ->addSelect('product_info.url')
             ->leftJoin(
@@ -183,7 +274,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
             ->addGroupBy('product_info.article')
             ->addGroupBy('product_info.sort');
 
-        /** Даты категории */
+        /** Даты продукта */
         $dbal
             ->addSelect('product_active.active_from')
             ->addSelect('product_active.active_to')
@@ -194,21 +285,27 @@ final class ProductCatalogRepository implements ProductCatalogInterface
                 'product_active.event = product.event'
             );
 
-        /** Торговое предложение */
+        /** OFFERS */
+        $method = 'leftJoin';
+
+        if($this->filter?->getOffer())
+        {
+            $method = 'join';
+            $dbal->setParameter('offer', $this->filter->getOffer());
+        }
 
         $dbal
             ->addSelect('product_offer.id as product_offer_uid')
             ->addSelect('product_offer.value as product_offer_value')
             ->addSelect('product_offer.postfix as product_offer_postfix')
-            ->leftJoin(
-                'product_event',
+            ->{$method}(
+                'product',
                 ProductOffer::class,
                 'product_offer',
-                'product_offer.event = product_event.id'
-            )
-            ->addGroupBy('product_offer.article');
+                'product_offer.event = product.event '.($this->filter?->getOffer() ? ' AND product_offer.value = :offer' : '').' '
+            );
 
-        /** Цена торгового предожения */
+        /** Цена торгового предложения */
         $dbal->leftJoin(
             'product_offer',
             ProductOfferPrice::class,
@@ -218,7 +315,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
             ->addGroupBy('product_offer_price.price')
             ->addGroupBy('product_offer_price.currency');
 
-        /** Наличие торгового предожения */
+        /** Наличие торгового предложения */
         $dbal->leftJoin(
             'product_offer',
             ProductOfferQuantity::class,
@@ -238,23 +335,27 @@ final class ProductCatalogRepository implements ProductCatalogInterface
                 'category_offer.id = product_offer.category_offer'
             );
 
-        //CategoryProductOffers
+        /** VARIATIONS */
+        $method = 'leftJoin';
 
-        /** Множественные варианты торгового предложения */
+        if($this->filter?->getVariation())
+        {
+            $method = 'join';
+            $dbal->setParameter('variation', $this->filter->getVariation());
+        }
+
         $dbal
             ->addSelect('product_offer_variation.id as product_variation_uid')
             ->addSelect('product_offer_variation.value as product_variation_value')
             ->addSelect('product_offer_variation.postfix as product_variation_postfix')
-            ->leftOneJoin(
+            ->{$method}(
                 'product_offer',
                 ProductVariation::class,
                 'product_offer_variation',
-                'product_offer_variation.offer = product_offer.id'
-            )
-            ->addGroupBy('product_offer_variation.article');
+                'product_offer_variation.offer = product_offer.id '.($this->filter?->getVariation() ? ' AND product_offer_variation.value = :variation' : '').' '
+            );
 
         /** Цена множественного варианта */
-
         $dbal->leftJoin(
             'category_offer_variation',
             ProductVariationPrice::class,
@@ -265,7 +366,6 @@ final class ProductCatalogRepository implements ProductCatalogInterface
             ->addGroupBy('product_variation_price.currency');
 
         /** Наличие множественного варианта */
-
         $dbal->leftJoin(
             'category_offer_variation',
             ProductVariationQuantity::class,
@@ -285,20 +385,25 @@ final class ProductCatalogRepository implements ProductCatalogInterface
                 'category_offer_variation.id = product_offer_variation.category_variation'
             );
 
+        /** MODIFICATION */
+        $method = 'leftJoin';
 
-        /** Модификация множественного варианта торгового предложения */
+        if($this->filter?->getModification())
+        {
+            $method = 'join';
+            $dbal->setParameter('modification', $this->filter->getModification());
+        }
 
         $dbal
             ->addSelect('product_offer_modification.id as product_modification_uid')
             ->addSelect('product_offer_modification.value as product_modification_value')
             ->addSelect('product_offer_modification.postfix as product_modification_postfix')
-            ->leftJoin(
-                'product_offer_variation',
+            ->{$method}(
+                'category_offer_variation',
                 ProductModification::class,
                 'product_offer_modification',
-                'product_offer_modification.variation = product_offer_variation.id'
-            )
-            ->addGroupBy('product_offer_modification.article');
+                'product_offer_modification.variation = product_offer_variation.id '.($this->filter?->getModification() ? ' AND product_offer_modification.value = :modification' : '').' '
+            );
 
         /** Цена множественного варианта */
         $dbal->leftJoin(
@@ -331,7 +436,6 @@ final class ProductCatalogRepository implements ProductCatalogInterface
             );
 
         /** Артикул продукта */
-
         $dbal->addSelect("
 			CASE
 			   WHEN product_offer_modification.article IS NOT NULL 
@@ -352,7 +456,6 @@ final class ProductCatalogRepository implements ProductCatalogInterface
         );
 
         /** Фото продукта */
-
         $dbal->leftJoin(
             'product_offer_modification',
             ProductModificationImage::class,
@@ -361,10 +464,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
 			product_offer_modification_image.modification = product_offer_modification.id AND
 			product_offer_modification_image.root = true
 			'
-        )
-            ->addGroupBy('product_offer_modification_image.name')
-            ->addGroupBy('product_offer_modification_image.ext')
-            ->addGroupBy('product_offer_modification_image.cdn');
+        );
 
         $dbal->leftJoin(
             'product_offer',
@@ -374,10 +474,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
 			product_offer_variation_image.variation = product_offer_variation.id AND
 			product_offer_variation_image.root = true
 			'
-        )
-            ->addGroupBy('product_offer_variation_image.name')
-            ->addGroupBy('product_offer_variation_image.ext')
-            ->addGroupBy('product_offer_variation_image.cdn');
+        );
 
         $dbal->leftJoin(
             'product_offer',
@@ -388,10 +485,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
 			product_offer_images.offer = product_offer.id AND
 			product_offer_images.root = true
 			'
-        )
-            ->addGroupBy('product_offer_images.name')
-            ->addGroupBy('product_offer_images.ext')
-            ->addGroupBy('product_offer_images.cdn');
+        );
 
         $dbal->leftJoin(
             'product_offer',
@@ -402,10 +496,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
 			product_photo.event = product_event.id AND
 			product_photo.root = true
 			'
-        )
-            ->addGroupBy('product_photo.name')
-            ->addGroupBy('product_photo.ext')
-            ->addGroupBy('product_photo.cdn');
+        );
 
         $dbal->addSelect("
 			CASE
@@ -486,9 +577,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
 		"
         );
 
-
-        /* Предыдущая стоимость продукта */
-
+        /** Предыдущая стоимость продукта */
         $dbal->addSelect("
 			COALESCE(
                 NULLIF(product_modification_price.old, 0),
@@ -498,18 +587,6 @@ final class ProductCatalogRepository implements ProductCatalogInterface
                 0
             ) AS product_old_price
 		");
-
-        //        /** Наличие продукта */
-        //        $dbal->addSelect("
-        //			CASE
-        //			   WHEN COALESCE(product_modification_price.quantity, 0) != 0 THEN product_modification_price.quantity
-        //			   WHEN COALESCE(product_variation_price.quantity, 0) != 0 THEN product_variation_price.quantity
-        //			   WHEN COALESCE(product_offer_price.quantity, 0) != 0 THEN product_offer_price.quantity
-        //			   WHEN COALESCE(product_price.quantity, 0) != 0 THEN product_price.quantity
-        //			   ELSE NULL
-        //			END AS product_quantity
-        //		"
-        //        );
 
         /** Стоимость продукта */
         $dbal->addSelect("
@@ -527,8 +604,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
 			   THEN product_price.currency
 			   
 			   ELSE NULL
-			END AS product_currency
-		"
+			END AS product_currency"
         );
 
         /** Категория */
@@ -634,7 +710,6 @@ final class ProductCatalogRepository implements ProductCatalogInterface
 
         /** Только с ценой */
         $dbal->andWhere("
-
  			CASE
 			   WHEN product_modification_price.price  IS NOT NULL THEN product_modification_price.price
 			   WHEN product_variation_price.price  IS NOT NULL THEN product_variation_price.price
@@ -642,13 +717,11 @@ final class ProductCatalogRepository implements ProductCatalogInterface
 			   WHEN product_price.price IS NOT NULL THEN product_price.price
 			   ELSE 0
 			END > 0
-
  		"
         );
 
         /** Только при наличии */
         $dbal->andWhere("
- 		
  			CASE
 			   WHEN product_modification_quantity.quantity IS NOT NULL THEN (product_modification_quantity.quantity - product_modification_quantity.reserve)
 			   WHEN product_variation_quantity.quantity IS NOT NULL THEN (product_variation_quantity.quantity - product_variation_quantity.reserve)
@@ -656,8 +729,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
 			   WHEN product_price.quantity  IS NOT NULL THEN (product_price.quantity - product_price.reserve)
 			   ELSE 0
 			END > 0
- 		
- 		"
+			"
         );
 
         $dbal->addOrderBy('product_modification_quantity.reserve', 'DESC');
@@ -680,4 +752,5 @@ final class ProductCatalogRepository implements ProductCatalogInterface
 
         return empty($result) ? false : $result;
     }
+
 }
