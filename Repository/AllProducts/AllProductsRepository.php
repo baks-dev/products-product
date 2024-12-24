@@ -303,8 +303,8 @@ final class AllProductsRepository implements AllProductsInterface
             "
 			CASE
 			
-			    WHEN product_variation_image.name IS NOT NULL 
-			   THEN CONCAT ( '/upload/".$dbal->table(ProductModificationImage::class)."' , '/', product_variation_image.name)
+			    WHEN product_modification_image.name IS NOT NULL 
+			   THEN CONCAT ( '/upload/".$dbal->table(ProductModificationImage::class)."' , '/', product_modification_image.name)
 			   
 			   WHEN product_variation_image.name IS NOT NULL 
 			   THEN CONCAT ( '/upload/".$dbal->table(ProductVariationImage::class)."' , '/', product_variation_image.name)
@@ -792,6 +792,9 @@ final class AllProductsRepository implements AllProductsInterface
         $dbal->addSelect(
             "
 			CASE
+			    WHEN product_modification_image.name IS NOT NULL 
+			   THEN CONCAT ( '/upload/".$dbal->table(ProductModificationImage::class)."' , '/', product_modification_image.name)
+
 			   WHEN product_variation_image.name IS NOT NULL 
 			   THEN CONCAT ( '/upload/".$dbal->table(ProductVariationImage::class)."' , '/', product_variation_image.name)
 					
