@@ -43,7 +43,8 @@ use Symfony\Component\Routing\Attribute\Route;
 #[AsController]
 final class DetailController extends AbstractController
 {
-    #[Route('/catalog/{category}/{url}/{offer}/{variation}/{modification}/{postfix}', name: 'user.detail')]
+    #[Route('/catalog/{category}/{url}/{offer}/{variation}/{modification}/{postfix}',
+        name: 'user.detail')]
     public function index(
         Request $request,
         HttpKernelInterface $httpKernel,

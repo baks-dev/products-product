@@ -1,17 +1,17 @@
 <?php
 /*
  *  Copyright 2024.  Baks.dev <admin@baks.dev>
- *
+ *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *
+ *  
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *
+ *  
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -183,9 +183,9 @@ class ProductsProductEditTest extends KernelTestCase
         $InfoDTO->setSort(25);
         self::assertSame(25, $InfoDTO->getSort());
 
-        self::assertSame('test_new_info_url', $InfoDTO->getUrl());
-        $InfoDTO->setUrl('test_edit_info_url');
-        self::assertSame('test_edit_info_url', $InfoDTO->getUrl());
+        self::assertSame('new_info_url', $InfoDTO->getUrl());
+        $InfoDTO->setUrl('edit_info_url');
+        self::assertSame('edit_info_url', $InfoDTO->getUrl());
 
         self::assertTrue($InfoDTO->getProfile()->equals(UserProfileUid::TEST));
 
@@ -299,7 +299,7 @@ class ProductsProductEditTest extends KernelTestCase
 
         foreach($ProductOffersCollection as $ProductOffersCollectionDTO)
         {
-            self::assertSame('Test New Offer Value', $ProductOffersCollectionDTO->getValue());
+            self::assertSame('100', $ProductOffersCollectionDTO->getValue());
             $ProductOffersCollectionDTO->setValue('Test Edit Offer Value');
             self::assertSame('Test Edit Offer Value', $ProductOffersCollectionDTO->getValue());
 
@@ -373,7 +373,7 @@ class ProductsProductEditTest extends KernelTestCase
                 );
 
                 self::assertSame(
-                    'Test New Variation Value',
+                    '200',
                     $ProductOffersVariationCollectionDTO->getValue()
                 );
 
@@ -452,7 +452,7 @@ class ProductsProductEditTest extends KernelTestCase
                     );
 
                     self::assertSame(
-                        'Test New Modification Value',
+                        '300',
                         $ProductOffersVariationModificationCollectionDTO->getValue()
                     );
 

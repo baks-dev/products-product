@@ -82,6 +82,10 @@ use Symfony\Component\HttpFoundation\File\File;
 #[When(env: 'test')]
 class ProductsProductNewTest extends KernelTestCase
 {
+    public const string OFFER_VALUE = '100';
+    public const string VARIATION_VALUE = '200';
+    public const string MODIFICATION_VALUE = '300';
+
     public static function setUpBeforeClass(): void
     {
         // Бросаем событие консольной комманды
@@ -245,8 +249,8 @@ class ProductsProductNewTest extends KernelTestCase
         $InfoDTO->setSort(5);
         self::assertSame(5, $InfoDTO->getSort());
 
-        $InfoDTO->setUrl('test_new_info_url');
-        self::assertSame('test_new_info_url', $InfoDTO->getUrl());
+        $InfoDTO->setUrl('new_info_url');
+        self::assertSame('new_info_url', $InfoDTO->getUrl());
 
         $InfoDTO->setProfile($UserProfileUid = new UserProfileUid());
         self::assertSame($UserProfileUid, $InfoDTO->getProfile());
@@ -320,8 +324,8 @@ class ProductsProductNewTest extends KernelTestCase
 
         $ProductOffersCollectionDTO = new ProductOffersCollectionDTO();
 
-        $ProductOffersCollectionDTO->setValue('Test New Offer Value');
-        self::assertSame('Test New Offer Value', $ProductOffersCollectionDTO->getValue());
+        $ProductOffersCollectionDTO->setValue(self::OFFER_VALUE);
+        self::assertSame('100', $ProductOffersCollectionDTO->getValue());
 
         $ProductOffersCollectionDTO->setPostfix('Test New Offer Postfix');
         self::assertSame('Test New Offer Postfix', $ProductOffersCollectionDTO->getPostfix());
@@ -400,8 +404,8 @@ class ProductsProductNewTest extends KernelTestCase
         $ProductOffersVariationCollectionDTO->setArticle('Test New Variation Article');
         self::assertSame('Test New Variation Article', $ProductOffersVariationCollectionDTO->getArticle());
 
-        $ProductOffersVariationCollectionDTO->setValue('Test New Variation Value');
-        self::assertSame('Test New Variation Value', $ProductOffersVariationCollectionDTO->getValue());
+        $ProductOffersVariationCollectionDTO->setValue(self::VARIATION_VALUE);
+        self::assertSame('200', $ProductOffersVariationCollectionDTO->getValue());
 
         $ProductOffersVariationCollectionDTO->setPostfix('Test New Variation Postfix');
         self::assertSame('Test New Variation Postfix', $ProductOffersVariationCollectionDTO->getPostfix());
@@ -477,9 +481,9 @@ class ProductsProductNewTest extends KernelTestCase
         );
 
 
-        $ProductOffersVariationModificationCollectionDTO->setValue('Test New Modification Value');
+        $ProductOffersVariationModificationCollectionDTO->setValue(self::MODIFICATION_VALUE);
         self::assertSame(
-            'Test New Modification Value',
+            '300',
             $ProductOffersVariationModificationCollectionDTO->getValue()
         );
 
@@ -519,7 +523,6 @@ class ProductsProductNewTest extends KernelTestCase
         );
 
         $ProductOffersVariationCollectionDTO->addModification($ProductOffersVariationModificationCollectionDTO);
-
 
         /** @var ProductHandler $ProductHandler */
         $ProductHandler = self::getContainer()->get(ProductHandler::class);

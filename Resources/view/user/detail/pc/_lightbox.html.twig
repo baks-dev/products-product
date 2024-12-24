@@ -27,7 +27,7 @@
                                 {% set img_host =  modification_image.product_img_cdn == true  ? CDN_HOST : '' %}
                                 {% set img_dir = modification_image.product_img %}
                                 {% set img_file = (img_host is empty ? '/image.' : '/large.') ~ modification_image.product_img_ext %}
-                                {% set image_path = img_host ~ img_table ~ img_dir ~ img_file %}
+                                {% set image_path = img_host ~ img_dir ~ img_file %}
                             {% endif %}
 
                             <div class="carousel-item {{ img_active ? 'active' }}">

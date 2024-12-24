@@ -43,6 +43,7 @@ use BaksDev\Products\Product\Entity\Offers\Price\ProductOfferPrice;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\Quantity\ProductOfferQuantity;
 use BaksDev\Products\Product\Entity\Offers\Variation\Image\ProductVariationImage;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Image\ProductModificationImage;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Price\ProductModificationPrice;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Quantity\ProductModificationQuantity;
@@ -301,6 +302,10 @@ final class AllProductsRepository implements AllProductsInterface
         $dbal->addSelect(
             "
 			CASE
+			
+			    WHEN product_variation_image.name IS NOT NULL 
+			   THEN CONCAT ( '/upload/".$dbal->table(ProductModificationImage::class)."' , '/', product_variation_image.name)
+			   
 			   WHEN product_variation_image.name IS NOT NULL 
 			   THEN CONCAT ( '/upload/".$dbal->table(ProductVariationImage::class)."' , '/', product_variation_image.name)
 			   

@@ -102,15 +102,13 @@ final class CategoryController extends AbstractController
                     ];
                 }
             }
-
-            $productsByCategory
-                ->filter($ProductCategoryFilterDTO)
-                ->property($property);
         }
 
 
         /* Список товаров в категории */
         $Products = $productsByCategory
+            ->filter($ProductCategoryFilterDTO)
+            ->property($property)
             ->fetchAllProductByCategoryAssociative($CategoryUid, 'AND');
 
 

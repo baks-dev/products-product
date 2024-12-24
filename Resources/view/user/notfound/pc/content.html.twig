@@ -117,7 +117,7 @@
                     {% set image_path = '/assets/img/blank.svg' %}
 
                     {% if modification_image.product_img_ext is defined and modification_image.product_img_ext is not null %}
-                        {% set img_host =  ISSET_CDN == true  ? CDN_HOST : '' %}
+                        {% set img_host =  CDN_HOST == true  ? CDN_HOST : '' %}
                         {% set img_table = '/upload/payment_cover' %}
                         {% set img_dir = modification_image.product_img %}
                         {% set img_file = (img_host is empty ? '/image.' : '/min.') ~ modification_image.product_img_ext %}
@@ -138,7 +138,7 @@
 
                     {% if variation_image.product_img_ext is defined and variation_image.product_img_ext is not null %}
                         {% set img_host =  variation_image.product_img_cdn == true  ? CDN_HOST : '' %}
-                        {% set img_dir = ISSET_NAME %}
+                        {% set img_dir = variation_image.product_img %}
                         {% set img_file = (img_host is empty ? '/image.' : '/min.') ~ variation_image.product_img_ext %}
                         {% set image_path = img_host ~ img_dir ~ img_file %}
                     {% endif %}
@@ -161,7 +161,7 @@
                         {% set img_host =  offer_images.product_img_cdn == true  ? CDN_HOST : '' %}
                         {% set img_dir = offer_images.product_img %}
                         {% set img_file = (img_host is empty ? '/image.' : '/min.') ~ offer_images.product_img_ext %}
-                        {% set image_path = img_host ~ img_table ~ img_dir ~ img_file %}
+                        {% set image_path = img_host ~ img_dir ~ img_file %}
                     {% endif %}
 
 
