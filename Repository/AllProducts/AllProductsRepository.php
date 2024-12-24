@@ -287,16 +287,23 @@ final class AllProductsRepository implements AllProductsInterface
 
         $dbal->leftJoin(
             'product_offer',
+            ProductOfferImage::class,
+            'product_offer_images',
+            'product_offer_images.offer = product_offer.id AND product_offer_images.root = true'
+        );
+
+        $dbal->leftJoin(
+            'product_offer',
             ProductVariationImage::class,
             'product_variation_image',
             'product_variation_image.variation = product_variation.id AND product_variation_image.root = true'
         );
 
         $dbal->leftJoin(
-            'product_offer',
-            ProductOfferImage::class,
-            'product_offer_images',
-            'product_offer_images.offer = product_offer.id AND product_offer_images.root = true'
+            'product_modification',
+            ProductModificationImage::class,
+            'product_modification_image',
+            'product_modification_image.modification = product_modification.id AND product_modification_image.root = true'
         );
 
         $dbal->addSelect(
@@ -754,6 +761,13 @@ final class AllProductsRepository implements AllProductsInterface
             ProductModification::class,
             'product_modification',
             'product_modification.variation = product_variation.id '
+        );
+
+        $dbal->leftJoin(
+            'product_modification',
+            ProductModificationImage::class,
+            'product_modification_image',
+            'product_modification_image.modification = product_modification.id AND product_modification_image.root = true'
         );
 
 
