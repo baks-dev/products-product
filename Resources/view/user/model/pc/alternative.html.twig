@@ -59,7 +59,8 @@
                                     url: card.url,
                                     offer : offers.offer_value,
                                     variation : offers.variation_value,
-                                    modification : offers.modification_value
+                                    modification : offers.modification_value,
+                                    postfix:  (offers.modification_postfix ?: offers.variation_postfix ?: offers.offer_postfix ?: null )|replace({ '/': '-' })
                                 }) }}">
                                     {{ card.product_name }}
                                 </a>

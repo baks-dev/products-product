@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -175,7 +175,6 @@ final class ProductCategoryFilterForm extends AbstractType
                                 $properties[$property->getConst()] = $property->getValue();
                             }
                         }
-
                     }
 
                     !empty($properties) ? $sessionArray['properties'] = $properties : false;
@@ -190,25 +189,6 @@ final class ProductCategoryFilterForm extends AbstractType
 
                     $this->session->remove($this->sessionKey);
                 }
-
-
-                //                $session = [];
-                //
-                //                if($data->getProperty())
-                //                {
-                //                    /** @var Property\ProductFilterPropertyDTO $property */
-                //                    foreach($data->getProperty() as $property)
-                //                    {
-                //                        if(!empty($property->getValue()) && $property->getValue() !== 'false')
-                //                        {
-                //                            $session[$property->getConst()] = $property->getValue();
-                //                        }
-                //                    }
-                //
-                //                }
-
-
-                // $this->request->getSession()->set('catalog_filter', $session);
             }
         );
 
@@ -328,35 +308,35 @@ final class ProductCategoryFilterForm extends AbstractType
                     $i--;
                 }
 
-                $builder->addEventListener(
-                    FormEvents::POST_SUBMIT,
-                    function(FormEvent $event) {
-
-                        $data = $event->getForm()->all();
-
-                        $session = [];
-
-                        foreach($data as $datum)
-                        {
-                            if(!empty($datum->getViewData()))
-                            {
-                                if($datum->getNormData() === true)
-                                {
-                                    $item = 'true';
-                                }
-                                else
-                                {
-                                    $item = (string) $datum->getNormData();
-                                }
-
-                                $session[$datum->getConfig()->getOption('block_name')] = $item;
-                            }
-                        }
-
-                        $this->request->getSession()->set('catalog_filter', $session);
-
-                    }
-                );
+                //                $builder->addEventListener(
+                //                    FormEvents::POST_SUBMIT,
+                //                    function(FormEvent $event) {
+                //
+                //                        $data = $event->getForm()->all();
+                //
+                //                        $session = [];
+                //
+                //                        foreach($data as $datum)
+                //                        {
+                //                            if(!empty($datum->getViewData()))
+                //                            {
+                //                                if($datum->getNormData() === true)
+                //                                {
+                //                                    $item = 'true';
+                //                                }
+                //                                else
+                //                                {
+                //                                    $item = (string) $datum->getNormData();
+                //                                }
+                //
+                //                                $session[$datum->getConfig()->getOption('block_name')] = $item;
+                //                            }
+                //                        }
+                //
+                //                        $this->request->getSession()->set('catalog_filter', $session);
+                //
+                //                    }
+                //                );
 
 
             }
