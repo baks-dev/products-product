@@ -754,7 +754,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
             $dbal->setMaxResults($this->maxResult);
         }
 
-//        $dbal->enableCache('product-products', 86400, false);
+        $dbal->enableCache('product-products', 86400, false);
 
         $result = $dbal->fetchAllAssociative();
 
