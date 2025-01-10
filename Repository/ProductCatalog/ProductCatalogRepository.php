@@ -173,6 +173,37 @@ final class ProductCatalogRepository implements ProductCatalogInterface
             'product_event.id = product.event'
         );
 
+        /** Категория */
+        if($this->categoryUid instanceof CategoryProductUid)
+        {
+            $dbal->join(
+                'product',
+                ProductCategory::class,
+                'product_event_category',
+                '
+                product_event_category.event = product.event AND 
+                product_event_category.category = :category AND 
+                product_event_category.root = true'
+            )->setParameter(
+                'category',
+                $this->categoryUid,
+                CategoryProductUid::TYPE
+            );
+        }
+        else
+        {
+            $dbal->leftJoin(
+                'product',
+                ProductCategory::class,
+                'product_event_category',
+                '
+                product_event_category.event = product.event AND 
+                product_event_category.root = true'
+            );
+        }
+
+
+
         /** ФИЛЬТР СВОЙСТВ */
         if($this->property)
         {
@@ -354,6 +385,8 @@ final class ProductCatalogRepository implements ProductCatalogInterface
                 'product_offer_variation',
                 'product_offer_variation.offer = product_offer.id '.($this->filter?->getVariation() ? ' AND product_offer_variation.value = :variation' : '').' '
             );
+
+
 
         /** Цена множественного варианта */
         $dbal->leftJoin(
@@ -607,34 +640,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
 			END AS product_currency"
         );
 
-        /** Категория */
-        if($this->categoryUid instanceof CategoryProductUid)
-        {
-            $dbal->join(
-                'product',
-                ProductCategory::class,
-                'product_event_category',
-                '
-                product_event_category.event = product.event AND 
-                product_event_category.category = :category AND 
-                product_event_category.root = true'
-            )->setParameter(
-                'category',
-                $this->categoryUid,
-                CategoryProductUid::TYPE
-            );
-        }
-        else
-        {
-            $dbal->leftJoin(
-                'product',
-                ProductCategory::class,
-                'product_event_category',
-                '
-                product_event_category.event = product.event AND 
-                product_event_category.root = true'
-            );
-        }
+
 
         $dbal->leftJoin(
             'product_event_category',
@@ -719,6 +725,8 @@ final class ProductCatalogRepository implements ProductCatalogInterface
 			END > 0
  		"
         );
+
+
 
         /** Только при наличии */
         $dbal->andWhere("

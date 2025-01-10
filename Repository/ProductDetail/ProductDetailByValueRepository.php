@@ -59,6 +59,7 @@ use BaksDev\Products\Product\Entity\Offers\Variation\Quantity\ProductVariationQu
 use BaksDev\Products\Product\Entity\Photo\ProductPhoto;
 use BaksDev\Products\Product\Entity\Price\ProductPrice;
 use BaksDev\Products\Product\Entity\Product;
+use BaksDev\Products\Product\Entity\ProductInvariable;
 use BaksDev\Products\Product\Entity\Property\ProductProperty;
 use BaksDev\Products\Product\Entity\Seo\ProductSeo;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
@@ -683,6 +684,21 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
 			
 		)
 			AS category_section_field"
+        );
+
+        /** Product Invariable */
+        $dbal
+            ->addSelect('product_invariable.id AS product_invariable_id')
+            ->leftJoin(
+            'product_modification',
+            ProductInvariable::class,
+            'product_invariable',
+            '
+                    product.id = product_invariable.product AND 
+                    product_offer.const = product_invariable.offer AND
+                    product_variation.const = product_invariable.variation AND
+                    product_modification.const = product_invariable.modification
+                '
         );
 
         $dbal->where('product.id = :product');
