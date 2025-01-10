@@ -35,6 +35,8 @@ use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Forms\ProductFilter\Admin\ProductFilterDTO;
 use BaksDev\Products\Product\Forms\ProductFilter\Admin\ProductFilterForm;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\CallbackTransformer;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -133,7 +135,6 @@ final class ProductCategoryFilterForm extends AbstractType
 
         });
 
-
         $builder->addEventListener(
             FormEvents::POST_SUBMIT,
             function(FormEvent $event): void {
@@ -192,14 +193,25 @@ final class ProductCategoryFilterForm extends AbstractType
             }
         );
 
-
         $data = $builder->getData();
 
         if($data->getCategory())
         {
 
-            /** Торговое предложение раздела */
+            $builder->add('category', HiddenType::class);
 
+            $builder->get('category')->addModelTransformer(
+                new CallbackTransformer(
+                    function(?string $field) {
+                        return $field instanceof CategoryProductUid ? $field->getValue() : $field;
+                    },
+                    function(?string $field) {
+                        return $field ? new CategoryProductUid($field) : null;
+                    },
+                ),
+            );
+
+            /** Торговое предложение раздела */
             $offerField = $this->offerChoice
                 ->category($data->getCategory())
                 ->findAllCategoryProductOffers();
@@ -275,7 +287,6 @@ final class ProductCategoryFilterForm extends AbstractType
 
 
             /** Свойства, участвующие в фильтре */
-
             $fields = $this->fields
                 ->category($data->getCategory())
                 ->findAll();

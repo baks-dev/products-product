@@ -26,7 +26,8 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Controller\User;
 
 use BaksDev\Core\Controller\AbstractController;
-use BaksDev\Products\Category\Repository\AllCategoryByMenu\AllCategoryByMenuInterface;
+use BaksDev\Products\Category\Repository\AllCategory\AllCategoryInterface;
+use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Forms\ProductCategoryFilter\User\ProductCategoryFilterDTO;
 use BaksDev\Products\Product\Forms\ProductCategoryFilter\User\ProductCategoryFilterForm;
 use BaksDev\Products\Product\Forms\ProductFilter\Admin\ProductFilterDTO;
@@ -48,13 +49,33 @@ final class CatalogController extends AbstractController
         Request $request,
         ProductCatalogInterface $catalogProducts,
         ProductLiederInterface $productsLeader,
-        AllCategoryByMenuInterface $allCategory,
+        AllCategoryInterface $allCategoryRec,
         FormFactoryInterface $formFactory,
         int $page = 0,
     ): Response
     {
+        /** Список всех категорий (родительские и дочерние) */
+        $categories = $allCategoryRec->getRecursive();
+
+        $categoryUid = null;
+
+        /** Из сессии */
+        if($sessionFromForm = $request->getSession()->get(md5(ProductFilterForm::class)))
+        {
+            $sessionData = base64_decode($sessionFromForm);
+            $allCategoryRec = json_decode($sessionData, true, 512, JSON_THROW_ON_ERROR);
+            $categoryUid = new CategoryProductUid($allCategoryRec['category']);
+        }
+
+        /** Из формы */
+        $post = $request->request->all();
+        if(isset($post['product_category_filter_form']['category']))
+        {
+            $categoryUid = new CategoryProductUid($post['product_category_filter_form']['category']);
+        }
+
         /** Фильтр с главной страницы */
-        $productCategoryFilterDTO = new ProductCategoryFilterDTO();
+        $productCategoryFilterDTO = new ProductCategoryFilterDTO($categoryUid);
 
         $productFilterForm = $this->createForm(ProductCategoryFilterForm::class, $productCategoryFilterDTO);
         $productFilterForm->handleRequest($request);
@@ -77,37 +98,34 @@ final class CatalogController extends AbstractController
             }
         }
 
-        $categories = $allCategory->findAll();
-
         $products = null;
         $bestOffers = null;
         $filters = null;
 
-        foreach($categories as $categoryUid => $category)
+        foreach($categories as $category)
         {
-            /** Продукция с фильтром с главной страницы */
-            $products[$categoryUid] = $catalogProducts
-                ->forCategory($categoryUid)
+            /** Продукция */
+            $products[$category['id']] = $catalogProducts
+                ->forCategory($category['id'])
                 ->maxResult(4)
                 ->property($propertyFields)
                 ->filter($productCategoryFilterDTO)
-                ->find();
+                ->find();;
 
-            $bestOffers[$categoryUid] = $productsLeader
-                ->forCategory($categoryUid)
+            /** Лучшие предложения */
+            $bestOffers[$category['id']] = $productsLeader
+                ->forCategory($category['id'])
                 ->maxResult(10)
                 ->find();
 
-            /**
-             * Фильтр продукции для каждой категории
-             */
+            /** Фильтр для продукции каждой категории*/
             $filter = new ProductFilterDTO();
             $filter
                 ->categoryInvisible()
-                ->setCategory($categoryUid);
+                ->setCategory($category['id']);
 
             $filterForm = $formFactory->createNamed(
-                $categoryUid,
+                $category['id'],
                 ProductFilterForm::class, $filter, [
                 'action' => $this->generateUrl('products-product:user.catalog.category',
                     ['category' => $category['category_url']]
@@ -116,7 +134,7 @@ final class CatalogController extends AbstractController
             ]);
 
             $filterForm->handleRequest($request);
-            $filters[$categoryUid] = $filterForm->createView();
+            $filters[$category['id']] = $filterForm->createView();
         }
 
         return $this->render(
