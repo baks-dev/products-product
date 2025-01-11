@@ -15,18 +15,13 @@
                 <a href="{{ path('products-product:user.catalog.category', { category : category.category_url }) }}"
                    class="d-flex gap-3 align-items-center fw-medium text-black text-uppercase rounded-5 px-3 fs-18 text-decoration-none py-3">
 
-                    {% set image_path = '/assets/img/blank.svg' %}
-
-                    {% if category.category_cover_ext is defined and category.category_cover_ext is not null %}
-                        {% set img_host = category.category_cover_cdn == true  ? CDN_HOST : '' %}
-                        {% set img_dir = category.category_cover_dir %}
-                        {% set img_file = (img_host is empty ? '/image.' : '/small.') ~ category.category_cover_ext %}
-                        {% set image_path = img_host ~ img_dir ~ img_file %}
-                    {% endif %}
-
                     <div class="icon m-0 rounded-3 bg-contain lazy p-1 shadow"
                          style="width: 50px; height: 50px;"
-                         data-bg="{{ image_path }}">
+                         data-bg="{{ cdn_image_path(
+                             name: category.category_cover_image,
+                             ext: category.category_cover_ext,
+                             cdn: category.category_cover_cdn,
+                         ) }}">
                     </div>
 
                     {{ category.category_name }}

@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -37,6 +37,8 @@ final class CategoryCollectionForm extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+
+
         $builder
             ->add('category', ChoiceType::class, [
                 'choices' => $this->category->findAll(), // все категории, включая неактивные
@@ -44,7 +46,8 @@ final class CategoryCollectionForm extends AbstractType
                     return $type?->getValue();
                 },
                 'choice_label' => function(CategoryProductUid $type) {
-                    return ($type->getAttr() ? ' - ' : '').$type->getOptions();
+
+                    return ($type->getAttr() ? str_repeat(' - ', $type->getAttr() - 1) : '').$type->getOptions();
                 },
 
                 'label' => false,

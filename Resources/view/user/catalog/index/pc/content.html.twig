@@ -7,7 +7,7 @@
 
         {% for categoryId, category in categories %}
 
-            {% if products[categoryId] and bestOffers[categoryId] %}
+            {% if products[category.id] and bestOffers[category.id] %}
 
                 <div class="row ">
 
@@ -23,14 +23,14 @@
                                 </button>
                             </a>
 
-                            {% set filter = filters[categoryId] %}
+                            {% set filter = filters[category.id] %}
                             {% include Template('@products-product/filter/'~baks_settings.device~'/filter.html.twig') %}
 
                         </div>
 
                         <div class="row row-cols-4 gy-5">
 
-                            {% for product in products[categoryId] %}
+                            {% for product in products[category.id] %}
                                 <div class="col p-1 px-2">
                                     {# КАРТОЧКА ТОВАРА #}
 
@@ -47,7 +47,7 @@
 
                     <div class="col-3 ">
                         {# ЛИДЕРЫ ПРОДАЖ #}
-                        {{ include (_self|replace({ "content.html.twig" : "_includes/best_offers.html.twig" }), { 'bestOffers' : bestOffers[categoryId] }, with_context = false) }}
+                        {{ include (_self|replace({ "content.html.twig" : "_includes/best_offers.html.twig" }), { 'bestOffers' : bestOffers[category.id] }, with_context = false) }}
                     </div>
 
                 </div>
