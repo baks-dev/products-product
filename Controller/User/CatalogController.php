@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -64,7 +64,11 @@ final class CatalogController extends AbstractController
         {
             $sessionData = base64_decode($sessionFromForm);
             $allCategoryRec = json_decode($sessionData, true, 512, JSON_THROW_ON_ERROR);
-            $categoryUid = new CategoryProductUid($allCategoryRec['category']);
+
+            if(isset($allCategoryRec['category']))
+            {
+                $categoryUid = new CategoryProductUid($allCategoryRec['category']);
+            }
         }
 
         /** Из формы */
@@ -110,7 +114,7 @@ final class CatalogController extends AbstractController
                 ->maxResult(4)
                 ->property($propertyFields)
                 ->filter($productCategoryFilterDTO)
-                ->find();;
+                ->find();
 
             /** Лучшие предложения */
             $bestOffers[$category['id']] = $productsLeader

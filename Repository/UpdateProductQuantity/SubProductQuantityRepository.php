@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -93,9 +93,9 @@ final class SubProductQuantityRepository implements SubProductQuantityInterface
         return $this;
     }
 
-    public function forOffer(ProductOffer|ProductOfferUid|string|null $offer): self
+    public function forOffer(ProductOffer|ProductOfferUid|string|false|null $offer): self
     {
-        if(is_null($offer))
+        if(empty($offer))
         {
             $this->offer = false;
             return $this;
@@ -116,9 +116,9 @@ final class SubProductQuantityRepository implements SubProductQuantityInterface
         return $this;
     }
 
-    public function forVariation(ProductVariation|ProductVariationUid|string|null $variation): self
+    public function forVariation(ProductVariation|ProductVariationUid|string|false|null $variation): self
     {
-        if(is_null($variation))
+        if(empty($variation))
         {
             $this->variation = false;
             return $this;
@@ -140,9 +140,9 @@ final class SubProductQuantityRepository implements SubProductQuantityInterface
         return $this;
     }
 
-    public function forModification(ProductModification|ProductModificationUid|string|null $modification): self
+    public function forModification(ProductModification|ProductModificationUid|string|false|null $modification): self
     {
-        if(is_null($modification))
+        if(empty($modification))
         {
             $this->modification = false;
             return $this;
