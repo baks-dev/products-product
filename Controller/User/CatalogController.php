@@ -19,6 +19,7 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 declare(strict_types=1);
@@ -63,11 +64,11 @@ final class CatalogController extends AbstractController
         if($sessionFromForm = $request->getSession()->get(md5(ProductFilterForm::class)))
         {
             $sessionData = base64_decode($sessionFromForm);
-            $allCategoryRec = json_decode($sessionData, true, 512, JSON_THROW_ON_ERROR);
+            $categoryId = json_decode($sessionData, true, 512, JSON_THROW_ON_ERROR);
 
-            if(isset($allCategoryRec['category']))
+            if(isset($categoryId['category']))
             {
-                $categoryUid = new CategoryProductUid($allCategoryRec['category']);
+                $categoryUid = new CategoryProductUid($categoryId['category']);
             }
         }
 
@@ -102,11 +103,14 @@ final class CatalogController extends AbstractController
             }
         }
 
+        /** Список только дочерних категорий */
+        $childrenCategories = $allCategoryRec->getOnlyChildren();
+
         $products = null;
         $bestOffers = null;
         $filters = null;
 
-        foreach($categories as $category)
+        foreach($childrenCategories as $category)
         {
             /** Продукция */
             $products[$category['id']] = $catalogProducts
@@ -143,7 +147,7 @@ final class CatalogController extends AbstractController
 
         return $this->render(
             [
-                'categories' => $categories,
+                'categories' => $childrenCategories,
                 'products' => $products,
                 'bestOffers' => $bestOffers,
                 'filters' => $filters,
