@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -68,6 +68,7 @@ class ProductInvariable extends EntityState
     /** Константа модификации множественного варианта */
     #[ORM\Column(type: ProductModificationConst::TYPE, nullable: true)]
     private ?ProductModificationConst $modification = null;
+
 
     public function __construct()
     {

@@ -42,12 +42,11 @@ final class CategoryCollectionForm extends AbstractType
         $builder
             ->add('category', ChoiceType::class, [
                 'choices' => $this->category->findAll(), // все категории, включая неактивные
-                'choice_value' => function(?CategoryProductUid $type) {
-                    return $type?->getValue();
+                'choice_value' => function(?CategoryProductUid $category) {
+                    return $category?->getValue();
                 },
-                'choice_label' => function(CategoryProductUid $type) {
-
-                    return ($type->getAttr() ? str_repeat(' - ', $type->getAttr() - 1) : '').$type->getOptions();
+                'choice_label' => function(CategoryProductUid $category) {
+                    return (is_int($category->getAttr()) ? str_repeat(' - ', $category->getAttr() - 1) : '').$category->getOptions();
                 },
 
                 'label' => false,
