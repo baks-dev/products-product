@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -690,16 +690,32 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
         $dbal
             ->addSelect('product_invariable.id AS product_invariable_id')
             ->leftJoin(
-            'product_modification',
-            ProductInvariable::class,
-            'product_invariable',
-            '
-                    product.id = product_invariable.product AND 
-                    product_offer.const = product_invariable.offer AND
-                    product_variation.const = product_invariable.variation AND
-                    product_modification.const = product_invariable.modification
+                'product_modification',
+                ProductInvariable::class,
+                'product_invariable',
                 '
-        );
+                    product_invariable.product = product.id AND 
+                    
+                    (
+                        (product_offer.const IS NOT NULL AND product_invariable.offer = product_offer.const) OR 
+                        (product_offer.const IS NULL AND product_invariable.offer IS NULL)
+                    )
+                    
+                    AND
+                     
+                    (
+                        (product_variation.const IS NOT NULL AND product_invariable.variation = product_variation.const) OR 
+                        (product_variation.const IS NULL AND product_invariable.variation IS NULL)
+                    )
+                     
+                   AND
+                   
+                   (
+                        (product_modification.const IS NOT NULL AND product_invariable.modification = product_modification.const) OR 
+                        (product_modification.const IS NULL AND product_invariable.modification IS NULL)
+                   )
+         
+            ');
 
         $dbal->where('product.id = :product');
         $dbal->setParameter('product', $product, ProductUid::TYPE);
