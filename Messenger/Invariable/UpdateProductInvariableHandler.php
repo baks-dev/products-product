@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -37,16 +37,17 @@ use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductM
 use BaksDev\Products\Product\UseCase\Admin\Invariable\ProductInvariableDTO;
 use BaksDev\Products\Product\UseCase\Admin\Invariable\ProductInvariableHandler;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler(priority: 0)]
 final readonly class UpdateProductInvariableHandler
 {
     public function __construct(
+        #[Target('productsProductLogger')] private LoggerInterface $logger,
         private AllProductsIdentifierInterface $allProductsIdentifier,
         private ProductInvariableInterface $productInvariable,
         private ProductInvariableHandler $productInvariableHandler,
-        private LoggerInterface $logger
     ) {}
 
     /**

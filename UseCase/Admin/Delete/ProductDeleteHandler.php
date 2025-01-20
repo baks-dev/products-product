@@ -30,28 +30,17 @@ use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Messenger\ProductMessage;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-final class ProductDeleteHandler
+final readonly class ProductDeleteHandler
 {
-    private EntityManagerInterface $entityManager;
-    private ValidatorInterface $validator;
-    private LoggerInterface $logger;
-    private MessageDispatchInterface $messageDispatch;
-
-
     public function __construct(
-        EntityManagerInterface $entityManager,
-        ValidatorInterface $validator,
-        LoggerInterface $logger,
-        MessageDispatchInterface $messageDispatch
-    )
-    {
-        $this->entityManager = $entityManager;
-        $this->validator = $validator;
-        $this->logger = $logger;
-        $this->messageDispatch = $messageDispatch;
-    }
+        #[Target('productsProductLogger')] private LoggerInterface $logger,
+        private EntityManagerInterface $entityManager,
+        private ValidatorInterface $validator,
+        private MessageDispatchInterface $messageDispatch
+    ) {}
 
     public function handle(
         ProductDeleteDTO $command
@@ -131,9 +120,9 @@ final class ProductDeleteHandler
         $this->messageDispatch
             ->addClearCacheOther('products-category')
             ->dispatch(
-            message: new ProductMessage($Main->getId(), $Main->getEvent(), $command->getEvent()),
-            transport: 'products-product'
-        );
+                message: new ProductMessage($Main->getId(), $Main->getEvent(), $command->getEvent()),
+                transport: 'products-product'
+            );
 
 
         return $Main;
