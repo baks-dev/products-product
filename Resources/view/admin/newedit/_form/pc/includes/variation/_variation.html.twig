@@ -70,7 +70,13 @@
                 </button>
             </div>
 
-            {{ form_row(variation.article, variation.article.vars.data ? { label : 'Артикул' } : { label : false, attr : { placeholder : 'Артикул' }} ) }}
+            <div class="w-100">
+                {{ form_row(variation.article,
+                    variation.article.vars.data and loop.first ? { label : 'Артикул' } : { label : false, attr:  { placeholder : 'Артикул' } }
+                ) }}
+            </div>
+
+            {# {{ form_row(variation.article, variation.article.vars.data ? { label : 'Артикул' } : { label : false, attr : { placeholder : 'Артикул' }} ) }} #}
         </div>
 
 
