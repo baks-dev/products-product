@@ -27,11 +27,11 @@
         </div>
     {% endif %}
 
-    {% if filter.vars.data.invisible == false %}
+    {% if filter.vars.data.invisible is defined and filter.vars.data.invisible == false %}
 
-    <div class="w-25">
-        {{ form_widget(filter.category, { placeholder: 'Все категории ...', attr: { 'data-select' : 'select2', class: 'mb-0' } }) }}
-    </div>
+        <div class="w-25">
+            {{ form_widget(filter.category, { placeholder: 'Все категории ...', attr: { 'data-select' : 'select2', class: 'mb-0' } }) }}
+        </div>
 
     {% endif %}
 
