@@ -432,7 +432,6 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
 
 
         $dbal->allGroupByExclude();
-        dd($dbal->analyze());
 
         $dbal
             ->addSelect('SUM(product_variation_quantity.quantity) AS product_variation_quantity')
