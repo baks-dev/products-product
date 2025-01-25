@@ -591,24 +591,15 @@ final class ProductCatalogRepository implements ProductCatalogInterface
         );
 
         /** Стоимость продукта */
-        $dbal->addSelect("
-			CASE
-			   WHEN COALESCE(product_modification_price.price, 0) != 0 
-			   THEN product_modification_price.price
-			   
-			   WHEN COALESCE(product_variation_price.price, 0) != 0 
-			   THEN product_variation_price.price
-			   
-			   WHEN COALESCE(product_offer_price.price, 0) != 0 
-			   THEN product_offer_price.price
-			   
-			   WHEN COALESCE(product_price.price, 0) != 0 
-			   THEN product_price.price
-			   
-			   ELSE NULL
-			END AS product_price
-		"
-        );
+        $dbal->addSelect('
+			COALESCE(
+                NULLIF(product_modification_price.price, 0), 
+                NULLIF(product_variation_price.price, 0), 
+                NULLIF(product_offer_price.price, 0), 
+                NULLIF(product_price.price, 0),
+                0
+            ) AS product_price
+		');
 
         /** Предыдущая стоимость продукта */
         $dbal->addSelect("
@@ -621,7 +612,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
             ) AS product_old_price
 		");
 
-        /** Стоимость продукта */
+        /** Валюта продукта */
         $dbal->addSelect("
 			CASE
 			   WHEN COALESCE(product_modification_price.price, 0) != 0 

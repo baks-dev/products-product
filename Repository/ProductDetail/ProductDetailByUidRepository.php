@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -26,7 +26,6 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Repository\ProductDetail;
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
-use BaksDev\Core\Type\Locale\Locale;
 use BaksDev\Products\Category\Entity\CategoryProduct;
 use BaksDev\Products\Category\Entity\Info\CategoryProductInfo;
 use BaksDev\Products\Category\Entity\Offers\CategoryProductOffers;
@@ -49,6 +48,7 @@ use BaksDev\Products\Product\Entity\Offers\Price\ProductOfferPrice;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\Quantity\ProductOfferQuantity;
 use BaksDev\Products\Product\Entity\Offers\Variation\Image\ProductVariationImage;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Image\ProductModificationImage;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Price\ProductModificationPrice;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Quantity\ProductModificationQuantity;
@@ -63,37 +63,42 @@ use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
-use Symfony\Contracts\Translation\TranslatorInterface;
+use InvalidArgumentException;
 
 final class ProductDetailByUidRepository implements ProductDetailByUidInterface
 {
+    private ProductEventUid|false $event = false;
+
+    private ProductOfferUid|false $offer = false;
+
+    private ProductVariationUid|false $variation = false;
+
+    private ProductModificationUid|false $modification = false;
+
     public function __construct(private readonly DBALQueryBuilder $DBALQueryBuilder) {}
 
-    /**
-     * Метод возвращает детальную информацию о продукте по его идентификаторам события, ТП, вариантов и модификаций.
-     */
-    public function fetchProductDetailByEventAssociative(
-        ProductEvent|ProductEventUid|string $event,
-        ProductOffer|ProductOfferUid|string|null $offer = null,
-        ProductVariation|ProductVariationUid|string|null $variation = null,
-        ProductModification|ProductModificationUid|string|null $modification = null,
-    ): false|array
+    public function event(ProductEvent|ProductEventUid|string $event): self
     {
+        if(is_string($event))
+        {
+            $event = new ProductEventUid($event);
+        }
 
         if($event instanceof ProductEvent)
         {
             $event = $event->getId();
         }
 
-        if(is_string($event))
-        {
-            $event = new ProductEventUid($event);
-        }
+        $this->event = $event;
+        return $this;
+    }
 
-
-        if($offer instanceof ProductOffer)
+    public function offer(ProductOffer|ProductOfferUid|string|null|false $offer): self
+    {
+        if(empty($offer))
         {
-            $offer = $offer->getId();
+            $this->offer = false;
+            return $this;
         }
 
         if(is_string($offer))
@@ -101,10 +106,21 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
             $offer = new ProductOfferUid($offer);
         }
 
-
-        if($variation instanceof ProductVariation)
+        if($offer instanceof ProductOffer)
         {
-            $variation = $variation->getId();
+            $offer = $offer->getId();
+        }
+
+        $this->offer = $offer;
+        return $this;
+    }
+
+    public function variation(ProductVariation|ProductVariationUid|string|null|false $variation): self
+    {
+        if(empty($variation))
+        {
+            $this->variation = false;
+            return $this;
         }
 
         if(is_string($variation))
@@ -112,9 +128,21 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
             $variation = new ProductVariationUid($variation);
         }
 
-        if($modification instanceof ProductModification)
+        if($variation instanceof ProductVariation)
         {
-            $modification = $modification->getId();
+            $variation = $variation->getId();
+        }
+
+        $this->variation = $variation;
+        return $this;
+    }
+
+    public function modification(ProductModification|ProductModificationUid|string|null|false $modification): self
+    {
+        if(empty($modification))
+        {
+            $this->modification = false;
+            return $this;
         }
 
         if(is_string($modification))
@@ -122,352 +150,325 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
             $modification = new ProductModificationUid($modification);
         }
 
-        $qb = $this->DBALQueryBuilder
+        if($modification instanceof ProductModification)
+        {
+            $modification = $modification->getId();
+        }
+
+        $this->modification = $modification;
+        return $this;
+    }
+
+    /**
+     * Метод возвращает детальную информацию о продукте по его идентификаторам события, ТП, вариантов и модификаций.
+     */
+    public function find(): array|false
+    {
+
+        if(false === $this->event)
+        {
+            throw new InvalidArgumentException('Invalid Argument ProductEvent');
+        }
+
+        $dbal = $this->DBALQueryBuilder
             ->createQueryBuilder(self::class)
             ->bindLocal();
 
-        $qb->select('product_event.main'); //->groupBy('product_event.main');
-        $qb->addSelect('product_event.id'); //->addGroupBy('product_event.id');
+        $dbal->select('product_event.main'); //->groupBy('product_event.main');
+        $dbal->addSelect('product_event.id'); //->addGroupBy('product_event.id');
 
-        $qb
+        $dbal
             ->from(ProductEvent::class, 'product_event')
             ->where('product_event.id = :event')
             ->setParameter(
                 'event',
-                $event,
+                $this->event,
                 ProductEventUid::TYPE
             );
 
 
-        $qb->addSelect('product_active.active'); //->addGroupBy('product_active.active');
-        $qb->addSelect('product_active.active_from'); //->addGroupBy('product_active.active_from');
-        $qb->addSelect('product_active.active_to'); //->addGroupBy('product_active.active_to');
+        $dbal
+            ->addSelect('product_active.active')
+            ->addSelect('product_active.active_from')
+            ->addSelect('product_active.active_to')
+            ->join(
+                'product_event',
+                ProductActive::class,
+                'product_active',
+                'product_active.event = product_event.id'
+            );
 
-        $qb->join(
-            'product_event',
-            ProductActive::class,
-            'product_active',
-            '
-			product_active.event = product_event.id
-			
-			'
-        );
-
-        $qb->addSelect('product_trans.name AS product_name'); //->addGroupBy('product_trans.name');
-
-        $qb->leftJoin(
-            'product_event',
-            ProductTrans::class,
-            'product_trans',
-            'product_trans.event = product_event.id AND product_trans.local = :local'
-        );
+        $dbal
+            ->addSelect('product_trans.name AS product_name')
+            ->leftJoin(
+                'product_event',
+                ProductTrans::class,
+                'product_trans',
+                'product_trans.event = product_event.id AND product_trans.local = :local'
+            );
 
 
-        $qb->addSelect('product_desc.preview AS product_preview'); //->addGroupBy('product_desc.preview');
-        $qb->addSelect('product_desc.description AS product_description'); //->addGroupBy('product_desc.description');
-
-        $qb
+        $dbal
+            ->addSelect('product_desc.preview AS product_preview')
+            ->addSelect('product_desc.description AS product_description')
             ->leftJoin(
                 'product_event',
                 ProductDescription::class,
                 'product_desc',
                 'product_desc.event = product_event.id AND product_desc.device = :device '
-            )->setParameter('device', 'pc');
+            )
+            ->setParameter('device', 'pc');
 
         /* Базовая Цена товара */
-        $qb->leftJoin(
+        $dbal->leftJoin(
             'product_event',
             ProductPrice::class,
             'product_price',
             'product_price.event = product_event.id'
-        )
-            //            ->addGroupBy('product_price.price')
-            //            ->addGroupBy('product_price.currency')
-            //            ->addGroupBy('product_price.quantity')
-            //            ->addGroupBy('product_price.reserve')
-            //            ->addGroupBy('product_price.reserve')
-        ;
+        );
 
         /* ProductInfo */
 
-        $qb->addSelect('product_info.url')//->addGroupBy('product_info.url')
-        ;
-
-        $qb->leftJoin(
-            'product_event',
-            ProductInfo::class,
-            'product_info',
-            'product_info.product = product_event.main '
-        )//->addGroupBy('product_info.article')
-        ;
+        $dbal
+            ->addSelect('product_info.url')
+            ->leftJoin(
+                'product_event',
+                ProductInfo::class,
+                'product_info',
+                'product_info.product = product_event.main '
+            );
 
         /* Торговое предложение */
 
-        $qb->addSelect('product_offer.id as product_offer_uid')//->addGroupBy('product_offer.id')
-        ;
-        $qb->addSelect('product_offer.value as product_offer_value')//->addGroupBy('product_offer.value')
-        ;
-        $qb->addSelect('product_offer.postfix as product_offer_postfix')//->addGroupBy('product_offer.postfix')
-        ;
+        $dbal
+            ->addSelect('product_offer.id as product_offer_uid')
+            ->addSelect('product_offer.value as product_offer_value')
+            ->addSelect('product_offer.postfix as product_offer_postfix');
 
-
-        $qb->{$offer ? 'join' : 'leftJoin'}(
+        $dbal->{$this->offer ? 'join' : 'leftJoin'}(
             'product_event',
             ProductOffer::class,
             'product_offer',
-            'product_offer.event = product_event.id '.($offer ? ' AND product_offer.id = :product_offer' : '').' '
-        )//->addGroupBy('product_offer.article')
-        ;
+            'product_offer.event = product_event.id '.($this->offer ? ' AND product_offer.id = :product_offer' : '').' '
+        );
 
-        if($offer)
+        if($this->offer)
         {
-            $qb->setParameter('product_offer', $offer);
+            $dbal->setParameter('product_offer', $this->offer, ProductOfferUid::TYPE);
         }
 
-        /* Цена торгового предо жения */
-        $qb->leftJoin(
+        /* Цена торгового предоложения */
+        $dbal->leftJoin(
             'product_offer',
             ProductOfferPrice::class,
             'product_offer_price',
             'product_offer_price.offer = product_offer.id'
-        )
-            //->addGroupBy('product_offer_price.price')
-            //->addGroupBy('product_offer_price.currency')
-        ;
+        );
 
         /* Получаем тип торгового предложения */
-        $qb->addSelect('category_offer.reference AS product_offer_reference')//->addGroupBy('category_offer.reference')
-        ;
-        $qb->leftJoin(
-            'product_offer',
-            CategoryProductOffers::class,
-            'category_offer',
-            'category_offer.id = product_offer.category_offer'
-        );
+        $dbal
+            ->addSelect('category_offer.reference AS product_offer_reference')
+            ->leftJoin(
+                'product_offer',
+                CategoryProductOffers::class,
+                'category_offer',
+                'category_offer.id = product_offer.category_offer'
+            );
 
         /* Получаем название торгового предложения */
-        $qb->addSelect('category_offer_trans.name as product_offer_name')//->addGroupBy('category_offer_trans.name')
-        ;
-        $qb->addSelect('category_offer_trans.postfix as product_offer_name_postfix')//->addGroupBy('category_offer_trans.postfix')
-        ;
-        $qb->leftJoin(
-            'category_offer',
-            CategoryProductOffersTrans::class,
-            'category_offer_trans',
-            'category_offer_trans.offer = category_offer.id AND category_offer_trans.local = :local'
-        );
+        $dbal
+            ->addSelect('category_offer_trans.name as product_offer_name')
+            ->addSelect('category_offer_trans.postfix as product_offer_name_postfix')
+            ->leftJoin(
+                'category_offer',
+                CategoryProductOffersTrans::class,
+                'category_offer_trans',
+                'category_offer_trans.offer = category_offer.id AND category_offer_trans.local = :local'
+            );
 
         /* Наличие и резерв торгового предложения */
-        $qb->leftJoin(
+        $dbal->leftJoin(
             'product_offer',
             ProductOfferQuantity::class,
             'product_offer_quantity',
             'product_offer_quantity.offer = product_offer.id'
-        )
-            //->addGroupBy('product_offer_quantity.quantity')
-            //->addGroupBy('product_offer_quantity.reserve')
-        ;
+        );
 
         //ProductCategoryOffers
 
         /* Множественные варианты торгового предложения */
 
-        $qb->addSelect('product_offer_variation.id as product_variation_uid')//->addGroupBy('product_offer_variation.id')
-        ;
-        $qb->addSelect('product_offer_variation.value as product_variation_value')//->addGroupBy('product_offer_variation.value')
-        ;
-        $qb->addSelect('product_offer_variation.postfix as product_variation_postfix')//->addGroupBy('product_offer_variation.postfix')
-        ;
+        $dbal
+            ->addSelect('product_variation.id as product_variation_uid')
+            ->addSelect('product_variation.value as product_variation_value')
+            ->addSelect('product_variation.postfix as product_variation_postfix');
 
-        $qb->{$variation ? 'join' : 'leftJoin'}(
+        $dbal->{$this->variation ? 'join' : 'leftJoin'}(
             'product_offer',
             ProductVariation::class,
-            'product_offer_variation',
-            'product_offer_variation.offer = product_offer.id'.($variation ? ' AND product_offer_variation.id = :product_variation' : '').' '
-        )//->addGroupBy('product_offer_variation.article')
-        ;
+            'product_variation',
+            'product_variation.offer = product_offer.id'.($this->variation ? ' AND product_variation.id = :product_variation' : '').' '
+        );
 
-        if($variation)
+        if($this->variation)
         {
-            $qb->setParameter('product_variation', $variation);
+            $dbal->setParameter('product_variation', $this->variation, ProductVariationUid::TYPE);
         }
 
         /* Цена множественного варианта */
-        $qb->leftJoin(
-            'product_offer_variation',
+        $dbal->leftJoin(
+            'product_variation',
             ProductVariationPrice::class,
             'product_variation_price',
-            'product_variation_price.variation = product_offer_variation.id'
-        )
-            //->addGroupBy('product_variation_price.price')
-            //->addGroupBy('product_variation_price.currency')
-        ;
+            'product_variation_price.variation = product_variation.id'
+        );
 
         /* Получаем тип множественного варианта */
-        $qb->addSelect('category_offer_variation.reference as product_variation_reference')//->addGroupBy('category_offer_variation.reference')
-        ;
-        $qb->leftJoin(
-            'product_offer_variation',
-            CategoryProductVariation::class,
-            'category_offer_variation',
-            'category_offer_variation.id = product_offer_variation.category_variation'
-        );
+        $dbal
+            ->addSelect('category_offer_variation.reference as product_variation_reference')
+            ->leftJoin(
+                'product_variation',
+                CategoryProductVariation::class,
+                'category_offer_variation',
+                'category_offer_variation.id = product_variation.category_variation'
+            );
 
         /* Получаем название множественного варианта */
-        $qb->addSelect('category_offer_variation_trans.name as product_variation_name')//->addGroupBy('category_offer_variation_trans.name')
-        ;
-
-        $qb->addSelect('category_offer_variation_trans.postfix as product_variation_name_postfix')//->addGroupBy('category_offer_variation_trans.postfix')
-        ;
-        $qb->leftJoin(
-            'category_offer_variation',
-            CategoryProductVariationTrans::class,
-            'category_offer_variation_trans',
-            'category_offer_variation_trans.variation = category_offer_variation.id AND category_offer_variation_trans.local = :local'
-        );
+        $dbal
+            ->addSelect('category_offer_variation_trans.name as product_variation_name')
+            ->addSelect('category_offer_variation_trans.postfix as product_variation_name_postfix')
+            ->leftJoin(
+                'category_offer_variation',
+                CategoryProductVariationTrans::class,
+                'category_offer_variation_trans',
+                'category_offer_variation_trans.variation = category_offer_variation.id AND category_offer_variation_trans.local = :local'
+            );
 
 
         /* Наличие и резерв множественного варианта */
-        $qb->leftJoin(
+        $dbal->leftJoin(
             'category_offer_variation',
             ProductVariationQuantity::class,
             'product_variation_quantity',
-            'product_variation_quantity.variation = product_offer_variation.id'
-        )
-            //->addGroupBy('product_variation_quantity.quantity')
-            //->addGroupBy('product_variation_quantity.reserve')
-        ;
+            'product_variation_quantity.variation = product_variation.id'
+        );
 
         /* Модификация множественного варианта торгового предложения */
 
-        $qb->addSelect('product_offer_modification.id as product_modification_uid')//->addGroupBy('product_offer_modification.id')
-        ;
-        $qb->addSelect('product_offer_modification.value as product_modification_value')//->addGroupBy('product_offer_modification.value')
-        ;
-        $qb->addSelect('product_offer_modification.postfix as product_modification_postfix')//->addGroupBy('product_offer_modification.postfix')
-        ;
+        $dbal
+            ->addSelect('product_modification.id as product_modification_uid')
+            ->addSelect('product_modification.value as product_modification_value')
+            ->addSelect('product_modification.postfix as product_modification_postfix');
 
-        $qb->{$modification ? 'join' : 'leftJoin'}(
-            'product_offer_variation',
+        $dbal->{$this->modification ? 'join' : 'leftJoin'}(
+            'product_variation',
             ProductModification::class,
-            'product_offer_modification',
-            'product_offer_modification.variation = product_offer_variation.id'.($modification ? ' AND product_offer_modification.id = :product_modification' : '').' '
-        )//->addGroupBy('product_offer_modification.article')
-        ;
+            'product_modification',
+            'product_modification.variation = product_variation.id'.($this->modification ? ' AND product_modification.id = :product_modification' : '').' '
+        );
 
-        if($modification)
+        if($this->modification)
         {
-            $qb->setParameter('product_modification', $modification);
+            $dbal->setParameter('product_modification', $this->modification, ProductModificationUid::TYPE);
         }
 
         /* Цена модификации множественного варианта */
-        $qb->leftJoin(
-            'product_offer_modification',
+        $dbal->leftJoin(
+            'product_modification',
             ProductModificationPrice::class,
             'product_modification_price',
-            'product_modification_price.modification = product_offer_modification.id'
-        )
-            //->addGroupBy('product_modification_price.price')
-            //->addGroupBy('product_modification_price.currency')
-        ;
+            'product_modification_price.modification = product_modification.id'
+        );
 
         /* Получаем тип модификации множественного варианта */
-        $qb
-            ->addSelect('category_offer_modification.reference as product_modification_reference')//->addGroupBy('category_offer_modification.reference')
-        ;
-        $qb->leftJoin(
-            'product_offer_modification',
-            CategoryProductModification::class,
-            'category_offer_modification',
-            'category_offer_modification.id = product_offer_modification.category_modification'
-        );
+        $dbal
+            ->addSelect('category_offer_modification.reference as product_modification_reference')
+            ->leftJoin(
+                'product_modification',
+                CategoryProductModification::class,
+                'category_offer_modification',
+                'category_offer_modification.id = product_modification.category_modification'
+            );
 
         /* Получаем название типа модификации */
-        $qb
-            ->addSelect('category_offer_modification_trans.name as product_modification_name')//->addGroupBy('category_offer_modification_trans.name')
-        ;
-
-        $qb
-            ->addSelect('category_offer_modification_trans.postfix as product_modification_name_postfix')//->addGroupBy('category_offer_modification_trans.postfix')
-        ;
-        $qb->leftJoin(
-            'category_offer_modification',
-            CategoryProductModificationTrans::class,
-            'category_offer_modification_trans',
-            'category_offer_modification_trans.modification = category_offer_modification.id AND category_offer_modification_trans.local = :local'
-        );
+        $dbal
+            ->addSelect('category_offer_modification_trans.name as product_modification_name')
+            ->addSelect('category_offer_modification_trans.postfix as product_modification_name_postfix')
+            ->leftJoin(
+                'category_offer_modification',
+                CategoryProductModificationTrans::class,
+                'category_offer_modification_trans',
+                '
+            category_offer_modification_trans.modification = category_offer_modification.id AND 
+            category_offer_modification_trans.local = :local'
+            );
 
         /* Наличие и резерв модификации множественного варианта */
-        $qb->leftJoin(
+        $dbal->leftJoin(
             'category_offer_modification',
             ProductModificationQuantity::class,
             'product_modification_quantity',
-            'product_modification_quantity.modification = product_offer_modification.id'
-        )
-            //->addGroupBy('product_modification_quantity.quantity')
-            //->addGroupBy('product_modification_quantity.reserve')
-        ;
+            'product_modification_quantity.modification = product_modification.id'
+        );
 
 
         /* Артикул продукта */
 
-        $qb->addSelect(
-            '
-			CASE
-			   WHEN product_offer_modification.article IS NOT NULL THEN product_offer_modification.article
-			   WHEN product_offer_variation.article IS NOT NULL THEN product_offer_variation.article
-			   WHEN product_offer.article IS NOT NULL THEN product_offer.article
-			   WHEN product_info.article IS NOT NULL THEN product_info.article
-			   ELSE NULL
-			END AS product_article
-		'
-        );
+        $dbal->addSelect('
+            COALESCE(
+                product_modification.article, 
+                product_variation.article, 
+                product_offer.article, 
+                product_info.article
+            ) AS product_article
+		');
 
 
         /* Фото продукта */
 
-        $qb->leftJoin(
+        $dbal->leftJoin(
             'product_event',
             ProductPhoto::class,
             'product_photo',
             'product_photo.event = product_event.id AND product_photo.root = true'
         );
 
-        $qb->leftJoin(
-            'product_offer',
-            ProductVariationImage::class,
-            'product_offer_variation_image',
-            'product_offer_variation_image.variation = product_offer_variation.id AND product_offer_variation_image.root = true'
-        )
-            //            ->addGroupBy('product_offer_variation_image.name')
-            //            ->addGroupBy('product_offer_variation_image.ext')
-            //            ->addGroupBy('product_offer_variation_image.cdn')
-            //            ->addGroupBy('product_offer_images.name')
-            //            ->addGroupBy('product_offer_images.ext')
-            //            ->addGroupBy('product_offer_images.cdn')
-            //            ->addGroupBy('product_photo.name')
-            //            ->addGroupBy('product_photo.ext')
-            //            ->addGroupBy('product_photo.cdn')
-        ;
-
-        $qb->leftJoin(
+        $dbal->leftJoin(
             'product_offer',
             ProductOfferImage::class,
             'product_offer_images',
             'product_offer_images.offer = product_offer.id AND product_offer_images.root = true'
         );
 
-        $qb->addSelect(
+        $dbal->leftJoin(
+            'product_variation',
+            ProductVariationImage::class,
+            'product_variation_image',
+            'product_variation_image.variation = product_variation.id AND product_variation_image.root = true'
+        );
+
+        $dbal->leftJoin(
+            'product_modification',
+            ProductModificationImage::class,
+            'product_modification_image',
+            'product_modification_image.modification = product_modification.id AND product_modification_image.root = true'
+        );
+
+
+        $dbal->addSelect(
             "
 			CASE
-			   WHEN product_offer_variation_image.name IS NOT NULL 
-			   THEN CONCAT ( '/upload/".$qb->table(ProductVariationImage::class)."' , '/', product_offer_variation_image.name)
+			    WHEN product_modification_image.name IS NOT NULL 
+			   THEN CONCAT ( '/upload/".$dbal->table(ProductModificationImage::class)."' , '/', product_modification_image.name)
+
+			   WHEN product_variation_image.name IS NOT NULL 
+			   THEN CONCAT ( '/upload/".$dbal->table(ProductVariationImage::class)."' , '/', product_variation_image.name)
 			   
 			   WHEN product_offer_images.name IS NOT NULL 
-			   THEN CONCAT ( '/upload/".$qb->table(ProductOfferImage::class)."' , '/', product_offer_images.name)
+			   THEN CONCAT ( '/upload/".$dbal->table(ProductOfferImage::class)."' , '/', product_offer_images.name)
 			   
 			   WHEN product_photo.name IS NOT NULL 
-			   THEN CONCAT ( '/upload/".$qb->table(ProductPhoto::class)."' , '/', product_photo.name)
+			   THEN CONCAT ( '/upload/".$dbal->table(ProductPhoto::class)."' , '/', product_photo.name)
 					
 			   ELSE NULL
 			END AS product_image
@@ -475,10 +476,13 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
         );
 
         /* Флаг загрузки файла CDN */
-        $qb->addSelect('
+        $dbal->addSelect('
 			CASE
-			   WHEN product_offer_variation_image.name IS NOT NULL 
-			   THEN product_offer_variation_image.ext
+				WHEN product_modification_image.name IS NOT NULL 
+			   THEN product_modification_image.ext
+			   
+			   WHEN product_variation_image.name IS NOT NULL 
+			   THEN product_variation_image.ext
 					
 			   WHEN product_offer_images.name IS NOT NULL 
 			   THEN product_offer_images.ext
@@ -491,10 +495,13 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
 		');
 
         /* Флаг загрузки файла CDN */
-        $qb->addSelect('
+        $dbal->addSelect('
 			CASE
-			   WHEN product_offer_variation_image.name IS NOT NULL 
-			   THEN product_offer_variation_image.cdn
+			   WHEN product_modification_image.name IS NOT NULL 
+			   THEN product_modification_image.cdn
+			   
+				WHEN product_variation_image.name IS NOT NULL 
+			   THEN product_variation_image.cdn
 					
 			   WHEN product_offer_images.name IS NOT NULL 
 			   THEN product_offer_images.cdn
@@ -509,29 +516,20 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
 
         /* Стоимость продукта */
 
-        $qb->addSelect(
-            '
-			CASE
-			   WHEN product_modification_price.price IS NOT NULL AND product_modification_price.price > 0 
-			   THEN product_modification_price.price
-			   
-			   WHEN product_variation_price.price IS NOT NULL AND product_variation_price.price > 0 
-			   THEN product_variation_price.price
-			   
-			   WHEN product_offer_price.price IS NOT NULL AND product_offer_price.price > 0 
-			   THEN product_offer_price.price
-			   
-			   WHEN product_price.price IS NOT NULL AND product_price.price > 0 
-			   THEN product_price.price
-			   
-			   ELSE NULL
-			END AS product_price
-		'
-        );
+        $dbal->addSelect('
+			COALESCE(
+                NULLIF(product_modification_price.price, 0), 
+                NULLIF(product_variation_price.price, 0), 
+                NULLIF(product_offer_price.price, 0), 
+                NULLIF(product_price.price, 0),
+                0
+            ) AS product_price
+		');
+
 
         /* Предыдущая стоимость продукта */
 
-        $qb->addSelect("
+        $dbal->addSelect("
 			COALESCE(
                 NULLIF(product_modification_price.old, 0),
                 NULLIF(product_variation_price.old, 0),
@@ -543,7 +541,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
 
         /* Валюта продукта */
 
-        $qb->addSelect(
+        $dbal->addSelect(
             '
 			CASE
 			   WHEN product_modification_price.price IS NOT NULL AND product_modification_price.price > 0 
@@ -565,7 +563,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
 
         /* Наличие продукта */
 
-        $qb->addSelect(
+        $dbal->addSelect(
             '
 			CASE
 			
@@ -588,7 +586,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
 
 
         /* Категория */
-        $qb->join(
+        $dbal->join(
             'product_event',
             ProductCategory::class,
             'product_event_category',
@@ -596,31 +594,31 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
         );
 
 
-        $qb->join(
+        $dbal->join(
             'product_event_category',
             CategoryProduct::class,
             'category',
             'category.id = product_event_category.category'
         );
 
-        $qb->addSelect('category_trans.name AS category_name')->addGroupBy('category_trans.name');
+        $dbal->addSelect('category_trans.name AS category_name')->addGroupBy('category_trans.name');
 
-        $qb->leftJoin(
+        $dbal->leftJoin(
             'category',
             CategoryProductTrans::class,
             'category_trans',
             'category_trans.event = category.event AND category_trans.local = :local'
         );
 
-        $qb->addSelect('category_info.url AS category_url')->addGroupBy('category_info.url');
-        $qb->leftJoin(
+        $dbal->addSelect('category_info.url AS category_url')->addGroupBy('category_info.url');
+        $dbal->leftJoin(
             'category',
             CategoryProductInfo::class,
             'category_info',
             'category_info.event = category.event'
         );
 
-        $qb->leftJoin(
+        $dbal->leftJoin(
             'category',
             CategoryProductSection::class,
             'category_section',
@@ -629,34 +627,33 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
 
         /* Свойства, участвующие в карточке */
 
-        $qb->leftJoin(
+        $dbal->leftJoin(
             'category_section',
             CategoryProductSectionField::class,
             'category_section_field',
             'category_section_field.section = category_section.id AND (category_section_field.public = TRUE OR category_section_field.name = TRUE )'
         );
 
-        $qb->leftJoin(
+        $dbal->leftJoin(
             'category_section_field',
             CategoryProductSectionFieldTrans::class,
             'category_section_field_trans',
             'category_section_field_trans.field = category_section_field.id AND category_section_field_trans.local = :local'
         );
 
-        $qb->leftJoin(
+        $dbal->leftJoin(
             'category_section_field',
             ProductProperty::class,
             'product_property',
             'product_property.event = product_event.id AND product_property.field = category_section_field.const'
         );
 
-        $qb->addSelect(
+        $dbal->addSelect(
             "JSON_AGG
 		( DISTINCT
 			
 				JSONB_BUILD_OBJECT
 				(
-				
 					'0', category_section_field.sort, /* сортировка  */
 				
 					'field_uid', category_section_field.id,
@@ -674,10 +671,10 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
 			AS category_section_field"
         );
 
-        $qb->allGroupByExclude();
+        $dbal->allGroupByExclude();
 
         /* Кешируем результат DBAL */
-        return $qb
+        return $dbal
             ->enableCache('products-product', 86400)
             ->fetchAssociative();
 

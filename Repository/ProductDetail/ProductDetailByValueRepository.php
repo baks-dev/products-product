@@ -485,25 +485,15 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
 
         /* Стоимость продукта */
 
-        $dbal->addSelect(
-            '
-			CASE
-			   WHEN product_modification_price.price IS NOT NULL AND product_modification_price.price > 0 
-			   THEN product_modification_price.price
-			   
-			   WHEN product_variation_price.price IS NOT NULL AND product_variation_price.price > 0 
-			   THEN product_variation_price.price
-			   
-			   WHEN product_offer_price.price IS NOT NULL AND product_offer_price.price > 0 
-			   THEN product_offer_price.price
-			   
-			   WHEN product_price.price IS NOT NULL AND product_price.price > 0 
-			   THEN product_price.price
-			   
-			   ELSE NULL
-			END AS product_price
-		'
-        );
+        $dbal->addSelect('
+			COALESCE(
+                NULLIF(product_modification_price.price, 0), 
+                NULLIF(product_variation_price.price, 0), 
+                NULLIF(product_offer_price.price, 0), 
+                NULLIF(product_price.price, 0),
+                0
+            ) AS product_price
+		');
 
 
         /* Предыдущая стоимость продукта */
@@ -721,6 +711,10 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
         $dbal->setParameter('product', $product, ProductUid::TYPE);
 
         $dbal->allGroupByExclude(['product_modification_postfix']);
+
+        dd($dbal
+            ->enableCache('products-product', 86400)
+            ->fetchAssociative());
 
         return $dbal
             ->enableCache('products-product', 86400)
@@ -1104,25 +1098,15 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
 
         /* Стоимость продукта */
 
-        $dbal->addSelect(
-            '
-			CASE
-			   WHEN product_modification_price.price IS NOT NULL AND product_modification_price.price > 0 
-			   THEN product_modification_price.price
-			   
-			   WHEN product_variation_price.price IS NOT NULL AND product_variation_price.price > 0 
-			   THEN product_variation_price.price
-			   
-			   WHEN product_offer_price.price IS NOT NULL AND product_offer_price.price > 0 
-			   THEN product_offer_price.price
-			   
-			   WHEN product_price.price IS NOT NULL AND product_price.price > 0 
-			   THEN product_price.price
-			   
-			   ELSE NULL
-			END AS product_price
-		'
-        );
+        $dbal->addSelect('
+			COALESCE(
+                NULLIF(product_modification_price.price, 0), 
+                NULLIF(product_variation_price.price, 0), 
+                NULLIF(product_offer_price.price, 0), 
+                NULLIF(product_price.price, 0),
+                0
+            ) AS product_price
+		');
 
         /* Предыдущая стоимость продукта */
 

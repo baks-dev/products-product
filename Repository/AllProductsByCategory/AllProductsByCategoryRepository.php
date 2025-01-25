@@ -1691,25 +1691,16 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
 
 
         /** Стоимость */
-        $dbal->addSelect(
-            "
-			CASE
-			   WHEN product_modification_price.price IS NOT NULL AND product_modification_price.price > 0 
-			   THEN product_modification_price.price
-			   
-			   WHEN product_variation_price.price IS NOT NULL AND product_variation_price.price > 0  
-			   THEN product_variation_price.price
-			   
-			   WHEN product_offer_price.price IS NOT NULL AND product_offer_price.price > 0 
-			   THEN product_offer_price.price
-			   
-			   WHEN product_price.price IS NOT NULL 
-			   THEN product_price.price
-			   
-			   ELSE NULL
-			END AS product_price
-		"
-        );
+        $dbal->addSelect('
+			COALESCE(
+                NULLIF(product_modification_price.price, 0), 
+                NULLIF(product_variation_price.price, 0), 
+                NULLIF(product_offer_price.price, 0), 
+                NULLIF(product_price.price, 0),
+                0
+            ) AS product_price
+		');
+
 
         /* Предыдущая стоимость продукта */
 
