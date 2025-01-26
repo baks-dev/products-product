@@ -1,17 +1,17 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
- *
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *
+ *  
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *
+ *  
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -68,7 +68,7 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
 
     public function forOffer(ProductOffer|ProductOfferUid|string|null|false $offer): self
     {
-        if(is_null($offer) || $offer === false)
+        if(empty($offer))
         {
             $this->offer = false;
             return $this;
@@ -91,7 +91,7 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
 
     public function forVariation(ProductVariation|ProductVariationUid|string|null|false $variation): self
     {
-        if(is_null($variation) || $variation === false)
+        if(empty($variation))
         {
             $this->variation = false;
             return $this;
@@ -115,7 +115,7 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
 
     public function forModification(ProductModification|ProductModificationUid|string|null|false $modification): self
     {
-        if(is_null($modification) || $modification === false)
+        if(empty($modification))
         {
             $this->modification = false;
             return $this;
@@ -151,9 +151,9 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
          * Определяем активное событие продукции
          */
 
-        $current = $this->DBALQueryBuilder->createQueryBuilder(self::class);
+        $dbal = $this->DBALQueryBuilder->createQueryBuilder(self::class);
 
-        $current
+        $dbal
             ->from(ProductEvent::class, 'event')
             ->where('event.id = :event')
             ->setParameter(
@@ -162,7 +162,7 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
                 ProductEventUid::TYPE
             );
 
-        $current
+        $dbal
             ->addSelect('product.id')
             ->addSelect('product.event')
             ->join(
@@ -172,9 +172,10 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
                 'product.id = event.main'
             );
 
+
         if($this->offer)
         {
-            $current->leftJoin(
+            $dbal->leftJoin(
                 'product',
                 ProductOffer::class,
                 'offer',
@@ -187,7 +188,7 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
                 );
 
 
-            $current
+            $dbal
                 ->addSelect('current_offer.id AS offer')
                 ->addSelect('current_offer.const AS offer_const')
                 ->leftJoin(
@@ -200,7 +201,7 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
             if($this->variation)
             {
 
-                $current->leftJoin(
+                $dbal->leftJoin(
                     'offer',
                     ProductVariation::class,
                     'variation',
@@ -212,7 +213,7 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
                         ProductVariationUid::TYPE
                     );
 
-                $current
+                $dbal
                     ->addSelect('current_variation.id AS variation')
                     ->addSelect('current_variation.const AS variation_const')
                     ->leftJoin(
@@ -225,7 +226,7 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
 
                 if($this->modification)
                 {
-                    $current
+                    $dbal
                         ->leftJoin(
                             'variation',
                             ProductModification::class,
@@ -238,7 +239,7 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
                             ProductModificationUid::TYPE
                         );
 
-                    $current
+                    $dbal
                         ->addSelect('current_modification.id AS modification')
                         ->addSelect('current_modification.const AS modification_const')
                         ->leftJoin(
@@ -251,7 +252,7 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
             }
         }
 
-        return $current
+        return $dbal
             ->enableCache('products-product', 60)
             ->fetchAssociative();
     }
