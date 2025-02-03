@@ -42,7 +42,7 @@
 
             {% for offer in form.offer %}
 
-                {% if offer.vars.data.article %}
+                {% if offer.article is defined and offer.vars.data.article %}
                     <li data-href="{{ offer.article.vars.id }}">
                         <span class="nav-link rounded-3 px-2 small text-nowrap mb-1 pointer">
                             {{ offer.vars.data.article }}

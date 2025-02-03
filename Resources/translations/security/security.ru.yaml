@@ -1,12 +1,14 @@
 # Роль
 ROLE_PRODUCT:
-  name: 'Продукция'
+  name: 'Каталог продукции'
   desc: 'Список продукции'
+  header: 'Продукция'
 
 # Правила
 ROLE_PRODUCT_INDEX:
   name: 'Просмотр'
   desc: ''
+
 
 ROLE_PRODUCT_NEW:
   name: 'Добавить'

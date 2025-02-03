@@ -130,7 +130,7 @@
 
         <div class="card-body variation-modification-collection"
              id='collection_{{ form.offer.vars.prototype.variation.vars.prototype.vars.id }}'>
-            {% if variation_first.modification is defined %}
+            {% if prototype_modification is defined and variation_first.modification is defined %}
                 <div id='item_{{ form.offer.vars.prototype.variation.vars.prototype.modification.vars.prototype.vars.id|replace({ '__variation_modification__' : 0 }) }}'>
                     {{ prototype_modification|replace({ '__variation_modification__' : 0 })|raw }}
                 </div>

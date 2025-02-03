@@ -177,7 +177,7 @@ final class SubProductQuantityRepository implements SubProductQuantityInterface
 
         //$result = $this->getCurrentProductQuantity();
 
-        $result = $this->currentProductIdentifier
+        $CurrentProductIdentifier = $this->currentProductIdentifier
             ->forEvent($this->event)
             ->forOffer($this->offer)
             ->forVariation($this->variation)
@@ -185,7 +185,7 @@ final class SubProductQuantityRepository implements SubProductQuantityInterface
             ->find();
 
         /** Если идентификатор события не определен - не выполняем обновление (продукт не найден) */
-        if(!isset($result['event']))
+        if(false === $CurrentProductIdentifier)
         {
             return false;
         }
@@ -197,44 +197,44 @@ final class SubProductQuantityRepository implements SubProductQuantityInterface
             ->where('event = :event')
             ->setParameter(
                 'event',
-                $result['event'],
+                $CurrentProductIdentifier->getEvent(),
                 ProductEventUid::TYPE
             );
 
 
-        if($this->offer && isset($result['offer']))
+        if($this->offer && $CurrentProductIdentifier->getOffer() instanceof ProductOfferUid)
         {
             $dbal
                 ->update(ProductOfferQuantity::class)
                 ->where('offer = :offer')
                 ->setParameter(
                     'offer',
-                    $result['offer'],
+                    $CurrentProductIdentifier->getOffer(),
                     ProductOfferUid::TYPE
                 );
         }
 
-        if($this->variation && isset($result['variation']))
+        if($this->variation && $CurrentProductIdentifier->getVariation() instanceof ProductVariationUid)
         {
             $dbal
                 ->update(ProductVariationQuantity::class)
                 ->where('variation = :variation')
                 ->setParameter(
                     'variation',
-                    $result['variation'],
+                    $CurrentProductIdentifier->getVariation(),
                     ProductVariationUid::TYPE
                 );
         }
 
 
-        if($this->variation && isset($result['modification']))
+        if($this->variation && $CurrentProductIdentifier->getModification() instanceof ProductModificationUid)
         {
             $dbal
                 ->update(ProductModificationQuantity::class)
                 ->where('modification = :modification')
                 ->setParameter(
                     'modification',
-                    $result['modification'],
+                    $CurrentProductIdentifier->getModification(),
                     ProductModificationUid::TYPE
                 );
         }

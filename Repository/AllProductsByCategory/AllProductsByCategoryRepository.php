@@ -1996,18 +1996,34 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
         {
 
             $dbal
-                ->addSelect('product_parameter.length AS product_parameter_length')
-                ->addSelect('product_parameter.width AS product_parameter_width')
-                ->addSelect('product_parameter.height AS product_parameter_height')
-                ->addSelect('product_parameter.weight AS product_parameter_weight')
+                ->addSelect('product_package.length AS product_parameter_length')
+                ->addSelect('product_package.width AS product_parameter_width')
+                ->addSelect('product_package.height AS product_parameter_height')
+                ->addSelect('product_package.weight AS product_parameter_weight')
                 ->leftJoin(
                     'product_modification',
                     DeliveryPackageProductParameter::class,
-                    'product_parameter',
-                    'product_parameter.product = product.id AND
-            (product_parameter.offer IS NULL OR product_parameter.offer = product_offer.const) AND
-            (product_parameter.variation IS NULL OR product_parameter.variation = product_variation.const) AND
-            (product_parameter.modification IS NULL OR product_parameter.modification = product_modification.const)
+                    'product_package',
+                    'product_package.product = product.id AND 
+                    
+                    (
+                        (product_offer.const IS NOT NULL AND product_package.offer = product_offer.const) OR 
+                        (product_offer.const IS NULL AND product_package.offer IS NULL)
+                    )
+                    
+                    AND
+                     
+                    (
+                        (product_variation.const IS NOT NULL AND product_package.variation = product_variation.const) OR 
+                        (product_variation.const IS NULL AND product_package.variation IS NULL)
+                    )
+                     
+                   AND
+                   
+                   (
+                        (product_modification.const IS NOT NULL AND product_package.modification = product_modification.const) OR 
+                        (product_modification.const IS NULL AND product_package.modification IS NULL)
+                   )
 
         '
                 );

@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -32,6 +32,7 @@ use BaksDev\Products\Product\UseCase\Admin\NewEdit\Active\ActiveDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Category\CategoryCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Files\FilesCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Info\InfoDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Materials\ProductMaterialDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Photo\PhotoCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Price\PriceDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Property\PropertyCollectionDTO;
@@ -83,8 +84,8 @@ final class ProductDTO implements ProductEventInterface
     #[Assert\Valid]
     private ArrayCollection $description;
 
-
-    //private ArrayCollection $collectionProperty;
+    #[Assert\Valid]
+    private ArrayCollection $material;
 
     public function __construct()
     {
@@ -101,6 +102,7 @@ final class ProductDTO implements ProductEventInterface
         $this->translate = new ArrayCollection();
         $this->video = new ArrayCollection();
         $this->description = new ArrayCollection();
+        $this->material = new ArrayCollection();
     }
 
 
@@ -144,6 +146,12 @@ final class ProductDTO implements ProductEventInterface
         }
     }
 
+    public function resetCategory(): self
+    {
+        $this->category = new ArrayCollection();
+        return $this;
+    }
+
     /**
      * @return ArrayCollection
      */
@@ -163,6 +171,45 @@ final class ProductDTO implements ProductEventInterface
         $this->category->removeElement($category);
     }
 
+
+    /* MATERIAL */
+
+    public function setMaterial(ArrayCollection $material): self
+    {
+        $this->material = $material;
+        return $this;
+    }
+
+    public function addMaterial(ProductMaterialDTO $material): void
+    {
+        $filter = $this->material->filter(function(ProductMaterialDTO $element) use ($material) {
+            return $material->getMaterial()?->equals($element->getMaterial());
+        });
+
+        if($filter->isEmpty())
+        {
+            $this->material->add($material);
+        }
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getMaterial(): ArrayCollection
+    {
+        if($this->material->isEmpty())
+        {
+            $CategoryCollectionDTO = new ProductMaterialDTO();
+            $this->addMaterial($CategoryCollectionDTO);
+        }
+
+        return $this->material;
+    }
+
+    public function removeMaterial(ProductMaterialDTO $material): void
+    {
+        $this->material->removeElement($material);
+    }
 
     /* ACTIVE */
 
@@ -265,6 +312,11 @@ final class ProductDTO implements ProductEventInterface
         return $this->photo;
     }
 
+    public function getImage(): ArrayCollection
+    {
+        return $this->getPhoto();
+    }
+
 
     public function addPhoto(PhotoCollectionDTO $photo): void
     {
@@ -276,6 +328,11 @@ final class ProductDTO implements ProductEventInterface
         {
             $this->photo->add($photo);
         }
+    }
+
+    public function addImage(PhotoCollectionDTO $photo): void
+    {
+        $this->addPhoto($photo);
     }
 
 
@@ -335,7 +392,6 @@ final class ProductDTO implements ProductEventInterface
     /* PROPERTIES */
     public function getProperty(): ArrayIterator
     {
-
         $iterator = $this->property->getIterator();
 
         $iterator->uasort(function($first, $second) {
@@ -344,6 +400,12 @@ final class ProductDTO implements ProductEventInterface
         });
 
         return $iterator;
+    }
+
+
+    public function getPropertyCollection(): ArrayCollection
+    {
+        return $this->property;
     }
 
 

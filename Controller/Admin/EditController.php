@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -33,7 +33,6 @@ use BaksDev\Products\Product\UseCase\Admin\NewEdit\Category\CategoryCollectionDT
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\ProductDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\ProductForm;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\ProductHandler;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -81,8 +80,10 @@ final class EditController extends AbstractController
         }
 
         // Форма добавления
-        $form = $this->createForm(ProductForm::class, $ProductDTO);
-        $form->handleRequest($request);
+        $form = $this
+            ->createForm(ProductForm::class, $ProductDTO)
+            ->handleRequest($request);
+
 
         if($form->isSubmitted() && $form->isValid() && $form->has('product'))
         {

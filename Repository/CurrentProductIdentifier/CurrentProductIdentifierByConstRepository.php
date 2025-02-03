@@ -1,17 +1,17 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
- *
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *
+ *  
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *
+ *  
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,19 +26,14 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Repository\CurrentProductIdentifier;
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
-use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Product\Entity\Product;
-use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
-use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
-use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
-use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
 use InvalidArgumentException;
 
 final class CurrentProductIdentifierByConstRepository implements CurrentProductIdentifierByConstInterface
@@ -124,7 +119,7 @@ final class CurrentProductIdentifierByConstRepository implements CurrentProductI
     /**
      * Метод возвращает активные идентификаторы продукта по событию и идентификаторов торгового предложения
      */
-    public function execute(): CurrentProductDTO|false
+    public function find(): CurrentProductDTO|false
     {
         if(!$this->product instanceof ProductUid)
         {
@@ -154,6 +149,7 @@ final class CurrentProductIdentifierByConstRepository implements CurrentProductI
             $current
                 ->addSelect('current_offer.id AS offer')
                 ->addSelect('current_offer.const AS offer_const')
+                ->addSelect('current_offer.value AS offer_value')
                 ->leftJoin(
                     'product',
                     ProductOffer::class,
@@ -172,6 +168,7 @@ final class CurrentProductIdentifierByConstRepository implements CurrentProductI
                 $current
                     ->addSelect('current_variation.id AS variation')
                     ->addSelect('current_variation.const AS variation_const')
+                    ->addSelect('current_variation.value AS variation_value')
                     ->leftJoin(
                         'current_offer',
                         ProductVariation::class,
@@ -190,6 +187,7 @@ final class CurrentProductIdentifierByConstRepository implements CurrentProductI
                     $current
                         ->addSelect('current_modification.id AS modification')
                         ->addSelect('current_modification.const AS modification_const')
+                        ->addSelect('current_modification.value AS modification_value')
                         ->leftJoin(
                             'current_variation',
                             ProductModification::class,

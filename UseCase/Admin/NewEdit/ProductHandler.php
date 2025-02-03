@@ -45,7 +45,6 @@ use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Photo\PhotoCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Video\VideoCollectionDTO;
 use Doctrine\ORM\EntityManagerInterface;
-use DomainException;
 
 final class ProductHandler extends AbstractHandler
 {
@@ -65,20 +64,8 @@ final class ProductHandler extends AbstractHandler
     public function handle(ProductDTO $command): Product|string
     {
 
-        /* Валидация DTO  */
-        $this->validatorCollection->add($command);
-
-        $this->main = new Product();
-        $this->event = new ProductEvent();
-
-        try
-        {
-            $command->getEvent() ? $this->preUpdate($command, true) : $this->prePersist($command);
-        }
-        catch(DomainException $errorUniqid)
-        {
-            return $errorUniqid->getMessage();
-        }
+        $this->setCommand($command);
+        $this->preEventPersistOrUpdate(Product::class, ProductEvent::class);
 
 
         /** Проверяем уникальность семантической ссылки продукта */
@@ -185,16 +172,13 @@ final class ProductHandler extends AbstractHandler
             }
         }
 
-
         /* Валидация всех объектов */
         if($this->validatorCollection->isInvalid())
         {
             return $this->validatorCollection->getErrorUniqid();
         }
 
-        //dd($this->event);
-
-        $this->entityManager->flush();
+        $this->flush();
 
         /* Отправляем событие в шину  */
         $this->messageDispatch->dispatch(

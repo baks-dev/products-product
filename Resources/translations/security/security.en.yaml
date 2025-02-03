@@ -1,10 +1,12 @@
 ROLE_PRODUCT:
   name: 'Products'
   desc: 'Product List'
+  header: 'Products'
 
 ROLE_PRODUCT_INDEX:
   name: 'View'
   desc: ''
+
 
 ROLE_PRODUCT_NEW:
   name: 'Add'

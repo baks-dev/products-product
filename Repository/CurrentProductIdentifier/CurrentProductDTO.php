@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -45,14 +45,18 @@ final class CurrentProductDTO
     /** Торговое предложение */
     private ProductOfferUid|null|false $offer = null;
     private ProductOfferConst|null|false $offerConst = null;
+    private string|null|false $offerValue = null;
 
     /** Множественный вариант торгового предложения */
     private ProductVariationUid|null|false $variation = null;
     private ProductVariationConst|null|false $variationConst = null;
+    private string|null|false $variationValue = null;
 
     /** Модификация множественного варианта торгового предложения */
     private ProductModificationUid|null|false $modification = null;
     private ProductModificationConst|null|false $modificationConst = null;
+    private string|null|false $modificationValue = null;
+
 
     public function __construct(
         string $id,
@@ -61,14 +65,17 @@ final class CurrentProductDTO
         /** Торговое предложение */
         ?string $offer = null,
         ?string $offer_const = null,
+        ?string $offer_value = null,
 
         /** Множественный вариант торгового предложения */
         ?string $variation = null,
         ?string $variation_const = null,
+        ?string $variation_value = null,
 
         /** Модификация множественного варианта торгового предложения */
         ?string $modification = null,
         ?string $modification_const = null,
+        ?string $modification_value = null,
     )
     {
 
@@ -79,18 +86,21 @@ final class CurrentProductDTO
         {
             $this->offer = new ProductOfferUid($offer);
             $this->offerConst = new ProductOfferConst($offer_const);
+            $this->offerValue = $offer_value ?: false;
         }
 
         if($variation)
         {
             $this->variation = new ProductVariationUid($variation);
             $this->variationConst = new ProductVariationConst($variation_const);
+            $this->variationValue = $variation_value ?: false;
         }
 
         if($modification)
         {
             $this->modification = new ProductModificationUid($modification);
             $this->modificationConst = new ProductModificationConst($modification_const);
+            $this->modificationValue = $modification_value ?: false;
         }
 
     }
@@ -157,5 +167,29 @@ final class CurrentProductDTO
     public function getModificationConst(): ProductModificationConst|false
     {
         return $this->modificationConst ?: false;
+    }
+
+    /**
+     * OfferValue
+     */
+    public function getOfferValue(): false|string|null
+    {
+        return $this->offerValue;
+    }
+
+    /**
+     * VariationValue
+     */
+    public function getVariationValue(): false|string|null
+    {
+        return $this->variationValue;
+    }
+
+    /**
+     * ModificationValue
+     */
+    public function getModificationValue(): false|string|null
+    {
+        return $this->modificationValue;
     }
 }

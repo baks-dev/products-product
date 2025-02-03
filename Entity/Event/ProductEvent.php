@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -31,6 +31,7 @@ use BaksDev\Products\Product\Entity\Category\ProductCategory;
 use BaksDev\Products\Product\Entity\Description\ProductDescription;
 use BaksDev\Products\Product\Entity\Files\ProductFiles;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
+use BaksDev\Products\Product\Entity\Materials\ProductMaterial;
 use BaksDev\Products\Product\Entity\Modify\ProductModify;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Photo\ProductPhoto;
@@ -54,8 +55,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Index(columns: ['main'])]
 class ProductEvent extends EntityEvent
 {
-    public const TABLE = 'product_event';
-
     /** ID */
     #[Assert\NotBlank]
     #[Assert\Uuid]
@@ -99,7 +98,8 @@ class ProductEvent extends EntityEvent
     #[ORM\OneToMany(targetEntity: ProductTrans::class, mappedBy: 'event', cascade: ['all'])]
     private Collection $translate;
 
-    /** Перевод */
+
+    /** Описание */
     #[Assert\Valid]
     #[ORM\OneToMany(targetEntity: ProductDescription::class, mappedBy: 'event', cascade: ['persist', 'remove'])]
     private Collection $description;
@@ -135,6 +135,11 @@ class ProductEvent extends EntityEvent
     #[Assert\Valid]
     #[ORM\OneToMany(targetEntity: ProductProperty::class, mappedBy: 'event', cascade: ['all'])]
     private Collection $property;
+
+    /** Сырье */
+    #[Assert\Valid]
+    #[ORM\OneToMany(targetEntity: ProductMaterial::class, mappedBy: 'event', cascade: ['all'])]
+    private Collection $material;
 
 
     public function __construct()

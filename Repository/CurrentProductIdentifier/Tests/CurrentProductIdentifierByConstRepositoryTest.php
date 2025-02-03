@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -144,7 +144,7 @@ class CurrentProductIdentifierByConstRepositoryTest extends KernelTestCase
 
         $result = $CurrentProductIdentifierByConstInterface
             ->forProduct(self::$result['id'])
-            ->execute();
+            ->find();
 
         self::assertTrue($result->getProduct()->equals(self::$new['id']));
         self::assertTrue($result->getEvent()->equals(self::$new['event']));
@@ -162,7 +162,7 @@ class CurrentProductIdentifierByConstRepositoryTest extends KernelTestCase
         $result = $CurrentProductIdentifierByConstInterface
             ->forProduct(self::$result['id'])
             ->forOfferConst(self::$result['offer_const'])
-            ->execute();
+            ->find();
 
         self::assertTrue($result->getProduct()->equals(self::$new['id']));
         self::assertTrue($result->getEvent()->equals(self::$new['event']));
@@ -184,7 +184,7 @@ class CurrentProductIdentifierByConstRepositoryTest extends KernelTestCase
             ->forProduct(self::$result['id'])
             ->forOfferConst(self::$result['offer_const'])
             ->forVariationConst(self::$result['variation_const'])
-            ->execute();
+            ->find();
 
         self::assertTrue($result->getProduct()->equals(self::$new['id']));
         self::assertTrue($result->getEvent()->equals(self::$new['event']));
@@ -209,7 +209,7 @@ class CurrentProductIdentifierByConstRepositoryTest extends KernelTestCase
             ->forOfferConst(self::$result['offer_const'])
             ->forVariationConst(self::$result['variation_const'])
             ->forModificationConst(self::$result['modification_const'])
-            ->execute();
+            ->find();
 
         self::assertTrue($result->getProduct()->equals(self::$new['id']));
         self::assertTrue($result->getEvent()->equals(self::$new['event']));

@@ -140,7 +140,7 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
     /**
      * Метод возвращает активные идентификаторы продукта по событию и идентификаторов торгового предложения
      */
-    public function find(): array|false
+    public function find(): CurrentProductDTO|false
     {
         if(!$this->event instanceof ProductEventUid)
         {
@@ -191,6 +191,7 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
             $dbal
                 ->addSelect('current_offer.id AS offer')
                 ->addSelect('current_offer.const AS offer_const')
+                ->addSelect('current_offer.value AS offer_value')
                 ->leftJoin(
                     'offer',
                     ProductOffer::class,
@@ -216,6 +217,7 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
                 $dbal
                     ->addSelect('current_variation.id AS variation')
                     ->addSelect('current_variation.const AS variation_const')
+                    ->addSelect('current_variation.value AS variation_value')
                     ->leftJoin(
                         'variation',
                         ProductVariation::class,
@@ -242,6 +244,7 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
                     $dbal
                         ->addSelect('current_modification.id AS modification')
                         ->addSelect('current_modification.const AS modification_const')
+                        ->addSelect('current_modification.value AS modification_value')
                         ->leftJoin(
                             'modification',
                             ProductModification::class,
@@ -254,6 +257,13 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
 
         return $dbal
             ->enableCache('products-product', 60)
-            ->fetchAssociative();
+            ->fetchHydrate(CurrentProductDTO::class);
+
+        //        return $dbal
+        //            ->enableCache('products-product', 60)
+        //            ->fetchAssociative();
+
+
+
     }
 }

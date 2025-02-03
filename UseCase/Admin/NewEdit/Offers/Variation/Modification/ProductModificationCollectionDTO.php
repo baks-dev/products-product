@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@ namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modifi
 
 use BaksDev\Products\Category\Type\Offers\Modification\CategoryProductModificationUid;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModificationInterface;
+use BaksDev\Products\Product\Type\Barcode\ProductBarcode;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
 use Doctrine\Common\Collections\ArrayCollection;
 use ReflectionProperty;
@@ -40,6 +41,9 @@ final class ProductModificationCollectionDTO implements ProductModificationInter
     #[Assert\NotBlank]
     #[Assert\Uuid]
     private readonly ProductModificationConst $const;
+
+    /** Штрихкод товара */
+    private readonly ProductBarcode $barcode;
 
     /** Заполненное значение */
     private ?string $value = null;
@@ -74,9 +78,14 @@ final class ProductModificationCollectionDTO implements ProductModificationInter
 
     public function getConst(): ProductModificationConst
     {
-        if(!(new ReflectionProperty(self::class, 'const'))->isInitialized($this))
+        if(false === (new ReflectionProperty(self::class, 'const')->isInitialized($this)))
         {
             $this->const = new ProductModificationConst();
+
+            if(false === (new ReflectionProperty(self::class, 'barcode')->isInitialized($this)))
+            {
+                $this->barcode = new ProductBarcode(ProductBarcode::generate());
+            }
         }
 
         return $this->const;
@@ -84,12 +93,40 @@ final class ProductModificationCollectionDTO implements ProductModificationInter
 
     public function setConst(ProductModificationConst $const): void
     {
-        if(!(new ReflectionProperty(self::class, 'const'))->isInitialized($this))
+        if(false === (new ReflectionProperty(self::class, 'const')->isInitialized($this)))
         {
             $this->const = $const;
         }
     }
 
+
+    /**
+     * Barcode
+     */
+    public function getBarcode(): ProductBarcode
+    {
+        if(false === (new ReflectionProperty(self::class, 'barcode')->isInitialized($this)))
+        {
+            $this->barcode = new ProductBarcode(ProductBarcode::generate());
+        }
+
+        return $this->barcode;
+    }
+
+    public function setBarcode(?ProductBarcode $barcode): self
+    {
+        if(false === (new ReflectionProperty(self::class, 'barcode')->isInitialized($this)))
+        {
+            if(is_null($barcode))
+            {
+                $barcode = new ProductBarcode(ProductBarcode::generate());
+            }
+
+            $this->barcode = $barcode;
+        }
+
+        return $this;
+    }
 
     /** Заполненное значение */
 

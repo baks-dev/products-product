@@ -38,7 +38,6 @@ final class CategoryCollectionForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
 
-
         $builder
             ->add('category', ChoiceType::class, [
                 'choices' => $this->category->findAll(), // все категории, включая неактивные

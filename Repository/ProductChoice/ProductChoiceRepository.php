@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,6 @@ namespace BaksDev\Products\Product\Repository\ProductChoice;
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Core\Doctrine\ORMQueryBuilder;
-use BaksDev\Core\Type\Locale\Locale;
 use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Entity\Active\ProductActive;
 use BaksDev\Products\Product\Entity\Category\ProductCategory;
@@ -43,15 +42,35 @@ use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
+use BaksDev\Users\Profile\UserProfile\Entity\UserProfile;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Generator;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class ProductChoiceRepository implements ProductChoiceInterface
 {
+    private UserProfileUid|false $profile = false;
+
     public function __construct(
         private readonly ORMQueryBuilder $ORMQueryBuilder,
         private readonly DBALQueryBuilder $DBALQueryBuilder,
     ) {}
+
+    public function profile(UserProfile|UserProfileUid|string $profile): self
+    {
+        if(is_string($profile))
+        {
+            $profile = new UserProfileUid($profile);
+        }
+
+        if($profile instanceof UserProfile)
+        {
+            $profile = $profile->getId();
+        }
+
+        $this->profile = $profile;
+
+        return $this;
+    }
 
     /**
      * Метод возвращает все идентификаторы продуктов (ProductUid) с названием указанной категории
@@ -62,14 +81,20 @@ final class ProductChoiceRepository implements ProductChoiceInterface
             ->createQueryBuilder(self::class)
             ->bindLocal();
 
+
         $qb->from(Product::class, 'product');
 
         $qb->join(
             'product',
             ProductInfo::class,
             'info',
-            'info.product = product.id'
+            'info.product = product.id '.($this->profile ? 'AND (info.profile = :profile OR info.profile IS NULL)' : '')
         );
+
+        if($this->profile instanceof UserProfileUid)
+        {
+            $qb->setParameter('profile', $this->profile, UserProfileUid::TYPE);
+        }
 
         if($category)
         {
@@ -182,11 +207,20 @@ final class ProductChoiceRepository implements ProductChoiceInterface
             ->createQueryBuilder(self::class)
             ->bindLocal();
 
-        //$select = sprintf('new %s(product.event, trans.name)', ProductEventUid::class);
-
-        //$qb->select($select);
-
         $dbal->from(Product::class, 'product');
+
+        $dbal->join(
+            'product',
+            ProductInfo::class,
+            'info',
+            'info.product = product.id '.($this->profile ? 'AND (info.profile = :profile OR info.profile IS NULL)' : 'info.profile IS NULL')
+        );
+
+        if($this->profile instanceof UserProfileUid)
+        {
+            $dbal->setParameter('profile', $this->profile, UserProfileUid::TYPE);
+        }
+
 
         if($category)
         {
@@ -196,7 +230,11 @@ final class ProductChoiceRepository implements ProductChoiceInterface
                 'category',
                 'category.event = product.event AND category.category = :category AND category.root = TRUE'
             )
-                ->setParameter('category', $category, CategoryProductUid::TYPE);
+                ->setParameter(
+                    'category',
+                    $category,
+                    CategoryProductUid::TYPE
+                );
         }
 
 
@@ -288,18 +326,11 @@ final class ProductChoiceRepository implements ProductChoiceInterface
 
         AS option');
 
-
-        $dbal->andWhere('
-            product_modification_quantity.quantity > 0 OR 
-            product_variation_quantity.quantity > 0 OR 
-            product_offer_quantity.quantity > 0 OR
-            product_price.quantity > 0 
-        ');
-
-
         $dbal->allGroupByExclude();
 
-        return $dbal->enableCache('products-product', 60)->fetchAllHydrate(ProductEventUid::class);
+        return $dbal
+            ->enableCache('products-product', 60)
+            ->fetchAllHydrate(ProductEventUid::class);
 
     }
 

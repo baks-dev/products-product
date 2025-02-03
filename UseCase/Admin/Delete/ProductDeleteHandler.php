@@ -23,108 +23,36 @@
 
 namespace BaksDev\Products\Product\UseCase\Admin\Delete;
 
-use BaksDev\Core\Messenger\MessageDispatchInterface;
+use BaksDev\Core\Entity\AbstractHandler;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
-use BaksDev\Products\Product\Entity\Info\ProductInfo;
 use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Messenger\ProductMessage;
-use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\DependencyInjection\Attribute\Target;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-final readonly class ProductDeleteHandler
+final class ProductDeleteHandler extends AbstractHandler
 {
-    public function __construct(
-        #[Target('productsProductLogger')] private LoggerInterface $logger,
-        private EntityManagerInterface $entityManager,
-        private ValidatorInterface $validator,
-        private MessageDispatchInterface $messageDispatch
-    ) {}
+    //    public function __construct(
+    //        #[Target('productsProductLogger')] private LoggerInterface $logger,
+    //        private EntityManagerInterface $entityManager,
+    //        private ValidatorInterface $validator,
+    //        private MessageDispatchInterface $messageDispatch
+    //    ) {}
 
-    public function handle(
-        ProductDeleteDTO $command
-    ): Product|string
+    public function handle(ProductDeleteDTO $command): Product|string
     {
+        $this->setCommand($command);
 
-        /**
-         *  Валидация WbBarcodeDTO
-         */
-        $errors = $this->validator->validate($command);
+        $this->preEventRemove(Product::class, ProductEvent::class);
 
-        if(count($errors) > 0)
-        {
-            /** Ошибка валидации */
-            $uniqid = uniqid('', false);
-            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [self::class.':'.__LINE__]);
-            return $uniqid;
-        }
-
-
-        /** Получаем событие */
-        $Event = $this->entityManager->getRepository(ProductEvent::class)
-            ->find($command->getEvent());
-
-        if($Event === null)
-        {
-            $uniqid = uniqid('', false);
-            $errorsString = sprintf(
-                'Not found %s by id: %s',
-                ProductEvent::class,
-                $command->getEvent()
-            );
-            $this->logger->error($uniqid.': '.$errorsString);
-
-            return $uniqid;
-        }
-
-
-        /** Получаем корень агрегата */
-        $Main = $this->entityManager->getRepository(Product::class)
-            ->findOneBy(['event' => $command->getEvent()]);
-
-        if(empty($Main))
-        {
-            $uniqid = uniqid('', false);
-            $errorsString = sprintf(
-                'Not found %s by event: %s',
-                Product::class,
-                $command->getEvent()
-            );
-            $this->logger->error($uniqid.': '.$errorsString);
-
-            return $uniqid;
-        }
-
-
-        // Сбрасываем семантическую ссылку
-        $ProductInfo = $this->entityManager->getRepository(ProductInfo::class)
-            ->find($Main->getId());
-
-        if($ProductInfo)
-        {
-            $ProductInfo->setEntity($command->getInfo());
-        }
-
-
-        /* Применяем изменения к событию */
-        $Event->setEntity($command);
-        $this->entityManager->persist($Event);
-
-        /* Удаляем корень агрегата */
-        $this->entityManager->remove($Main);
-
-        $this->entityManager->flush();
+        $this->flush();
 
         /* Отправляем событие в шину  */
         $this->messageDispatch
             ->addClearCacheOther('products-category')
             ->dispatch(
-                message: new ProductMessage($Main->getId(), $Main->getEvent(), $command->getEvent()),
+                message: new ProductMessage($this->main->getId(), $this->event->getId(), $command->getEvent()),
                 transport: 'products-product'
             );
 
-
-        return $Main;
+        return $this->main;
     }
 }

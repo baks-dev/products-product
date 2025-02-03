@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -41,10 +41,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: 'product_modification')]
 #[ORM\Index(columns: ['const'])]
 #[ORM\Index(columns: ['article'])]
+#[ORM\Index(columns: ['barcode'])]
 class ProductModification extends EntityEvent
 {
-    public const TABLE = 'product_modification';
-
     /** ID модификации множественного варианта */
     #[Assert\NotBlank]
     #[Assert\Uuid]
@@ -64,6 +63,10 @@ class ProductModification extends EntityEvent
     #[ORM\Column(type: ProductModificationConst::TYPE)]
     private readonly ProductModificationConst $const;
 
+    /** Штрихкод товара */
+    #[ORM\Column(type: ProductBarcode::TYPE, nullable: true)]
+    private ?ProductBarcode $barcode = null;
+
     /** ID модификации категории */
     #[Assert\Uuid]
     #[ORM\Column(name: 'category_modification', type: CategoryProductModificationUid::TYPE, nullable: true)]
@@ -76,10 +79,6 @@ class ProductModification extends EntityEvent
     /** Артикул */
     #[ORM\Column(type: Types::STRING, nullable: true)]
     private ?string $article = null;
-
-    /** Штрихкод товара */
-    #[ORM\Column(type: ProductBarcode::TYPE, nullable: true)]
-    private ?ProductBarcode $barcode = null;
 
     /** Постфикс */
     #[ORM\Column(type: Types::STRING, nullable: true)]

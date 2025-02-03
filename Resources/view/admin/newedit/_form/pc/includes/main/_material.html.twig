@@ -1,0 +1,55 @@
+{% trans_default_domain 'admin.products.product' %}
+
+<div id="material_collection">
+
+    {% for material in form.material %}
+
+        {% set material_parent = loop.index0 ? 'false' : 'true' %}
+
+        <div class="d-flex gap-2 align-items-end item-collection-material">
+
+            <div class="w-100">
+                {# Родительский раздел #}
+                {{ form_row(material.material, {
+                    placeholder: 'Выберите сырьё из списка...'|trans,
+                    attr: { 'data-select' : 'select2', 'data-parent' :  material_parent }
+                }) }}
+            </div>
+
+            <div class="{{ loop.index0 ? '' : ' d-none' }}">
+                {{ form_row(material.DeleteMaterial, { label:
+                    '<span class="svg-icon svg-icon-2">
+					<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25" fill="none">
+						<rect opacity="0.5" x="7.05025" y="15.5356" width="12" height="2" rx="1" transform="rotate(-45 7.05025 15.5356)" fill="currentColor"></rect>
+						<rect x="8.46447" y="7.05029" width="12" height="2" rx="1" transform="rotate(45 8.46447 7.05029)" fill="currentColor"></rect>
+					</svg>
+				</span>',
+                    attr: { class: 'btn-outline-danger btn-sm del-item-section border-0 del-item-material' }
+                }) }}
+            </div>
+        </div>
+
+    {% endfor %}
+</div>
+
+<div class="form-group">
+    <button type="button" id="material_addCollection"
+            class="btn btn-sm btn-outline-primary border-0"
+            data-index="{{ form.material.count }}"
+            data-prototype="prototype.material"
+    >
+		
+		<span class="svg-icon svg-icon-2">
+			<svg xmlns="http://www.w3.org/2000/svg"
+                 width="24" height="24" viewBox="0 0 24 24" fill="none">
+				<rect opacity="0.5" x="11" y="18" width="12"
+                      height="2" rx="1" transform="rotate(-90 11 18)" fill="currentColor"></rect>
+				<rect x="6" y="11" width="12" height="2" rx="1" fill="currentColor"></rect>
+			</svg>
+		</span>
+        Добавить еще сырье
+    </button>
+</div>
+
+
+{# {{ include(_self|replace({ "_material.html.twig": "prototype.material.html.twig" }), { prototype: form.material.vars.prototype }) |e('html_attr') }} #}
