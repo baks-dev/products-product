@@ -23,32 +23,47 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Materials;
+namespace BaksDev\Products\Product\Type\Material\Tests;
 
-use BaksDev\Products\Product\Entity\Materials\ProductMaterialInterface;
 use BaksDev\Products\Product\Type\Material\MaterialUid;
-use Symfony\Component\Validator\Constraints as Assert;
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\DependencyInjection\Attribute\When;
+use Symfony\Component\Uid\Uuid;
 
-/** @see ProductMaterial */
-final class ProductMaterialDTO implements ProductMaterialInterface
+/**
+ * @group materials-catalog
+ */
+#[When(env: 'test')]
+final class MaterialUidTests extends TestCase
 {
-    /** Идентификатор материала */
-    #[Assert\Uuid]
-    private ?MaterialUid $material = null;
-
-    /**
-     * Material
-     */
-
-    public function getMaterial(): ?MaterialUid
+    public function testConstructor()
     {
-        return $this->material;
+        $uid = new MaterialUid();
+        $this->assertInstanceOf(MaterialUid::class, $uid);
+
+        $value = '0188a99e-e18e-733d-9305-9e2bfaf96f09';
+        $uid = new MaterialUid($value);
+        $this->assertEquals($value, $uid->getValue());
     }
 
-    public function setMaterial(MaterialUid $material): self
+    public function testGetters()
     {
-        $this->material = $material;
-        return $this;
+        $attr = 'someAttr';
+        $option = 'someOption';
+
+        $uid = new MaterialUid(null, $attr, $option);
+
+        $this->assertEquals($attr, $uid->getAttr());
+        $this->assertEquals($option, $uid->getOption());
     }
 
+    public function testUidGeneration()
+    {
+        $uid1 = MaterialUid::generate();
+        $uid2 = MaterialUid::generate();
+
+        $this->assertInstanceOf(MaterialUid::class, $uid1);
+        $this->assertInstanceOf(MaterialUid::class, $uid2);
+        $this->assertNotEquals($uid1->getValue(), $uid2->getValue());
+    }
 }

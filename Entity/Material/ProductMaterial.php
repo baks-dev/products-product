@@ -26,8 +26,8 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Entity\Materials;
 
 use BaksDev\Core\Entity\EntityEvent;
-use BaksDev\Materials\Catalog\Type\Id\MaterialUid;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
+use BaksDev\Products\Product\Type\Material\MaterialUid;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use InvalidArgumentException;

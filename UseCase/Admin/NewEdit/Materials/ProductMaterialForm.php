@@ -26,8 +26,8 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Materials;
 
 
-use BaksDev\Materials\Catalog\Type\Id\MaterialUid;
 use BaksDev\Products\Product\Repository\MaterialsChoice\MaterialsChoiceInterface;
+use BaksDev\Products\Product\Type\Material\MaterialUid;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;

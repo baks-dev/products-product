@@ -21,34 +21,46 @@
  *  THE SOFTWARE.
  */
 
-declare(strict_types=1);
+namespace BaksDev\Products\Product\Type\Material;
 
-namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Materials;
+use BaksDev\Core\Type\UidType\Uid;
+use Symfony\Component\Uid\AbstractUid;
 
-use BaksDev\Products\Product\Entity\Materials\ProductMaterialInterface;
-use BaksDev\Products\Product\Type\Material\MaterialUid;
-use Symfony\Component\Validator\Constraints as Assert;
-
-/** @see ProductMaterial */
-final class ProductMaterialDTO implements ProductMaterialInterface
+final class MaterialUid extends Uid
 {
-    /** Идентификатор материала */
-    #[Assert\Uuid]
-    private ?MaterialUid $material = null;
+    public const string TEST = '0188a99e-e18e-733d-9305-9e2bfaf96f09';
 
-    /**
-     * Material
-     */
+    public const string TYPE = 'material';
 
-    public function getMaterial(): ?MaterialUid
+    private mixed $attr;
+
+    private mixed $option;
+
+    public function __construct(
+        AbstractUid|self|string|null $value = null,
+        mixed $attr = null,
+        mixed $option = null
+    )
     {
-        return $this->material;
+
+        parent::__construct($value);
+
+        $this->attr = $attr;
+        $this->option = $option;
     }
 
-    public function setMaterial(MaterialUid $material): self
+    public function __toString(): string
     {
-        $this->material = $material;
-        return $this;
+        return $this->getValue();
     }
 
+    public function getAttr(): mixed
+    {
+        return $this->attr;
+    }
+
+    public function getOption(): mixed
+    {
+        return $this->option;
+    }
 }

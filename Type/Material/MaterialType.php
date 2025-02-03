@@ -21,34 +21,21 @@
  *  THE SOFTWARE.
  */
 
-declare(strict_types=1);
+namespace BaksDev\Products\Product\Type\Material;
 
-namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Materials;
+use BaksDev\Core\Type\UidType\UidType;
 
-use BaksDev\Products\Product\Entity\Materials\ProductMaterialInterface;
-use BaksDev\Products\Product\Type\Material\MaterialUid;
-use Symfony\Component\Validator\Constraints as Assert;
-
-/** @see ProductMaterial */
-final class ProductMaterialDTO implements ProductMaterialInterface
+final class MaterialType extends UidType
 {
-    /** Идентификатор материала */
-    #[Assert\Uuid]
-    private ?MaterialUid $material = null;
-
-    /**
-     * Material
-     */
-
-    public function getMaterial(): ?MaterialUid
+    public function getClassType(): string
     {
-        return $this->material;
+        return MaterialUid::class;
     }
 
-    public function setMaterial(MaterialUid $material): self
+
+    public function getName(): string
     {
-        $this->material = $material;
-        return $this;
+        return MaterialUid::TYPE;
     }
 
 }

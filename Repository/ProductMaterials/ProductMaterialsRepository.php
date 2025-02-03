@@ -26,10 +26,10 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Repository\ProductMaterials;
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
-use BaksDev\Materials\Catalog\Type\Id\MaterialUid;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Materials\ProductMaterial;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
+use BaksDev\Products\Product\Type\Material\MaterialUid;
 use Generator;
 use InvalidArgumentException;
 

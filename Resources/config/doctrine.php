@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -34,6 +34,8 @@ use BaksDev\Products\Product\Type\Id\ProductType;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Product\Type\Invariable\ProductInvariableType;
 use BaksDev\Products\Product\Type\Invariable\ProductInvariableUid;
+use BaksDev\Products\Product\Type\Material\MaterialType;
+use BaksDev\Products\Product\Type\Material\MaterialUid;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConstType;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferType;
@@ -82,6 +84,8 @@ return static function(ContainerConfigurator $container, DoctrineConfig $doctrin
     $doctrine->dbal()->type(ProductModificationUid::TYPE)->class(ProductModificationType::class);
     $doctrine->dbal()->type(ProductBarcode::TYPE)->class(ProductBarcodeType::class);
     $doctrine->dbal()->type(ProductInvariableUid::TYPE)->class(ProductInvariableType::class);
+
+    $doctrine->dbal()->type(MaterialUid::TYPE)->class(MaterialType::class);
 
     $services = $container->services()
         ->defaults()
