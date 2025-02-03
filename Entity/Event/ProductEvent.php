@@ -31,7 +31,7 @@ use BaksDev\Products\Product\Entity\Category\ProductCategory;
 use BaksDev\Products\Product\Entity\Description\ProductDescription;
 use BaksDev\Products\Product\Entity\Files\ProductFiles;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
-use BaksDev\Products\Product\Entity\Materials\ProductMaterial;
+use BaksDev\Products\Product\Entity\Material\ProductMaterial;
 use BaksDev\Products\Product\Entity\Modify\ProductModify;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Photo\ProductPhoto;

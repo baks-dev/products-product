@@ -21,7 +21,7 @@
  *  THE SOFTWARE.
  */
 
-namespace BaksDev\Products\Product\Entity\Materials;
+namespace BaksDev\Products\Product\Entity\Material;
 
 interface ProductMaterialInterface
 {

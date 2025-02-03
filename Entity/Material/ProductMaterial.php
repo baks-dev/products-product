@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\Entity\Materials;
+namespace BaksDev\Products\Product\Entity\Material;
 
 use BaksDev\Core\Entity\EntityEvent;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
