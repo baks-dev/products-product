@@ -51,7 +51,7 @@
         '%PRODUCT_MOD%' : '',
     })|replace({ ' ,': null })|trim %}
 {% else %}
-    {% set PRODUCT_KEYWORDS = 'Купить по выгодной цене ' ~ card.product_name ~ ' от ' ~ money(first_price.price) %}
+    {% set PRODUCT_KEYWORDS = 'Купить по выгодной цене ' ~ card.product_name ~ ' от ' ~ money(first_price.price ?: '') %}
 {% endif %}
 
 

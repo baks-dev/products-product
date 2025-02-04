@@ -25,7 +25,7 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Materials;
 
-use BaksDev\Products\Product\Entity\Materials\ProductMaterialInterface;
+use BaksDev\Products\Product\Entity\Material\ProductMaterialInterface;
 use BaksDev\Products\Product\Type\Material\MaterialUid;
 use Symfony\Component\Validator\Constraints as Assert;
 
