@@ -38,7 +38,7 @@ final readonly class ProductConstByBarcodeRepository implements ProductConstByBa
     public function __construct(private DBALQueryBuilder $DBALQueryBuilder) {}
 
     /**
-     * Метод возвращает активные идентификаторы продукции
+     * Метод возвращает активные идентификаторы продукции по штрихкоду
      */
     public function find(string $barcode): CurrentProductDTO|false
     {

@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -144,8 +144,9 @@ class CurrentProductIdentifierRepositoryTest extends KernelTestCase
             ->forEvent(self::$result['event'])
             ->find();
 
+
         self::assertNotFalse($result);
-        self::assertSame(self::$new['event'], $result['event']);
+        self::assertTrue($result->getEvent()->equals(self::$new['event']));
 
     }
 
@@ -163,8 +164,9 @@ class CurrentProductIdentifierRepositoryTest extends KernelTestCase
 
         self::assertNotFalse($result);
 
-        self::assertSame(self::$new['event'], $result['event']);
-        self::assertSame(self::$new['offer'], $result['offer']);
+
+        self::assertTrue($result->getEvent()->equals(self::$new['event']));
+        self::assertTrue($result->getOffer()->equals(self::$new['offer']));
 
     }
 
@@ -185,9 +187,9 @@ class CurrentProductIdentifierRepositoryTest extends KernelTestCase
 
         self::assertNotFalse($result);
 
-        self::assertSame(self::$new['event'], $result['event']);
-        self::assertSame(self::$new['offer'], $result['offer']);
-        self::assertSame(self::$new['variation'], $result['variation']);
+        self::assertTrue($result->getEvent()->equals(self::$new['event']));
+        self::assertTrue($result->getOffer()->equals(self::$new['offer']));
+        self::assertTrue($result->getVariation()->equals(self::$new['variation']));
     }
 
 
@@ -208,10 +210,11 @@ class CurrentProductIdentifierRepositoryTest extends KernelTestCase
 
         self::assertNotFalse($result);
 
-        self::assertSame(self::$new['event'], $result['event']);
-        self::assertSame(self::$new['offer'], $result['offer']);
-        self::assertSame(self::$new['variation'], $result['variation']);
-        self::assertSame(self::$new['modification'], $result['modification']);
+        self::assertTrue($result->getEvent()->equals(self::$new['event']));
+        self::assertTrue($result->getOffer()->equals(self::$new['offer']));
+        self::assertTrue($result->getVariation()->equals(self::$new['variation']));
+        self::assertTrue($result->getModification()->equals(self::$new['modification']));
+
 
     }
 }

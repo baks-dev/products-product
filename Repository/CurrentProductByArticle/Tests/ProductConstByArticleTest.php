@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -36,7 +36,6 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'test')]
 class ProductConstByArticleTest extends KernelTestCase
 {
-
     public function testUseCase(): void
     {
         /** @var ProductConstByArticleInterface $ProductConstByArticle */
@@ -44,16 +43,5 @@ class ProductConstByArticleTest extends KernelTestCase
 
         $CurrentProductDTO = $ProductConstByArticle->find('TH202-16-195-45-84W');
         self::assertNotFalse($CurrentProductDTO);
-
-        /*dd(sprintf(
-            'https://bundles.baks.dev/admin/product/edit/%s?offfer=%s&variation=%s&modification=%s',
-            $CurrentProductDTO->getEvent(),
-            $CurrentProductDTO->getOfferConst(),
-            $CurrentProductDTO->getVariationConst(),
-            $CurrentProductDTO->getModificationConst()
-        ));*/
-
     }
-
-
 }

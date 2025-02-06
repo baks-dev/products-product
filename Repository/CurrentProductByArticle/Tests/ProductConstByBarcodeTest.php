@@ -36,24 +36,13 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'test')]
 class ProductConstByBarcodeTest extends KernelTestCase
 {
-
     public function testUseCase(): void
     {
         /** @var ProductConstByBarcodeInterface $ProductConstByBarcode */
         $ProductConstByBarcode = self::getContainer()->get(ProductConstByBarcodeInterface::class);
 
-        $CurrentProductDTO = $ProductConstByBarcode->find('TH202-16-195-45-84W');
+        $CurrentProductDTO = $ProductConstByBarcode->find('2738141621291');
         self::assertNotFalse($CurrentProductDTO);
 
-        /*dd(sprintf(
-            'https://bundles.baks.dev/admin/product/edit/%s?offfer=%s&variation=%s&modification=%s',
-            $CurrentProductDTO->getEvent(),
-            $CurrentProductDTO->getOfferConst(),
-            $CurrentProductDTO->getVariationConst(),
-            $CurrentProductDTO->getModificationConst()
-        ));*/
-
     }
-
-
 }
