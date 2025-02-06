@@ -87,6 +87,7 @@ return static function(ContainerConfigurator $container, DoctrineConfig $doctrin
 
     $doctrine->dbal()->type(MaterialUid::TYPE)->class(MaterialType::class);
 
+
     $services = $container->services()
         ->defaults()
         ->autowire()
@@ -105,6 +106,8 @@ return static function(ContainerConfigurator $container, DoctrineConfig $doctrin
 
     $services->set(ProductModificationUid::class)->class(ProductModificationUid::class);
     $services->set(ProductModificationConst::class)->class(ProductModificationConst::class);
+
+    $services->set(MaterialUid::class)->class(MaterialUid::class);
 
     $emDefault = $doctrine->orm()->entityManager('default')->autoMapping(true);
 
