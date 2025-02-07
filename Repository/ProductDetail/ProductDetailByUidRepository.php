@@ -423,6 +423,17 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
             ) AS product_article
 		');
 
+        /* Штрихкод продукта */
+
+        $dbal->addSelect('
+            COALESCE(
+                product_modification.barcode, 
+                product_variation.barcode, 
+                product_offer.barcode, 
+                product_info.barcode
+            ) AS product_barcode
+		');
+
 
         /* Фото продукта */
 
