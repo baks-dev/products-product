@@ -209,6 +209,7 @@
                             {% endif %}
 
                             <a href='{{ path('products-product:user.detail', {
+                                category: card.category_url,
                                 url : card.url ,
                                 offer: offer.product_offer_value,
                                 variation: offer.product_variation_value
