@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -38,7 +38,6 @@ use BaksDev\Products\Category\Entity\Section\CategoryProductSection;
 use BaksDev\Products\Category\Entity\Section\Field\CategoryProductSectionField;
 use BaksDev\Products\Category\Entity\Section\Field\Trans\CategoryProductSectionFieldTrans;
 use BaksDev\Products\Category\Entity\Trans\CategoryProductTrans;
-use BaksDev\Products\Category\Type\Section\Field\Id\CategoryProductSectionFieldUid;
 use BaksDev\Products\Product\Entity\Active\ProductActive;
 use BaksDev\Products\Product\Entity\Category\ProductCategory;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
@@ -60,8 +59,19 @@ use stdClass;
 
 final class ProductAlternativeRepository implements ProductAlternativeInterface
 {
+    private int|false $limit = 100;
+
     public function __construct(private readonly DBALQueryBuilder $DBALQueryBuilder) {}
 
+    public function setMaxResult(int $limit): self
+    {
+        $this->limit = $limit;
+        return $this;
+    }
+
+    /**
+     * Метод возвращает альтернативные варианты продукции по значению value торговых предложений
+     */
     public function fetchAllAlternativeAssociative(
         string $offer,
         ?string $variation,
@@ -142,7 +152,9 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                 'product',
                 ProductActive::class,
                 'product_active',
-                'product_active.event = product.event AND product_active.active = true AND product_active.active_from < NOW()
+                'product_active.event = product.event AND 
+                product_active.active = true AND 
+                product_active.active_from < NOW()
 			
 			AND (
 				CASE
@@ -151,8 +163,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 				   ELSE TRUE
 				END
 			)
-		'
-            );
+		');
 
 
         // Название твоара
@@ -319,9 +330,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                 ProductPrice::class,
                 'product_price',
                 'product_price.event = product.event'
-            )
-            ->addGroupBy('product_price.currency')
-            ->addGroupBy('product_price.reserve');
+            );
 
         $dbal
             ->leftJoin(
@@ -329,8 +338,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                 ProductOfferPrice::class,
                 'product_offer_price',
                 'product_offer_price.offer = product_offer.id'
-            )
-            ->addGroupBy('product_offer_price.currency');
+            );
 
         // Цена множественного варианта
         $dbal
@@ -339,8 +347,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                 ProductVariationPrice::class,
                 'product_variation_price',
                 'product_variation_price.variation = product_variation.id'
-            )
-            ->addGroupBy('product_variation_price.currency');
+            );
 
 
         // Цена модификации множественного варианта
@@ -350,8 +357,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                 ProductModificationPrice::class,
                 'product_modification_price',
                 'product_modification_price.modification = product_modification.id'
-            )
-            ->addGroupBy('product_modification_price.currency');
+            );
 
 
         /**
@@ -389,8 +395,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                 ProductOfferQuantity::class,
                 'product_offer_quantity',
                 'product_offer_quantity.offer = product_offer.id'
-            )
-            ->addGroupBy('product_offer_quantity.reserve');
+            );
 
         // Наличие и резерв множественного варианта
         $dbal
@@ -399,8 +404,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                 ProductVariationQuantity::class,
                 'product_variation_quantity',
                 'product_variation_quantity.variation = product_variation.id'
-            )
-            ->addGroupBy('product_variation_quantity.reserve');
+            );
 
         // Наличие и резерв модификации множественного варианта
         $dbal
@@ -409,8 +413,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                 ProductModificationQuantity::class,
                 'product_modification_quantity',
                 'product_modification_quantity.modification = product_modification.id'
-            )
-            ->addGroupBy('product_modification_quantity.reserve');
+            );
 
 
         /**
@@ -527,7 +530,10 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 			AS category_section_field"
         );
 
-        /** Product Invariable */
+        /**
+         * Product Invariable
+         */
+
         $dbal
             ->addSelect('product_invariable.id AS product_invariable_id')
             ->leftJoin(
@@ -554,7 +560,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 
         $dbal->where('product_offer.value = :offer');
         $dbal->setParameter('offer', $offer);
-        $dbal->setMaxResults(1000);
+        $dbal->setMaxResults($this->limit);
 
         $dbal->allGroupByExclude();
 

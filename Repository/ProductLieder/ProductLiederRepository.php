@@ -31,7 +31,6 @@ use BaksDev\Products\Category\Entity\Info\CategoryProductInfo;
 use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Entity\Active\ProductActive;
 use BaksDev\Products\Product\Entity\Category\ProductCategory;
-use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
 use BaksDev\Products\Product\Entity\Offers\Image\ProductOfferImage;
 use BaksDev\Products\Product\Entity\Offers\Price\ProductOfferPrice;
@@ -110,12 +109,6 @@ final class ProductLiederRepository implements ProductLiederInterface
 
         $dbal->from(Product::class, 'product');
 
-        $dbal->join('product',
-            ProductEvent::class,
-            'product_event',
-            'product_event.id = product.event'
-        );
-
         $dbal
             ->addSelect('product_trans.name AS product_name')
             ->leftJoin(
@@ -144,18 +137,22 @@ final class ProductLiederRepository implements ProductLiederInterface
                 'product_info.product = product.id'
             );
 
-        /** Даты категории */
+
         $dbal
-            ->addSelect('product_active.active_from')
-            ->addSelect('product_active.active_to')
             ->join(
                 'product',
                 ProductActive::class,
                 'product_active',
-                'product_active.event = product.event'
+                '
+                    product_active.event = product.event AND 
+                    product_active.active IS TRUE 
+                '
             );
 
-        /** Торговое предложение */
+        /**
+         * Торговое предложение
+         */
+
         $dbal->leftJoin(
             'product',
             ProductOffer::class,
@@ -176,11 +173,12 @@ final class ProductLiederRepository implements ProductLiederInterface
             ProductOfferPrice::class,
             'product_offer_price',
             'product_offer_price.offer = product_offer.id'
-        )
-            ->addGroupBy('product_offer_price.price')
-            ->addGroupBy('product_offer_price.currency');
+        );
 
-        /** Множественный вариант */
+        /**
+         * Множественный вариант
+         */
+
         $dbal->leftOneJoin(
             'product_offer',
             ProductVariation::class,
@@ -201,11 +199,12 @@ final class ProductLiederRepository implements ProductLiederInterface
             ProductVariationPrice::class,
             'product_variation_price',
             'product_variation_price.variation = product_offer_variation.id'
-        )
-            ->addGroupBy('product_variation_price.price')
-            ->addGroupBy('product_variation_price.currency');
+        );
 
-        /** Модификация множественного варианта */
+        /**
+         * Модификация множественного варианта
+         */
+
         $dbal->leftJoin(
             'product_offer_variation',
             ProductModification::class,
@@ -226,11 +225,12 @@ final class ProductLiederRepository implements ProductLiederInterface
             ProductModificationPrice::class,
             'product_modification_price',
             'product_modification_price.modification = product_offer_modification.id'
-        )
-            ->addGroupBy('product_modification_price.price')
-            ->addGroupBy('product_modification_price.currency');
+        );
 
-        /** Категория */
+        /**
+         * Категория
+         */
+
         if($this->categoryUid instanceof CategoryProductUid)
         {
             $dbal->join(
@@ -276,7 +276,10 @@ final class ProductLiederRepository implements ProductLiederInterface
             );
 
 
-        /** Фото продукта */
+        /**
+         * Фото продукта
+         */
+
         $dbal->leftJoin(
             'product_offer_modification',
             ProductModificationImage::class,
@@ -315,7 +318,7 @@ final class ProductLiederRepository implements ProductLiederInterface
             'product_photo',
             '
 			product_offer_images.name IS NULL AND
-			product_photo.event = product_event.id AND
+			product_photo.event = product.event AND
 			product_photo.root = true
 			'
         );
