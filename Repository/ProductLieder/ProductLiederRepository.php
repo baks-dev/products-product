@@ -31,13 +31,21 @@ use BaksDev\Products\Category\Entity\Info\CategoryProductInfo;
 use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Entity\Active\ProductActive;
 use BaksDev\Products\Product\Entity\Category\ProductCategory;
+use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
+use BaksDev\Products\Product\Entity\Offers\Image\ProductOfferImage;
+use BaksDev\Products\Product\Entity\Offers\Price\ProductOfferPrice;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\Quantity\ProductOfferQuantity;
+use BaksDev\Products\Product\Entity\Offers\Variation\Image\ProductVariationImage;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Image\ProductModificationImage;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Price\ProductModificationPrice;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Quantity\ProductModificationQuantity;
+use BaksDev\Products\Product\Entity\Offers\Variation\Price\ProductVariationPrice;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Product\Entity\Offers\Variation\Quantity\ProductVariationQuantity;
+use BaksDev\Products\Product\Entity\Photo\ProductPhoto;
 use BaksDev\Products\Product\Entity\Price\ProductPrice;
 use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
@@ -102,6 +110,12 @@ final class ProductLiederRepository implements ProductLiederInterface
 
         $dbal->from(Product::class, 'product');
 
+        $dbal->join('product',
+            ProductEvent::class,
+            'product_event',
+            'product_event.id = product.event'
+        );
+
         $dbal
             ->addSelect('product_trans.name AS product_name')
             ->leftJoin(
@@ -156,6 +170,16 @@ final class ProductLiederRepository implements ProductLiederInterface
             'product_offer_quantity.offer = product_offer.id'
         );
 
+        /** Цена торгового предложения */
+        $dbal->leftJoin(
+            'product_offer',
+            ProductOfferPrice::class,
+            'product_offer_price',
+            'product_offer_price.offer = product_offer.id'
+        )
+            ->addGroupBy('product_offer_price.price')
+            ->addGroupBy('product_offer_price.currency');
+
         /** Множественный вариант */
         $dbal->leftOneJoin(
             'product_offer',
@@ -171,6 +195,16 @@ final class ProductLiederRepository implements ProductLiederInterface
             'product_variation_quantity.variation = product_offer_variation.id'
         );
 
+        /** Цена множественного варианта */
+        $dbal->leftJoin(
+            'product_offer_variation',
+            ProductVariationPrice::class,
+            'product_variation_price',
+            'product_variation_price.variation = product_offer_variation.id'
+        )
+            ->addGroupBy('product_variation_price.price')
+            ->addGroupBy('product_variation_price.currency');
+
         /** Модификация множественного варианта */
         $dbal->leftJoin(
             'product_offer_variation',
@@ -185,6 +219,16 @@ final class ProductLiederRepository implements ProductLiederInterface
             'product_modification_quantity',
             'product_modification_quantity.modification = product_offer_modification.id'
         );
+
+        /** Цена множественного варианта */
+        $dbal->leftJoin(
+            'product_offer_modification',
+            ProductModificationPrice::class,
+            'product_modification_price',
+            'product_modification_price.modification = product_offer_modification.id'
+        )
+            ->addGroupBy('product_modification_price.price')
+            ->addGroupBy('product_modification_price.currency');
 
         /** Категория */
         if($this->categoryUid instanceof CategoryProductUid)
@@ -230,6 +274,163 @@ final class ProductLiederRepository implements ProductLiederInterface
                 'category_info',
                 'category_info.event = category.event'
             );
+
+
+        /** Фото продукта */
+        $dbal->leftJoin(
+            'product_offer_modification',
+            ProductModificationImage::class,
+            'product_offer_modification_image',
+            '
+			product_offer_modification_image.modification = product_offer_modification.id AND
+			product_offer_modification_image.root = true
+			'
+        );
+
+        $dbal->leftJoin(
+            'product_offer',
+            ProductVariationImage::class,
+            'product_offer_variation_image',
+            '
+			product_offer_variation_image.variation = product_offer_variation.id AND
+			product_offer_variation_image.root = true
+			'
+        );
+
+        $dbal->leftJoin(
+            'product_offer',
+            ProductOfferImage::class,
+            'product_offer_images',
+            '
+			product_offer_variation_image.name IS NULL AND
+			product_offer_images.offer = product_offer.id AND
+			product_offer_images.root = true
+			'
+        );
+
+
+        $dbal->leftJoin(
+            'product_offer',
+            ProductPhoto::class,
+            'product_photo',
+            '
+			product_offer_images.name IS NULL AND
+			product_photo.event = product_event.id AND
+			product_photo.root = true
+			'
+        );
+
+        $dbal->addSelect("
+			CASE
+			
+			 WHEN product_offer_modification_image.name IS NOT NULL 
+			 THEN CONCAT ( '/upload/".$dbal->table(ProductModificationImage::class)."', '/', product_offer_modification_image.name)
+			 
+			 WHEN product_offer_variation_image.name IS NOT NULL 
+			 THEN CONCAT ( '/upload/".$dbal->table(ProductVariationImage::class)."' , '/', product_offer_variation_image.name)
+			   
+			 WHEN product_offer_images.name IS NOT NULL 
+			 THEN CONCAT ( '/upload/".$dbal->table(ProductOfferImage::class)."' , '/', product_offer_images.name)
+			 
+			 WHEN product_photo.name IS NOT NULL 
+			 THEN CONCAT ( '/upload/".$dbal->table(ProductPhoto::class)."' , '/', product_photo.name)
+			 
+			 ELSE NULL
+			 
+			END AS product_image
+		"
+        );
+
+        /** Флаг загрузки файла CDN */
+        $dbal->addSelect("
+			CASE
+			
+                WHEN product_offer_modification_image.name IS NOT NULL 
+                THEN product_offer_modification_image.ext
+			
+			   WHEN product_offer_variation_image.name IS NOT NULL 
+			   THEN product_offer_variation_image.ext
+			   
+			   WHEN product_offer_images.name IS NOT NULL 
+			   THEN product_offer_images.ext
+			   
+			   WHEN product_photo.name IS NOT NULL 
+			   THEN product_photo.ext
+			   
+			   ELSE NULL
+			END AS product_image_ext
+		"
+        );
+
+        /** Флаг загрузки файла CDN */
+        $dbal->addSelect("
+			CASE
+			   WHEN product_offer_variation_image.name IS NOT NULL 
+			   THEN product_offer_variation_image.cdn
+					
+			   WHEN product_offer_images.name IS NOT NULL 
+			   THEN product_offer_images.cdn
+					
+			   WHEN product_photo.name IS NOT NULL 
+			   THEN product_photo.cdn
+					
+			   ELSE NULL
+			END AS product_image_cdn
+		"
+        );
+
+        /** Стоимость продукта */
+        $dbal->addSelect('
+			COALESCE(
+                NULLIF(product_modification_price.price, 0), 
+                NULLIF(product_variation_price.price, 0), 
+                NULLIF(product_offer_price.price, 0), 
+                NULLIF(product_price.price, 0),
+                0
+            ) AS product_price
+		');
+
+        /** Предыдущая стоимость продукта */
+        $dbal->addSelect("
+			COALESCE(
+                NULLIF(product_modification_price.old, 0),
+                NULLIF(product_variation_price.old, 0),
+                NULLIF(product_offer_price.old, 0),
+                NULLIF(product_price.old, 0),
+                0
+            ) AS product_old_price
+		");
+
+        /** Валюта продукта */
+        $dbal->addSelect("
+			CASE
+			   WHEN COALESCE(product_modification_price.price, 0) != 0 
+			   THEN product_modification_price.currency
+			   
+			   WHEN COALESCE(product_variation_price.price, 0) != 0 
+			   THEN product_variation_price.currency
+			   
+			   WHEN COALESCE(product_offer_price.price, 0) != 0 
+			   THEN product_offer_price.currency
+			   
+			   WHEN COALESCE(product_price.price, 0) != 0 
+			   THEN product_price.currency
+			   
+			   ELSE NULL
+			END AS product_currency"
+        );
+
+        /** Только с ценой */
+        $dbal->andWhere("
+ 			CASE
+			   WHEN product_modification_price.price  IS NOT NULL THEN product_modification_price.price
+			   WHEN product_variation_price.price  IS NOT NULL THEN product_variation_price.price
+			   WHEN product_offer_price.price IS NOT NULL THEN product_offer_price.price
+			   WHEN product_price.price IS NOT NULL THEN product_price.price
+			   ELSE 0
+			END > 0
+ 		"
+        );
 
         /** Только при наличии */
         $dbal->andWhere("
