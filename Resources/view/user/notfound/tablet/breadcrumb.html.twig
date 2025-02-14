@@ -2,14 +2,12 @@
     <ol class="breadcrumb text-secondary small opacity-75">
         <li>
             <svg xmlns="http://www.w3.org/2000/svg"
-                 width="15"
-                 height="12"
+                 width="10"
+                 height="10"
                  fill="currentColor"
-                 class="text-primary me-1"
-                 viewBox="0 0 16 16"
-                 style="margin-bottom: 2px;">
-                <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L8 2.207l6.646 6.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5Z"/>
-                <path d="m8 3.293 6 6V13.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5V9.293l6-6Z"/>
+                 class="bi bi-caret-right-fill text-muted me-1"
+                 viewBox="0 0 16 16">
+                <path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"/>
             </svg>
         </li>
 
@@ -21,26 +19,45 @@
                 {{ 'breadcrumb.homepage.user'|trans({}, 'core') }}
             </a>
         </li>
-        <li class="breadcrumb-item">
-            <a href="{{ path('products-product:user.catalog.category') }}" class="text-muted" aria-label="Продукция"
-               title="Продукция">Каталог</a>
-        </li>
+
 
         <li class="breadcrumb-item">
-            <a href="#" class="text-muted" aria-label="Продукция" title="Продукция">Шины</a>
+            <a href="{{ path('products-product:user.catalog.category', { category : card.category_url }) }}"
+               class="text-muted"
+               aria-label="{{ card.category_name }}"
+               title="{{ card.category_name }}">
+                {{ card.category_name }}
+            </a>
         </li>
 
-        <li class="breadcrumb-item">
-            <a href="#" class="text-muted" aria-label="Продукция" title="Продукция">Triangle</a>
-        </li>
 
-        <li class="breadcrumb-item">
-            <a href="#" class="text-muted" aria-label="Triangle Sports TH201" title="Triangle Sports TH201">Sports
-                TH201</a>
-        </li>
+        {% set breadcrumb_active_name = card.product_offer_value|call_twig_func(card.product_offer_reference~'_render')
+            ~card.product_variation_value|call_twig_func(card.product_variation_reference~'_render')
+            ~card.product_modification_value|call_twig_func(card.product_modification_reference~'_render') %}
 
-        <li class="breadcrumb-item active text-primary" aria-current="page" aria-label="195/45 R16 84W"
-            title="195/45 R16 84W">195/45 R16
+        {% if breadcrumb_active_name %}
+
+            <li class="breadcrumb-item">
+                <a href="{{ path('products-product:user.model', {
+                    category: card.category_url,
+                    url: card.url }) }}" class="text-muted"
+                   aria-label="{{ card.product_name }}"
+                   title="{{ card.product_name }}">
+                    {{ card.product_name }}
+                </a>
+            </li>
+
+        {% else %}
+            {% set breadcrumb_active_name = card.product_name %}
+        {% endif %}
+
+
+        <li class="breadcrumb-item active text-primary"
+            aria-current="page"
+            aria-label="{{ breadcrumb_active_name }}"
+            title="{{ breadcrumb_active_name }}">
+            {# Значение торгового предложения #}
+            {{ breadcrumb_active_name }}
         </li>
     </ol>
 </nav>

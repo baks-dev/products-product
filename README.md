@@ -1,6 +1,6 @@
 # BaksDev Product
 
-[![Version](https://img.shields.io/badge/version-7.2.15-blue)](https://github.com/baks-dev/products-product/releases)
+[![Version](https://img.shields.io/badge/version-7.2.16-blue)](https://github.com/baks-dev/products-product/releases)
 ![php 8.4+](https://img.shields.io/badge/php-min%208.4-red.svg)
 
 Модуль Продукции
