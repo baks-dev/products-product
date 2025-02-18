@@ -30,6 +30,7 @@ use BaksDev\Products\Product\Entity\Info\ProductInfo;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
+use BaksDev\Products\Product\Entity\Product;
 
 
 final class ExistProductArticleRepository implements ExistProductArticleInterface
@@ -104,21 +105,73 @@ final class ExistProductArticleRepository implements ExistProductArticleInterfac
         if($this->modification)
         {
             $dbal->from(ProductModification::class, 'exist');
+
+            $dbal->join(
+                'exist',
+                ProductVariation::class,
+                'variation',
+                'variation.id = exist.variation'
+            );
+
+            $dbal->join(
+                'variation',
+                ProductOffer::class,
+                'offer',
+                'offer.id = variation.offer'
+            );
+
+            $dbal->join(
+                'offer',
+                Product::class,
+                'product',
+                'product.event = offer.event'
+            );
+
+
         }
 
         if($this->variation)
         {
             $dbal->from(ProductVariation::class, 'exist');
+
+            $dbal->join(
+                'exist',
+                ProductOffer::class,
+                'offer',
+                'offer.id = exist.offer'
+            );
+
+            $dbal->join(
+                'offer',
+                Product::class,
+                'product',
+                'product.event = offer.event'
+            );
+
         }
 
         if($this->offer)
         {
             $dbal->from(ProductOffer::class, 'exist');
+
+            $dbal->join(
+                'exist',
+                Product::class,
+                'product',
+                'product.event = exist.event'
+            );
         }
 
         if(false === $this->modification && false === $this->variation && false === $this->offer)
         {
             $dbal->from(ProductInfo::class, 'exist');
+
+            $dbal->join(
+                'exist',
+                Product::class,
+                'product',
+                'product.event = exist.event'
+            );
         }
 
         $dbal

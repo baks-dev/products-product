@@ -46,6 +46,9 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
     /** Штрихкод товара */
     private readonly ProductBarcode $barcode;
 
+    /** Индивидуальное название */
+    private ?string $name = null;
+
     /** Заполненное значение */
     private ?string $value = null;
 
@@ -207,7 +210,7 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
         $filter = $this->variation->filter(function(Variation\ProductVariationCollectionDTO $element) use (
             $variation
         ) {
-            return $variation->getValue() === $element->getValue();
+            return $variation->getValue() === $element->getValue() && $variation->getBarcode() === $element->getBarcode();
         });
 
         if($filter->isEmpty())
@@ -259,4 +262,17 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
         $this->postfix = $postfix;
     }
 
+    /**
+     * Name
+     */
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): self
+    {
+        $this->name = $name;
+        return $this;
+    }
 }

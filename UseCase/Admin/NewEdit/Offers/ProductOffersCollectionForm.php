@@ -80,16 +80,16 @@ final class ProductOffersCollectionForm extends AbstractType
             )
         );
 
+        $builder->add('name', TextType::class);
+
         $builder->add('postfix', TextType::class);
 
         $builder->add('article', TextType::class);
-
 
         $builder->add('value', TextType::class, ['label' => $offer?->name, 'attr' => ['class' => 'mb-3']]);
 
         $builder->add('price', Price\ProductOfferPriceForm::class, ['label' => false]);
 
-        //$builder->add('quantity', Quantity\ProductOfferQuantityForm::class, ['label' => false]);
 
         /** Торговые предложения */
         $builder->add('image', CollectionType::class, [

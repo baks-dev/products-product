@@ -280,7 +280,7 @@ final class ProductDTO implements ProductEventInterface
     {
 
         $filter = $this->offer->filter(function(Offers\ProductOffersCollectionDTO $element) use ($offer) {
-            return $offer->getValue() === $element->getValue();
+            return $offer->getValue() === $element->getValue() && $offer->getBarcode() === $element->getBarcode();
         });
 
         if($filter->isEmpty())

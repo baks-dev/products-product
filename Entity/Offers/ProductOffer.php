@@ -69,6 +69,9 @@ class ProductOffer extends EntityEvent
     #[ORM\Column(type: ProductOfferConst::TYPE)]
     private readonly ProductOfferConst $const;
 
+    /** Индивидуальное название */
+    #[ORM\Column(type: Types::STRING, nullable: true)]
+    private ?string $name = null;
 
     /** Штрихкод товара */
     #[ORM\Column(type: ProductBarcode::TYPE, nullable: true)]
