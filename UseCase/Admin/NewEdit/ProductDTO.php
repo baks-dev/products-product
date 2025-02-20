@@ -182,6 +182,11 @@ final class ProductDTO implements ProductEventInterface
 
     public function addMaterial(ProductMaterialDTO $material): void
     {
+        if(!$material->getMaterial())
+        {
+            return;
+        }
+
         $filter = $this->material->filter(function(ProductMaterialDTO $element) use ($material) {
             return $material->getMaterial()?->equals($element->getMaterial());
         });
