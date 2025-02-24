@@ -1,0 +1,65 @@
+{% set bestSeller = bestSellers|filter(v => v.product_invariable_id != invariable)|first %}
+    {#    {% set bestSeller = bestSellers|first %} #}
+
+{# Старая цена #}
+{% set oldPrice = user_profile_discount(bestSeller.product_old_price) ?: bestSeller.product_old_price %}
+
+{# Персональная скидка #}
+{% set price = user_profile_discount(bestSeller.product_price) ?: bestSeller.product_price %}
+
+{# Главная картинка продукта #}
+{% set rootImg = bestSeller.product_image|json_decode|filter(v => v != null and v.img_root == true)|first %}
+
+{# ОБЛОЖКА #}
+{% if rootImg.img_ext is defined and rootImg.img_ext is not null %}
+    {% set bestSellerImg = cdn_image_path(rootImg.img, rootImg.img_ext, rootImg.img_cdn) %}
+{% endif %}
+
+<div class="col">
+    <div class="card border p-4 rounded-5 justify-content-between"
+         style="height: 409px;
+                 background: url({{ bestSellerImg }});
+                 background-size: 80%, contain;  background-position: 150% center,center;  background-repeat: no-repeat;">
+
+        {# Ссылка на продукт #}
+        <a href="{{ path('products-product:user.detail', {
+            category: bestSeller.category_url,
+            url: bestSeller.url,
+            offer: bestSeller.product_offer_value,
+            variation: bestSeller.product_variation_value,
+            modification: bestSeller.product_modification_value,
+            postfix: (bestSeller.product_modification_postfix ?: bestSeller.product_variation_postfix ?: bestSeller.product_offer_postfix ?: null )|replace({ '/': '-' }),
+        }) }}" aria-label="{{ bestSeller.product_name }}"
+           class="card-title text-uppercase text-decoration-none fs-18 w-75 fw-bold">
+
+            {# НАЗВАНИЕ ПРОДУКТА #}
+            {{ bestSeller.product_name }}
+
+            <br>
+            R{{ bestSeller.product_offer_value }}
+            {{ bestSeller.product_variation_value }}/{{ bestSeller.product_modification_value }}
+            {{ bestSeller.product_modification_postfix is defined ? bestSeller.product_modification_postfix : '' }}
+
+        </a>
+
+        <div class="bg-white border rounded-5 fw-medium px-3 py-2 d-flex gap-2"
+             style="width: max-content;">
+
+            {# ЦЕНА #}
+            <p class="fs-24 mb-0 lh-1">
+                {{ money(price, bestSeller.product_currency) }}
+            </p>
+
+            {# СТАРАЯ ЦЕНА #}
+            {% if oldPrice %}
+                <span class="text-black" style="font-size: 11px;">
+                    <del>
+                        {{ money(oldPrice, bestSeller.product_currency) }}
+                    </del>
+                </span>
+            {% endif %}
+
+        </div>
+
+    </div>
+</div>
