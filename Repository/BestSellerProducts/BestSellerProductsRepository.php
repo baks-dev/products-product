@@ -49,9 +49,13 @@ use BaksDev\Products\Product\Entity\Price\ProductPrice;
 use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Entity\ProductInvariable;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
+use BaksDev\Products\Product\Type\Invariable\ProductInvariableUid;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 
 final class BestSellerProductsRepository implements BestSellerProductsInterface
 {
+    private ProductInvariableUid|false $invariable = false;
+
     private CategoryProductUid|false $category = false;
 
     private int|false $maxResult = false;
@@ -59,6 +63,22 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
     public function __construct(
         private readonly DBALQueryBuilder $dbal
     ) {}
+
+    /**
+     * Исключает продукт по Product Invariable
+     */
+    public function byInvariable(ProductInvariableUid|string $invariable): self
+    {
+
+        if(is_string($invariable))
+        {
+            $invariable = new ProductInvariableUid($invariable);
+        }
+
+        $this->invariable = $invariable;
+
+        return $this;
+    }
 
     /**
      * Максимальное количество записей в результате
@@ -452,6 +472,14 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
 			   ELSE 0
 			END > 0"
         );
+
+
+        /** Исключить продукта по Product Invariable */
+        if($this->invariable instanceof ProductInvariableUid)
+        {
+            $dbal->andWhere('product_invariable.id != :invariable')
+                ->setParameter('invariable', $this->invariable, ProductInvariableUid::TYPE);
+        }
 
         /** Агрегация и сортировка по резервам */
         $dbal->addOrderBy('product_modification_quantity.reserve', 'DESC');

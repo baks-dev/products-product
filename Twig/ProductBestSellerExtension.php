@@ -80,18 +80,15 @@ final class ProductBestSellerExtension extends AbstractExtension
     public function renderOneBestSeller(Environment $twig, ?string $category = null, ?string $invariable = null): string
     {
 
+        if(false === is_null($invariable))
+        {
+            $this->bestSellerProducts->byInvariable($invariable);
+        }
+
         $bestSellers = $this->bestSellerProducts
             ->forCategory($category)
-            ->maxResult(2)
+            ->maxResult(1)
             ->find();
-
-        /** Если передан продукт из шаблона - убираем его из результата */
-        //        if(false === is_null($invariable))
-        //        {
-        //            $bestSellers = array_filter($bestSellers, function(array $product) use ($invariable) {
-        //                return $product['product_invariable_id'] !== $invariable;
-        //            });
-        //        }
 
         if(true === empty($bestSellers))
         {

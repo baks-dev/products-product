@@ -28,6 +28,7 @@ namespace BaksDev\Products\Product\Repository\BestSellerProducts\Tests;
 
 use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Repository\BestSellerProducts\BestSellerProductsInterface;
+use BaksDev\Products\Product\Type\Invariable\ProductInvariableUid;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
@@ -155,5 +156,25 @@ class BestSellerProductsRepositoryTest extends KernelTestCase
             ->find();
 
         self::assertFalse($result);
+    }
+
+    /** Тестирование метода byInvariable */
+    public function testByInvariable(): void
+    {
+        /** @var BestSellerProductsInterface $repository */
+        $repository = self::getContainer()->get(BestSellerProductsInterface::class);
+
+        $invariable = new ProductInvariableUid();
+
+        $result = $repository
+            ->byInvariable($invariable)
+            ->maxResult(2)
+            ->find();
+
+        foreach($result as $product)
+        {
+            self::assertTrue($product['product_invariable_id'] !== $invariable, 'Ошибка фильтрации по Product Invariable');
+        }
+
     }
 }

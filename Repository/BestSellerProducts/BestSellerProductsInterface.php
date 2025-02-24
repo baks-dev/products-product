@@ -27,9 +27,16 @@ namespace Pages\Homepage\Repository\BestSellerModel;
 namespace BaksDev\Products\Product\Repository\BestSellerProducts;
 
 use BaksDev\Products\Category\Type\Id\CategoryProductUid;
+use BaksDev\Products\Product\Type\Invariable\ProductInvariableUid;
 
 interface BestSellerProductsInterface
 {
+
+    /**
+     * Исключает продукт по Product Invariable
+     */
+    public function byInvariable(ProductInvariableUid|string $invariable): self;
+
     /**
      * Максимальное количество записей в результате
      */

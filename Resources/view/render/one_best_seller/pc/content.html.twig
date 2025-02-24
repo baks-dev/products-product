@@ -1,5 +1,4 @@
-{% set bestSeller = bestSellers|filter(v => v.product_invariable_id != invariable)|first %}
-    {#    {% set bestSeller = bestSellers|first %} #}
+{% set bestSeller = bestSellers|first %}
 
 {# Старая цена #}
 {% set oldPrice = user_profile_discount(bestSeller.product_old_price) ?: bestSeller.product_old_price %}
