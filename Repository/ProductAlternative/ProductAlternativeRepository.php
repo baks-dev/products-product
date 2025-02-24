@@ -19,6 +19,7 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 declare(strict_types=1);
@@ -41,15 +42,19 @@ use BaksDev\Products\Category\Entity\Trans\CategoryProductTrans;
 use BaksDev\Products\Product\Entity\Active\ProductActive;
 use BaksDev\Products\Product\Entity\Category\ProductCategory;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
+use BaksDev\Products\Product\Entity\Offers\Image\ProductOfferImage;
 use BaksDev\Products\Product\Entity\Offers\Price\ProductOfferPrice;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\Quantity\ProductOfferQuantity;
+use BaksDev\Products\Product\Entity\Offers\Variation\Image\ProductVariationImage;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Image\ProductModificationImage;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Price\ProductModificationPrice;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Quantity\ProductModificationQuantity;
 use BaksDev\Products\Product\Entity\Offers\Variation\Price\ProductVariationPrice;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Product\Entity\Offers\Variation\Quantity\ProductVariationQuantity;
+use BaksDev\Products\Product\Entity\Photo\ProductPhoto;
 use BaksDev\Products\Product\Entity\Price\ProductPrice;
 use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Entity\ProductInvariable;
@@ -530,10 +535,90 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 			AS category_section_field"
         );
 
+        /** Фото продукции*/
+        /**
+         * Фото модификаций
+         */
+        $dbal->leftJoin(
+            'product_modification',
+            ProductModificationImage::class,
+            'product_offer_modification_image',
+            'product_offer_modification_image.modification = product_modification.id'
+        );
+
+        /**
+         * Фото вариантов
+         */
+        $dbal->leftJoin(
+            'product_offer',
+            ProductVariationImage::class,
+            'product_variation_image',
+            'product_variation_image.variation = product_variation.id'
+        );
+
+        /**
+         * Фото торговых предложений
+         */
+        $dbal->leftJoin(
+            'product_offer',
+            ProductOfferImage::class,
+            'product_offer_images',
+            'product_offer_images.offer = product_offer.id'
+        );
+
+        /**
+         * Фото продукта
+         */
+        $dbal->leftJoin(
+            'product',
+            ProductPhoto::class,
+            'product_photo',
+            'product_photo.event = product.event'
+        );
+
+        $dbal->addSelect(
+            "JSON_AGG 
+            (DISTINCT
+				CASE 
+                    WHEN product_offer_images.ext IS NOT NULL 
+                    THEN JSONB_BUILD_OBJECT
+                        (
+                            'img_root', product_offer_images.root,
+                            'img', CONCAT ( '/upload/".$dbal->table(ProductOfferImage::class)."' , '/', product_offer_images.name),
+                            'img_ext', product_offer_images.ext,
+                            'img_cdn', product_offer_images.cdn
+                        ) 
+                    WHEN product_variation_image.ext IS NOT NULL 
+                    THEN JSONB_BUILD_OBJECT
+                        (
+                            'img_root', product_variation_image.root,
+                            'img', CONCAT ( '/upload/".$dbal->table(ProductVariationImage::class)."' , '/', product_variation_image.name),
+                            'img_ext', product_variation_image.ext,
+                            'img_cdn', product_variation_image.cdn
+                        )	
+                    WHEN product_offer_modification_image.ext IS NOT NULL 
+                    THEN JSONB_BUILD_OBJECT
+                        (
+                            'img_root', product_offer_modification_image.root,
+                            'img', CONCAT ( '/upload/".$dbal->table(ProductModificationImage::class)."' , '/', product_offer_modification_image.name),
+                            'img_ext', product_offer_modification_image.ext,
+                            'img_cdn', product_offer_modification_image.cdn
+                        )
+                    WHEN product_photo.ext IS NOT NULL 
+                    THEN JSONB_BUILD_OBJECT
+                        (
+                            'img_root', product_photo.root,
+                            'img', CONCAT ( '/upload/".$dbal->table(ProductPhoto::class)."' , '/', product_photo.name),
+                            'img_ext', product_photo.ext,
+                            'img_cdn', product_photo.cdn
+                        )
+                    END) AS product_image"
+        );
+
+
         /**
          * Product Invariable
          */
-
         $dbal
             ->addSelect('product_invariable.id AS product_invariable_id')
             ->leftJoin(
