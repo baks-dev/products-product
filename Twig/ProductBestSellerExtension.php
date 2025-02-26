@@ -52,8 +52,14 @@ final class ProductBestSellerExtension extends AbstractExtension
     }
 
     /** Отображает блок с несколькими продуктами, сортируя их по убыванию количества резервов на данную продукцию */
-    public function renderAllBestSeller(Environment $twig, ?string $category = null): string
+    public function renderAllBestSeller(Environment $twig, ?string $category = null, ?string $invariable = null): string
     {
+
+        /** Если передан invariable id - исключает продукт из результата */
+        if(false === is_null($invariable))
+        {
+            $this->bestSellerProducts->byInvariable($invariable);
+        }
 
         $bestSellers = $this->bestSellerProducts
             ->forCategory($category)
@@ -80,6 +86,7 @@ final class ProductBestSellerExtension extends AbstractExtension
     public function renderOneBestSeller(Environment $twig, ?string $category = null, ?string $invariable = null): string
     {
 
+        /** Если передан invariable id - исключает продукт из результата */
         if(false === is_null($invariable))
         {
             $this->bestSellerProducts->byInvariable($invariable);
@@ -87,7 +94,7 @@ final class ProductBestSellerExtension extends AbstractExtension
 
         $bestSellers = $this->bestSellerProducts
             ->forCategory($category)
-            ->maxResult(1)
+            ->maxResult(2)
             ->find();
 
         if(true === empty($bestSellers))
