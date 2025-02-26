@@ -80,7 +80,7 @@ final class ProductOffersCollectionForm extends AbstractType
             )
         );
 
-        $builder->add('name', TextType::class);
+        $builder->add('name', TextType::class, ['required' => false]);
 
         $builder->add('postfix', TextType::class);
 
