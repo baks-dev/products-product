@@ -22,8 +22,6 @@
  *
  */
 
-namespace Pages\Homepage\Repository\BestSellerModel;
-
 namespace BaksDev\Products\Product\Repository\BestSellerProducts;
 
 use BaksDev\Products\Category\Type\Id\CategoryProductUid;

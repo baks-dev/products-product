@@ -50,7 +50,6 @@ use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Entity\ProductInvariable;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Type\Invariable\ProductInvariableUid;
-use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 
 final class BestSellerProductsRepository implements BestSellerProductsInterface
 {
