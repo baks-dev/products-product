@@ -59,6 +59,7 @@ use BaksDev\Products\Product\Entity\Offers\Variation\Quantity\ProductVariationQu
 use BaksDev\Products\Product\Entity\Photo\ProductPhoto;
 use BaksDev\Products\Product\Entity\Price\ProductPrice;
 use BaksDev\Products\Product\Entity\Product;
+use BaksDev\Products\Product\Entity\ProductInvariable;
 use BaksDev\Products\Product\Entity\Property\ProductProperty;
 use BaksDev\Products\Product\Entity\Seo\ProductSeo;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
@@ -592,6 +593,33 @@ final class ProductModelRepository implements ProductModelInterface
 		)
 			AS category_section_field"
         );
+
+        /**
+         * Product Invariable
+         */
+        $dbal
+            ->addSelect('product_invariable.id AS product_invariable_id')
+            ->leftJoin(
+                'product_modification',
+                ProductInvariable::class,
+                'product_invariable',
+                '
+                    product_invariable.product = product.id AND 
+                    (
+                        (product_offer.const IS NOT NULL AND product_invariable.offer = product_offer.const) OR 
+                        (product_offer.const IS NULL AND product_invariable.offer IS NULL)
+                    )
+                    AND
+                    (
+                        (product_variation.const IS NOT NULL AND product_invariable.variation = product_variation.const) OR 
+                        (product_variation.const IS NULL AND product_invariable.variation IS NULL)
+                    )
+                   AND
+                   (
+                        (product_modification.const IS NOT NULL AND product_invariable.modification = product_modification.const) OR 
+                        (product_modification.const IS NULL AND product_invariable.modification IS NULL)
+                   )
+            ');
 
         $dbal->where('product.id = :product');
         $dbal->setParameter('product', $product, ProductUid::TYPE);

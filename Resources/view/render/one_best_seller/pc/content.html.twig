@@ -10,6 +10,7 @@
 {% set rootImg = bestSeller.product_image|json_decode|filter(v => v != null and v.img_root == true)|first %}
 
 {# ОБЛОЖКА #}
+{% set bestSellerImg = '/assets/img/blank.svg' %}
 {% if rootImg.img_ext is defined and rootImg.img_ext is not null %}
     {% set bestSellerImg = cdn_image_path(rootImg.img, rootImg.img_ext, rootImg.img_cdn) %}
 {% endif %}
