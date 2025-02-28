@@ -47,7 +47,7 @@ class BestSellerProductsRepositoryTest extends KernelTestCase
 
         $result = $repository
             ->maxResult(1)
-            ->find();
+            ->findAll();
 
         self::assertNotFalse($result, 'Не найдено ни одного продукта для тестирования');
         self::$result = current($result);
@@ -76,6 +76,9 @@ class BestSellerProductsRepositoryTest extends KernelTestCase
             "product_currency",
             "product_image",
             "product_invariable_id",
+            "product_offer_reference",
+            "product_variation_reference",
+            "product_modification_reference",
         ];
     }
 
@@ -137,7 +140,7 @@ class BestSellerProductsRepositoryTest extends KernelTestCase
 
         $result = $repository
             ->maxResult(5)
-            ->find();
+            ->findAll();
 
         self::assertNotFalse($result, 'Не найдено ни одного продукта для тестирования');
         self::assertTrue(count($result) === 5);
@@ -153,7 +156,7 @@ class BestSellerProductsRepositoryTest extends KernelTestCase
 
         $result = $repository
             ->forCategory($category)
-            ->find();
+            ->findAll();
 
         self::assertFalse($result);
     }
@@ -169,7 +172,7 @@ class BestSellerProductsRepositoryTest extends KernelTestCase
         $result = $repository
             ->byInvariable($invariable)
             ->maxResult(2)
-            ->find();
+            ->findAll();
 
         foreach($result as $product)
         {

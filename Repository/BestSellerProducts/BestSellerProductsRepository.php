@@ -19,6 +19,7 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 declare(strict_types=1);
@@ -28,6 +29,9 @@ namespace BaksDev\Products\Product\Repository\BestSellerProducts;
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Products\Category\Entity\CategoryProduct;
 use BaksDev\Products\Category\Entity\Info\CategoryProductInfo;
+use BaksDev\Products\Category\Entity\Offers\CategoryProductOffers;
+use BaksDev\Products\Category\Entity\Offers\Variation\CategoryProductVariation;
+use BaksDev\Products\Category\Entity\Offers\Variation\Modification\CategoryProductModification;
 use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Entity\Category\ProductCategory;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
@@ -184,6 +188,16 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
             ->addGroupBy('product_offer_price.price')
             ->addGroupBy('product_offer_price.currency');
 
+        /** Получаем тип торгового предложения */
+        $dbal
+            ->addSelect('category_offer.reference as product_offer_reference')
+            ->leftJoin(
+                'product_offer',
+                CategoryProductOffers::class,
+                'category_offer',
+                'category_offer.id = product_offer.category_offer'
+            );
+
         /**
          * VARIATION
          */
@@ -217,6 +231,16 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
         )
             ->addGroupBy('product_variation_price.price')
             ->addGroupBy('product_variation_price.currency');
+
+        /** Получаем тип множественного варианта */
+        $dbal
+            ->addSelect('category_offer_variation.reference as product_variation_reference')
+            ->leftJoin(
+                'product_variation',
+                CategoryProductVariation::class,
+                'category_offer_variation',
+                'category_offer_variation.id = product_variation.category_variation'
+            );
 
         /**
          * MODIFICATION
@@ -252,6 +276,16 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
         )
             ->addGroupBy('product_modification_price.price')
             ->addGroupBy('product_modification_price.currency');
+
+        /** Получаем тип множественного варианта */
+        $dbal
+            ->addSelect('category_offer_modification.reference as product_modification_reference')
+            ->leftJoin(
+                'product_modification',
+                CategoryProductModification::class,
+                'category_offer_modification',
+                'category_offer_modification.id = product_modification.category_modification'
+            );
 
         /** Категория */
         $dbal->leftJoin(

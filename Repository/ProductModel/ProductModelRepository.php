@@ -293,6 +293,28 @@ final class ProductModelRepository implements ProductModelInterface
                 'product_modification_quantity.modification = product_modification.id'
             );
 
+        $dbal->leftJoin(
+            'product_modification',
+            ProductInvariable::class,
+            'product_invariable',
+            '
+                    product_invariable.product = product.id AND
+                    (
+                        (product_offer.const IS NOT NULL AND product_invariable.offer = product_offer.const) OR
+                        (product_offer.const IS NULL AND product_invariable.offer IS NULL)
+                    )
+                    AND
+                    (
+                        (product_variation.const IS NOT NULL AND product_invariable.variation = product_variation.const) OR
+                        (product_variation.const IS NULL AND product_invariable.variation IS NULL)
+                    )
+                   AND
+                   (
+                        (product_modification.const IS NOT NULL AND product_invariable.modification = product_modification.const) OR
+                        (product_modification.const IS NULL AND product_invariable.modification IS NULL)
+                   )
+            ');
+
 
         $dbal->addSelect(
             "JSON_AGG
@@ -330,7 +352,10 @@ final class ProductModelRepository implements ProductModelInterface
 						   ELSE NULL
 						END,
 						
-					
+                        /* Product Invariable */
+						'product_invariable_id', COALESCE(
+						    product_invariable.id
+						),
 						
 						'price', CASE
 						   WHEN product_modification_price.price IS NOT NULL AND product_modification_price.price > 0 THEN product_modification_price.price
@@ -348,7 +373,6 @@ final class ProductModelRepository implements ProductModelInterface
                             0
                         ),
 						
-						
 						'currency', CASE
 						   WHEN product_modification_price.price IS NOT NULL AND product_modification_price.price > 0 THEN product_modification_price.currency
 						   WHEN product_variation_price.price IS NOT NULL AND product_variation_price.price > 0 THEN product_variation_price.currency
@@ -364,7 +388,6 @@ final class ProductModelRepository implements ProductModelInterface
 						   WHEN product_price.quantity IS NOT NULL THEN (product_price.quantity - product_price.reserve)
 						   ELSE NULL
 						END
-
 					)
 
 			)
@@ -496,11 +519,11 @@ final class ProductModelRepository implements ProductModelInterface
         $dbal
             ->addSelect('category.id as category_id')
             ->join(
-            'product_event_category',
-            CategoryProduct::class,
-            'category',
-            'category.id = product_event_category.category'
-        );
+                'product_event_category',
+                CategoryProduct::class,
+                'category',
+                'category.id = product_event_category.category'
+            );
 
         $dbal
             ->addSelect('category_trans.name AS category_name')
@@ -593,33 +616,6 @@ final class ProductModelRepository implements ProductModelInterface
 		)
 			AS category_section_field"
         );
-
-        /**
-         * Product Invariable
-         */
-        $dbal
-            ->addSelect('product_invariable.id AS product_invariable_id')
-            ->leftJoin(
-                'product_modification',
-                ProductInvariable::class,
-                'product_invariable',
-                '
-                    product_invariable.product = product.id AND 
-                    (
-                        (product_offer.const IS NOT NULL AND product_invariable.offer = product_offer.const) OR 
-                        (product_offer.const IS NULL AND product_invariable.offer IS NULL)
-                    )
-                    AND
-                    (
-                        (product_variation.const IS NOT NULL AND product_invariable.variation = product_variation.const) OR 
-                        (product_variation.const IS NULL AND product_invariable.variation IS NULL)
-                    )
-                   AND
-                   (
-                        (product_modification.const IS NOT NULL AND product_invariable.modification = product_modification.const) OR 
-                        (product_modification.const IS NULL AND product_invariable.modification IS NULL)
-                   )
-            ');
 
         $dbal->where('product.id = :product');
         $dbal->setParameter('product', $product, ProductUid::TYPE);

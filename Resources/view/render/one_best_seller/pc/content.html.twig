@@ -32,13 +32,16 @@
         }) }}" aria-label="{{ bestSeller.product_name }}"
            class="card-title text-uppercase text-decoration-none fs-18 w-75 fw-bold">
 
-            {# НАЗВАНИЕ ПРОДУКТА #}
+            {# Название продукта #}
             {{ bestSeller.product_name }}
 
             <br>
-            R{{ bestSeller.product_offer_value }}
-            {{ bestSeller.product_variation_value }}/{{ bestSeller.product_modification_value }}
-            {{ bestSeller.product_modification_postfix is defined ? bestSeller.product_modification_postfix : '' }}
+            {# Значение множественного варианта ТП #}
+            {{ bestSeller.product_variation_value|call_twig_func(bestSeller.product_variation_reference~'_render')
+            ~ bestSeller.product_modification_value|call_twig_func(bestSeller.product_modification_reference~'_render') }}
+
+            {# Значение торгового предложения #}
+            {{ bestSeller.product_offer_value|call_twig_func(bestSeller.product_offer_reference~'_render') }}
 
         </a>
 
