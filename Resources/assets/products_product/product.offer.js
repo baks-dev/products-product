@@ -78,6 +78,7 @@ if($btnAddOffer)
 
 
         let $changeRoot = div.querySelector('[class^="change-root-"]');
+
         if($changeRoot)
         {
             $changeRoot.checked = true;

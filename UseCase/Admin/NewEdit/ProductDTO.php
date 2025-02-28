@@ -205,7 +205,7 @@ final class ProductDTO implements ProductEventInterface
         if($this->material->isEmpty())
         {
             $CategoryCollectionDTO = new ProductMaterialDTO();
-            $this->addMaterial($CategoryCollectionDTO);
+            $this->material->add($CategoryCollectionDTO);
         }
 
         return $this->material;

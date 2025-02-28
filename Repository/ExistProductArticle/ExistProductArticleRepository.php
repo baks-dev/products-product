@@ -31,6 +31,8 @@ use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Product\Entity\Product;
+use BaksDev\Users\Profile\UserProfile\Entity\UserProfile;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 
 
 final class ExistProductArticleRepository implements ExistProductArticleInterface
@@ -41,7 +43,28 @@ final class ExistProductArticleRepository implements ExistProductArticleInterfac
 
     private bool $modification = false;
 
+    private UserProfileUid|false $profile = false;
+
     public function __construct(private readonly DBALQueryBuilder $DBALQueryBuilder) {}
+
+    public function forProfile(UserProfile|UserProfileUid|string $profile): self
+    {
+
+        if(is_string($profile))
+        {
+            $profile = new UserProfileUid($profile);
+        }
+
+        if($profile instanceof UserProfile)
+        {
+            $profile = $profile->getId();
+        }
+
+        $this->profile = $profile;
+
+        return $this;
+    }
+
 
     public function onlyOffer(): self
     {
@@ -126,8 +149,6 @@ final class ExistProductArticleRepository implements ExistProductArticleInterfac
                 'product',
                 'product.event = offer.event'
             );
-
-
         }
 
         if($this->variation)
@@ -177,6 +198,31 @@ final class ExistProductArticleRepository implements ExistProductArticleInterfac
         $dbal
             ->where('exist.article = :article')
             ->setParameter('article', $article);
+
+        /** Фильтр по профилю пользователя */
+        if($this->profile instanceof UserProfileUid)
+        {
+            if(false === $this->modification && false === $this->variation && false === $this->offer)
+            {
+                $dbal->andWhere('exist.profile = :profile');
+            }
+            else
+            {
+                $dbal->join(
+                    'product',
+                    ProductInfo::class,
+                    'info',
+                    'info.product = product.id AND info.profile = :profile'
+                );
+            }
+
+            $dbal->setParameter(
+                key: 'profile',
+                value: $this->profile,
+                type: UserProfileUid::TYPE
+            );
+        }
+
 
         return $dbal->fetchExist();
     }
