@@ -115,11 +115,12 @@ final class ProductFilterForm extends AbstractType
 
                 if($sessionArray !== false)
                 {
-                    isset($sessionArray['all']) ? $data->setAll($sessionArray['all'] === true) : false;
-                    isset($sessionArray['category']) ? $data->setCategory(new CategoryProductUid($sessionArray['category'], $sessionArray['category_name'] ?? null)) : false;
-                    isset($sessionArray['offer']) ? $data->setOffer($sessionArray['offer']) : false;
-                    isset($sessionArray['variation']) ? $data->setVariation($sessionArray['variation']) : false;
-                    isset($sessionArray['modification']) ? $data->setModification($sessionArray['modification']) : false;
+                    !isset($sessionArray['all']) ?: $data->setAll($sessionArray['all'] === true);
+                    !isset($sessionArray['category']) ?: $data->setCategory(new CategoryProductUid($sessionArray['category'], $sessionArray['category_name'] ?? null));
+                    !isset($sessionArray['offer']) ?: $data->setOffer($sessionArray['offer']);
+                    !isset($sessionArray['variation']) ?: $data->setVariation($sessionArray['variation']);
+                    !isset($sessionArray['modification']) ?: $data->setModification($sessionArray['modification']);
+                    !isset($sessionArray['materials']) ?: $data->setMaterials($sessionArray['materials']);
                 }
             }
 
@@ -307,17 +308,16 @@ final class ProductFilterForm extends AbstractType
 
                     if($data->getCategory())
                     {
-                        if($data->getCategory())
-                        {
-                            $sessionArray['category'] = (string) $data->getCategory();
-                            $sessionArray['category_name'] = $data->getCategory()->getOptions();
-                        }
 
+                        $sessionArray['category'] = (string) $data->getCategory();
+                        $sessionArray['category_name'] = $data->getCategory()->getOptions();
 
-                        $data->getOffer() ? $sessionArray['offer'] = (string) $data->getOffer() : false;
-                        $data->getVariation() ? $sessionArray['variation'] = (string) $data->getVariation() : false;
-                        $data->getModification() ? $sessionArray['modification'] = (string) $data->getModification() : false;
+                        !$data->getOffer() ?: $sessionArray['offer'] = (string) $data->getOffer();
+                        !$data->getVariation() ?: $sessionArray['variation'] = (string) $data->getVariation();
+                        !$data->getModification() ?: $sessionArray['modification'] = (string) $data->getModification();
                     }
+
+                    !$data->getMaterials() ?: $sessionArray['materials'] = true;
 
                     $properties = [];
 
@@ -334,8 +334,7 @@ final class ProductFilterForm extends AbstractType
 
                     }
 
-                    !empty($properties) ? $sessionArray['properties'] = $properties : false;
-
+                    empty($properties) ?: $sessionArray['properties'] = $properties;
 
                     if($sessionArray)
                     {
