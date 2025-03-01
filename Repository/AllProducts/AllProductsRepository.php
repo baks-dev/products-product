@@ -667,7 +667,7 @@ final class AllProductsRepository implements AllProductsInterface
 
         $dbal
             ->addSelect('product_info.url')
-            ->leftJoin(
+            ->join(
                 'product_event',
                 ProductInfo::class,
                 'product_info',
