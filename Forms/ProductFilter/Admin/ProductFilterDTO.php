@@ -65,9 +65,13 @@ final class ProductFilterDTO implements ProductFilterInterface
      */
     private bool $invisible = false;
 
+    /**
+     * Показать только без сырья
+     */
+    private bool $materials = false;
+
 
     private ?bool $all = null;
-
 
     public function __construct()
     {
@@ -209,4 +213,19 @@ final class ProductFilterDTO implements ProductFilterInterface
 
         return $this;
     }
+
+    public function setMaterials(bool|null $materials): self
+    {
+        $this->materials = (bool) $materials;
+        return $this;
+    }
+
+    /**
+     * Materials
+     */
+    public function getMaterials(): bool
+    {
+        return $this->materials;
+    }
+
 }

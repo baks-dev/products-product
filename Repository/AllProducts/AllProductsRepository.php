@@ -38,6 +38,7 @@ use BaksDev\Products\Product\Entity\Category\ProductCategory;
 use BaksDev\Products\Product\Entity\Description\ProductDescription;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
+use BaksDev\Products\Product\Entity\Material\ProductMaterial;
 use BaksDev\Products\Product\Entity\Offers\Image\ProductOfferImage;
 use BaksDev\Products\Product\Entity\Offers\Price\ProductOfferPrice;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
@@ -658,11 +659,8 @@ final class AllProductsRepository implements AllProductsInterface
                 ProductDescription::class,
                 'product_desc',
                 'product_desc.event = product_event.id AND product_desc.device = :device '
-            )->setParameter('device', 'pc');
-
-
-        $dbal->andWhere('product_info.profile = :profile OR product_info.profile IS NULL');
-        $dbal->setParameter('profile', $profile, UserProfileUid::TYPE);
+            )
+            ->setParameter('device', 'pc');
 
 
         /* ProductInfo */
@@ -673,8 +671,22 @@ final class AllProductsRepository implements AllProductsInterface
                 'product_event',
                 ProductInfo::class,
                 'product_info',
-                'product_info.product = product.id'
+                '
+                product_info.product = product.id AND 
+                (product_info.profile = :profile OR product_info.profile IS NULL)
+            ')
+            ->setParameter(
+                key: 'profile',
+                value: $profile,
+                type: UserProfileUid::TYPE
             );
+
+
+        if($this->filter->getMaterials())
+        {
+            $dbal->andWhereNotExists(ProductMaterial::class, 'tmp', 'tmp.event = product.event');
+        }
+
 
         /** Ответственное лицо (Профиль пользователя) */
 

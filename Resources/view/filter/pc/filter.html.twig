@@ -27,6 +27,30 @@
         </div>
     {% endif %}
 
+    {% if filter.materials is defined %}
+        <div>
+            <div class="d-flex justify-content-around radio-buttons clearfix"
+                 data-buttons="true"
+                 style="clear: both"
+            >
+                <label class="btn p-1 border-dotted rounded-3 w-100 {{ filter.materials.vars.data ? 'active' }}">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+
+                            <div class="d-flex align-items-center">
+                                {{ form_widget(filter.materials, { label: false }) }}
+                                <div class="form-check ps-0">
+                                    {# Продукт активный #}
+                                    {{ 'Без сырья'|trans }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </label>
+            </div>
+        </div>
+    {% endif %}
+
     {% if filter.vars.data.invisible is defined and filter.vars.data.invisible == false %}
 
         <div class="w-25">

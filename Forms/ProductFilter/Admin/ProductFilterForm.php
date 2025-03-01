@@ -24,6 +24,7 @@
 namespace BaksDev\Products\Product\Forms\ProductFilter\Admin;
 
 use BaksDev\Core\Services\Fields\FieldsChoice;
+use BaksDev\Materials\Catalog\BaksDevMaterialsCatalogBundle;
 use BaksDev\Products\Category\Repository\AllFilterFieldsByCategory\AllFilterFieldsByCategoryInterface;
 use BaksDev\Products\Category\Repository\CategoryChoice\CategoryChoiceInterface;
 use BaksDev\Products\Category\Repository\ModificationFieldsCategoryChoice\ModificationFieldsCategoryChoiceInterface;
@@ -65,6 +66,12 @@ final class ProductFilterForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('all', CheckboxType::class);
+
+        /** Если в приложении участвует сырье - добавляем фильтр по сырью */
+        if(class_exists(BaksDevMaterialsCatalogBundle::class))
+        {
+            $builder->add('materials', CheckboxType::class);
+        }
 
         /**
          * Категория
@@ -120,6 +127,7 @@ final class ProductFilterForm extends AbstractType
 
             if($data && $data->isInvisible() === false)
             {
+
                 $builder->add('category', ChoiceType::class, [
                     'choices' => $this->categoryChoice->findAll(),
                     'choice_value' => function(?CategoryProductUid $category) {
