@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -25,10 +25,8 @@ namespace BaksDev\Products\Product\Command;
 
 use BaksDev\Files\Resources\Messenger\Request\Images\CDNUploadImage;
 use BaksDev\Files\Resources\Messenger\Request\Images\CDNUploadImageMessage;
-use BaksDev\Products\Product\Entity\Offers\Image\ProductOfferImage;
-use BaksDev\Products\Product\Entity\Offers\Variation\Image\ProductVariationImage;
-use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Image\ProductModificationImage;
-use BaksDev\Products\Product\Entity\Photo\ProductPhoto;
+use BaksDev\Products\Product\Repository\UnCompressProductsImages\UnCompressProductsImagesInterface;
+use BaksDev\Products\Product\Repository\UnCompressProductsImages\UnCompressProductsImagesResult;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -45,105 +43,56 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class ProductsRepackWebpCdnCommand extends Command
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager,
+        private readonly UnCompressProductsImagesInterface $UnCompressProductsImages,
         private readonly CDNUploadImage $CDNUploadImage
     )
     {
         parent::__construct();
     }
 
-
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
 
+        /** Получаем все изображения продукта без сжатия */
+        $images = $this->UnCompressProductsImages->findAll();
+
+        if(false === $images || false === $images->valid())
+        {
+            $io->success('Изображений для сжатия не найдено');
+            return Command::SUCCESS;
+        }
 
         $progressBar = new ProgressBar($output);
         $progressBar->start();
 
+        /** @var UnCompressProductsImagesResult $UnCompressProductsImagesResult */
 
-        /** Галерея фото */
-
-        $productPhotos = $this->entityManager->getRepository(ProductPhoto::class)->findBy(['cdn' => false]);
-        $this->entityManager->clear();
-
-        /** @var $productPhoto ProductPhoto */
-        foreach($productPhotos as $k => $productPhoto)
+        foreach($images as $UnCompressProductsImagesResult)
         {
-            $message = new CDNUploadImageMessage(
-                $productPhoto->getId(),
-                ProductPhoto::class,
-                $productPhoto->getPathDir()
+
+            $CDNUploadImageMessage = new CDNUploadImageMessage(
+                $UnCompressProductsImagesResult->getIdentifier(),
+                $UnCompressProductsImagesResult->getEntity(),
+                $UnCompressProductsImagesResult->getName()
             );
 
-            ($this->CDNUploadImage)($message);
+            $compress = ($this->CDNUploadImage)($CDNUploadImageMessage);
+
+            if($compress === false)
+            {
+                $io->writeln(sprintf(
+                        '<fg=red>Ошибка при сжатии изображения %s: %s</>',
+                        $UnCompressProductsImagesResult->getEntity(),
+                        $UnCompressProductsImagesResult->getIdentifier())
+                );
+            }
 
             $progressBar->advance();
         }
-
-
-        /** Торговые предложения */
-
-        $offerImages = $this->entityManager->getRepository(ProductOfferImage::class)->findBy(['cdn' => false]);
-        $this->entityManager->clear();
-
-        /** @var $offerImage ProductOfferImage */
-        foreach($offerImages as $offerImage)
-        {
-            $message = new CDNUploadImageMessage(
-                $offerImage->getId(),
-                ProductOfferImage::class,
-                $offerImage->getPathDir()
-            );
-
-            ($this->CDNUploadImage)($message);
-
-            $progressBar->advance();
-        }
-
-
-        /** Множественные варианты  */
-
-        $variationImages = $this->entityManager->getRepository(ProductVariationImage::class)->findBy(['cdn' => false]);
-        $this->entityManager->clear();
-
-        /** @var $variationImage ProductVariationImage */
-        foreach($variationImages as $variationImage)
-        {
-            $message = new CDNUploadImageMessage(
-                $variationImage->getId(),
-                ProductVariationImage::class,
-                $variationImage->getPathDir()
-            );
-
-            ($this->CDNUploadImage)($message);
-
-            $progressBar->advance();
-        }
-
-
-        /** Модификации множественных вариантов */
-
-        $modificationImages = $this->entityManager->getRepository(ProductModificationImage::class)->findBy(['cdn' => false]);
-        $this->entityManager->clear();
-
-        /** @var $modificationImage ProductModificationImage */
-        foreach($modificationImages as $modificationImage)
-        {
-            $message = new CDNUploadImageMessage(
-                $modificationImage->getId(),
-                ProductModificationImage::class,
-                $modificationImage->getPathDir()
-            );
-
-            ($this->CDNUploadImage)($message);
-
-            $progressBar->advance();
-        }
-
 
         $progressBar->finish();
-        $io->success('Команда успешно завершена');
+        $io->success('Изображения успешно сжаты');
 
         return Command::SUCCESS;
     }
