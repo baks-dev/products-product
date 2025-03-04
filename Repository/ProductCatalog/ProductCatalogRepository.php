@@ -126,36 +126,6 @@ final class ProductCatalogRepository implements ProductCatalogInterface
 
     /**
      * Метод возвращает список продуктов из разных категорий
-     *
-     * @return array{
-     * "id": string,
-     * "event": string,
-     * "product_name": string,
-     * "url": string,
-     * "active_from": string,
-     * "active_to": string,
-     * "product_offer_uid": string,
-     * "product_offer_value": string,
-     * "product_offer_postfix": string,
-     * "product_offer_reference": string,
-     * "product_variation_uid": string,
-     * "product_variation_value": string,
-     * "product_variation_postfix": string,
-     * "product_variation_reference": string,
-     * "product_modification_uid": string,
-     * "product_modification_value": string,
-     * "product_modification_postfix": string,
-     * "product_modification_reference": string,
-     * "product_article": string,
-     * "product_image": string,
-     * "product_image_ext": string,
-     * "product_image_cdn": bool,
-     * "product_price": int,
-     * "product_currency": string,
-     * "category_url": string,
-     * "category_name": string,
-     * "category_section_field": string,
-     * } | false
      */
     public function find(string $expr = 'AND'): array|false
     {
