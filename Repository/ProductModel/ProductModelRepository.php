@@ -64,23 +64,50 @@ use BaksDev\Products\Product\Entity\Property\ProductProperty;
 use BaksDev\Products\Product\Entity\Seo\ProductSeo;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Type\Id\ProductUid;
+use InvalidArgumentException;
 
 final class ProductModelRepository implements ProductModelInterface
 {
-    public function __construct(private readonly DBALQueryBuilder $DBALQueryBuilder) {}
+    private ProductUid|false $productUid = false;
 
-    public function fetchModelAssociative(ProductUid $product): array|bool
+    public function __construct(
+        private readonly DBALQueryBuilder $DBALQueryBuilder
+    ) {}
+
+    /** Фильтрация по продукту */
+    public function byProduct(Product|ProductUid|string $productUid): self
     {
+        if(is_string($productUid))
+        {
+            $productUid = new ProductUid($productUid);
+        }
+
+        if($productUid instanceof Product)
+        {
+            $productUid = $productUid->getId();
+        }
+
+        $this->productUid = $productUid;
+
+        return $this;
+    }
+
+    /** Информация о продукте (модели) со списком торговых предложений */
+    public function find(): array|false
+    {
+        if(false === $this->productUid)
+        {
+            throw new InvalidArgumentException('Не передан обязательный параметр $productUid');
+        }
+
         $dbal = $this->DBALQueryBuilder
             ->createQueryBuilder(self::class)
             ->bindLocal();
-
 
         $dbal
             ->select('product.id')
             ->addSelect('product.event')
             ->from(Product::class, 'product');
-
 
         $dbal
             ->addSelect('product_active.active')
@@ -90,9 +117,7 @@ final class ProductModelRepository implements ProductModelInterface
                 'product',
                 ProductActive::class,
                 'product_active',
-                '
-			product_active.event = product.event
-			'
+                'product_active.event = product.event'
             );
 
         $dbal
@@ -315,7 +340,6 @@ final class ProductModelRepository implements ProductModelInterface
                    )
             ');
 
-
         $dbal->addSelect(
             "JSON_AGG
 			( DISTINCT
@@ -394,7 +418,6 @@ final class ProductModelRepository implements ProductModelInterface
 			AS product_offers"
         );
 
-
         /** Фото модификаций */
 
         $dbal->leftJoin(
@@ -417,8 +440,7 @@ final class ProductModelRepository implements ProductModelInterface
 						
 
 					) END
-			) AS product_modification_image
-	"
+			) AS product_modification_image"
         );
 
 
@@ -561,10 +583,8 @@ final class ProductModelRepository implements ProductModelInterface
                  WHEN category_cover.name IS NOT NULL 
                  THEN CONCAT ( '/upload/".$dbal->table(CategoryProductCover::class)."' , '/', category_cover.name)
                  ELSE NULL
-			END AS category_cover_dir
-		"
+			END AS category_cover_dir"
             );
-
 
         $dbal->leftJoin(
             'category',
@@ -574,7 +594,7 @@ final class ProductModelRepository implements ProductModelInterface
         );
 
 
-        /** Свойства, учавствующие в карточке */
+        /** Свойства, участвующие в карточке */
 
         $dbal->leftJoin(
             'category_section',
@@ -617,16 +637,16 @@ final class ProductModelRepository implements ProductModelInterface
 			AS category_section_field"
         );
 
-        $dbal->where('product.id = :product');
-        $dbal->setParameter('product', $product, ProductUid::TYPE);
-
-        //dd($dbal->analyze());
-
         $dbal->allGroupByExclude();
 
-        return $dbal
+        $dbal->where('product.id = :product');
+        $dbal->setParameter('product', $this->productUid, ProductUid::TYPE);
+
+        $result = $dbal
             ->enableCache('products-product', 86400)
             ->fetchAssociative();
+
+        return empty($result) ? false : $result;
     }
 
 }

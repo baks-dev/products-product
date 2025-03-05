@@ -503,7 +503,6 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
 			END > 0"
         );
 
-
         /** Исключить продукта по Product Invariable */
         if($this->invariable instanceof ProductInvariableUid)
         {
@@ -524,7 +523,9 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
 
         $dbal->allGroupByExclude();
 
-        $result = $dbal->fetchAllAssociative();
+        $result = $dbal
+            ->enableCache('products-product', 86400)
+            ->fetchAllAssociative();
 
         return empty($result) ? false : $result;
     }
