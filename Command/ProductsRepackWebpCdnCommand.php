@@ -23,6 +23,7 @@
 
 namespace BaksDev\Products\Product\Command;
 
+use BaksDev\Core\Messenger\MessageDispatchInterface;
 use BaksDev\Files\Resources\Messenger\Request\Images\CDNUploadImage;
 use BaksDev\Files\Resources\Messenger\Request\Images\CDNUploadImageMessage;
 use BaksDev\Products\Product\Repository\UnCompressProductsImages\UnCompressProductsImagesInterface;
@@ -44,7 +45,8 @@ class ProductsRepackWebpCdnCommand extends Command
 {
     public function __construct(
         private readonly UnCompressProductsImagesInterface $UnCompressProductsImages,
-        private readonly CDNUploadImage $CDNUploadImage
+        private readonly CDNUploadImage $CDNUploadImage,
+        private readonly MessageDispatchInterface $MessageDispatch
     )
     {
         parent::__construct();
@@ -75,6 +77,11 @@ class ProductsRepackWebpCdnCommand extends Command
                 $UnCompressProductsImagesResult->getIdentifier(),
                 $UnCompressProductsImagesResult->getEntity(),
                 $UnCompressProductsImagesResult->getName()
+            );
+
+            $this->MessageDispatch->dispatch(
+                $CDNUploadImageMessage,
+
             );
 
             $compress = ($this->CDNUploadImage)($CDNUploadImageMessage);
