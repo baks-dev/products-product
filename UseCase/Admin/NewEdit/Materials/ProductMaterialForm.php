@@ -44,7 +44,7 @@ final class ProductMaterialForm extends AbstractType
 
         if(false === $material || false === $material->valid())
         {
-            return;
+            $material = [];
         }
 
         $builder

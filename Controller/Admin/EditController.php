@@ -87,7 +87,9 @@ final class EditController extends AbstractController
 
         if($form->isSubmitted() && $form->isValid() && $form->has('product'))
         {
-            $this->refreshTokenForm($form);
+
+            /* TODO: удалить !!! */
+            //$this->refreshTokenForm($form);
 
             $handle = $productHandler->handle($ProductDTO);
 

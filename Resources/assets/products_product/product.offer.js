@@ -898,6 +898,11 @@ function offerPreloadPhoto(div)
 function replaceReference($replace, $id)
 {
 
+    if(!$replace)
+    {
+        return;
+    }
+
     // product_form_data-variation-reference
 
     /* Получаем дефолтное поле для заполнения  */

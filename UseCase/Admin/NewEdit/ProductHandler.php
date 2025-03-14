@@ -64,18 +64,20 @@ final class ProductHandler extends AbstractHandler
     public function handle(ProductDTO $command): Product|string
     {
 
-        $this->setCommand($command);
-        $this->preEventPersistOrUpdate(Product::class, ProductEvent::class);
+        $this
+            ->setCommand($command)
+            ->preEventPersistOrUpdate(Product::class, ProductEvent::class);
 
 
         /** Проверяем уникальность семантической ссылки продукта */
         $infoDTO = $command->getInfo();
         $uniqProductUrl = $this->uniqProductUrl->isExists($infoDTO->getUrl(), $this->main->getId());
 
-        if($uniqProductUrl)
+        if(true === $uniqProductUrl)
         {
             $this->event->getInfo()->updateUrlUniq(); // Обновляем URL на уникальный с префиксом
         }
+
 
         // Загрузка базового фото галереи
         foreach($this->event->getPhoto() as $ProductPhoto)
@@ -88,6 +90,10 @@ final class ProductHandler extends AbstractHandler
                 $this->imageUpload->upload($PhotoCollectionDTO->file, $ProductPhoto);
             }
         }
+
+
+        dump($this->validatorCollection->isInvalid());  /* TODO: удалить !!! */
+        dd($this->event); /* TODO: удалить !!! */
 
 
         // Загрузка файлов PDF галереи
