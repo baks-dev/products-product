@@ -91,11 +91,6 @@ final class ProductHandler extends AbstractHandler
             }
         }
 
-
-        dump($this->validatorCollection->isInvalid());  /* TODO: удалить !!! */
-        dd($this->event); /* TODO: удалить !!! */
-
-
         // Загрузка файлов PDF галереи
         foreach($this->event->getFile() as $ProductFile)
         {
