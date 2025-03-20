@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 declare(strict_types=1);
@@ -145,6 +144,19 @@ final class ProductCatalogRepository implements ProductCatalogInterface
             'product_event.id = product.event'
         );
 
+        /** ProductInfo */
+        $dbal
+            ->addSelect('product_info.url')
+            ->addSelect('product_info.model')
+            ->leftJoin(
+                'product_event',
+                ProductInfo::class,
+                'product_info',
+                'product_info.product = product.id'
+            )
+            ->addGroupBy('product_info.article')
+            ->addGroupBy('product_info.sort');
+
         /** Категория */
         if($this->categoryUid instanceof CategoryProductUid)
         {
@@ -173,7 +185,6 @@ final class ProductCatalogRepository implements ProductCatalogInterface
                 product_event_category.root = true'
             );
         }
-
 
 
         /** ФИЛЬТР СВОЙСТВ */
@@ -265,17 +276,6 @@ final class ProductCatalogRepository implements ProductCatalogInterface
             ->addGroupBy('product_price.quantity')
             ->addGroupBy('product_price.reserve');
 
-        /** ProductInfo */
-        $dbal
-            ->addSelect('product_info.url')
-            ->leftJoin(
-                'product_event',
-                ProductInfo::class,
-                'product_info',
-                'product_info.product = product.id'
-            )
-            ->addGroupBy('product_info.article')
-            ->addGroupBy('product_info.sort');
 
         /** Даты продукта */
         $dbal
@@ -357,7 +357,6 @@ final class ProductCatalogRepository implements ProductCatalogInterface
                 'product_offer_variation',
                 'product_offer_variation.offer = product_offer.id '.($this->filter?->getVariation() ? ' AND product_offer_variation.value = :variation' : '').' '
             );
-
 
 
         /** Цена множественного варианта */
@@ -604,7 +603,6 @@ final class ProductCatalogRepository implements ProductCatalogInterface
         );
 
 
-
         $dbal->leftJoin(
             'product_event_category',
             CategoryProduct::class,
@@ -716,7 +714,6 @@ final class ProductCatalogRepository implements ProductCatalogInterface
 			END > 0
  		"
         );
-
 
 
         /** Только при наличии */
