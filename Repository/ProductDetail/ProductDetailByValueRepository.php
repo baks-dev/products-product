@@ -19,6 +19,7 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 declare(strict_types=1);
@@ -100,7 +101,6 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
             ->addSelect('product.event')
             ->from(Product::class, 'product');
 
-
         $dbal
             ->addSelect('product_active.active')
             ->addSelect('product_active.active_from')
@@ -123,7 +123,6 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
                 'product_seo.event = product.event AND product_seo.local = :local'
             );
 
-
         $dbal
             ->addSelect('product_trans.name AS product_name')
             ->leftJoin(
@@ -132,7 +131,6 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
                 'product_trans',
                 'product_trans.event = product.event AND product_trans.local = :local'
             );
-
 
         $dbal
             ->addSelect('product_desc.preview AS product_preview')
@@ -144,17 +142,7 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
                 'product_desc.event = product.event AND product_desc.device = :device '
             )->setParameter('device', 'pc');
 
-
-        /* Базовая Цена товара */
-        $dbal->leftJoin(
-            'product',
-            ProductPrice::class,
-            'product_price',
-            'product_price.event = product.event'
-        );
-
-        /* ProductInfo */
-
+        /** ProductInfo */
         $dbal
             ->addSelect('product_info.url')
             ->leftJoin(
@@ -164,8 +152,7 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
                 'product_info.product = product.id '
             );
 
-        /* Торговое предложение */
-
+        /** Торговое предложение */
         $dbal
             ->addSelect('product_offer.id as product_offer_uid')
             ->addSelect('product_offer.const as product_offer_const')
@@ -180,7 +167,6 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
                 ($postfix ? ' AND ( product_offer.postfix = :postfix OR product_offer.postfix IS NULL )' : '')
             );
 
-
         if($postfix)
         {
             $dbal->setParameter('postfix', $postfix);
@@ -191,15 +177,8 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
             $dbal->setParameter('product_offer_value', $offer);
         }
 
-        /* Цена торгового предо жения */
-        $dbal->leftJoin(
-            'product_offer',
-            ProductOfferPrice::class,
-            'product_offer_price',
-            'product_offer_price.offer = product_offer.id'
-        );
 
-        /* Получаем тип торгового предложения */
+        /** Получаем тип торгового предложения */
         $dbal
             ->addSelect('category_offer.reference AS product_offer_reference')
             ->leftJoin(
@@ -209,7 +188,7 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
                 'category_offer.id = product_offer.category_offer'
             );
 
-        /* Получаем название торгового предложения */
+        /** Получаем название торгового предложения */
         $dbal
             ->addSelect('category_offer_trans.name as product_offer_name')
             ->addSelect('category_offer_trans.postfix as product_offer_name_postfix')
@@ -220,7 +199,7 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
                 'category_offer_trans.offer = category_offer.id AND category_offer_trans.local = :local'
             );
 
-        /* Наличие и резерв торгового предложения */
+        /** Наличие и резерв торгового предложения */
         $dbal->leftJoin(
             'product_offer',
             ProductOfferQuantity::class,
@@ -228,12 +207,7 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
             'product_offer_quantity.offer = product_offer.id'
         );
 
-        //ProductCategoryOffers
-
-        /**
-         * Множественные варианты торгового предложения
-         */
-
+        /** Множественные варианты торгового предложения */
         $dbal
             ->addSelect('product_variation.id as product_variation_uid')
             ->addSelect('product_variation.const as product_variation_const')
@@ -253,15 +227,7 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
             $dbal->setParameter('product_variation_value', $variation);
         }
 
-        /* Цена множественного варианта */
-        $dbal->leftJoin(
-            'product_variation',
-            ProductVariationPrice::class,
-            'product_variation_price',
-            'product_variation_price.variation = product_variation.id'
-        );
-
-        /* Получаем тип множественного варианта */
+        /** Получаем тип множественного варианта */
         $dbal
             ->addSelect('category_variation.reference as product_variation_reference')
             ->leftJoin(
@@ -271,7 +237,7 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
                 'category_variation.id = product_variation.category_variation'
             );
 
-        /* Получаем название множественного варианта */
+        /** Получаем название множественного варианта */
         $dbal
             ->addSelect('category_variation_trans.name as product_variation_name')
             ->addSelect('category_variation_trans.postfix as product_variation_name_postfix')
@@ -282,7 +248,7 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
                 'category_variation_trans.variation = category_variation.id AND category_variation_trans.local = :local'
             );
 
-        /* Наличие и резерв множественного варианта */
+        /** Наличие и резерв множественного варианта */
         $dbal->leftJoin(
             'category_variation',
             ProductVariationQuantity::class,
@@ -290,10 +256,7 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
             'product_variation_quantity.variation = product_variation.id'
         );
 
-        /**
-         * Модификация множественного варианта торгового предложения
-         */
-
+        /** Модификация множественного варианта торгового предложения */
         $dbal
             ->addSelect('product_modification.id as product_modification_uid')
             ->addSelect('product_modification.const as product_modification_const')
@@ -313,15 +276,7 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
             $dbal->setParameter('product_modification_value', $modification);
         }
 
-        /* Цена модификации множественного варианта */
-        $dbal->leftJoin(
-            'product_modification',
-            ProductModificationPrice::class,
-            'product_modification_price',
-            'product_modification_price.modification = product_modification.id'
-        );
-
-        /* Получаем тип модификации множественного варианта */
+        /** Получаем тип модификации множественного варианта */
         $dbal
             ->addSelect('category_modification.reference as product_modification_reference')
             ->leftJoin(
@@ -331,7 +286,7 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
                 'category_modification.id = product_modification.category_modification'
             );
 
-        /* Получаем название типа модификации */
+        /** Получаем название типа модификации */
         $dbal
             ->addSelect('category_modification_trans.name as product_modification_name')
             ->addSelect('category_modification_trans.postfix as product_modification_name_postfix')
@@ -342,7 +297,7 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
                 'category_modification_trans.modification = category_modification.id AND category_modification_trans.local = :local'
             );
 
-        /* Наличие и резерв модификации множественного варианта */
+        /** Наличие и резерв модификации множественного варианта */
         $dbal->leftJoin(
             'category_modification',
             ProductModificationQuantity::class,
@@ -350,10 +305,39 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
             'product_modification_quantity.modification = product_modification.id'
         );
 
-        //$dbal->addSelect("'".Entity\Offers\Variation\Image\ProductOfferVariationImage::class."' AS upload_image_dir ");
+        /** Базовая Цена товара */
+        $dbal->leftJoin(
+            'product',
+            ProductPrice::class,
+            'product_price',
+            'product_price.event = product.event'
+        );
 
-        /* Артикул продукта */
+        /** Цена торгового предо жения */
+        $dbal->leftJoin(
+            'product_offer',
+            ProductOfferPrice::class,
+            'product_offer_price',
+            'product_offer_price.offer = product_offer.id'
+        );
 
+        /** Цена множественного варианта */
+        $dbal->leftJoin(
+            'product_variation',
+            ProductVariationPrice::class,
+            'product_variation_price',
+            'product_variation_price.variation = product_variation.id'
+        );
+
+        /** Цена модификации множественного варианта */
+        $dbal->leftJoin(
+            'product_modification',
+            ProductModificationPrice::class,
+            'product_modification_price',
+            'product_modification_price.modification = product_modification.id'
+        );
+
+        /** Артикул продукта */
         $dbal->addSelect('
             COALESCE(
                 product_modification.article, 
@@ -363,128 +347,104 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
             ) AS product_article
 		');
 
-        /* Фото модификаций */
-
-        $dbal->leftJoin(
-            'product_modification',
-            ProductModificationImage::class,
-            'product_modification_image',
-            '
-			product_modification_image.modification = product_modification.id
-			'
-        );
-
-        $dbal->addSelect(
-            "JSON_AGG
-		( DISTINCT
-				CASE WHEN product_modification_image.ext IS NOT NULL THEN
-					JSONB_BUILD_OBJECT
-					(
-						'product_img_root', product_modification_image.root,
-						'product_img', CONCAT ( '/upload/".$dbal->table(ProductModificationImage::class)."' , '/', product_modification_image.name),
-						'product_img_ext', product_modification_image.ext,
-						'product_img_cdn', product_modification_image.cdn
-						
-
-					) END
-			) AS product_modification_image
-	"
-        );
-
-        /* Фото вариантов */
-
-        $dbal->leftJoin(
-            'product_offer',
-            ProductVariationImage::class,
-            'product_variation_image',
-            '
-			product_variation_image.variation = product_variation.id
-			'
-        );
-
-        $dbal->addSelect(
-            "JSON_AGG
-		( DISTINCT
-				CASE WHEN product_variation_image.ext IS NOT NULL THEN
-					JSONB_BUILD_OBJECT
-					(
-						'product_img_root', product_variation_image.root,
-						'product_img', CONCAT ( '/upload/".$dbal->table(ProductVariationImage::class)."' , '/', product_variation_image.name),
-						'product_img_ext', product_variation_image.ext,
-						'product_img_cdn', product_variation_image.cdn
-						
-
-					) END
-			) AS product_variation_image
-	"
-        );
-
-        /* Фот оторговых предложений */
-
-        $dbal->leftJoin(
-            'product_offer',
-            ProductOfferImage::class,
-            'product_offer_images',
-            '
-			
-			product_offer_images.offer = product_offer.id
-			
-		'
-        );
-
-        $dbal->addSelect(
-            "JSON_AGG
-		( DISTINCT
-				CASE WHEN product_offer_images.ext IS NOT NULL THEN
-					JSONB_BUILD_OBJECT
-					(
-						'product_img_root', product_offer_images.root,
-						'product_img', CONCAT ( '/upload/".$dbal->table(ProductOfferImage::class)."' , '/', product_offer_images.name),
-						'product_img_ext', product_offer_images.ext,
-						'product_img_cdn', product_offer_images.cdn
-						
-
-					) END
-
-				 /*ORDER BY product_photo.root DESC, product_photo.id*/
-			) AS product_offer_images
-	"
-        );
-
-        /* Фот опродукта */
-
+        /** Фото продукта */
         $dbal->leftJoin(
             'product',
             ProductPhoto::class,
             'product_photo',
-            '
-	
-			product_photo.event = product.event
-			'
+            'product_photo.event = product.event'
+        )
+            ->addGroupBy('product_photo.ext');
+
+
+        /** Фото торговых предложений */
+        $dbal->leftJoin(
+            'product_offer',
+            ProductOfferImage::class,
+            'product_offer_images',
+            'product_offer_images.offer = product_offer.id'
+        )
+            ->addGroupBy('product_offer_images.ext');
+
+        /** Фото вариантов */
+        $dbal->leftJoin(
+            'product_offer',
+            ProductVariationImage::class,
+            'product_variation_image',
+            'product_variation_image.variation = product_variation.id'
+        )
+            ->addGroupBy('product_variation_image.ext');
+
+        /** Фото модификаций */
+        $dbal->leftJoin(
+            'product_modification',
+            ProductModificationImage::class,
+            'product_modification_image',
+            'product_modification_image.modification = product_modification.id'
+        )
+            ->addGroupBy('product_modification_image.ext');
+
+        /** Агрегация фотографий */
+        $dbal->addSelect("
+            CASE 
+            WHEN product_modification_image.ext IS NOT NULL THEN
+                JSON_AGG 
+                    (DISTINCT
+                        JSONB_BUILD_OBJECT
+                            (
+                                'product_img_root', product_modification_image.root,
+                                'product_img', CONCAT ( '/upload/".$dbal->table(ProductModificationImage::class)."' , '/', product_modification_image.name),
+                                'product_img_ext', product_modification_image.ext,
+                                'product_img_cdn', product_modification_image.cdn
+                            )
+                    )
+            
+            WHEN product_variation_image.ext IS NOT NULL THEN
+                JSON_AGG
+                    (DISTINCT
+                    JSONB_BUILD_OBJECT
+                        (
+                            'product_img_root', product_variation_image.root,
+                            'product_img', CONCAT ( '/upload/".$dbal->table(ProductVariationImage::class)."' , '/', product_variation_image.name),
+                            'product_img_ext', product_variation_image.ext,
+                            'product_img_cdn', product_variation_image.cdn
+                        ) 
+                    )
+                    
+            WHEN product_offer_images.ext IS NOT NULL THEN
+            JSON_AGG
+                (DISTINCT
+                    JSONB_BUILD_OBJECT
+                        (
+                            'product_img_root', product_offer_images.root,
+                            'product_img', CONCAT ( '/upload/".$dbal->table(ProductOfferImage::class)."' , '/', product_offer_images.name),
+                            'product_img_ext', product_offer_images.ext,
+                            'product_img_cdn', product_offer_images.cdn
+                        )
+                        
+                    /*ORDER BY product_photo.root DESC, product_photo.id*/
+                )
+                
+            WHEN product_photo.ext IS NOT NULL THEN
+            JSON_AGG
+                (DISTINCT
+                    JSONB_BUILD_OBJECT
+                        (
+                            'product_img_root', product_photo.root,
+                            'product_img', CONCAT ( '/upload/".$dbal->table(ProductPhoto::class)."' , '/', product_photo.name),
+                            'product_img_ext', product_photo.ext,
+                            'product_img_cdn', product_photo.cdn
+                        )
+                    
+                    /*ORDER BY product_photo.root DESC, product_photo.id*/
+                )
+            
+            ELSE NULL
+            END
+			AS product_images"
         );
 
-        $dbal->addSelect(
-            "JSON_AGG
-		( DISTINCT
-
-					CASE WHEN product_photo.ext IS NOT NULL THEN
-					JSONB_BUILD_OBJECT
-					(
-						'product_img_root', product_photo.root,
-						'product_img', CONCAT ( '/upload/".$dbal->table(ProductPhoto::class)."' , '/', product_photo.name),
-						'product_img_ext', product_photo.ext,
-						'product_img_cdn', product_photo.cdn
-						
-
-					) END
-
-				 /*ORDER BY product_photo.root DESC, product_photo.id*/
-			) AS product_photo
-	"
-        );
-
-        /* Стоимость продукта */
-
+        /** Стоимость продукта */
         $dbal->addSelect('
 			COALESCE(
                 NULLIF(product_modification_price.price, 0), 
@@ -495,9 +455,7 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
             ) AS product_price
 		');
 
-
-        /* Предыдущая стоимость продукта */
-
+        /** Предыдущая стоимость продукта */
         $dbal->addSelect("
 			COALESCE(
                 NULLIF(product_modification_price.old, 0),
@@ -508,8 +466,7 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
             ) AS product_old_price
 		");
 
-        /* Валюта продукта */
-
+        /** Валюта продукта */
         $dbal->addSelect(
             '
 			CASE
@@ -530,8 +487,7 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
 		'
         );
 
-        /* Наличие продукта */
-
+        /** Наличие продукта */
         $dbal->addSelect(
             '
 			CASE
@@ -556,19 +512,6 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
             ->addGroupBy('product_variation_quantity.reserve')
             ->addGroupBy('product_offer_quantity.reserve')
             ->addGroupBy('product_price.reserve');
-
-
-        /* Наличие */
-        //		$dbal->addSelect("
-        //			CASE
-        //			   WHEN product_modification_price.price IS NOT NULL THEN product_modification_price.price
-        //			   WHEN product_variation_price.price IS NOT NULL THEN product_variation_price.price
-        //			   WHEN product_offer_price.price IS NOT NULL THEN product_offer_price.price
-        //			   WHEN product_price.price IS NOT NULL THEN product_price.price
-        //			   ELSE NULL
-        //			END AS product_price
-        //		"
-        //		);
 
         /** Категория */
         $dbal->join(
@@ -717,13 +660,13 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
             ->fetchAssociative();
     }
 
-
     /**
-     * Метод возвращает детальную информацию о продукте и его заполненному значению ТП, вариантов и модификаций.
-     *
      * @param ?string $offer - значение торгового предложения
      * @param ?string $variation - значение множественного варианта ТП
      * @param ?string $modification - значение модификации множественного варианта ТП
+     *@deprecated
+     * Метод возвращает детальную информацию о продукте и его заполненному значению ТП, вариантов и модификаций.
+     *
      */
     public function fetchProductEventAssociative(
         ProductEventUid $event,
@@ -781,8 +724,7 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
             'product_price.event = product_event.id'
         );
 
-        /* ProductInfo */
-
+        /** ProductInfo */
         $dbal
             ->addSelect('product_info.url')
             ->leftJoin(
@@ -792,8 +734,7 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
                 'product_info.product = product.id '
             );
 
-        /* Торговое предложение */
-
+        /** Торговое предложение */
         $dbal
             ->addSelect('product_offer.id as product_offer_uid')
             ->addSelect('product_offer.value as product_offer_value')
@@ -810,7 +751,7 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
             $dbal->setParameter('product_offer_value', $offer);
         }
 
-        /* Цена торгового предо жения */
+        /** Цена торгового предо жения */
         $dbal->leftJoin(
             'product_offer',
             ProductOfferPrice::class,
@@ -818,7 +759,7 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
             'product_offer_price.offer = product_offer.id'
         );
 
-        /* Получаем тип торгового предложения */
+        /** Получаем тип торгового предложения */
         $dbal
             ->addSelect('category_offer.reference AS product_offer_reference')
             ->leftJoin(
@@ -828,7 +769,7 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
                 'category_offer.id = product_offer.category_offer'
             );
 
-        /* Получаем название торгового предложения */
+        /** Получаем название торгового предложения */
         $dbal
             ->addSelect('category_offer_trans.name as product_offer_name')
             ->addSelect('category_offer_trans.postfix as product_offer_name_postfix')
@@ -839,7 +780,7 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
                 'category_offer_trans.offer = category_offer.id AND category_offer_trans.local = :local'
             );
 
-        /* Наличие и резерв торгового предложения */
+        /** Наличие и резерв торгового предложения */
         $dbal->leftJoin(
             'product_offer',
             ProductOfferQuantity::class,
@@ -847,10 +788,7 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
             'product_offer_quantity.offer = product_offer.id'
         );
 
-        //ProductCategoryOffers
-
-        /* Множественные варианты торгового предложения */
-
+        /** Множественные варианты торгового предложения */
         $dbal
             ->addSelect('product_variation.id as product_variation_uid')
             ->addSelect('product_variation.value as product_variation_value')
@@ -867,7 +805,7 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
             $dbal->setParameter('product_variation_value', $variation);
         }
 
-        /* Цена множественного варианта */
+        /** Цена множественного варианта */
         $dbal->leftJoin(
             'product_variation',
             ProductVariationPrice::class,
@@ -875,7 +813,7 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
             'product_variation_price.variation = product_variation.id'
         );
 
-        /* Получаем тип множественного варианта */
+        /** Получаем тип множественного варианта */
         $dbal
             ->addSelect('category_variation.reference as product_variation_reference')
             ->leftJoin(
@@ -885,7 +823,7 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
                 'category_variation.id = product_variation.category_variation'
             );
 
-        /* Получаем название множественного варианта */
+        /** Получаем название множественного варианта */
         $dbal
             ->addSelect('category_variation_trans.name as product_variation_name')
             ->addSelect('category_variation_trans.postfix as product_variation_name_postfix')
@@ -904,8 +842,7 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
             'product_variation_quantity.variation = product_variation.id'
         );
 
-        /* Модификация множественного варианта торгового предложения */
-
+        /** Модификация множественного варианта торгового предложения */
         $dbal
             ->addSelect('product_modification.id as product_modification_uid')
             ->addSelect('product_modification.value as product_modification_value')
@@ -922,7 +859,7 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
             $dbal->setParameter('product_modification_value', $modification);
         }
 
-        /* Цена модификации множественного варианта */
+        /** Цена модификации множественного варианта */
         $dbal->leftJoin(
             'product_modification',
             ProductModificationPrice::class,
@@ -930,7 +867,7 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
             'product_modification_price.modification = product_modification.id'
         );
 
-        /* Получаем тип модификации множественного варианта */
+        /** Получаем тип модификации множественного варианта */
         $dbal
             ->addSelect('category_modification.reference as product_modification_reference')
             ->leftJoin(
@@ -940,7 +877,7 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
                 'category_modification.id = product_modification.category_modification'
             );
 
-        /* Получаем название типа модификации */
+        /** Получаем название типа модификации */
         $dbal
             ->addSelect('category_modification_trans.name as product_modification_name')
             ->addSelect('category_modification_trans.postfix as product_modification_name_postfix')
@@ -951,7 +888,7 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
                 'category_modification_trans.modification = category_modification.id AND category_modification_trans.local = :local'
             );
 
-        /* Наличие и резерв модификации множественного варианта */
+        /** Наличие и резерв модификации множественного варианта */
         $dbal->leftJoin(
             'category_modification',
             ProductModificationQuantity::class,
@@ -959,10 +896,7 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
             'product_modification_quantity.modification = product_modification.id'
         );
 
-        //$dbal->addSelect("'".Entity\Offers\Variation\Image\ProductOfferVariationImage::class."' AS upload_image_dir ");
-
-        /* Артикул продукта */
-
+        /** Артикул продукта */
         $dbal->addSelect('
             COALESCE(
                 product_modification.article, 
@@ -972,8 +906,7 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
             ) AS product_article
 		');
 
-        /* Фото модификаций */
-
+        /** Фото модификаций */
         $dbal->leftJoin(
             'product_modification',
             ProductModificationImage::class,
