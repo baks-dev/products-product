@@ -1,0 +1,14 @@
+{% extends Template('/user/base.html.twig') %}
+
+{% block title %}
+    Спецпредложения
+{% endblock %}
+
+{% block stylesheets %}{% endblock %}
+
+{% block content %}
+
+    {{ include(_self|replace({ "template.html.twig" : baks_settings.device~"/content.html.twig" })) }}
+{% endblock %}
+
+{% block javascript %}{% endblock %}

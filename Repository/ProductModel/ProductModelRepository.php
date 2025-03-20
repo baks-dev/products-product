@@ -413,130 +413,116 @@ final class ProductModelRepository implements ProductModelInterface
 						   ELSE NULL
 						END
 					)
-
 			)
 			AS product_offers"
         );
 
-        /** Фото модификаций */
-
-        $dbal->leftJoin(
-            'product_modification',
-            ProductModificationImage::class,
-            'product_modification_image',
-            ' product_modification_image.modification = product_modification.id'
-        );
-
-        $dbal->addSelect(
-            "JSON_AGG
-		( DISTINCT
-				CASE WHEN product_modification_image.ext IS NOT NULL THEN
-					JSONB_BUILD_OBJECT
-					(
-						'product_img_root', product_modification_image.root,
-						'product_img', CONCAT ( '/upload/".$dbal->table(ProductModificationImage::class)."' , '/', product_modification_image.name),
-						'product_img_ext', product_modification_image.ext,
-						'product_img_cdn', product_modification_image.cdn
-						
-
-					) END
-			) AS product_modification_image"
-        );
-
-
-        /* Фото вариантов */
-
-        $dbal->leftJoin(
-            'product_offer',
-            ProductVariationImage::class,
-            'product_variation_image',
-            'product_variation_image.variation = product_variation.id'
-        );
-
-        $dbal
-            ->addSelect(
-                "JSON_AGG
-		( DISTINCT
-				CASE WHEN product_variation_image.ext IS NOT NULL THEN
-					JSONB_BUILD_OBJECT
-					(
-						'product_img_root', product_variation_image.root,
-						'product_img', CONCAT ( '/upload/".$dbal->table(ProductVariationImage::class)."' , '/', product_variation_image.name),
-						'product_img_ext', product_variation_image.ext,
-						'product_img_cdn', product_variation_image.cdn
-						
-					) END
-			) AS product_variation_image
-	"
-            );
-
-
-        /* Фот оторговых предложений */
-
+        /** Фото торговых предложений */
         $dbal->leftJoin(
             'product_offer',
             ProductOfferImage::class,
             'product_offer_images',
             'product_offer_images.offer = product_offer.id'
-        );
+        )
+            ->addGroupBy('product_offer_images.ext');
 
-        $dbal->addSelect(
-            "JSON_AGG
-		( DISTINCT
-				CASE WHEN product_offer_images.ext IS NOT NULL THEN
-					JSONB_BUILD_OBJECT
-					(
-						'product_img_root', product_offer_images.root,
-						'product_img', CONCAT ( '/upload/".$dbal->table(ProductOfferImage::class)."' , '/', product_offer_images.name),
-						'product_img_ext', product_offer_images.ext,
-						'product_img_cdn', product_offer_images.cdn
-						
-					) END
-
-				 /*ORDER BY product_photo.root DESC, product_photo.id*/
-			) AS product_offer_images
-	"
-        );
-
-        /** Фот опродукта */
-
+        /** Фото продукта */
         $dbal
             ->leftJoin(
                 'product_offer',
                 ProductPhoto::class,
                 'product_photo',
                 'product_photo.event = product.event'
-            );
+            )
+            ->addGroupBy('product_photo.ext');
 
-        $dbal->addSelect(
-            "JSON_AGG
-		( DISTINCT
+        /** Фото модификаций */
+        $dbal->leftJoin(
+            'product_modification',
+            ProductModificationImage::class,
+            'product_modification_image',
+            ' product_modification_image.modification = product_modification.id'
+        )
+            ->addGroupBy('product_modification_image.ext');
 
-					CASE WHEN product_photo.ext IS NOT NULL THEN
-					JSONB_BUILD_OBJECT
-					(
-						'product_img_root', product_photo.root,
-						'product_img', CONCAT ( '/upload/".$dbal->table(ProductPhoto::class)."' , '/', product_photo.name),
-						'product_img_ext', product_photo.ext,
-						'product_img_cdn', product_photo.cdn
-						
 
-					) END
+        /** Фото вариантов */
+        $dbal->leftJoin(
+            'product_offer',
+            ProductVariationImage::class,
+            'product_variation_image',
+            'product_variation_image.variation = product_variation.id'
+        )
+            ->addGroupBy('product_variation_image.ext');
 
-				 /*ORDER BY product_photo.root DESC, product_photo.id*/
-			) AS product_photo
-	"
+
+        $dbal->addSelect("
+            CASE 
+            WHEN product_modification_image.ext IS NOT NULL THEN
+                JSON_AGG 
+                    (DISTINCT
+                        JSONB_BUILD_OBJECT
+                            (
+                                'product_img_root', product_modification_image.root,
+                                'product_img', CONCAT ( '/upload/".$dbal->table(ProductModificationImage::class)."' , '/', product_modification_image.name),
+                                'product_img_ext', product_modification_image.ext,
+                                'product_img_cdn', product_modification_image.cdn
+                            )
+                    )
+            
+            WHEN product_variation_image.ext IS NOT NULL THEN
+                JSON_AGG
+                    (DISTINCT
+                    JSONB_BUILD_OBJECT
+                        (
+                            'product_img_root', product_variation_image.root,
+                            'product_img', CONCAT ( '/upload/".$dbal->table(ProductVariationImage::class)."' , '/', product_variation_image.name),
+                            'product_img_ext', product_variation_image.ext,
+                            'product_img_cdn', product_variation_image.cdn
+                        ) 
+                    )
+                    
+            WHEN product_offer_images.ext IS NOT NULL THEN
+            JSON_AGG
+                (DISTINCT
+                    JSONB_BUILD_OBJECT
+                        (
+                            'product_img_root', product_offer_images.root,
+                            'product_img', CONCAT ( '/upload/".$dbal->table(ProductOfferImage::class)."' , '/', product_offer_images.name),
+                            'product_img_ext', product_offer_images.ext,
+                            'product_img_cdn', product_offer_images.cdn
+                        )
+                        
+                    /*ORDER BY product_photo.root DESC, product_photo.id*/
+                )
+                
+            WHEN product_photo.ext IS NOT NULL THEN
+            JSON_AGG
+                (DISTINCT
+                    JSONB_BUILD_OBJECT
+                        (
+                            'product_img_root', product_photo.root,
+                            'product_img', CONCAT ( '/upload/".$dbal->table(ProductPhoto::class)."' , '/', product_photo.name),
+                            'product_img_ext', product_photo.ext,
+                            'product_img_cdn', product_photo.cdn
+                        )
+                    
+                    /*ORDER BY product_photo.root DESC, product_photo.id*/
+                )
+            
+            ELSE NULL
+            END
+			AS product_images"
         );
 
 
-        /* Категория */
+        /** Категория */
         $dbal->join(
             'product',
             ProductCategory::class,
             'product_event_category',
             'product_event_category.event = product.event AND product_event_category.root = true'
         );
-
 
         $dbal
             ->addSelect('category.id as category_id')
