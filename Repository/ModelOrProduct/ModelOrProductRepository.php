@@ -164,8 +164,8 @@ final class ModelOrProductRepository implements ModelOrProductInterface
 
         /**  Тип торгового предложения */
         $dbal
-            //            ->addSelect('category_offer.id AS category_offer_id')
             ->addSelect('category_offer.card AS category_offer_card ')
+            ->addSelect('category_offer.reference AS product_offer_reference')
             ->leftJoin(
                 'product_offer',
                 CategoryProductOffers::class,
@@ -235,8 +235,8 @@ final class ModelOrProductRepository implements ModelOrProductInterface
 
         /** Тип множественного варианта */
         $dbal
-            //            ->addSelect('category_variation.id AS category_variation_id')
             ->addSelect('category_variation.card AS category_variation_card')
+            ->addSelect('category_variation.reference as product_variation_reference')
             ->leftJoin(
                 'product_variation',
                 CategoryProductVariation::class,
@@ -302,8 +302,8 @@ final class ModelOrProductRepository implements ModelOrProductInterface
 
         /** Тип модификации множественного варианта */
         $dbal
-            //            ->addSelect('category_modification.id AS category_modification_id')
             ->addSelect('category_modification.card AS category_modification_card ')
+            ->addSelect('category_modification.reference as product_modification_reference')
             ->leftJoin(
                 'product_modification',
                 CategoryProductModification::class,
