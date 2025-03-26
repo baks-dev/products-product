@@ -164,6 +164,7 @@ final class ModelOrProductRepository implements ModelOrProductInterface
 
         /**  Тип торгового предложения */
         $dbal
+            //            ->addSelect('category_offer.id AS category_offer_id')
             ->addSelect('category_offer.card AS category_offer_card ')
             ->leftJoin(
                 'product_offer',
@@ -172,7 +173,7 @@ final class ModelOrProductRepository implements ModelOrProductInterface
                 'category_offer.id = product_offer.category_offer'
             );
 
-        /** Группировка в зависимости от настройки торгового предложения */
+        /** Группировка в зависимости от настройки группировки торгового предложения */
         $dbal
             ->addSelect(
                 '
@@ -234,7 +235,8 @@ final class ModelOrProductRepository implements ModelOrProductInterface
 
         /** Тип множественного варианта */
         $dbal
-            ->addSelect('category_variation.card AS category_variation_card ')
+            //            ->addSelect('category_variation.id AS category_variation_id')
+            ->addSelect('category_variation.card AS category_variation_card')
             ->leftJoin(
                 'product_variation',
                 CategoryProductVariation::class,
@@ -242,13 +244,14 @@ final class ModelOrProductRepository implements ModelOrProductInterface
                 'category_variation.id = product_variation.category_variation'
             );
 
-        /** Группировка в зависимости от настройки множественного варианта */
+        /** Группировка в зависимости от настройки группировки множественного варианта */
         $dbal
             ->addSelect(
                 '
                 CASE
                     WHEN category_variation.card IS NOT NULL AND category_variation.card IS TRUE
                     THEN product_variation.value
+                    ELSE NULL
                 END AS product_variation_value')
             ->addGroupBy('
                 CASE
@@ -299,6 +302,7 @@ final class ModelOrProductRepository implements ModelOrProductInterface
 
         /** Тип модификации множественного варианта */
         $dbal
+            //            ->addSelect('category_modification.id AS category_modification_id')
             ->addSelect('category_modification.card AS category_modification_card ')
             ->leftJoin(
                 'product_modification',
@@ -307,12 +311,13 @@ final class ModelOrProductRepository implements ModelOrProductInterface
                 'category_modification.id = product_modification.category_modification'
             );
 
-        /** Группировка в зависимости от настройки модификации множественного варианта */
+        /** Группировка в зависимости от настройки группировки модификации множественного варианта */
         $dbal
             ->addSelect('
                 CASE
                     WHEN category_modification.card IS NOT NULL AND category_modification.card IS TRUE
                     THEN product_modification.value
+                    ELSE NULL
                 END
             AS product_modification_value
             ')
