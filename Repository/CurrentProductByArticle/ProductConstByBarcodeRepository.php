@@ -31,6 +31,7 @@ use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Product\Entity\Product;
+use BaksDev\Products\Product\Entity\ProductInvariable;
 use BaksDev\Products\Product\Type\Barcode\ProductBarcode;
 
 final readonly class ProductConstByBarcodeRepository implements ProductConstByBarcodeInterface
@@ -67,6 +68,19 @@ final readonly class ProductConstByBarcodeRepository implements ProductConstByBa
 
         $dbalInfo->where('info.barcode = :barcode');
 
+        $dbalInfo
+            ->join(
+                'product',
+                ProductInvariable::class, 'invariable',
+                '
+                    invariable.product = product.id AND
+                    invariable.offer IS NULL AND
+                    invariable.variation IS NULL AND
+                    invariable.modification IS NULL
+                '
+            )
+            ->addSelect('invariable.id AS invariable');
+
 
         /** Поиск артикула OFFER */
 
@@ -90,6 +104,19 @@ final readonly class ProductConstByBarcodeRepository implements ProductConstByBa
             Product::class, 'product',
             'product.event = offer.event'
         );
+
+        $dbalOffer
+            ->addSelect('invariable.id AS invariable')
+            ->join(
+                'product',
+                ProductInvariable::class, 'invariable',
+                '
+                    invariable.product = product.id AND
+                    invariable.offer = offer.const AND
+                    invariable.variation IS NULL AND
+                    invariable.modification IS NULL
+                '
+            );
 
 
         /** Поиск артикула VARIATION */
@@ -123,6 +150,18 @@ final readonly class ProductConstByBarcodeRepository implements ProductConstByBa
                 'product.event = offer.event'
             );
 
+        $dbalVariation
+            ->addSelect('invariable.id AS invariable')
+            ->join(
+                'product',
+                ProductInvariable::class, 'invariable',
+                '
+                    invariable.product = product.id AND
+                    invariable.offer = offer.const AND
+                    invariable.variation = variation.const AND
+                    invariable.modification IS NULL
+                '
+            );
 
         /** Поиск артикула MODIFICATION */
 
@@ -163,6 +202,19 @@ final readonly class ProductConstByBarcodeRepository implements ProductConstByBa
                 'offer',
                 Product::class, 'product',
                 'product.event = offer.event'
+            );
+
+        $dbalModification
+            ->addSelect('invariable.id AS invariable')
+            ->join(
+                'product',
+                ProductInvariable::class, 'invariable',
+                '
+                    invariable.product = product.id AND
+                    invariable.offer = offer.const AND
+                    invariable.variation = variation.const AND
+                    invariable.modification = modification.const
+                '
             );
 
 
