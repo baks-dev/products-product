@@ -147,7 +147,6 @@ final class ProductCatalogRepository implements ProductCatalogInterface
         /** ProductInfo */
         $dbal
             ->addSelect('product_info.url')
-            ->addSelect('product_info.model')
             ->leftJoin(
                 'product_event',
                 ProductInfo::class,
