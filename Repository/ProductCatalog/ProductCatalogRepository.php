@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 declare(strict_types=1);
@@ -148,7 +147,6 @@ final class ProductCatalogRepository implements ProductCatalogInterface
         /** ProductInfo */
         $dbal
             ->addSelect('product_info.url')
-            //            ->addSelect('product_info.model')
             ->leftJoin(
                 'product_event',
                 ProductInfo::class,

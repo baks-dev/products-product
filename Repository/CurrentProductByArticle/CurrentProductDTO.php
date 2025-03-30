@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -27,6 +27,7 @@ namespace BaksDev\Products\Product\Repository\CurrentProductByArticle;
 
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
+use BaksDev\Products\Product\Type\Invariable\ProductInvariableUid;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
@@ -39,6 +40,7 @@ final readonly class CurrentProductDTO
     public function __construct(
         private string $product,
         private string $event,
+        private string $invariable,
 
         /** Торговое предложение */
         private ?string $offer,
@@ -51,6 +53,8 @@ final readonly class CurrentProductDTO
         /** Модификация множественного варианта торгового предложения */
         private ?string $modification,
         private ?string $modification_const,
+
+
     ) {}
 
     /**
@@ -115,5 +119,10 @@ final readonly class CurrentProductDTO
     public function getModificationConst(): ?ProductModificationConst
     {
         return $this->modification_const ? new ProductModificationConst($this->modification_const) : null;
+    }
+
+    public function getInvariable(): ProductInvariableUid
+    {
+        return new ProductInvariableUid($this->invariable);
     }
 }
