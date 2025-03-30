@@ -515,7 +515,6 @@ final class ModelOrProductRepository implements ModelOrProductInterface
             END > 0
         ");
 
-
         $dbal->allGroupByExclude();
 
         $dbal->addOrderBy('product_info.sort', 'DESC');

@@ -36,16 +36,20 @@ use Symfony\Component\Routing\Attribute\Route;
 #[AsController]
 final class ModelController extends AbstractController
 {
-    #[Route('/catalog/{category}/{url}/model', name: 'user.model', priority: 10)]
+    #[Route('/catalog/{category}/{url}/model/{offer}/{variation}', name: 'user.model', priority: 10)]
     public function model(
         Request $request,
         #[MapEntity(mapping: ['url' => 'url'])] ProductInfo $info,
         ProductModelInterface $productModel,
+        string|null $offer = null,
+        string|null $variation = null,
     ): Response
     {
 
         $card = $productModel
             ->byProduct($info)
+            ->byOffer($offer)
+            ->byVariation($variation)
             ->find();
 
         return $this->render([

@@ -68,6 +68,10 @@ use InvalidArgumentException;
 
 final class ProductModelRepository implements ProductModelInterface
 {
+    private string|false $offer = false;
+
+    private string|false $variation = false;
+
     private ProductUid|false $productUid = false;
 
     public function __construct(
@@ -89,6 +93,32 @@ final class ProductModelRepository implements ProductModelInterface
 
         $this->productUid = $productUid;
 
+        return $this;
+    }
+
+    /** Фильтрация по Offer */
+    public function byOffer(string|null $offer): self
+    {
+        if(is_null($offer))
+        {
+            $this->offer = false;
+            return $this;
+        }
+
+        $this->offer = $offer;
+        return $this;
+    }
+
+    /** Фильтрация по Variation */
+    public function byVariation(string|null $variation): self
+    {
+        if(is_null($variation))
+        {
+            $this->variation = false;
+            return $this;
+        }
+
+        $this->variation = $variation;
         return $this;
     }
 
@@ -169,13 +199,27 @@ final class ProductModelRepository implements ProductModelInterface
                 'product_info.product = product.id '
             );
 
-        /** Торговое предложение */
-        $dbal->leftJoin(
-            'product',
-            ProductOffer::class,
-            'product_offer',
-            'product_offer.event = product.event'
-        );
+        /** OFFERS */
+        if(false === $this->offer)
+        {
+            $dbal->leftJoin(
+                'product',
+                ProductOffer::class,
+                'product_offer',
+                'product_offer.event = product.event'
+            );
+        }
+        else
+        {
+            $dbal->leftJoin(
+                'product',
+                ProductOffer::class,
+                'product_offer',
+                'product_offer.event = product.event AND product_offer.value = :product_offer_value'
+            );
+
+            $dbal->setParameter('product_offer_value', $this->offer);
+        }
 
         /** Получаем тип торгового предложения */
         $dbal
@@ -196,7 +240,7 @@ final class ProductModelRepository implements ProductModelInterface
                 'category_offer_trans.offer = category_offer.id AND category_offer_trans.local = :local'
             );
 
-
+        /** Цена OFFERS */
         $dbal
             ->leftOneJoin(
                 'product_offer',
@@ -205,7 +249,6 @@ final class ProductModelRepository implements ProductModelInterface
                 'product_offer_price.offer = product_offer.id',
                 'offer'
             );
-
 
         /** Наличие и резерв торгового предложения */
         $dbal
@@ -217,16 +260,29 @@ final class ProductModelRepository implements ProductModelInterface
             );
 
 
-        /** Множественные варианты торгового предложения */
+        /** VARIATION */
+        if(false === $this->variation)
+        {
+            $dbal
+                ->leftJoin(
+                    'product_offer',
+                    ProductVariation::class,
+                    'product_variation',
+                    'product_variation.offer = product_offer.id'
+                );
+        }
+        else
+        {
+            $dbal
+                ->leftJoin(
+                    'product_offer',
+                    ProductVariation::class,
+                    'product_variation',
+                    'product_variation.offer = product_offer.id AND product_variation.value = :product_variation_value'
+                );
 
-
-        $dbal
-            ->leftJoin(
-                'product_offer',
-                ProductVariation::class,
-                'product_variation',
-                'product_variation.offer = product_offer.id'
-            );
+            $dbal->setParameter('product_variation_value', $this->variation);
+        }
 
         $dbal
             ->leftJoin(

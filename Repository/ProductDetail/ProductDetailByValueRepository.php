@@ -521,7 +521,9 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
             'product_event_category.event = product.event AND product_event_category.root = true'
         );
 
-        $dbal->join(
+        $dbal
+            ->addSelect('category.id AS category_id')
+            ->join(
             'product_event_category',
             CategoryProduct::class,
             'category',
@@ -539,6 +541,9 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
 
         $dbal
             ->addSelect('category_info.url AS category_url')
+            ->addSelect('category_info.minimal AS category_minimal')
+            ->addSelect('category_info.input AS category_input')
+            ->addSelect('category_info.threshold AS category_threshold')
             ->leftJoin(
                 'category',
                 CategoryProductInfo::class,
@@ -558,7 +563,7 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
             'category_section',
             CategoryProductSectionField::class,
             'category_section_field',
-            'category_section_field.section = category_section.id AND (category_section_field.public = TRUE OR category_section_field.name = TRUE )'
+            'category_section_field.section = category_section.id'
         );
 
         $dbal->leftJoin(
@@ -1187,7 +1192,6 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
 		)
 			AS category_section_field"
         );
-
 
         /* Кешируем результат DBAL */
         return $dbal
