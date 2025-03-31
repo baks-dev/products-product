@@ -68,6 +68,10 @@ use InvalidArgumentException;
 
 final class ProductModelRepository implements ProductModelInterface
 {
+    private string|false $offer = false;
+
+    private string|false $variation = false;
+
     private ProductUid|false $productUid = false;
 
     public function __construct(
@@ -92,7 +96,33 @@ final class ProductModelRepository implements ProductModelInterface
         return $this;
     }
 
-    /** Информация о продукте (модели) со списком торговых предложений */
+    /** Фильтрация по Offer */
+    public function byOffer(string|null $offer): self
+    {
+        if(is_null($offer))
+        {
+            $this->offer = false;
+            return $this;
+        }
+
+        $this->offer = $offer;
+        return $this;
+    }
+
+    /** Фильтрация по Variation */
+    public function byVariation(string|null $variation): self
+    {
+        if(is_null($variation))
+        {
+            $this->variation = false;
+            return $this;
+        }
+
+        $this->variation = $variation;
+        return $this;
+    }
+
+    /** Информация о модели со списком offer, variation, modification */
     public function find(): array|false
     {
         if(false === $this->productUid)
@@ -131,7 +161,6 @@ final class ProductModelRepository implements ProductModelInterface
                 'product_seo.event = product.event AND product_seo.local = :local'
             );
 
-
         $dbal
             ->addSelect('product_trans.name AS product_name')
             ->leftJoin(
@@ -152,7 +181,6 @@ final class ProductModelRepository implements ProductModelInterface
             )
             ->setParameter('device', 'pc');
 
-
         /** Цена товара */
         $dbal->leftJoin(
             'product',
@@ -161,8 +189,7 @@ final class ProductModelRepository implements ProductModelInterface
             'product_price.event = product.event'
         );
 
-        /* ProductInfo */
-
+        /** ProductInfo */
         $dbal
             ->addSelect('product_info.url')
             ->leftJoin(
@@ -172,15 +199,27 @@ final class ProductModelRepository implements ProductModelInterface
                 'product_info.product = product.id '
             );
 
+        /** OFFERS */
+        if(false === $this->offer)
+        {
+            $dbal->leftJoin(
+                'product',
+                ProductOffer::class,
+                'product_offer',
+                'product_offer.event = product.event'
+            );
+        }
+        else
+        {
+            $dbal->leftJoin(
+                'product',
+                ProductOffer::class,
+                'product_offer',
+                'product_offer.event = product.event AND product_offer.value = :product_offer_value'
+            );
 
-        /** Торговое предложение */
-
-        $dbal->leftJoin(
-            'product',
-            ProductOffer::class,
-            'product_offer',
-            'product_offer.event = product.event'
-        );
+            $dbal->setParameter('product_offer_value', $this->offer);
+        }
 
         /** Получаем тип торгового предложения */
         $dbal
@@ -201,7 +240,7 @@ final class ProductModelRepository implements ProductModelInterface
                 'category_offer_trans.offer = category_offer.id AND category_offer_trans.local = :local'
             );
 
-
+        /** Цена OFFERS */
         $dbal
             ->leftOneJoin(
                 'product_offer',
@@ -210,7 +249,6 @@ final class ProductModelRepository implements ProductModelInterface
                 'product_offer_price.offer = product_offer.id',
                 'offer'
             );
-
 
         /** Наличие и резерв торгового предложения */
         $dbal
@@ -222,16 +260,29 @@ final class ProductModelRepository implements ProductModelInterface
             );
 
 
-        /** Множественные варианты торгового предложения */
+        /** VARIATION */
+        if(false === $this->variation)
+        {
+            $dbal
+                ->leftJoin(
+                    'product_offer',
+                    ProductVariation::class,
+                    'product_variation',
+                    'product_variation.offer = product_offer.id'
+                );
+        }
+        else
+        {
+            $dbal
+                ->leftJoin(
+                    'product_offer',
+                    ProductVariation::class,
+                    'product_variation',
+                    'product_variation.offer = product_offer.id AND product_variation.value = :product_variation_value'
+                );
 
-
-        $dbal
-            ->leftJoin(
-                'product_offer',
-                ProductVariation::class,
-                'product_variation',
-                'product_variation.offer = product_offer.id'
-            );
+            $dbal->setParameter('product_variation_value', $this->variation);
+        }
 
         $dbal
             ->leftJoin(
@@ -259,8 +310,7 @@ final class ProductModelRepository implements ProductModelInterface
                 'variation'
             );
 
-
-        /* Наличие и резерв множественного варианта */
+        /** Наличие и резерв множественного варианта */
         $dbal
             ->leftJoin(
                 'category_variation',
@@ -271,7 +321,6 @@ final class ProductModelRepository implements ProductModelInterface
 
 
         /** Модификация множественного варианта торгового предложения */
-
         $dbal
             ->leftJoin(
                 'product_variation',
@@ -281,7 +330,6 @@ final class ProductModelRepository implements ProductModelInterface
             );
 
         /** Получаем название типа */
-
         $dbal
             ->leftJoin(
                 'category_modification',
@@ -309,7 +357,7 @@ final class ProductModelRepository implements ProductModelInterface
             );
 
 
-        /* Наличие и резерв модификации множественного варианта */
+        /** Наличие и резерв модификации множественного варианта */
         $dbal
             ->leftJoin(
                 'category_modification',
@@ -340,93 +388,85 @@ final class ProductModelRepository implements ProductModelInterface
                    )
             ');
 
+        /** Продукты внутри категории */
         $dbal->addSelect(
             "JSON_AGG
-			( DISTINCT
+        			( DISTINCT
 
-					JSONB_BUILD_OBJECT
-					(
+        					JSONB_BUILD_OBJECT
+        					(
 
-						/* свойства для сортирвоки JSON */
-						'0', CONCAT(product_offer.value, product_variation.value, product_modification.value, product_modification_price.price),
+        						/* свойства для сортирвоки JSON */
+        						'0', CONCAT(product_offer.value, product_variation.value, product_modification.value, product_modification_price.price),
 
-						'offer_uid', product_offer.id,
-						'offer_value', product_offer.value, /* значение торгового предложения */
-						'offer_postfix', product_offer.postfix, /* постфикс торгового предложения */
-						'offer_reference', category_offer.reference, /* тип (field) торгового предложения */
-						'offer_name', category_offer_trans.name, /* Название свойства */
+        						'offer_uid', product_offer.id,
+        						'offer_value', product_offer.value, /* значение торгового предложения */
+        						'offer_postfix', product_offer.postfix, /* постфикс торгового предложения */
+        						'offer_reference', category_offer.reference, /* тип (field) торгового предложения */
+        						'offer_name', category_offer_trans.name, /* Название свойства */
 
-						'variation_uid', product_variation.id,
-						'variation_value', product_variation.value, /* значение множественного варианта */
-						'variation_postfix', product_variation.postfix, /* постфикс множественного варианта */
-						'variation_reference', category_variation.reference, /* тип (field) множественного варианта */
-						'variation_name', category_variation_trans.name, /* Название свойства */
+        						'variation_uid', product_variation.id,
+        						'variation_value', product_variation.value, /* значение множественного варианта */
+        						'variation_postfix', product_variation.postfix, /* постфикс множественного варианта */
+        						'variation_reference', category_variation.reference, /* тип (field) множественного варианта */
+        						'variation_name', category_variation_trans.name, /* Название свойства */
 
-						'modification_uid', product_modification.id,
-						'modification_value', product_modification.value, /* значение модификации */
-						'modification_postfix', product_modification.postfix, /* постфикс модификации */
-						'modification_reference', category_modification.reference, /* тип (field) модификации */
-						'modification_name', category_modification_trans.name, /* артикул модификации */
-						
-						'article', CASE
-						   WHEN product_modification.article IS NOT NULL THEN product_modification.article
-						   WHEN product_variation.article IS NOT NULL THEN product_variation.article
-						   WHEN product_offer.article IS NOT NULL THEN product_offer.article
-						   WHEN product_info.article IS NOT NULL THEN product_info.article
-						   ELSE NULL
-						END,
-						
-                        /* Product Invariable */
-						'product_invariable_id', COALESCE(
-						    product_invariable.id
-						),
-						
-						'price', CASE
-						   WHEN product_modification_price.price IS NOT NULL AND product_modification_price.price > 0 THEN product_modification_price.price
-						   WHEN product_variation_price.price IS NOT NULL AND product_variation_price.price > 0 THEN product_variation_price.price
-						   WHEN product_offer_price.price IS NOT NULL AND product_offer_price.price > 0 THEN product_offer_price.price
-						   WHEN product_price.price IS NOT NULL AND product_price.price > 0 THEN product_price.price
-						   ELSE NULL
-						END,
-						
-                        'old_price', COALESCE(
-                            NULLIF(product_modification_price.old, 0),
-                            NULLIF(product_variation_price.old, 0),
-                            NULLIF(product_offer_price.old, 0),
-                            NULLIF(product_price.old, 0),
-                            0
-                        ),
-						
-						'currency', CASE
-						   WHEN product_modification_price.price IS NOT NULL AND product_modification_price.price > 0 THEN product_modification_price.currency
-						   WHEN product_variation_price.price IS NOT NULL AND product_variation_price.price > 0 THEN product_variation_price.currency
-						   WHEN product_offer_price.price IS NOT NULL AND product_offer_price.price > 0 THEN product_offer_price.currency
-						   WHEN product_price.price IS NOT NULL AND product_price.price > 0 THEN product_price.currency
-						   ELSE NULL
-						END,
-						
-						'quantity', CASE
-						   WHEN product_modification_quantity.quantity IS NOT NULL THEN (product_modification_quantity.quantity - product_modification_quantity.reserve)
-						   WHEN product_variation_quantity.quantity IS NOT NULL THEN (product_variation_quantity.quantity - product_variation_quantity.reserve)
-						   WHEN product_offer_quantity.quantity IS NOT NULL THEN (product_offer_quantity.quantity - product_offer_quantity.reserve)
-						   WHEN product_price.quantity IS NOT NULL THEN (product_price.quantity - product_price.reserve)
-						   ELSE NULL
-						END
-					)
-			)
-			AS product_offers"
+        						'modification_uid', product_modification.id,
+        						'modification_value', product_modification.value, /* значение модификации */
+        						'modification_postfix', product_modification.postfix, /* постфикс модификации */
+        						'modification_reference', category_modification.reference, /* тип (field) модификации */
+        						'modification_name', category_modification_trans.name, /* артикул модификации */
+
+        						'article', CASE
+        						   WHEN product_modification.article IS NOT NULL THEN product_modification.article
+        						   WHEN product_variation.article IS NOT NULL THEN product_variation.article
+        						   WHEN product_offer.article IS NOT NULL THEN product_offer.article
+        						   WHEN product_info.article IS NOT NULL THEN product_info.article
+        						   ELSE NULL
+        						END,
+
+                                /* Product Invariable */
+        						'product_invariable_id', COALESCE(
+        						    product_invariable.id
+        						),
+
+        						'price', CASE
+        						   WHEN product_modification_price.price IS NOT NULL AND product_modification_price.price > 0 THEN product_modification_price.price
+        						   WHEN product_variation_price.price IS NOT NULL AND product_variation_price.price > 0 THEN product_variation_price.price
+        						   WHEN product_offer_price.price IS NOT NULL AND product_offer_price.price > 0 THEN product_offer_price.price
+        						   WHEN product_price.price IS NOT NULL AND product_price.price > 0 THEN product_price.price
+        						   ELSE NULL
+        						END,
+
+                                'old_price', COALESCE(
+                                    NULLIF(product_modification_price.old, 0),
+                                    NULLIF(product_variation_price.old, 0),
+                                    NULLIF(product_offer_price.old, 0),
+                                    NULLIF(product_price.old, 0),
+                                    0
+                                ),
+
+        						'currency', CASE
+        						   WHEN product_modification_price.price IS NOT NULL AND product_modification_price.price > 0 THEN product_modification_price.currency
+        						   WHEN product_variation_price.price IS NOT NULL AND product_variation_price.price > 0 THEN product_variation_price.currency
+        						   WHEN product_offer_price.price IS NOT NULL AND product_offer_price.price > 0 THEN product_offer_price.currency
+        						   WHEN product_price.price IS NOT NULL AND product_price.price > 0 THEN product_price.currency
+        						   ELSE NULL
+        						END,
+
+        						'quantity', CASE
+        						   WHEN product_modification_quantity.quantity IS NOT NULL THEN (product_modification_quantity.quantity - product_modification_quantity.reserve)
+        						   WHEN product_variation_quantity.quantity IS NOT NULL THEN (product_variation_quantity.quantity - product_variation_quantity.reserve)
+        						   WHEN product_offer_quantity.quantity IS NOT NULL THEN (product_offer_quantity.quantity - product_offer_quantity.reserve)
+        						   WHEN product_price.quantity IS NOT NULL THEN (product_price.quantity - product_price.reserve)
+        						   ELSE NULL
+        						END
+        					)
+        			)
+        			AS product_offers"
         );
 
-        /** Фото торговых предложений */
-        $dbal->leftJoin(
-            'product_offer',
-            ProductOfferImage::class,
-            'product_offer_images',
-            'product_offer_images.offer = product_offer.id'
-        )
-            ->addGroupBy('product_offer_images.ext');
-
-        /** Фото продукта */
+        /** Фото PRODUCT */
         $dbal
             ->leftJoin(
                 'product_offer',
@@ -436,17 +476,18 @@ final class ProductModelRepository implements ProductModelInterface
             )
             ->addGroupBy('product_photo.ext');
 
-        /** Фото модификаций */
+
+        /** Фото OFFERS */
         $dbal->leftJoin(
-            'product_modification',
-            ProductModificationImage::class,
-            'product_modification_image',
-            ' product_modification_image.modification = product_modification.id'
+            'product_offer',
+            ProductOfferImage::class,
+            'product_offer_images',
+            'product_offer_images.offer = product_offer.id'
         )
-            ->addGroupBy('product_modification_image.ext');
+            ->addGroupBy('product_offer_images.ext');
 
 
-        /** Фото вариантов */
+        /** Фото VARIATION */
         $dbal->leftJoin(
             'product_offer',
             ProductVariationImage::class,
@@ -456,65 +497,56 @@ final class ProductModelRepository implements ProductModelInterface
             ->addGroupBy('product_variation_image.ext');
 
 
+        /** Фото MODIFICATION */
+        $dbal->leftJoin(
+            'product_modification',
+            ProductModificationImage::class,
+            'product_modification_image',
+            ' product_modification_image.modification = product_modification.id'
+        )
+            ->addGroupBy('product_modification_image.ext');
+
+        /** Агрегация фото продуктов из offer, variation, modification */
         $dbal->addSelect("
-            CASE 
-            WHEN product_modification_image.ext IS NOT NULL THEN
                 JSON_AGG 
                     (DISTINCT
-                        JSONB_BUILD_OBJECT
-                            (
-                                'product_img_root', product_modification_image.root,
-                                'product_img', CONCAT ( '/upload/".$dbal->table(ProductModificationImage::class)."' , '/', product_modification_image.name),
-                                'product_img_ext', product_modification_image.ext,
-                                'product_img_cdn', product_modification_image.cdn
-                            )
-                    )
-            
-            WHEN product_variation_image.ext IS NOT NULL THEN
-                JSON_AGG
-                    (DISTINCT
-                    JSONB_BUILD_OBJECT
-                        (
-                            'product_img_root', product_variation_image.root,
-                            'product_img', CONCAT ( '/upload/".$dbal->table(ProductVariationImage::class)."' , '/', product_variation_image.name),
-                            'product_img_ext', product_variation_image.ext,
-                            'product_img_cdn', product_variation_image.cdn
-                        ) 
-                    )
-                    
-            WHEN product_offer_images.ext IS NOT NULL THEN
-            JSON_AGG
-                (DISTINCT
-                    JSONB_BUILD_OBJECT
-                        (
-                            'product_img_root', product_offer_images.root,
-                            'product_img', CONCAT ( '/upload/".$dbal->table(ProductOfferImage::class)."' , '/', product_offer_images.name),
-                            'product_img_ext', product_offer_images.ext,
-                            'product_img_cdn', product_offer_images.cdn
-                        )
-                        
-                    /*ORDER BY product_photo.root DESC, product_photo.id*/
-                )
-                
-            WHEN product_photo.ext IS NOT NULL THEN
-            JSON_AGG
-                (DISTINCT
-                    JSONB_BUILD_OBJECT
-                        (
-                            'product_img_root', product_photo.root,
-                            'product_img', CONCAT ( '/upload/".$dbal->table(ProductPhoto::class)."' , '/', product_photo.name),
-                            'product_img_ext', product_photo.ext,
-                            'product_img_cdn', product_photo.cdn
-                        )
-                    
-                    /*ORDER BY product_photo.root DESC, product_photo.id*/
-                )
-            
-            ELSE NULL
-            END
+                        CASE
+                            WHEN product_modification_image.ext IS NOT NULL THEN
+                                JSONB_BUILD_OBJECT
+                                    (
+                                        'product_img_root', product_modification_image.root,
+                                        'product_img', CONCAT ( '/upload/".$dbal->table(ProductModificationImage::class)."' , '/', product_modification_image.name),
+                                        'product_img_ext', product_modification_image.ext,
+                                        'product_img_cdn', product_modification_image.cdn
+                                    )
+                            WHEN product_variation_image.ext IS NOT NULL THEN
+                                    JSONB_BUILD_OBJECT
+                                    (
+                                        'product_img_root', product_variation_image.root,
+                                        'product_img', CONCAT ( '/upload/".$dbal->table(ProductVariationImage::class)."' , '/', product_variation_image.name),
+                                        'product_img_ext', product_variation_image.ext,
+                                        'product_img_cdn', product_variation_image.cdn
+                                    ) 
+                            WHEN product_offer_images.ext IS NOT NULL THEN
+                                JSONB_BUILD_OBJECT
+                                    (
+                                        'product_img_root', product_offer_images.root,
+                                        'product_img', CONCAT ( '/upload/".$dbal->table(ProductOfferImage::class)."' , '/', product_offer_images.name),
+                                        'product_img_ext', product_offer_images.ext,
+                                        'product_img_cdn', product_offer_images.cdn
+                                    )
+                            WHEN product_photo.ext IS NOT NULL THEN
+                                JSONB_BUILD_OBJECT
+                                    (
+                                        'product_img_root', product_photo.root,
+                                        'product_img', CONCAT ( '/upload/".$dbal->table(ProductPhoto::class)."' , '/', product_photo.name),
+                                        'product_img_ext', product_photo.ext,
+                                        'product_img_cdn', product_photo.cdn
+                                    )
+                            ELSE NULL
+                        END)
 			AS product_images"
         );
-
 
         /** Категория */
         $dbal->join(
@@ -531,7 +563,8 @@ final class ProductModelRepository implements ProductModelInterface
                 CategoryProduct::class,
                 'category',
                 'category.id = product_event_category.category'
-            );
+            )
+            ->groupBy('category.id');
 
         $dbal
             ->addSelect('category_trans.name AS category_name')
@@ -559,14 +592,13 @@ final class ProductModelRepository implements ProductModelInterface
         );
 
         /** Обложка */
-
         $dbal
             ->addSelect('category_cover.ext AS category_cover_ext')
             ->addSelect('category_cover.cdn AS category_cover_cdn')
             ->addSelect(
                 "
 			CASE
-                 WHEN category_cover.name IS NOT NULL 
+                 WHEN category_cover.name IS NOT NULL
                  THEN CONCAT ( '/upload/".$dbal->table(CategoryProductCover::class)."' , '/', category_cover.name)
                  ELSE NULL
 			END AS category_cover_dir"
@@ -579,9 +611,7 @@ final class ProductModelRepository implements ProductModelInterface
             'category_cover.event = category.event'
         );
 
-
         /** Свойства, участвующие в карточке */
-
         $dbal->leftJoin(
             'category_section',
             CategoryProductSectionField::class,
@@ -605,22 +635,20 @@ final class ProductModelRepository implements ProductModelInterface
 
         $dbal->addSelect(
             "JSON_AGG
-		( DISTINCT
-			
-				JSONB_BUILD_OBJECT
-				(
-					'0', category_section_field.sort,
-					
-					'field_name', category_section_field.name,
-					'field_public', category_section_field.public,
-					'field_card', category_section_field.card,
-					'field_type', category_section_field.type,
-					'field_trans', category_section_field_trans.name,
-					'field_value', product_property.value
-				)
-			
-		)
-			AS category_section_field"
+        		( DISTINCT
+        				JSONB_BUILD_OBJECT
+        				(
+        					'0', category_section_field.sort,
+
+        					'field_name', category_section_field.name,
+        					'field_public', category_section_field.public,
+        					'field_card', category_section_field.card,
+        					'field_type', category_section_field.type,
+        					'field_trans', category_section_field_trans.name,
+        					'field_value', product_property.value
+        				)
+        		)
+            AS category_section_field"
         );
 
         $dbal->allGroupByExclude();

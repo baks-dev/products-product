@@ -25,8 +25,6 @@
 namespace BaksDev\Products\Product\Controller\User;
 
 use BaksDev\Core\Controller\AbstractController;
-use BaksDev\Core\Form\Search\SearchDTO;
-use BaksDev\Core\Form\Search\SearchForm;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
 use BaksDev\Products\Product\Repository\ProductModel\ProductModelInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -38,27 +36,24 @@ use Symfony\Component\Routing\Attribute\Route;
 #[AsController]
 final class ModelController extends AbstractController
 {
-    #[Route('/catalog/{category}/{url}/model', name: 'user.model', priority: 10)]
+    #[Route('/catalog/{category}/{url}/model/{offer}/{variation}', name: 'user.model', priority: 10)]
     public function model(
         Request $request,
         #[MapEntity(mapping: ['url' => 'url'])] ProductInfo $info,
         ProductModelInterface $productModel,
+        string|null $offer = null,
+        string|null $variation = null,
     ): Response
     {
 
         $card = $productModel
-            ->byProduct($info->getProduct())
+            ->byProduct($info)
+            ->byOffer($offer)
+            ->byVariation($variation)
             ->find();
-
-        // Поиск по всему сайту
-        $allSearch = new SearchDTO($request);
-        $allSearchForm = $this->createForm(SearchForm::class, $allSearch, [
-            'action' => $this->generateUrl('core:search'),
-        ]);
 
         return $this->render([
             'card' => $card,
-            'all_search' => $allSearchForm->createView(),
         ]);
 
     }

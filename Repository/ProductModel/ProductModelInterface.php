@@ -32,7 +32,13 @@ interface ProductModelInterface
     /** Фильтрация по продукту */
     public function byProduct(Product|ProductUid|string $productUid): self;
 
-    /** Информация о продукте (модели) со списком торговых предложений */
+    /** Фильтрация по Offer */
+    public function byOffer(string|null $offer): self;
+
+    /** Фильтрация по Variation */
+    public function byVariation(string|null $variation): self;
+
+    /** Информация о модели со списком offer, variation, modification */
     public function find(): array|false;
 
 }
