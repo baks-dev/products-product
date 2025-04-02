@@ -19,16 +19,16 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\Repository\ProductLieder\Tests;
+namespace BaksDev\Products\Product\Repository\LiederCategory\Tests;
 
-use BaksDev\Products\Product\Repository\ProductLieder\ProductLiederInterface;
+use BaksDev\Products\Product\Repository\LiederCategory\ProductLiederInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
-
 
 /**
  * @group products-product
@@ -41,22 +41,20 @@ class ProductLiederRepositoryTest extends KernelTestCase
         /** @var ProductLiederInterface $ProductLieder */
         $ProductLieder = self::getContainer()->get(ProductLiederInterface::class);
 
-        $result = $ProductLieder->maxResult(1)->find();
+        $result = $ProductLieder
+            ->maxResult(1)
+            ->find();
 
         $array_keys = [
             "product_name",
             "url",
             "sort",
             "category_url",
-            "product_image",
-            "product_image_ext",
-            "product_image_cdn",
-            "product_price",
-            "product_old_price",
-            "product_currency",
         ];
 
         $current = current($result);
+
+        self::assertNotFalse($current);
 
         foreach($current as $key => $value)
         {
