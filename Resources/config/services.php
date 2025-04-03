@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -38,6 +38,7 @@ return static function(ContainerConfigurator $container) {
         ->exclude([
             BaksDevProductsProductBundle::PATH.'{Entity,Resources,Type}',
             BaksDevProductsProductBundle::PATH.'**'.DIRECTORY_SEPARATOR.'*Message.php',
+            BaksDevProductsProductBundle::PATH.'**'.DIRECTORY_SEPARATOR.'*Result.php',
             BaksDevProductsProductBundle::PATH.'**'.DIRECTORY_SEPARATOR.'*DTO.php',
         ]);
 };
