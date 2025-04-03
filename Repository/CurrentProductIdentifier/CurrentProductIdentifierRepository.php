@@ -140,7 +140,7 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
     /**
      * Метод возвращает активные идентификаторы продукта по событию и идентификаторов торгового предложения
      */
-    public function find(): CurrentProductDTO|false
+    public function find(): CurrentProductIdentifierResult|false
     {
         if(!$this->event instanceof ProductEventUid)
         {
@@ -188,6 +188,7 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
                 );
 
 
+            /** Определяем активное состояние ProductOffer */
             $dbal
                 ->addSelect('current_offer.id AS offer')
                 ->addSelect('current_offer.const AS offer_const')
@@ -257,7 +258,7 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
 
         return $dbal
             ->enableCache('products-product', 60)
-            ->fetchHydrate(CurrentProductDTO::class);
+            ->fetchHydrate(CurrentProductIdentifierResult::class);
 
         //        return $dbal
         //            ->enableCache('products-product', 60)

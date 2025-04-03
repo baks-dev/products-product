@@ -34,7 +34,7 @@ use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
 
-final class CurrentProductDTO
+final class CurrentProductIdentifierResult
 {
     /** ID продукта */
     private ProductUid $product;

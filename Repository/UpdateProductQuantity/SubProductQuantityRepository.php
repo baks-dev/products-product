@@ -35,6 +35,7 @@ use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Product\Entity\Offers\Variation\Quantity\ProductVariationQuantity;
 use BaksDev\Products\Product\Entity\Price\ProductPrice;
 use BaksDev\Products\Product\Repository\CurrentProductIdentifier\CurrentProductIdentifierInterface;
+use BaksDev\Products\Product\Repository\CurrentProductIdentifier\CurrentProductIdentifierResult;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
@@ -185,7 +186,7 @@ final class SubProductQuantityRepository implements SubProductQuantityInterface
             ->find();
 
         /** Если идентификатор события не определен - не выполняем обновление (продукт не найден) */
-        if(false === $CurrentProductIdentifier)
+        if(false === ($CurrentProductIdentifier instanceof CurrentProductIdentifierResult))
         {
             return false;
         }

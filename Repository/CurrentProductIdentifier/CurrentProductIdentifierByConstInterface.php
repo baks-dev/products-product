@@ -41,5 +41,5 @@ interface CurrentProductIdentifierByConstInterface
     /**
      * Метод возвращает активные идентификаторы продукта
      */
-    public function find(): CurrentProductDTO|false;
+    public function find(): CurrentProductIdentifierResult|false;
 }

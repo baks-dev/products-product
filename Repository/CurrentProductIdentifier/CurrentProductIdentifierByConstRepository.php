@@ -119,7 +119,7 @@ final class CurrentProductIdentifierByConstRepository implements CurrentProductI
     /**
      * Метод возвращает активные идентификаторы продукта по событию и идентификаторов торгового предложения
      */
-    public function find(): CurrentProductDTO|false
+    public function find(): CurrentProductIdentifierResult|false
     {
         if(!$this->product instanceof ProductUid)
         {
@@ -205,7 +205,7 @@ final class CurrentProductIdentifierByConstRepository implements CurrentProductI
 
         return $current
             ->enableCache('products-product', 60)
-            ->fetchHydrate(CurrentProductDTO::class);
+            ->fetchHydrate(CurrentProductIdentifierResult::class);
 
     }
 }
