@@ -19,6 +19,7 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 declare(strict_types=1);
@@ -32,8 +33,8 @@ use BaksDev\Products\Product\Forms\ProductCategoryFilter\User\ProductCategoryFil
 use BaksDev\Products\Product\Forms\ProductCategoryFilter\User\ProductCategoryFilterForm;
 use BaksDev\Products\Product\Forms\ProductFilter\Admin\ProductFilterDTO;
 use BaksDev\Products\Product\Forms\ProductFilter\Admin\ProductFilterForm;
+use BaksDev\Products\Product\Repository\LiederCategory\ProductLiederInterface;
 use BaksDev\Products\Product\Repository\ProductCatalog\ProductCatalogInterface;
-use BaksDev\Products\Product\Repository\ProductLieder\ProductLiederInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;

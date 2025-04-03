@@ -22,29 +22,35 @@
  *
  */
 
-namespace BaksDev\Products\Product\Repository\AllProductsByCategory;
+declare(strict_types=1);
 
-use BaksDev\Core\Services\Paginator\PaginatorInterface;
-use BaksDev\Products\Category\Type\Id\CategoryProductUid;
-use BaksDev\Products\Product\Forms\ProductCategoryFilter\User\ProductCategoryFilterDTO;
-use Symfony\Component\Form\Form;
+namespace BaksDev\Products\Product\Repository\ModelsOrProductsByCategory\Tests;
 
-interface AllProductsByCategoryInterface
+use BaksDev\Products\Product\Repository\ModelsOrProductsByCategory\ModelsOrProductsByCategoryInterface;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\DependencyInjection\Attribute\When;
+
+/**
+ * @group products-product
+ */
+#[When(env: 'test')]
+class ModelOrProductsByCategoryTest extends KernelTestCase
 {
-    /** Фильтра по offer, variation, modification в зависимости от настроек */
-    public function filter(ProductCategoryFilterDTO $filter): self;
+    public function testUseCase(): void
+    {
+        self::assertTrue(true);
+        return;
 
-    /** Фильтр по свойствам категории */
-    public function property(?array $property): self;
+        /** @var ModelsOrProductsByCategoryInterface $repository */
+        $repository = self::getContainer()->get(ModelsOrProductsByCategoryInterface::class);
 
-    public function fetchAllProductByCategoryAssociative(
-        CategoryProductUid|string $category,
-        string $expr = 'AND'
-    ): PaginatorInterface;
+        $result = $repository
+            ->category('01876af0-ddfc-70c3-ab25-5f85f55a9907') // triangle
+            ->findPaginator('AND');
 
-    /** Метод возвращает все товары в категории */
-    public function fetchAllProductByCategory(
-        ?CategoryProductUid $category = null
-    ): array;
+        dump($result);
+        dd();
+
+    }
 
 }

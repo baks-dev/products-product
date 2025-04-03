@@ -616,7 +616,7 @@ final class ProductModelRepository implements ProductModelInterface
             'category_section',
             CategoryProductSectionField::class,
             'category_section_field',
-            'category_section_field.section = category_section.id AND (category_section_field.public = TRUE OR category_section_field.name = TRUE )'
+            'category_section_field.section = category_section.id'
         );
 
         $dbal->leftJoin(

@@ -1,17 +1,17 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
- *  
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *  
+ *
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *  
+ *
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -19,6 +19,7 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 namespace BaksDev\Products\Product\Controller\User\Catalog;
@@ -30,7 +31,7 @@ use BaksDev\Products\Category\Repository\CategoryByUrl\CategoryByUrlInterface;
 use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Forms\ProductCategoryFilter\User\ProductCategoryFilterDTO;
 use BaksDev\Products\Product\Forms\ProductCategoryFilter\User\ProductCategoryFilterForm;
-use BaksDev\Products\Product\Repository\AllProductsByCategory\AllProductsByCategoryInterface;
+use BaksDev\Products\Product\Repository\ModelsOrProductsByCategory\ModelsOrProductsByCategoryInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -45,14 +46,13 @@ final class CategoryController extends AbstractController
     #[Route('/catalog/{category}/{page<\d+>}', name: 'user.catalog.category')]
     public function index(
         Request $request,
-        AllProductsByCategoryInterface $productsByCategory,
+        ModelsOrProductsByCategoryInterface $modelsOrProducts,
         CategoryByUrlInterface $categoryByUrl,
         FormFactoryInterface $formFactory,
         string $category,
         int $page = 0,
     ): Response
     {
-
         /* Получаем информацию о разделе */
         $info = $categoryByUrl->findByUrl($category);
 
@@ -104,22 +104,22 @@ final class CategoryController extends AbstractController
             }
         }
 
-
-        /* Список товаров в категории */
-        $Products = $productsByCategory
+        /** Список товаров в категории */
+        $Products = $modelsOrProducts
             ->filter($ProductCategoryFilterDTO)
             ->property($property)
-            ->fetchAllProductByCategoryAssociative($CategoryUid, 'AND');
+            ->category($CategoryUid)
+            ->findPaginator('AND');
 
-
-        /* Если список пуст - пробуем предложить другие варианты */
+        /** Если список пуст - пробуем предложить другие варианты */
         $otherProducts = false;
 
         if(!$Products->getData())
         {
-            /* Список аналогичных товаров */
-            $Products = $productsByCategory
-                ->fetchAllProductByCategoryAssociative($CategoryUid, 'OR');
+
+            /** Список аналогичных товаров */
+            $Products = $modelsOrProducts
+                ->findPaginator('OR');
 
             $otherProducts = true;
         }
@@ -129,7 +129,6 @@ final class CategoryController extends AbstractController
         $allSearchForm = $this->createForm(SearchForm::class, $allSearch, [
             'action' => $this->generateUrl('core:search'),
         ]);
-
 
         return $this->render([
             'category' => $info,

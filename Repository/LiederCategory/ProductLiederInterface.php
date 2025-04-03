@@ -22,29 +22,21 @@
  *
  */
 
-namespace BaksDev\Products\Product\Repository\AllProductsByCategory;
+namespace BaksDev\Products\Product\Repository\LiederCategory;
 
-use BaksDev\Core\Services\Paginator\PaginatorInterface;
+use BaksDev\Products\Category\Entity\CategoryProduct;
 use BaksDev\Products\Category\Type\Id\CategoryProductUid;
-use BaksDev\Products\Product\Forms\ProductCategoryFilter\User\ProductCategoryFilterDTO;
-use Symfony\Component\Form\Form;
 
-interface AllProductsByCategoryInterface
+interface ProductLiederInterface
 {
-    /** Фильтра по offer, variation, modification в зависимости от настроек */
-    public function filter(ProductCategoryFilterDTO $filter): self;
+    /** Максимальное количество в результате */
+    public function maxResult(int $max): self;
 
-    /** Фильтр по свойствам категории */
-    public function property(?array $property): self;
+    /** Фильтр по категории */
+    public function forCategory(CategoryProduct|CategoryProductUid|string $category): self;
 
-    public function fetchAllProductByCategoryAssociative(
-        CategoryProductUid|string $category,
-        string $expr = 'AND'
-    ): PaginatorInterface;
-
-    /** Метод возвращает все товары в категории */
-    public function fetchAllProductByCategory(
-        ?CategoryProductUid $category = null
-    ): array;
-
+    /**
+     * Метод возвращает ограниченный по количеству элементов список лидеров продаж продукции, суммируя количество резервов на продукт
+     */
+    public function find(): array|false;
 }
