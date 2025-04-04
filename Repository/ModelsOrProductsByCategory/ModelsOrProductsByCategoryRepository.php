@@ -274,6 +274,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                 CASE
                     WHEN product_offer.value IS NOT NULL THEN
                         JSONB_BUILD_OBJECT (
+                            'offer_id', product_offer.id,
                             'offer_value', product_offer.value,
                             'offer_postfix', product_offer.postfix
                         )
@@ -357,6 +358,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                  CASE
                      WHEN product_variation.value IS NOT NULL THEN
                          JSONB_BUILD_OBJECT (
+                             'variation_id', product_variation.id,
                              'variation_value', product_variation.value,
                              'variation_postfix', product_variation.postfix
                          )
@@ -439,6 +441,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                 CASE
                     WHEN product_modification.value IS NOT NULL THEN
                         JSONB_BUILD_OBJECT (
+                            'modification_id', product_modification.id,
                             'modification_value', product_modification.value,
                             'modification_postfix', product_modification.postfix
                         )
