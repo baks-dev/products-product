@@ -52,6 +52,7 @@ use BaksDev\Products\Product\Entity\Offers\Variation\Quantity\ProductVariationQu
 use BaksDev\Products\Product\Entity\Photo\ProductPhoto;
 use BaksDev\Products\Product\Entity\Price\ProductPrice;
 use BaksDev\Products\Product\Entity\Product;
+use BaksDev\Products\Product\Entity\ProductInvariable;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use InvalidArgumentException;
 
@@ -81,10 +82,9 @@ final class ModelOrProductRepository implements ModelOrProductInterface
         $dbal = $this->builder();
 
         $dbal->setMaxResults($this->maxResult);
+        $dbal->enableCache('products-product', 86400);
 
-        $result = $dbal
-            ->enableCache('products-product', 86400)
-            ->fetchAllAssociative();
+        $result = $dbal->fetchAllAssociative();
 
         return empty($result) ? false : $result;
     }
@@ -197,6 +197,7 @@ final class ModelOrProductRepository implements ModelOrProductInterface
                 CASE
                     WHEN product_offer.value IS NOT NULL THEN
                         JSONB_BUILD_OBJECT (
+                            'offer_id', product_offer.id,
                             'offer_value', product_offer.value,
                             'offer_postfix', product_offer.postfix
                         )
@@ -267,6 +268,7 @@ final class ModelOrProductRepository implements ModelOrProductInterface
                  CASE
                      WHEN product_variation.value IS NOT NULL THEN
                          JSONB_BUILD_OBJECT (
+                             'variation_id', product_variation.id,
                              'variation_value', product_variation.value,
                              'variation_postfix', product_variation.postfix
                          )
@@ -335,6 +337,7 @@ final class ModelOrProductRepository implements ModelOrProductInterface
                 CASE
                     WHEN product_modification.value IS NOT NULL THEN
                         JSONB_BUILD_OBJECT (
+                            'modification_id', product_modification.id,
                             'modification_value', product_modification.value,
                             'modification_postfix', product_modification.postfix
                         )
@@ -361,6 +364,34 @@ final class ModelOrProductRepository implements ModelOrProductInterface
                 'product_modification_quantity.modification = product_modification.id'
             )
             ->addGroupBy('product_modification_price.currency');
+
+        /** Product Invariable */
+        $dbal
+            ->leftJoin(
+                'product_variation',
+                ProductInvariable::class,
+                'product_invariable',
+                '
+                            product_invariable.product = product.id
+                            AND
+                                CASE 
+                                    WHEN product_offer.const IS NOT NULL THEN product_invariable.offer = product_offer.const
+                                    ELSE product_invariable.offer IS NULL
+                                END
+                            AND 
+                                CASE
+                                    WHEN product_variation.const IS NOT NULL THEN product_invariable.variation = product_variation.const
+                                    ELSE product_invariable.variation IS NULL
+                                END
+                            AND
+                                CASE
+                                    WHEN product_modification.const IS NOT NULL THEN product_invariable.modification = product_modification.const
+                                    ELSE product_invariable.modification IS NULL
+                                END
+                        ');
+
+        /** Агрегация Invariable */
+        $dbal->addSelect('JSON_AGG( DISTINCT product_invariable.id) AS invariable');
 
         /** Фото продукта */
         $dbal->leftJoin(
