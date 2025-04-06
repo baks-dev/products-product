@@ -260,7 +260,7 @@ final class SubProductQuantityRepository implements SubProductQuantityInterface
                 ->setParameter('reserve', $this->reserve, ParameterType::INTEGER);
 
             /** @note !!! Снять резерв можно только если положительный */
-            $dbal->andWhere('reserve > 0');
+            $dbal->andWhere('reserve >= :reserve');
         }
 
         return (int) $dbal->executeStatement();
