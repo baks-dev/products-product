@@ -257,9 +257,6 @@ final class AddProductQuantityRepository implements AddProductQuantityInterface
             $dbal
                 ->set('reserve', 'reserve + :reserve')
                 ->setParameter('reserve', $this->reserve, ParameterType::INTEGER);
-
-            /** @note !!! Добавить резерв можно только если имеются остатки */
-            //$dbal->andWhere('(quantity - reserve) > 0');
         }
 
         return (int) $dbal->executeStatement();
