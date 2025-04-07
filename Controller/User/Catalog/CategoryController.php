@@ -31,7 +31,7 @@ use BaksDev\Products\Category\Repository\CategoryByUrl\CategoryByUrlInterface;
 use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Forms\ProductCategoryFilter\User\ProductCategoryFilterDTO;
 use BaksDev\Products\Product\Forms\ProductCategoryFilter\User\ProductCategoryFilterForm;
-use BaksDev\Products\Product\Repository\ModelsOrProductsByCategory\ModelsOrProductsByCategoryInterface;
+use BaksDev\Products\Product\Repository\Cards\ModelsOrProductsByCategory\ModelsOrProductsByCategoryInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -109,7 +109,7 @@ final class CategoryController extends AbstractController
             ->filter($ProductCategoryFilterDTO)
             ->property($property)
             ->category($CategoryUid)
-            ->findPaginator('AND');
+            ->findResult('AND');
 
         /** Если список пуст - пробуем предложить другие варианты */
         $otherProducts = false;
@@ -119,7 +119,7 @@ final class CategoryController extends AbstractController
 
             /** Список аналогичных товаров */
             $Products = $modelsOrProducts
-                ->findPaginator('OR');
+                ->findResult('OR');
 
             $otherProducts = true;
         }

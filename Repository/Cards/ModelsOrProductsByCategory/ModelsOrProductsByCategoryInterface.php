@@ -22,7 +22,7 @@
  *
  */
 
-namespace BaksDev\Products\Product\Repository\ModelsOrProductsByCategory;
+namespace BaksDev\Products\Product\Repository\Cards\ModelsOrProductsByCategory;
 
 use BaksDev\Core\Services\Paginator\PaginatorInterface;
 use BaksDev\Products\Category\Entity\CategoryProduct;
@@ -43,6 +43,8 @@ interface ModelsOrProductsByCategoryInterface
 
     /** Категория продуктов */
     public function category(CategoryProduct|CategoryProductUid|string $category): self;
+
+    public function findResult(string $expr): PaginatorInterface;
 
     public function findAll(string $expr): array|false;
 

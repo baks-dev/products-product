@@ -24,7 +24,7 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\Repository\ModelsOrProductsByCategory;
+namespace BaksDev\Products\Product\Repository\Cards\ModelsOrProductsByCategory;
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Core\Services\Paginator\PaginatorInterface;
@@ -124,6 +124,14 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
         return $this;
     }
 
+    public function findResult(string $expr = 'AND'): PaginatorInterface
+    {
+        $dbal = $this->builder($expr);
+        return $this->paginator->fetchAllHydrate($dbal, 'products-product', ModelOrProductByCategoryResult::class);
+    }
+
+    /**
+     * Возвращает генератор с ограниченным количеством элементов */
     public function findAll(string $expr = 'AND'): array|false
     {
         if(false == $this->maxResult)
@@ -148,7 +156,6 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
         return $this->paginator->fetchAllAssociative($dbal);
     }
 
-    /** Билдер запроса */
     private function builder(string $expr): DBALQueryBuilder
     {
 
@@ -162,8 +169,8 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
             ->bindLocal();
 
         $dbal
-            ->select('product.id')
-            ->addSelect('product.event')
+            ->select('product.id AS product_id')
+            ->addSelect('product.event AS product_event')
             ->from(Product::class, 'product');
 
         $dbal
@@ -186,8 +193,8 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
 
         /** ProductInfo */
         $dbal
-            ->addSelect('product_info.url')
-            ->addSelect('product_info.sort')
+            ->addSelect('product_info.url AS product_url')
+            ->addSelect('product_info.sort AS product_sort')
             ->leftJoin(
                 'product',
                 ProductInfo::class,
@@ -196,7 +203,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
             );
 
         $dbal
-            ->addSelect('product_active.active_from')
+            ->addSelect('product_active.active_from AS product_active_from')
             ->join(
                 'product',
                 ProductActive::class,
@@ -280,7 +287,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                         )
                     ELSE NULL
                 END
-            ) AS offer_value_agg"
+            ) AS offer_agg"
         );
 
         /** Цена торгового предложения */
@@ -364,7 +371,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                          )
                      ELSE NULL
                  END
-             ) AS variation_value_agg"
+             ) AS variation_agg"
         );
 
         /** Цена множественного варианта */
@@ -447,7 +454,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                         )
                     ELSE NULL
                 END
-            ) AS modification_value_agg"
+            ) AS modification_agg"
         );
 
         /** Цена множественного варианта */

@@ -24,7 +24,7 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\Repository\ProductAlternative;
+namespace BaksDev\Products\Product\Repository\Cards\ProductAlternative;
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Products\Category\Entity\CategoryProduct;
@@ -60,13 +60,26 @@ use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Entity\ProductInvariable;
 use BaksDev\Products\Product\Entity\Property\ProductProperty;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
+use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
+use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
+use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
 use stdClass;
 
 final class ProductAlternativeRepository implements ProductAlternativeInterface
 {
+    private ProductOffer|ProductOfferUid|string|false $offer = false;
+
+    private ProductVariation|ProductVariationUid|string|false $variation = false;
+
+    private ProductModification|ProductModificationUid|string|false $modification = false;
+
+    private array|null $property = null;
+
     private int|false $limit = 100;
 
-    public function __construct(private readonly DBALQueryBuilder $DBALQueryBuilder) {}
+    public function __construct(
+        private readonly DBALQueryBuilder $DBALQueryBuilder
+    ) {}
 
     public function setMaxResult(int $limit): self
     {
@@ -74,29 +87,74 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
         return $this;
     }
 
-    /**
-     * Метод возвращает альтернативные варианты продукции по значению value торговых предложений
-     */
-    public function fetchAllAlternativeAssociative(
-        string $offer,
-        ?string $variation,
-        ?string $modification,
-        ?array $property = null
-    ): ?array
+    public function forOfferValue(string $offer): self
+    {
+        $this->offer = $offer;
+        return $this;
+    }
+
+    public function forVariationValue(string $variation): self
+    {
+        $this->variation = $variation;
+        return $this;
+    }
+
+    public function forModificationValue(string $modification): self
+    {
+        $this->modification = $modification;
+        return $this;
+    }
+
+    public function byProperty(array|null $property): self
+    {
+        if(empty($property))
+        {
+            return $this;
+        }
+
+        $this->property = $property;
+
+        return $this;
+    }
+
+    public function findResult(): array|false
+    {
+        $dbal = $this->builder();
+
+        $dbal->enableCache('products-product', 86400);
+
+        $result = $dbal->fetchAllHydrate(ProductAlternativeResult::class);
+
+        return (true === $result->valid()) ? iterator_to_array($result) : false;
+    }
+
+    /** Метод возвращает альтернативные варианты продукции по значению value торговых предложений */
+    public function fetchAllAlternativeAssociative(): array|false
+    {
+        $dbal = $this->builder();
+
+        $dbal->orderBy('quantity', 'DESC');
+
+        $dbal->enableCache('products-product', 86400);
+
+        $result = $dbal->fetchAllAssociative();
+
+        return empty($result) ? false : $result;
+    }
+
+    public function builder(): DBALQueryBuilder
     {
 
         $dbal = $this->DBALQueryBuilder
             ->createQueryBuilder(self::class)
             ->bindLocal();
 
-        // ТОРГОВОЕ ПРЕДЛОЖЕНИЕ
-
+        /** OFFER */
         $dbal
             ->addSelect('product_offer.value as product_offer_value')
             ->addSelect('product_offer.postfix as product_offer_postfix')
             ->addSelect('product_offer.id as product_offer_uid')
             ->from(ProductOffer::class, 'product_offer');
-
 
         $dbal
             ->addSelect('product.id')
@@ -108,47 +166,100 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                 'product.event = product_offer.event'
             );
 
+        /** VARIATION */
+        if($this->variation)
+        {
+            $dbal->join(
+                'product_offer',
+                ProductVariation::class,
+                'product_variation',
+                'product_variation.offer = product_offer.id AND product_variation.value = :variation'
+            );
 
-        // МНОЖЕСТВЕННЫЕ ВАРИАНТЫ
-
-        $variationMethod = empty($variation) ? 'leftJoin' : 'join';
+            $dbal->setParameter('variation', $this->variation);
+        }
+        else
+        {
+            $dbal->leftJoin(
+                'product_offer',
+                ProductVariation::class,
+                'product_variation',
+                'product_variation.offer = product_offer.id'
+            );
+        }
 
         $dbal
             ->addSelect('product_variation.value as product_variation_value')
             ->addSelect('product_variation.postfix as product_variation_postfix')
-            ->addSelect('product_variation.id as product_variation_uid')
-            ->{$variationMethod}(
-                'product_offer',
-                ProductVariation::class,
-                'product_variation',
-                'product_variation.offer = product_offer.id '.(empty($variation) ? '' : 'AND product_variation.value = :variation')
-            );
+            ->addSelect('product_variation.id as product_variation_uid');
 
-        if(!empty($variation))
+        // МНОЖЕСТВЕННЫЕ ВАРИАНТЫ
+
+        //        $variationMethod = empty($this->variation) ? 'leftJoin' : 'join';
+        //
+        //        $dbal
+        //            ->addSelect('product_variation.value as product_variation_value')
+        //            ->addSelect('product_variation.postfix as product_variation_postfix')
+        //            ->addSelect('product_variation.id as product_variation_uid')
+        //            ->{$variationMethod}(
+        //                'product_offer',
+        //                ProductVariation::class,
+        //                'product_variation',
+        //                'product_variation.offer = product_offer.id '.(empty($this->variation)) ? '' : 'AND product_variation.value = :variation')
+        //            );
+        //
+        //        if(!empty($variation))
+        //        {
+        //            $dbal->setParameter('variation', $variation);
+        //        }
+
+        /** MODIFICATION */
+        if($this->modification)
         {
-            $dbal->setParameter('variation', $variation);
-        }
-
-        $modificationMethod = empty($modification) ? 'leftJoin' : 'join';
-
-        // МОДИФИКАЦИЯ
-        $dbal
-            ->addSelect('product_modification.value as product_modification_value')
-            ->addSelect('product_modification.postfix as product_modification_postfix')
-            ->addSelect('product_modification.id as product_modification_uid')
-            ->{$modificationMethod}(
+            $dbal->join(
                 'product_variation',
                 ProductModification::class,
                 'product_modification',
-                'product_modification.variation = product_variation.id '.(empty($modification) ? '' : 'AND product_modification.value = :modification')
-            )
-            ->addGroupBy('product_modification.article');
+                'product_modification.variation = product_variation.id AND product_modification.value = :modification'
+            );
 
-        if(!empty($modification))
+            $dbal->setParameter('modification', $this->modification);
+        }
+        else
         {
-            $dbal->setParameter('modification', $modification);
+            $dbal->leftJoin(
+                'product_variation',
+                ProductModification::class,
+                'product_modification',
+                'product_modification.variation = product_variation.id'
+            );
         }
 
+        $dbal
+            ->addSelect('product_modification.value as product_modification_value')
+            ->addSelect('product_modification.postfix as product_modification_postfix')
+            ->addSelect('product_modification.id as product_modification_uid');
+
+        // МОДИФИКАЦИЯ
+
+        //        $modificationMethod = empty($modification) ? 'leftJoin' : 'join';
+        //
+        //        $dbal
+        //            ->addSelect('product_modification.value as product_modification_value')
+        //            ->addSelect('product_modification.postfix as product_modification_postfix')
+        //            ->addSelect('product_modification.id as product_modification_uid')
+        //            ->{$modificationMethod}(
+        //                'product_variation',
+        //                ProductModification::class,
+        //                'product_modification',
+        //                'product_modification.variation = product_variation.id '.(empty($modification) ? '' : 'AND product_modification.value = :modification')
+        //            )
+        //            ->addGroupBy('product_modification.article');
+        //
+        //        if(!empty($modification))
+        //        {
+        //            $dbal->setParameter('modification', $modification);
+        //        }
 
         // Проверяем активность продукции
         $dbal
@@ -170,8 +281,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 			)
 		');
 
-
-        // Название твоара
+        /** Название товара */
         $dbal
             ->addSelect('product_trans.name AS product_name')
             ->leftJoin(
@@ -180,7 +290,6 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                 'product_trans',
                 'product_trans.event = product.event AND product_trans.local = :local'
             );
-
 
         $dbal
             ->addSelect('product_info.url AS product_url')
@@ -191,8 +300,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                 'product_info.product = product.id '
             );
 
-        // Артикул продукта
-
+        /** Артикул продукта */
         $dbal->addSelect('
             COALESCE(
                 product_modification.article, 
@@ -268,7 +376,6 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                 'category_offer_modification_trans.modification = category_offer_modification.id AND category_offer_modification_trans.local = :local'
             );
 
-
         /**
          * СТОИМОСТЬ И ВАЛЮТА ПРОДУКТА
          */
@@ -289,12 +396,11 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 			   THEN product_price.price
 			   
 			   ELSE NULL
-			END AS price
+			END AS product_price
 		'
         );
 
         /* Предыдущая стоимость продукта */
-
         $dbal->addSelect("
 			COALESCE(
                 NULLIF(product_modification_price.old, 0),
@@ -307,7 +413,6 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 
 
         // Валюта продукта
-
         $dbal->addSelect(
             '
 			CASE
@@ -324,7 +429,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 			   THEN product_price.currency
 			   
 			   ELSE NULL
-			END AS currency
+			END AS product_currency
 		'
         );
 
@@ -470,10 +575,10 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
          * СВОЙСТВА, УЧАВСТВУЮЩИЕ В ФИЛЬТРЕ АЛЬТЕРНАТИВ
          */
 
-        if($property)
+        if($this->property)
         {
             /** @var stdClass $props */
-            foreach($property as $props)
+            foreach($this->property as $props)
             {
                 if(empty($props->field_uid))
                 {
@@ -612,7 +717,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                             'img_ext', product_photo.ext,
                             'img_cdn', product_photo.cdn
                         )
-                    END) AS product_image"
+                    END) AS product_images"
         );
 
 
@@ -644,15 +749,17 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
             ');
 
         $dbal->where('product_offer.value = :offer');
-        $dbal->setParameter('offer', $offer);
-        $dbal->setMaxResults($this->limit);
+        $dbal->setParameter('offer', $this->offer);
 
         $dbal->allGroupByExclude();
 
-        $dbal->orderBy('quantity', 'DESC');
+        $dbal->setMaxResults($this->limit);
 
-        return $dbal
-            ->enableCache('products-product', 86400)
-            ->fetchAllAssociative();
+        return $dbal;
+    }
+
+    public function analyze(): void
+    {
+        $this->builder()->analyze();
     }
 }

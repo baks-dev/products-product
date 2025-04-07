@@ -24,7 +24,7 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\Repository\ModelOrProduct;
+namespace BaksDev\Products\Product\Repository\Cards\ModelOrProduct;
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Products\Category\Entity\CategoryProduct;
@@ -54,7 +54,6 @@ use BaksDev\Products\Product\Entity\Price\ProductPrice;
 use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Entity\ProductInvariable;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
-use InvalidArgumentException;
 
 final class ModelOrProductRepository implements ModelOrProductInterface
 {
@@ -74,32 +73,40 @@ final class ModelOrProductRepository implements ModelOrProductInterface
     /** Возвращает массив ограниченный по количеству */
     public function findAll(): array|false
     {
-        if(false == $this->maxResult)
-        {
-            throw new InvalidArgumentException('Не передан обязательный параметр запроса $maxResult');
-        }
-
         $dbal = $this->builder();
 
-        $dbal->setMaxResults($this->maxResult);
         $dbal->enableCache('products-product', 86400);
 
         $result = $dbal->fetchAllAssociative();
 
-        return empty($result) ? false : $result;
+        return (false === empty($result)) ? $result : false;
     }
 
-    /** Билдер запроса */
-    public function builder(): DBALQueryBuilder
+    /**
+     * Возвращает список с ограниченным количеством элементов
+     *
+     * @return array<int, ModelOrProductResult>|false
+     */
+    public function findResult(): array|false
     {
+        $dbal = $this->builder();
 
+        $dbal->enableCache('products-product', 86400);
+
+        $result = $dbal->fetchAllHydrate(ModelOrProductResult::class);
+
+        return (true === $result->valid()) ? iterator_to_array($result) : false;
+    }
+
+    private function builder(): DBALQueryBuilder
+    {
         $dbal = $this->DBALQueryBuilder
             ->createQueryBuilder(self::class)
             ->bindLocal();
 
         $dbal
-            ->select('product.id')
-            ->addSelect('product.event')
+            ->select('product.id AS product_id')
+            ->addSelect('product.event AS product_event')
             ->from(Product::class, 'product');
 
         $dbal
@@ -122,8 +129,8 @@ final class ModelOrProductRepository implements ModelOrProductInterface
 
         /** ProductInfo */
         $dbal
-            ->addSelect('product_info.url')
-            ->addSelect('product_info.sort')
+            ->addSelect('product_info.url AS product_url')
+            ->addSelect('product_info.sort AS product_sort')
             ->leftJoin(
                 'product',
                 ProductInfo::class,
@@ -132,7 +139,7 @@ final class ModelOrProductRepository implements ModelOrProductInterface
             );
 
         $dbal
-            ->addSelect('product_active.active_from')
+            ->addSelect('product_active.active_from as product_active_from')
             ->join(
                 'product',
                 ProductActive::class,
@@ -164,7 +171,7 @@ final class ModelOrProductRepository implements ModelOrProductInterface
 
         /**  Тип торгового предложения */
         $dbal
-            ->addSelect('category_offer.card AS category_offer_card ')
+            ->addSelect('category_offer.card AS category_offer_card')
             ->addSelect('category_offer.reference AS product_offer_reference')
             ->leftJoin(
                 'product_offer',
@@ -203,7 +210,7 @@ final class ModelOrProductRepository implements ModelOrProductInterface
                         )
                     ELSE NULL
                 END
-            ) AS offer_value_agg"
+            ) AS offer_agg"
         );
 
         /** Цена торгового предложения */
@@ -274,7 +281,7 @@ final class ModelOrProductRepository implements ModelOrProductInterface
                          )
                      ELSE NULL
                  END
-             ) AS variation_value_agg"
+             ) AS variation_agg"
         );
 
         /** Цена множественного варианта */
@@ -304,7 +311,7 @@ final class ModelOrProductRepository implements ModelOrProductInterface
 
         /** Тип модификации множественного варианта */
         $dbal
-            ->addSelect('category_modification.card AS category_modification_card ')
+            ->addSelect('category_modification.card AS category_modification_card')
             ->addSelect('category_modification.reference as product_modification_reference')
             ->leftJoin(
                 'product_modification',
@@ -343,7 +350,7 @@ final class ModelOrProductRepository implements ModelOrProductInterface
                         )
                     ELSE NULL
                 END
-            ) AS modification_value_agg"
+            ) AS modification_agg"
         );
 
         /** Цена множественного варианта */
@@ -549,6 +556,11 @@ final class ModelOrProductRepository implements ModelOrProductInterface
         $dbal->allGroupByExclude();
 
         $dbal->addOrderBy('product_info.sort', 'DESC');
+
+        if(false !== $this->maxResult)
+        {
+            $dbal->setMaxResults($this->maxResult);
+        }
 
         return $dbal;
     }

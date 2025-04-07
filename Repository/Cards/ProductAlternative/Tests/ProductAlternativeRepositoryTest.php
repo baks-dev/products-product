@@ -19,16 +19,16 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\Repository\ProductAlternative\Tests;
+namespace BaksDev\Products\Product\Repository\Cards\ProductAlternative\Tests;
 
 use BaksDev\Products\Product\Repository\ProductAlternative\ProductAlternativeInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
-
 
 /**
  * @group product-alternative-interface-test
@@ -43,12 +43,8 @@ class ProductAlternativeRepositoryTest extends KernelTestCase
 
         $result = $ProductAlternative
             ->setMaxResult(1)
-            ->fetchAllAlternativeAssociative(
-                '19',
-                null,
-                null,
-                null
-            );
+            ->forOfferValue('19')
+            ->findResult();
 
         $array_keys = [
             "id",
@@ -75,11 +71,11 @@ class ProductAlternativeRepositoryTest extends KernelTestCase
             "product_name",
             "product_url",
             "article",
+            "product_image",
 
-
-            "price",
+            "product_price",
             "product_old_price",
-            "currency",
+            "product_currency",
             "quantity",
             "category_name",
             "category_url",

@@ -22,25 +22,20 @@
  *
  */
 
-namespace BaksDev\Products\Product\Repository\ProductCatalog;
+namespace BaksDev\Products\Product\Repository\Cards\ModelOrProduct;
 
-use BaksDev\Products\Category\Entity\CategoryProduct;
-use BaksDev\Products\Category\Type\Id\CategoryProductUid;
-
-interface ProductCatalogInterface
+interface ModelOrProductInterface
 {
-    /**
-     * Максимальное количество записей в результате
-     */
+    /** Максимальное количество записей в результате */
     public function maxResult(int $max): self;
 
-    /**
-     * Фильтр по категории
-     */
-    public function forCategory(CategoryProduct|CategoryProductUid|string $category): self;
+    /** Возвращает массив ограниченный по количеству */
+    public function findAll(): array|false;
 
     /**
-     * Метод возвращает ограниченный по количеству элементов список продуктов из разных категорий
+     * Возвращает список с ограниченным количеством элементов
+     *
+     * @return array<int, ModelOrProductResult>|false
      */
-    public function find(): array|false;
+    public function findResult(): array|false;
 }
