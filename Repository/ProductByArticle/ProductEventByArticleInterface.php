@@ -24,6 +24,8 @@
 namespace BaksDev\Products\Product\Repository\ProductByArticle;
 
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
+use BaksDev\Users\Profile\UserProfile\Entity\UserProfile;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 
 interface ProductEventByArticleInterface
 {
@@ -33,6 +35,8 @@ interface ProductEventByArticleInterface
     public function onlyCard(): self;
 
     public function onlyOffers(): self;
+
+    public function forProfile(UserProfile|UserProfileUid|string|false $profile): self;
 
     /**
      * Метод возвращает по артикулу событие продукта
