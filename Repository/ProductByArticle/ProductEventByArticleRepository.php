@@ -32,10 +32,14 @@ use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Product\Entity\Product;
+use BaksDev\Users\Profile\UserProfile\Entity\UserProfile;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 
 final class ProductEventByArticleRepository implements ProductEventByArticleInterface
 {
     private bool $isCard = false;
+
+    private UserProfile|false $profile = false;
 
     public function __construct(private readonly ORMQueryBuilder $ORMQueryBuilder) {}
 
@@ -58,6 +62,29 @@ final class ProductEventByArticleRepository implements ProductEventByArticleInte
     }
 
 
+    public function forProfile(UserProfile|UserProfileUid|string|false $profile): self
+    {
+        if(empty($profile))
+        {
+            $this->profile = false;
+            return $this;
+        }
+
+        if(is_string($profile))
+        {
+            $profile = new UserProfileUid($profile);
+        }
+
+        if($profile instanceof UserProfile)
+        {
+            $profile = $profile->getId();
+        }
+
+        $this->profile = $profile;
+
+        return $this;
+    }
+
 
     /**
      * Метод возвращает по артикулу событие продукта
@@ -69,6 +96,18 @@ final class ProductEventByArticleRepository implements ProductEventByArticleInte
         $qb
             ->from(ProductInfo::class, 'info')
             ->where('info.article = :article');
+
+        if($this->profile)
+        {
+            $qb
+                ->andWhere('info.profile = :profile')
+                ->setParameter(
+                    'profile',
+                    $this->profile,
+                    UserProfileUid::TYPE
+                );
+        }
+
 
         $qb->join(
             Product::class,
