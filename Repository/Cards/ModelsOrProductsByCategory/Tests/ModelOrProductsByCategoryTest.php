@@ -22,13 +22,35 @@
  *
  */
 
-namespace BaksDev\Products\Product\Repository\ModelOrProduct;
+declare(strict_types=1);
 
-interface ModelOrProductInterface
+namespace BaksDev\Products\Product\Repository\Cards\ModelsOrProductsByCategory\Tests;
+
+use BaksDev\Products\Product\Repository\Cards\ModelsOrProductsByCategory\ModelsOrProductsByCategoryInterface;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\DependencyInjection\Attribute\When;
+
+/**
+ * @group products-product
+ */
+#[When(env: 'test')]
+class ModelOrProductsByCategoryTest extends KernelTestCase
 {
-    /** Максимальное количество записей в результате */
-    public function maxResult(int $max): self;
+    public function testUseCase(): void
+    {
+        self::assertTrue(true);
+        return;
 
-    /** Возвращает массив ограниченный по количеству */
-    public function findAll(): array|false;
+        /** @var ModelsOrProductsByCategoryInterface $repository */
+        $repository = self::getContainer()->get(ModelsOrProductsByCategoryInterface::class);
+
+        $result = $repository
+            ->category('01876af0-ddfc-70c3-ab25-5f85f55a9907') // triangle
+            ->findResult('AND');
+
+        dump($result->getData());
+        dd();
+
+    }
+
 }

@@ -19,11 +19,12 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\Repository\ProductCatalog;
+namespace BaksDev\Products\Product\Repository\Cards\ProductCatalog;
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Products\Category\Entity\CategoryProduct;
@@ -60,6 +61,7 @@ use BaksDev\Products\Product\Entity\ProductInvariable;
 use BaksDev\Products\Product\Entity\Property\ProductProperty;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Forms\ProductCategoryFilter\User\ProductCategoryFilterDTO;
+use BaksDev\Products\Product\Repository\Cards\ProductCardInterface;
 
 final class ProductCatalogRepository implements ProductCatalogInterface
 {
@@ -93,19 +95,14 @@ final class ProductCatalogRepository implements ProductCatalogInterface
         return $this;
     }
 
-    /**
-     * Максимальное количество записей в результате
-     */
+    /** Максимальное количество записей в результате */
     public function maxResult(int $max): self
     {
         $this->maxResult = $max;
-
         return $this;
     }
 
-    /**
-     * Фильтр по категории
-     */
+    /** Фильтр по категории */
     public function forCategory(CategoryProduct|CategoryProductUid|string $category): self
     {
         if($category instanceof CategoryProduct)
@@ -124,9 +121,34 @@ final class ProductCatalogRepository implements ProductCatalogInterface
     }
 
     /**
-     * Метод возвращает список продуктов из разных категорий
+     * Возвращает список с ограниченным количеством элементов
+     *
+     * @return array<int, ProductCardInterface>|false
      */
-    public function find(string $expr = 'AND'): array|false
+    public function findResult(string $expr = 'AND'): array|false
+    {
+        $dbal = $this->builder($expr);
+
+        $dbal->enableCache('products-product', 86400);
+
+        $result = $dbal->fetchAllHydrate(ProductCatalogResult::class);
+
+        return (true === $result->valid()) ? iterator_to_array($result) : false;
+    }
+
+    /** Метод возвращает список продуктов из разных категорий */
+    public function findAll(string $expr = 'AND'): array|false
+    {
+        $dbal = $this->builder($expr);
+
+        $dbal->enableCache('products-product', 86400, false);
+
+        $result = $dbal->fetchAllAssociative();
+
+        return empty($result) ? false : $result;
+    }
+
+    public function builder($expr): DBALQueryBuilder
     {
 
         $dbal = $this->dbal
@@ -134,8 +156,8 @@ final class ProductCatalogRepository implements ProductCatalogInterface
             ->bindLocal();
 
         $dbal
-            ->select('product.id')
-            ->addSelect('product.event')
+            ->select('product.id AS product_id')
+            ->addSelect('product.event AS product_event')
             ->from(Product::class, 'product');
 
         $dbal->join('product',
@@ -146,7 +168,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
 
         /** ProductInfo */
         $dbal
-            ->addSelect('product_info.url')
+            ->addSelect('product_info.url AS product_url')
             ->leftJoin(
                 'product_event',
                 ProductInfo::class,
@@ -278,8 +300,8 @@ final class ProductCatalogRepository implements ProductCatalogInterface
 
         /** Даты продукта */
         $dbal
-            ->addSelect('product_active.active_from')
-            ->addSelect('product_active.active_to')
+            //            ->addSelect('product_active.active_from')
+            //            ->addSelect('product_active.active_to')
             ->join(
                 'product',
                 ProductActive::class,
@@ -463,101 +485,67 @@ final class ProductCatalogRepository implements ProductCatalogInterface
             'product_offer_modification',
             ProductModificationImage::class,
             'product_offer_modification_image',
-            '
-			product_offer_modification_image.modification = product_offer_modification.id AND
-			product_offer_modification_image.root = true
-			'
+            'product_offer_modification_image.modification = product_offer_modification.id AND product_offer_modification_image.root = true'
         );
 
         $dbal->leftJoin(
             'product_offer',
             ProductVariationImage::class,
             'product_offer_variation_image',
-            '
-			product_offer_variation_image.variation = product_offer_variation.id AND
-			product_offer_variation_image.root = true
-			'
+            'product_offer_variation_image.variation = product_offer_variation.id AND product_offer_variation_image.root = true'
         );
 
         $dbal->leftJoin(
             'product_offer',
             ProductOfferImage::class,
             'product_offer_images',
-            '
-			product_offer_variation_image.name IS NULL AND
-			product_offer_images.offer = product_offer.id AND
-			product_offer_images.root = true
-			'
+            'product_offer_variation_image.name IS NULL AND product_offer_images.offer = product_offer.id AND product_offer_images.root = true'
         );
 
         $dbal->leftJoin(
             'product_offer',
             ProductPhoto::class,
             'product_photo',
-            '
-			product_offer_images.name IS NULL AND
-			product_photo.event = product_event.id AND
-			product_photo.root = true
-			'
+            'product_offer_images.name IS NULL AND product_photo.event = product_event.id AND product_photo.root = true'
         );
 
-        $dbal->addSelect("
-			CASE
-			
-			 WHEN product_offer_modification_image.name IS NOT NULL 
-			 THEN CONCAT ( '/upload/".$dbal->table(ProductModificationImage::class)."', '/', product_offer_modification_image.name)
-			 
-			 WHEN product_offer_variation_image.name IS NOT NULL 
-			 THEN CONCAT ( '/upload/".$dbal->table(ProductVariationImage::class)."' , '/', product_offer_variation_image.name)
-			   
-			 WHEN product_offer_images.name IS NOT NULL 
-			 THEN CONCAT ( '/upload/".$dbal->table(ProductOfferImage::class)."' , '/', product_offer_images.name)
-			 
-			 WHEN product_photo.name IS NOT NULL 
-			 THEN CONCAT ( '/upload/".$dbal->table(ProductPhoto::class)."' , '/', product_photo.name)
-			 
-			 ELSE NULL
-			 
-			END AS product_image
-		"
-        );
-
-        /** Флаг загрузки файла CDN */
-        $dbal->addSelect("
-			CASE
-			
-                WHEN product_offer_modification_image.name IS NOT NULL 
-                THEN product_offer_modification_image.ext
-			
-			   WHEN product_offer_variation_image.name IS NOT NULL 
-			   THEN product_offer_variation_image.ext
-			   
-			   WHEN product_offer_images.name IS NOT NULL 
-			   THEN product_offer_images.ext
-			   
-			   WHEN product_photo.name IS NOT NULL 
-			   THEN product_photo.ext
-			   
-			   ELSE NULL
-			END AS product_image_ext
-		"
-        );
-
-        /** Флаг загрузки файла CDN */
-        $dbal->addSelect("
-			CASE
-			   WHEN product_offer_variation_image.name IS NOT NULL 
-			   THEN product_offer_variation_image.cdn
-					
-			   WHEN product_offer_images.name IS NOT NULL 
-			   THEN product_offer_images.cdn
-					
-			   WHEN product_photo.name IS NOT NULL 
-			   THEN product_photo.cdn
-					
-			   ELSE NULL
-			END AS product_image_cdn
-		"
+        $dbal->addSelect(
+            "JSON_AGG 
+            (DISTINCT
+				CASE 
+                    WHEN product_offer_images.ext IS NOT NULL 
+                    THEN JSONB_BUILD_OBJECT
+                        (
+                            'img_root', product_offer_images.root,
+                            'img', CONCAT ( '/upload/".$dbal->table(ProductOfferImage::class)."' , '/', product_offer_images.name),
+                            'img_ext', product_offer_images.ext,
+                            'img_cdn', product_offer_images.cdn
+                        ) 
+                    WHEN product_offer_variation_image.ext IS NOT NULL 
+                    THEN JSONB_BUILD_OBJECT
+                        (
+                            'img_root', product_offer_variation_image.root,
+                            'img', CONCAT ( '/upload/".$dbal->table(ProductVariationImage::class)."' , '/', product_offer_variation_image.name),
+                            'img_ext', product_offer_variation_image.ext,
+                            'img_cdn', product_offer_variation_image.cdn
+                        )	
+                    WHEN product_offer_modification_image.ext IS NOT NULL 
+                    THEN JSONB_BUILD_OBJECT
+                        (
+                            'img_root', product_offer_modification_image.root,
+                            'img', CONCAT ( '/upload/".$dbal->table(ProductModificationImage::class)."' , '/', product_offer_modification_image.name),
+                            'img_ext', product_offer_modification_image.ext,
+                            'img_cdn', product_offer_modification_image.cdn
+                        )
+                    WHEN product_photo.ext IS NOT NULL 
+                    THEN JSONB_BUILD_OBJECT
+                        (
+                            'img_root', product_photo.root,
+                            'img', CONCAT ( '/upload/".$dbal->table(ProductPhoto::class)."' , '/', product_photo.name),
+                            'img_ext', product_photo.ext,
+                            'img_cdn', product_photo.cdn
+                        )
+                    END) AS product_images"
         );
 
         /** Стоимость продукта */
@@ -600,7 +588,6 @@ final class ProductCatalogRepository implements ProductCatalogInterface
 			   ELSE NULL
 			END AS product_currency"
         );
-
 
         $dbal->leftJoin(
             'product_event_category',
@@ -741,11 +728,11 @@ final class ProductCatalogRepository implements ProductCatalogInterface
             $dbal->setMaxResults($this->maxResult);
         }
 
-        $dbal->enableCache('products-product', 86400, false);
-
-        $result = $dbal->fetchAllAssociative();
-
-        return empty($result) ? false : $result;
+        return $dbal;
     }
 
+    public function analyze(string $expr = 'AND'): void
+    {
+        $this->builder($expr)->analyze();
+    }
 }

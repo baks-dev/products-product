@@ -19,21 +19,25 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
-namespace BaksDev\Products\Product\Repository\ProductAlternative;
+namespace BaksDev\Products\Product\Repository\Cards\ProductAlternative;
 
 interface ProductAlternativeInterface
 {
     public function setMaxResult(int $limit): self;
 
-    /**
-     * Метод возвращает альтернативные варианты продукции по значению value торговых предложений
-     */
-    public function fetchAllAlternativeAssociative(
-        string $offer,
-        ?string $variation,
-        ?string $modification,
-        ?array $property
-    ): ?array;
+    public function forOfferValue(string $offer): self;
+
+    public function forVariationValue(string $variation): self;
+
+    public function forModificationValue(string $modification): self;
+
+    public function byProperty(array|null $property): self;
+
+    public function findResult(): array|false;
+
+    /** Метод возвращает альтернативные варианты продукции по значению value торговых предложений */
+    public function fetchAllAlternativeAssociative(): array|false;
 }

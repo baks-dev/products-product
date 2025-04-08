@@ -33,8 +33,8 @@ use BaksDev\Products\Product\Forms\ProductCategoryFilter\User\ProductCategoryFil
 use BaksDev\Products\Product\Forms\ProductCategoryFilter\User\ProductCategoryFilterForm;
 use BaksDev\Products\Product\Forms\ProductFilter\Admin\ProductFilterDTO;
 use BaksDev\Products\Product\Forms\ProductFilter\Admin\ProductFilterForm;
+use BaksDev\Products\Product\Repository\Cards\ProductCatalog\ProductCatalogInterface;
 use BaksDev\Products\Product\Repository\LiederCategory\ProductLiederInterface;
-use BaksDev\Products\Product\Repository\ProductCatalog\ProductCatalogInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -116,7 +116,7 @@ final class CatalogController extends AbstractController
                 ->maxResult(4)
                 ->property($propertyFields)
                 ->filter($productCategoryFilterDTO)
-                ->find();
+                ->findResult();
 
             /** Лучшие предложения */
             $bestOffers[$category['id']] = $productsLeader

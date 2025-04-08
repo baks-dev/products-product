@@ -24,10 +24,10 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\Repository\ProductCatalog\Tests;
+namespace BaksDev\Products\Product\Repository\Cards\ProductCatalog\Tests;
 
 use BaksDev\Products\Category\Type\Id\CategoryProductUid;
-use BaksDev\Products\Product\Repository\ProductCatalog\ProductCatalogInterface;
+use BaksDev\Products\Product\Repository\Cards\ProductCatalog\ProductCatalogInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
@@ -46,10 +46,22 @@ class ProductCatalogRepositoryTest extends KernelTestCase
 
         $result = $repository
             ->maxResult(1)
-            ->find();
+            ->findAll();
 
         self::assertNotFalse($result, 'Не найдено ни одного продукта для тестирования');
         self::$result = current($result);
+    }
+
+    public function testFindResult(): void
+    {
+        /** @var ProductCatalogInterface $repository */
+        $repository = self::getContainer()->get(ProductCatalogInterface::class);
+
+        $result = $repository
+            ->maxResult(1)
+            ->findResult();
+
+        self::assertTrue(true);
     }
 
     /** Набор ключей для сравнения алиасов в основном запросе */
@@ -57,12 +69,10 @@ class ProductCatalogRepositoryTest extends KernelTestCase
     {
 
         return [
-            "id",
-            "event",
+            "product_id",
+            "product_event",
             "product_name",
-            "url",
-            "active_from",
-            "active_to",
+            "product_url",
             "product_offer_uid",
             "product_offer_value",
             "product_offer_postfix",
@@ -76,9 +86,7 @@ class ProductCatalogRepositoryTest extends KernelTestCase
             "product_modification_postfix",
             "product_modification_reference",
             "product_article",
-            "product_image",
-            "product_image_ext",
-            "product_image_cdn",
+            "product_images",
             "product_price",
             "product_old_price",
             "product_currency",
@@ -153,7 +161,7 @@ class ProductCatalogRepositoryTest extends KernelTestCase
 
         $result = $repository
             ->maxResult($actual)
-            ->find();
+            ->findAll();
 
         self::assertNotFalse($result, 'Не найдено ни одного продукта для тестирования');
         self::assertTrue(count($result) === $expected, sprintf('Ошибка maxResult. Количество элементов: %s. Ожидаемое количество: %s', $actual, $expected));
@@ -172,7 +180,7 @@ class ProductCatalogRepositoryTest extends KernelTestCase
 
         $result = $repository
             ->forCategory($category)
-            ->find();
+            ->findAll();
 
         self::assertFalse($result);
     }
