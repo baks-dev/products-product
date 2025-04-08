@@ -63,6 +63,7 @@ use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
+use InvalidArgumentException;
 use stdClass;
 
 final class ProductAlternativeRepository implements ProductAlternativeInterface
@@ -144,6 +145,10 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 
     public function builder(): DBALQueryBuilder
     {
+        if(false === $this->offer)
+        {
+            throw new InvalidArgumentException('Не передан обязательный параметр запроса $offer');
+        }
 
         $dbal = $this->DBALQueryBuilder
             ->createQueryBuilder(self::class)
