@@ -29,13 +29,9 @@ interface ModelOrProductInterface
     /** Максимальное количество записей в результате */
     public function maxResult(int $max): self;
 
-    /** Возвращает массив ограниченный по количеству */
-    public function findAll(): array|false;
+    /** @return array<int, ModelOrProductResult>|false */
+    public function toArray(): array|false;
 
-    /**
-     * Возвращает список с ограниченным количеством элементов
-     *
-     * @return array<int, ModelOrProductResult>|false
-     */
-    public function findResult(): array|false;
+    /** @return \Generator<int, ModelOrProductResult>|false */
+    public function findAll(): \Generator|false;
 }

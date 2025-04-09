@@ -35,13 +35,13 @@ interface ProductCatalogInterface
     /** Фильтр по категории */
     public function forCategory(CategoryProduct|CategoryProductUid|string $category): self;
 
-    /**
-     * Возвращает список с ограниченным количеством элементов
-     *
-     * @return array<int, ProductCatalogResult>|false
-     */
-    public function findResult(string $expr): array|false;
+    /** @return \Generator<int, ProductCatalogResult>|false */
+    public function findAll(string $expr): \Generator|false;
 
-    /** Метод возвращает ограниченный по количеству элементов список продуктов из разных категорий */
-    public function findAll(string $expr): array|false;
+    /**
+     * Метод возвращает ограниченный по количеству элементов список продуктов из разных категорий
+     *
+     * /** @return array<int, ProductCatalogResult>|false
+     */
+    public function toArray(string $expr): array|false;
 }

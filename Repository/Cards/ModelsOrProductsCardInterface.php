@@ -24,59 +24,60 @@
 
 namespace BaksDev\Products\Product\Repository\Cards;
 
+use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 
 interface ModelsOrProductsCardInterface
 {
     public function getProductId(): ProductUid;
 
-    public function getProductEvent(): string;
+    public function getProductEvent(): ProductEventUid;
 
-    public function getProductName(): string;
+    public function getProductName(): string|null|bool;
 
-    public function getProductUrl(): string;
+    public function getProductUrl(): string|null|bool;
 
-    public function getProductSort(): int;
+    public function getProductSort(): int|null|bool;
 
-    public function getActiveFrom(): string;
+    public function getProductActiveFrom(): string|null|bool;
 
-    public function isCategoryOfferCard(): ?bool;
+    public function getCategoryOfferCard(): bool|null;
 
-    public function getProductOfferReference(): ?string;
+    public function getProductOfferReference(): string|null|bool;
 
-    public function getProductOfferValue(): ?string;
+    public function getProductOfferValue(): string|null|bool;
 
     public function getOfferAgg(): string;
 
-    public function isCategoryVariationCard(): ?bool;
+    public function getCategoryVariationCard(): bool|null;
 
-    public function getProductVariationReference(): ?string;
+    public function getProductVariationReference(): string|null|bool;
 
-    public function getProductVariationValue(): ?string;
+    public function getProductVariationValue(): string|null|bool;
 
     public function getVariationAgg(): string;
 
-    public function isCategoryModificationCard(): ?bool;
+    public function getCategoryModificationCard(): bool|null;
 
-    public function getProductModificationReference(): ?string;
+    public function getProductModificationReference(): string|null|bool;
 
-    public function getProductModificationValue(): ?string;
+    public function getProductModificationValue(): string|null|bool;
 
     public function getModificationAgg(): string;
 
-    public function getInvariable(): string;
+    public function getInvariable(): array|null|bool;
 
-    public function getProductRootImages(): string;
+    public function getProductRootImages(): array|null;
 
-    public function getCategoryUrl(): string;
+    public function getCategoryUrl(): string|null|bool;
 
-    public function getCategoryName(): string;
+    public function getCategoryName(): string|null|bool;
 
-    public function getProductPrice(): ?int;
+    public function getProductPrice(): int|null|bool;
 
-    public function getProductCurrency(): ?string;
+    public function getProductCurrency(): string|null|bool;
 
-    public function getCategorySectionField(): false|string|null;
+    public function getCategorySectionField(): array|null|bool;
 
-    public function getProductQuantity(): false|int|null;
+    public function getProductQuantity(): int|null|bool;
 }

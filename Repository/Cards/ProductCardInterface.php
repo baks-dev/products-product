@@ -24,9 +24,16 @@
 
 namespace BaksDev\Products\Product\Repository\Cards;
 
+use BaksDev\Products\Category\Type\Event\CategoryProductEventUid;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
+use BaksDev\Products\Product\Type\Invariable\ProductInvariableUid;
+use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
+use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
+use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
+use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
+use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
 
 interface ProductCardInterface
 {
@@ -34,51 +41,73 @@ interface ProductCardInterface
 
     public function getProductEvent(): ProductEventUid;
 
-    public function getProductName(): string;
+    public function getProductName(): string|null|bool;
 
-    public function getProductUrl(): ?string;
+    public function getProductUrl(): string|null|bool;
 
-    public function getProductOfferUid(): ?ProductOfferUid;
+    public function getProductOfferUid(): ProductOfferUid|null|bool;
 
-    public function getProductOfferValue(): ?string;
+    public function getProductOfferConst(): ProductOfferConst|null|bool;
 
-    public function getProductOfferPostfix(): ?string;
+    public function getProductOfferValue(): string|null|bool;
 
-    public function getProductOfferReference(): ?string;
+    public function getProductOfferName(): string|null|bool;
 
-    public function getProductVariationUid(): ?string;
+    public function getProductOfferPostfix(): string|null|bool;
 
-    public function getProductVariationValue(): ?string;
+    public function getProductOfferReference(): string|null|bool;
 
-    public function getProductVariationPostfix(): ?string;
+    public function getProductVariationUid(): ProductVariationUid|null|bool;
 
-    public function getProductVariationReference(): ?string;
+    public function getProductVariationConst(): ProductVariationConst|null|bool;
 
-    public function getProductModificationUid(): ?string;
+    public function getProductVariationValue(): string|null|bool;
 
-    public function getProductModificationValue(): ?string;
+    public function getProductVariationName(): string|null|bool;
 
-    public function getProductModificationPostfix(): ?string;
+    public function getProductVariationPostfix(): string|null|bool;
 
-    public function getProductModificationReference(): ?string;
+    public function getProductVariationReference(): string|null|bool;
 
-    public function getProductArticle(): string|false|null;
+    public function getProductModificationUid(): ProductModificationUid|null|bool;
 
-    public function getProductImages(): ?array;
+    public function getProductModificationConst(): ProductModificationConst|null|bool;
 
-    public function getProductPrice(): ?int;
+    public function getProductModificationValue(): string|null|bool;
 
-    public function getProductOldPrice(): ?int;
+    public function getProductModificationName(): string|null|bool;
 
-    public function getProductCurrency(): ?string;
+    public function getProductModificationPostfix(): string|null|bool;
 
-    public function getProductQuantity(): bool|int|null;
+    public function getProductModificationReference(): string|null|bool;
 
-    public function getCategoryUrl(): string;
+    public function getProductActiveFrom(): string|null|bool;
 
-    public function getCategoryName(): string;
+    public function getProductArticle(): string|null|bool;
 
-    public function getCategorySectionField(): string;
+    public function getProductImages(): array|null|bool;
 
-    public function getProductInvariableId(): ?string;
+    public function getProductPrice(): int|null|bool;
+
+    public function getProductOldPrice(): int|null|bool;
+
+    public function getProductCurrency(): string|null|bool;
+
+    public function getProductReserve(): int|null|bool;
+
+    public function getProductQuantity(): int|null|bool;
+
+    public function getProductInvariableId(): ProductInvariableUid|string|null|bool;
+
+    public function getProductInvariableOfferConst(): ProductOfferConst|null|bool;
+
+    public function getProductCategory(): string|null|bool;
+
+    public function getCategoryEvent(): CategoryProductEventUid|null|bool;
+
+    public function getCategoryUrl(): string|null|bool;
+
+    public function getCategoryName(): string|bool;
+
+    public function getCategorySectionField(): array|null|bool;
 }

@@ -38,19 +38,14 @@ class ModelOrProductRepositoryTest extends KernelTestCase
 {
     public function testAll()
     {
-        self::assertTrue(true);
-        return;
-
         /** @var ModelOrProductInterface $repository */
         $repository = self::getContainer()->get(ModelOrProductInterface::class);
-        //        $repository->analyze();
 
         $result = $repository
-            ->maxResult(1)
-            ->findResult();
+            ->maxResult(10000)
+            //        ->analyze()
+            ->toArray();
 
-        dump($result->current());
-        //        dump($result);
-        dd();
+        self::assertTrue(true);
     }
 }

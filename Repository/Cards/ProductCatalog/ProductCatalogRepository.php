@@ -61,8 +61,8 @@ use BaksDev\Products\Product\Entity\ProductInvariable;
 use BaksDev\Products\Product\Entity\Property\ProductProperty;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Forms\ProductCategoryFilter\User\ProductCategoryFilterDTO;
-use BaksDev\Products\Product\Repository\Cards\ProductCardInterface;
 
+/** @see ProductCatalogResult */
 final class ProductCatalogRepository implements ProductCatalogInterface
 {
     private CategoryProductUid|false $categoryUid = false;
@@ -121,11 +121,11 @@ final class ProductCatalogRepository implements ProductCatalogInterface
     }
 
     /**
-     * Возвращает список с ограниченным количеством элементов
+     * Метод возвращает ограниченный по количеству элементов список продуктов из разных категорий
      *
-     * @return array<int, ProductCardInterface>|false
+     * @return \Generator<int, ProductCatalogResult>|false
      */
-    public function findResult(string $expr = 'AND'): array|false
+    public function findAll(string $expr = 'AND'): \Generator|false
     {
         $dbal = $this->builder($expr);
 
@@ -133,19 +133,19 @@ final class ProductCatalogRepository implements ProductCatalogInterface
 
         $result = $dbal->fetchAllHydrate(ProductCatalogResult::class);
 
-        return (true === $result->valid()) ? iterator_to_array($result) : false;
+        return (true === $result->valid()) ? $result : false;
     }
 
-    /** Метод возвращает список продуктов из разных категорий */
-    public function findAll(string $expr = 'AND'): array|false
+    /**
+     * Метод возвращает список продуктов из разных категорий
+     *
+     * @return array<int, ProductCatalogResult>|false
+     */
+    public function toArray(string $expr = 'AND'): array|false
     {
-        $dbal = $this->builder($expr);
+        $result = $this->findAll();
 
-        $dbal->enableCache('products-product', 86400, false);
-
-        $result = $dbal->fetchAllAssociative();
-
-        return empty($result) ? false : $result;
+        return (true === $result->valid()) ? iterator_to_array($result) : false;
     }
 
     public function builder($expr): DBALQueryBuilder

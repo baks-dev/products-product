@@ -26,10 +26,17 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Repository\Cards\ProductCatalog;
 
+use BaksDev\Products\Category\Type\Event\CategoryProductEventUid;
 use BaksDev\Products\Product\Repository\Cards\ProductCardInterface;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
+use BaksDev\Products\Product\Type\Invariable\ProductInvariableUid;
+use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
+use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
+use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
+use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
+use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
 
 /** @see ProductCatalogRepository */
 final readonly class ProductCatalogResult implements ProductCardInterface
@@ -51,10 +58,10 @@ final readonly class ProductCatalogResult implements ProductCardInterface
         private string|null $product_modification_value,
         private string|null $product_modification_postfix,
         private string|null $product_modification_reference,
-        private string $product_article,
+        private string|null $product_article,
         private string|null $product_images,
-        private int $product_price,
-        private int $product_old_price,
+        private int|null $product_price,
+        private int|null $product_old_price,
         private string|null $product_currency,
         private string $category_url,
         private string $category_name,
@@ -82,8 +89,13 @@ final readonly class ProductCatalogResult implements ProductCardInterface
         return $this->product_url;
     }
 
-    public function getProductOfferUid(): ?ProductOfferUid
+    public function getProductOfferUid(): ProductOfferUid|null
     {
+        if(null === $this->product_offer_uid)
+        {
+            return null;
+        }
+
         return new ProductOfferUid($this->product_offer_uid);
     }
 
@@ -102,9 +114,14 @@ final readonly class ProductCatalogResult implements ProductCardInterface
         return $this->product_offer_reference;
     }
 
-    public function getProductVariationUid(): ?string
+    public function getProductVariationUid(): ProductVariationUid|null
     {
-        return $this->product_variation_uid;
+        if(null === $this->product_variation_uid)
+        {
+            return null;
+        }
+
+        return new ProductVariationUid($this->product_variation_uid);
     }
 
     public function getProductVariationValue(): ?string
@@ -122,9 +139,14 @@ final readonly class ProductCatalogResult implements ProductCardInterface
         return $this->product_variation_reference;
     }
 
-    public function getProductModificationUid(): ?string
+    public function getProductModificationUid(): ProductModificationUid|null
     {
-        return $this->product_modification_uid;
+        if(null === $this->product_modification_uid)
+        {
+            return null;
+        }
+
+        return new ProductModificationUid($this->product_modification_uid);
     }
 
     public function getProductModificationValue(): ?string
@@ -142,7 +164,7 @@ final readonly class ProductCatalogResult implements ProductCardInterface
         return $this->product_modification_reference;
     }
 
-    public function getProductArticle(): string
+    public function getProductArticle(): string|null
     {
         return $this->product_article;
     }
@@ -151,20 +173,20 @@ final readonly class ProductCatalogResult implements ProductCardInterface
     {
         $images = json_decode($this->product_images, true, 512, JSON_THROW_ON_ERROR);
 
-        if(null === $images)
+        if(null === current($images))
         {
             return null;
         }
 
-        return current($images);
+        return $images;
     }
 
-    public function getProductPrice(): ?int
+    public function getProductPrice(): int|null
     {
         return $this->product_price;
     }
 
-    public function getProductOldPrice(): ?int
+    public function getProductOldPrice(): int|null
     {
         return $this->product_old_price;
     }
@@ -184,18 +206,87 @@ final readonly class ProductCatalogResult implements ProductCardInterface
         return $this->category_name;
     }
 
-    public function getCategorySectionField(): string
+    public function getCategorySectionField(): array|null
     {
-        return $this->category_section_field;
+        $sectionFields = json_decode($this->category_section_field, true, 512, JSON_THROW_ON_ERROR);
+
+        if(null === current($sectionFields))
+        {
+            return null;
+        }
+
+        return $sectionFields;
     }
 
-    public function getProductInvariableId(): ?string
+    public function getProductInvariableId(): ProductInvariableUid|null
     {
-        return $this->product_invariable_id;
+        if(null === $this->product_invariable_id)
+        {
+            return null;
+        }
+
+        return new ProductInvariableUid($this->product_invariable_id);
     }
 
-    public function getProductQuantity(): true
+    /** Методы - заглушки */
+
+    public function getProductOfferConst(): ProductOfferConst|null|bool
+    {
+        return false;
+    }
+
+    public function getProductOfferName(): string|null|bool
+    {
+        return false;
+    }
+
+    public function getProductVariationConst(): ProductVariationConst|null|bool
+    {
+        return false;
+    }
+
+    public function getProductVariationName(): string|null|bool
+    {
+        return false;
+    }
+
+    public function getProductModificationConst(): ProductModificationConst|null|bool
+    {
+        return false;
+    }
+
+    public function getProductModificationName(): string|null|bool
+    {
+        return false;
+    }
+
+    public function getProductActiveFrom(): string|null|bool
+    {
+        return false;
+    }
+
+    public function getProductReserve(): int|null|bool
+    {
+        return false;
+    }
+
+    public function getProductQuantity(): int|null|bool
     {
         return true;
+    }
+
+    public function getProductInvariableOfferConst(): ProductOfferConst|null|bool
+    {
+        return false;
+    }
+
+    public function getProductCategory(): string|null|bool
+    {
+        return false;
+    }
+
+    public function getCategoryEvent(): CategoryProductEventUid|null|bool
+    {
+        return false;
     }
 }

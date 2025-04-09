@@ -27,6 +27,7 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Repository\Cards\ModelsOrProductsByCategory;
 
 use BaksDev\Products\Product\Repository\Cards\ModelsOrProductsCardInterface;
+use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 
 /** @see ModelsOrProductsByCategoryRepository */
@@ -66,9 +67,9 @@ final readonly class ModelOrProductByCategoryResult implements ModelsOrProductsC
         return new ProductUid($this->product_id);
     }
 
-    public function getProductEvent(): string
+    public function getProductEvent(): ProductEventUid
     {
-        return $this->product_event;
+        return new ProductEventUid($this->product_event);
     }
 
     public function getProductName(): string
@@ -86,12 +87,12 @@ final readonly class ModelOrProductByCategoryResult implements ModelsOrProductsC
         return $this->product_sort;
     }
 
-    public function getActiveFrom(): string
+    public function getProductActiveFrom(): string
     {
         return $this->product_active_from;
     }
 
-    public function isCategoryOfferCard(): ?bool
+    public function getCategoryOfferCard(): ?bool
     {
         return $this->category_offer_card;
     }
@@ -111,7 +112,7 @@ final readonly class ModelOrProductByCategoryResult implements ModelsOrProductsC
         return $this->offer_agg;
     }
 
-    public function isCategoryVariationCard(): ?bool
+    public function getCategoryVariationCard(): ?bool
     {
         return $this->category_variation_card;
     }
@@ -131,7 +132,7 @@ final readonly class ModelOrProductByCategoryResult implements ModelsOrProductsC
         return $this->variation_agg;
     }
 
-    public function isCategoryModificationCard(): ?bool
+    public function getCategoryModificationCard(): ?bool
     {
         return $this->category_modification_card;
     }
@@ -151,14 +152,28 @@ final readonly class ModelOrProductByCategoryResult implements ModelsOrProductsC
         return $this->modification_agg;
     }
 
-    public function getInvariable(): string
+    public function getInvariable(): array|null
     {
-        return $this->invariable;
+        $invariables = json_decode($this->invariable, true, 512, JSON_THROW_ON_ERROR);
+
+        if(null === current($invariables))
+        {
+            return null;
+        }
+
+        return $invariables;
     }
 
-    public function getProductRootImages(): string
+    public function getProductRootImages(): array|null
     {
-        return $this->product_root_images;
+        $images = json_decode($this->product_root_images, true, 512, JSON_THROW_ON_ERROR);
+
+        if(null === current($images))
+        {
+            return null;
+        }
+
+        return $images;
     }
 
     public function getCategoryUrl(): string
@@ -181,12 +196,19 @@ final readonly class ModelOrProductByCategoryResult implements ModelsOrProductsC
         return $this->product_currency;
     }
 
-    public function getCategorySectionField(): string|null
+    public function getCategorySectionField(): array|null
     {
-        return $this->category_section_field;
+        $category_section_field = json_decode($this->category_section_field, true, 512, JSON_THROW_ON_ERROR);
+
+        if(null === current($category_section_field))
+        {
+            return null;
+        }
+
+        return $category_section_field;
     }
 
-    public function getProductQuantity(): int|null
+    public function getProductQuantity(): ?int
     {
         return $this->product_quantity;
     }

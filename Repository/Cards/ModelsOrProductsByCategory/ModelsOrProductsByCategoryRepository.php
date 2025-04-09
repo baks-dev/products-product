@@ -64,6 +64,7 @@ use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Forms\ProductCategoryFilter\User\ProductCategoryFilterDTO;
 use InvalidArgumentException;
 
+/** @see ModelOrProductByCategoryResult */
 final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCategoryInterface
 {
     private CategoryProductUid|false $category = false;
@@ -124,15 +125,14 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
         return $this;
     }
 
-    public function findResult(string $expr = 'AND'): PaginatorInterface
+    public function findAllWithPaginator(string $expr = 'AND'): PaginatorInterface
     {
         $dbal = $this->builder($expr);
-        return $this->paginator->fetchAllHydrate($dbal, 'products-product', ModelOrProductByCategoryResult::class);
+        return $this->paginator->fetchAllHydrate($dbal, ModelOrProductByCategoryResult::class, 'products-product');
     }
 
-    /**
-     * Возвращает генератор с ограниченным количеством элементов */
-    public function findAll(string $expr = 'AND'): array|false
+    /** @return array<int, ModelOrProductByCategoryResult>|false */
+    public function toArray(string $expr = 'AND'): array|false
     {
         if(false == $this->maxResult)
         {
@@ -143,17 +143,11 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
 
         $dbal->setMaxResults($this->maxResult);
 
-        $result = $dbal
-            ->enableCache('products-product', 86400)
-            ->fetchAllAssociative();
+        $dbal->enableCache('products-product', 86400);
 
-        return empty($result) ? false : $result;
-    }
+        $result = $dbal->fetchAllHydrate(ModelOrProductByCategoryResult::class);
 
-    public function findPaginator(string $expr = 'AND'): PaginatorInterface
-    {
-        $dbal = $this->builder($expr);
-        return $this->paginator->fetchAllAssociative($dbal);
+        return (true === $result->valid()) ? iterator_to_array($result) : false;
     }
 
     private function builder(string $expr): DBALQueryBuilder
@@ -804,5 +798,10 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
         $dbal->addOrderBy('SUM(product_price.quantity)', 'DESC');
 
         return $dbal;
+    }
+
+    public function analyze(string $expr = 'AND'): void
+    {
+        $this->builder($expr)->analyze();
     }
 }

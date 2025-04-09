@@ -109,7 +109,7 @@ final class CategoryController extends AbstractController
             ->filter($ProductCategoryFilterDTO)
             ->property($property)
             ->category($CategoryUid)
-            ->findResult('AND');
+            ->findAllWithPaginator('AND');
 
         /** Если список пуст - пробуем предложить другие варианты */
         $otherProducts = false;
@@ -119,7 +119,7 @@ final class CategoryController extends AbstractController
 
             /** Список аналогичных товаров */
             $Products = $modelsOrProducts
-                ->findResult('OR');
+                ->findAllWithPaginator('OR');
 
             $otherProducts = true;
         }
