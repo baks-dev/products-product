@@ -116,7 +116,7 @@ final class CatalogController extends AbstractController
                 ->maxResult(4)
                 ->property($propertyFields)
                 ->filter($productCategoryFilterDTO)
-                ->findResult();
+                ->toArray();
 
             /** Лучшие предложения */
             $bestOffers[$category['id']] = $productsLeader

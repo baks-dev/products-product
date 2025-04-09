@@ -132,7 +132,7 @@ final class DetailController extends AbstractController
                 ->forVariationValue($productCard['product_variation_value'])
                 ->forModificationValue($productCard['product_modification_value'])
                 ->byProperty($alternativeField)
-                ->findResult();
+                ->toArray();
         }
 
         /* Корзина */

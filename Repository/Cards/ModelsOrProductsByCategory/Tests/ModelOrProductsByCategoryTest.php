@@ -26,6 +26,7 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Repository\Cards\ModelsOrProductsByCategory\Tests;
 
+use BaksDev\Products\Category\Repository\AllCategory\AllCategoryInterface;
 use BaksDev\Products\Product\Repository\Cards\ModelsOrProductsByCategory\ModelsOrProductsByCategoryInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
@@ -38,19 +39,20 @@ class ModelOrProductsByCategoryTest extends KernelTestCase
 {
     public function testUseCase(): void
     {
-        self::assertTrue(true);
-        return;
+        /** @var AllCategoryInterface $categoriesRepo */
+        $categoriesRepo = self::getContainer()->get(AllCategoryInterface::class);
+        $categories = $categoriesRepo->getOnlyChildren();
+        //        dd($categories);
 
         /** @var ModelsOrProductsByCategoryInterface $repository */
         $repository = self::getContainer()->get(ModelsOrProductsByCategoryInterface::class);
 
         $result = $repository
-            ->category('01876af0-ddfc-70c3-ab25-5f85f55a9907') // triangle
-            ->findResult('AND');
+            ->category(current($categories)['id'])
+            //            ->analyze()
+            ->findAllWithPaginator('AND');
 
-        dump($result->getData());
-        dd();
-
+        self::assertTrue(true);
     }
 
 }

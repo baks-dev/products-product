@@ -28,7 +28,6 @@ use BaksDev\Core\Services\Paginator\PaginatorInterface;
 use BaksDev\Products\Category\Entity\CategoryProduct;
 use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Forms\ProductCategoryFilter\User\ProductCategoryFilterDTO;
-use Symfony\Component\Form\Form;
 
 interface ModelsOrProductsByCategoryInterface
 {
@@ -44,9 +43,9 @@ interface ModelsOrProductsByCategoryInterface
     /** Категория продуктов */
     public function category(CategoryProduct|CategoryProductUid|string $category): self;
 
-    public function findResult(string $expr): PaginatorInterface;
+    public function findAllWithPaginator(string $expr): PaginatorInterface;
 
-    public function findAll(string $expr): array|false;
+    /** @return array<int, ModelOrProductByCategoryResult>|false */
+    public function toArray(string $expr): array|false;
 
-    public function findPaginator(string $expr): PaginatorInterface;
 }

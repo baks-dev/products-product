@@ -55,6 +55,7 @@ use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Entity\ProductInvariable;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 
+/** @see ModelOrProductResult */
 final class ModelOrProductRepository implements ModelOrProductInterface
 {
     private int|false $maxResult = false;
@@ -70,24 +71,16 @@ final class ModelOrProductRepository implements ModelOrProductInterface
         return $this;
     }
 
-    /** Возвращает массив ограниченный по количеству */
-    public function findAll(): array|false
+    /** @return array<int, ModelOrProductResult>|false */
+    public function toArray(): array|false
     {
-        $dbal = $this->builder();
+        $result = $this->findAll();
 
-        $dbal->enableCache('products-product', 86400);
-
-        $result = $dbal->fetchAllAssociative();
-
-        return (false === empty($result)) ? $result : false;
+        return (true === $result->valid()) ? iterator_to_array($result) : false;
     }
 
-    /**
-     * Возвращает список с ограниченным количеством элементов
-     *
-     * @return array<int, ModelOrProductResult>|false
-     */
-    public function findResult(): array|false
+    /** @return \Generator<int, ModelOrProductResult>|false */
+    public function findAll(): \Generator|false
     {
         $dbal = $this->builder();
 
@@ -95,7 +88,7 @@ final class ModelOrProductRepository implements ModelOrProductInterface
 
         $result = $dbal->fetchAllHydrate(ModelOrProductResult::class);
 
-        return (true === $result->valid()) ? iterator_to_array($result) : false;
+        return (true === $result->valid()) ? $result : false;
     }
 
     private function builder(): DBALQueryBuilder

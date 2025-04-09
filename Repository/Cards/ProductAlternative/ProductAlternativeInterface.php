@@ -30,14 +30,23 @@ interface ProductAlternativeInterface
 
     public function forOfferValue(string $offer): self;
 
-    public function forVariationValue(string $variation): self;
+    public function forVariationValue(string|null $variation): self;
 
-    public function forModificationValue(string $modification): self;
+    public function forModificationValue(string|null $modification): self;
 
     public function byProperty(array|null $property): self;
 
-    public function findResult(): array|false;
+    /** @return array<int, ProductAlternativeResult>|false */
+    public function toArray(): array|false;
+
+    /** @return \Generator<int, ProductAlternativeResult>|false */
+    public function findAll(): \Generator|false;
 
     /** Метод возвращает альтернативные варианты продукции по значению value торговых предложений */
-    public function fetchAllAlternativeAssociative(): array|false;
+    public function fetchAllAlternativeAssociative(
+        string $offer,
+        ?string $variation,
+        ?string $modification,
+        ?array $property = null
+    ): array|false;
 }

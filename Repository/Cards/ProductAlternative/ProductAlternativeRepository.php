@@ -60,19 +60,17 @@ use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Entity\ProductInvariable;
 use BaksDev\Products\Product\Entity\Property\ProductProperty;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
-use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
-use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
-use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
 use InvalidArgumentException;
 use stdClass;
 
+/** @see ProductAlternativeResult */
 final class ProductAlternativeRepository implements ProductAlternativeInterface
 {
-    private ProductOffer|ProductOfferUid|string|false $offer = false;
+    private string|false $offer = false;
 
-    private ProductVariation|ProductVariationUid|string|false $variation = false;
+    private string|null|false $variation = false;
 
-    private ProductModification|ProductModificationUid|string|false $modification = false;
+    private string|null|false $modification = false;
 
     private array|null $property = null;
 
@@ -94,13 +92,13 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
         return $this;
     }
 
-    public function forVariationValue(string $variation): self
+    public function forVariationValue(string|null $variation): self
     {
         $this->variation = $variation;
         return $this;
     }
 
-    public function forModificationValue(string $modification): self
+    public function forModificationValue(string|null $modification): self
     {
         $this->modification = $modification;
         return $this;
@@ -118,7 +116,16 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
         return $this;
     }
 
-    public function findResult(): array|false
+    /** @return array<int, ProductAlternativeResult>|false */
+    public function toArray(): array|false
+    {
+        $result = $this->findAll();
+
+        return (true === $result->valid()) ? iterator_to_array($result) : false;
+    }
+
+    /** @return \Generator<int, ProductAlternativeResult>|false */
+    public function findAll(): \Generator|false
     {
         $dbal = $this->builder();
 
@@ -126,12 +133,21 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 
         $result = $dbal->fetchAllHydrate(ProductAlternativeResult::class);
 
-        return (true === $result->valid()) ? iterator_to_array($result) : false;
+        return (true === $result->valid()) ? $result : false;
     }
 
     /** Метод возвращает альтернативные варианты продукции по значению value торговых предложений */
-    public function fetchAllAlternativeAssociative(): array|false
+    public function fetchAllAlternativeAssociative(
+        string $offer,
+        ?string $variation,
+        ?string $modification,
+        ?array $property = null
+    ): array|false
     {
+        $this->forVariationValue($variation);
+        $this->forModificationValue($modification);
+        $this->byProperty($property);
+
         $dbal = $this->builder();
 
         $dbal->orderBy('quantity', 'DESC');
