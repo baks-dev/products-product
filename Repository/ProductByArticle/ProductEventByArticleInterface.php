@@ -34,7 +34,7 @@ interface ProductEventByArticleInterface
      */
     public function onlyCard(): self;
 
-    public function onlyOffers(): self;
+    public function allOffers(): self;
 
     public function forProfile(UserProfile|UserProfileUid|string|false $profile): self;
 

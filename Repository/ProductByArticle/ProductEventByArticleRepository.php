@@ -39,7 +39,7 @@ final class ProductEventByArticleRepository implements ProductEventByArticleInte
 {
     private bool $isCard = false;
 
-    private UserProfile|false $profile = false;
+    private UserProfileUid|false $profile = false;
 
     public function __construct(private readonly ORMQueryBuilder $ORMQueryBuilder) {}
 
@@ -53,14 +53,13 @@ final class ProductEventByArticleRepository implements ProductEventByArticleInte
     }
 
     /**
-     * Метод возвращает событие любого артикула в, в том числе торговых предложений
+     * Метод возвращает событие любого артикула, в том числе торговых предложений
      */
-    public function onlyOffers(): self
+    public function allOffers(): self
     {
         $this->isCard = false;
         return $this;
     }
-
 
     public function forProfile(UserProfile|UserProfileUid|string|false $profile): self
     {
@@ -91,15 +90,15 @@ final class ProductEventByArticleRepository implements ProductEventByArticleInte
      */
     public function findProductEventByArticle(string $article): ProductEvent|false
     {
-        $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
+        $orm = $this->ORMQueryBuilder->createQueryBuilder(self::class);
 
-        $qb
+        $orm
             ->from(ProductInfo::class, 'info')
             ->where('info.article = :article');
 
-        if($this->profile)
+        if($this->profile instanceof UserProfileUid)
         {
-            $qb
+            $orm
                 ->andWhere('info.profile = :profile')
                 ->setParameter(
                     'profile',
@@ -108,8 +107,7 @@ final class ProductEventByArticleRepository implements ProductEventByArticleInte
                 );
         }
 
-
-        $qb->join(
+        $orm->join(
             Product::class,
             'product',
             'WITH',
@@ -117,7 +115,7 @@ final class ProductEventByArticleRepository implements ProductEventByArticleInte
         )
             ->setParameter('article', $article);
 
-        $qb
+        $orm
             ->select('event')
             ->join(
                 ProductEvent::class,
@@ -128,30 +126,32 @@ final class ProductEventByArticleRepository implements ProductEventByArticleInte
 
         if(true === $this->isCard)
         {
-            $qb->setMaxResults(1);
+            $orm->setMaxResults(1);
         }
 
         /** @var Product $Product */
-        $ProductEvent = $qb->getQuery()->getOneOrNullResult();
+        $ProductEvent = $orm->getQuery()->getOneOrNullResult();
 
-        if(true === $this->isCard || $ProductEvent)
+        if(true === $this->isCard || $ProductEvent instanceof ProductEvent)
         {
             return $ProductEvent ?: false;
         }
-
 
         /**
          * Поиск по артикулу в торговом предложении
          */
 
-        $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
+        $orm = $this->ORMQueryBuilder->createQueryBuilder(self::class);
 
-        $qb
+        $orm
             ->from(ProductOffer::class, 'offer')
             ->where('offer.article = :article')
-            ->setParameter('article', $article);
+            ->setParameter(
+                key: 'article',
+                value: $article
+            );
 
-        $qb
+        $orm
             ->select('event')
             ->join(
                 ProductEvent::class,
@@ -160,14 +160,14 @@ final class ProductEventByArticleRepository implements ProductEventByArticleInte
                 'event.id = offer.event'
             );
 
-        $qb->join(Product::class, 'product', 'WITH', 'product.event = event.id');
+        $orm->join(Product::class, 'product', 'WITH', 'product.event = event.id');
 
         /** @var ProductEvent $ProductEvent */
-        $ProductEvent = $qb->getQuery()->getOneOrNullResult();
+        $ProductEvent = $orm->getQuery()->getOneOrNullResult();
 
-        if($ProductEvent)
+        if($ProductEvent instanceof ProductEvent)
         {
-            return $ProductEvent ?: false;
+            return $ProductEvent;
         }
 
 
@@ -175,16 +175,19 @@ final class ProductEventByArticleRepository implements ProductEventByArticleInte
          * Поиск по артикулу в множественном варианте торгового предложения
          */
 
-        $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
+        $orm = $this->ORMQueryBuilder->createQueryBuilder(self::class);
 
-        $qb
+        $orm
             ->from(ProductVariation::class, 'variation')
             ->where('variation.article = :article')
-            ->setParameter('article', $article);
+            ->setParameter(
+                key: 'article',
+                value: $article
+            );
 
-        $qb->join(ProductOffer::class, 'offer', 'WITH', 'offer.id = variation.offer');
+        $orm->join(ProductOffer::class, 'offer', 'WITH', 'offer.id = variation.offer');
 
-        $qb
+        $orm
             ->select('event')
             ->join(
                 ProductEvent::class,
@@ -193,32 +196,35 @@ final class ProductEventByArticleRepository implements ProductEventByArticleInte
                 'event.id = offer.event'
             );
 
-        $qb->join(Product::class, 'product', 'WITH', 'product.event = event.id');
+        $orm->join(Product::class, 'product', 'WITH', 'product.event = event.id');
 
         /** @var ProductEvent $ProductEvent */
-        $ProductEvent = $qb->getQuery()->getOneOrNullResult();
+        $ProductEvent = $orm->getQuery()->getOneOrNullResult();
 
-        if($ProductEvent)
+        if($ProductEvent instanceof ProductEvent)
         {
-            return $ProductEvent ?: false;
+            return $ProductEvent;
         }
 
         /**
          * Поиск по артикулу в множественном варианте торгового предложения
          */
 
-        $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
+        $orm = $this->ORMQueryBuilder->createQueryBuilder(self::class);
 
 
-        $qb
+        $orm
             ->from(ProductModification::class, 'modification')
             ->where('modification.article = :article')
-            ->setParameter('article', $article);
+            ->setParameter(
+                key: 'article',
+                value: $article
+            );
 
-        $qb->join(ProductVariation::class, 'variation', 'WITH', 'variation.id = modification.variation');
-        $qb->join(ProductOffer::class, 'offer', 'WITH', 'offer.id = variation.offer');
+        $orm->join(ProductVariation::class, 'variation', 'WITH', 'variation.id = modification.variation');
+        $orm->join(ProductOffer::class, 'offer', 'WITH', 'offer.id = variation.offer');
 
-        $qb
+        $orm
             ->select('event')
             ->join(
                 ProductEvent::class,
@@ -227,8 +233,12 @@ final class ProductEventByArticleRepository implements ProductEventByArticleInte
                 'event.id = offer.event'
             );
 
-        $qb->join(Product::class, 'product', 'WITH', 'product.event = event.id');
+        $orm->join(Product::class, 'product', 'WITH', 'product.event = event.id');
 
-        return $qb->getQuery()->getOneOrNullResult() ?: false;
+
+        /** @var ProductEvent $ProductEvent */
+        $ProductEvent = $orm->getQuery()->getOneOrNullResult();
+
+        return $ProductEvent instanceof ProductEvent ? $ProductEvent : false;
     }
 }
