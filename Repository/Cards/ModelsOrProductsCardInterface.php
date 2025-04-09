@@ -26,6 +26,8 @@ namespace BaksDev\Products\Product\Repository\Cards;
 
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
+use BaksDev\Reference\Currency\Type\Currency;
+use BaksDev\Reference\Money\Type\Money;
 
 interface ModelsOrProductsCardInterface
 {
@@ -73,9 +75,9 @@ interface ModelsOrProductsCardInterface
 
     public function getCategoryName(): string|null|bool;
 
-    public function getProductPrice(): int|null|bool;
+    public function getProductPrice(): Money|bool;
 
-    public function getProductCurrency(): string|null|bool;
+    public function getProductCurrency(): Currency|bool;
 
     public function getCategorySectionField(): array|null|bool;
 

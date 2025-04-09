@@ -29,6 +29,8 @@ namespace BaksDev\Products\Product\Repository\Cards\ModelOrProduct;
 use BaksDev\Products\Product\Repository\Cards\ModelsOrProductsCardInterface;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
+use BaksDev\Reference\Currency\Type\Currency;
+use BaksDev\Reference\Money\Type\Money;
 
 /** @see ModelOrProductRepository */
 final readonly class ModelOrProductResult implements ModelsOrProductsCardInterface
@@ -185,14 +187,14 @@ final readonly class ModelOrProductResult implements ModelsOrProductsCardInterfa
         return $this->category_name;
     }
 
-    public function getProductPrice(): ?int
+    public function getProductPrice(): Money
     {
-        return $this->product_price;
+        return new Money($this->product_price, true);
     }
 
-    public function getProductCurrency(): ?string
+    public function getProductCurrency(): Currency
     {
-        return $this->product_currency;
+        return new Currency($this->product_currency);
     }
 
     /** Методы - заглушки */

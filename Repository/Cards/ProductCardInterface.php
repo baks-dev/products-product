@@ -34,6 +34,8 @@ use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
+use BaksDev\Reference\Currency\Type\Currency;
+use BaksDev\Reference\Money\Type\Money;
 
 interface ProductCardInterface
 {
@@ -87,11 +89,11 @@ interface ProductCardInterface
 
     public function getProductImages(): array|null|bool;
 
-    public function getProductPrice(): int|null|bool;
+    public function getProductPrice(): Money|bool;
 
-    public function getProductOldPrice(): int|null|bool;
+    public function getProductOldPrice(): Money|bool;
 
-    public function getProductCurrency(): string|null|bool;
+    public function getProductCurrency(): Currency|bool;
 
     public function getProductReserve(): int|null|bool;
 

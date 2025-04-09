@@ -37,6 +37,8 @@ use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
+use BaksDev\Reference\Currency\Type\Currency;
+use BaksDev\Reference\Money\Type\Money;
 
 /** @see ProductCatalogRepository */
 final readonly class ProductCatalogResult implements ProductCardInterface
@@ -181,19 +183,19 @@ final readonly class ProductCatalogResult implements ProductCardInterface
         return $images;
     }
 
-    public function getProductPrice(): int|null
+    public function getProductPrice(): Money
     {
-        return $this->product_price;
+        return new Money($this->product_price, true);
     }
 
-    public function getProductOldPrice(): int|null
+    public function getProductOldPrice(): Money
     {
-        return $this->product_old_price;
+        return new Money($this->product_old_price, true);
     }
 
-    public function getProductCurrency(): ?string
+    public function getProductCurrency(): Currency
     {
-        return $this->product_currency;
+        return new Currency($this->product_currency);
     }
 
     public function getCategoryUrl(): string
