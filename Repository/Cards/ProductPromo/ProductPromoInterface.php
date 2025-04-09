@@ -22,7 +22,7 @@
  *
  */
 
-namespace BaksDev\Products\Product\Repository\ProductPromo;
+namespace BaksDev\Products\Product\Repository\Cards\ProductPromo;
 
 use BaksDev\Products\Category\Entity\CategoryProduct;
 use BaksDev\Products\Category\Type\Id\CategoryProductUid;
@@ -42,6 +42,8 @@ interface ProductPromoInterface
     /** Фильтр по свойствам */
     public function property(array|null $property): self;
 
+    public function toArray(string $expr): array|false;
+
     /** Метод возвращает продукты по условию - старая цена продукта больше текущей цены */
-    public function findAll(string $expr): array|false;
+    public function findAll(string $expr): \Generator|false;
 }

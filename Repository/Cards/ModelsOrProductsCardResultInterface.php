@@ -29,7 +29,7 @@ use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Reference\Currency\Type\Currency;
 use BaksDev\Reference\Money\Type\Money;
 
-interface ModelsOrProductsCardInterface
+interface ModelsOrProductsCardResultInterface
 {
     public function getProductId(): ProductUid;
 

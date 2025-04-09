@@ -24,7 +24,7 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\Repository\ProductPromo;
+namespace BaksDev\Products\Product\Repository\Cards\ProductPromo;
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Products\Category\Entity\CategoryProduct;
@@ -63,6 +63,7 @@ use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Forms\ProductCategoryFilter\User\ProductCategoryFilterDTO;
 use InvalidArgumentException;
 
+/** @see ProductPromoResult */
 final class ProductPromoRepository implements ProductPromoInterface
 {
     private int|false $maxResult = false;
@@ -120,25 +121,30 @@ final class ProductPromoRepository implements ProductPromoInterface
         return $this;
     }
 
+    public function toArray(string $expr = 'AND'): array|false
+    {
+        $result = $this->findAll($expr);
+
+        return (true === $result->valid()) ? iterator_to_array($result) : false;
+    }
+
     /**
      * Метод возвращает продукты по условию - старая цена продукта больше текущей цены
      */
-    public function findAll(string $expr = 'AND'): array|false
+    public function findAll(string $expr = 'AND'): \Generator|false
     {
         if(false == $this->maxResult)
         {
             throw new InvalidArgumentException('Не передан обязательный параметр запроса $maxResult');
         }
 
-        $builder = $this->builder($expr);
+        $dbal = $this->builder($expr);
 
-        $builder->setMaxResults($this->maxResult);
+        $dbal->enableCache('products-product', 86400);
 
-        $builder->enableCache('products-product', 86400, false);
+        $result = $dbal->fetchAllHydrate(ProductPromoResult::class);
 
-        $result = $builder->fetchAllAssociative();
-
-        return empty($result) ? false : $result;
+        return (true === $result->valid()) ? $result : false;
     }
 
     /** Билдер запроса */
@@ -150,8 +156,8 @@ final class ProductPromoRepository implements ProductPromoInterface
             ->bindLocal();
 
         $dbal
-            ->select('product.id')
-            ->addSelect('product.event')
+            ->select('product.id AS product_id')
+            ->addSelect('product.event AS product_event')
             ->from(Product::class, 'product');
 
         $dbal->join('product',
@@ -280,7 +286,7 @@ final class ProductPromoRepository implements ProductPromoInterface
 
         /** ProductInfo */
         $dbal
-            ->addSelect('product_info.url')
+            ->addSelect('product_info.url as product_url')
             ->leftJoin(
                 'product_event',
                 ProductInfo::class,
@@ -292,8 +298,8 @@ final class ProductPromoRepository implements ProductPromoInterface
 
         /** Даты продукта */
         $dbal
-            ->addSelect('product_active.active_from')
-            ->addSelect('product_active.active_to')
+            //            ->addSelect('product_active.active_from')
+            //            ->addSelect('product_active.active_to')
             ->join(
                 'product',
                 ProductActive::class,
@@ -477,101 +483,75 @@ final class ProductPromoRepository implements ProductPromoInterface
             'product_offer_modification',
             ProductModificationImage::class,
             'product_offer_modification_image',
-            '
-			product_offer_modification_image.modification = product_offer_modification.id AND
-			product_offer_modification_image.root = true
-			'
+            'product_offer_modification_image.modification = product_offer_modification.id AND product_offer_modification_image.root = true'
         );
 
         $dbal->leftJoin(
             'product_offer',
             ProductVariationImage::class,
             'product_offer_variation_image',
-            '
-			product_offer_variation_image.variation = product_offer_variation.id AND
-			product_offer_variation_image.root = true
-			'
+            'product_offer_variation_image.variation = product_offer_variation.id AND product_offer_variation_image.root = true'
         );
 
         $dbal->leftJoin(
             'product_offer',
             ProductOfferImage::class,
             'product_offer_images',
-            '
-			product_offer_variation_image.name IS NULL AND
-			product_offer_images.offer = product_offer.id AND
-			product_offer_images.root = true
-			'
+            'product_offer_variation_image.name IS NULL AND product_offer_images.offer = product_offer.id AND product_offer_images.root = true'
         );
 
         $dbal->leftJoin(
             'product_offer',
             ProductPhoto::class,
             'product_photo',
-            '
-			product_offer_images.name IS NULL AND
-			product_photo.event = product_event.id AND
-			product_photo.root = true
-			'
+            'product_offer_images.name IS NULL AND product_photo.event = product_event.id AND product_photo.root = true'
         );
 
-        $dbal->addSelect("
-			CASE
-			
-			 WHEN product_offer_modification_image.name IS NOT NULL 
-			 THEN CONCAT ( '/upload/".$dbal->table(ProductModificationImage::class)."', '/', product_offer_modification_image.name)
-			 
-			 WHEN product_offer_variation_image.name IS NOT NULL 
-			 THEN CONCAT ( '/upload/".$dbal->table(ProductVariationImage::class)."' , '/', product_offer_variation_image.name)
-			   
-			 WHEN product_offer_images.name IS NOT NULL 
-			 THEN CONCAT ( '/upload/".$dbal->table(ProductOfferImage::class)."' , '/', product_offer_images.name)
-			 
-			 WHEN product_photo.name IS NOT NULL 
-			 THEN CONCAT ( '/upload/".$dbal->table(ProductPhoto::class)."' , '/', product_photo.name)
-			 
-			 ELSE NULL
-			 
-			END AS product_image
-			"
-        );
-
-        /** Флаг загрузки файла CDN */
-        $dbal->addSelect("
-			CASE
-			
-                WHEN product_offer_modification_image.name IS NOT NULL 
-                THEN product_offer_modification_image.ext
-			
-			   WHEN product_offer_variation_image.name IS NOT NULL 
-			   THEN product_offer_variation_image.ext
-			   
-			   WHEN product_offer_images.name IS NOT NULL 
-			   THEN product_offer_images.ext
-			   
-			   WHEN product_photo.name IS NOT NULL 
-			   THEN product_photo.ext
-			   
-			   ELSE NULL
-			END AS product_image_ext
-		"
-        );
-
-        /** Флаг загрузки файла CDN */
-        $dbal->addSelect("
-			CASE
-			   WHEN product_offer_variation_image.name IS NOT NULL 
-			   THEN product_offer_variation_image.cdn
-					
-			   WHEN product_offer_images.name IS NOT NULL 
-			   THEN product_offer_images.cdn
-					
-			   WHEN product_photo.name IS NOT NULL 
-			   THEN product_photo.cdn
-					
-			   ELSE NULL
-			END AS product_image_cdn
-		"
+        /** Агрегация фото продуктов из offer, variation, modification */
+        $dbal->addSelect(
+            "
+            JSON_AGG
+                    (DISTINCT
+        				CASE
+                            WHEN product_offer_images.ext IS NOT NULL
+                            THEN JSONB_BUILD_OBJECT
+                                (
+                                    'img_root', product_offer_images.root,
+                                    'img', CONCAT ( '/upload/".$dbal->table(ProductOfferImage::class)."' , '/', product_offer_images.name),
+                                    'img_ext', product_offer_images.ext,
+                                    'img_cdn', product_offer_images.cdn
+                                )
+        
+                            WHEN product_offer_variation_image.ext IS NOT NULL
+                            THEN JSONB_BUILD_OBJECT
+                                (
+                                    'img_root', product_offer_variation_image.root,
+                                    'img', CONCAT ( '/upload/".$dbal->table(ProductVariationImage::class)."' , '/', product_offer_variation_image.name),
+                                    'img_ext', product_offer_variation_image.ext,
+                                    'img_cdn', product_offer_variation_image.cdn
+                                )
+        
+                            WHEN product_offer_modification_image.ext IS NOT NULL
+                            THEN JSONB_BUILD_OBJECT
+                                (
+                                    'img_root', product_offer_modification_image.root,
+                                    'img', CONCAT ( '/upload/".$dbal->table(ProductModificationImage::class)."' , '/', product_offer_modification_image.name),
+                                    'img_ext', product_offer_modification_image.ext,
+                                    'img_cdn', product_offer_modification_image.cdn
+                                )
+        
+                            WHEN product_photo.ext IS NOT NULL
+                            THEN JSONB_BUILD_OBJECT
+                                (
+                                    'img_root', product_photo.root,
+                                    'img', CONCAT ( '/upload/".$dbal->table(ProductPhoto::class)."' , '/', product_photo.name),
+                                    'img_ext', product_photo.ext,
+                                    'img_cdn', product_photo.cdn
+                                )
+                            ELSE NULL
+                        END
+                    )
+                    AS product_images"
         );
 
         /** Стоимость продукта */

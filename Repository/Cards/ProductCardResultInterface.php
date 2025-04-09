@@ -37,7 +37,7 @@ use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModifi
 use BaksDev\Reference\Currency\Type\Currency;
 use BaksDev\Reference\Money\Type\Money;
 
-interface ProductCardInterface
+interface ProductCardResultInterface
 {
     public function getProductId(): ProductUid;
 

@@ -26,14 +26,14 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Repository\Cards\ModelsOrProductsByCategory;
 
-use BaksDev\Products\Product\Repository\Cards\ModelsOrProductsCardInterface;
+use BaksDev\Products\Product\Repository\Cards\ModelsOrProductsCardResultInterface;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Reference\Currency\Type\Currency;
 use BaksDev\Reference\Money\Type\Money;
 
 /** @see ModelsOrProductsByCategoryRepository */
-final readonly class ModelOrProductByCategoryResult implements ModelsOrProductsCardInterface
+final readonly class ModelOrProductByCategoryResult implements ModelsOrProductsCardResultInterface
 {
     public function __construct(
         private string $product_id,

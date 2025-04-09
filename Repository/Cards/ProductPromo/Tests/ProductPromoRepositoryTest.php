@@ -24,9 +24,9 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\Repository\ProductPromo\Tests;
+namespace BaksDev\Products\Product\Repository\Cards\ProductPromo\Tests;
 
-use BaksDev\Products\Product\Repository\ProductPromo\ProductPromoRepository;
+use BaksDev\Products\Product\Repository\Cards\ProductPromo\ProductPromoInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
@@ -39,19 +39,14 @@ class ProductPromoRepositoryTest extends KernelTestCase
 
     public function testAll()
     {
-        self::assertTrue(true);
-        return;
-
-        /** @var ProductPromoRepository $repository */
-        $repository = self::getContainer()->get(ProductPromoRepository::class);
-
-        $repository->analyze();
+        /** @var ProductPromoInterface $repository */
+        $repository = self::getContainer()->get(ProductPromoInterface::class);
 
         $result = $repository
-            ->maxResult(1)
-            ->findAll();
+            ->maxResult(1000)
+            //            ->analyze()
+            ->toArray();
 
-        dump($result);
-        dd();
+        self::assertTrue(true);
     }
 }

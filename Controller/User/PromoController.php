@@ -27,7 +27,7 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Controller\User;
 
 use BaksDev\Core\Controller\AbstractController;
-use BaksDev\Products\Product\Repository\ProductPromo\ProductPromoRepository;
+use BaksDev\Products\Product\Repository\Cards\ProductPromo\ProductPromoRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
@@ -42,10 +42,9 @@ final class PromoController extends AbstractController
         ProductPromoRepository $productPromoRepository,
     ): Response
     {
-
         $promoProducts = $productPromoRepository
             ->maxResult(16)
-            ->findAll();
+            ->toArray();
 
         return $this->render([
             'promoProducts' => $promoProducts

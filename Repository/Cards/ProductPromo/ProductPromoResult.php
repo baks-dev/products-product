@@ -24,7 +24,7 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\Repository\Cards\ProductCatalog;
+namespace BaksDev\Products\Product\Repository\Cards\ProductPromo;
 
 use BaksDev\Products\Product\Repository\Cards\ProductCardResultInterface;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
@@ -36,8 +36,8 @@ use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModifi
 use BaksDev\Reference\Currency\Type\Currency;
 use BaksDev\Reference\Money\Type\Money;
 
-/** @see ProductCatalogRepository */
-final readonly class ProductCatalogResult implements ProductCardResultInterface
+/** @see ProductPromoRepository */
+final readonly class ProductPromoResult implements ProductCardResultInterface
 {
     public function __construct(
         private string $product_id,
@@ -57,7 +57,7 @@ final readonly class ProductCatalogResult implements ProductCardResultInterface
         private string|null $product_modification_postfix,
         private string|null $product_modification_reference,
         private string|null $product_article,
-        private string|null $product_images,
+        private string $product_images,
         private int|null $product_price,
         private int|null $product_old_price,
         private string|null $product_currency,
@@ -162,7 +162,7 @@ final readonly class ProductCatalogResult implements ProductCardResultInterface
         return $this->product_modification_reference;
     }
 
-    public function getProductArticle(): string|null
+    public function getProductArticle(): ?string
     {
         return $this->product_article;
     }
