@@ -27,21 +27,18 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Repository\Cards\ProductAlternative;
 
 use BaksDev\Products\Category\Type\Event\CategoryProductEventUid;
-use BaksDev\Products\Product\Repository\Cards\ProductCardInterface;
+use BaksDev\Products\Product\Repository\Cards\ProductCardResultInterface;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Product\Type\Invariable\ProductInvariableUid;
-use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
-use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
-use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
 use BaksDev\Reference\Currency\Type\Currency;
 use BaksDev\Reference\Money\Type\Money;
 
 /** @see ProductAlternativeRepository */
-final readonly class ProductAlternativeResult implements ProductCardInterface
+final readonly class ProductAlternativeResult implements ProductCardResultInterface
 {
     public function __construct(
         private string $id,
@@ -262,37 +259,37 @@ final readonly class ProductAlternativeResult implements ProductCardInterface
 
     /** Методы - заглушки */
 
-    public function getProductOfferConst(): ProductOfferConst|null|bool
+    public function getProductOfferConst(): bool
     {
         return false;
     }
 
-    public function getProductVariationConst(): ProductVariationConst|null|bool
+    public function getProductVariationConst(): bool
     {
         return false;
     }
 
-    public function getProductModificationConst(): ProductModificationConst|null|bool
+    public function getProductModificationConst(): bool
     {
         return false;
     }
 
-    public function getProductReserve(): int|null|bool
+    public function getProductReserve(): bool
     {
         return false;
     }
 
-    public function getProductInvariableOfferConst(): ProductOfferConst|null|bool
+    public function getProductInvariableOfferConst(): bool
     {
         return false;
     }
 
-    public function getProductCategory(): string|null|bool
+    public function getProductCategory(): bool
     {
         return false;
     }
 
-    public function getCategoryEvent(): CategoryProductEventUid|bool
+    public function getCategoryEvent(): bool
     {
         return false;
     }

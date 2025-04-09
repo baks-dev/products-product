@@ -26,14 +26,14 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Repository\Cards\ModelOrProduct;
 
-use BaksDev\Products\Product\Repository\Cards\ModelsOrProductsCardInterface;
+use BaksDev\Products\Product\Repository\Cards\ModelsOrProductsCardResultInterface;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Reference\Currency\Type\Currency;
 use BaksDev\Reference\Money\Type\Money;
 
 /** @see ModelOrProductRepository */
-final readonly class ModelOrProductResult implements ModelsOrProductsCardInterface
+final readonly class ModelOrProductResult implements ModelsOrProductsCardResultInterface
 {
 
     public function __construct(
@@ -199,12 +199,12 @@ final readonly class ModelOrProductResult implements ModelsOrProductsCardInterfa
 
     /** Методы - заглушки */
 
-    public function getCategorySectionField(): array|null|bool
+    public function getCategorySectionField(): bool
     {
         return false;
     }
 
-    public function getProductQuantity(): int|null|bool
+    public function getProductQuantity(): bool
     {
         return false;
     }
