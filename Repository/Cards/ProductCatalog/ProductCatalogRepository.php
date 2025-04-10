@@ -145,7 +145,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
     {
         $result = $this->findAll();
 
-        return (true === $result->valid()) ? iterator_to_array($result) : false;
+        return (false !== $result) ? iterator_to_array($result) : false;
     }
 
     public function builder($expr): DBALQueryBuilder

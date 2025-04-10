@@ -121,7 +121,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
     {
         $result = $this->findAll();
 
-        return (true === $result->valid()) ? iterator_to_array($result) : false;
+        return (false !== $result) ? iterator_to_array($result) : false;
     }
 
     /** @return \Generator<int, ProductAlternativeResult>|false */
