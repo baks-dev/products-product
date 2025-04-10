@@ -61,6 +61,7 @@ final readonly class ModelOrProductResult implements ModelsOrProductsCardResultI
         private string $category_name,
         private int|null $product_price,
         private string|null $product_currency,
+        private int|null $product_quantity,
     ) {}
 
     public function getProductId(): ProductUid
@@ -197,14 +198,14 @@ final readonly class ModelOrProductResult implements ModelsOrProductsCardResultI
         return new Currency($this->product_currency);
     }
 
+    public function getProductQuantity(): int|null
+    {
+        return $this->product_quantity;
+    }
+
     /** Методы - заглушки */
 
     public function getCategorySectionField(): bool
-    {
-        return false;
-    }
-
-    public function getProductQuantity(): bool
     {
         return false;
     }

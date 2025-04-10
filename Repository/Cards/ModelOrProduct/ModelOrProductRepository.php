@@ -535,6 +535,27 @@ final class ModelOrProductRepository implements ModelOrProductInterface
 		"
         );
 
+        /** Количественный учет */
+        $dbal->addSelect('
+			CASE
+
+			   WHEN SUM(product_modification_quantity.quantity) - SUM(product_modification_quantity.reserve) > 0
+			   THEN SUM(product_modification_quantity.quantity) - SUM(product_modification_quantity.reserve)
+
+			   WHEN SUM(product_variation_quantity.quantity) - SUM(product_variation_quantity.reserve) > 0
+			   THEN SUM(product_variation_quantity.quantity) - SUM(product_variation_quantity.reserve)
+
+			   WHEN SUM(product_offer_quantity.quantity) - SUM(product_offer_quantity.reserve) > 0
+			   THEN SUM(product_offer_quantity.quantity) - SUM(product_offer_quantity.reserve)
+
+			   WHEN SUM(product_price.quantity) - SUM(product_price.reserve) > 0
+			   THEN SUM(product_price.quantity) - SUM(product_price.reserve)
+
+			   ELSE 0
+
+			END AS product_quantity
+		');
+
         /** Только в наличии */
         $dbal->andWhere("
             CASE
