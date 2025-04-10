@@ -91,7 +91,7 @@ final class ProductFilterDTO implements ProductFilterInterface
     /**
      * Категория
      */
-    public function setCategory(CategoryProductUid|string|null $category): void
+    public function setCategory(CategoryProductUid|string|null $category): self
     {
         if(is_string($category))
         {
@@ -99,6 +99,8 @@ final class ProductFilterDTO implements ProductFilterInterface
         }
 
         $this->category = $category;
+
+        return $this;
     }
 
     /**
@@ -110,9 +112,10 @@ final class ProductFilterDTO implements ProductFilterInterface
         return $this->offer;
     }
 
-    public function setOffer(?string $offer): void
+    public function setOffer(?string $offer): self
     {
         $this->offer = $offer;
+        return $this;
     }
 
 
@@ -125,9 +128,10 @@ final class ProductFilterDTO implements ProductFilterInterface
         return $this->variation;
     }
 
-    public function setVariation(?string $variation): void
+    public function setVariation(?string $variation): self
     {
         $this->variation = $variation;
+        return $this;
     }
 
 
@@ -140,9 +144,10 @@ final class ProductFilterDTO implements ProductFilterInterface
         return $this->modification;
     }
 
-    public function setModification(?string $modification): void
+    public function setModification(?string $modification): self
     {
         $this->modification = $modification;
+        return $this;
     }
 
     /**
