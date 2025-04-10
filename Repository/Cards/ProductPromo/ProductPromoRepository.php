@@ -125,7 +125,7 @@ final class ProductPromoRepository implements ProductPromoInterface
     {
         $result = $this->findAll($expr);
 
-        return (true === $result->valid()) ? iterator_to_array($result) : false;
+        return (false !== $result) ? iterator_to_array($result) : false;
     }
 
     /**
