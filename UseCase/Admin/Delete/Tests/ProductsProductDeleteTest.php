@@ -45,8 +45,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * @group products-product
  * @group products-product-usecase
  *
- * @depends \BaksDev\Products\Product\Controller\Admin\Tests\DeleteControllerTest::class
- * @depends \BaksDev\Products\Product\UseCase\Admin\NewEdit\Tests\ProductsProductEditTest::class
+ * @depends BaksDev\Products\Product\Controller\Admin\Tests\DeleteControllerTest::class
+ * @depends BaksDev\Products\Product\UseCase\Admin\NewEdit\Tests\ProductsProductEditTest::class
  *
  */
 #[When(env: 'test')]

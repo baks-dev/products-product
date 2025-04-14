@@ -32,7 +32,7 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 /**
  * @group products-product
  *
- * @depends \BaksDev\Products\Product\UseCase\Admin\NewEdit\Tests\ProductsProductNewTest::class
+ * @depends BaksDev\Products\Product\UseCase\Admin\NewEdit\Tests\ProductsProductNewTest::class
  */
 #[When(env: 'test')]
 final class EditControllerTest extends WebTestCase
