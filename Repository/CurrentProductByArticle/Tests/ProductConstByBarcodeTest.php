@@ -56,9 +56,9 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class ProductConstByBarcodeTest extends KernelTestCase
 {
 
-    private static ?string $offer;
-    private static ?string $variation;
-    private static ?string $modification;
+    private static string|false|null $offer;
+    private static string|false|null $variation;
+    private static string|false|null $modification;
 
     public static function setUpBeforeClass(): void
     {
@@ -118,6 +118,11 @@ class ProductConstByBarcodeTest extends KernelTestCase
 
         foreach([self::$offer, self::$variation, self::$modification] as $barcode)
         {
+            if(false === $barcode)
+            {
+                continue;
+            }
+
             $CurrentProductDTO = $ProductConstByBarcode->find($barcode);
 
             if(false === $CurrentProductDTO)
