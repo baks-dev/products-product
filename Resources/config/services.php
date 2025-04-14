@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
@@ -40,5 +39,6 @@ return static function(ContainerConfigurator $container) {
             BaksDevProductsProductBundle::PATH.'**'.DIRECTORY_SEPARATOR.'*Message.php',
             BaksDevProductsProductBundle::PATH.'**'.DIRECTORY_SEPARATOR.'*Result.php',
             BaksDevProductsProductBundle::PATH.'**'.DIRECTORY_SEPARATOR.'*DTO.php',
+            BaksDevProductsProductBundle::PATH.'**'.DIRECTORY_SEPARATOR.'*Test.php',
         ]);
 };
