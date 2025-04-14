@@ -106,7 +106,7 @@ class ProductVariation extends EntityEvent
 
     public function __construct(ProductOffer $offer)
     {
-        $this->id = new ProductVariationUid();
+        $this->id = clone new ProductVariationUid();
         $this->offer = $offer;
         $this->price = new Price\ProductVariationPrice($this);
         $this->quantity = new Quantity\ProductVariationQuantity($this);

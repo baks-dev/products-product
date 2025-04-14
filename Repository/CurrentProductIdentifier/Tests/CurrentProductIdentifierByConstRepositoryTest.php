@@ -26,11 +26,11 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Repository\CurrentProductIdentifier\Tests;
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
-use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Product\Entity\Product;
+use BaksDev\Products\Product\Repository\CurrentProductEvent\CurrentProductEventInterface;
 use BaksDev\Products\Product\Repository\CurrentProductIdentifier\CurrentProductIdentifierByConstInterface;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\ProductDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\ProductHandler;
@@ -88,27 +88,27 @@ class CurrentProductIdentifierByConstRepositoryTest extends KernelTestCase
 
 
         $dbal->setMaxResults(1);
-        $dbal->orderBy('product.id', 'DESC');
+        $dbal->orderBy('product.event', 'DESC');
 
         self::$result = $dbal->fetchAssociative();
 
 
+
         /**
          * Обновляем событие
-         * @var EntityManagerInterface $EntityManagerInterface
+         * @var CurrentProductEventInterface $CurrentProductEvent
          */
-        $EntityManagerInterface = self::getContainer()->get(EntityManagerInterface::class);
-        $ProductEvent = $EntityManagerInterface->getRepository(ProductEvent::class)->find(self::$result['event']);
-
-
-        //
+        $CurrentProductEvent = self::getContainer()->get(CurrentProductEventInterface::class);
+        $ProductEvent = $CurrentProductEvent->findByProduct(self::$result['id']);
 
         $ProductDTO = new ProductDTO();
         $ProductEvent->getDto($ProductDTO);
 
+
         /** @var ProductHandler $ProductHandler */
         $ProductHandler = self::getContainer()->get(ProductHandler::class);
         $handle = $ProductHandler->handle($ProductDTO);
+
 
         /** Получаем новые идентификаторы */
 
@@ -141,6 +141,7 @@ class CurrentProductIdentifierByConstRepositoryTest extends KernelTestCase
     {
         /** @var CurrentProductIdentifierByConstInterface $CurrentProductIdentifierByConstInterface */
         $CurrentProductIdentifierByConstInterface = self::getContainer()->get(CurrentProductIdentifierByConstInterface::class);
+
 
         $result = $CurrentProductIdentifierByConstInterface
             ->forProduct(self::$result['id'])

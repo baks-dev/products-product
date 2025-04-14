@@ -64,10 +64,10 @@ final class ProductHandler extends AbstractHandler
     public function handle(ProductDTO $command): Product|string
     {
 
+
         $this
             ->setCommand($command)
             ->preEventPersistOrUpdate(Product::class, ProductEvent::class);
-
 
         /** Проверяем уникальность семантической ссылки продукта */
         $infoDTO = $command->getInfo();
@@ -178,6 +178,7 @@ final class ProductHandler extends AbstractHandler
         {
             return $this->validatorCollection->getErrorUniqid();
         }
+
 
         $this->flush();
 

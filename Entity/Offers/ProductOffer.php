@@ -113,8 +113,8 @@ class ProductOffer extends EntityEvent
 
     public function __construct(ProductEvent $event)
     {
+        $this->id = clone new ProductOfferUid();
         $this->event = $event;
-        $this->id = new ProductOfferUid();
         $this->price = new Price\ProductOfferPrice($this);
         $this->quantity = new Quantity\ProductOfferQuantity($this);
     }

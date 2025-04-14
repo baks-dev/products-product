@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -66,7 +66,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * @group products-product
  * @group products-product-usecase
  *
- * @depends BaksDev\Products\Product\UseCase\Admin\NewEdit\Tests\ProductsProductNewTest::class
+ * @depends \BaksDev\Products\Product\UseCase\Admin\NewEdit\Tests\ProductsProductNewTest::class
  */
 #[When(env: 'test')]
 class ProductsProductEditTest extends KernelTestCase

@@ -39,29 +39,10 @@
 
             {# ГЛАВНОЕ ФОТО #}
 
-            {% set product_modification_image = card.product_modification_image|json_decode %}
-            {% set product_variation_image = card.product_variation_image|json_decode %}
-            {% set product_offer_images = card.product_offer_images|json_decode %}
-            {% set product_photo = card.product_photo|json_decode %}
+
+            {% set product_photo = card.product_images|json_decode %}
             {% set root_image = null %}
 
-            {# Определяем главное фото #}
-            {% for modification_image in product_modification_image | filter(img =>  img.product_img_root is defined and img.product_img_root == true) %}
-                {% set root_image = modification_image %}
-            {% endfor %}
-
-            {% if root_image is null %}
-                {% for variation_image in product_variation_image | filter(img => img.product_img_root is defined and img.product_img_root == true) %}
-                    {% set root_image = variation_image %}
-                {% endfor %}
-            {% endif %}
-
-            {% if root_image is null %}
-                {% for offer_images in product_offer_images | filter(img => img.product_img_root is defined and img.product_img_root == true) %}
-                    {% set root_image = offer_images %}
-
-                {% endfor %}
-            {% endif %}
 
             {% if root_image is null %}
                 {% for product_images in product_photo | filter(img => img.product_img_root is defined and img.product_img_root == true) %}
@@ -95,68 +76,6 @@
 
             <div class="d-flex justify-content-center gap-3 mt-4 ">
 
-                {% for modification_image in product_modification_image | filter(img => img.product_img_ext is defined) | sort((a, b) => a.product_img_root < b.product_img_root) %}
-
-                    {# Обложка  #}
-                    {% set image_path = '/assets/img/blank.svg' %}
-
-                    {% if modification_image.product_img_ext is defined and modification_image.product_img_ext is not null %}
-                        {% set img_host = modification_image.product_img_cdn == true  ? CDN_HOST : '' %}
-                        {% set img_dir = modification_image.product_img %}
-                        {% set img_file = (img_host is empty ? '/image.' : '/medium.') ~ modification_image.product_img_ext %}
-                        {% set image_path = img_host ~ img_dir ~ img_file %}
-                    {% endif %}
-
-                    <button class="btn btn-link icon bg-cover rounded-4 lazy border-0 img-product m-0"
-                            data-bg="{{ image_path }}"
-                            style="width: 70px; height: 70px;"
-                            title="{{ card.product_name }}"
-                    ></button>
-                {% endfor %}
-
-
-                {% for variation_image in product_variation_image | filter(img => img.product_img_ext is defined) | sort((a, b) => a.product_img_root < b.product_img_root) %}
-
-
-                    {# Обложка  #}
-                    {% set image_path = '/assets/img/blank.svg' %}
-
-                    {% if variation_image.product_img_ext is defined and variation_image.product_img_ext is not null %}
-                        {% set img_host = variation_image.product_img_cdn == true  ? CDN_HOST : '' %}
-                        {% set img_dir = variation_image.product_img %}
-                        {% set img_file = (img_host is empty ? '/image.' : '/medium.') ~ variation_image.product_img_ext %}
-                        {% set image_path = img_host ~ img_dir ~ img_file %}
-                    {% endif %}
-
-                    <button class="btn btn-link icon bg-cover rounded-4 lazy border-0 img-product m-0"
-                            data-bg="{{ image_path }}"
-                            style="width: 70px; height: 70px;"
-                            title="{{ card.product_name }}"
-                    ></button>
-
-                {% endfor %}
-
-
-                {% for offer_images in product_offer_images | filter(img => img.product_img_ext is defined) %}
-
-
-                    {# Обложка  #}
-                    {% set image_path = '/assets/img/blank.svg' %}
-
-                    {% if offer_images.product_img_ext is defined and offer_images.product_img_ext is not null %}
-                        {% set img_host = offer_images.product_img_cdn == true  ? CDN_HOST : '' %}
-                        {% set img_dir = offer_images.product_img %}
-                        {% set img_file = (img_host is empty ? '/image.' : '/medium.') ~ offer_images.product_img_ext %}
-                        {% set image_path = img_host ~ img_dir ~ img_file %}
-                    {% endif %}
-
-                    <button class="btn btn-link icon bg-cover rounded-4 lazy border-0 img-product m-0"
-                            data-bg="{{ image_path }}"
-                            style="width: 70px; height: 70px;"
-                            title="{{ card.product_name }}"
-                    ></button>
-
-                {% endfor %}
 
 
                 {% for product_images in product_photo | filter(img => img.product_img_ext is defined) | sort((a, b) => a.product_img_root < b.product_img_root) %}

@@ -44,10 +44,14 @@
 
                 <tbody>
 
+                {# @var alt \BaksDev\Products\Product\Repository\Cards\ProductAlternative\ProductAlternativeResult #}
 
                 {% for alt in alternative %}
 
-                    {% set arr_property = alt.category_section_field|json_decode %}
+
+                    {% set arr_property = alt.categorySectionField %}
+
+
 
                     <tr class="vertical-middle">
 
@@ -55,13 +59,15 @@
                         <td>
                             <div class='d-flex gap-3 align-items-center'>
 
-                                <a href="{{ path('products-product:user.detail', { category: alt.category_url, url: alt.product_url,
-                                    offer : alt.product_offer_value,
-                                    variation : alt.product_variation_value,
-                                    modification : alt.product_modification_value,
-                                    postfix: (alt.product_modification_postfix ?: alt.product_variation_postfix ?: alt.product_offer_postfix ?: null )|replace({ '/': '-' })
+                                <a href="{{ path('products-product:user.detail', {
+                                    category: alt.categoryUrl,
+                                    url: alt.productUrl,
+                                    offer : alt.productOfferValue,
+                                    variation : alt.productVariationValue,
+                                    modification : alt.productModificationValue,
+                                    postfix: (alt.productModificationPostfix ?: alt.productVariationPostfix ?: alt.productOfferPostfix ?: null )|replace({ '/': '-' })
                                 }) }}">
-                                    {{ alt.product_name }}
+                                    {{ alt.productName }}
                                 </a>
 
                                 <div class='d-flex gap-2 align-items-center'>
@@ -73,7 +79,7 @@
                                 </div>
 
                                 <div>
-                                    {% if date() < alt.active_from|date_modify("+1 month") %}
+                                    {% if date() < alt.productActiveFrom|date_modify("+1 month") %}
                                         <span class="badge bg-success rounded-2">Новинка</span>
                                     {% endif %}
                                 </div>
@@ -85,33 +91,33 @@
 
 
                         <td>
-                            {{ alt.article }}
+                            {{ alt.productArticle }}
                         </td>
 
                         <td>
-                            {{ alt.product_offer_value|call_twig_func(alt.product_offer_reference) }}
-                            {{ alt.product_offer_postfix }}
+                            {{ alt.productOfferValue|call_twig_func(alt.productOfferReference) }}
+                            {{ alt.productOfferPostfix }}
                         </td>
 
                         {% if name_variation %}
                             <td>
-                                {{ alt.product_variation_value|call_twig_func(alt.product_variation_reference) }}
-                                {{ alt.product_variation_postfix }}
+                                {{ alt.productVariationValue|call_twig_func(alt.productVariationReference) }}
+                                {{ alt.productVariationPostfix }}
                             </td>
                         {% endif %}
 
                         {% if name_modification %}
                             <td>
-                                {{ alt.product_modification_value|call_twig_func(alt.product_modification_reference) }}
-                                {{ alt.product_modification_postfix }}
+                                {{ alt.productModificationValue|call_twig_func(alt.productModificationReference) }}
+                                {{ alt.productModificationPostfix }}
                             </td>
                         {% endif %}
 
                         <td>
 
-                            {% if alt.quantity >= 20 %}
+                            {% if alt.productQuantity >= 20 %}
                                 <span class='text-success fw-bold'>более 20 шт.</span>
-                            {% elseif alt.quantity <= 0 %}
+                            {% elseif alt.productQuantity <= 0 %}
                                 <span class='text-danger fw-bold'>нет в наличии</span>
                             {% else %}
                                 <span class='text-warning fw-bold'>менее 20 шт.</span>
@@ -121,9 +127,9 @@
 
                         <td>
 
-                            {% set discount_alt = user_profile_discount(alt.price) %}
+                            {% set discount_alt = user_profile_discount(alt.productPrice) %}
 
-                            {{ discount_alt ? money(discount_alt, alt.currency) : money(alt.price, alt.currency) }}
+                            {{ discount_alt ? money(discount_alt, alt.productCurrency) : money(alt.productPrice, alt.productCurrency) }}
 
                             {#  Пользовательская скидка #}
                             {% if discount_alt %}
@@ -135,12 +141,12 @@
 
                         <td>
 
-                            {% if alt.quantity %}
+                            {% if alt.productQuantity %}
                                 <a href="{{ path('orders-order:user.add', {
-                                    product: alt.event,
-                                    offer : alt.product_offer_uid,
-                                    variation : alt.product_variation_uid,
-                                    modification : alt.product_modification_uid
+                                    product: alt.productEvent,
+                                    offer : alt.productOfferUid,
+                                    variation : alt.productVariationUid,
+                                    modification : alt.productModificationUid
                                 }) }}"
                                    class="btn btn-sm btn-primary rounded-circle modal-link disabled add-basket"
                                    data-bs-toggle="modal"

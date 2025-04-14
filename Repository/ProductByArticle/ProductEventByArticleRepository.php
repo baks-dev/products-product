@@ -84,7 +84,6 @@ final class ProductEventByArticleRepository implements ProductEventByArticleInte
         return $this;
     }
 
-
     /**
      * Метод возвращает по артикулу событие продукта
      */
@@ -136,6 +135,7 @@ final class ProductEventByArticleRepository implements ProductEventByArticleInte
         {
             return $ProductEvent ?: false;
         }
+
 
         /**
          * Поиск по артикулу в торговом предложении
@@ -206,6 +206,7 @@ final class ProductEventByArticleRepository implements ProductEventByArticleInte
             return $ProductEvent;
         }
 
+
         /**
          * Поиск по артикулу в множественном варианте торгового предложения
          */
@@ -222,6 +223,7 @@ final class ProductEventByArticleRepository implements ProductEventByArticleInte
             );
 
         $orm->join(ProductVariation::class, 'variation', 'WITH', 'variation.id = modification.variation');
+
         $orm->join(ProductOffer::class, 'offer', 'WITH', 'offer.id = variation.offer');
 
         $orm

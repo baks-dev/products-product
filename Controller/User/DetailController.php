@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 namespace BaksDev\Products\Product\Controller\User;
@@ -156,7 +155,7 @@ final class DetailController extends AbstractController
         }
 
         // Поиск по всему сайту
-        $allSearch = new SearchDTO($request);
+        $allSearch = new SearchDTO();
         $allSearchForm = $this->createForm(SearchForm::class, $allSearch, [
             'action' => $this->generateUrl('core:search'),
         ]);
