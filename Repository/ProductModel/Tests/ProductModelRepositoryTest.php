@@ -48,14 +48,25 @@ class ProductModelRepositoryTest extends KernelTestCase
             ->findAll();
 
         /** @var Product $product */
-        $product = current($products);
+        foreach($products as $key => $product)
+        {
+            if($key >= 100)
+            {
+                break;
+            }
 
-        /** @var ProductModelInterface $repository */
-        $repository = self::getContainer()->get(ProductModelInterface::class);
+            /** @var ProductModelInterface $repository */
+            $repository = self::getContainer()->get(ProductModelInterface::class);
 
-        $result = $repository
-            ->byProduct($product->getId())
-            ->find();
+            $result = $repository
+                ->byProduct($product->getId())
+                ->find();
+
+            if($result)
+            {
+                break;
+            }
+        }
 
         self::assertNotFalse($result, 'Не найдено ни одного продукта для тестирования');
         self::$result = $result;
