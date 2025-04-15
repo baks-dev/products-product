@@ -202,9 +202,8 @@ final class CurrentProductIdentifierByConstRepository implements CurrentProductI
             }
         }
 
-
         return $current
-            ->enableCache('products-product', 60)
+            ->enableCache('products-product', 5)
             ->fetchHydrate(CurrentProductIdentifierResult::class);
 
     }

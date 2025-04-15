@@ -257,14 +257,8 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
         }
 
         return $dbal
-            ->enableCache('products-product', 60)
+            ->enableCache('products-product', 5)
             ->fetchHydrate(CurrentProductIdentifierResult::class);
-
-        //        return $dbal
-        //            ->enableCache('products-product', 60)
-        //            ->fetchAssociative();
-
-
 
     }
 }
