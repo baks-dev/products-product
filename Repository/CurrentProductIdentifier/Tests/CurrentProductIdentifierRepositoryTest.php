@@ -90,6 +90,7 @@ class CurrentProductIdentifierRepositoryTest extends KernelTestCase
         $dbal->setMaxResults(1);
 
         self::$result = $dbal->fetchAssociative();
+        sleep(1);
 
 
         /**
@@ -97,6 +98,7 @@ class CurrentProductIdentifierRepositoryTest extends KernelTestCase
          * @var EntityManagerInterface $EntityManagerInterface
          */
         $EntityManagerInterface = self::getContainer()->get(EntityManagerInterface::class);
+        $EntityManagerInterface->clear();
         $ProductEvent = $EntityManagerInterface->getRepository(ProductEvent::class)->find(self::$result['event']);
 
 
