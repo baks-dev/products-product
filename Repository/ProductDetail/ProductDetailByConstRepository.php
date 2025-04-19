@@ -201,14 +201,6 @@ final class ProductDetailByConstRepository implements ProductDetailByConstInterf
                 'product_active.event = product.event'
             );
 
-        $dbal
-            ->addSelect('product_trans.name AS product_name')
-            ->leftJoin(
-                'product',
-                ProductTrans::class,
-                'product_trans',
-                'product_trans.event = product.event AND product_trans.local = :local'
-            );
 
         $dbal
             ->addSelect('product_desc.preview AS product_preview')
@@ -275,6 +267,24 @@ final class ProductDetailByConstRepository implements ProductDetailByConstInterf
             ->addSelect('product_offer.const as product_offer_const')
             ->addSelect('product_offer.value as product_offer_value')
             ->addSelect('product_offer.postfix as product_offer_postfix');
+
+        $dbal
+            ->addSelect('product_trans.name AS product_name')
+            ->leftJoin(
+                'product',
+                ProductTrans::class,
+                'product_trans',
+                'product_trans.event = product.event AND product_trans.local = :local'
+            );
+
+        /* Название продукта */
+
+        $dbal->addSelect('
+            COALESCE(
+                product_offer.name,
+                product_trans.name
+            ) AS product_name
+		');
 
 
         /* Получаем тип торгового предложения */

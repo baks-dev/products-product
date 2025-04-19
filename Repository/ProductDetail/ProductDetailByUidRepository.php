@@ -198,15 +198,6 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
                 'product_active.event = product_event.id'
             );
 
-        $dbal
-            ->addSelect('product_trans.name AS product_name')
-            ->leftJoin(
-                'product_event',
-                ProductTrans::class,
-                'product_trans',
-                'product_trans.event = product_event.id AND product_trans.local = :local'
-            );
-
 
         $dbal
             ->addSelect('product_desc.preview AS product_preview')
@@ -256,6 +247,24 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
         {
             $dbal->setParameter('product_offer', $this->offer, ProductOfferUid::TYPE);
         }
+
+        $dbal
+            ->leftJoin(
+                'product_event',
+                ProductTrans::class,
+                'product_trans',
+                'product_trans.event = product_event.id AND product_trans.local = :local'
+            );
+
+        /* Название продукта */
+
+        $dbal->addSelect('
+            COALESCE(
+                product_offer.name,
+                product_trans.name
+            ) AS product_name
+		');
+
 
         /* Цена торгового предоложения */
         $dbal->leftJoin(

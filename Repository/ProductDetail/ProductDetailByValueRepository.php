@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 declare(strict_types=1);
@@ -123,14 +122,7 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
                 'product_seo.event = product.event AND product_seo.local = :local'
             );
 
-        $dbal
-            ->addSelect('product_trans.name AS product_name')
-            ->leftJoin(
-                'product',
-                ProductTrans::class,
-                'product_trans',
-                'product_trans.event = product.event AND product_trans.local = :local'
-            );
+
 
         $dbal
             ->addSelect('product_desc.preview AS product_preview')
@@ -166,6 +158,25 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
                 ($offer ? ' AND product_offer.value = :product_offer_value' : '').
                 ($postfix ? ' AND ( product_offer.postfix = :postfix OR product_offer.postfix IS NULL )' : '')
             );
+
+
+        $dbal
+            ->leftJoin(
+                'product',
+                ProductTrans::class,
+                'product_trans',
+                'product_trans.event = product.event AND product_trans.local = :local'
+            );
+
+        /* Название продукта */
+
+        $dbal->addSelect('
+            COALESCE(
+                product_offer.name,
+                product_trans.name
+            ) AS product_name
+		');
+
 
         if($postfix)
         {
