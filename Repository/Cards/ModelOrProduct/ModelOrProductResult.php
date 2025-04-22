@@ -19,6 +19,7 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 declare(strict_types=1);
@@ -65,8 +66,11 @@ final readonly class ModelOrProductResult implements ModelsOrProductsCardResultI
         private ?string $category_name,
 
         private int|null $product_price,
+        private int|null $product_old_price,
         private string|null $product_currency,
         private int|null $product_quantity,
+
+        private string|null $category_section_field = null,
     ) {}
 
     public function getProductId(): ProductUid
@@ -198,6 +202,11 @@ final readonly class ModelOrProductResult implements ModelsOrProductsCardResultI
         return new Money($this->product_price, true);
     }
 
+    public function getProductOldPrice(): Money
+    {
+        return new Money($this->product_old_price, true);
+    }
+
     public function getProductCurrency(): Currency
     {
         return new Currency($this->product_currency);
@@ -208,10 +217,20 @@ final readonly class ModelOrProductResult implements ModelsOrProductsCardResultI
         return $this->product_quantity;
     }
 
-    /** Методы - заглушки */
-
-    public function getCategorySectionField(): bool
+    public function getCategorySectionField(): array|null
     {
-        return false;
+        if(is_null($this->category_section_field))
+        {
+            return null;
+        }
+
+        $category_section_field = json_decode($this->category_section_field, true, 512, JSON_THROW_ON_ERROR);
+
+        if(null === current($category_section_field))
+        {
+            return null;
+        }
+
+        return $category_section_field;
     }
 }

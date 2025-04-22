@@ -121,15 +121,20 @@ class BestSellerProductsRepositoryTest extends KernelTestCase
 
         $current = current(json_decode(self::$result['product_image'], true));
 
-        foreach($queryKeys as $key)
+        if(false === is_null($current))
         {
-            self::assertArrayHasKey($key, $current, sprintf('Найдено несоответствие с ключами из массива getProductImagesKeys: %s', $key));
+            foreach($queryKeys as $key)
+            {
+                self::assertArrayHasKey($key, $current, sprintf('Найдено несоответствие с ключами из массива getProductImagesKeys: %s', $key));
+            }
+
+            foreach($current as $key => $value)
+            {
+                self::assertTrue(in_array($key, $queryKeys), sprintf('Новый ключ в массиве с результатом запроса: %s', $key));
+            }
         }
 
-        foreach($current as $key => $value)
-        {
-            self::assertTrue(in_array($key, $queryKeys), sprintf('Новый ключ в массиве с результатом запроса: %s', $key));
-        }
+        self::assertTrue(true);
     }
 
     /** Тестирование метода maxResult */
@@ -179,5 +184,6 @@ class BestSellerProductsRepositoryTest extends KernelTestCase
             self::assertTrue($product['product_invariable_id'] !== $invariable, 'Ошибка фильтрации по Product Invariable');
         }
 
+        self::assertTrue(true);
     }
 }

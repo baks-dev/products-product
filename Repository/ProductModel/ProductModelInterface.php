@@ -39,6 +39,5 @@ interface ProductModelInterface
     public function byVariation(string|null $variation): self;
 
     /** Информация о модели со списком offer, variation, modification */
-    public function find(): array|false;
-
+    public function find(): ProductModelResult|false;
 }

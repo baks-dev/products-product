@@ -19,11 +19,12 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\Repository\ProductDetail;
+namespace BaksDev\Products\Product\Repository\ProductDetailByValue;
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Products\Category\Entity\CategoryProduct;
@@ -65,10 +66,111 @@ use BaksDev\Products\Product\Entity\Seo\ProductSeo;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
+use Deprecated;
 
-final readonly class ProductDetailByValueRepository implements ProductDetailByValueInterface
+/** @see ProductDetailByValueResult */
+final class ProductDetailByValueRepository implements ProductDetailByValueInterface
 {
-    public function __construct(private DBALQueryBuilder $DBALQueryBuilder) {}
+    private ProductUid|false $productUid = false;
+
+    private string|null|false $offer = false;
+
+    private string|null|false $variation = false;
+
+    private string|null|false $modification = false;
+
+    private string|null|false $postfix = false;
+
+    public function __construct(
+        private readonly DBALQueryBuilder $DBALQueryBuilder
+    ) {}
+
+    /** Фильтрация по продукту */
+    public function byProduct(Product|ProductUid|string $productUid): self
+    {
+        if(is_string($productUid))
+        {
+            $productUid = new ProductUid($productUid);
+        }
+
+        if($productUid instanceof Product)
+        {
+            $productUid = $productUid->getId();
+        }
+
+        $this->productUid = $productUid;
+
+        return $this;
+    }
+
+    /** Фильтрация по Offer */
+    public function byOfferValue(string|null $offer): self
+    {
+        if(is_null($offer))
+        {
+            $this->offer = false;
+            return $this;
+        }
+
+        $this->offer = $offer;
+        return $this;
+    }
+
+    /** Фильтрация по Variation */
+    public function byVariationValue(string|null $variation): self
+    {
+        if(is_null($variation))
+        {
+            $this->variation = false;
+            return $this;
+        }
+
+        $this->variation = $variation;
+        return $this;
+    }
+
+    /** Фильтрация по Modification */
+    public function byModificationValue(string|null $modification): self
+    {
+        if(is_null($modification))
+        {
+            $this->modification = false;
+            return $this;
+        }
+
+        $this->modification = $modification;
+        return $this;
+    }
+
+    /** Фильтрация по Postfix */
+    public function byPostfix(string|null $postfix): self
+    {
+        if(is_null($postfix))
+        {
+            $this->postfix = false;
+            return $this;
+        }
+
+        $this->postfix = $postfix;
+        return $this;
+    }
+
+    /** Метод возвращает детальную информацию о продукте и его заполненному значению ТП, вариантов и модификаций. */
+    public function find(): ProductDetailByValueResult|false
+    {
+        if(false === $this->productUid)
+        {
+            throw new \InvalidArgumentException('Не передан обязательный параметр запроса $productUid');
+        }
+
+        $builder = $this->builder();
+        $builder->allGroupByExclude(['product_modification_postfix']);
+
+        $builder->enableCache('products-product', 86400);
+        $result = $builder->fetchHydrate(ProductDetailByValueResult::class);
+
+        return ($result instanceof ProductDetailByValueResult) ? $result : false;
+    }
 
     /**
      * Метод возвращает детальную информацию о продукте и его заполненному значению ТП, вариантов и модификаций.
@@ -85,10 +187,26 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
         ?string $postfix = null,
     ): array|bool
     {
+        $this->productUid = $product;
+        $this->offer = $offer;
+        $this->variation = $variation;
+        $this->modification = $modification;
+        $this->postfix = $postfix;
 
-        if($postfix)
+        $builder = $this->builder();
+
+        $builder->allGroupByExclude(['product_modification_postfix']);
+        $builder->enableCache('products-product', 86400);
+
+        return $builder->fetchAssociative();
+    }
+
+    public function builder(): DBALQueryBuilder
+    {
+
+        if($this->postfix)
         {
-            $postfix = str_replace('-', '/', $postfix);
+            $this->postfix = str_replace('-', '/', $this->postfix);
         }
 
         $dbal = $this->DBALQueryBuilder
@@ -122,7 +240,14 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
                 'product_seo.event = product.event AND product_seo.local = :local'
             );
 
-
+        $dbal
+            ->addSelect('product_trans.name AS product_name')
+            ->leftJoin(
+                'product',
+                ProductTrans::class,
+                'product_trans',
+                'product_trans.event = product.event AND product_trans.local = :local'
+            );
 
         $dbal
             ->addSelect('product_desc.preview AS product_preview')
@@ -155,37 +280,18 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
                 ProductOffer::class,
                 'product_offer',
                 'product_offer.event = product.event '.
-                ($offer ? ' AND product_offer.value = :product_offer_value' : '').
-                ($postfix ? ' AND ( product_offer.postfix = :postfix OR product_offer.postfix IS NULL )' : '')
+                ($this->offer ? ' AND product_offer.value = :product_offer_value' : '').
+                ($this->postfix ? ' AND ( product_offer.postfix = :postfix OR product_offer.postfix IS NULL )' : '')
             );
 
-
-        $dbal
-            ->leftJoin(
-                'product',
-                ProductTrans::class,
-                'product_trans',
-                'product_trans.event = product.event AND product_trans.local = :local'
-            );
-
-        /* Название продукта */
-
-        $dbal->addSelect('
-            COALESCE(
-                product_offer.name,
-                product_trans.name
-            ) AS product_name
-		');
-
-
-        if($postfix)
+        if($this->postfix)
         {
-            $dbal->setParameter('postfix', $postfix);
+            $dbal->setParameter('postfix', $this->postfix);
         }
 
-        if($offer)
+        if($this->offer)
         {
-            $dbal->setParameter('product_offer_value', $offer);
+            $dbal->setParameter('product_offer_value', $this->offer);
         }
 
 
@@ -229,13 +335,13 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
                 ProductVariation::class,
                 'product_variation',
                 'product_variation.offer = product_offer.id'.
-                ($variation ? ' AND product_variation.value = :product_variation_value' : '').
-                ($postfix ? ' AND ( product_variation.postfix = :postfix OR product_variation.postfix IS NULL )' : '')
+                ($this->variation ? ' AND product_variation.value = :product_variation_value' : '').
+                ($this->postfix ? ' AND ( product_variation.postfix = :postfix OR product_variation.postfix IS NULL )' : '')
             );
 
-        if($variation)
+        if($this->variation)
         {
-            $dbal->setParameter('product_variation_value', $variation);
+            $dbal->setParameter('product_variation_value', $this->variation);
         }
 
         /** Получаем тип множественного варианта */
@@ -278,13 +384,13 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
                 ProductModification::class,
                 'product_modification',
                 'product_modification.variation = product_variation.id'.
-                ($modification ? ' AND product_modification.value = :product_modification_value' : '').
-                ($postfix ? ' AND ( product_modification.postfix = :postfix OR product_modification.postfix IS NULL )' : '')
+                ($this->modification ? ' AND product_modification.value = :product_modification_value' : '').
+                ($this->postfix ? ' AND ( product_modification.postfix = :postfix OR product_modification.postfix IS NULL )' : '')
             );
 
-        if($modification)
+        if($this->modification)
         {
-            $dbal->setParameter('product_modification_value', $modification);
+            $dbal->setParameter('product_modification_value', $this->modification);
         }
 
         /** Получаем тип модификации множественного варианта */
@@ -535,11 +641,11 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
         $dbal
             ->addSelect('category.id AS category_id')
             ->join(
-            'product_event_category',
-            CategoryProduct::class,
-            'category',
-            'category.id = product_event_category.category'
-        );
+                'product_event_category',
+                CategoryProduct::class,
+                'category',
+                'category.id = product_event_category.category'
+            );
 
         $dbal
             ->addSelect('category_trans.name AS category_name')
@@ -667,23 +773,21 @@ final readonly class ProductDetailByValueRepository implements ProductDetailByVa
             ');
 
         $dbal->where('product.id = :product');
-        $dbal->setParameter('product', $product, ProductUid::TYPE);
+        $dbal->setParameter('product', $this->productUid, ProductUid::TYPE);
 
-        $dbal->allGroupByExclude(['product_modification_postfix']);
-
-        return $dbal
-            ->enableCache('products-product', 86400)
-            ->fetchAssociative();
+        return $dbal;
     }
 
     /**
      * @param ?string $offer - значение торгового предложения
      * @param ?string $variation - значение множественного варианта ТП
      * @param ?string $modification - значение модификации множественного варианта ТП
-     *@deprecated
+     *
      * Метод возвращает детальную информацию о продукте и его заполненному значению ТП, вариантов и модификаций.
+     * @deprecated
      *
      */
+    #[\Deprecated]
     public function fetchProductEventAssociative(
         ProductEventUid $event,
         ?string $offer = null,

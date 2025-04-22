@@ -77,6 +77,8 @@ interface ModelsOrProductsCardResultInterface
 
     public function getProductPrice(): Money|bool;
 
+    public function getProductOldPrice(): Money|bool;
+
     public function getProductCurrency(): Currency|bool;
 
     public function getCategorySectionField(): array|null|bool;

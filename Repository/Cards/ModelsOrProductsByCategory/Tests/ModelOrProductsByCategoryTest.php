@@ -52,6 +52,8 @@ class ModelOrProductsByCategoryTest extends KernelTestCase
             //            ->analyze()
             ->findAllWithPaginator('AND');
 
+        //        dd($result->getData());
+
         self::assertTrue(true);
     }
 

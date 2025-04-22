@@ -57,6 +57,7 @@ final readonly class ProductCatalogResult implements ProductCardResultInterface
         private string|null $product_modification_postfix,
         private string|null $product_modification_reference,
         private string|null $product_article,
+        private string|null $active_from,
         private string|null $product_images,
         private int|null $product_price,
         private int|null $product_old_price,
@@ -226,6 +227,11 @@ final readonly class ProductCatalogResult implements ProductCardResultInterface
         return new ProductInvariableUid($this->product_invariable_id);
     }
 
+    public function getProductActiveFrom(): string|null
+    {
+        return $this->active_from;
+    }
+
     /** Методы - заглушки */
 
     public function getProductOfferConst(): bool
@@ -254,11 +260,6 @@ final readonly class ProductCatalogResult implements ProductCardResultInterface
     }
 
     public function getProductModificationName(): bool
-    {
-        return false;
-    }
-
-    public function getProductActiveFrom(): bool
     {
         return false;
     }

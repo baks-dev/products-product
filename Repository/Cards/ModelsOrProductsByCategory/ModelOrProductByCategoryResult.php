@@ -59,6 +59,7 @@ final readonly class ModelOrProductByCategoryResult implements ModelsOrProductsC
         private string $category_url,
         private string $category_name,
         private int|null $product_price,
+        private int|null $product_old_price,
         private string|null $product_currency,
         private string|null $category_section_field,
         private int|null $product_quantity,
@@ -191,6 +192,11 @@ final readonly class ModelOrProductByCategoryResult implements ModelsOrProductsC
     public function getProductPrice(): Money
     {
         return new Money($this->product_price, true);
+    }
+
+    public function getProductOldPrice(): Money
+    {
+        return new Money($this->product_old_price, true);
     }
 
     public function getProductCurrency(): Currency

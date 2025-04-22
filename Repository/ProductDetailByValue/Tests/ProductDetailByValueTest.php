@@ -24,9 +24,9 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\Repository\ProductDetail\Tests;
+namespace BaksDev\Products\Product\Repository\ProductDetailByValue\Tests;
 
-use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailByValueInterface;
+use BaksDev\Products\Product\Repository\ProductDetailByValue\ProductDetailByValueInterface;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
@@ -39,6 +39,26 @@ class ProductDetailByValueTest extends KernelTestCase
 {
     public function testUseCase(): void
     {
+
+        /** @var ProductDetailByValueInterface $repository */
+        $repository = self::getContainer()->get(ProductDetailByValueInterface::class);
+
+        $result = $repository
+            ->byProduct('01876b34-ed23-7c18-ba48-9071e8646a08')
+            ->byOfferValue('01876b34-eccb-7188-887f-0738cae05232')
+            ->byVariationValue('01876b34-ecce-7c46-9f63-fc184b6527ee')
+            ->byModificationValue('01876b34-ecd2-762c-9834-b6a914a020ba')
+            ->find();
+
+        //                dump($result);
+        //                dd();
+
+        self::assertTrue(true);
+    }
+
+    public function testFetchProductAssociative(): void
+    {
+
         self::assertTrue(true);
         return;
 
@@ -53,7 +73,7 @@ class ProductDetailByValueTest extends KernelTestCase
                 modification: '01876b34-ecd2-762c-9834-b6a914a020ba'
             );
 
-        dump($result);
-        dd();
+        //        dump($result);
+        //        dd();
     }
 }

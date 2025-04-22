@@ -19,6 +19,7 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 namespace BaksDev\Products\Product\Controller\User;
@@ -30,7 +31,8 @@ use BaksDev\Orders\Order\UseCase\User\Basket\Add\OrderProductDTO;
 use BaksDev\Orders\Order\UseCase\User\Basket\Add\OrderProductForm;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
 use BaksDev\Products\Product\Repository\Cards\ProductAlternative\ProductAlternativeInterface;
-use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailByValueInterface;
+use BaksDev\Products\Product\Repository\ProductDetailByValue\ProductDetailByValueInterface;
+use BaksDev\Products\Product\Repository\ProductDetailByValue\ProductDetailByValueResult;
 use BaksDev\Products\Product\Repository\ProductDetailOffer\ProductDetailOfferInterface;
 use DateTimeImmutable;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -58,13 +60,14 @@ final class DetailController extends AbstractController
         ?string $postfix = null,
     ): Response
     {
-        $productCard = $productDetail->fetchProductAssociative(
-            $info->getProduct(),
-            $offer,
-            $variation,
-            $modification,
-            $postfix
-        );
+        /** @var ProductDetailByValueResult|false $productCard */
+        $productCard = $productDetail
+            ->byProduct($info->getProduct())
+            ->byOfferValue($offer)
+            ->byVariationValue($variation)
+            ->byModificationValue($modification)
+            ->byPostfix($postfix)
+            ->find();
 
         /** Другие ТП данного продукта */
         $productOffer = $productDetailOffer->fetchProductOfferAssociative($info->getProduct());
@@ -74,8 +77,8 @@ final class DetailController extends AbstractController
         {
             $path['_controller'] = ModelController::class.'::model';
             $path['_route'] = 'products-product:user.model';
-            $path['category'] = $productCard['category_url'];
-            $path['url'] = $productCard['url'];
+            $path['category'] = $productCard->getCategoryUrl();
+            $path['url'] = $productCard->getProductUrl();
 
             $subRequest = $request->duplicate([], null, $path);
 
@@ -88,18 +91,18 @@ final class DetailController extends AbstractController
 
         if(
             !$productCard ||
-            ($offer !== null && $productCard['product_offer_value'] === null) ||
-            ($variation !== null && $productCard['product_variation_value'] === null) ||
-            ($modification !== null && $productCard['product_modification_value'] === null) ||
-            $productCard['active'] === false ||
-            (!empty($productCard['active_from']) && new DateTimeImmutable($productCard['active_from']) > $NOW) ||
-            (!empty($productCard['active_to']) && new DateTimeImmutable($productCard['active_to']) < $NOW)
+            ($offer !== null && $productCard->getProductOfferValue() === null) ||
+            ($variation !== null && $productCard->getProductVariationValue() === null) ||
+            ($modification !== null && $productCard->getProductModificationValue() === null) ||
+            $productCard->isActiveProduct() === false ||
+            (!empty($productCard->getProductActiveFrom()) && new DateTimeImmutable($productCard->getProductActiveFrom()) > $NOW) ||
+            (!empty($productCard->getProductActiveTo()) && new DateTimeImmutable($productCard->getProductActiveTo()) < $NOW)
         )
         {
             $path['_controller'] = NotFoundController::class.'::notfound';
             $path['_route'] = 'products-product:user.notfound';
-            $path['category'] = $productCard['category_url'];
-            $path['url'] = $productCard['url'];
+            $path['category'] = $productCard->getCategoryUrl();
+            $path['url'] = $productCard->getProductUrl();
             $path['offer'] = $offer;
             $path['variation'] = $variation;
             $path['modification'] = $modification;
@@ -109,33 +112,30 @@ final class DetailController extends AbstractController
             return $httpKernel->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
         }
 
-
         /** Удаляем сессию фильтра каталога */
         $request->getSession()->set('catalog_filter', null);
 
         /** Список альтернатив  */
-        $alternativeProperty = json_decode($productCard['category_section_field'], false, 512, JSON_THROW_ON_ERROR);
+        $alternativeProperty = $productCard->getCategorySectionField();
 
-        /* получаем свойства, учавствующие в фильтре альтернатив */
+        /** Получаем свойства, участвующие в фильтре альтернатив */
         $alternativeField = array_filter($alternativeProperty, function($v) {
             return $v->field_alternative === true;
         }, ARRAY_FILTER_USE_BOTH);
 
-
         $alternative = null;
 
-        if(!empty($productCard['product_offer_value']))
+        if(!empty($productCard->getProductOfferValue()))
         {
             $alternative = $productAlternative
-                ->forOfferValue($productCard['product_offer_value'])
-                ->forVariationValue($productCard['product_variation_value'])
-                ->forModificationValue($productCard['product_modification_value'])
+                ->forOfferValue($productCard->getProductOfferValue())
+                ->forVariationValue($productCard->getProductVariationValue())
+                ->forModificationValue($productCard->getProductModificationValue())
                 ->byProperty($alternativeField)
                 ->toArray();
         }
 
-        /* Корзина */
-
+        /** Корзина */
         $form = null;
 
         if(class_exists(OrderProductDTO::class))
@@ -145,14 +145,15 @@ final class DetailController extends AbstractController
                 'action' => $this->generateUrl(
                     'orders-order:user.add',
                     [
-                        'product' => $productCard['event'],
-                        'offer' => $productCard['product_offer_uid'],
-                        'variation' => $productCard['product_variation_uid'],
-                        'modification' => $productCard['product_modification_uid'],
+                        'product' => $productCard->getProductEvent(),
+                        'offer' => $productCard->getProductOfferUid(),
+                        'variation' => $productCard->getProductVariationUid(),
+                        'modification' => $productCard->getProductModificationUid(),
                     ]
                 ),
             ]);
         }
+
 
         // Поиск по всему сайту
         $allSearch = new SearchDTO();
