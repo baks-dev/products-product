@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 declare(strict_types=1);
@@ -67,6 +66,7 @@ use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use Deprecated;
+use InvalidArgumentException;
 
 /** @see ProductDetailByValueResult */
 final class ProductDetailByValueRepository implements ProductDetailByValueInterface
@@ -160,7 +160,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
     {
         if(false === $this->productUid)
         {
-            throw new \InvalidArgumentException('Не передан обязательный параметр запроса $productUid');
+            throw new InvalidArgumentException('Не передан обязательный параметр запроса $productUid');
         }
 
         $builder = $this->builder();
@@ -787,7 +787,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
      * @deprecated
      *
      */
-    #[\Deprecated]
+    #[Deprecated]
     public function fetchProductEventAssociative(
         ProductEventUid $event,
         ?string $offer = null,
@@ -813,15 +813,6 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 ProductActive::class,
                 'product_active',
                 'product_active.event = product.event'
-            );
-
-        $dbal
-            ->addSelect('product_trans.name AS product_name')
-            ->leftJoin(
-                'product',
-                ProductTrans::class,
-                'product_trans',
-                'product_trans.event = product.event AND product_trans.local = :local'
             );
 
 
@@ -1015,6 +1006,22 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             'product_modification_quantity',
             'product_modification_quantity.modification = product_modification.id'
         );
+
+
+        $dbal
+            ->leftJoin(
+                'product',
+                ProductTrans::class,
+                'product_trans',
+                'product_trans.event = product.event AND product_trans.local = :local'
+            );
+
+        /** Название продукта */
+        $dbal->addSelect('
+            COALESCE(
+                product_offer.name,
+                product_trans.name
+            ) AS product_name');
 
         /** Артикул продукта */
         $dbal->addSelect('

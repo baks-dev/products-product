@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 declare(strict_types=1);
@@ -60,6 +59,7 @@ use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Entity\ProductInvariable;
 use BaksDev\Products\Product\Entity\Property\ProductProperty;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
+use Generator;
 use InvalidArgumentException;
 use stdClass;
 
@@ -124,8 +124,8 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
         return (false !== $result) ? iterator_to_array($result) : false;
     }
 
-    /** @return \Generator<int, ProductAlternativeResult>|false */
-    public function findAll(): \Generator|false
+    /** @return Generator<int, ProductAlternativeResult>|false */
+    public function findAll(): Generator|false
     {
         $dbal = $this->builder();
 
@@ -136,7 +136,10 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
         return (true === $result->valid()) ? $result : false;
     }
 
-    /** Метод возвращает альтернативные варианты продукции по значению value торговых предложений */
+    /**
+     * Метод возвращает альтернативные варианты продукции по значению value торговых предложений
+     * @deprecated Используйте метод findAll
+     */
     public function fetchAllAlternativeAssociative(
         string $offer,
         ?string $variation,

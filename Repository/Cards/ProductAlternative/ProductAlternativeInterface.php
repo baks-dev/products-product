@@ -19,10 +19,11 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 namespace BaksDev\Products\Product\Repository\Cards\ProductAlternative;
+
+use Generator;
 
 interface ProductAlternativeInterface
 {
@@ -39,10 +40,13 @@ interface ProductAlternativeInterface
     /** @return array<int, ProductAlternativeResult>|false */
     public function toArray(): array|false;
 
-    /** @return \Generator<int, ProductAlternativeResult>|false */
-    public function findAll(): \Generator|false;
+    /** @return Generator<int, ProductAlternativeResult>|false */
+    public function findAll(): Generator|false;
 
-    /** Метод возвращает альтернативные варианты продукции по значению value торговых предложений */
+    /**
+     * Метод возвращает альтернативные варианты продукции по значению value торговых предложений
+     * @deprecated Используйте метод findAll
+     */
     public function fetchAllAlternativeAssociative(
         string $offer,
         ?string $variation,
