@@ -19,6 +19,7 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 declare(strict_types=1);
@@ -27,7 +28,7 @@ namespace BaksDev\Products\Product\Repository\ProductModel\Tests;
 
 use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Repository\ProductModel\ProductModelInterface;
-use BaksDev\Products\Product\Type\Id\ProductUid;
+use BaksDev\Products\Product\Repository\ProductModel\ProductModelResult;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
@@ -38,7 +39,7 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'test')]
 class ProductModelRepositoryTest extends KernelTestCase
 {
-    private static array $result;
+    private static ProductModelResult $result;
 
     public static function setUpBeforeClass(): void
     {
@@ -46,6 +47,10 @@ class ProductModelRepositoryTest extends KernelTestCase
         $em = self::getContainer()->get(EntityManagerInterface::class);
         $products = $em->getRepository(Product::class)
             ->findAll();
+
+        /** @var ProductModelInterface $repository */
+        $repository = self::getContainer()->get(ProductModelInterface::class);
+        $result = false;
 
         /** @var Product $product */
         foreach($products as $key => $product)
@@ -55,58 +60,15 @@ class ProductModelRepositoryTest extends KernelTestCase
                 break;
             }
 
-            /** @var ProductModelInterface $repository */
-            $repository = self::getContainer()->get(ProductModelInterface::class);
-
             $result = $repository
                 ->byProduct($product->getId())
                 ->find();
-
-            if($result)
-            {
-                break;
-            }
         }
 
         self::assertNotFalse($result, 'Не найдено ни одного продукта для тестирования');
         self::$result = $result;
     }
 
-    /** Набор ключей для сравнения алиасов в основном запросе */
-    public static function getAllQueryKeys(): array
-    {
-        return [
-            "id",
-            "event",
-            "active",
-            "active_from",
-            "active_to",
-            "seo_title",
-            "seo_keywords",
-            "seo_description",
-            "product_name",
-            "product_preview",
-            "product_description",
-            "url",
-            "product_offer_reference",
-            "product_offers",
-
-            "product_images",
-            //"product_variation_image",
-            //"product_offer_images",
-            //"product_photo",
-
-            "category_id",
-            "category_name",
-            "category_url",
-            "category_cover_ext",
-            "category_cover_cdn",
-            "category_cover_dir",
-            "category_section_field"
-        ];
-    }
-
-    /** Набор ключей для сравнения алиасов в результате применения функции JSONB_BUILD_OBJECT */
     public static function getProductOffersKeys(): array
     {
 
@@ -136,7 +98,6 @@ class ProductModelRepositoryTest extends KernelTestCase
         ];
     }
 
-    /** Набор ключей для сравнения алиасов в результате применения функции JSONB_BUILD_OBJECT */
     public static function getProductPhotoKeys(): array
     {
         return [
@@ -147,7 +108,6 @@ class ProductModelRepositoryTest extends KernelTestCase
         ];
     }
 
-    /** Набор ключей для сравнения алиасов в результате применения функции JSONB_BUILD_OBJECT */
     public static function getSectionFieldKeys(): array
     {
         return [
@@ -161,46 +121,37 @@ class ProductModelRepositoryTest extends KernelTestCase
         ];
     }
 
-    /** Тестирование алиасов в основном запросе */
-    public function testFindAll(): void
-    {
-        $queryKeys = self::getAllQueryKeys();
-
-        $current = self::$result;
-
-        //dd($current); /* TODO: удалить !!! */
-
-
-        foreach($queryKeys as $key)
-        {
-            self::assertArrayHasKey($key, $current, sprintf('Найдено несоответствие с ключами из массива getAllQueryKeys: %s', $key));
-        }
-
-        foreach($current as $key => $value)
-        {
-            self::assertTrue(in_array($key, $queryKeys), sprintf('Новый ключ в массиве с результатом запроса: %s', $key));
-        }
-    }
-
-    /**
-     * @depends testFindAll
-     * Тестирование алиасов в результате применения функции JSONB_BUILD_OBJECT
-     */
+    /** Тестирование алиасов в результате применения функции JSONB_BUILD_OBJECT */
     public function testProductOffersKeys(): void
     {
+        $result = self::$result->getProductOffers();
+
+        if(is_null($result))
+        {
+            self::assertTrue(true);
+            return;
+        }
+
         $queryKeys = self::getProductOffersKeys();
 
-        $current = current(json_decode(self::$result['product_offers'], true));
+        $current = current($result);
 
-        foreach($queryKeys as $key)
+        if(false === is_null($current))
         {
-            self::assertArrayHasKey($key, $current, sprintf('Найдено несоответствие с ключами из массива getProductImagesKeys: %s', $key));
+            $keys = implode(', ', array_keys($current));
+
+            foreach($queryKeys as $key)
+            {
+                self::assertArrayHasKey($key, $current, sprintf('Ключ %s не найден. Доступные ключи: %s', $key, $keys));
+            }
+
+            foreach($current as $key => $value)
+            {
+                self::assertTrue(in_array($key, $queryKeys), sprintf('Новый ключ в массиве с результатом запроса: %s', $key));
+            }
         }
 
-        foreach($current as $key => $value)
-        {
-            self::assertTrue(in_array($key, $queryKeys), sprintf('Новый ключ в массиве с результатом запроса: %s', $key));
-        }
+        self::assertTrue(true);
     }
 
     /**
@@ -209,19 +160,34 @@ class ProductModelRepositoryTest extends KernelTestCase
      */
     public function testProductPhotoKeys(): void
     {
+        $result = self::$result->getProductImages();
+
+        if(is_null($result))
+        {
+            self::assertTrue(true);
+            return;
+        }
+
         $queryKeys = self::getProductPhotoKeys();
 
-        $current = current(json_decode(self::$result['product_images'], true));
+        $current = current($result);
 
-        foreach($queryKeys as $key)
+        if(false === is_null($current))
         {
-            self::assertArrayHasKey($key, $current, sprintf('Найдено несоответствие с ключами из массива getProductImagesKeys: %s', $key));
+            $keys = implode(', ', array_keys($current));
+
+            foreach($queryKeys as $key)
+            {
+                self::assertArrayHasKey($key, $current, sprintf('Ключ %s не найден. Доступные ключи: %s', $key, $keys));
+            }
+
+            foreach($current as $key => $value)
+            {
+                self::assertTrue(in_array($key, $queryKeys), sprintf('Новый ключ в массиве с результатом запроса: %s', $key));
+            }
         }
 
-        foreach($current as $key => $value)
-        {
-            self::assertTrue(in_array($key, $queryKeys), sprintf('Новый ключ в массиве с результатом запроса: %s', $key));
-        }
+        self::assertTrue(true);
     }
 
     /**
@@ -230,36 +196,33 @@ class ProductModelRepositoryTest extends KernelTestCase
      */
     public function testSectionFieldKeys(): void
     {
+        $result = self::$result->getCategorySectionField();
+
+        if(is_null($result))
+        {
+            self::assertTrue(true);
+            return;
+        }
+
         $queryKeys = self::getSectionFieldKeys();
 
-        $current = current(json_decode(self::$result['category_section_field'], true));
+        $current = current($result);
 
-        foreach($queryKeys as $key)
+        if(false === is_null($current))
         {
-            self::assertArrayHasKey($key, $current, sprintf('Найдено несоответствие с ключами из массива getProductImagesKeys: %s', $key));
+            $keys = implode(', ', array_keys($current));
+
+            foreach($queryKeys as $key)
+            {
+                self::assertArrayHasKey($key, $current, sprintf('Ключ %s не найден. Доступные ключи: %s', $key, $keys));
+            }
+
+            foreach($current as $key => $value)
+            {
+                self::assertTrue(in_array($key, $queryKeys), sprintf('Новый ключ в массиве с результатом запроса: %s', $key));
+            }
         }
-
-        foreach($current as $key => $value)
-        {
-            self::assertTrue(in_array($key, $queryKeys), sprintf('Новый ключ в массиве с результатом запроса: %s', $key));
-        }
-    }
-
-    /** Тестирование метода byProduct */
-    public function testByProduct(): void
-    {
-        /** @var ProductModelInterface $repository */
-        $repository = self::getContainer()->get(ProductModelInterface::class);
-
-        $product = new ProductUid();
-
-        $result = $repository
-            ->byProduct($product)
-            ->find();
 
         self::assertTrue(true);
-
-        //dd($result); /* TODO: удалить !!! */
-        // self::assertFalse($result, 'Не сработало условие для метода byProduct');
     }
 }

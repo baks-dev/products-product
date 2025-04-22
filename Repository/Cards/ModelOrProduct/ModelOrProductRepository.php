@@ -32,6 +32,9 @@ use BaksDev\Products\Category\Entity\Info\CategoryProductInfo;
 use BaksDev\Products\Category\Entity\Offers\CategoryProductOffers;
 use BaksDev\Products\Category\Entity\Offers\Variation\CategoryProductVariation;
 use BaksDev\Products\Category\Entity\Offers\Variation\Modification\CategoryProductModification;
+use BaksDev\Products\Category\Entity\Section\CategoryProductSection;
+use BaksDev\Products\Category\Entity\Section\Field\CategoryProductSectionField;
+use BaksDev\Products\Category\Entity\Section\Field\Trans\CategoryProductSectionFieldTrans;
 use BaksDev\Products\Category\Entity\Trans\CategoryProductTrans;
 use BaksDev\Products\Product\Entity\Active\ProductActive;
 use BaksDev\Products\Product\Entity\Category\ProductCategory;
@@ -53,11 +56,14 @@ use BaksDev\Products\Product\Entity\Photo\ProductPhoto;
 use BaksDev\Products\Product\Entity\Price\ProductPrice;
 use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Entity\ProductInvariable;
+use BaksDev\Products\Product\Entity\Property\ProductProperty;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 
 /** @see ModelOrProductResult */
 final class ModelOrProductRepository implements ModelOrProductInterface
 {
+    private bool $properties = false;
+
     private int|false $maxResult = false;
 
     public function __construct(
@@ -68,6 +74,13 @@ final class ModelOrProductRepository implements ModelOrProductInterface
     public function maxResult(int $max): self
     {
         $this->maxResult = $max;
+        return $this;
+    }
+
+    /** Добавляет в результат свойства продукта */
+    public function withProperties(): self
+    {
+        $this->properties = true;
         return $this;
     }
 
@@ -502,6 +515,64 @@ final class ModelOrProductRepository implements ModelOrProductInterface
                 'category_trans.event = category.event AND category_trans.local = :local'
             );
 
+        /** Свойства, участвующие в карточке */
+        if(true === $this->properties)
+        {
+            $dbal->leftJoin(
+                'category',
+                CategoryProductSection::class,
+                'category_section',
+                'category_section.event = category.event'
+            );
+
+            $dbal
+                ->leftJoin(
+                    'category_section',
+                    CategoryProductSectionField::class,
+                    'category_section_field',
+                    'category_section_field.section = category_section.id AND
+                          (
+                            category_section_field.card = TRUE OR
+                            category_section_field.photo = TRUE OR
+                            category_section_field.name = TRUE
+                          )
+                      '
+                );
+
+            $dbal->leftJoin(
+                'category_section_field',
+                CategoryProductSectionFieldTrans::class,
+                'category_section_field_trans',
+                'category_section_field_trans.field = category_section_field.id AND category_section_field_trans.local = :local'
+            );
+
+            $dbal->leftJoin(
+                'category_section_field',
+                ProductProperty::class,
+                'product_property',
+                'product_property.event = product.event AND product_property.field = category_section_field.const'
+            );
+
+            /** Агрегация свойств для карточки */
+            $dbal->addSelect(
+                "JSON_AGG
+        		( DISTINCT
+
+        				JSONB_BUILD_OBJECT
+        				(
+        					'field_name', category_section_field.name,
+        					'field_card', category_section_field.card,
+        					'field_photo', category_section_field.photo,
+        					'field_type', category_section_field.type,
+        					'field_trans', category_section_field_trans.name,
+        					
+        					'field_value', product_property.value
+        				)
+        		)
+        			AS category_section_field"
+            );
+        }
+
         /** Минимальная стоимость */
         $dbal->addSelect('
             COALESCE(
@@ -510,6 +581,16 @@ final class ModelOrProductRepository implements ModelOrProductInterface
                 MIN(product_offer_price.price),
                 MIN(product_price.price)
             ) AS product_price
+		');
+
+        /** Старая цена */
+        $dbal->addSelect('
+            COALESCE(
+                MIN(product_modification_price.old),
+                MIN(product_variation_price.old),
+                MIN(product_offer_price.old),
+                MIN(product_price.old)
+            ) AS product_old_price
 		');
 
         /** Валюта */

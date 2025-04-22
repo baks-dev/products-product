@@ -22,13 +22,32 @@
  *
  */
 
-namespace BaksDev\Products\Product\Repository\ProductDetail;
+namespace BaksDev\Products\Product\Repository\ProductDetailByValue;
 
+use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 
 interface ProductDetailByValueInterface
 {
+    /** Фильтрация по продукту */
+    public function byProduct(Product|ProductUid|string $productUid): self;
+
+    /** Фильтрация по Offer */
+    public function byOfferValue(string|null $offer): self;
+
+    /** Фильтрация по Variation */
+    public function byVariationValue(string|null $variation): self;
+
+    /** Фильтрация по Modification */
+    public function byModificationValue(string|null $modification): self;
+
+    /** Фильтрация по Postfix */
+    public function byPostfix(string|null $postfix): self;
+
+    /** Метод возвращает детальную информацию о продукте и его заполненному значению ТП, вариантов и модификаций. */
+    public function find(): ProductDetailByValueResult|false;
+
     /**
      * Метод возвращает детальную информацию о продукте и его заполненному значению ТП, вариантов и модификаций.
      *
@@ -44,14 +63,15 @@ interface ProductDetailByValueInterface
         ?string $postfix = null,
     ): array|bool;
 
-
     /**
-     * Метод возвращает детальную информацию о продукте и его заполненному значению ТП, вариантов и модификаций.
-     *
      * @param ?string $offer - значение торгового предложения
      * @param ?string $variation - значение множественного варианта ТП
      * @param ?string $modification - значение модификации множественного варианта ТП
+     *@deprecated
+     * Метод возвращает детальную информацию о продукте и его заполненному значению ТП, вариантов и модификаций.
+     *
      */
+    #[\Deprecated]
     public function fetchProductEventAssociative(
         ProductEventUid $event,
         ?string $offer = null,

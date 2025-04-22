@@ -66,6 +66,7 @@ use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use InvalidArgumentException;
 
+/** @see ProductModelResult */
 final class ProductModelRepository implements ProductModelInterface
 {
     private string|false $offer = false;
@@ -123,7 +124,17 @@ final class ProductModelRepository implements ProductModelInterface
     }
 
     /** Информация о модели со списком offer, variation, modification */
-    public function find(): array|false
+    public function find(): ProductModelResult|false
+    {
+        $builder = $this->builder();
+
+        $builder->enableCache('products-product', 86400);
+        $result = $builder->fetchHydrate(ProductModelResult::class);
+
+        return ($result instanceof ProductModelResult) ? $result : false;
+    }
+
+    public function builder(): DBALQueryBuilder
     {
         if(false === $this->productUid)
         {
@@ -396,9 +407,9 @@ final class ProductModelRepository implements ProductModelInterface
         					JSONB_BUILD_OBJECT
         					(
 
-        						/* свойства для сортирвоки JSON */
+        						/* свойства для сортировки JSON */
         						'0', CONCAT(product_offer.value, product_variation.value, product_modification.value, product_modification_price.price),
-
+        						
         						'offer_uid', product_offer.id,
         						'offer_value', product_offer.value, /* значение торгового предложения */
         						'offer_postfix', product_offer.postfix, /* постфикс торгового предложения */
@@ -463,8 +474,20 @@ final class ProductModelRepository implements ProductModelInterface
         						END
         					)
         			)
+        			
+        			    /* Только с ценой */
+                        FILTER (WHERE 
+                                    CASE
+                                       WHEN product_modification_price.price IS NOT NULL AND product_modification_price.price > 0 THEN product_modification_price.price
+                                       WHEN product_variation_price.price IS NOT NULL AND product_variation_price.price > 0 THEN product_variation_price.price
+                                       WHEN product_offer_price.price IS NOT NULL AND product_offer_price.price > 0 THEN product_offer_price.price
+                                       WHEN product_price.price IS NOT NULL AND product_price.price > 0 THEN product_price.price
+                                    ELSE 0
+                                END > 0)
+                
         			AS product_offers"
         );
+
 
         /** Фото PRODUCT */
         $dbal
@@ -656,11 +679,11 @@ final class ProductModelRepository implements ProductModelInterface
         $dbal->where('product.id = :product');
         $dbal->setParameter('product', $this->productUid, ProductUid::TYPE);
 
-        $result = $dbal
-            ->enableCache('products-product', 86400)
-            ->fetchAssociative();
-
-        return empty($result) ? false : $result;
+        return $dbal;
     }
 
+    public function analyze(): void
+    {
+        $this->builder()->analyze();
+    }
 }

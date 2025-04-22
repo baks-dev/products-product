@@ -740,6 +740,17 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
             ) AS product_price
 		');
 
+        /** Старая цена */
+        $dbal->addSelect("
+			COALESCE(
+                NULLIF(MIN(product_modification_price.old), 0),
+                NULLIF(MIN(product_variation_price.old), 0),
+                NULLIF(MIN(product_offer_price.old), 0),
+                NULLIF(MIN(product_price.old), 0),
+                0
+            ) AS product_old_price
+		");
+
         /** Валюта */
         $dbal->addSelect('
             CASE

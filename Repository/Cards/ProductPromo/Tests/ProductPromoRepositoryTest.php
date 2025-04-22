@@ -47,6 +47,8 @@ class ProductPromoRepositoryTest extends KernelTestCase
             //            ->analyze()
             ->toArray();
 
+        //        dd($result);
+
         self::assertTrue(true);
     }
 }

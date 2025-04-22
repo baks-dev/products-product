@@ -300,7 +300,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
 
         /** Даты продукта */
         $dbal
-            //            ->addSelect('product_active.active_from')
+            ->addSelect('product_active.active_from')
             //            ->addSelect('product_active.active_to')
             ->join(
                 'product',

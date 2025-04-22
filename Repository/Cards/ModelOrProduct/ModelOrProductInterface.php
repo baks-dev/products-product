@@ -26,6 +26,9 @@ namespace BaksDev\Products\Product\Repository\Cards\ModelOrProduct;
 
 interface ModelOrProductInterface
 {
+    /** Добавляет в результат свойства продукта */
+    public function withProperties(): self;
+
     /** Максимальное количество записей в результате */
     public function maxResult(int $max): self;
 

@@ -144,6 +144,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
         ?array $property = null
     ): array|false
     {
+        $this->forOfferValue($offer);
         $this->forVariationValue($variation);
         $this->forModificationValue($modification);
         $this->byProperty($property);

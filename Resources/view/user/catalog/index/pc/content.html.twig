@@ -36,7 +36,7 @@
 
                                     {% if product %}
 
-                                        {{ include (_self|replace({ "content.html.twig" : "_includes/card.html.twig" }), { 'card': product }, with_context = false) }}
+                                        {{ include (_self|replace({ "content.html.twig" : "_includes/card.html.twig" }), { product }, with_context = false) }}
 
                                     {% endif %}
                                 </div>
