@@ -91,12 +91,12 @@ class ProductOffer extends EntityEvent
 
     /** Стоимость торгового предложения */
     #[Assert\Valid]
-    #[ORM\OneToOne(targetEntity: Price\ProductOfferPrice::class, mappedBy: 'offer', cascade: ['all'])]
+    #[ORM\OneToOne(targetEntity: Price\ProductOfferPrice::class, mappedBy: 'offer', cascade: ['all'], fetch: 'EAGER')]
     private ?Price\ProductOfferPrice $price = null;
 
     /** Количественный учет */
     #[Assert\Valid]
-    #[ORM\OneToOne(targetEntity: Quantity\ProductOfferQuantity::class, mappedBy: 'offer', cascade: ['all'])]
+    #[ORM\OneToOne(targetEntity: Quantity\ProductOfferQuantity::class, mappedBy: 'offer', cascade: ['all'], fetch: 'EAGER')]
     private ?Quantity\ProductOfferQuantity $quantity = null;
 
     /** Дополнительные фото торгового предложения */

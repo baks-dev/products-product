@@ -76,17 +76,17 @@ class ProductEvent extends EntityEvent
     /**
      * Информация о продукции
      */
-    #[ORM\OneToOne(targetEntity: ProductInfo::class, mappedBy: 'event', cascade: ['all'])]
+    #[ORM\OneToOne(targetEntity: ProductInfo::class, mappedBy: 'event', cascade: ['all'], fetch: 'EAGER')]
     private ?ProductInfo $info = null;
 
     /** Статусы активности продукта */
     #[Assert\Valid]
-    #[ORM\OneToOne(targetEntity: ProductActive::class, mappedBy: 'event', cascade: ['all'])]
+    #[ORM\OneToOne(targetEntity: ProductActive::class, mappedBy: 'event', cascade: ['all'], fetch: 'EAGER')]
     private ProductActive $active;
 
     /** Базовые Стоимость и наличие */
     #[Assert\Valid]
-    #[ORM\OneToOne(targetEntity: ProductPrice::class, mappedBy: 'event', cascade: ['all'])]
+    #[ORM\OneToOne(targetEntity: ProductPrice::class, mappedBy: 'event', cascade: ['all'], fetch: 'EAGER')]
     private ?ProductPrice $price = null;
 
     /** Модификатор */

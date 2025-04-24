@@ -85,11 +85,11 @@ class ProductVariation extends EntityEvent
     private ?string $postfix = null;
 
     /** Стоимость торгового предложения */
-    #[ORM\OneToOne(targetEntity: Price\ProductVariationPrice::class, mappedBy: 'variation', cascade: ['all'])]
+    #[ORM\OneToOne(targetEntity: Price\ProductVariationPrice::class, mappedBy: 'variation', cascade: ['all'], fetch: 'EAGER')]
     private ?Price\ProductVariationPrice $price = null;
 
     /** Количественный учет */
-    #[ORM\OneToOne(targetEntity: Quantity\ProductVariationQuantity::class, mappedBy: 'variation', cascade: ['all'])]
+    #[ORM\OneToOne(targetEntity: Quantity\ProductVariationQuantity::class, mappedBy: 'variation', cascade: ['all'], fetch: 'EAGER')]
     private ?Quantity\ProductVariationQuantity $quantity = null;
 
     /** Дополнительные фото торгового предложения */
