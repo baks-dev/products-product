@@ -139,6 +139,7 @@ final class ProductPromoRepository implements ProductPromoInterface
         }
 
         $dbal = $this->builder($expr);
+        $dbal->setMaxResults($this->maxResult);
 
         $dbal->enableCache('products-product', 86400);
 
