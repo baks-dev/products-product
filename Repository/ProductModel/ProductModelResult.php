@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 declare(strict_types=1);
@@ -126,7 +125,7 @@ final readonly class ProductModelResult
 
     public function getProductOffers(): ?array
     {
-        if(is_null($this->product_offers))
+        if(false === json_validate((string) $this->product_offers))
         {
             return null;
         }
@@ -143,6 +142,11 @@ final readonly class ProductModelResult
 
     public function getProductImages(): array|null
     {
+        if(false === json_validate((string) $this->product_images))
+        {
+            return null;
+        }
+
         $images = json_decode($this->product_images, true, 512, JSON_THROW_ON_ERROR);
 
         if(null === current($images))
@@ -190,6 +194,11 @@ final readonly class ProductModelResult
 
     public function getCategorySectionField(): array|null
     {
+        if(false === json_validate((string) $this->category_section_field))
+        {
+            return null;
+        }
+
         $sectionFields = json_decode($this->category_section_field, true, 512, JSON_THROW_ON_ERROR);
 
         if(null === current($sectionFields))
@@ -205,7 +214,7 @@ final readonly class ProductModelResult
     /** Минимальная цена из торговых предложений */
     public function getMinPrice(): ?Money
     {
-        if(is_null($this->product_offers))
+        if(false === json_validate((string) $this->product_offers))
         {
             return null;
         }
@@ -218,7 +227,7 @@ final readonly class ProductModelResult
         }
 
         // Сортировка по возрастанию цены
-        usort($offers, function($a, $b) {
+        usort($offers, static function($a, $b) {
             return $a->price <=> $b->price;
         });
 
@@ -230,7 +239,7 @@ final readonly class ProductModelResult
     /** Валюта из торговых предложений */
     public function getOfferCurrency(): ?string
     {
-        if(is_null($this->product_offers))
+        if(false === json_validate((string) $this->product_offers))
         {
             return null;
         }
@@ -243,7 +252,7 @@ final readonly class ProductModelResult
         }
 
         // Сортировка по возрастанию цены
-        usort($offers, function($a, $b) {
+        usort($offers, static function($a, $b) {
             return $a->price <=> $b->price;
         });
 
@@ -253,7 +262,7 @@ final readonly class ProductModelResult
     /** Торговые предложения только в наличии */
     public function getInStockOffers(): ?array
     {
-        if(is_null($this->product_offers))
+        if(false === json_validate((string) $this->product_offers))
         {
             return [];
         }
@@ -265,7 +274,7 @@ final readonly class ProductModelResult
             return null;
         }
 
-        $inStock = array_filter($offers, function(array $offer) {
+        $inStock = array_filter($offers, static function(array $offer) {
             return $offer['quantity'] !== 0;
         });
 
@@ -275,19 +284,19 @@ final readonly class ProductModelResult
     /** Торговые предложения не в наличии */
     public function getOutOfStockOffers(): ?array
     {
-        if(is_null($this->product_offers))
+        if(false === json_validate((string) $this->product_offers))
         {
             return [];
         }
 
         $offers = json_decode($this->product_offers, true, 512, JSON_THROW_ON_ERROR);
 
-        if(is_null(current($offers)))
+        if(empty(current($offers)))
         {
             return null;
         }
 
-        $outOfStock = array_filter($offers, function(array $offer) {
+        $outOfStock = array_filter($offers, static function(array $offer) {
             return $offer['quantity'] === 0;
         });
 
@@ -297,15 +306,20 @@ final readonly class ProductModelResult
     /** Изображения, отсортированные по флагу root */
     public function getProductImagesSortByRoot(): array|null
     {
+        if(false === json_validate((string) $this->product_images))
+        {
+            return null;
+        }
+
         $images = json_decode($this->product_images, null, 512, JSON_THROW_ON_ERROR);
 
-        if(null === current($images))
+        if(empty(current($images)))
         {
             return null;
         }
 
         // Сортировка массива элементов с изображениями по root = true
-        usort($images, function($f) {
+        usort($images, static function($f) {
             return $f->product_img_root === true ? -1 : 1;
         });
 
