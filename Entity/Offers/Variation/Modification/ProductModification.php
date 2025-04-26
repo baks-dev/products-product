@@ -96,7 +96,7 @@ class ProductModification extends EntityEvent
 
     /** Дополнительные фото модификации */
     #[Assert\Valid]
-    #[ORM\OneToMany(targetEntity: Image\ProductModificationImage::class, mappedBy: 'modification', cascade: ['all'])]
+    #[ORM\OneToMany(targetEntity: Image\ProductModificationImage::class, mappedBy: 'modification', cascade: ['all'], fetch: 'EAGER')]
     #[ORM\OrderBy(['root' => 'DESC'])]
     private Collection $image;
 

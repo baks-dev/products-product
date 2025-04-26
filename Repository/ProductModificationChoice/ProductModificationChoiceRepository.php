@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -143,9 +143,14 @@ final class ProductModificationChoiceRepository implements ProductModificationCh
 
         $qb->select($select);
 
-        $qb->from(ProductVariation::class, 'variation');
-        $qb->where('variation.id = :variation');
-        $qb->setParameter('variation', $variation, ProductVariationUid::TYPE);
+        $qb
+            ->from(ProductVariation::class, 'variation')
+            ->where('variation.id = :variation')
+            ->setParameter(
+                key: 'variation',
+                value: $variation,
+                type: ProductVariationUid::TYPE
+            );
 
         $qb->join(
             ProductOffer::class,
@@ -185,9 +190,7 @@ final class ProductModificationChoiceRepository implements ProductModificationCh
             'trans.modification = category_modification.id AND trans.local = :local'
         );
 
-        /* Кешируем результат ORM */
-        return $qb->enableCache('products-product', 86400)->getResult();
-
+        return $qb->getResult();
     }
 
     /**
@@ -204,11 +207,14 @@ final class ProductModificationChoiceRepository implements ProductModificationCh
             ->createQueryBuilder(self::class)
             ->bindLocal();
 
-
         $dbal
             ->from(ProductVariation::class, 'variation')
             ->where('variation.id = :variation')
-            ->setParameter('variation', $variation, ProductVariationUid::TYPE);
+            ->setParameter(
+                key: 'variation',
+                value: $variation,
+                type: ProductVariationUid::TYPE
+            );
 
         $dbal->join(
             'variation',

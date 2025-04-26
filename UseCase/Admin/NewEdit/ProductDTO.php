@@ -111,6 +111,14 @@ final class ProductDTO implements ProductEventInterface
         return $this->id;
     }
 
+    public function copy(): self
+    {
+        $this->id = null;
+        $this->info->setArticle(null);
+        $this->offer = new ArrayCollection();
+
+        return $this;
+    }
 
     public function setId(ProductEventUid $id): void
     {

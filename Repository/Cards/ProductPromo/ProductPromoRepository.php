@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 declare(strict_types=1);
@@ -61,6 +60,7 @@ use BaksDev\Products\Product\Entity\ProductInvariable;
 use BaksDev\Products\Product\Entity\Property\ProductProperty;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Forms\ProductCategoryFilter\User\ProductCategoryFilterDTO;
+use Generator;
 use InvalidArgumentException;
 
 /** @see ProductPromoResult */
@@ -131,7 +131,7 @@ final class ProductPromoRepository implements ProductPromoInterface
     /**
      * Метод возвращает продукты по условию - старая цена продукта больше текущей цены
      */
-    public function findAll(string $expr = 'AND'): \Generator|false
+    public function findAll(string $expr = 'AND'): Generator|false
     {
         if(false == $this->maxResult)
         {
@@ -140,7 +140,9 @@ final class ProductPromoRepository implements ProductPromoInterface
 
         $dbal = $this->builder($expr);
 
-        $dbal->enableCache('products-product', 86400);
+        $dbal->setMaxResults($this->maxResult);
+
+        $dbal->enableCache('products-product', '1 day');
 
         $result = $dbal->fetchAllHydrate(ProductPromoResult::class);
 

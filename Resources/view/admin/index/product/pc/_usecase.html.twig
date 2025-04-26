@@ -37,10 +37,18 @@ value="{{ item.event }}">
         {% if  is_granted(ROLE~'_EDIT') or is_granted('ROLE_ADMIN') %}
 
             <li class="list-group-item d-flex justify-content-between bg-transparent border-0 text-truncate rounded-5">
-                <a href="{{ path('products-product:admin.newedit.edit', {id: item.event }) }}"
+                <a href="{{ path('products-product:admin.newedit.edit', { id: item.event }) }}"
                    class="text-decoration-none text-dark w-100"
                    title="{{ 'btn.edit'|trans({}, 'core.btn') }}">
                     {{ 'btn.edit'|trans({}, 'core.btn') }}
+                </a>
+            </li>
+
+            <li class="list-group-item d-flex justify-content-between bg-transparent border-0 text-truncate rounded-5">
+                <a href="{{ path('products-product:admin.newedit.edit', { id: item.event, copy: true }) }}"
+                   class="text-decoration-none text-dark w-100"
+                   title="{{ 'btn.copy'|trans({}, 'core.btn') }}">
+                    {{ 'btn.copy'|trans({}, 'core.btn') }}
                 </a>
             </li>
 

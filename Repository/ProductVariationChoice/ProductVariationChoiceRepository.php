@@ -27,8 +27,6 @@ namespace BaksDev\Products\Product\Repository\ProductVariationChoice;
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Core\Doctrine\ORMQueryBuilder;
-use BaksDev\Products\Category\Entity\Offers\CategoryProductOffers;
-use BaksDev\Products\Category\Entity\Offers\Trans\CategoryProductOffersTrans;
 use BaksDev\Products\Category\Entity\Offers\Variation\CategoryProductVariation;
 use BaksDev\Products\Category\Entity\Offers\Variation\Trans\CategoryProductVariationTrans;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
@@ -140,7 +138,14 @@ final class ProductVariationChoiceRepository implements ProductVariationChoiceIn
 
         $qb->select($select);
 
-        $qb->from(ProductOffer::class, 'offer');
+        $qb
+            ->from(ProductOffer::class, 'offer')
+            ->where('offer.id = :offer')
+            ->setParameter(
+                key: 'offer',
+                value: $offer,
+                type: ProductOfferUid::TYPE
+            );
 
 
         $qb->join(
@@ -174,12 +179,8 @@ final class ProductVariationChoiceRepository implements ProductVariationChoiceIn
             'trans.variation = category_variation.id AND trans.local = :local'
         );
 
-        $qb->where('offer.id = :offer');
-
-        $qb->setParameter('offer', $offer, ProductOfferUid::TYPE);
-
         /* Кешируем результат ORM */
-        return $qb->enableCache('products-product', 86400)->getResult();
+        return $qb->getResult();
 
     }
 
@@ -201,7 +202,11 @@ final class ProductVariationChoiceRepository implements ProductVariationChoiceIn
         $dbal
             ->from(ProductOffer::class, 'product_offer')
             ->where('product_offer.id = :offer')
-            ->setParameter('offer', $offer, ProductOfferUid::TYPE);
+            ->setParameter(
+                key: 'offer',
+                value: $offer,
+                type: ProductOfferUid::TYPE
+            );
 
         $dbal->join(
             'product_offer',

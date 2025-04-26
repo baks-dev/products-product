@@ -101,14 +101,14 @@ class ProductOffer extends EntityEvent
 
     /** Дополнительные фото торгового предложения */
     #[Assert\Valid]
-    #[ORM\OneToMany(targetEntity: Image\ProductOfferImage::class, mappedBy: 'offer', cascade: ['all'])]
+    #[ORM\OneToMany(targetEntity: Image\ProductOfferImage::class, mappedBy: 'offer', cascade: ['all'], fetch: 'EAGER')]
     #[ORM\OrderBy(['root' => 'DESC'])]
     private Collection $image;
 
     /** Коллекция вариаций в торговом предложении  */
     #[Assert\Valid]
     #[ORM\OrderBy(['value' => 'ASC'])]
-    #[ORM\OneToMany(targetEntity: Variation\ProductVariation::class, mappedBy: 'offer', cascade: ['all'])]
+    #[ORM\OneToMany(targetEntity: Variation\ProductVariation::class, mappedBy: 'offer', cascade: ['all'], fetch: 'EAGER')]
     private Collection $variation;
 
     public function __construct(ProductEvent $event)

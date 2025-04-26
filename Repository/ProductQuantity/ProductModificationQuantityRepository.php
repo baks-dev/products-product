@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -52,11 +52,14 @@ final class ProductModificationQuantityRepository implements ProductModification
     {
         $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
 
-
         $qb
             ->from(Product::class, 'product')
             ->where('product.id = :product')
-            ->setParameter('product', $product, ProductUid::TYPE);
+            ->setParameter(
+                key: 'product',
+                value: $product,
+                type: ProductUid::TYPE
+            );
 
         $qb->join(
             ProductEvent::class,
@@ -75,9 +78,9 @@ final class ProductModificationQuantityRepository implements ProductModification
                 'offer.event = event.id AND offer.const = :offer_const'
             )
             ->setParameter(
-                'offer_const',
-                $offer,
-                ProductOfferConst::TYPE
+                key: 'offer_const',
+                value: $offer,
+                type: ProductOfferConst::TYPE
             );
 
         // Множественный вариант
@@ -90,9 +93,9 @@ final class ProductModificationQuantityRepository implements ProductModification
                 'variation.offer = offer.id AND variation.const = :variation_const'
             )
             ->setParameter(
-                'variation_const',
-                $variation,
-                ProductVariationConst::TYPE
+                key: 'variation_const',
+                value: $variation,
+                type: ProductVariationConst::TYPE
             );
 
         // Модификация множественного варианта
@@ -105,9 +108,9 @@ final class ProductModificationQuantityRepository implements ProductModification
                 'modification.variation = variation.id AND modification.const = :modification_const'
             )
             ->setParameter(
-                'modification_const',
-                $modification,
-                ProductModificationConst::TYPE
+                key: 'modification_const',
+                value: $modification,
+                type: ProductModificationConst::TYPE
             );
 
         $qb

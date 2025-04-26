@@ -100,9 +100,9 @@ final class ProductEventByArticleRepository implements ProductEventByArticleInte
             $orm
                 ->andWhere('info.profile = :profile')
                 ->setParameter(
-                    'profile',
-                    $this->profile,
-                    UserProfileUid::TYPE
+                    key: 'profile',
+                    value: $this->profile,
+                    type: UserProfileUid::TYPE
                 );
         }
 
@@ -112,7 +112,10 @@ final class ProductEventByArticleRepository implements ProductEventByArticleInte
             'WITH',
             'product.id = info.product'
         )
-            ->setParameter('article', $article);
+            ->setParameter(
+                key: 'article',
+                value: $article
+            );
 
         $orm
             ->select('event')
@@ -213,7 +216,6 @@ final class ProductEventByArticleRepository implements ProductEventByArticleInte
 
         $orm = $this->ORMQueryBuilder->createQueryBuilder(self::class);
 
-
         $orm
             ->from(ProductModification::class, 'modification')
             ->where('modification.article = :article')
@@ -239,7 +241,7 @@ final class ProductEventByArticleRepository implements ProductEventByArticleInte
 
 
         /** @var ProductEvent $ProductEvent */
-        $ProductEvent = $orm->getQuery()->getOneOrNullResult();
+        $ProductEvent = $orm->getOneOrNullResult();
 
         return $ProductEvent instanceof ProductEvent ? $ProductEvent : false;
     }

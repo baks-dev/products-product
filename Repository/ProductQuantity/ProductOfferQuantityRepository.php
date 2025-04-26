@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -33,7 +33,6 @@ use BaksDev\Products\Product\Entity\Offers\Quantity\ProductOfferQuantity;
 use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
-use Doctrine\ORM\EntityManagerInterface;
 
 final class ProductOfferQuantityRepository implements ProductOfferQuantityInterface
 {
@@ -50,7 +49,11 @@ final class ProductOfferQuantityRepository implements ProductOfferQuantityInterf
         $qb
             ->from(Product::class, 'product')
             ->where('product.id = :product')
-            ->setParameter('product', $product, ProductUid::TYPE);
+            ->setParameter(
+                key: 'product',
+                value: $product,
+                type: ProductUid::TYPE
+            );
 
         $qb->join(
             ProductEvent::class,
@@ -68,9 +71,9 @@ final class ProductOfferQuantityRepository implements ProductOfferQuantityInterf
             'offer.event = event.id AND offer.const = :offer_const'
         )
             ->setParameter(
-                'offer_const',
-                $offer,
-                ProductOfferConst::TYPE
+                key: 'offer_const',
+                value: $offer,
+                type: ProductOfferConst::TYPE
             );
 
 

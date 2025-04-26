@@ -70,7 +70,7 @@ class ProductEvent extends EntityEvent
 
     /** Категории */
     #[Assert\Valid]
-    #[ORM\OneToMany(targetEntity: ProductCategory::class, mappedBy: 'event', cascade: ['all'])]
+    #[ORM\OneToMany(targetEntity: ProductCategory::class, mappedBy: 'event', cascade: ['all'], fetch: 'EAGER')]
     private Collection $category;
 
     /**
@@ -90,55 +90,55 @@ class ProductEvent extends EntityEvent
     private ?ProductPrice $price = null;
 
     /** Модификатор */
-    #[ORM\OneToOne(targetEntity: ProductModify::class, mappedBy: 'event', cascade: ['all'])]
+    #[ORM\OneToOne(targetEntity: ProductModify::class, mappedBy: 'event', cascade: ['all'], fetch: 'EAGER')]
     private ProductModify $modify;
 
     /** Перевод */
     #[Assert\Valid]
-    #[ORM\OneToMany(targetEntity: ProductTrans::class, mappedBy: 'event', cascade: ['all'])]
+    #[ORM\OneToMany(targetEntity: ProductTrans::class, mappedBy: 'event', cascade: ['all'], fetch: 'EAGER')]
     private Collection $translate;
 
 
     /** Описание */
     #[Assert\Valid]
-    #[ORM\OneToMany(targetEntity: ProductDescription::class, mappedBy: 'event', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(targetEntity: ProductDescription::class, mappedBy: 'event', cascade: ['all'], fetch: 'EAGER')]
     private Collection $description;
 
     /** Фото продукта */
     #[Assert\Valid]
-    #[ORM\OneToMany(targetEntity: ProductPhoto::class, mappedBy: 'event', cascade: ['all'])]
+    #[ORM\OneToMany(targetEntity: ProductPhoto::class, mappedBy: 'event', cascade: ['all'], fetch: 'EAGER')]
     #[ORM\OrderBy(['root' => 'DESC'])]
     private Collection $photo;
 
     /** Файлы (документы) продукта */
     #[Assert\Valid]
-    #[ORM\OneToMany(targetEntity: ProductFiles::class, mappedBy: 'event', cascade: ['all'])]
+    #[ORM\OneToMany(targetEntity: ProductFiles::class, mappedBy: 'event', cascade: ['all'], fetch: 'EAGER')]
     private Collection $file;
 
     /** Видео */
     #[Assert\Valid]
-    #[ORM\OneToMany(targetEntity: ProductVideo::class, mappedBy: 'event', cascade: ['all'])]
+    #[ORM\OneToMany(targetEntity: ProductVideo::class, mappedBy: 'event', cascade: ['all'], fetch: 'EAGER')]
     private Collection $video;
 
     /**  Настройки SEO информации */
     #[Assert\Valid]
-    #[ORM\OneToMany(targetEntity: ProductSeo::class, mappedBy: 'event', cascade: ['all'])]
+    #[ORM\OneToMany(targetEntity: ProductSeo::class, mappedBy: 'event', cascade: ['all'], fetch: 'EAGER')]
     private Collection $seo;
 
     /** Тоговые предложения */
     #[Assert\Valid]
     #[ORM\OrderBy(['value' => 'ASC'])]
-    #[ORM\OneToMany(targetEntity: ProductOffer::class, mappedBy: 'event', cascade: ['all'])]
+    #[ORM\OneToMany(targetEntity: ProductOffer::class, mappedBy: 'event', cascade: ['all'], fetch: 'EAGER')]
     private Collection $offer;
 
     /** Свойства продукта */
     #[Assert\Valid]
-    #[ORM\OneToMany(targetEntity: ProductProperty::class, mappedBy: 'event', cascade: ['all'])]
+    #[ORM\OneToMany(targetEntity: ProductProperty::class, mappedBy: 'event', cascade: ['all'], fetch: 'EAGER')]
     private Collection $property;
 
     /** Сырье */
     #[Assert\Valid]
-    #[ORM\OneToMany(targetEntity: ProductMaterial::class, mappedBy: 'event', cascade: ['all'])]
+    #[ORM\OneToMany(targetEntity: ProductMaterial::class, mappedBy: 'event', cascade: ['all'], fetch: 'EAGER')]
     private Collection $material;
 
 

@@ -193,7 +193,7 @@ final class ProductChoiceRepository implements ProductChoiceInterface
 
 
         /* Кешируем результат ORM */
-        return $qb->enableCache('products-product', 86400)->getResult();
+        return $qb->getResult();
 
     }
 
@@ -231,9 +231,9 @@ final class ProductChoiceRepository implements ProductChoiceInterface
                 'category.event = product.event AND category.category = :category AND category.root = TRUE'
             )
                 ->setParameter(
-                    'category',
-                    $category,
-                    CategoryProductUid::TYPE
+                    key: 'category',
+                    value: $category,
+                    type: CategoryProductUid::TYPE
                 );
         }
 

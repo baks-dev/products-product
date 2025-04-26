@@ -50,9 +50,13 @@ final class EditController extends AbstractController
         ProductHandler $productHandler
     ): Response
     {
-
         $ProductDTO = new ProductDTO();
         $ProductDTO = $Event->getDto($ProductDTO);
+
+        if($request->get('copy'))
+        {
+            $ProductDTO->copy();
+        }
 
         // Если передана категория - присваиваем для подгрузки настроект (свойства, ТП)
         if($request->get('category'))
