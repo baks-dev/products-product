@@ -325,4 +325,10 @@ final readonly class ProductModelResult
 
         return $images;
     }
+
+    /** Для модели нет Invariable */
+    public function getProductInvariableId(): null
+    {
+        return null;
+    }
 }
