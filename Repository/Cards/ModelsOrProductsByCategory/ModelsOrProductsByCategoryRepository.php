@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 declare(strict_types=1);
@@ -800,13 +799,17 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                 ->setParameter('category', $this->category, CategoryProductUid::TYPE);
         }
 
+
         $dbal->allGroupByExclude();
+
+        /** Используем индекс сортировки для поднятия в топ списка */
         $dbal->addOrderBy('product_info.sort', 'DESC');
 
-        $dbal->addOrderBy('SUM(product_modification_quantity.quantity)', 'DESC');
-        $dbal->addOrderBy('SUM(product_variation_quantity.quantity)', 'DESC');
-        $dbal->addOrderBy('SUM(product_offer_quantity.quantity)', 'DESC');
-        $dbal->addOrderBy('SUM(product_price.quantity)', 'DESC');
+        /** Сортируем список по количеству резерва продукции, суммируем если группировка по иному свойству */
+        $dbal->addOrderBy('SUM(product_modification_quantity.reserve)', 'DESC');
+        $dbal->addOrderBy('SUM(product_variation_quantity.reserve)', 'DESC');
+        $dbal->addOrderBy('SUM(product_offer_quantity.reserve)', 'DESC');
+        $dbal->addOrderBy('SUM(product_price.reserve)', 'DESC');
 
         return $dbal;
     }

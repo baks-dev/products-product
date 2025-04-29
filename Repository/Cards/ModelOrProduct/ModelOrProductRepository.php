@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 declare(strict_types=1);
@@ -58,6 +57,7 @@ use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Entity\ProductInvariable;
 use BaksDev\Products\Product\Entity\Property\ProductProperty;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
+use Generator;
 
 /** @see ModelOrProductResult */
 final class ModelOrProductRepository implements ModelOrProductInterface
@@ -92,8 +92,8 @@ final class ModelOrProductRepository implements ModelOrProductInterface
         return (true === $result->valid()) ? iterator_to_array($result) : false;
     }
 
-    /** @return \Generator<int, ModelOrProductResult>|false */
-    public function findAll(): \Generator|false
+    /** @return Generator<int, ModelOrProductResult>|false */
+    public function findAll(): Generator|false
     {
         $dbal = $this->builder();
 
@@ -648,9 +648,17 @@ final class ModelOrProductRepository implements ModelOrProductInterface
             END > 0
         ");
 
+
         $dbal->allGroupByExclude();
 
+        /** Используем индекс сортировки для поднятия в топ списка */
         $dbal->addOrderBy('product_info.sort', 'DESC');
+
+        /** Сортируем список по количеству резерва продукции, суммируем если группировка по иному свойству */
+        $dbal->addOrderBy('SUM(product_modification_quantity.reserve)', 'DESC');
+        $dbal->addOrderBy('SUM(product_variation_quantity.reserve)', 'DESC');
+        $dbal->addOrderBy('SUM(product_offer_quantity.reserve)', 'DESC');
+        $dbal->addOrderBy('SUM(product_price.reserve)', 'DESC');
 
         if(false !== $this->maxResult)
         {
