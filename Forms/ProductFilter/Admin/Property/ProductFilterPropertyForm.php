@@ -56,19 +56,20 @@ final class ProductFilterPropertyForm extends AbstractType
                 if($input)
                 {
                     $data->setDomain($input->domain());
-                    $form = $input->form();
+
+                    $formField = $input->form();
                     $blockName = $data->getType();
 
                     /** Если тип свойства IntegerField - для фильтра применяем RangeIntegerFieldForm */
                     if($input->type() === IntegerField::TYPE)
                     {
-                        $form = RangeIntegerFieldForm::class;
+                        $formField = RangeIntegerFieldForm::class;
                         $blockName = 'range_'.IntegerField::TYPE;
                     }
 
                     $builder->add(
                         'value',
-                        $form,
+                        $formField,
                         [
                             'label' => $data->getLabel(),
                             'required' => false,

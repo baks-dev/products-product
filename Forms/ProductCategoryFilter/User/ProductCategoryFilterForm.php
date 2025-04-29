@@ -27,6 +27,8 @@ namespace BaksDev\Products\Product\Forms\ProductCategoryFilter\User;
 
 use BaksDev\Core\Services\Fields\FieldsChoice;
 use BaksDev\Core\Type\Field\InputField;
+use BaksDev\Field\Pack\Integer\Form\Range\RangeIntegerFieldForm;
+use BaksDev\Field\Pack\Integer\Type\IntegerField;
 use BaksDev\Products\Category\Repository\AllFilterFieldsByCategory\AllFilterFieldsByCategoryInterface;
 use BaksDev\Products\Category\Repository\ModificationFieldsCategoryChoice\ModificationFieldsCategoryChoiceInterface;
 use BaksDev\Products\Category\Repository\OfferFieldsCategoryChoice\OfferFieldsCategoryChoiceInterface;
@@ -302,15 +304,25 @@ final class ProductCategoryFilterForm extends AbstractType
 
                     if($input)
                     {
+                        $formField = $input->form();
+                        $blockName = $field['type'];
+
+                        /** Если тип свойства IntegerField - для фильтра применяем RangeIntegerFieldForm */
+                        if($input->type() === IntegerField::TYPE)
+                        {
+                            $formField = RangeIntegerFieldForm::class;
+                            $blockName = 'range_'.IntegerField::TYPE;
+                        }
+
                         $builder->add(
                             $field['const'],
-                            $input->form(),
+                            $formField,
                             [
                                 'label' => $field['name'],
                                 'mapped' => false,
                                 'priority' => $i,
                                 'required' => false,
-                                'block_name' => $field['type'],
+                                'block_name' => $blockName,
                                 'data' => $session[$field['type']] ?? null,
                             ]
                         );
