@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -27,6 +27,8 @@ namespace BaksDev\Products\Product\Forms\ProductFilter\Admin\Property;
 
 use BaksDev\Core\Services\Fields\FieldsChoice;
 use BaksDev\Core\Type\Field\InputField;
+use BaksDev\Field\Pack\Integer\Form\Range\RangeIntegerFieldForm;
+use BaksDev\Field\Pack\Integer\Type\IntegerField;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -54,14 +56,23 @@ final class ProductFilterPropertyForm extends AbstractType
                 if($input)
                 {
                     $data->setDomain($input->domain());
+                    $form = $input->form();
+                    $blockName = $data->getType();
+
+                    /** Если тип свойства IntegerField - для фильтра применяем RangeIntegerFieldForm */
+                    if($input->type() === IntegerField::TYPE)
+                    {
+                        $form = RangeIntegerFieldForm::class;
+                        $blockName = 'range_'.IntegerField::TYPE;
+                    }
 
                     $builder->add(
                         'value',
-                        $input->form(),
+                        $form,
                         [
                             'label' => $data->getLabel(),
                             'required' => false,
-                            'block_name' => $data->getType()
+                            'block_name' => $blockName
                         ]
                     );
                 }

@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 declare(strict_types=1);
@@ -27,6 +26,7 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Repository\Cards\ProductCatalog;
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
+use BaksDev\Field\Pack\Integer\Form\Range\RangeIntegerFieldDTO;
 use BaksDev\Products\Category\Entity\CategoryProduct;
 use BaksDev\Products\Category\Entity\Info\CategoryProductInfo;
 use BaksDev\Products\Category\Entity\Offers\CategoryProductOffers;
@@ -61,6 +61,7 @@ use BaksDev\Products\Product\Entity\ProductInvariable;
 use BaksDev\Products\Product\Entity\Property\ProductProperty;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Forms\ProductCategoryFilter\User\ProductCategoryFilterDTO;
+use Generator;
 
 /** @see ProductCatalogResult */
 final class ProductCatalogRepository implements ProductCatalogInterface
@@ -73,9 +74,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
 
     private ?array $property = null;
 
-    public function __construct(
-        private readonly DBALQueryBuilder $dbal
-    ) {}
+    public function __construct(private readonly DBALQueryBuilder $dbal) {}
 
     public function filter(ProductCategoryFilterDTO $filter): self
     {
@@ -123,9 +122,9 @@ final class ProductCatalogRepository implements ProductCatalogInterface
     /**
      * Метод возвращает ограниченный по количеству элементов список продуктов из разных категорий
      *
-     * @return \Generator<int, ProductCatalogResult>|false
+     * @return Generator<int, ProductCatalogResult>|false
      */
-    public function findAll(string $expr = 'AND'): \Generator|false
+    public function findAll(string $expr = 'AND'): Generator|false
     {
         $dbal = $this->builder($expr);
 
@@ -213,6 +212,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
         {
             if($expr === 'AND')
             {
+                /** @var RangeIntegerFieldDTO $item */
                 foreach($this->property as $type => $item)
                 {
                     if($item === true)
@@ -251,6 +251,55 @@ final class ProductCatalogRepository implements ProductCatalogInterface
                         $item = 'true';
                     }
 
+                    if(isset($item['min']) || isset($item['max']))
+                    {
+                        $RangeProductPropertyJoin = null;
+
+                        foreach($item as $key => $value)
+                        {
+                            if(empty($value))
+                            {
+                                continue;
+                            }
+
+                            $prepareValue = uniqid('', false);
+
+                            if($key === 'min')
+                            {
+                                $RangeProductPropertyJoin[] = 'product_property_filter.value >= '.$prepareValue;
+
+                            }
+
+                            if($key === 'max')
+                            {
+                                $RangeProductPropertyJoin[] = 'product_property_filter.value <= '.$prepareValue;
+
+                            }
+
+                            $dbal->setParameter($prepareValue, $value);
+                        }
+
+
+                        if($RangeProductPropertyJoin)
+                        {
+                            $prepareKey = uniqid('', false);
+
+                            $ProductCategorySectionFieldUid = new CategoryProductSectionFieldUid($type);
+
+                            $dbal->setParameter(
+                                $prepareKey,
+                                $ProductCategorySectionFieldUid,
+                                CategoryProductSectionFieldUid::TYPE
+                            );
+
+                            $ProductPropertyJoin[] = 'product_property_filter.field = :'.$prepareKey.' 
+                                AND ('.implode(' AND ', $RangeProductPropertyJoin).')';
+                        }
+
+                        continue;
+                    }
+
+
                     $prepareKey = uniqid('', false);
                     $prepareValue = uniqid('', false);
 
@@ -262,6 +311,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
                         $ProductCategorySectionFieldUid,
                         CategoryProductSectionFieldUid::TYPE
                     );
+
                     $dbal->setParameter($prepareValue, $item);
 
                 }
