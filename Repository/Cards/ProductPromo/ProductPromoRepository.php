@@ -718,12 +718,14 @@ final class ProductPromoRepository implements ProductPromoInterface
  		"
         );
 
+        /** Используем индекс сортировки для поднятия в топ списка */
+        $dbal->addOrderBy('product_info.sort', 'DESC');
+
+        /** Сортируем список по количеству резерва продукции, суммируем если группировка по иному свойству */
         $dbal->addOrderBy('product_modification_quantity.reserve', 'DESC');
         $dbal->addOrderBy('product_variation_quantity.reserve', 'DESC');
         $dbal->addOrderBy('product_offer_quantity.reserve', 'DESC');
         $dbal->addOrderBy('product_price.reserve', 'DESC');
-
-        $dbal->addOrderBy('product_info.sort', 'DESC');
 
         $dbal->allGroupByExclude();
 

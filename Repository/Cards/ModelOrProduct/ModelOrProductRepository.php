@@ -660,6 +660,11 @@ final class ModelOrProductRepository implements ModelOrProductInterface
         $dbal->addOrderBy('SUM(product_offer_quantity.reserve)', 'DESC');
         $dbal->addOrderBy('SUM(product_price.reserve)', 'DESC');
 
+        $dbal->addOrderBy('SUM(product_modification_quantity.quantity)', 'DESC');
+        $dbal->addOrderBy('SUM(product_variation_quantity.quantity)', 'DESC');
+        $dbal->addOrderBy('SUM(product_offer_quantity.quantity)', 'DESC');
+        $dbal->addOrderBy('SUM(product_price.quantity)', 'DESC');
+
         if(false !== $this->maxResult)
         {
             $dbal->setMaxResults($this->maxResult);
