@@ -27,6 +27,7 @@ namespace BaksDev\Products\Product\Repository\Cards\ModelsOrProductsByCategory;
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Core\Services\Paginator\PaginatorInterface;
+use BaksDev\Field\Pack\Integer\Form\Range\RangeIntegerFieldDTO;
 use BaksDev\Products\Category\Entity\CategoryProduct;
 use BaksDev\Products\Category\Entity\Info\CategoryProductInfo;
 use BaksDev\Products\Category\Entity\Offers\CategoryProductOffers;
@@ -666,6 +667,101 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
         {
             if($expr === 'AND')
             {
+                /** @var RangeIntegerFieldDTO $item */
+                foreach($this->property as $type => $item)
+                {
+
+                    if($item === true)
+                    {
+                        $item = 'true';
+                    }
+
+                    if ($item instanceof RangeIntegerFieldDTO) {
+                        $item = [
+                            'min' => $item->getMin(),
+                            'max' => $item->getMax(),
+                        ];
+                    }
+
+                    $prepareKey = uniqid('key_', false);
+                    $prepareValue = uniqid('val_', false);
+                    $alias = uniqid('alias', false);
+
+                    $ProductCategorySectionFieldUid = new CategoryProductSectionFieldUid($type);
+                    $ProductPropertyJoin = $alias.'.field = :'.$prepareKey.' AND '.$alias.'.value = :'.$prepareValue;
+
+                    $dbal->setParameter(
+                        $prepareKey,
+                        $ProductCategorySectionFieldUid,
+                        CategoryProductSectionFieldUid::TYPE
+                    );
+
+                    if(isset($item['min']) || isset($item['max']))
+                    {
+                        $RangeProductPropertyJoin = null;
+
+                        foreach($item as $key => $value)
+                        {
+                            if(empty($value))
+                            {
+                                continue;
+                            }
+
+                            $prepareValue = uniqid('', false);
+
+                            if($key === 'min')
+                            {
+                                $RangeProductPropertyJoin[] = 'product_property_filter.value >= :'.$prepareValue;
+                            }
+
+                            if($key === 'max')
+                            {
+                                $RangeProductPropertyJoin[] = 'product_property_filter.value <= :'.$prepareValue;
+                            }
+
+                            $dbal->setParameter($prepareValue, $value);
+                        }
+                        if($RangeProductPropertyJoin)
+                        {
+                            $ProductCategorySectionFieldUid = new CategoryProductSectionFieldUid($type);
+
+                            $dbal->setParameter(
+                                $prepareKey,
+                                $ProductCategorySectionFieldUid,
+                                CategoryProductSectionFieldUid::TYPE
+                            );
+
+                            $ProductPropertyJoin = 'product_property_filter.field = :'.$prepareKey.' 
+                                AND ('.implode(' AND ', $RangeProductPropertyJoin).')';
+
+                        }
+
+                        continue;
+                    }
+
+                    else
+                    {
+                        $dbal->setParameter($prepareValue, $item);
+                    }
+
+                    $dbal->join(
+                        'product',
+                        ProductProperty::class,
+                        $alias,
+                        $alias.'.event = product.event '.$expr.' '.$ProductPropertyJoin
+                    );
+
+                }
+
+                $dbal->join(
+                    'product',
+                    ProductProperty::class,
+                    'product_property_filter',
+                    'product_property_filter.event = product.event AND '.$ProductPropertyJoin
+                );
+            }
+            else
+            {
                 foreach($this->property as $type => $item)
                 {
                     if($item === true)
@@ -673,36 +769,57 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                         $item = 'true';
                     }
 
-                    $prepareKey = uniqid('key_', false);
-                    $prepareValue = uniqid('val_', false);
-                    $aliase = uniqid('aliase', false);
+                    if ($item instanceof RangeIntegerFieldDTO) {
+                        $item = [
+                            'min' => $item->getMin(),
+                            'max' => $item->getMax(),
+                        ];
+                    }
 
-                    $ProductCategorySectionFieldUid = new CategoryProductSectionFieldUid($type);
-                    $ProductPropertyJoin = $aliase.'.field = :'.$prepareKey.' AND '.$aliase.'.value = :'.$prepareValue;
-
-                    $dbal->setParameter(
-                        $prepareKey,
-                        $ProductCategorySectionFieldUid,
-                        CategoryProductSectionFieldUid::TYPE
-                    );
-                    $dbal->setParameter($prepareValue, $item);
-
-                    $dbal->join(
-                        'product',
-                        ProductProperty::class,
-                        $aliase,
-                        $aliase.'.event = product.event '.$expr.' '.$ProductPropertyJoin
-                    );
-                }
-            }
-            else
-            {
-
-                foreach($this->property as $type => $item)
-                {
-                    if($item === true)
+                    if(isset($item['min']) || isset($item['max']))
                     {
-                        $item = 'true';
+                        $RangeProductPropertyJoin = null;
+
+                        foreach($item as $key => $value)
+                        {
+                            if(empty($value))
+                            {
+                                continue;
+                            }
+
+                            $prepareValue = uniqid('', false);
+
+                            if($key === 'min')
+                            {
+                                $RangeProductPropertyJoin[] = 'product_property_filter.value >= :'.$prepareValue;
+                            }
+
+                            if($key === 'max')
+                            {
+                                $RangeProductPropertyJoin[] = 'product_property_filter.value <= :'.$prepareValue;
+                            }
+
+                            $dbal->setParameter($prepareValue, $value);
+                        }
+
+
+                        if($RangeProductPropertyJoin)
+                        {
+                            $prepareKey = uniqid('', false);
+
+                            $ProductCategorySectionFieldUid = new CategoryProductSectionFieldUid($type);
+
+                            $dbal->setParameter(
+                                $prepareKey,
+                                $ProductCategorySectionFieldUid,
+                                CategoryProductSectionFieldUid::TYPE
+                            );
+
+                            $ProductPropertyJoin[] = 'product_property_filter.field = :'.$prepareKey.' 
+                                AND ('.implode(' AND ', $RangeProductPropertyJoin).')';
+                        }
+
+                        continue;
                     }
 
                     $prepareKey = uniqid('', false);
@@ -727,6 +844,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                     'product_property_filter.event = product.event AND '.implode(' '.$expr.' ', $ProductPropertyJoin)
                 );
             }
+
         }
 
         /** Минимальная стоимость */

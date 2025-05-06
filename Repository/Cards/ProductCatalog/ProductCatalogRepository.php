@@ -220,6 +220,13 @@ final class ProductCatalogRepository implements ProductCatalogInterface
                         $item = 'true';
                     }
 
+                    if ($item instanceof RangeIntegerFieldDTO) {
+                        $item = [
+                            'min' => $item->getMin(),
+                            'max' => $item->getMax(),
+                        ];
+                    }
+
                     $prepareKey = uniqid('key_', false);
                     $prepareValue = uniqid('val_', false);
                     $alias = uniqid('alias', false);
@@ -232,7 +239,58 @@ final class ProductCatalogRepository implements ProductCatalogInterface
                         $ProductCategorySectionFieldUid,
                         CategoryProductSectionFieldUid::TYPE
                     );
-                    $dbal->setParameter($prepareValue, $item);
+
+                    if(isset($item['min']) || isset($item['max']))
+                    {
+                        $RangeProductPropertyJoin = null;
+
+                        foreach($item as $key => $value)
+                        {
+                            if(empty($value))
+                            {
+                                continue;
+                            }
+
+                            $prepareValue = uniqid('', false);
+
+                            if($key === 'min')
+                            {
+                                $RangeProductPropertyJoin[] = 'product_property_filter.value >= :'.$prepareValue;
+
+                            }
+
+                            if($key === 'max')
+                            {
+                                $RangeProductPropertyJoin[] = 'product_property_filter.value <= :'.$prepareValue;
+
+                            }
+
+                            $dbal->setParameter($prepareValue, $value);
+                        }
+                        if($RangeProductPropertyJoin)
+                        {
+
+                            $ProductCategorySectionFieldUid = new CategoryProductSectionFieldUid($type);
+
+                            $dbal->setParameter(
+                                $prepareKey,
+                                $ProductCategorySectionFieldUid,
+                                CategoryProductSectionFieldUid::TYPE
+                            );
+
+                            $ProductPropertyJoin = 'product_property_filter.field = :'.$prepareKey.' 
+                                AND ('.implode(' AND ', $RangeProductPropertyJoin).')';
+
+
+                        }
+
+                        continue;
+                    }
+
+                    else
+                    {
+                        $dbal->setParameter($prepareValue, $item);
+                    }
 
                     $dbal->join(
                         'product',
@@ -241,6 +299,13 @@ final class ProductCatalogRepository implements ProductCatalogInterface
                         $alias.'.event = product.event '.$expr.' '.$ProductPropertyJoin
                     );
                 }
+
+                $dbal->join(
+                    'product',
+                    ProductProperty::class,
+                    'product_property_filter',
+                    'product_property_filter.event = product.event AND '.$ProductPropertyJoin
+                );
             }
             else
             {
@@ -266,19 +331,18 @@ final class ProductCatalogRepository implements ProductCatalogInterface
 
                             if($key === 'min')
                             {
-                                $RangeProductPropertyJoin[] = 'product_property_filter.value >= '.$prepareValue;
+                                $RangeProductPropertyJoin[] = 'product_property_filter.value >= :'.$prepareValue;
 
                             }
 
                             if($key === 'max')
                             {
-                                $RangeProductPropertyJoin[] = 'product_property_filter.value <= '.$prepareValue;
+                                $RangeProductPropertyJoin[] = 'product_property_filter.value <= :'.$prepareValue;
 
                             }
 
                             $dbal->setParameter($prepareValue, $value);
                         }
-
 
                         if($RangeProductPropertyJoin)
                         {
@@ -298,7 +362,6 @@ final class ProductCatalogRepository implements ProductCatalogInterface
 
                         continue;
                     }
-
 
                     $prepareKey = uniqid('', false);
                     $prepareValue = uniqid('', false);
