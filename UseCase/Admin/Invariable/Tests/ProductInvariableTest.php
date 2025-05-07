@@ -41,6 +41,7 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 
 /**
  * @group products-product
+ * @group products-product-repository
  */
 #[When(env: 'test')]
 class ProductInvariableTest extends KernelTestCase
