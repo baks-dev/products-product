@@ -36,8 +36,10 @@ use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
 use BaksDev\Reference\Currency\Type\Currency;
 use BaksDev\Reference\Money\Type\Money;
+use Symfony\Component\DependencyInjection\Attribute\Exclude;
 
 /** @see ProductAlternativeRepository */
+#[Exclude]
 final readonly class ProductAlternativeResult implements ProductCardResultInterface
 {
     public function __construct(
@@ -71,6 +73,8 @@ final readonly class ProductAlternativeResult implements ProductCardResultInterf
         private string $category_url,
         private string $category_section_field,
         private string|null $product_invariable_id,
+
+        private int|null $profile_discount = null,
     ) {}
 
     public function getProductId(): ProductUid
@@ -207,12 +211,32 @@ final readonly class ProductAlternativeResult implements ProductCardResultInterf
 
     public function getProductPrice(): Money
     {
-        return new Money($this->product_price, true);
+        // без применения скидки в профиле пользователя
+        if(is_null($this->profile_discount))
+        {
+            return new Money($this->product_price, true);
+        }
+
+        // применяем скидку пользователя из профиля
+        $price = new Money($this->product_price, true);
+        $price->applyPercent($this->profile_discount);
+
+        return $price;
     }
 
     public function getProductOldPrice(): Money
     {
-        return new Money($this->product_old_price, true);
+        // без применения скидки в профиле пользователя
+        if(is_null($this->profile_discount))
+        {
+            return new Money($this->product_old_price, true);
+        }
+
+        // применяем скидку пользователя из профиля
+        $price = new Money($this->product_old_price, true);
+        $price->applyPercent($this->profile_discount);
+
+        return $price;
     }
 
     public function getProductCurrency(): Currency
@@ -293,6 +317,21 @@ final readonly class ProductAlternativeResult implements ProductCardResultInterf
     {
         return false;
     }
+
+    /** Helpers */
+
+    /** Возвращает разницу между старой и новой ценами в процентах */
+    public function getDiscountPercent(): int|null
+    {
+        $price = $this->getProductPrice()->getValue();
+        $oldPrice = $this->getProductOldPrice()->getValue();
+
+        $discountPercent = null;
+        if($oldPrice > $price)
+        {
+            $discountPercent = (int) (($oldPrice - $price) / $oldPrice * 100);
+        }
+
+        return $discountPercent;
+    }
 }
-
-

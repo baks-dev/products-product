@@ -19,6 +19,7 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 declare(strict_types=1);
@@ -63,7 +64,7 @@ final class ProductBestSellerExtension extends AbstractExtension
         $bestSellers = $this->bestSellerProducts
             ->forCategory($category)
             ->maxResult(20)
-            ->findAll();
+            ->toArray();
 
         if(true === empty($bestSellers))
         {
@@ -94,7 +95,7 @@ final class ProductBestSellerExtension extends AbstractExtension
         $bestSellers = $this->bestSellerProducts
             ->forCategory($category)
             ->maxResult(2)
-            ->findAll();
+            ->toArray();
 
         if(true === empty($bestSellers))
         {

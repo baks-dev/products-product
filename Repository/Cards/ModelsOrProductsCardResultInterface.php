@@ -24,12 +24,12 @@
 
 namespace BaksDev\Products\Product\Repository\Cards;
 
+use BaksDev\Products\Product\Repository\RepositoryResultInterface;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Reference\Currency\Type\Currency;
-use BaksDev\Reference\Money\Type\Money;
 
-interface ModelsOrProductsCardResultInterface
+interface ModelsOrProductsCardResultInterface extends RepositoryResultInterface
 {
     public function getProductId(): ProductUid;
 
@@ -74,10 +74,6 @@ interface ModelsOrProductsCardResultInterface
     public function getCategoryUrl(): string|null|bool;
 
     public function getCategoryName(): string|null|bool;
-
-    public function getProductPrice(): Money|bool;
-
-    public function getProductOldPrice(): Money|bool;
 
     public function getProductCurrency(): Currency|bool;
 

@@ -27,6 +27,7 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Repository\ProductDetailByValue;
 
 use BaksDev\Products\Category\Type\Id\CategoryProductUid;
+use BaksDev\Products\Product\Repository\RepositoryResultInterface;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Product\Type\Invariable\ProductInvariableUid;
@@ -37,23 +38,30 @@ use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
 use BaksDev\Reference\Money\Type\Money;
+use Symfony\Component\DependencyInjection\Attribute\Exclude;
 
 /** @see ProductDetailByValueRepository */
-final readonly class ProductDetailByValueResult
+#[Exclude]
+final readonly class ProductDetailByValueResult implements RepositoryResultInterface
 {
     public function __construct(
         private string $id,
         private string $event,
+
         private bool $active,
+
         private string|null $active_from,
         private string|null $active_to,
+
         private string|null $seo_title,
         private string|null $seo_keywords,
         private string|null $seo_description,
+
         private string|null $product_name,
         private string|null $product_preview,
         private string|null $product_description,
         private string|null $url,
+
         private string|null $product_offer_uid,
         private string|null $product_offer_const,
         private string|null $product_offer_value,
@@ -61,6 +69,7 @@ final readonly class ProductDetailByValueResult
         private string|null $product_offer_reference,
         private string|null $product_offer_name,
         private string|null $product_offer_name_postfix,
+
         private string|null $product_variation_uid,
         private string|null $product_variation_const,
         private string|null $product_variation_value,
@@ -68,6 +77,7 @@ final readonly class ProductDetailByValueResult
         private string|null $product_variation_reference,
         private string|null $product_variation_name,
         private string|null $product_variation_name_postfix,
+
         private string|null $product_modification_uid,
         private string|null $product_modification_const,
         private string|null $product_modification_value,
@@ -75,12 +85,15 @@ final readonly class ProductDetailByValueResult
         private string|null $product_modification_reference,
         private string|null $product_modification_name,
         private string|null $product_modification_name_postfix,
+
         private string|null $product_article,
         private string|null $product_images,
+
         private int|null $product_price,
         private int|null $product_old_price,
         private string|null $product_currency,
         private int|null $product_quantity,
+
         private string|null $category_id,
         private string|null $category_name,
         private string|null $category_url,
@@ -91,7 +104,10 @@ final readonly class ProductDetailByValueResult
         private bool|null $category_cover_cdn,
         private string|null $category_cover_path,
         private string|null $category_section_field,
+
         private string|null $product_invariable_id,
+
+        private int|null $profile_discount = null,
     ) {}
 
     public function getProductId(): ProductUid
@@ -156,7 +172,7 @@ final readonly class ProductDetailByValueResult
 
     public function getProductOfferUid(): ProductOfferUid|null
     {
-        if(null === $this->product_offer_uid)
+        if(is_null($this->product_offer_uid))
         {
             return null;
         }
@@ -166,7 +182,7 @@ final readonly class ProductDetailByValueResult
 
     public function getProductOfferConst(): ProductOfferConst|null
     {
-        if(null === $this->product_offer_const)
+        if(is_null($this->product_offer_const))
         {
             return null;
         }
@@ -202,7 +218,7 @@ final readonly class ProductDetailByValueResult
 
     public function getProductVariationUid(): ProductVariationUid|null
     {
-        if(null === $this->product_variation_uid)
+        if(is_null($this->product_variation_uid))
         {
             return null;
         }
@@ -212,7 +228,7 @@ final readonly class ProductDetailByValueResult
 
     public function getProductVariationConst(): ProductVariationConst|null
     {
-        if(null === $this->product_variation_const)
+        if(is_null($this->product_variation_const))
         {
             return null;
         }
@@ -247,7 +263,7 @@ final readonly class ProductDetailByValueResult
 
     public function getProductModificationUid(): ProductModificationUid|null
     {
-        if(null === $this->product_modification_uid)
+        if(is_null($this->product_modification_uid))
         {
             return null;
         }
@@ -257,7 +273,7 @@ final readonly class ProductDetailByValueResult
 
     public function getProductModificationConst(): ProductModificationConst|null
     {
-        if(null === $this->product_modification_const)
+        if(is_null($this->product_modification_const))
         {
             return null;
         }
@@ -309,12 +325,32 @@ final readonly class ProductDetailByValueResult
 
     public function getProductPrice(): Money
     {
-        return new Money($this->product_price, true);
+        // без применения скидки в профиле пользователя
+        if(is_null($this->profile_discount))
+        {
+            return new Money($this->product_price, true);
+        }
+
+        // применяем скидку пользователя из профиля
+        $price = new Money($this->product_price, true);
+        $price->applyPercent($this->profile_discount);
+
+        return $price;
     }
 
     public function getProductOldPrice(): Money
     {
-        return new Money($this->product_old_price, true);
+        // без применения скидки в профиле пользователя
+        if(is_null($this->profile_discount))
+        {
+            return new Money($this->product_old_price, true);
+        }
+
+        // применяем скидку пользователя из профиля
+        $price = new Money($this->product_old_price, true);
+        $price->applyPercent($this->profile_discount);
+
+        return $price;
     }
 
     public function getProductCurrency(): ?string
@@ -422,5 +458,20 @@ final readonly class ProductDetailByValueResult
         });
 
         return $images;
+    }
+
+    /** Возвращает разницу между старой и новой ценами в процентах */
+    public function getDiscountPercent(): int|null
+    {
+        $price = $this->getProductPrice()->getValue();
+        $oldPrice = $this->getProductOldPrice()->getValue();
+
+        $discountPercent = null;
+        if($oldPrice > $price)
+        {
+            $discountPercent = (int) (($oldPrice - $price) / $oldPrice * 100);
+        }
+
+        return $discountPercent;
     }
 }

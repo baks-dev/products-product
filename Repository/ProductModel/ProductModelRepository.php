@@ -64,6 +64,11 @@ use BaksDev\Products\Product\Entity\Property\ProductProperty;
 use BaksDev\Products\Product\Entity\Seo\ProductSeo;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Type\Id\ProductUid;
+use BaksDev\Users\Profile\UserProfile\Entity\Info\UserProfileInfo;
+use BaksDev\Users\Profile\UserProfile\Repository\UserProfileTokenStorage\UserProfileTokenStorageInterface;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
+use BaksDev\Users\Profile\UserProfile\Type\UserProfileStatus\Status\UserProfileStatusActive;
+use BaksDev\Users\Profile\UserProfile\Type\UserProfileStatus\UserProfileStatus;
 use InvalidArgumentException;
 
 /** @see ProductModelResult */
@@ -76,7 +81,8 @@ final class ProductModelRepository implements ProductModelInterface
     private ProductUid|false $productUid = false;
 
     public function __construct(
-        private readonly DBALQueryBuilder $DBALQueryBuilder
+        private readonly DBALQueryBuilder $DBALQueryBuilder,
+        private readonly UserProfileTokenStorageInterface $userProfileTokenStorage,
     ) {}
 
     /** Фильтрация по продукту */
@@ -399,6 +405,40 @@ final class ProductModelRepository implements ProductModelInterface
                    )
             ');
 
+        /** Персональная скидка из профиля авторизованного пользователя */
+        $discountSelect = "'profile_discount', NULL,";
+
+        if(true === $this->userProfileTokenStorage->isUser())
+        {
+            $profile = $this->userProfileTokenStorage->getProfileCurrent();
+
+            if($profile instanceof UserProfileUid)
+            {
+                $discountSelect = "'profile_discount', profile_info.discount,";
+
+                $dbal
+                    ->addSelect('profile_info.discount AS profile_discount')
+                    ->leftJoin(
+                        'product',
+                        UserProfileInfo::class,
+                        'profile_info',
+                        '
+                        profile_info.profile = :profile AND 
+                        profile_info.status = :profile_status'
+                    )
+                    ->setParameter(
+                        key: 'profile',
+                        value: $profile,
+                        type: UserProfileUid::TYPE)
+                    /** Активный статус профиля */
+                    ->setParameter(
+                        key: 'profile_status',
+                        value: UserProfileStatusActive::class,
+                        type: UserProfileStatus::TYPE
+                    );
+            }
+        }
+
         /** Продукты внутри категории */
         $dbal->addSelect(
             "JSON_AGG
@@ -440,7 +480,10 @@ final class ProductModelRepository implements ProductModelInterface
         						'product_invariable_id', COALESCE(
         						    product_invariable.id
         						),
-
+        						
+        						/* Profile Discount */
+        						{$discountSelect}
+        						
         						'price', CASE
         						   WHEN product_modification_price.price IS NOT NULL AND product_modification_price.price > 0 THEN product_modification_price.price
         						   WHEN product_variation_price.price IS NOT NULL AND product_variation_price.price > 0 THEN product_variation_price.price
@@ -487,7 +530,6 @@ final class ProductModelRepository implements ProductModelInterface
                 
         			AS product_offers"
         );
-
 
         /** Фото PRODUCT */
         $dbal

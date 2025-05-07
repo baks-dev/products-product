@@ -24,75 +24,72 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\Repository\Cards\ProductPromo;
+namespace BaksDev\Products\Product\Repository\BestSellerProducts;
 
-use BaksDev\Products\Product\Repository\Cards\ProductCardResultInterface;
-use BaksDev\Products\Product\Type\Event\ProductEventUid;
-use BaksDev\Products\Product\Type\Id\ProductUid;
+use BaksDev\Products\Category\Type\Id\CategoryProductUid;
+use BaksDev\Products\Product\Repository\RepositoryResultInterface;
 use BaksDev\Products\Product\Type\Invariable\ProductInvariableUid;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
-use BaksDev\Reference\Currency\Type\Currency;
 use BaksDev\Reference\Money\Type\Money;
+use Symfony\Component\DependencyInjection\Attribute\Exclude;
 
-/** @see ProductPromoRepository */
+/** @see BestSellerProductsRepository */
 #[Exclude]
-final readonly class ProductPromoResult implements ProductCardResultInterface
+final readonly class BestSellerProductsResult implements RepositoryResultInterface
 {
     public function __construct(
-        private string $product_id,
-        private string $product_event,
-        private string $product_name,
-        private string|null $product_url,
+        private int $sort,
+
+        private string|null $url,
+        private string|null $product_name,
+
         private string|null $product_offer_uid,
         private string|null $product_offer_value,
         private string|null $product_offer_postfix,
         private string|null $product_offer_reference,
+
         private string|null $product_variation_uid,
         private string|null $product_variation_value,
         private string|null $product_variation_postfix,
         private string|null $product_variation_reference,
+
         private string|null $product_modification_uid,
         private string|null $product_modification_value,
         private string|null $product_modification_postfix,
         private string|null $product_modification_reference,
-        private string|null $product_article,
+
+        private string|null $category_id,
+        private string|null $category_url,
+
+        private int $product_price,
+        private int $product_old_price,
+        private string $product_currency,
         private string $product_images,
-        private int|null $product_price,
-        private int|null $product_old_price,
-        private string|null $product_currency,
-        private string $category_url,
-        private string $category_name,
-        private string $category_section_field,
         private string|null $product_invariable_id,
 
         private int|null $profile_discount = null,
     ) {}
 
-    public function getProductId(): ProductUid
+    public function getSort(): int
     {
-        return new ProductUid($this->product_id);
+        return $this->sort;
     }
 
-    public function getProductEvent(): ProductEventUid
+    public function getProductUrl(): string
     {
-        return new ProductEventUid($this->product_event);
+        return $this->url;
     }
 
-    public function getProductName(): string
+    public function getProductName(): ?string
     {
         return $this->product_name;
     }
 
-    public function getProductUrl(): ?string
-    {
-        return $this->product_url;
-    }
-
     public function getProductOfferUid(): ProductOfferUid|null
     {
-        if(null === $this->product_offer_uid)
+        if(is_null($this->product_offer_uid))
         {
             return null;
         }
@@ -117,7 +114,7 @@ final readonly class ProductPromoResult implements ProductCardResultInterface
 
     public function getProductVariationUid(): ProductVariationUid|null
     {
-        if(null === $this->product_variation_uid)
+        if(is_null($this->product_variation_uid))
         {
             return null;
         }
@@ -142,7 +139,7 @@ final readonly class ProductPromoResult implements ProductCardResultInterface
 
     public function getProductModificationUid(): ProductModificationUid|null
     {
-        if(null === $this->product_modification_uid)
+        if(is_null($this->product_modification_uid))
         {
             return null;
         }
@@ -165,21 +162,19 @@ final readonly class ProductPromoResult implements ProductCardResultInterface
         return $this->product_modification_reference;
     }
 
-    public function getProductArticle(): ?string
+    public function getCategoryId(): CategoryProductUid|null
     {
-        return $this->product_article;
-    }
-
-    public function getProductImages(): array|null
-    {
-        $images = json_decode($this->product_images, true, 512, JSON_THROW_ON_ERROR);
-
-        if(null === current($images))
+        if(is_null($this->category_id))
         {
             return null;
         }
 
-        return $images;
+        return new CategoryProductUid($this->category_id);
+    }
+
+    public function getCategoryUrl(): string
+    {
+        return $this->category_url;
     }
 
     public function getProductPrice(): Money
@@ -212,36 +207,26 @@ final readonly class ProductPromoResult implements ProductCardResultInterface
         return $price;
     }
 
-    public function getProductCurrency(): Currency
+    public function getProductCurrency(): string
     {
-        return new Currency($this->product_currency);
+        return $this->product_currency;
     }
 
-    public function getCategoryUrl(): string
+    public function getProductImages(): array|null
     {
-        return $this->category_url;
-    }
+        $images = json_decode($this->product_images, true, 512, JSON_THROW_ON_ERROR);
 
-    public function getCategoryName(): string
-    {
-        return $this->category_name;
-    }
-
-    public function getCategorySectionField(): array|null
-    {
-        $sectionFields = json_decode($this->category_section_field, true, 512, JSON_THROW_ON_ERROR);
-
-        if(null === current($sectionFields))
+        if(null === current($images))
         {
             return null;
         }
 
-        return $sectionFields;
+        return $images;
     }
 
-    public function getProductInvariableId(): ProductInvariableUid|null
+    public function getProductInvariableId(): ?ProductInvariableUid
     {
-        if(null === $this->product_invariable_id)
+        if(is_null($this->product_invariable_id))
         {
             return null;
         }
@@ -249,65 +234,29 @@ final readonly class ProductPromoResult implements ProductCardResultInterface
         return new ProductInvariableUid($this->product_invariable_id);
     }
 
-    /** Методы - заглушки */
+    /** Helpers */
 
-    public function getProductOfferConst(): bool
+    /** Изображения, отсортированные по флагу root */
+    public function getProductImagesSortByRoot(): array|null
     {
-        return false;
+        if(is_null($this->product_images))
+        {
+            return null;
+        }
+
+        $images = json_decode($this->product_images, null, 512, JSON_THROW_ON_ERROR);
+
+        if(null === current($images))
+        {
+            return null;
+        }
+
+        // Сортировка массива элементов с изображениями по root = true
+        usort($images, function($f) {
+            return $f->img_root === true ? -1 : 1;
+        });
+
+        return $images;
     }
 
-    public function getProductOfferName(): bool
-    {
-        return false;
-    }
-
-    public function getProductVariationConst(): bool
-    {
-        return false;
-    }
-
-    public function getProductVariationName(): bool
-    {
-        return false;
-    }
-
-    public function getProductModificationConst(): bool
-    {
-        return false;
-    }
-
-    public function getProductModificationName(): bool
-    {
-        return false;
-    }
-
-    public function getProductActiveFrom(): bool
-    {
-        return false;
-    }
-
-    public function getProductReserve(): bool
-    {
-        return false;
-    }
-
-    public function getProductQuantity(): bool
-    {
-        return true;
-    }
-
-    public function getProductInvariableOfferConst(): bool
-    {
-        return false;
-    }
-
-    public function getProductCategory(): bool
-    {
-        return false;
-    }
-
-    public function getCategoryEvent(): bool
-    {
-        return false;
-    }
 }

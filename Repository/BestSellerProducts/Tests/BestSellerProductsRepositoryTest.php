@@ -38,49 +38,6 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'test')]
 class BestSellerProductsRepositoryTest extends KernelTestCase
 {
-    private static array $result;
-
-    public static function setUpBeforeClass(): void
-    {
-        /** @var BestSellerProductsInterface $repository */
-        $repository = self::getContainer()->get(BestSellerProductsInterface::class);
-
-        $result = $repository
-            ->maxResult(1)
-            ->findAll();
-
-        self::assertNotFalse($result, 'Не найдено ни одного продукта для тестирования');
-        self::$result = current($result);
-    }
-
-    /** Набор ключей для сравнения алиасов в основном запросе */
-    public static function getAllQueryKeys(): array
-    {
-        return [
-            "product_name",
-            "url",
-            "sort",
-            "product_offer_uid",
-            "product_offer_value",
-            "product_offer_postfix",
-            "product_variation_uid",
-            "product_variation_value",
-            "product_variation_postfix",
-            "product_modification_uid",
-            "product_modification_value",
-            "product_modification_postfix",
-            "category_id",
-            "category_url",
-            "product_price",
-            "product_old_price",
-            "product_currency",
-            "product_image",
-            "product_invariable_id",
-            "product_offer_reference",
-            "product_variation_reference",
-            "product_modification_reference",
-        ];
-    }
 
     /** Набор ключей для сравнения алиасов в результате применения функции JSONB_BUILD_OBJECT */
     public static function getProductImagesKeys(): array
@@ -93,44 +50,39 @@ class BestSellerProductsRepositoryTest extends KernelTestCase
         ];
     }
 
-    /** Тестирование алиасов в основном запросе */
-    public function testFindAll(): void
-    {
-        $queryKeys = self::getAllQueryKeys();
-
-        $current = self::$result;
-
-        foreach($queryKeys as $key)
-        {
-            self::assertArrayHasKey($key, $current, sprintf('Найдено несоответствие с ключами из массива getAllQueryKeys: %s', $key));
-        }
-
-        foreach($current as $key => $value)
-        {
-            self::assertTrue(in_array($key, $queryKeys), sprintf('Новый ключ в массиве с результатом запроса: %s', $key));
-        }
-    }
-
     /**
-     * @depends testFindAll
      * Тестирование алиасов в результате применения функции JSONB_BUILD_OBJECT
      */
     public function testOrderProducts(): void
     {
         $queryKeys = self::getProductImagesKeys();
 
-        $current = current(json_decode(self::$result['product_image'], true));
+        /** @var BestSellerProductsInterface $repository */
+        $repository = self::getContainer()->get(BestSellerProductsInterface::class);
 
-        if(false === is_null($current))
+        $products = $repository
+            ->maxResult(1000)
+            ->findAll();
+
+        foreach($products as $product)
         {
-            foreach($queryKeys as $key)
-            {
-                self::assertArrayHasKey($key, $current, sprintf('Найдено несоответствие с ключами из массива getProductImagesKeys: %s', $key));
-            }
+            $images = $product->getProductImages();
 
-            foreach($current as $key => $value)
+            if(false === is_null($images))
             {
-                self::assertTrue(in_array($key, $queryKeys), sprintf('Новый ключ в массиве с результатом запроса: %s', $key));
+                $current = current($images);
+
+                foreach($queryKeys as $key)
+                {
+                    self::assertArrayHasKey($key, $current, sprintf('Найдено несоответствие с ключами из массива getProductImagesKeys: %s', $key));
+                }
+
+                foreach($current as $key => $value)
+                {
+                    self::assertTrue(in_array($key, $queryKeys), sprintf('Новый ключ в массиве с результатом запроса: %s', $key));
+                }
+
+                break;
             }
         }
 
@@ -148,7 +100,7 @@ class BestSellerProductsRepositoryTest extends KernelTestCase
             ->findAll();
 
         self::assertNotFalse($result, 'Не найдено ни одного продукта для тестирования');
-        self::assertTrue(count($result) === 5);
+        self::assertTrue(count(iterator_to_array($result)) === 5);
     }
 
     /** Тестирование метода forCategory */
@@ -181,7 +133,7 @@ class BestSellerProductsRepositoryTest extends KernelTestCase
 
         foreach($result as $product)
         {
-            self::assertTrue($product['product_invariable_id'] !== $invariable, 'Ошибка фильтрации по Product Invariable');
+            self::assertTrue($product->getProductInvariableId() !== $invariable, 'Ошибка фильтрации по Product Invariable');
         }
 
         self::assertTrue(true);

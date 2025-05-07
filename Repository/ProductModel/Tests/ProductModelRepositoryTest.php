@@ -94,7 +94,8 @@ class ProductModelRepositoryTest extends KernelTestCase
             "variation_reference",
             "modification_postfix",
             "product_invariable_id",
-            "modification_reference"
+            "modification_reference",
+            "profile_discount"
         ];
     }
 

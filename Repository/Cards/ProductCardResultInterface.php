@@ -25,6 +25,7 @@
 namespace BaksDev\Products\Product\Repository\Cards;
 
 use BaksDev\Products\Category\Type\Event\CategoryProductEventUid;
+use BaksDev\Products\Product\Repository\RepositoryResultInterface;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Product\Type\Invariable\ProductInvariableUid;
@@ -35,9 +36,8 @@ use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
 use BaksDev\Reference\Currency\Type\Currency;
-use BaksDev\Reference\Money\Type\Money;
 
-interface ProductCardResultInterface
+interface ProductCardResultInterface extends RepositoryResultInterface
 {
     public function getProductId(): ProductUid;
 
@@ -89,10 +89,6 @@ interface ProductCardResultInterface
 
     public function getProductImages(): array|null|bool;
 
-    public function getProductPrice(): Money|bool;
-
-    public function getProductOldPrice(): Money|bool;
-
     public function getProductCurrency(): Currency|bool;
 
     public function getProductReserve(): int|null|bool;
@@ -109,7 +105,7 @@ interface ProductCardResultInterface
 
     public function getCategoryUrl(): string|null|bool;
 
-    public function getCategoryName(): string|bool;
+    public function getCategoryName(): string|null|bool;
 
     public function getCategorySectionField(): array|null|bool;
 }

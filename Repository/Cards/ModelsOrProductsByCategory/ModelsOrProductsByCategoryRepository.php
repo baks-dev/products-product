@@ -19,6 +19,7 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 declare(strict_types=1);
@@ -62,6 +63,11 @@ use BaksDev\Products\Product\Entity\ProductInvariable;
 use BaksDev\Products\Product\Entity\Property\ProductProperty;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Forms\ProductCategoryFilter\User\ProductCategoryFilterDTO;
+use BaksDev\Users\Profile\UserProfile\Entity\Info\UserProfileInfo;
+use BaksDev\Users\Profile\UserProfile\Repository\UserProfileTokenStorage\UserProfileTokenStorageInterface;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
+use BaksDev\Users\Profile\UserProfile\Type\UserProfileStatus\Status\UserProfileStatusActive;
+use BaksDev\Users\Profile\UserProfile\Type\UserProfileStatus\UserProfileStatus;
 use InvalidArgumentException;
 
 /** @see ModelOrProductByCategoryResult */
@@ -78,6 +84,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
     public function __construct(
         private readonly DBALQueryBuilder $DBALQueryBuilder,
         private readonly PaginatorInterface $paginator,
+        private readonly UserProfileTokenStorageInterface $userProfileTokenStorage,
     ) {}
 
     /** Максимальное количество записей в результате */
@@ -847,17 +854,18 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
 
         }
 
-        /** Минимальная стоимость */
+        /** Минимальная стоимость или 0 */
         $dbal->addSelect('
             COALESCE(
-                MIN(product_modification_price.price),
-                MIN(product_variation_price.price),
-                MIN(product_offer_price.price),
-                MIN(product_price.price)
+                NULLIF(MIN(product_modification_price.price), 0),
+                NULLIF(MIN(product_variation_price.price), 0),
+                NULLIF(MIN(product_offer_price.price), 0),
+                NULLIF(MIN(product_price.price), 0),
+                0
             ) AS product_price
 		');
 
-        /** Старая цена */
+        /** Старая цена или 0 */
         $dbal->addSelect("
 			COALESCE(
                 NULLIF(MIN(product_modification_price.old), 0),
@@ -910,7 +918,38 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
 			END AS product_quantity
 		');
 
-        if($this->category)
+        /** Персональная скидка из профиля авторизованного пользователя */
+        if(true === $this->userProfileTokenStorage->isUser())
+        {
+            $profile = $this->userProfileTokenStorage->getProfileCurrent();
+
+            if($profile instanceof UserProfileUid)
+            {
+                $dbal
+                    ->addSelect('profile_info.discount AS profile_discount')
+                    ->leftJoin(
+                        'product',
+                        UserProfileInfo::class,
+                        'profile_info',
+                        '
+                        profile_info.profile = :profile AND 
+                        profile_info.status = :profile_status'
+                    )
+                    ->setParameter(
+                        key: 'profile',
+                        value: $profile,
+                        type: UserProfileUid::TYPE)
+                    /** Активный статус профиля */
+                    ->setParameter(
+                        key: 'profile_status',
+                        value: UserProfileStatusActive::class,
+                        type: UserProfileStatus::TYPE
+                    );
+            }
+
+        }
+
+        if($this->category instanceof CategoryProductUid)
         {
             $dbal
                 ->andWhere('product_event_category.category = :category')
