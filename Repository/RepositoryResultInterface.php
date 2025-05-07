@@ -22,27 +22,13 @@
  *
  */
 
-namespace BaksDev\Products\Product\Repository\Cards\ProductCatalog;
+namespace BaksDev\Products\Product\Repository;
 
-use BaksDev\Products\Category\Entity\CategoryProduct;
-use BaksDev\Products\Category\Type\Id\CategoryProductUid;
-use Generator;
+use BaksDev\Reference\Money\Type\Money;
 
-interface ProductCatalogInterface
+interface RepositoryResultInterface
 {
-    /** Максимальное количество записей в результате */
-    public function maxResult(int $max): self;
+    public function getProductPrice(): Money|bool;
 
-    /** Фильтр по категории */
-    public function forCategory(CategoryProduct|CategoryProductUid|string $category): self;
-
-    /** @return Generator<int, ProductCatalogResult>|false */
-    public function findAll(string $expr): Generator|false;
-
-    /**
-     * Метод возвращает ограниченный по количеству элементов список продуктов из разных категорий
-     *
-     * /** @return array<int, ProductCatalogResult>|false
-     */
-    public function toArray(string $expr): array|false;
+    public function getProductOldPrice(): Money|bool;
 }

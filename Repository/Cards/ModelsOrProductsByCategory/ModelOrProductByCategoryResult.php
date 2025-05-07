@@ -63,6 +63,8 @@ final readonly class ModelOrProductByCategoryResult implements ModelsOrProductsC
         private string|null $product_currency,
         private string|null $category_section_field,
         private int|null $product_quantity,
+
+        private int|null $profile_discount = null,
     ) {}
 
     public function getProductId(): ProductUid
@@ -191,12 +193,32 @@ final readonly class ModelOrProductByCategoryResult implements ModelsOrProductsC
 
     public function getProductPrice(): Money
     {
-        return new Money($this->product_price, true);
+        // без применения скидки в профиле пользователя
+        if(is_null($this->profile_discount))
+        {
+            return new Money($this->product_price, true);
+        }
+
+        // применяем скидку пользователя из профиля
+        $price = new Money($this->product_price, true);
+        $price->applyPercent($this->profile_discount);
+
+        return $price;
     }
 
     public function getProductOldPrice(): Money
     {
-        return new Money($this->product_old_price, true);
+        // без применения скидки в профиле пользователя
+        if(is_null($this->profile_discount))
+        {
+            return new Money($this->product_old_price, true);
+        }
+
+        // применяем скидку пользователя из профиля
+        $price = new Money($this->product_old_price, true);
+        $price->applyPercent($this->profile_discount);
+
+        return $price;
     }
 
     public function getProductCurrency(): Currency

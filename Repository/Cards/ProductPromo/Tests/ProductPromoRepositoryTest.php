@@ -32,6 +32,7 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 
 /**
  * @group products-product
+ * @group products-product-cards
  */
 #[When(env: 'test')]
 class ProductPromoRepositoryTest extends KernelTestCase

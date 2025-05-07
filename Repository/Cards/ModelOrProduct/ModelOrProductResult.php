@@ -31,8 +31,10 @@ use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Reference\Currency\Type\Currency;
 use BaksDev\Reference\Money\Type\Money;
+use Symfony\Component\DependencyInjection\Attribute\Exclude;
 
 /** @see ModelOrProductRepository */
+#[Exclude]
 final readonly class ModelOrProductResult implements ModelsOrProductsCardResultInterface
 {
 
@@ -71,6 +73,8 @@ final readonly class ModelOrProductResult implements ModelsOrProductsCardResultI
         private int|null $product_quantity,
 
         private string|null $category_section_field = null,
+
+        private int|null $profile_discount = null,
     ) {}
 
     public function getProductId(): ProductUid
@@ -199,12 +203,31 @@ final readonly class ModelOrProductResult implements ModelsOrProductsCardResultI
 
     public function getProductPrice(): Money
     {
-        return new Money($this->product_price, true);
-    }
+        // без применения скидки в профиле пользователя
+        if(is_null($this->profile_discount))
+        {
+            return new Money($this->product_price, true);
+        }
 
+        // применяем скидку пользователя из профиля
+        $price = new Money($this->product_price, true);
+        $price->applyPercent($this->profile_discount);
+
+        return $price;
+    }
     public function getProductOldPrice(): Money
     {
-        return new Money($this->product_old_price, true);
+        // без применения скидки в профиле пользователя
+        if(is_null($this->profile_discount))
+        {
+            return new Money($this->product_old_price, true);
+        }
+
+        // применяем скидку пользователя из профиля
+        $price = new Money($this->product_old_price, true);
+        $price->applyPercent($this->profile_discount);
+
+        return $price;
     }
 
     public function getProductCurrency(): Currency

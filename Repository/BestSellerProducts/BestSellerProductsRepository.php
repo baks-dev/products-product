@@ -53,6 +53,12 @@ use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Entity\ProductInvariable;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Type\Invariable\ProductInvariableUid;
+use BaksDev\Users\Profile\UserProfile\Entity\Info\UserProfileInfo;
+use BaksDev\Users\Profile\UserProfile\Repository\UserProfileTokenStorage\UserProfileTokenStorageInterface;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
+use BaksDev\Users\Profile\UserProfile\Type\UserProfileStatus\Status\UserProfileStatusActive;
+use BaksDev\Users\Profile\UserProfile\Type\UserProfileStatus\UserProfileStatus;
+use Generator;
 
 final class BestSellerProductsRepository implements BestSellerProductsInterface
 {
@@ -62,11 +68,12 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
 
     private int|false $maxResult = false;
 
-    public function __construct(private readonly DBALQueryBuilder $dbal) {}
+    public function __construct(
+        private readonly DBALQueryBuilder $dbal,
+        private readonly UserProfileTokenStorageInterface $userProfileTokenStorage,
+    ) {}
 
-    /**
-     * Исключает продукт по Product Invariable
-     */
+    /** Исключает продукт по Product Invariable */
     public function byInvariable(ProductInvariableUid|string $invariable): self
     {
 
@@ -80,9 +87,7 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
         return $this;
     }
 
-    /**
-     * Максимальное количество записей в результате
-     */
+    /** Максимальное количество записей в результате */
     public function maxResult(int $max): self
     {
         $this->maxResult = $max;
@@ -90,9 +95,7 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
         return $this;
     }
 
-    /**
-     * Фильтрация по категории продукта
-     */
+    /** Фильтрация по категории продукта */
     public function forCategory(CategoryProductUid|string|null $category): self
     {
         if(is_null($category))
@@ -113,8 +116,30 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
 
     /**
      * Метод возвращает информацию о самых продаваемых продуктах
+     * @return array<int, BestSellerProductsResult>|false
      */
-    public function findAll(): array|false
+    public function toArray(): array|false
+    {
+        $result = $this->findAll();
+
+        return (false !== $result) ? iterator_to_array($result) : false;
+    }
+
+    /**
+     * Метод возвращает информацию о самых продаваемых продуктах
+     * @return Generator<int, BestSellerProductsResult>|false
+     */
+    public function findAll(): Generator|false
+    {
+        $dbal = $this->builder();
+        $dbal->enableCache('products-product', 86400);
+
+        $result = $dbal->fetchAllHydrate(BestSellerProductsResult::class);
+
+        return (true === $result->valid()) ? $result : false;
+    }
+
+    public function builder(): DBALQueryBuilder
     {
         $dbal = $this->dbal
             ->createQueryBuilder(self::class)
@@ -451,7 +476,7 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
                             'img_ext', product_photo.ext,
                             'img_cdn', product_photo.cdn
                         )
-                    END) AS product_image"
+                    END) AS product_images"
         );
 
         /**
@@ -480,6 +505,36 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
                         (product_modification.const IS NULL AND product_invariable.modification IS NULL)
                    )
             ');
+
+        if(true === $this->userProfileTokenStorage->isUser())
+        {
+            $profile = $this->userProfileTokenStorage->getProfileCurrent();
+
+            if($profile instanceof UserProfileUid)
+            {
+
+                $dbal
+                    ->addSelect('profile_info.discount AS profile_discount')
+                    ->leftJoin(
+                        'product',
+                        UserProfileInfo::class,
+                        'profile_info',
+                        '
+                        profile_info.profile = :profile AND 
+                        profile_info.status = :profile_status'
+                    )
+                    ->setParameter(
+                        key: 'profile',
+                        value: $profile,
+                        type: UserProfileUid::TYPE)
+                    /** Активный статус профиля */
+                    ->setParameter(
+                        key: 'profile_status',
+                        value: UserProfileStatusActive::class,
+                        type: UserProfileStatus::TYPE
+                    );
+            }
+        }
 
         /** Только с ценой */
         $dbal->andWhere("
@@ -523,11 +578,7 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
 
         $dbal->allGroupByExclude();
 
-        $result = $dbal
-            ->enableCache('products-product', 86400)
-            ->fetchAllAssociative();
-
-        return empty($result) ? false : $result;
+        return $dbal;
     }
 
 }

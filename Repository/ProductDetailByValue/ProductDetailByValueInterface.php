@@ -54,6 +54,8 @@ interface ProductDetailByValueInterface
      * @param ?string $offer - значение торгового предложения
      * @param ?string $variation - значение множественного варианта ТП
      * @param ?string $modification - значение модификации множественного варианта ТП
+     *
+     * @deprecated
      */
     public function fetchProductAssociative(
         ProductUid $product,
@@ -67,9 +69,9 @@ interface ProductDetailByValueInterface
      * @param ?string $offer - значение торгового предложения
      * @param ?string $variation - значение множественного варианта ТП
      * @param ?string $modification - значение модификации множественного варианта ТП
-     *@deprecated
      * Метод возвращает детальную информацию о продукте и его заполненному значению ТП, вариантов и модификаций.
      *
+     * @deprecated
      */
     #[\Deprecated]
     public function fetchProductEventAssociative(

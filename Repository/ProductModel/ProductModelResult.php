@@ -19,6 +19,7 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 declare(strict_types=1);
@@ -29,8 +30,10 @@ use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Reference\Money\Type\Money;
+use Symfony\Component\DependencyInjection\Attribute\Exclude;
 
 /** @see ProductModelRepository */
+#[Exclude]
 final readonly class ProductModelResult
 {
     public function __construct(
@@ -55,7 +58,8 @@ final readonly class ProductModelResult
         private string|null $category_cover_ext,
         private bool|null $category_cover_cdn,
         private string|null $category_cover_dir,
-        private string|null $category_section_field
+        private string|null $category_section_field,
+        private int|null $profile_discount = null,
     ) {}
 
     public function getProductId(): ProductUid
@@ -123,6 +127,8 @@ final readonly class ProductModelResult
         return $this->product_offer_reference;
     }
 
+    /** @deprecated */
+    #[\Deprecated(message: "")]
     public function getProductOffers(): ?array
     {
         if(false === json_validate((string) $this->product_offers))
@@ -233,7 +239,17 @@ final readonly class ProductModelResult
 
         $minPrice = current($offers)->price;
 
-        return new Money($minPrice, true);
+        // без применения скидки в профиле пользователя
+        if(is_null($this->profile_discount))
+        {
+            return new Money($minPrice, true);
+        }
+
+        // применяем скидку пользователя из профиля
+        $price = new Money($minPrice, true);
+        $price->applyPercent($this->profile_discount);
+
+        return $price;
     }
 
     /** Валюта из торговых предложений */
@@ -259,45 +275,70 @@ final readonly class ProductModelResult
         return current($offers)->currency;
     }
 
-    /** Торговые предложения только в наличии */
-    public function getInStockOffers(): ?array
+    /**
+     * @return array<int, ProductModelOfferResult>|null
+     */
+    public function getProductOffersResult(): array|null
     {
         if(false === json_validate((string) $this->product_offers))
-        {
-            return [];
-        }
-
-        $offers = json_decode($this->product_offers, true, 512, JSON_THROW_ON_ERROR);
-
-        if(is_null(current($offers)))
         {
             return null;
         }
 
-        $inStock = array_filter($offers, static function(array $offer) {
-            return $offer['quantity'] !== 0;
+        $offers = json_decode($this->product_offers, true, 512, JSON_THROW_ON_ERROR);
+
+        if(null === current($offers))
+        {
+            return null;
+        }
+
+        $offersResult = [];
+        foreach($offers as $offer)
+        {
+            // первый ключ в массиве - ключ для сортировки при сортировке в JSON_BUILD - удаляем его
+            unset($offer[0]);
+
+            $offersResult[] = new ProductModelOfferResult(...$offer);
+        }
+
+        return $offersResult;
+    }
+
+    /**
+     * Торговые предложения только в наличии
+     * @return array<int, ProductModelOfferResult>|array<empty>|null
+     */
+    public function getInStockOffersResult(): ?array
+    {
+        $offers = $this->getProductOffersResult();
+
+        if(is_null($offers))
+        {
+            return null;
+        }
+
+        $inStock = array_filter($offers, static function(ProductModelOfferResult $offer) {
+            return $offer->getProductQuantity() !== 0;
         });
 
         return $inStock;
     }
 
-    /** Торговые предложения не в наличии */
-    public function getOutOfStockOffers(): ?array
+    /**
+     * Торговые предложения не в наличии
+     * @return array<int, ProductModelOfferResult>|array<empty>|null
+     */
+    public function getOutOfStockOffersResult(): ?array
     {
-        if(false === json_validate((string) $this->product_offers))
-        {
-            return [];
-        }
+        $offers = $this->getProductOffersResult();
 
-        $offers = json_decode($this->product_offers, true, 512, JSON_THROW_ON_ERROR);
-
-        if(empty(current($offers)))
+        if(is_null($offers))
         {
             return null;
         }
 
-        $outOfStock = array_filter($offers, static function(array $offer) {
-            return $offer['quantity'] === 0;
+        $outOfStock = array_filter($offers, static function(ProductModelOfferResult $offer) {
+            return $offer->getProductQuantity() === 0;
         });
 
         return $outOfStock;
@@ -331,4 +372,57 @@ final readonly class ProductModelResult
     {
         return null;
     }
+
+    /**
+     * Торговые предложения только в наличии
+     * @deprecated
+     */
+    #[\Deprecated(message: "")]
+    public function getInStockOffers(): ?array
+    {
+        if(false === json_validate((string) $this->product_offers))
+        {
+            return [];
+        }
+
+        $offers = json_decode($this->product_offers, true, 512, JSON_THROW_ON_ERROR);
+
+        if(is_null(current($offers)))
+        {
+            return null;
+        }
+
+        $inStock = array_filter($offers, static function(array $offer) {
+            return $offer['quantity'] !== 0;
+        });
+
+        return $inStock;
+    }
+
+    /**
+     * Торговые предложения не в наличии
+     * @deprecated
+     */
+    #[\Deprecated(message: "")]
+    public function getOutOfStockOffers(): ?array
+    {
+        if(false === json_validate((string) $this->product_offers))
+        {
+            return [];
+        }
+
+        $offers = json_decode($this->product_offers, true, 512, JSON_THROW_ON_ERROR);
+
+        if(empty(current($offers)))
+        {
+            return null;
+        }
+
+        $outOfStock = array_filter($offers, static function(array $offer) {
+            return $offer['quantity'] === 0;
+        });
+
+        return $outOfStock;
+    }
+
 }
