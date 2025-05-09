@@ -211,8 +211,13 @@ final readonly class ModelOrProductByCategoryResult implements ModelsOrProductsC
         return $this->category_name;
     }
 
-    public function getProductPrice(): Money
+    public function getProductPrice(): Money|false
     {
+        if(empty($this->product_price))
+        {
+            return false;
+        }
+
         $price = new Money($this->product_price, true);
 
         // применяем скидку пользователя из профиля
@@ -224,8 +229,13 @@ final readonly class ModelOrProductByCategoryResult implements ModelsOrProductsC
         return $price;
     }
 
-    public function getProductOldPrice(): Money
+    public function getProductOldPrice(): Money|false
     {
+        if(empty($this->product_old_price))
+        {
+            return false;
+        }
+
         $price = new Money($this->product_old_price, true);
 
         // применяем скидку пользователя из профиля
