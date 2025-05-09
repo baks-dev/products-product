@@ -483,6 +483,16 @@ final readonly class ProductDetailByValueResult implements RepositoryResultInter
     /** Возвращает разницу между старой и новой ценами в процентах */
     public function getDiscountPercent(): int|null
     {
+        if(false === $this->getProductPrice())
+        {
+            return null;
+        }
+
+        if(false === $this->getProductOldPrice())
+        {
+            return null;
+        }
+
         $price = $this->getProductPrice()->getValue();
         $oldPrice = $this->getProductOldPrice()->getValue();
 
