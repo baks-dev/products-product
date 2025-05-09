@@ -254,7 +254,7 @@ final readonly class ProductModelResult
         // применяем скидку пользователя из профиля
         if(false === is_null($this->profile_discount))
         {
-            $price->applyPercent($this->profile_discount);
+            $price->applyString($this->profile_discount);
         }
 
         return $price;
