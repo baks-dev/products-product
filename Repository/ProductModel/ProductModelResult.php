@@ -220,6 +220,11 @@ final readonly class ProductModelResult
     /** Минимальная цена из торговых предложений */
     public function getMinPrice(): ?Money
     {
+        if(is_null($this->product_offers))
+        {
+            return null;
+        }
+
         if(false === json_validate((string) $this->product_offers))
         {
             return null;
@@ -232,22 +237,25 @@ final readonly class ProductModelResult
             return null;
         }
 
-        // Сортировка по возрастанию цены
+        // продукты только в наличии
+        $offers = array_filter($offers, static function(object $offer) {
+            return $offer->quantity !== null and $offer->quantity > 0;
+        });
+
+        // сортировка по возрастанию цены
         usort($offers, static function($a, $b) {
             return $a->price <=> $b->price;
         });
 
         $minPrice = current($offers)->price;
 
-        // без применения скидки в профиле пользователя
-        if(is_null($this->profile_discount))
-        {
-            return new Money($minPrice, true);
-        }
+        $price = new Money($minPrice, true);
 
         // применяем скидку пользователя из профиля
-        $price = new Money($minPrice, true);
-        $price->applyPercent($this->profile_discount);
+        if(false === is_null($this->profile_discount))
+        {
+            $price->applyPercent($this->profile_discount);
+        }
 
         return $price;
     }
