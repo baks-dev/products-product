@@ -177,7 +177,7 @@ final readonly class ProductModelOfferResult implements RepositoryResultInterfac
 
     public function getProductPrice(): Money|false
     {
-        if(empty($this->product_price))
+        if(empty($this->price))
         {
             return false;
         }
@@ -195,7 +195,7 @@ final readonly class ProductModelOfferResult implements RepositoryResultInterfac
 
     public function getProductOldPrice(): Money|false
     {
-        if(empty($this->product_old_price))
+        if(empty($this->old_price))
         {
             return false;
         }
