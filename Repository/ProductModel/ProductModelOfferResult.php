@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 declare(strict_types=1);
@@ -68,7 +67,7 @@ final readonly class ProductModelOfferResult implements RepositoryResultInterfac
         private string $currency,
         private int $quantity,
 
-        private int|null $profile_discount = null,
+        private string|null $profile_discount = null,
     ) {}
 
     public function getProductOfferUid(): ProductOfferUid|null
@@ -178,30 +177,26 @@ final readonly class ProductModelOfferResult implements RepositoryResultInterfac
 
     public function getProductPrice(): Money
     {
-        // без применения скидки в профиле пользователя
-        if(is_null($this->profile_discount))
-        {
-            return new Money($this->price, true);
-        }
+        $price = new Money($this->price, true);
 
         // применяем скидку пользователя из профиля
-        $price = new Money($this->price, true);
-        $price->applyPercent($this->profile_discount);
+        if(false === empty($this->profile_discount))
+        {
+            $price->applyString($this->profile_discount);
+        }
 
         return $price;
     }
 
     public function getProductOldPrice(): Money
     {
-        // без применения скидки в профиле пользователя
-        if(is_null($this->profile_discount))
-        {
-            return new Money($this->old_price, true);
-        }
+        $price = new Money($this->old_price, true);
 
         // применяем скидку пользователя из профиля
-        $price = new Money($this->old_price, true);
-        $price->applyPercent($this->profile_discount);
+        if(false === empty($this->profile_discount))
+        {
+            $price->applyString($this->profile_discount);
+        }
 
         return $price;
     }

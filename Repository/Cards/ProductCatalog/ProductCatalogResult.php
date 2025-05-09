@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 declare(strict_types=1);
@@ -35,6 +34,7 @@ use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
 use BaksDev\Reference\Currency\Type\Currency;
 use BaksDev\Reference\Money\Type\Money;
+use Symfony\Component\DependencyInjection\Attribute\Exclude;
 
 /** @see ProductCatalogRepository */
 #[Exclude]
@@ -68,7 +68,7 @@ final readonly class ProductCatalogResult implements ProductCardResultInterface
         private string $category_section_field,
         private string|null $product_invariable_id,
 
-        private int|null $profile_discount = null,
+        private string|null $profile_discount = null,
     ) {}
 
     public function getProductId(): ProductUid
@@ -173,6 +173,16 @@ final readonly class ProductCatalogResult implements ProductCardResultInterface
 
     public function getProductImages(): array|null
     {
+        if(is_null($this->product_images))
+        {
+            return null;
+        }
+
+        if(false === json_validate($this->product_images))
+        {
+            return null;
+        }
+
         $images = json_decode($this->product_images, true, 512, JSON_THROW_ON_ERROR);
 
         if(null === current($images))
@@ -185,30 +195,26 @@ final readonly class ProductCatalogResult implements ProductCardResultInterface
 
     public function getProductPrice(): Money
     {
-        // без применения скидки в профиле пользователя
-        if(is_null($this->profile_discount))
-        {
-            return new Money($this->product_price, true);
-        }
+        $price = new Money($this->product_price, true);
 
         // применяем скидку пользователя из профиля
-        $price = new Money($this->product_price, true);
-        $price->applyPercent($this->profile_discount);
+        if(false === empty($this->profile_discount))
+        {
+            $price->applyString($this->profile_discount);
+        }
 
         return $price;
     }
 
     public function getProductOldPrice(): Money
     {
-        // без применения скидки в профиле пользователя
-        if(is_null($this->profile_discount))
-        {
-            return new Money($this->product_old_price, true);
-        }
+        $price = new Money($this->product_old_price, true);
 
         // применяем скидку пользователя из профиля
-        $price = new Money($this->product_old_price, true);
-        $price->applyPercent($this->profile_discount);
+        if(false === empty($this->profile_discount))
+        {
+            $price->applyString($this->profile_discount);
+        }
 
         return $price;
     }

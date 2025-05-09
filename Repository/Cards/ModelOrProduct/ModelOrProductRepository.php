@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 declare(strict_types=1);
@@ -643,6 +642,7 @@ final class ModelOrProductRepository implements ModelOrProductInterface
 
 			END AS product_quantity
 		');
+
 
         /** Персональная скидка из профиля авторизованного пользователя */
         if(true === $this->userProfileTokenStorage->isUser())

@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 declare(strict_types=1);
@@ -69,7 +68,7 @@ final readonly class BestSellerProductsResult implements RepositoryResultInterfa
         private string $product_images,
         private string|null $product_invariable_id,
 
-        private int|null $profile_discount = null,
+        private string|null $profile_discount = null,
     ) {}
 
     public function getSort(): int
@@ -179,30 +178,26 @@ final readonly class BestSellerProductsResult implements RepositoryResultInterfa
 
     public function getProductPrice(): Money
     {
-        // без применения скидки в профиле пользователя
-        if(is_null($this->profile_discount))
-        {
-            return new Money($this->product_price, true);
-        }
+        $price = new Money($this->product_price, true);
 
         // применяем скидку пользователя из профиля
-        $price = new Money($this->product_price, true);
-        $price->applyPercent($this->profile_discount);
+        if(false === empty($this->profile_discount))
+        {
+            $price->applyString($this->profile_discount);
+        }
 
         return $price;
     }
 
     public function getProductOldPrice(): Money
     {
-        // без применения скидки в профиле пользователя
-        if(is_null($this->profile_discount))
-        {
-            return new Money($this->product_old_price, true);
-        }
+        $price = new Money($this->product_old_price, true);
 
         // применяем скидку пользователя из профиля
-        $price = new Money($this->product_old_price, true);
-        $price->applyPercent($this->profile_discount);
+        if(false === empty($this->profile_discount))
+        {
+            $price->applyString($this->profile_discount);
+        }
 
         return $price;
     }
@@ -214,6 +209,16 @@ final readonly class BestSellerProductsResult implements RepositoryResultInterfa
 
     public function getProductImages(): array|null
     {
+        if(is_null($this->product_images))
+        {
+            return null;
+        }
+
+        if(false === json_validate($this->product_images))
+        {
+            return null;
+        }
+
         $images = json_decode($this->product_images, true, 512, JSON_THROW_ON_ERROR);
 
         if(null === current($images))
@@ -240,6 +245,11 @@ final readonly class BestSellerProductsResult implements RepositoryResultInterfa
     public function getProductImagesSortByRoot(): array|null
     {
         if(is_null($this->product_images))
+        {
+            return null;
+        }
+
+        if(false === json_validate($this->product_images))
         {
             return null;
         }

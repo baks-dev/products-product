@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 declare(strict_types=1);
@@ -30,6 +29,7 @@ use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Reference\Money\Type\Money;
+use Deprecated;
 use Symfony\Component\DependencyInjection\Attribute\Exclude;
 
 /** @see ProductModelRepository */
@@ -59,7 +59,7 @@ final readonly class ProductModelResult
         private bool|null $category_cover_cdn,
         private string|null $category_cover_dir,
         private string|null $category_section_field,
-        private int|null $profile_discount = null,
+        private string|null $profile_discount = null,
     ) {}
 
     public function getProductId(): ProductUid
@@ -128,7 +128,7 @@ final readonly class ProductModelResult
     }
 
     /** @deprecated */
-    #[\Deprecated(message: "")]
+    #[Deprecated(message: "")]
     public function getProductOffers(): ?array
     {
         if(false === json_validate((string) $this->product_offers))
@@ -385,7 +385,7 @@ final readonly class ProductModelResult
      * Торговые предложения только в наличии
      * @deprecated
      */
-    #[\Deprecated(message: "")]
+    #[Deprecated(message: "")]
     public function getInStockOffers(): ?array
     {
         if(false === json_validate((string) $this->product_offers))
@@ -411,7 +411,7 @@ final readonly class ProductModelResult
      * Торговые предложения не в наличии
      * @deprecated
      */
-    #[\Deprecated(message: "")]
+    #[Deprecated(message: "")]
     public function getOutOfStockOffers(): ?array
     {
         if(false === json_validate((string) $this->product_offers))
