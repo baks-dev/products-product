@@ -44,7 +44,7 @@
                     <vendor>{{ card.category_name }}</vendor>
                     <vendorCode>{{ card.product_article }}</vendorCode>
 
-                    <url>{{ absolute_url(path('products-product:user.detail', {
+                    <url>{{ absolute_url(path('products-product:public.detail', {
                             category: card.category_url,
                             url: card.url,
                             offer: card.offer_value ?: null,

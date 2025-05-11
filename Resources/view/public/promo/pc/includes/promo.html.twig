@@ -1,0 +1,82 @@
+<div class="bg-secondary">
+    <section class="container  py-5">
+
+        {{ include(_self|replace({ "promo.html.twig" : "breadcrumb.html.twig" })) }}
+
+        <div class="row">
+            <div class="col-12">
+
+                <h2 class="fs-24 text-uppercase fw-bold mb-2">
+                    спецпредложения
+                </h2>
+
+                <div class="d-flex align-items-center justify-content-between  mb-5">
+
+                    <ul class="nav nav-pills  fs-18" id="pills-tab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active text-secondary" id="pills-hit-tab"
+                                    data-bs-target="#pills-hit" data-bs-toggle="pill" aria-controls="pills-hit"
+                                    aria-selected="true" type="button" role="tab">Хит
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link text-secondary" id="pills-advise-tab" data-bs-target="#pills-advise"
+                                    data-bs-toggle="pill" aria-controls="pills-advise" aria-selected="false"
+                                    type="button" role="tab">Советуем
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link text-secondary" id="pills-new-tab" data-bs-target="#pills-new"
+                                    data-bs-toggle="pill" aria-controls="pills-new" aria-selected="false" type="button"
+                                    role="tab">Новинка
+                            </button>
+                        </li>
+                    </ul>
+
+                    <a class="text-secondary text-uppercase" href="{{ path('products-product:public.catalog.index') }}">
+                        Весь каталог
+                    </a>
+
+                </div>
+
+
+                <div class="tab-content " id="pills-tabContent">
+                    <div class="tab-pane fade show active" id="pills-hit" aria-labelledby="pills-hit-tab"
+                         role="tabpanel" tabindex="0">
+                        <div class="row row-cols-4 gy-3">
+
+                            {% for product in promoProducts %}
+                                {{ include(_self|replace({ "promo.html.twig" : "card-sm.html.twig" })) }}
+                            {% endfor %}
+
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="pills-advise" aria-labelledby="pills-advise-tab" role="tabpanel"
+                         tabindex="0">
+                        <div class="row row-cols-4 gy-3">
+
+                            Пусто
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="pills-new" aria-labelledby="pills-new-tab" role="tabpanel"
+                         tabindex="0">
+                        <div class="row row-cols-4  gy-3">
+
+                            Пусто
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="text-center">
+                    <a class="btn btn-primary fs-14 rounded-5 shadow px-5 py-2 fw-medium"
+                       href="{{ path('products-product:public.catalog.index') }}">
+                        <span class="px-4">Все товары</span>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </section>
+</div>

@@ -1,0 +1,52 @@
+<section class="container  py-4">
+
+    <div class="d-flex  align-items-center gap-2">
+        <svg class="bi bi-lightning-charge-fill d-block" xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+             fill="currentColor" viewbox="0 0 16 16">
+            <path d="M11.251.068a.5.5 0 0 1 .227.58L9.677 6.5H13a.5.5 0 0 1 .364.843l-8 8.5a.5.5 0 0 1-.842-.49L6.323 9.5H3a.5.5 0 0 1-.364-.843l8-8.5a.5.5 0 0 1 .615-.09z"></path>
+        </svg>
+        <h2 class="fs-14 text-uppercase fw-bold mb-0">
+            спецпредложения
+        </h2>
+
+    </div>
+
+    {{ include(_self|replace({ "promo.html.twig" : "breadcrumb.html.twig" })) }}
+
+    <div class="tab-content mb-3" id="pills-tabContent">
+        <div class="tab-pane fade show active" id="pills-hit" aria-labelledby="pills-hit-tab" role="tabpanel"
+             tabindex="0">
+            <div class="row row-cols-2 gy-3 gx-2">
+
+                {% for product in promoProducts %}
+                    {% include Template('@products-product/public/'~baks_settings.device~'/card-in-stock-sm.html.twig') with {product} only %}
+                {% endfor %}
+
+            </div>
+        </div>
+        <div class="tab-pane fade" id="pills-advise" aria-labelledby="pills-advise-tab" role="tabpanel" tabindex="0">
+            <div class="row row-cols-2 gy-3 gx-2">
+
+                Пусто
+
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="pills-new" aria-labelledby="pills-new-tab" role="tabpanel" tabindex="0">
+            <div class="row row-cols-2  gy-3 gx-2">
+
+                Пусто
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="text-center">
+        <a class="btn btn-primary fs-14 rounded-5 shadow px-5 py-2 fw-medium"
+           href="{{ path('products-product:public.catalog.index') }}">
+            <span class="px-4">Все товары</span>
+        </a>
+    </div>
+
+</section>
