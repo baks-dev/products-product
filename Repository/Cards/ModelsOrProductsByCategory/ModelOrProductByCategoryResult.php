@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 declare(strict_types=1);
@@ -63,6 +62,8 @@ final readonly class ModelOrProductByCategoryResult implements ModelsOrProductsC
         private string|null $product_currency,
         private string|null $category_section_field,
         private int|null $product_quantity,
+
+        private string|null $profile_discount = null,
     ) {}
 
     public function getProductId(): ProductUid
@@ -157,6 +158,16 @@ final readonly class ModelOrProductByCategoryResult implements ModelsOrProductsC
 
     public function getInvariable(): array|null
     {
+        if(is_null($this->invariable))
+        {
+            return null;
+        }
+
+        if(false === json_validate($this->invariable))
+        {
+            return null;
+        }
+
         $invariables = json_decode($this->invariable, true, 512, JSON_THROW_ON_ERROR);
 
         if(null === current($invariables))
@@ -169,6 +180,17 @@ final readonly class ModelOrProductByCategoryResult implements ModelsOrProductsC
 
     public function getProductRootImages(): array|null
     {
+
+        if(is_null($this->product_root_images))
+        {
+            return null;
+        }
+
+        if(false === json_validate($this->product_root_images))
+        {
+            return null;
+        }
+
         $images = json_decode($this->product_root_images, true, 512, JSON_THROW_ON_ERROR);
 
         if(null === current($images))
@@ -189,14 +211,40 @@ final readonly class ModelOrProductByCategoryResult implements ModelsOrProductsC
         return $this->category_name;
     }
 
-    public function getProductPrice(): Money
+    public function getProductPrice(): Money|false
     {
-        return new Money($this->product_price, true);
+        if(empty($this->product_price))
+        {
+            return false;
+        }
+
+        $price = new Money($this->product_price, true);
+
+        // применяем скидку пользователя из профиля
+        if(false === empty($this->profile_discount))
+        {
+            $price->applyString($this->profile_discount);
+        }
+
+        return $price;
     }
 
-    public function getProductOldPrice(): Money
+    public function getProductOldPrice(): Money|false
     {
-        return new Money($this->product_old_price, true);
+        if(empty($this->product_old_price))
+        {
+            return false;
+        }
+
+        $price = new Money($this->product_old_price, true);
+
+        // применяем скидку пользователя из профиля
+        if(false === empty($this->profile_discount))
+        {
+            $price->applyString($this->profile_discount);
+        }
+
+        return $price;
     }
 
     public function getProductCurrency(): Currency
@@ -206,6 +254,17 @@ final readonly class ModelOrProductByCategoryResult implements ModelsOrProductsC
 
     public function getCategorySectionField(): array|null
     {
+
+        if(is_null($this->category_section_field))
+        {
+            return null;
+        }
+
+        if(false === json_validate($this->category_section_field))
+        {
+            return null;
+        }
+
         $category_section_field = json_decode($this->category_section_field, true, 512, JSON_THROW_ON_ERROR);
 
         if(null === current($category_section_field))

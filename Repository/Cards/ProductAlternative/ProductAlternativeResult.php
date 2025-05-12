@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 declare(strict_types=1);
@@ -36,8 +35,10 @@ use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
 use BaksDev\Reference\Currency\Type\Currency;
 use BaksDev\Reference\Money\Type\Money;
+use Symfony\Component\DependencyInjection\Attribute\Exclude;
 
 /** @see ProductAlternativeRepository */
+#[Exclude]
 final readonly class ProductAlternativeResult implements ProductCardResultInterface
 {
     public function __construct(
@@ -71,6 +72,8 @@ final readonly class ProductAlternativeResult implements ProductCardResultInterf
         private string $category_url,
         private string $category_section_field,
         private string|null $product_invariable_id,
+
+        private string|null $profile_discount = null,
     ) {}
 
     public function getProductId(): ProductUid
@@ -195,6 +198,16 @@ final readonly class ProductAlternativeResult implements ProductCardResultInterf
 
     public function getProductImages(): array|null
     {
+        if(is_null($this->product_images))
+        {
+            return null;
+        }
+
+        if(false === json_validate($this->product_images))
+        {
+            return null;
+        }
+
         $images = json_decode($this->product_images, true, 512, JSON_THROW_ON_ERROR);
 
         if(null === current($images))
@@ -205,14 +218,40 @@ final readonly class ProductAlternativeResult implements ProductCardResultInterf
         return $images;
     }
 
-    public function getProductPrice(): Money
+    public function getProductPrice(): Money|false
     {
-        return new Money($this->product_price, true);
+        if(empty($this->product_price))
+        {
+            return false;
+        }
+
+        $price = new Money($this->product_price, true);
+
+        // применяем скидку пользователя из профиля
+        if(false === empty($this->profile_discount))
+        {
+            $price->applyString($this->profile_discount);
+        }
+
+        return $price;
     }
 
-    public function getProductOldPrice(): Money
+    public function getProductOldPrice(): Money|false
     {
-        return new Money($this->product_old_price, true);
+        if(empty($this->product_old_price))
+        {
+            return false;
+        }
+
+        $price = new Money($this->product_old_price, true);
+
+        // применяем скидку пользователя из профиля
+        if(false === empty($this->profile_discount))
+        {
+            $price->applyString($this->profile_discount);
+        }
+
+        return $price;
     }
 
     public function getProductCurrency(): Currency
@@ -237,6 +276,16 @@ final readonly class ProductAlternativeResult implements ProductCardResultInterf
 
     public function getCategorySectionField(): array|null
     {
+        if(is_null($this->category_section_field))
+        {
+            return null;
+        }
+
+        if(false === json_validate($this->category_section_field))
+        {
+            return null;
+        }
+
         $sectionFields = json_decode($this->category_section_field, true, 512, JSON_THROW_ON_ERROR);
 
         if(null === current($sectionFields))
@@ -293,6 +342,31 @@ final readonly class ProductAlternativeResult implements ProductCardResultInterf
     {
         return false;
     }
+
+    /** Helpers */
+
+    /** Возвращает разницу между старой и новой ценами в процентах */
+    public function getDiscountPercent(): int|null
+    {
+        if(false === $this->getProductPrice())
+        {
+            return null;
+        }
+
+        if(false === $this->getProductOldPrice())
+        {
+            return null;
+        }
+
+        $price = $this->getProductPrice()->getValue();
+        $oldPrice = $this->getProductOldPrice()->getValue();
+
+        $discountPercent = null;
+        if($oldPrice > $price)
+        {
+            $discountPercent = (int) (($oldPrice - $price) / $oldPrice * 100);
+        }
+
+        return $discountPercent;
+    }
 }
-
-

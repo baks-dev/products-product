@@ -26,6 +26,7 @@ namespace BaksDev\Products\Product\Repository\Cards\ProductCatalog;
 
 use BaksDev\Products\Category\Entity\CategoryProduct;
 use BaksDev\Products\Category\Type\Id\CategoryProductUid;
+use Generator;
 
 interface ProductCatalogInterface
 {
@@ -35,8 +36,8 @@ interface ProductCatalogInterface
     /** Фильтр по категории */
     public function forCategory(CategoryProduct|CategoryProductUid|string $category): self;
 
-    /** @return \Generator<int, ProductCatalogResult>|false */
-    public function findAll(string $expr): \Generator|false;
+    /** @return Generator<int, ProductCatalogResult>|false */
+    public function findAll(string $expr): Generator|false;
 
     /**
      * Метод возвращает ограниченный по количеству элементов список продуктов из разных категорий

@@ -57,6 +57,11 @@ use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Entity\ProductInvariable;
 use BaksDev\Products\Product\Entity\Property\ProductProperty;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
+use BaksDev\Users\Profile\UserProfile\Entity\Info\UserProfileInfo;
+use BaksDev\Users\Profile\UserProfile\Repository\UserProfileTokenStorage\UserProfileTokenStorageInterface;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
+use BaksDev\Users\Profile\UserProfile\Type\UserProfileStatus\Status\UserProfileStatusActive;
+use BaksDev\Users\Profile\UserProfile\Type\UserProfileStatus\UserProfileStatus;
 use Generator;
 
 /** @see ModelOrProductResult */
@@ -68,6 +73,7 @@ final class ModelOrProductRepository implements ModelOrProductInterface
 
     public function __construct(
         private readonly DBALQueryBuilder $DBALQueryBuilder,
+        private readonly UserProfileTokenStorageInterface $userProfileTokenStorage,
     ) {}
 
     /** Максимальное количество записей в результате */
@@ -636,6 +642,37 @@ final class ModelOrProductRepository implements ModelOrProductInterface
 
 			END AS product_quantity
 		');
+
+
+        /** Персональная скидка из профиля авторизованного пользователя */
+        if(true === $this->userProfileTokenStorage->isUser())
+        {
+            $profile = $this->userProfileTokenStorage->getProfileCurrent();
+
+            if($profile instanceof UserProfileUid)
+            {
+                $dbal
+                    ->addSelect('profile_info.discount AS profile_discount')
+                    ->leftJoin(
+                        'product',
+                        UserProfileInfo::class,
+                        'profile_info',
+                        '
+                        profile_info.profile = :profile AND 
+                        profile_info.status = :profile_status'
+                    )
+                    ->setParameter(
+                        key: 'profile',
+                        value: $profile,
+                        type: UserProfileUid::TYPE)
+                    /** Активный статус профиля */
+                    ->setParameter(
+                        key: 'profile_status',
+                        value: UserProfileStatusActive::class,
+                        type: UserProfileStatus::TYPE
+                    );
+            }
+        }
 
         /** Только в наличии */
         $dbal->andWhere("

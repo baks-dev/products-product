@@ -65,6 +65,11 @@ use BaksDev\Products\Product\Entity\Seo\ProductSeo;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
+use BaksDev\Users\Profile\UserProfile\Entity\Info\UserProfileInfo;
+use BaksDev\Users\Profile\UserProfile\Repository\UserProfileTokenStorage\UserProfileTokenStorageInterface;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
+use BaksDev\Users\Profile\UserProfile\Type\UserProfileStatus\Status\UserProfileStatusActive;
+use BaksDev\Users\Profile\UserProfile\Type\UserProfileStatus\UserProfileStatus;
 use Deprecated;
 use InvalidArgumentException;
 
@@ -82,7 +87,8 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
     private string|null|false $postfix = false;
 
     public function __construct(
-        private readonly DBALQueryBuilder $DBALQueryBuilder
+        private readonly DBALQueryBuilder $DBALQueryBuilder,
+        private readonly UserProfileTokenStorageInterface $userProfileTokenStorage,
     ) {}
 
     /** Фильтрация по продукту */
@@ -608,8 +614,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
         $dbal->addSelect(
             '
 			CASE
-		
-			    WHEN product_modification_quantity.quantity > 0 AND product_modification_quantity.quantity > product_modification_quantity.reserve 
+			   WHEN product_modification_quantity.quantity > 0 AND product_modification_quantity.quantity > product_modification_quantity.reserve 
 			   THEN (product_modification_quantity.quantity - product_modification_quantity.reserve)
 
 			   WHEN product_variation_quantity.quantity > 0 AND product_variation_quantity.quantity > product_variation_quantity.reserve  
@@ -772,11 +777,42 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
          
             ');
 
+        /** Персональная скидка из профиля авторизованного пользователя */
+        if(true === $this->userProfileTokenStorage->isUser())
+        {
+            $profile = $this->userProfileTokenStorage->getProfileCurrent();
+
+            if($profile instanceof UserProfileUid)
+            {
+                $dbal
+                    ->addSelect('profile_info.discount AS profile_discount')
+                    ->leftJoin(
+                        'product',
+                        UserProfileInfo::class,
+                        'profile_info',
+                        '
+                        profile_info.profile = :profile AND 
+                        profile_info.status = :profile_status'
+                    )
+                    ->setParameter(
+                        key: 'profile',
+                        value: $profile,
+                        type: UserProfileUid::TYPE)
+                    /** Активный статус профиля */
+                    ->setParameter(
+                        key: 'profile_status',
+                        value: UserProfileStatusActive::class,
+                        type: UserProfileStatus::TYPE
+                    );
+            }
+        }
+
         $dbal->where('product.id = :product');
         $dbal->setParameter('product', $this->productUid, ProductUid::TYPE);
 
         return $dbal;
     }
+
 
     /**
      * @param ?string $offer - значение торгового предложения
@@ -785,7 +821,6 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
      *
      * Метод возвращает детальную информацию о продукте и его заполненному значению ТП, вариантов и модификаций.
      * @deprecated
-     *
      */
     #[Deprecated]
     public function fetchProductEventAssociative(
@@ -1319,7 +1354,5 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
         return $dbal
             ->enableCache('products-product', 86400)
             ->fetchAssociative();
-
     }
-
 }

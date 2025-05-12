@@ -19,33 +19,35 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 namespace BaksDev\Products\Product\Repository\BestSellerProducts;
 
 use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Type\Invariable\ProductInvariableUid;
+use Generator;
 
 interface BestSellerProductsInterface
 {
-
-    /**
-     * Исключает продукт по Product Invariable
-     */
+    /** Исключает продукт по Product Invariable */
     public function byInvariable(ProductInvariableUid|string $invariable): self;
 
-    /**
-     * Максимальное количество записей в результате
-     */
+    /** Максимальное количество записей в результате */
     public function maxResult(int $max): self;
 
-    /**
-     * Фильтрация по категории продукта
-     */
+    /** Фильтрация по категории продукта */
     public function forCategory(CategoryProductUid|string|null $category): self;
 
     /**
      * Метод возвращает информацию о самых продаваемых продуктах
+     * @return array<int, BestSellerProductsResult>|false
      */
-    public function findAll(): array|false;
+    public function toArray(): array|false;
+
+    /**
+     * Метод возвращает информацию о самых продаваемых продуктах
+     * @return Generator<int, BestSellerProductsResult>|false
+     */
+    public function findAll(): Generator|false;
 }

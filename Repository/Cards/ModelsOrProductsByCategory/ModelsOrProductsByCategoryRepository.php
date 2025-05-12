@@ -19,6 +19,7 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 declare(strict_types=1);
@@ -27,6 +28,7 @@ namespace BaksDev\Products\Product\Repository\Cards\ModelsOrProductsByCategory;
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Core\Services\Paginator\PaginatorInterface;
+use BaksDev\Field\Pack\Integer\Form\Range\RangeIntegerFieldDTO;
 use BaksDev\Products\Category\Entity\CategoryProduct;
 use BaksDev\Products\Category\Entity\Info\CategoryProductInfo;
 use BaksDev\Products\Category\Entity\Offers\CategoryProductOffers;
@@ -61,6 +63,11 @@ use BaksDev\Products\Product\Entity\ProductInvariable;
 use BaksDev\Products\Product\Entity\Property\ProductProperty;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Forms\ProductCategoryFilter\User\ProductCategoryFilterDTO;
+use BaksDev\Users\Profile\UserProfile\Entity\Info\UserProfileInfo;
+use BaksDev\Users\Profile\UserProfile\Repository\UserProfileTokenStorage\UserProfileTokenStorageInterface;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
+use BaksDev\Users\Profile\UserProfile\Type\UserProfileStatus\Status\UserProfileStatusActive;
+use BaksDev\Users\Profile\UserProfile\Type\UserProfileStatus\UserProfileStatus;
 use InvalidArgumentException;
 
 /** @see ModelOrProductByCategoryResult */
@@ -77,6 +84,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
     public function __construct(
         private readonly DBALQueryBuilder $DBALQueryBuilder,
         private readonly PaginatorInterface $paginator,
+        private readonly UserProfileTokenStorageInterface $userProfileTokenStorage,
     ) {}
 
     /** Максимальное количество записей в результате */
@@ -666,6 +674,101 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
         {
             if($expr === 'AND')
             {
+                /** @var RangeIntegerFieldDTO $item */
+                foreach($this->property as $type => $item)
+                {
+
+                    if($item === true)
+                    {
+                        $item = 'true';
+                    }
+
+                    if ($item instanceof RangeIntegerFieldDTO) {
+                        $item = [
+                            'min' => $item->getMin(),
+                            'max' => $item->getMax(),
+                        ];
+                    }
+
+                    $prepareKey = uniqid('key_', false);
+                    $prepareValue = uniqid('val_', false);
+                    $alias = uniqid('alias', false);
+
+                    $ProductCategorySectionFieldUid = new CategoryProductSectionFieldUid($type);
+                    $ProductPropertyJoin = $alias.'.field = :'.$prepareKey.' AND '.$alias.'.value = :'.$prepareValue;
+
+                    $dbal->setParameter(
+                        $prepareKey,
+                        $ProductCategorySectionFieldUid,
+                        CategoryProductSectionFieldUid::TYPE
+                    );
+
+                    if(isset($item['min']) || isset($item['max']))
+                    {
+                        $RangeProductPropertyJoin = null;
+
+                        foreach($item as $key => $value)
+                        {
+                            if(empty($value))
+                            {
+                                continue;
+                            }
+
+                            $prepareValue = uniqid('', false);
+
+                            if($key === 'min')
+                            {
+                                $RangeProductPropertyJoin[] = 'product_property_filter.value >= :'.$prepareValue;
+                            }
+
+                            if($key === 'max')
+                            {
+                                $RangeProductPropertyJoin[] = 'product_property_filter.value <= :'.$prepareValue;
+                            }
+
+                            $dbal->setParameter($prepareValue, $value);
+                        }
+                        if($RangeProductPropertyJoin)
+                        {
+                            $ProductCategorySectionFieldUid = new CategoryProductSectionFieldUid($type);
+
+                            $dbal->setParameter(
+                                $prepareKey,
+                                $ProductCategorySectionFieldUid,
+                                CategoryProductSectionFieldUid::TYPE
+                            );
+
+                            $ProductPropertyJoin = 'product_property_filter.field = :'.$prepareKey.' 
+                                AND ('.implode(' AND ', $RangeProductPropertyJoin).')';
+
+                        }
+
+                        continue;
+                    }
+
+                    else
+                    {
+                        $dbal->setParameter($prepareValue, $item);
+                    }
+
+                    $dbal->join(
+                        'product',
+                        ProductProperty::class,
+                        $alias,
+                        $alias.'.event = product.event '.$expr.' '.$ProductPropertyJoin
+                    );
+
+                }
+
+                $dbal->join(
+                    'product',
+                    ProductProperty::class,
+                    'product_property_filter',
+                    'product_property_filter.event = product.event AND '.$ProductPropertyJoin
+                );
+            }
+            else
+            {
                 foreach($this->property as $type => $item)
                 {
                     if($item === true)
@@ -673,36 +776,57 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                         $item = 'true';
                     }
 
-                    $prepareKey = uniqid('key_', false);
-                    $prepareValue = uniqid('val_', false);
-                    $aliase = uniqid('aliase', false);
+                    if ($item instanceof RangeIntegerFieldDTO) {
+                        $item = [
+                            'min' => $item->getMin(),
+                            'max' => $item->getMax(),
+                        ];
+                    }
 
-                    $ProductCategorySectionFieldUid = new CategoryProductSectionFieldUid($type);
-                    $ProductPropertyJoin = $aliase.'.field = :'.$prepareKey.' AND '.$aliase.'.value = :'.$prepareValue;
-
-                    $dbal->setParameter(
-                        $prepareKey,
-                        $ProductCategorySectionFieldUid,
-                        CategoryProductSectionFieldUid::TYPE
-                    );
-                    $dbal->setParameter($prepareValue, $item);
-
-                    $dbal->join(
-                        'product',
-                        ProductProperty::class,
-                        $aliase,
-                        $aliase.'.event = product.event '.$expr.' '.$ProductPropertyJoin
-                    );
-                }
-            }
-            else
-            {
-
-                foreach($this->property as $type => $item)
-                {
-                    if($item === true)
+                    if(isset($item['min']) || isset($item['max']))
                     {
-                        $item = 'true';
+                        $RangeProductPropertyJoin = null;
+
+                        foreach($item as $key => $value)
+                        {
+                            if(empty($value))
+                            {
+                                continue;
+                            }
+
+                            $prepareValue = uniqid('', false);
+
+                            if($key === 'min')
+                            {
+                                $RangeProductPropertyJoin[] = 'product_property_filter.value >= :'.$prepareValue;
+                            }
+
+                            if($key === 'max')
+                            {
+                                $RangeProductPropertyJoin[] = 'product_property_filter.value <= :'.$prepareValue;
+                            }
+
+                            $dbal->setParameter($prepareValue, $value);
+                        }
+
+
+                        if($RangeProductPropertyJoin)
+                        {
+                            $prepareKey = uniqid('', false);
+
+                            $ProductCategorySectionFieldUid = new CategoryProductSectionFieldUid($type);
+
+                            $dbal->setParameter(
+                                $prepareKey,
+                                $ProductCategorySectionFieldUid,
+                                CategoryProductSectionFieldUid::TYPE
+                            );
+
+                            $ProductPropertyJoin[] = 'product_property_filter.field = :'.$prepareKey.' 
+                                AND ('.implode(' AND ', $RangeProductPropertyJoin).')';
+                        }
+
+                        continue;
                     }
 
                     $prepareKey = uniqid('', false);
@@ -727,19 +851,21 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                     'product_property_filter.event = product.event AND '.implode(' '.$expr.' ', $ProductPropertyJoin)
                 );
             }
+
         }
 
-        /** Минимальная стоимость */
+        /** Минимальная стоимость или 0 */
         $dbal->addSelect('
             COALESCE(
-                MIN(product_modification_price.price),
-                MIN(product_variation_price.price),
-                MIN(product_offer_price.price),
-                MIN(product_price.price)
+                NULLIF(MIN(product_modification_price.price), 0),
+                NULLIF(MIN(product_variation_price.price), 0),
+                NULLIF(MIN(product_offer_price.price), 0),
+                NULLIF(MIN(product_price.price), 0),
+                0
             ) AS product_price
 		');
 
-        /** Старая цена */
+        /** Старая цена или 0 */
         $dbal->addSelect("
 			COALESCE(
                 NULLIF(MIN(product_modification_price.old), 0),
@@ -792,7 +918,38 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
 			END AS product_quantity
 		');
 
-        if($this->category)
+        /** Персональная скидка из профиля авторизованного пользователя */
+        if(true === $this->userProfileTokenStorage->isUser())
+        {
+            $profile = $this->userProfileTokenStorage->getProfileCurrent();
+
+            if($profile instanceof UserProfileUid)
+            {
+                $dbal
+                    ->addSelect('profile_info.discount AS profile_discount')
+                    ->leftJoin(
+                        'product',
+                        UserProfileInfo::class,
+                        'profile_info',
+                        '
+                        profile_info.profile = :profile AND 
+                        profile_info.status = :profile_status'
+                    )
+                    ->setParameter(
+                        key: 'profile',
+                        value: $profile,
+                        type: UserProfileUid::TYPE)
+                    /** Активный статус профиля */
+                    ->setParameter(
+                        key: 'profile_status',
+                        value: UserProfileStatusActive::class,
+                        type: UserProfileStatus::TYPE
+                    );
+            }
+
+        }
+
+        if($this->category instanceof CategoryProductUid)
         {
             $dbal
                 ->andWhere('product_event_category.category = :category')

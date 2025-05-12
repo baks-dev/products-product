@@ -23,7 +23,7 @@
             {% for card in products %}
 
                 <offer id='{{ card.product_id }}'>
-                    <url>{{ absolute_url(path('products-product:user.detail', {
+                    <url>{{ absolute_url(path('products-product:public.detail', {
                             category: card.category_url,
                             url: card.url,
                             offer: card.offer_value,
