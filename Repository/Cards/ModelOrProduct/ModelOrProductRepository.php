@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 declare(strict_types=1);
@@ -193,9 +192,7 @@ final class ModelOrProductRepository implements ModelOrProductInterface
                 'category_offer.id = product_offer.category_offer'
             );
 
-        /**
-         * Группировка в зависимости от настройки группировки торгового предложения
-         */
+        /** Группировка в зависимости от настройки группировки торгового предложения */
         $dbal
             ->addSelect(
                 '
@@ -209,22 +206,6 @@ final class ModelOrProductRepository implements ModelOrProductInterface
                 CASE
                     WHEN category_offer.card IS NOT NULL AND category_offer.card IS TRUE
                     THEN product_offer.value
-                END
-            ');
-
-        $dbal
-            ->addSelect(
-                '
-                CASE
-                    WHEN category_offer.card IS NOT NULL AND category_offer.card IS TRUE
-                    THEN product_offer.postfix
-                    ELSE NULL
-                END AS product_offer_postfix
-            ')
-            ->addGroupBy('
-                CASE
-                    WHEN category_offer.card IS NOT NULL AND category_offer.card IS TRUE
-                    THEN product_offer.postfix
                 END
             ');
 
@@ -283,9 +264,7 @@ final class ModelOrProductRepository implements ModelOrProductInterface
                 'category_variation.id = product_variation.category_variation'
             );
 
-        /**
-         * Группировка в зависимости от настройки группировки множественного варианта
-         */
+        /** Группировка в зависимости от настройки группировки множественного варианта */
         $dbal
             ->addSelect(
                 '
@@ -298,22 +277,6 @@ final class ModelOrProductRepository implements ModelOrProductInterface
                 CASE
                     WHEN category_variation.card IS NOT NULL AND category_variation.card IS TRUE
                     THEN product_variation.value
-                END'
-            );
-
-        $dbal
-            ->addSelect('
-                CASE
-                WHEN category_variation.card IS NOT NULL AND category_variation.card IS TRUE
-                    THEN product_variation.postfix
-                    ELSE NULL
-                END
-            AS product_variation_postfix
-            ')
-            ->addGroupBy('
-                CASE
-                    WHEN category_variation.card IS NOT NULL AND category_variation.card IS TRUE
-                    THEN product_variation.postfix
                 END'
             );
 
@@ -369,9 +332,7 @@ final class ModelOrProductRepository implements ModelOrProductInterface
                 'category_modification.id = product_modification.category_modification'
             );
 
-        /**
-         * Группировка в зависимости от настройки группировки модификации множественного варианта
-         */
+        /** Группировка в зависимости от настройки группировки модификации множественного варианта */
         $dbal
             ->addSelect('
                 CASE
@@ -385,22 +346,6 @@ final class ModelOrProductRepository implements ModelOrProductInterface
                 CASE
                     WHEN category_modification.card IS NOT NULL AND category_modification.card IS TRUE
                     THEN product_modification.value
-                END'
-            );
-
-        $dbal
-            ->addSelect('
-                CASE
-                    WHEN category_modification.card IS NOT NULL AND category_modification.card IS TRUE
-                    THEN product_modification.postfix
-                    ELSE NULL
-                END
-            AS product_modification_postfix
-            ')
-            ->addGroupBy('
-                CASE
-                    WHEN category_modification.card IS NOT NULL AND category_modification.card IS TRUE
-                    THEN product_modification.postfix
                 END'
             );
 
