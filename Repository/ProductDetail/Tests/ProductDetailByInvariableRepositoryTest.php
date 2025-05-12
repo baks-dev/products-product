@@ -49,6 +49,9 @@ final class ProductDetailByInvariableRepositoryTest extends KernelTestCase
         /** @var ProductDetailByInvariableResult $item */
         foreach($result as $item)
         {
+            self::assertTrue(is_string($item->getProductArticle()));
+            self::assertTrue(is_string($item->getProductName()));
+
             self::assertTrue(
                 $item->getProductOfferValue() === null ||
                 is_string($item->getProductOfferValue())
@@ -88,7 +91,6 @@ final class ProductDetailByInvariableRepositoryTest extends KernelTestCase
                 $item->getProductModificationReference() instanceof InputField
             );
 
-            self::assertTrue($item->getProductArticle() === null || is_string($item->getProductArticle()));
             self::assertTrue($item->getProductImage() === null || is_string($item->getProductImage()));
             self::assertTrue($item->getProductImageExt() === null || is_string($item->getProductImageExt()));
             self::assertTrue($item->getProductImageCdn() === null || is_bool($item->getProductImageCdn()));

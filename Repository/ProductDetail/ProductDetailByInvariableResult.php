@@ -30,21 +30,21 @@ use BaksDev\Core\Type\Field\InputField;
 final readonly class ProductDetailByInvariableResult
 {
     public function __construct(
-        private ?string $product_offer_value = null,
-        private ?string $product_offer_postfix = null,
-        private ?string $product_offer_reference  = null,
-        private ?string $product_variation_value = null,
+        private string $product_article,
+        private string $product_name,
+        private ?string $product_offer_value,
+        private ?string $product_offer_postfix,
+        private ?string $product_offer_reference ,
+        private ?string $product_variation_value,
         private ?string $product_variation_postfix = null,
-        private ?string $product_variation_reference  = null,
-        private ?string $product_modification_value = null,
-        private ?string $product_modification_postfix = null,
-        private ?string $product_modification_reference  = null,
-        private ?string $product_article = null,
-        private ?string $product_image = null,
-        private ?string $product_image_ext = null,
-        private ?bool $product_image_cdn = null,
-        private ?string $product_name = null,
-        private ?string $category_section_field = null,
+        private ?string $product_variation_reference ,
+        private ?string $product_modification_value,
+        private ?string $product_modification_postfix,
+        private ?string $product_modification_reference ,
+        private ?string $product_image,
+        private ?string $product_image_ext,
+        private ?bool $product_image_cdn,
+        private ?string $category_section_field,
     ) {}
 
     public function getProductOfferValue(): ?string
@@ -92,7 +92,7 @@ final readonly class ProductDetailByInvariableResult
         return new InputField($this->product_modification_reference);
     }
 
-    public function getProductArticle(): ?string
+    public function getProductArticle(): string
     {
         return $this->product_article;
     }
@@ -117,7 +117,7 @@ final readonly class ProductDetailByInvariableResult
         return $this->category_section_field;
     }
 
-    public function getProductName(): ?string
+    public function getProductName(): string
     {
         return $this->product_name;
     }
