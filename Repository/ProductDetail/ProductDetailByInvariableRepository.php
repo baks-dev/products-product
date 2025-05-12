@@ -80,7 +80,7 @@ final class ProductDetailByInvariableRepository implements ProductDetailByInvari
      */
     public function find(): Generator
     {
-        if($this->invariable === false)
+        if(!($this->invariable instanceof ProductInvariableUid))
         {
             throw new InvalidArgumentException('Invalid Argument product');
         }
