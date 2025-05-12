@@ -1,17 +1,17 @@
 <?php
 /*
- * Copyright 2025.  Baks.dev <admin@baks.dev>
- *
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *
+ *  
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *
+ *  
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -50,7 +50,6 @@ use BaksDev\Products\Product\Entity\Property\ProductProperty;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Type\Invariable\ProductInvariableUid;
 use Doctrine\DBAL\Exception\InvalidArgumentException;
-use Generator;
 
 final class ProductDetailByInvariableRepository implements ProductDetailByInvariableInterface
 {
@@ -60,6 +59,12 @@ final class ProductDetailByInvariableRepository implements ProductDetailByInvari
 
     public function invariable(ProductInvariable|ProductInvariableUid|string $invariable): self
     {
+        if(empty($invariable))
+        {
+            $this->invariable = false;
+            return $this;
+        }
+
         if(is_string($invariable))
         {
             $invariable = new ProductInvariableUid($invariable);
@@ -78,9 +83,9 @@ final class ProductDetailByInvariableRepository implements ProductDetailByInvari
     /**
      * Метод возвращает детальную информацию о продукте по его invariable
      */
-    public function find(): Generator
+    public function find(): ProductDetailByInvariableResult|false
     {
-        if(!($this->invariable instanceof ProductInvariableUid))
+        if(false === ($this->invariable instanceof ProductInvariableUid))
         {
             throw new InvalidArgumentException('Invalid Argument product');
         }
@@ -92,7 +97,11 @@ final class ProductDetailByInvariableRepository implements ProductDetailByInvari
         $dbal
             ->from(ProductInvariable::class, 'invariable')
             ->where('invariable.id = :id')
-            ->setParameter('id', $this->invariable, ProductInvariableUid::TYPE);
+            ->setParameter(
+                key: 'id',
+                value: $this->invariable,
+                type: ProductInvariableUid::TYPE
+            );
 
         $dbal->join(
             'invariable',
@@ -118,11 +127,11 @@ final class ProductDetailByInvariableRepository implements ProductDetailByInvari
 
         /* Базовый артикул продукта и стоимость */
         $dbal->join(
-                'product',
-                ProductInfo::class,
-                'product_info',
-                'product_info.product = product.id '
-            );
+            'product',
+            ProductInfo::class,
+            'product_info',
+            'product_info.product = product.id '
+        );
 
         /**
          * Торговое предложение
@@ -371,10 +380,8 @@ final class ProductDetailByInvariableRepository implements ProductDetailByInvari
 
         $dbal->allGroupByExclude();
 
-        $result = $dbal
+        return $dbal
             ->enableCache('products-product')
-            ->fetchAllHydrate(ProductDetailByInvariableResult::class);
-
-        return $result;
+            ->fetchHydrate(ProductDetailByInvariableResult::class);
     }
 }
