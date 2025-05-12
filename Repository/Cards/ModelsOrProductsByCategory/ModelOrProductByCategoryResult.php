@@ -19,6 +19,7 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 declare(strict_types=1);
@@ -41,27 +42,37 @@ final readonly class ModelOrProductByCategoryResult implements ModelsOrProductsC
         private string $product_url,
         private int $product_sort,
         private string $product_active_from,
+
         private bool|null $category_offer_card,
         private string|null $product_offer_reference,
         private string|null $product_offer_value,
+        private string|null $product_offer_postfix,
         private string $offer_agg,
+
         private bool|null $category_variation_card,
         private string|null $product_variation_reference,
         private string|null $product_variation_value,
+        private string|null $product_variation_postfix,
         private string $variation_agg,
+
         private bool|null $category_modification_card,
         private string|null $product_modification_reference,
         private string|null $product_modification_value,
+        private string|null $product_modification_postfix,
         private string $modification_agg,
+
         private string $invariable,
         private string $product_root_images,
+
         private string $category_url,
         private string $category_name,
+
         private int|null $product_price,
         private int|null $product_old_price,
         private string|null $product_currency,
-        private string|null $category_section_field,
         private int|null $product_quantity,
+
+        private string|null $category_section_field,
 
         private string|null $profile_discount = null,
     ) {}
@@ -278,5 +289,20 @@ final readonly class ModelOrProductByCategoryResult implements ModelsOrProductsC
     public function getProductQuantity(): ?int
     {
         return $this->product_quantity;
+    }
+
+    public function getProductOfferPostfix(): ?string
+    {
+        return $this->product_offer_postfix;
+    }
+
+    public function getProductVariationPostfix(): ?string
+    {
+        return $this->product_variation_postfix;
+    }
+
+    public function getProductModificationPostfix(): ?string
+    {
+        return $this->product_modification_postfix;
     }
 }

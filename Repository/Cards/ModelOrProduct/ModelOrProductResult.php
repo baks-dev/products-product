@@ -19,6 +19,7 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 declare(strict_types=1);
@@ -48,16 +49,19 @@ final readonly class ModelOrProductResult implements ModelsOrProductsCardResultI
         private bool|null $category_offer_card,
         private string|null $product_offer_reference,
         private string|null $product_offer_value,
+        private string|null $product_offer_postfix,
         private string $offer_agg,
 
         private bool|null $category_variation_card,
         private string|null $product_variation_reference,
         private string|null $product_variation_value,
+        private string|null $product_variation_postfix,
         private string $variation_agg,
 
         private bool|null $category_modification_card,
         private string|null $product_modification_reference,
         private string|null $product_modification_value,
+        private string|null $product_modification_postfix,
         private string $modification_agg,
 
         private string $invariable,
@@ -168,6 +172,16 @@ final readonly class ModelOrProductResult implements ModelsOrProductsCardResultI
 
     public function getInvariable(): array|null
     {
+        if(is_null($this->invariable))
+        {
+            return null;
+        }
+
+        if(false === json_validate($this->invariable))
+        {
+            return null;
+        }
+
         $invariables = json_decode($this->invariable, true, 512, JSON_THROW_ON_ERROR);
 
         if(null === current($invariables))
@@ -276,5 +290,20 @@ final readonly class ModelOrProductResult implements ModelsOrProductsCardResultI
         }
 
         return $category_section_field;
+    }
+
+    public function getProductOfferPostfix(): ?string
+    {
+        return $this->product_offer_postfix;
+    }
+
+    public function getProductVariationPostfix(): ?string
+    {
+        return $this->product_variation_postfix;
+    }
+
+    public function getProductModificationPostfix(): ?string
+    {
+        return $this->product_modification_postfix;
     }
 }
