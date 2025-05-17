@@ -65,7 +65,7 @@ final readonly class ProductModelOfferResult implements RepositoryResultInterfac
         private int $price,
         private int $old_price,
         private string $currency,
-        private int $quantity,
+        private ?int $quantity,
 
         private string|null $profile_discount = null,
     ) {}
@@ -218,7 +218,7 @@ final readonly class ProductModelOfferResult implements RepositoryResultInterfac
 
     public function getProductQuantity(): int
     {
-        return $this->quantity;
+        return $this->quantity ?: 0;
     }
 
     /** Helpers */
