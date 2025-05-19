@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 declare(strict_types=1);
@@ -757,7 +756,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                         CategoryProductSectionFieldUid::TYPE
                     );
 
-                    if(isset($item['min']) || isset($item['max']))
+                    if(is_array($item) && (isset($item['min']) || isset($item['max'])))
                     {
                         $RangeProductPropertyJoin = null;
 
@@ -837,7 +836,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                         ];
                     }
 
-                    if(isset($item['min']) || isset($item['max']))
+                    if(is_array($item) && (isset($item['min']) || isset($item['max'])))
                     {
                         $RangeProductPropertyJoin = null;
 

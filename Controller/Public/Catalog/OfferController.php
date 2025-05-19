@@ -41,6 +41,7 @@ use Symfony\Component\Routing\Exception\RouteNotFoundException;
 #[AsController]
 final class OfferController extends AbstractController
 {
+    /** @depricate */
     #[Route('/catalog/{category}/offer/{offer}/{page<\d+>}', name: 'public.catalog.offer', methods: ['GEt', 'POSt'])]
     public function index(
         Request $request,

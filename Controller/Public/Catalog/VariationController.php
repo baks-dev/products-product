@@ -41,6 +41,7 @@ use Symfony\Component\Routing\Exception\RouteNotFoundException;
 #[AsController]
 final class VariationController extends AbstractController
 {
+    /** @depricate */
     #[Route('/catalog/{category}/variation/{offer}/{variation}/{page<\d+>}', name: 'public.catalog.variation')]
     public function index(
         Request $request,
