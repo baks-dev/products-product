@@ -159,7 +159,7 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
             ->setParameter(
                 'event',
                 $this->event,
-                ProductEventUid::TYPE
+                ProductEventUid::TYPE,
             );
 
         $dbal
@@ -169,7 +169,7 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
                 'event',
                 Product::class,
                 'product',
-                'product.id = event.main'
+                'product.id = event.main',
             );
 
 
@@ -179,12 +179,12 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
                 'product',
                 ProductOffer::class,
                 'offer',
-                'offer.id = :offer'
+                'offer.id = :offer',
             )
                 ->setParameter(
                     'offer',
                     $this->offer,
-                    ProductOfferUid::TYPE
+                    ProductOfferUid::TYPE,
                 );
 
 
@@ -197,7 +197,7 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
                     'offer',
                     ProductOffer::class,
                     'current_offer',
-                    'current_offer.const = offer.const AND current_offer.event = product.event'
+                    'current_offer.const = offer.const AND current_offer.event = product.event',
                 );
 
             if($this->variation)
@@ -207,12 +207,12 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
                     'offer',
                     ProductVariation::class,
                     'variation',
-                    'variation.id = :variation AND variation.offer = offer.id'
+                    'variation.id = :variation AND variation.offer = offer.id',
                 )
                     ->setParameter(
                         'variation',
                         $this->variation,
-                        ProductVariationUid::TYPE
+                        ProductVariationUid::TYPE,
                     );
 
                 $dbal
@@ -223,7 +223,7 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
                         'variation',
                         ProductVariation::class,
                         'current_variation',
-                        'current_variation.const = variation.const AND current_variation.offer = current_offer.id'
+                        'current_variation.const = variation.const AND current_variation.offer = current_offer.id',
                     );
 
 
@@ -234,12 +234,12 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
                             'variation',
                             ProductModification::class,
                             'modification',
-                            'modification.id = :modification AND modification.variation = variation.id'
+                            'modification.id = :modification AND modification.variation = variation.id',
                         )
                         ->setParameter(
                             'modification',
                             $this->modification,
-                            ProductModificationUid::TYPE
+                            ProductModificationUid::TYPE,
                         );
 
                     $dbal
@@ -250,15 +250,13 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
                             'modification',
                             ProductModification::class,
                             'current_modification',
-                            'current_modification.const = modification.const AND current_modification.variation = current_variation.id'
+                            'current_modification.const = modification.const AND current_modification.variation = current_variation.id',
                         );
                 }
             }
         }
 
-        return $dbal
-            ->enableCache('products-product', 5)
-            ->fetchHydrate(CurrentProductIdentifierResult::class);
+        return $dbal->fetchHydrate(CurrentProductIdentifierResult::class);
 
     }
 }

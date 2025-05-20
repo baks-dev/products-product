@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -26,15 +26,12 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Messenger;
 
 use BaksDev\Core\Cache\AppCacheInterface;
-use BaksDev\Products\Product\Repository\AllProductsIdentifier\AllProductsIdentifierInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler(priority: -100)]
 final class ProductNullHandler
 {
-    public function __construct(AllProductsIdentifierInterface $allProductsIdentifier) {}
-
     public function __invoke(ProductMessage $message): void
     {
         // ....

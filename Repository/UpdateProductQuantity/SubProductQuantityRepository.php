@@ -176,7 +176,10 @@ final class SubProductQuantityRepository implements SubProductQuantityInterface
             throw new InvalidArgumentException('Необходимо вызвать метод subQuantity || subReserve передав количество');
         }
 
-        //$result = $this->getCurrentProductQuantity();
+
+        /**
+         * Всегда пробуем определить активное состояние карточки на случай обновления
+         */
 
         $CurrentProductIdentifier = $this->currentProductIdentifier
             ->forEvent($this->event)
@@ -190,6 +193,8 @@ final class SubProductQuantityRepository implements SubProductQuantityInterface
         {
             return false;
         }
+
+        /** По умолчанию обновляем остатки в карточке */
 
         $dbal = $this->DBALQueryBuilder->createQueryBuilder(self::class);
 
@@ -205,6 +210,8 @@ final class SubProductQuantityRepository implements SubProductQuantityInterface
 
         if($this->offer && $CurrentProductIdentifier->getOffer() instanceof ProductOfferUid)
         {
+            $dbal = $this->DBALQueryBuilder->createQueryBuilder(self::class);
+
             $dbal
                 ->update(ProductOfferQuantity::class)
                 ->where('offer = :offer')
@@ -217,6 +224,9 @@ final class SubProductQuantityRepository implements SubProductQuantityInterface
 
         if($this->variation && $CurrentProductIdentifier->getVariation() instanceof ProductVariationUid)
         {
+
+            $dbal = $this->DBALQueryBuilder->createQueryBuilder(self::class);
+
             $dbal
                 ->update(ProductVariationQuantity::class)
                 ->where('variation = :variation')
@@ -230,6 +240,8 @@ final class SubProductQuantityRepository implements SubProductQuantityInterface
 
         if($this->variation && $CurrentProductIdentifier->getModification() instanceof ProductModificationUid)
         {
+            $dbal = $this->DBALQueryBuilder->createQueryBuilder(self::class);
+
             $dbal
                 ->update(ProductModificationQuantity::class)
                 ->where('modification = :modification')

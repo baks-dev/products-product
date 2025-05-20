@@ -179,6 +179,9 @@ final class AddProductQuantityRepository implements AddProductQuantityInterface
             throw new InvalidArgumentException('Необходимо вызвать метод addQuantity || addReserve передав количество');
         }
 
+        /**
+         * Всегда пробуем определить активное состояние карточки на случай обновления
+         */
 
         $CurrentProductIdentifier = $this->currentProductIdentifier
             ->forEvent($this->event)
@@ -207,6 +210,8 @@ final class AddProductQuantityRepository implements AddProductQuantityInterface
 
         if($this->offer && $CurrentProductIdentifier->getOffer() instanceof ProductOfferUid)
         {
+            $dbal = $this->DBALQueryBuilder->createQueryBuilder(self::class);
+
             $dbal
                 ->update(ProductOfferQuantity::class)
                 ->where('offer = :offer')
@@ -219,6 +224,8 @@ final class AddProductQuantityRepository implements AddProductQuantityInterface
 
         if($this->variation && $CurrentProductIdentifier->getVariation() instanceof ProductVariationUid)
         {
+            $dbal = $this->DBALQueryBuilder->createQueryBuilder(self::class);
+
             $dbal
                 ->update(ProductVariationQuantity::class)
                 ->where('variation = :variation')
@@ -232,6 +239,8 @@ final class AddProductQuantityRepository implements AddProductQuantityInterface
 
         if($this->variation && $CurrentProductIdentifier->getModification() instanceof ProductModificationUid)
         {
+            $dbal = $this->DBALQueryBuilder->createQueryBuilder(self::class);
+
             $dbal
                 ->update(ProductModificationQuantity::class)
                 ->where('modification = :modification')
