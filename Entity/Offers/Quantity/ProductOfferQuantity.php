@@ -84,11 +84,6 @@ class ProductOfferQuantity extends EntityEvent
     {
         if($dto instanceof ProductOfferQuantityInterface || $dto instanceof self)
         {
-            if(empty($dto->getQuantity()) && empty($dto->getReserve()))
-            {
-                return false;
-            }
-
             return parent::setEntity($dto);
         }
 

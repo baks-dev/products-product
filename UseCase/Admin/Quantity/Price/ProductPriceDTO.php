@@ -21,11 +21,30 @@
  *  THE SOFTWARE.
  */
 
-namespace BaksDev\Products\Product\Entity\Price;
+declare(strict_types=1);
 
+namespace BaksDev\Products\Product\UseCase\Admin\Quantity\Price;
+
+use BaksDev\Products\Product\Entity\Price\ProductPriceInterface;
 use BaksDev\Reference\Money\Type\Money;
+use Symfony\Component\Validator\Constraints as Assert;
 
-interface ProductPriceInterface
+/** @see ProductPrice */
+final class ProductPriceDTO implements ProductPriceInterface
 {
+    /** В наличии */
+    private ?int $quantity = 0;
+
+
+    public function getQuantity(): ?int
+    {
+        return $this->quantity;
+    }
+
+    public function setQuantity(?int $quantity): self
+    {
+        $this->quantity = $quantity;
+        return $this;
+    }
 
 }

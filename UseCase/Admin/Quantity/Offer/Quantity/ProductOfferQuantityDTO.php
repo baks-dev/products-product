@@ -21,11 +21,40 @@
  *  THE SOFTWARE.
  */
 
-namespace BaksDev\Products\Product\Entity\Price;
+namespace BaksDev\Products\Product\UseCase\Admin\Quantity\Offers\Quantity;
 
-use BaksDev\Reference\Money\Type\Money;
+use BaksDev\Products\Product\Entity\Offers\Quantity\ProductOfferQuantityInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
-interface ProductPriceInterface
+/** @see ProductOfferQuantity */
+final class ProductOfferQuantityDTO implements ProductOfferQuantityInterface
 {
+    /** В наличии */
+    #[Assert\NotBlank]
+    #[Assert\Range(min: 0)]
+    private ?int $quantity = 0;
 
+    /** Резерв */
+    #[Assert\NotBlank]
+    #[Assert\Range(min: 0)]
+    private ?int $reserve = 0;
+
+
+    /** В наличии */
+
+    public function getQuantity(): int
+    {
+        $this->quantity = $this->quantity && $this->quantity >= 0 ? $this->quantity : 0;
+
+        return $this->quantity;
+    }
+
+    /** Резерв */
+
+    public function getReserve(): int
+    {
+        $this->reserve = $this->reserve && $this->reserve >= 0 ? $this->reserve : 0;
+
+        return $this->reserve;
+    }
 }

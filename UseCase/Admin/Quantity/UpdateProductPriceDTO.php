@@ -21,11 +21,48 @@
  *  THE SOFTWARE.
  */
 
-namespace BaksDev\Products\Product\Entity\Price;
+declare(strict_types=1);
 
-use BaksDev\Reference\Money\Type\Money;
+namespace BaksDev\Products\Product\UseCase\Admin\Quantity;
 
-interface ProductPriceInterface
+use BaksDev\Products\Product\Entity\Event\ProductEventInterface;
+use BaksDev\Products\Product\Type\Event\ProductEventUid;
+use BaksDev\Products\Product\UseCase\Admin\Quantity\Price\ProductPriceDTO;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
+
+/** @see ProductEvent */
+final class UpdateProductPriceDTO implements ProductEventInterface
 {
+
+    /** Идентификатор */
+    #[Assert\Uuid]
+    #[Assert\NotBlank]
+    private ?ProductEventUid $id = null;
+
+    /** Базовые Стоимость и наличие */
+    #[Assert\Valid]
+    private ProductPriceDTO $price;
+
+
+    public function __construct()
+    {
+        $this->price = new ProductPriceDTO();
+    }
+
+    public function getEvent(): ?ProductEventUid
+    {
+        return $this->id;
+    }
+
+    public function setId(ProductEventUid $id): void
+    {
+        $this->id = $id;
+    }
+
+    public function getPrice(): ProductPriceDTO
+    {
+        return $this->price;
+    }
 
 }

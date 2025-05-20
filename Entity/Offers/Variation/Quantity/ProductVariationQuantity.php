@@ -78,11 +78,6 @@ class ProductVariationQuantity extends EntityEvent
     {
         if($dto instanceof ProductVariationQuantityInterface || $dto instanceof self)
         {
-            if(empty($dto->getQuantity()) && empty($dto->getReserve()))
-            {
-                return false;
-            }
-
             return parent::setEntity($dto);
         }
 

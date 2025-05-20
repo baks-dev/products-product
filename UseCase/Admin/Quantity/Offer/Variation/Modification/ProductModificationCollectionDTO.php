@@ -21,11 +21,31 @@
  *  THE SOFTWARE.
  */
 
-namespace BaksDev\Products\Product\Entity\Price;
+namespace BaksDev\Products\Product\UseCase\Admin\Quantity\Offers\Variation\Modification;
 
-use BaksDev\Reference\Money\Type\Money;
+use BaksDev\Products\Category\Type\Offers\Modification\CategoryProductModificationUid;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModificationInterface;
+use BaksDev\Products\Product\UseCase\Admin\Quantity\Offers\Variation\Modification\Quantity\ProductModificationQuantityDTO;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
 
-interface ProductPriceInterface
+/** @see ProductModification */
+final class ProductModificationCollectionDTO implements ProductModificationInterface
 {
+    /** Количественный учет */
+    #[Assert\Valid]
+    private ProductModificationQuantityDTO $quantity;
 
+
+    public function __construct()
+    {
+        $this->quantity = new ProductModificationQuantityDTO();
+    }
+
+    /** Количественный учет */
+
+    public function getQuantity(): ProductModificationQuantityDTO
+    {
+        return $this->quantity;
+    }
 }
