@@ -129,7 +129,9 @@ final class VariationController extends AbstractController
             'other' => $otherProducts,
             'fields' => $fields,
             'all_search' => $allSearchForm->createView(),
-        ], routingName: 'public.catalog.category');
+        ],
+        //routingName: 'public.catalog.category'
+        );
     }
 
 }
