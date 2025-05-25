@@ -33,7 +33,6 @@ use BaksDev\Products\Category\Entity\Offers\Variation\Modification\CategoryProdu
 use BaksDev\Products\Category\Entity\Section\CategoryProductSection;
 use BaksDev\Products\Category\Entity\Section\Field\CategoryProductSectionField;
 use BaksDev\Products\Category\Entity\Section\Field\Trans\CategoryProductSectionFieldTrans;
-use BaksDev\Products\Product\Entity\Category\ProductCategory;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
 use BaksDev\Products\Product\Entity\Offers\Image\ProductOfferImage;
@@ -46,7 +45,6 @@ use BaksDev\Products\Product\Entity\Photo\ProductPhoto;
 use BaksDev\Products\Product\Entity\Price\ProductPrice;
 use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Entity\ProductInvariable;
-use BaksDev\Products\Product\Entity\Property\ProductProperty;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Type\Invariable\ProductInvariableUid;
 use Doctrine\DBAL\Exception\InvalidArgumentException;
@@ -300,29 +298,29 @@ final class ProductDetailByInvariableRepository implements ProductDetailByInvari
 
 
         /* Категория */
-        $dbal->join(
+        /*$dbal->join(
             'product',
             ProductCategory::class,
             'product_event_category',
             'product_event_category.event = product.event AND product_event_category.root = true'
-        );
+        );*/
 
-        $dbal->join(
+        /*$dbal->join(
             'product_event_category',
             CategoryProduct::class,
             'category',
             'category.id = product_event_category.category'
-        );
+        );*/
 
-        $dbal->leftJoin(
+        /*$dbal->leftJoin(
             'category',
             CategoryProductSection::class,
             'category_section',
             'category_section.event = category.event'
-        );
+        );*/
 
         /* Свойства, участвующие в карточке */
-        $dbal->leftJoin(
+        /*$dbal->leftJoin(
             'category_section',
             CategoryProductSectionField::class,
             'category_section_field',
@@ -330,9 +328,9 @@ final class ProductDetailByInvariableRepository implements ProductDetailByInvari
                 category_section_field.section = category_section.id AND
                 (category_section_field.public = TRUE OR category_section_field.name = TRUE )
             '
-        );
+        );*/
 
-        $dbal->leftJoin(
+        /*$dbal->leftJoin(
             'category_section_field',
             CategoryProductSectionFieldTrans::class,
             'category_section_field_trans',
@@ -340,35 +338,39 @@ final class ProductDetailByInvariableRepository implements ProductDetailByInvari
                 category_section_field_trans.field = category_section_field.id AND
                 category_section_field_trans.local = :local
             '
-        );
+        );*/
 
-        $dbal->leftJoin(
+        /*$dbal->leftJoin(
             'category_section_field',
             ProductProperty::class,
             'product_property',
             'product_property.event = product.event AND product_property.field = category_section_field.const'
-        );
+        );*/
 
-        $dbal->addSelect(
-            "JSON_AGG (DISTINCT
-              
-                    JSONB_BUILD_OBJECT
-                    (
-                        '0', category_section_field.sort, /* сортировка  */
-                    
-                        'field_uid', category_section_field.id,
-                        'field_const', category_section_field.const,
-                        'field_name', category_section_field.name,
-                        'field_alternative', category_section_field.alternative,
-                        'field_public', category_section_field.public,
-                        'field_card', category_section_field.card,
-                        'field_type', category_section_field.type,
-                        'field_trans', category_section_field_trans.name,
-                        'field_value', product_property.value
-                    )
-            )
-			AS category_section_field"
-        );
+
+        //        $dbal->addSelect(
+        //            "JSON_AGG (DISTINCT
+        //
+        //                    JSONB_BUILD_OBJECT
+        //                    (
+        //                        '0', category_section_field.sort,
+        //
+        //                        'field_uid', category_section_field.id,
+        //                        'field_const', category_section_field.const,
+        //                        'field_name', category_section_field.name,
+        //                        'field_alternative', category_section_field.alternative,
+        //                        'field_public', category_section_field.public,
+        //                        'field_card', category_section_field.card,
+        //                        'field_type', category_section_field.type,
+        //                        'field_trans', category_section_field_trans.name,
+        //                        'field_value', product_property.value
+        //                    )
+        //            )
+        //			AS category_section_field"
+        //        );
+
+
+        $dbal->addSelect('NULL AS category_section_field');
 
         /* Название продукта */
         $dbal->addSelect('
