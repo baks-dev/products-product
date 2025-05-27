@@ -1,0 +1,15 @@
+{% if search_result %}
+
+    {# Заголовок указан, если тегов больше 1 #}
+    {% if headers %}
+        <h3>Нaйдено в products:</h3>
+    {% endif %}
+    {% set image_path = '/assets/img/blank.svg' %}
+    <div class="row row-cols-2 g-2 mb-5 rounded-4">
+        {% for product in search_result %}
+            <div class="col">
+                {{ include(_self|replace({ "search-results.html.twig" : "includes/search-card.html.twig" })) }}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
