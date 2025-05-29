@@ -141,4 +141,11 @@ class ProductModificationQuantity extends EntityEvent
         $this->quantity = $quantity ?: 0;
     }
 
+    /**
+     * Quantity
+     */
+    public function getQuantity(): int
+    {
+        return $this->quantity;
+    }
 }

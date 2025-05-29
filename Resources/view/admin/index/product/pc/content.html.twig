@@ -28,6 +28,15 @@
                     {{ form_end(profile) }}
                 </div>
             {% endif %} #}
+            {% if is_granted('ROLE_PRODUCT_QUANTITY') or is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('products-product:admin.quantity') }}"
+                   class="btn btn-primary modal-link disabled"
+                   data-bs-toggle="modal"
+                   data-bs-target="#modal"
+                   title="Изменить количество продукции">
+                    {{ 'Изменить количество продукции' }}
+                </a>
+            {% endif %}
 
             {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_PRODUCT_NEW') %}
                 <a href="{{ path('products-product:admin.newedit.new') }}" class="btn btn-primary"

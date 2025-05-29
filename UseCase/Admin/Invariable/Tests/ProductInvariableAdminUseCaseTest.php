@@ -41,6 +41,7 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 /**
  * @group products-product
  * @group products-product-repository
+ * @group products-product-usecase
  */
 #[When(env: 'test')]
 class ProductInvariableAdminUseCaseTest extends KernelTestCase

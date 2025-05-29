@@ -28,7 +28,9 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 /**
- * @group products-sign
+ * @group products-product
+ * @group products-product-usecase
+ *
  */
 #[When(env: 'test')]
 final class NewAdminControllerTest extends WebTestCase

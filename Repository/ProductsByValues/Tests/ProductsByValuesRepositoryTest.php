@@ -1,17 +1,17 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
- *  
+ * Copyright 2025.  Baks.dev <admin@baks.dev>
+ *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *  
+ *
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *  
+ *
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -23,28 +23,32 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\Repository\ProductDetail\Tests;
+namespace BaksDev\Products\Product\Repository\ProductsByValues\Tests;
 
-use BaksDev\Core\Type\Field\InputField;
+use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailByInvariableInterface;
 use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailByInvariableResult;
+use BaksDev\Products\Product\Repository\ProductsByValues\ProductsByValuesResult;
+use BaksDev\Products\Product\Type\Event\ProductEventUid;
+use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Product\Type\Invariable\ProductInvariableUid;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
-use BaksDev\Products\Product\Type\Event\ProductEventUid;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use BaksDev\Products\Product\Repository\ProductsByValues\ProductsByValuesInterface;
+use Symfony\Component\DependencyInjection\Attribute\When;
 
 /**
  * @group products-product
  * @group products-product-repository
  *
  * @depends BaksDev\Products\Product\UseCase\Admin\NewEdit\Tests\ProductsProductNewAdminUseCaseTest::class
- * @depends BaksDev\Products\Product\UseCase\Admin\Invariable\Tests\ProductInvariableAdminUseCaseTest::class
  */
-final class ProductDetailByInvariableRepositoryTest extends KernelTestCase
+#[When(env: 'test')]
+final class ProductsByValuesRepositoryTest extends KernelTestCase
 {
-    public function testFind(): void
+    public static function testFindAll(): void
     {
         /** @var ProductDetailByInvariableInterface $productDetailByInvariable */
         $productDetailByInvariable = self::getContainer()->get(ProductDetailByInvariableInterface::class);
@@ -52,13 +56,34 @@ final class ProductDetailByInvariableRepositoryTest extends KernelTestCase
         /** @var ProductDetailByInvariableResult $result */
         $result = $productDetailByInvariable->invariable(ProductInvariableUid::TEST)->find();
 
-        self::assertInstanceOf(ProductEventUid::class, $result->getProductEvent());
-        self::assertTrue(is_string($result->getProductArticle()));
-        self::assertTrue(is_string($result->getProductName()));
+        $offerValue = $result->getProductOfferValue();
+
+        $variationValue = $result->getProductVariationValue();
+
+        $modificationValue = $result->getProductModificationValue();
+
+        /** @var ProductsByValuesInterface $repositoryByValue */
+        $repositoryByValue = self::getContainer()->get(ProductsByValuesInterface::class);
+        $result = $repositoryByValue
+            ->forCategory(CategoryProductUid::TEST)
+            ->forOfferValue($offerValue)
+            ->forVariationValue($variationValue)
+            ->forModificationValue($modificationValue)
+            ->findAll();
+
+        self::assertNotFalse($result);
+
+        $result = $result->current();
+
+        self::assertInstanceOf(ProductsByValuesResult::class, $result);
+
+        self::assertInstanceOf(ProductUid::class, $result->getProduct());
+        self::assertInstanceOf(ProductEventUid::class, $result->getEvent());
+        self::assertIsString($result->getProductUrl());
 
         self::assertTrue(
-            $result->getProductOfferId() === null ||
-            $result->getProductOfferId() instanceof ProductOfferUid
+            $result->getProductOfferUid() === null ||
+            $result->getProductOfferUid() instanceof ProductOfferUid
         );
         self::assertTrue(
             $result->getProductOfferValue() === null ||
@@ -68,14 +93,10 @@ final class ProductDetailByInvariableRepositoryTest extends KernelTestCase
             $result->getProductOfferPostfix() === null ||
             is_string($result->getProductOfferPostfix())
         );
-        self::assertTrue(
-            $result->getProductOfferReference() === null ||
-            $result->getProductOfferReference() instanceof InputField
-        );
 
         self::assertTrue(
-            $result->getProductVariationId() === null ||
-            $result->getProductVariationId() instanceof ProductVariationUid
+            $result->getProductVariationUid() === null ||
+            $result->getProductVariationUid() instanceof ProductVariationUid
         );
         self::assertTrue(
             $result->getProductVariationValue() === null ||
@@ -85,14 +106,10 @@ final class ProductDetailByInvariableRepositoryTest extends KernelTestCase
             $result->getProductVariationPostfix() === null ||
             is_string($result->getProductVariationPostfix())
         );
-        self::assertTrue(
-            $result->getProductVariationReference() === null ||
-            $result->getProductVariationReference() instanceof InputField
-        );
 
         self::assertTrue(
-            $result->getProductModificationId() === null ||
-            $result->getProductModificationId() instanceof ProductModificationUid
+            $result->getProductModificationUid() === null ||
+            $result->getProductModificationUid() instanceof ProductModificationUid
         );
         self::assertTrue(
             $result->getProductModificationValue() === null ||
@@ -102,19 +119,5 @@ final class ProductDetailByInvariableRepositoryTest extends KernelTestCase
             $result->getProductModificationPostfix() === null ||
             is_string($result->getProductModificationPostfix())
         );
-        self::assertTrue(
-            $result->getProductModificationReference() === null ||
-            $result->getProductModificationReference() instanceof InputField
-        );
-
-        self::assertTrue($result->getProductImage() === null || is_string($result->getProductImage()));
-        self::assertTrue($result->getProductImageExt() === null || is_string($result->getProductImageExt()));
-        self::assertTrue($result->getProductImageCdn() === null || is_bool($result->getProductImageCdn()));
-        self::assertTrue(
-            $result->getCategorySectionField() === null ||
-            is_string($result->getCategorySectionField())
-        );
-
-
     }
 }

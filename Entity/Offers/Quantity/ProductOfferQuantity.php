@@ -145,4 +145,8 @@ class ProductOfferQuantity extends EntityEvent
         $this->quantity = $quantity ?: 0;
     }
 
+    public function getQuantity(): ?int
+    {
+        return $this->quantity;
+    }
 }
