@@ -29,33 +29,18 @@ use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 
 final readonly class UpdateOfferQuantityDTO
 {
-    private ProductOfferUid $offer;
-
-    private int $quantity;
-
+    public function __construct(
+        private ProductOfferUid $offer,
+        private int $quantity
+    ) {}
 
     public function getOffer(): ProductOfferUid
     {
         return $this->offer;
     }
 
-    public function setOffer(ProductOfferUid $offer): self
-    {
-        $this->offer = $offer;
-
-        return $this;
-    }
-
     public function getQuantity(): int
     {
         return $this->quantity;
-    }
-
-
-    public function setQuantity(int $quantity): self
-    {
-        $this->quantity = $quantity;
-
-        return $this;
     }
 }

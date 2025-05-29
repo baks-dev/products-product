@@ -30,15 +30,15 @@ use BaksDev\Core\Entity\AbstractHandler;
 
 final class UpdateVariationQuantityHandler extends AbstractHandler
 {
-    public function handle(UpdateVariationQuantityDTO $dto): ProductVariationQuantity|string|false
+    public function handle(UpdateVariationQuantityDTO $command): ProductVariationQuantity|string|false
     {
         $product = $this
             ->getRepository(ProductVariationQuantity::class)
-            ->findOneBy(['variation' => (string) $dto->getVariation()]);
+            ->findOneBy(['variation' => (string) $command->getVariation()]);
 
         if(empty($product) === false)
         {
-            $product->setQuantity($dto->getQuantity());
+            $product->setQuantity($command->getQuantity());
 
             /** Валидация всех объектов */
             $this->validatorCollection->add($product);

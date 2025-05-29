@@ -27,84 +27,43 @@ namespace BaksDev\Products\Product\Messenger\Quantity;
 
 use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 
-final class FindProductsForQuantityUpdateMessage
+final readonly class FindProductsForQuantityUpdateMessage
 {
-    private CategoryProductUid $category;
+    private string $category;
 
-    /**
-     * Значение торгового предложения
-     */
-    private ?string $offer = null;
-
-    /**
-     * Значение варианта торгового предложения
-     */
-    private ?string $variation = null;
-
-    /**
-     * Значение модификации торгового предложения
-     */
-    private ?string $modification = null;
-
-    /**
-     * Количество продукта
-     */
-    private int $quantity;
-
+    public function __construct(
+        CategoryProductUid $category,
+        private int $quantity,
+        private ?string $offerValue = null,
+        private ?string $variationValue = null,
+        private ?string $modificationValue = null,
+    )
+    {
+        $this->category = (string) $category;
+    }
 
     public function getCategory(): CategoryProductUid
     {
-        return $this->category;
+        return new CategoryProductUid($this->category);
     }
 
-    public function getOffer(): ?string
+    public function getOfferValue(): ?string
     {
-        return $this->offer;
+        return $this->offerValue;
     }
 
-    public function getVariation(): ?string
+    public function getVariationValue(): ?string
     {
-        return $this->variation;
+        return $this->variationValue;
     }
 
-    public function getModification(): ?string
+    public function getModificationValue(): ?string
     {
-        return $this->modification;
+        return $this->modificationValue;
     }
 
     public function getQuantity(): int
     {
         return $this->quantity;
-    }
-
-    public function setCategory(CategoryProductUid $category): self
-    {
-        $this->category = $category;
-
-        return $this;
-    }
-
-    public function setOffer(?string $offer): self
-    {
-        $this->offer = $offer;
-        return $this;
-    }
-
-    public function setVariation(?string $variation): self
-    {
-        $this->variation = $variation;
-        return $this;
-    }
-
-    public function setModification(?string $modification): self
-    {
-        $this->modification = $modification;
-        return $this;
-    }
-
-    public function setQuantity(int $quantity): self
-    {
-        $this->quantity = $quantity;
-        return $this;
     }
 }

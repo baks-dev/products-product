@@ -59,9 +59,10 @@ final class UpdateOfferQuantityTest extends KernelTestCase
 
         /** @var UpdateOfferQuantityHandler $handler */
         $handler = self::getContainer()->get(UpdateOfferQuantityHandler::class);
-        $dto = new UpdateOfferQuantityDTO()
-            ->setOffer($offer)
-            ->setQuantity($quantity);
+        $dto = new UpdateOfferQuantityDTO(
+            $offer,
+            $quantity
+        );
 
         $result = $handler->handle($dto);
 

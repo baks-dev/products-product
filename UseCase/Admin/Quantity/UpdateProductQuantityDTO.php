@@ -27,33 +27,20 @@ namespace BaksDev\Products\Product\UseCase\Admin\Quantity;
 
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 
-final class UpdateProductQuantityDTO
+final readonly class UpdateProductQuantityDTO
 {
-    private ProductEventUid $event;
-
-    private int $quantity;
-
+    public function __construct(
+        private ProductEventUid $event,
+        private int $quantity
+    ) {}
 
     public function getQuantity(): int
     {
         return $this->quantity;
     }
 
-    public function setQuantity(int $quantity): self
-    {
-        $this->quantity = $quantity;
-        return $this;
-    }
-
-
     public function getEvent(): ProductEventUid
     {
         return $this->event;
-    }
-
-    public function setEvent(ProductEventUid $event): self
-    {
-        $this->event = $event;
-        return $this;
     }
 }

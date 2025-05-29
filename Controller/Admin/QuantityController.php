@@ -61,12 +61,13 @@ final class QuantityController extends AbstractController
             /** @var ProductsQuantityDTO $data */
             $data = $form->getData();
 
-            $message = new FindProductsForQuantityUpdateMessage()
-                ->setCategory($data->getCategory())
-                ->setOffer($data->getOffer())
-                ->setVariation($data->getVariation())
-                ->setModification($data->getModification())
-                ->setQuantity($data->getQuantity());
+            $message = new FindProductsForQuantityUpdateMessage(
+                $data->getCategory(),
+                $data->getQuantity(),
+                $data->getOffer(),
+                $data->getVariation(),
+                $data->getModification(),
+            );
 
             /** Отправляем сообщение в шину */
             $messageDispatch->dispatch(

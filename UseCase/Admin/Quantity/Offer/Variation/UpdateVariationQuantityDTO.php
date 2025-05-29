@@ -27,34 +27,20 @@ namespace BaksDev\Products\Product\UseCase\Admin\Quantity\Offer\Variation;
 
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 
-final class UpdateVariationQuantityDTO
+final readonly class UpdateVariationQuantityDTO
 {
-    private ProductVariationUid $variation;
-
-    private int $quantity;
-
+    public function __construct(
+        private ProductVariationUid $variation,
+        private int $quantity
+    ) {}
 
     public function getVariation(): ProductVariationUid
     {
         return $this->variation;
     }
 
-    public function setVariation(ProductVariationUid $variation): self
-    {
-        $this->variation = $variation;
-
-        return $this;
-    }
-
     public function getQuantity(): int
     {
         return $this->quantity;
-    }
-
-    public function setQuantity(int $quantity): self
-    {
-        $this->quantity = $quantity;
-
-        return $this;
     }
 }

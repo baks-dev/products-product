@@ -32,69 +32,49 @@ use BaksDev\Products\Product\Type\Event\ProductEventUid;
 
 final readonly class UpdateProductQuantityMessage
 {
-    private ProductEventUid $event;
+    private string $event;
 
-    private ?ProductOfferUid $offer;
+    private ?string $offer;
 
-    private ?ProductVariationUid $variation;
+    private ?string $variation;
 
-    private ?ProductModificationUid $modification;
+    private ?string $modification;
 
-    private int $quantity;
-
+    public function __construct(
+        ProductEventUid $event,
+        private int $quantity,
+        ?ProductOfferUid $offer,
+        ?ProductVariationUid $variation,
+        ?ProductModificationUid $modification,
+    ) {
+        $this->event = (string) $event;
+        $this->offer = empty($offer) ? null : (string) $offer;
+        $this->variation = empty($variation) ? null : (string) $variation;
+        $this->modification = empty($modification) ? null : (string) $modification;
+    }
 
     public function getEvent(): ProductEventUid
     {
-        return $this->event;
+        return new ProductEventUid($this->event);
     }
 
     public function getOffer(): ?ProductOfferUid
     {
-        return $this->offer;
+        return $this->offer === null ? null : new ProductOfferUid($this->offer);
     }
 
     public function getVariation(): ?ProductVariationUid
     {
-        return $this->variation;
+        return $this->variation === null ? null : new ProductVariationUid($this->variation);
     }
 
     public function getModification(): ?ProductModificationUid
     {
-        return $this->modification;
+        return $this->modification === null ? null : new ProductModificationUid($this->modification);
     }
 
     public function getQuantity(): int
     {
         return $this->quantity;
-    }
-
-    public function setEvent(ProductEventUid $event): self
-    {
-        $this->event = $event;
-        return $this;
-    }
-
-    public function setOffer(?ProductOfferUid $offer): self
-    {
-        $this->offer = $offer;
-        return $this;
-    }
-
-    public function setVariation(?ProductVariationUid $variation): self
-    {
-        $this->variation = $variation;
-        return $this;
-    }
-
-    public function setModification(?ProductModificationUid $modification): self
-    {
-        $this->modification = $modification;
-        return $this;
-    }
-
-    public function setQuantity(int $quantity): self
-    {
-        $this->quantity = $quantity;
-        return $this;
     }
 }

@@ -30,15 +30,15 @@ use BaksDev\Products\Product\Entity\Offers\Quantity\ProductOfferQuantity;
 
 final class UpdateOfferQuantityHandler extends AbstractHandler
 {
-    public function handle(UpdateOfferQuantityDTO $dto): ProductOfferQuantity|string|false
+    public function handle(UpdateOfferQuantityDTO $command): ProductOfferQuantity|string|false
     {
         $product = $this
             ->getRepository(ProductOfferQuantity::class)
-            ->findOneBy(['offer' => (string) $dto->getOffer()]);
+            ->findOneBy(['offer' => (string) $command->getOffer()]);
 
         if(empty($product) === false)
         {
-            $product->setQuantity($dto->getQuantity());
+            $product->setQuantity($command->getQuantity());
 
             /** Валидация всех объектов */
             $this->validatorCollection->add($product);

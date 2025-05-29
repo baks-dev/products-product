@@ -63,11 +63,12 @@ final readonly class UpdateProductQuantityDispatcher
     {
         if($message->getModification() instanceof ProductModificationUid)
         {
-            $dto = new UpdateModificationQuantityDTO()
-                ->setModification($message->getModification())
-                ->setQuantity($message->getQuantity());
+            $updateModificationQuantityDTO = new UpdateModificationQuantityDTO(
+                $message->getModification(),
+                $message->getQuantity()
+            );
 
-            $product = $this->UpdateModificationQuantityHandler->handle($dto);
+            $product = $this->UpdateModificationQuantityHandler->handle($updateModificationQuantityDTO);
 
             if($product instanceof ProductModificationQuantity)
             {
@@ -97,11 +98,12 @@ final readonly class UpdateProductQuantityDispatcher
 
         if(empty($message->getModification()) && $message->getVariation() instanceof ProductVariationUid)
         {
-            $dto = new UpdateVariationQuantityDTO()
-                ->setVariation($message->getVariation())
-                ->setQuantity($message->getQuantity());
+            $updateVariationQuantityDTO = new UpdateVariationQuantityDTO(
+                $message->getVariation(),
+                $message->getQuantity()
+            );
 
-            $product = $this->UpdateVariationQuantityHandler->handle($dto);
+            $product = $this->UpdateVariationQuantityHandler->handle($updateVariationQuantityDTO);
 
             if($product instanceof ProductVariationQuantity)
             {
@@ -131,11 +133,12 @@ final readonly class UpdateProductQuantityDispatcher
 
         if(empty($message->getVariation()) && $message->getOffer() instanceof ProductOfferUid)
         {
-            $dto = new UpdateOfferQuantityDTO()
-                ->setOffer($message->getOffer())
-                ->setQuantity($message->getQuantity());
+            $updateOfferQuantityDTO = new UpdateOfferQuantityDTO(
+                $message->getOffer(),
+                $message->getQuantity()
+            );
 
-            $product = $this->UpdateOfferQuantityHandler->handle($dto);
+            $product = $this->UpdateOfferQuantityHandler->handle($updateOfferQuantityDTO);
 
             if($product instanceof ProductOfferQuantity)
             {
@@ -165,11 +168,12 @@ final readonly class UpdateProductQuantityDispatcher
 
         if(empty($message->getOffer()) && $message->getEvent() instanceof ProductEventUid)
         {
-            $dto = new UpdateProductQuantityDTO()
-                ->setEvent($message->getEvent())
-                ->setQuantity($message->getQuantity());
+            $updateProductQuantityDTO = new UpdateProductQuantityDTO(
+                $message->getEvent(),
+                $message->getQuantity()
+            );
 
-            $product = $this->UpdateProductQuantityHandler->handle($dto);
+            $product = $this->UpdateProductQuantityHandler->handle($updateProductQuantityDTO);
 
             if($product instanceof ProductPrice)
             {

@@ -27,6 +27,7 @@ namespace BaksDev\Products\Product\Messenger\Quantity;
 
 use BaksDev\Core\Messenger\MessageDispatch;
 use BaksDev\Products\Product\Repository\ProductsByValues\ProductsByValuesInterface;
+use BaksDev\Products\Product\Repository\ProductsByValues\ProductsByValuesResult;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler(priority: 0)]
@@ -41,9 +42,9 @@ final readonly class FindProductsForQuantityUpdateDispatcher
     {
         $this->ProductsByValuesRepository
             ->forCategory($message->getCategory())
-            ->forOfferValue($message->getOffer())
-            ->forVariationValue($message->getVariation())
-            ->forModificationValue($message->getModification());
+            ->forOfferValue($message->getOfferValue())
+            ->forVariationValue($message->getVariationValue())
+            ->forModificationValue($message->getModificationValue());
 
         $products = $this->ProductsByValuesRepository->findAll();
 
@@ -52,14 +53,16 @@ final readonly class FindProductsForQuantityUpdateDispatcher
             return;
         }
 
+        /** @var ProductsByValuesResult $product */
         foreach($products as $product)
         {
-            $message = new UpdateProductQuantityMessage()
-                ->setEvent($product->getEvent())
-                ->setOffer($product->getProductOfferUid())
-                ->setVariation($product->getProductVariationUid())
-                ->setModification($product->getProductModificationUid())
-                ->setQuantity($message->getQuantity());
+            $message = new UpdateProductQuantityMessage(
+                $product->getEvent(),
+                $message->getQuantity(),
+                $product->getProductOfferUid(),
+                $product->getProductVariationUid(),
+                $product->getProductModificationUid(),
+            );
 
             /** Отправляем сообщение в шину */
             $this->messageDispatch->dispatch(
