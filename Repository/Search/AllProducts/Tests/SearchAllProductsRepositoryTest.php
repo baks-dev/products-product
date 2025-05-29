@@ -1,17 +1,17 @@
 <?php
 /*
  *  Copyright 2025.  Baks.dev <admin@baks.dev>
- *  
+ *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *  
+ *
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *  
+ *
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,28 +21,37 @@
  *  THE SOFTWARE.
  */
 
-namespace Symfony\Component\DependencyInjection\Loader\Configurator;
+namespace BaksDev\Search\Repository\AllProducts;
 
-use BaksDev\Products\Product\BaksDevProductsProductBundle;
+use BaksDev\Core\Form\Search\SearchDTO;
+use BaksDev\Products\Product\Repository\Search\AllProducts\SearchAllProductsInterface;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\DependencyInjection\Attribute\When;
 
-return static function(ContainerConfigurator $container) {
+/**
+ * @group products-search
+ */
+#[When(env: 'test')]
+class SearchAllProductsRepositoryTest extends KernelTestCase
+{
+    public function testFindUserProductInvariablesViewed()
+    {
+        /** @var SearchAllProductsInterface $repository */
+        $repository = self::getContainer()->get(SearchAllProductsInterface::class);
 
-    $services = $container->services()
-        ->defaults()
-        ->public()
-        ->autowire()
-        ->autoconfigure();
+        $search = new SearchDTO();
+        //        $search->setQuery('triangle');
+//        $search->setQuery('tri');
+        $search->setQuery('?;+tri');
 
-    $services->load(BaksDevProductsProductBundle::NAMESPACE, BaksDevProductsProductBundle::PATH)
-        ->exclude([
-            BaksDevProductsProductBundle::PATH.'{Entity,Resources,Type}',
-            BaksDevProductsProductBundle::PATH.'**'.DIRECTORY_SEPARATOR.'*Message.php',
-            BaksDevProductsProductBundle::PATH.'**'.DIRECTORY_SEPARATOR.'*Result.php',
-            BaksDevProductsProductBundle::PATH.'**'.DIRECTORY_SEPARATOR.'*DTO.php',
-            BaksDevProductsProductBundle::PATH.'**'.DIRECTORY_SEPARATOR.'*Test.php',
-        ]);
+        $result = $repository
+            ->search($search)
+            ->findAll();
 
-    $NAMESPACE = BaksDevProductsProductBundle::NAMESPACE;
-    $PATH = BaksDevProductsProductBundle::PATH;
-    $services->load($NAMESPACE.'Type\RedisTags\\', $PATH.implode(DIRECTORY_SEPARATOR, ['Type', 'RedisTags']));
-};
+//                dd($result);
+//                dd(iterator_to_array($result));
+
+        self::assertTrue(true);
+    }
+
+}
