@@ -714,7 +714,9 @@ final class SearchAllProductsRepository implements SearchAllProductsInterface
 
         $this->maxResult ? $dbal->setMaxResults($this->maxResult) : $dbal->setMaxResults(self::MAX_RESULTS);
 
-        return $dbal->fetchAllHydrate(SearchAllResult::class);
+        $result = $dbal->fetchAllHydrate(SearchAllResult::class);
+
+        return ($result->valid() === true) ? $result : false;
 
     }
 
