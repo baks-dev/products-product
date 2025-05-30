@@ -21,6 +21,8 @@
  *  THE SOFTWARE.
  */
 
+declare(strict_types=1);
+
 namespace BaksDev\Products\Product\Controller\Admin\Tests;
 
 use BaksDev\Users\User\Tests\TestUserAccount;

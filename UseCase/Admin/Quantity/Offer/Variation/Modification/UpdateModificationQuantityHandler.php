@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2023.  Baks.dev <admin@baks.dev>
+ * Copyright 2025.  Baks.dev <admin@baks.dev>
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -23,12 +23,36 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\Entity\Offers\Variation\Modification\Quantity;
+namespace BaksDev\Products\Product\UseCase\Admin\Quantity\Offer\Variation\Modification;
 
-interface ProductModificationQuantityInterface
+use BaksDev\Core\Entity\AbstractHandler;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Quantity\ProductModificationQuantity;
+
+final class UpdateModificationQuantityHandler extends AbstractHandler
 {
-    public function getQuantity(): ?int;
+    public function handle(UpdateModificationQuantityDTO $command): ProductModificationQuantity|string|false
+    {
+        $product = $this
+            ->getRepository(ProductModificationQuantity::class)
+            ->findOneBy(['modification' => (string) $command->getModification()]);
 
-    public function getReserve(): ?int;
+        if(empty($product) === false)
+        {
+            $product->setQuantity($command->getQuantity());
 
+            /** Валидация всех объектов */
+            $this->validatorCollection->add($product);
+
+            if($this->validatorCollection->isInvalid())
+            {
+                return $this->validatorCollection->getErrorUniqid();
+            }
+
+            $this->flush();
+
+            return $product;
+        }
+
+        return false;
+    }
 }

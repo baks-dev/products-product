@@ -66,7 +66,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * @group products-product
  * @group products-product-usecase
  *
- * @depends BaksDev\Products\Product\UseCase\Admin\NewEdit\Tests\ProductsProductNewTest::class
+ * @depends BaksDev\Products\Product\UseCase\Admin\NewEdit\Tests\ProductsProductNewAdminUseCaseTest::class
  */
 #[When(env: 'test')]
 class ProductsProductEditAdminUseCaseTest extends KernelTestCase

@@ -45,9 +45,12 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * @group products-product
  * @group products-product-usecase
  *
- * @depends BaksDev\Products\Product\Controller\Admin\Tests\DeleteControllerTest::class
- * @depends BaksDev\Products\Product\UseCase\Admin\NewEdit\Tests\ProductsProductEditTest::class
- *
+ * @depends BaksDev\Products\Product\UseCase\Admin\Quantity\Tests\UpdateProductQuantityTest::class
+ * @depends BaksDev\Products\Product\UseCase\Admin\Quantity\Offer\Tests\UpdateOfferQuantityTest::class
+ * @depends BaksDev\Products\Product\UseCase\Admin\Quantity\Offer\Variation\Tests\UpdateVariationQuantityTest::class
+ * @depends BaksDev\Products\Product\UseCase\Admin\Quantity\Offer\Variation\Modification\Tests\UpdateModificationQuantityTest::class
+ * @depends BaksDev\Products\Product\Controller\Admin\Tests\DeleteAdminControllerTest::class
+ * @depends BaksDev\Products\Product\UseCase\Admin\NewEdit\Tests\ProductsProductEditAdminUseCaseTest::class
  */
 #[When(env: 'test')]
 class ProductsProductDeleteAdminUseCaseTest extends KernelTestCase

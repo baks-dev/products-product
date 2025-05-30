@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2023.  Baks.dev <admin@baks.dev>
+ * Copyright 2025.  Baks.dev <admin@baks.dev>
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -23,12 +23,31 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\Entity\Offers\Variation\Modification\Quantity;
+namespace BaksDev\Products\Product\Repository\ProductsByValues;
 
-interface ProductModificationQuantityInterface
+use BaksDev\Core\Doctrine\DBALQueryBuilder;
+use BaksDev\Products\Category\Entity\CategoryProduct;
+use BaksDev\Products\Category\Type\Id\CategoryProductUid;
+use Generator;
+
+interface ProductsByValuesInterface
 {
-    public function getQuantity(): ?int;
+    /** Фильтр по категории */
+    public function forCategory(CategoryProduct|CategoryProductUid|string $category): self;
 
-    public function getReserve(): ?int;
+    public function forOfferValue(string|null $offerValue): self;
 
+    public function forVariationValue(string|null $variationValue): self;
+
+    public function forModificationValue(string|null $modificationValue): self;
+
+    /**
+     * Метод возвращает список продуктов из данной категории и с нужными offer, variation и modification по uid и
+     * значениям offer, variation и modification
+     *
+     * @return Generator<int, ProductsByValuesResult>|false
+     */
+    public function findAll(): Generator|false;
+
+    public function builder(): DBALQueryBuilder;
 }

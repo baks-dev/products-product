@@ -42,7 +42,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Index(columns: ['const'])]
 #[ORM\Index(columns: ['article'])]
 #[ORM\Index(columns: ['barcode'])]
-class ProductOffer extends EntityEvent
+class
+ProductOffer extends EntityEvent
 {
     /** ID */
     #[Assert\NotBlank]

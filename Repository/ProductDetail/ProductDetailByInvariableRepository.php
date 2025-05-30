@@ -30,9 +30,6 @@ use BaksDev\Products\Category\Entity\CategoryProduct;
 use BaksDev\Products\Category\Entity\Offers\CategoryProductOffers;
 use BaksDev\Products\Category\Entity\Offers\Variation\CategoryProductVariation;
 use BaksDev\Products\Category\Entity\Offers\Variation\Modification\CategoryProductModification;
-use BaksDev\Products\Category\Entity\Section\CategoryProductSection;
-use BaksDev\Products\Category\Entity\Section\Field\CategoryProductSectionField;
-use BaksDev\Products\Category\Entity\Section\Field\Trans\CategoryProductSectionFieldTrans;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
 use BaksDev\Products\Product\Entity\Offers\Image\ProductOfferImage;
@@ -48,6 +45,7 @@ use BaksDev\Products\Product\Entity\ProductInvariable;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Type\Invariable\ProductInvariableUid;
 use Doctrine\DBAL\Exception\InvalidArgumentException;
+use BaksDev\Products\Product\Entity\Category\ProductCategory;
 
 final class ProductDetailByInvariableRepository implements ProductDetailByInvariableInterface
 {
@@ -108,7 +106,9 @@ final class ProductDetailByInvariableRepository implements ProductDetailByInvari
             'product.id = invariable.product'
         );
 
-        $dbal->join(
+        $dbal
+            ->select('product_event.id as product_event')
+            ->join(
             'product',
             ProductEvent::class,
             'product_event',
@@ -135,7 +135,8 @@ final class ProductDetailByInvariableRepository implements ProductDetailByInvari
          * Торговое предложение
          */
         $dbal
-            ->select('product_offer.value as product_offer_value')
+            ->addSelect('product_offer.id as product_offer_id')
+            ->addSelect('product_offer.value as product_offer_value')
             ->addSelect('product_offer.postfix as product_offer_postfix')
             ->leftJoin(
                 'product',
@@ -169,6 +170,7 @@ final class ProductDetailByInvariableRepository implements ProductDetailByInvari
          * Множественные варианты торгового предложения
          */
         $dbal
+            ->addSelect('product_variation.id as product_variation_id')
             ->addSelect('product_variation.value as product_variation_value')
             ->addSelect('product_variation.postfix as product_variation_postfix')
             ->leftJoin(
@@ -192,6 +194,7 @@ final class ProductDetailByInvariableRepository implements ProductDetailByInvari
          * Модификация множественного варианта торгового предложения
          */
         $dbal
+            ->addSelect('product_modification.id as product_modification_id')
             ->addSelect('product_modification.value as product_modification_value')
             ->addSelect('product_modification.postfix as product_modification_postfix')
             ->leftJoin(
@@ -298,19 +301,19 @@ final class ProductDetailByInvariableRepository implements ProductDetailByInvari
 
 
         /* Категория */
-        /*$dbal->join(
+        $dbal->leftJoin(
             'product',
             ProductCategory::class,
             'product_event_category',
             'product_event_category.event = product.event AND product_event_category.root = true'
-        );*/
+        );
 
-        /*$dbal->join(
+        $dbal->leftJoin(
             'product_event_category',
             CategoryProduct::class,
             'category',
             'category.id = product_event_category.category'
-        );*/
+        );
 
         /*$dbal->leftJoin(
             'category',

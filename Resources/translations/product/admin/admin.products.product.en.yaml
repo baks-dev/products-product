@@ -4,6 +4,7 @@ admin:
     new: 'Add product'
     edit: 'Edit product'
     delete: 'Delete products'
+    quantity: 'Change product quantity'
 
   breadcrumb:
     index: 'Product Catalog'
