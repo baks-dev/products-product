@@ -89,7 +89,7 @@ final readonly class SearchAllResult implements ProductCardResultInterface
 
         private string|null $product_invariable_id,
 
-        private int|null $profile_discount = null,
+        private string|null $profile_discount = null,
     ) {}
 
     public function getProductId(): ProductUid
@@ -229,6 +229,9 @@ final readonly class SearchAllResult implements ProductCardResultInterface
 
     public function getProductImages(): ?array
     {
+        if (is_null($this->product_root_image) || json_validate($this->product_root_image) === false) {
+            return null;
+        }
         $images = json_decode($this->product_root_image, true, 512, JSON_THROW_ON_ERROR);
 
         if(is_null(current($images)))
@@ -249,7 +252,7 @@ final readonly class SearchAllResult implements ProductCardResultInterface
 
         // применяем скидку пользователя из профиля
         $price = new Money($this->product_price, true);
-        $price->applyPercent($this->profile_discount);
+        $price->applyString($this->profile_discount);
 
         return $price;
     }
@@ -264,7 +267,7 @@ final readonly class SearchAllResult implements ProductCardResultInterface
 
         // применяем скидку пользователя из профиля
         $price = new Money($this->product_old_price, true);
-        $price->applyPercent($this->profile_discount);
+        $price->applyString($this->profile_discount);
 
         return $price;
     }
