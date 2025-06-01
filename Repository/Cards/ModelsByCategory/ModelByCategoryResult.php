@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\Repository\Cards\ModelsOrProductsByCategory;
+namespace BaksDev\Products\Product\Repository\Cards\ModelsByCategory;
 
 use BaksDev\Products\Product\Repository\Cards\ModelsOrProductsCardResultInterface;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
@@ -32,7 +32,7 @@ use BaksDev\Reference\Currency\Type\Currency;
 use BaksDev\Reference\Money\Type\Money;
 
 /** @see ModelsByCategoryRepository */
-final readonly class ModelOrProductByCategoryResult implements ModelsOrProductsCardResultInterface
+final readonly class ModelByCategoryResult implements ModelsOrProductsCardResultInterface
 {
     public function __construct(
         private string $product_id,
@@ -40,40 +40,30 @@ final readonly class ModelOrProductByCategoryResult implements ModelsOrProductsC
         private string $product_name,
         private string $product_url,
         private int $product_sort,
+
         private string $product_active_from,
 
         private bool|null $category_offer_card,
         private string|null $product_offer_reference,
-        private string|null $product_offer_value,
-        private string|null $product_offer_postfix,
-        private string $offer_agg,
 
         private bool|null $category_variation_card,
         private string|null $product_variation_reference,
-        private string|null $product_variation_value,
-        private string|null $product_variation_postfix,
-        private string $variation_agg,
 
         private bool|null $category_modification_card,
         private string|null $product_modification_reference,
-        private string|null $product_modification_value,
-        private string|null $product_modification_postfix,
-        private string $modification_agg,
-
-        private string $invariable,
-        private string $product_root_images,
 
         private string $category_url,
         private string $category_name,
 
-        private int|null $product_price,
-        private int|null $product_old_price,
+        private int|string|null $product_price,
         private string|null $product_currency,
-        private int|null $product_quantity,
-
-        private string|null $category_section_field,
 
         private string|null $profile_discount = null,
+
+        private ?string $product_image,
+        private ?string $product_image_ext,
+        private ?bool $product_image_cdn,
+
     ) {}
 
     public function getProductId(): ProductUid
@@ -118,12 +108,12 @@ final readonly class ModelOrProductByCategoryResult implements ModelsOrProductsC
 
     public function getProductOfferValue(): ?string
     {
-        return $this->product_offer_value;
+        return null;
     }
 
-    public function getOfferAgg(): string
+    public function getOfferAgg(): ?string
     {
-        return $this->offer_agg;
+        return null;
     }
 
     public function getCategoryVariationCard(): ?bool
@@ -138,12 +128,12 @@ final readonly class ModelOrProductByCategoryResult implements ModelsOrProductsC
 
     public function getProductVariationValue(): ?string
     {
-        return $this->product_variation_value;
+        return null;
     }
 
-    public function getVariationAgg(): string
+    public function getVariationAgg(): ?string
     {
-        return $this->variation_agg;
+        return null;
     }
 
     public function getCategoryModificationCard(): ?bool
@@ -158,56 +148,27 @@ final readonly class ModelOrProductByCategoryResult implements ModelsOrProductsC
 
     public function getProductModificationValue(): ?string
     {
-        return $this->product_modification_value;
+        return null;
     }
 
-    public function getModificationAgg(): string
+    public function getModificationAgg(): ?string
     {
-        return $this->modification_agg;
+        return null;
     }
 
     public function getInvariable(): array|null
     {
-        if(is_null($this->invariable))
-        {
-            return null;
-        }
-
-        if(false === json_validate($this->invariable))
-        {
-            return null;
-        }
-
-        $invariables = json_decode($this->invariable, true, 512, JSON_THROW_ON_ERROR);
-
-        if(null === current($invariables))
-        {
-            return null;
-        }
-
-        return $invariables;
+        return null;
     }
 
     public function getProductRootImages(): array|null
     {
-        if(is_null($this->product_root_images))
-        {
-            return null;
-        }
-
-        if(false === json_validate($this->product_root_images))
-        {
-            return null;
-        }
-
-        $images = json_decode($this->product_root_images, true, 512, JSON_THROW_ON_ERROR);
-
-        if(null === current($images))
-        {
-            return null;
-        }
-
-        return $images;
+        return [
+            'img_root' => true,
+            'img' => $this->product_image,
+            'img_ext' => $this->product_image_ext,
+            'img_cdn' => $this->product_image_cdn,
+        ];
     }
 
     public function getCategoryUrl(): string
@@ -263,44 +224,26 @@ final readonly class ModelOrProductByCategoryResult implements ModelsOrProductsC
 
     public function getCategorySectionField(): array|null
     {
-
-        if(is_null($this->category_section_field))
-        {
-            return null;
-        }
-
-        if(false === json_validate($this->category_section_field))
-        {
-            return null;
-        }
-
-        $category_section_field = json_decode($this->category_section_field, true, 512, JSON_THROW_ON_ERROR);
-
-        if(null === current($category_section_field))
-        {
-            return null;
-        }
-
-        return $category_section_field;
+        return null;
     }
 
     public function getProductQuantity(): ?int
     {
-        return $this->product_quantity;
+        return null;
     }
 
     public function getProductOfferPostfix(): ?string
     {
-        return $this->product_offer_postfix;
+        return null;
     }
 
     public function getProductVariationPostfix(): ?string
     {
-        return $this->product_variation_postfix;
+        return null;
     }
 
     public function getProductModificationPostfix(): ?string
     {
-        return $this->product_modification_postfix;
+        return null;
     }
 }

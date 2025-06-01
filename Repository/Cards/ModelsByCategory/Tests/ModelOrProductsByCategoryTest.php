@@ -23,11 +23,11 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\Repository\Cards\ModelsOrProductsByCategory\Tests;
+namespace BaksDev\Products\Product\Repository\Cards\ModelsByCategory\Tests;
 
 use BaksDev\Products\Category\Repository\AllCategory\AllCategoryInterface;
-use BaksDev\Products\Product\Repository\Cards\ModelsOrProductsByCategory\ModelOrProductByCategoryResult;
-use BaksDev\Products\Product\Repository\Cards\ModelsOrProductsByCategory\ModelsOrProductsByCategoryInterface;
+use BaksDev\Products\Product\Repository\Cards\ModelsByCategory\ModelByCategoryResult;
+use BaksDev\Products\Product\Repository\Cards\ModelsByCategory\ModelsByCategoryInterface;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Reference\Currency\Type\Currency;
@@ -53,27 +53,27 @@ class ModelOrProductsByCategoryTest extends KernelTestCase
             return;
         }
 
-        /** @var ModelsOrProductsByCategoryInterface $repository */
-        $repository = self::getContainer()->get(ModelsOrProductsByCategoryInterface::class);
+        /** @var ModelsByCategoryInterface $repository */
+        $repository = self::getContainer()->get(ModelsByCategoryInterface::class);
 
         $results = $repository
-            ->category(current($categories)['id'])
-            ->findAllWithPaginator('AND');
+            ->inCategories(current($categories)['id'])
+            ->findAll();
 
         if(empty($results->getData()))
         {
             $this->addWarning(sprintf('Не найдено ни одного продукта по категории %s | %s',
                 current($categories)['id'],
-                current($categories)['category_name']
+                current($categories)['category_name'],
             ));
 
             return;
         }
 
-        /** @var ModelOrProductByCategoryResult $result */
+        /** @var ModelByCategoryResult $result */
         foreach($results->getData() as $result)
         {
-            self::assertInstanceOf(ModelOrProductByCategoryResult::class, $result);
+            self::assertInstanceOf(ModelByCategoryResult::class, $result);
 
             self::assertInstanceOf(ProductUid::class, $result->getProductId());
             self::assertInstanceOf(ProductEventUid::class, $result->getProductEvent());

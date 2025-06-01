@@ -67,12 +67,14 @@ use BaksDev\Users\Profile\UserProfile\Repository\UserProfileTokenStorage\UserPro
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use BaksDev\Users\Profile\UserProfile\Type\UserProfileStatus\Status\UserProfileStatusActive;
 use BaksDev\Users\Profile\UserProfile\Type\UserProfileStatus\UserProfileStatus;
+use Doctrine\DBAL\ArrayParameterType;
+use Generator;
 use InvalidArgumentException;
 
-/** @see ModelOrProductByCategoryResult */
+/** @see ModelByCategoryResult */
 final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCategoryInterface
 {
-    private CategoryProductUid|false $category = false;
+    private array|false $categories = false;
 
     private ProductCategoryFilterDTO|null $filter = null;
 
@@ -116,6 +118,12 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
     /** Категория продуктов */
     public function category(CategoryProduct|CategoryProductUid|string $category): self
     {
+        if(empty($category))
+        {
+            $this->categories = false;
+            return $this;
+        }
+
         if(is_string($category))
         {
             $category = new CategoryProductUid($category);
@@ -126,7 +134,28 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
             $category = $category->getId();
         }
 
-        $this->category = $category;
+        $this->inCategories([$category]);
+
+        return $this;
+    }
+
+    /**
+     * Метод позволяет присвоить массив идентификаторов CategoryProductUid для фильтра
+     *
+     * @param array<CategoryProductUid> $categories
+     */
+    public function inCategories(array $categories): self
+    {
+        /** Проверяем, что все элементы коллекции являются идентификаторами категорий */
+        foreach($categories as $category)
+        {
+            if(false === ($category instanceof CategoryProductUid))
+            {
+                throw new InvalidArgumentException('Invalid Argument CategoryProduct');
+            }
+        }
+
+        $this->categories = $categories;
 
         return $this;
     }
@@ -140,28 +169,35 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
     /** @return array<int, ModelOrProductByCategoryResult>|false */
     public function toArray(string $expr = 'AND'): array|false
     {
-        if(false == $this->maxResult)
+        if(false === $this->maxResult)
         {
             throw new InvalidArgumentException('Не передан обязательный параметр запроса $maxResult');
         }
 
-        $dbal = $this->builder($expr);
-
-        $dbal->setMaxResults($this->maxResult);
-
-        $dbal->enableCache('products-product', 86400);
-
-        $result = $dbal->fetchAllHydrate(ModelOrProductByCategoryResult::class);
+        $result = $this->findAll($expr);
 
         return (true === $result->valid()) ? iterator_to_array($result) : false;
     }
 
+    /** @return Generator<int, ModelOrProductByCategoryResult>|false */
+    public function findAll(string $expr = 'AND'): Generator|false
+    {
+        $dbal = $this->builder($expr);
+
+        $dbal->setMaxResults($this->maxResult);
+
+        $dbal->enableCache('products-product');
+
+        $result = $dbal->fetchAllHydrate(ModelOrProductByCategoryResult::class);
+
+        return (true === $result->valid()) ? $result : false;
+    }
+
     private function builder(string $expr): DBALQueryBuilder
     {
-
-        if(false == $this->category)
+        if(false === $this->categories)
         {
-            throw new InvalidArgumentException('Не передан обязательный параметр запроса $category');
+            throw new InvalidArgumentException('Не передан обязательный параметр запроса categories');
         }
 
         $dbal = $this->DBALQueryBuilder
@@ -173,13 +209,29 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
             ->addSelect('product.event AS product_event')
             ->from(Product::class, 'product');
 
+
+        /** Категория */
+        $dbal
+            ->join(
+                'product',
+                ProductCategory::class,
+                'product_event_category',
+                'product_event_category.event = product.event AND product_event_category.category IN (:category)',
+            )
+            ->setParameter(
+                key: 'category',
+                value: $this->categories,
+                type: ArrayParameterType::STRING,
+            );
+
+
         $dbal
             ->addSelect('product_trans.name AS product_name')
             ->leftJoin(
                 'product',
                 ProductTrans::class,
                 'product_trans',
-                'product_trans.event = product.event AND product_trans.local = :local'
+                'product_trans.event = product.event AND product_trans.local = :local',
             );
 
         $dbal
@@ -187,7 +239,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                 'product',
                 ProductDescription::class,
                 'product_desc',
-                'product_desc.event = product.event AND product_desc.device = :device AND product_desc.local = :local'
+                'product_desc.event = product.event AND product_desc.device = :device AND product_desc.local = :local',
             )
             ->setParameter('device', 'pc');
 
@@ -199,7 +251,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                 'product',
                 ProductInfo::class,
                 'product_info',
-                'product_info.product = product.id'
+                'product_info.product = product.id',
             );
 
         $dbal
@@ -219,7 +271,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
             'product',
             ProductPrice::class,
             'product_price',
-            'product_price.event = product.event AND product_price.price > 0'
+            'product_price.event = product.event AND product_price.price > 0',
         )
             ->addGroupBy('product_price.price')
             ->addGroupBy('product_price.currency');
@@ -231,7 +283,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                 'product',
                 ProductOffer::class,
                 'product_offer',
-                'product_offer.event = product.event AND product_offer.value = :offer'
+                'product_offer.event = product.event AND product_offer.value = :offer',
             );
 
             $dbal->setParameter('offer', $this->filter->getOffer());
@@ -242,7 +294,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                 'product',
                 ProductOffer::class,
                 'product_offer',
-                'product_offer.event = product.event'
+                'product_offer.event = product.event',
             );
         }
 
@@ -254,7 +306,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                 'product_offer',
                 CategoryProductOffers::class,
                 'category_offer',
-                'category_offer.id = product_offer.category_offer'
+                'category_offer.id = product_offer.category_offer',
             );
 
         /**
@@ -305,7 +357,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                         )
                     ELSE NULL
                 END
-            ) AS offer_agg"
+            ) AS offer_agg",
         );
 
         /** Цена торгового предложения */
@@ -314,7 +366,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                 'product_offer',
                 ProductOfferPrice::class,
                 'product_offer_price',
-                'product_offer_price.offer = product_offer.id AND product_offer_price.price > 0'
+                'product_offer_price.offer = product_offer.id AND product_offer_price.price > 0',
             )
             //            ->addGroupBy('product_offer_price.price')
             ->addGroupBy('product_offer_price.currency');
@@ -324,7 +376,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                 'product_offer',
                 ProductOfferQuantity::class,
                 'product_offer_quantity',
-                'product_offer_quantity.offer = product_offer.id'
+                'product_offer_quantity.offer = product_offer.id',
             );
 
         /** VARIATION */
@@ -334,7 +386,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                 'product_offer',
                 ProductVariation::class,
                 'product_variation',
-                'product_variation.offer = product_offer.id AND product_variation.value = :variation'
+                'product_variation.offer = product_offer.id AND product_variation.value = :variation',
             );
 
             $dbal->setParameter('variation', $this->filter->getVariation());
@@ -345,7 +397,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                 'product_offer',
                 ProductVariation::class,
                 'product_variation',
-                'product_variation.offer = product_offer.id'
+                'product_variation.offer = product_offer.id',
             );
         }
 
@@ -357,7 +409,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                 'product_variation',
                 CategoryProductVariation::class,
                 'category_variation',
-                'category_variation.id = product_variation.category_variation'
+                'category_variation.id = product_variation.category_variation',
             );
 
         /**
@@ -375,7 +427,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                 CASE
                     WHEN category_variation.card IS NOT NULL AND category_variation.card IS TRUE
                     THEN product_variation.value
-                END'
+                END',
             );
 
         $dbal
@@ -391,7 +443,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                 CASE
                     WHEN category_variation.card IS NOT NULL AND category_variation.card IS TRUE
                     THEN product_variation.postfix
-                END'
+                END',
             );
 
         /** Агрегация множественных вариантов */
@@ -407,7 +459,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                          )
                      ELSE NULL
                  END
-             ) AS variation_agg"
+             ) AS variation_agg",
         );
 
         /** Цена множественного варианта */
@@ -415,7 +467,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
             'category_variation',
             ProductVariationPrice::class,
             'product_variation_price',
-            'product_variation_price.variation = product_variation.id AND product_variation_price.price > 0'
+            'product_variation_price.variation = product_variation.id AND product_variation_price.price > 0',
         )
             ->addGroupBy('product_variation_price.currency');
 
@@ -424,7 +476,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                 'category_variation',
                 ProductVariationQuantity::class,
                 'product_variation_quantity',
-                'product_variation_quantity.variation = product_variation.id'
+                'product_variation_quantity.variation = product_variation.id',
             );
 
         /** MODIFICATION */
@@ -434,7 +486,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                 'product_variation',
                 ProductModification::class,
                 'product_modification',
-                'product_modification.variation = product_variation.id AND product_modification.value = :modification'
+                'product_modification.variation = product_variation.id AND product_modification.value = :modification',
             );
 
             $dbal->setParameter('modification', $this->filter->getModification());
@@ -445,7 +497,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                 'product_variation',
                 ProductModification::class,
                 'product_modification',
-                'product_modification.variation = product_variation.id'
+                'product_modification.variation = product_variation.id',
             );
         }
 
@@ -457,7 +509,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                 'product_modification',
                 CategoryProductModification::class,
                 'category_modification',
-                'category_modification.id = product_modification.category_modification'
+                'category_modification.id = product_modification.category_modification',
             );
 
         /**
@@ -476,7 +528,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                 CASE
                     WHEN category_modification.card IS NOT NULL AND category_modification.card IS TRUE
                     THEN product_modification.value
-                END'
+                END',
             );
 
         $dbal
@@ -492,7 +544,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                 CASE
                     WHEN category_modification.card IS NOT NULL AND category_modification.card IS TRUE
                     THEN product_modification.postfix
-                END'
+                END',
             );
 
         /** Агрегация модификация множественных вариантов */
@@ -508,7 +560,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                         )
                     ELSE NULL
                 END
-            ) AS modification_agg"
+            ) AS modification_agg",
         );
 
         /** Цена множественного варианта */
@@ -516,7 +568,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
             'product_modification',
             ProductModificationPrice::class,
             'product_modification_price',
-            'product_modification_price.modification = product_modification.id AND product_modification_price.price > 0'
+            'product_modification_price.modification = product_modification.id AND product_modification_price.price > 0',
         )
             ->addGroupBy('product_modification_price.currency');
 
@@ -526,7 +578,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                 'product_modification',
                 ProductModificationQuantity::class,
                 'product_modification_quantity',
-                'product_modification_quantity.modification = product_modification.id'
+                'product_modification_quantity.modification = product_modification.id',
             )
             ->addGroupBy('product_modification_price.currency');
 
@@ -563,28 +615,28 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
             'product',
             ProductPhoto::class,
             'product_photo',
-            'product_photo.event = product.event AND product_photo.root = true'
+            'product_photo.event = product.event AND product_photo.root = true',
         );
 
         $dbal->leftJoin(
             'product_offer',
             ProductOfferImage::class,
             'product_offer_images',
-            'product_offer_images.offer = product_offer.id AND product_offer_images.root = true'
+            'product_offer_images.offer = product_offer.id AND product_offer_images.root = true',
         );
 
         $dbal->leftJoin(
             'product_offer',
             ProductVariationImage::class,
             'product_variation_image',
-            'product_variation_image.variation = product_variation.id AND product_variation_image.root = true'
+            'product_variation_image.variation = product_variation.id AND product_variation_image.root = true',
         );
 
         $dbal->leftJoin(
             'product_modification',
             ProductModificationImage::class,
             'product_modification_image',
-            'product_modification_image.modification = product_modification.id AND product_modification_image.root = true'
+            'product_modification_image.modification = product_modification.id AND product_modification_image.root = true',
         );
 
         /** Агрегация фото продуктов из offer, variation, modification */
@@ -631,22 +683,15 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                             ELSE NULL
                         END
                     )
-                    AS product_root_images"
+                    AS product_root_images",
         );
 
-        /** Категория */
-        $dbal->leftJoin(
-            'product',
-            ProductCategory::class,
-            'product_event_category',
-            'product_event_category.event = product.event AND product_event_category.root = true'
-        );
 
         $dbal->leftJoin(
             'product_event_category',
             CategoryProduct::class,
             'category',
-            'category.id = product_event_category.category'
+            'category.id = product_event_category.category',
         );
 
         $dbal
@@ -655,7 +700,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                 'category',
                 CategoryProductInfo::class,
                 'category_info',
-                'category_info.event = category.event AND category_info.active IS TRUE'
+                'category_info.event = category.event AND category_info.active IS TRUE',
             );
 
         $dbal
@@ -664,7 +709,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                 'category',
                 CategoryProductTrans::class,
                 'category_trans',
-                'category_trans.event = category.event AND category_trans.local = :local'
+                'category_trans.event = category.event AND category_trans.local = :local',
             );
 
         /** Свойства, участвующие в карточке */
@@ -672,7 +717,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
             'category',
             CategoryProductSection::class,
             'category_section',
-            'category_section.event = category.event'
+            'category_section.event = category.event',
         );
 
         $dbal
@@ -686,21 +731,21 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                             category_section_field.photo = TRUE OR
                             category_section_field.name = TRUE
                           )
-                      '
+                      ',
             );
 
         $dbal->leftJoin(
             'category_section_field',
             CategoryProductSectionFieldTrans::class,
             'category_section_field_trans',
-            'category_section_field_trans.field = category_section_field.id AND category_section_field_trans.local = :local'
+            'category_section_field_trans.field = category_section_field.id AND category_section_field_trans.local = :local',
         );
 
         $dbal->leftJoin(
             'category_section_field',
             ProductProperty::class,
             'product_property',
-            'product_property.event = product.event AND product_property.field = category_section_field.const'
+            'product_property.event = product.event AND product_property.field = category_section_field.const',
         );
 
         /** Агрегация свойств для карточки */
@@ -719,7 +764,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
         					'field_value', product_property.value
         				)
         		)
-        			AS category_section_field"
+        			AS category_section_field",
         );
 
         /** ФИЛЬТР СВОЙСТВ */
@@ -736,7 +781,8 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                         $item = 'true';
                     }
 
-                    if ($item instanceof RangeIntegerFieldDTO) {
+                    if($item instanceof RangeIntegerFieldDTO)
+                    {
                         $item = [
                             'min' => $item->getMin(),
                             'max' => $item->getMax(),
@@ -753,7 +799,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                     $dbal->setParameter(
                         $prepareKey,
                         $ProductCategorySectionFieldUid,
-                        CategoryProductSectionFieldUid::TYPE
+                        CategoryProductSectionFieldUid::TYPE,
                     );
 
                     if(is_array($item) && (isset($item['min']) || isset($item['max'])))
@@ -788,7 +834,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                             $dbal->setParameter(
                                 $prepareKey,
                                 $ProductCategorySectionFieldUid,
-                                CategoryProductSectionFieldUid::TYPE
+                                CategoryProductSectionFieldUid::TYPE,
                             );
 
                             $ProductPropertyJoin = 'product_property_filter.field = :'.$prepareKey.' 
@@ -808,7 +854,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                         'product',
                         ProductProperty::class,
                         $alias,
-                        $alias.'.event = product.event '.$expr.' '.$ProductPropertyJoin
+                        $alias.'.event = product.event '.$expr.' '.$ProductPropertyJoin,
                     );
 
                 }
@@ -817,7 +863,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                     'product',
                     ProductProperty::class,
                     'product_property_filter',
-                    'product_property_filter.event = product.event AND '.$ProductPropertyJoin
+                    'product_property_filter.event = product.event AND '.$ProductPropertyJoin,
                 );
             }
             else
@@ -829,7 +875,8 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                         $item = 'true';
                     }
 
-                    if ($item instanceof RangeIntegerFieldDTO) {
+                    if($item instanceof RangeIntegerFieldDTO)
+                    {
                         $item = [
                             'min' => $item->getMin(),
                             'max' => $item->getMax(),
@@ -872,7 +919,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                             $dbal->setParameter(
                                 $prepareKey,
                                 $ProductCategorySectionFieldUid,
-                                CategoryProductSectionFieldUid::TYPE
+                                CategoryProductSectionFieldUid::TYPE,
                             );
 
                             $ProductPropertyJoin[] = 'product_property_filter.field = :'.$prepareKey.' 
@@ -891,7 +938,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                     $dbal->setParameter(
                         $prepareKey,
                         $ProductCategorySectionFieldUid,
-                        CategoryProductSectionFieldUid::TYPE
+                        CategoryProductSectionFieldUid::TYPE,
                     );
                     $dbal->setParameter($prepareValue, $item);
 
@@ -901,7 +948,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                     'product',
                     ProductProperty::class,
                     'product_property_filter',
-                    'product_property_filter.event = product.event AND '.implode(' '.$expr.' ', $ProductPropertyJoin)
+                    'product_property_filter.event = product.event AND '.implode(' '.$expr.' ', $ProductPropertyJoin),
                 );
             }
 
@@ -986,7 +1033,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                         'profile_info',
                         '
                         profile_info.profile = :profile AND 
-                        profile_info.status = :profile_status'
+                        profile_info.status = :profile_status',
                     )
                     ->setParameter(
                         key: 'profile',
@@ -996,19 +1043,11 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                     ->setParameter(
                         key: 'profile_status',
                         value: UserProfileStatusActive::class,
-                        type: UserProfileStatus::TYPE
+                        type: UserProfileStatus::TYPE,
                     );
             }
 
         }
-
-        if($this->category instanceof CategoryProductUid)
-        {
-            $dbal
-                ->andWhere('product_event_category.category = :category')
-                ->setParameter('category', $this->category, CategoryProductUid::TYPE);
-        }
-
 
         $dbal->allGroupByExclude();
 

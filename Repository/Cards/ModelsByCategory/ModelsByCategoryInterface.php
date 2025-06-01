@@ -21,27 +21,17 @@
  *  THE SOFTWARE.
  */
 
-namespace BaksDev\Products\Product\Repository\Cards\ModelsOrProductsByCategory;
+namespace BaksDev\Products\Product\Repository\Cards\ModelsByCategory;
 
 use BaksDev\Core\Services\Paginator\PaginatorInterface;
 use BaksDev\Products\Category\Entity\CategoryProduct;
 use BaksDev\Products\Category\Type\Id\CategoryProductUid;
-use BaksDev\Products\Product\Forms\ProductCategoryFilter\User\ProductCategoryFilterDTO;
 use Generator;
 
-interface ModelsOrProductsByCategoryInterface
+interface ModelsByCategoryInterface
 {
     /** Максимальное количество записей в результате */
     public function maxResult(int $max): self;
-
-    /** Фильтра по offer, variation, modification в зависимости от настроек */
-    public function filter(ProductCategoryFilterDTO $filter): self;
-
-    /** Фильтр по свойствам категории */
-    public function property(?array $property): self;
-
-    /** Категория продуктов */
-    public function category(CategoryProduct|CategoryProductUid|string $category): self;
 
     /**
      * Метод позволяет присвоить массив идентификаторов CategoryProductUid для фильтра
@@ -50,12 +40,7 @@ interface ModelsOrProductsByCategoryInterface
      */
     public function inCategories(array $categories): self;
 
-    public function findAllWithPaginator(string $expr): PaginatorInterface;
-
-    /** @return Generator<int, ModelOrProductByCategoryResult>|false */
+    /** @return Generator<int, ModelByCategoryResult>|false */
     public function findAll(): Generator|false;
-
-    /** @return array<int, ModelOrProductByCategoryResult>|false */
-    public function toArray(string $expr): array|false;
 
 }
