@@ -156,7 +156,7 @@ final class DetailController extends AbstractController
         // Поиск по всему сайту
         $allSearch = new SearchDTO();
         $allSearchForm = $this->createForm(SearchForm::class, $allSearch, [
-            'action' => $this->generateUrl('core:search'),
+            'action' => $this->generateUrl('search:public.search'),
         ]);
 
         return $this->render([

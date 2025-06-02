@@ -58,11 +58,12 @@ final readonly class ModelByCategoryResult implements ModelsOrProductsCardResult
         private int|string|null $product_price,
         private string|null $product_currency,
 
-        private string|null $profile_discount = null,
 
         private ?string $product_image,
         private ?string $product_image_ext,
         private ?bool $product_image_cdn,
+
+        private string|null $profile_discount = null,
 
     ) {}
 
