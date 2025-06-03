@@ -24,14 +24,14 @@
 namespace BaksDev\Products\Product\Repository\Search\AllProductsToIndex;
 
 
+use BaksDev\Core\Contracts\Search\ToIndexResultInterface;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
-use BaksDev\Search\Repository\RedisToIndexResult\RedisToIndexResultInterface;
 use BaksDev\Core\Services\Switcher\Switcher;
 
-final readonly class AllProductsToIndexResult implements RedisToIndexResultInterface
+final readonly class AllProductsToIndexResult implements ToIndexResultInterface
 {
     public function __construct(
         private string|null $id,

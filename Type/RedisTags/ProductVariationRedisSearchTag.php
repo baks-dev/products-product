@@ -23,14 +23,15 @@
 
 namespace BaksDev\Products\Product\Type\RedisTags;
 
+use BaksDev\Core\Contracts\Search\SearchIndexTagInterface;
+use BaksDev\Core\Contracts\Search\ToIndexResultInterface;
 use BaksDev\Products\Product\Repository\Search\AllProductsToIndex\AllProductsToIndexResult;
 use BaksDev\Search\RedisSearchDocuments\EntityDocument;
-use BaksDev\Search\Type\RedisTags\Collection\RedisSearchIndexTagInterface;
+use BaksDev\Search\RedisSearchDocuments\PrepareDocumentInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
-use BaksDev\Search\Repository\RedisToIndexResult\RedisToIndexResultInterface;
 
 #[AutoconfigureTag('baks.redis-tags')]
-class ProductVariationRedisSearchTag extends AbstractProductRedisSearchTag implements RedisSearchIndexTagInterface
+class ProductVariationRedisSearchTag extends AbstractProductRedisSearchTag implements SearchIndexTagInterface, PrepareDocumentInterface
 {
 
     public const string TAG = 'products-product';
@@ -55,7 +56,7 @@ class ProductVariationRedisSearchTag extends AbstractProductRedisSearchTag imple
     /**
      * Подготовка сущности по множественным вариантам торгового предложения
      */
-    public function prepareDocument(RedisToIndexResultInterface $item): EntityDocument
+    public function prepareDocument(ToIndexResultInterface $item): EntityDocument
     {
         /** @var AllProductsToIndexResult $item */
         $documentId = $item->getProductVariationId();
