@@ -232,7 +232,7 @@ final readonly class ProductModelResult
 
         $offers = json_decode($this->product_offers, null, 512, JSON_THROW_ON_ERROR);
 
-        if(null === current($offers))
+        if(empty(current($offers)))
         {
             return null;
         }
@@ -241,6 +241,11 @@ final readonly class ProductModelResult
         $offers = array_filter($offers, static function(object $offer) {
             return $offer->quantity !== null and $offer->quantity > 0;
         });
+
+        if(empty($offers))
+        {
+            return null;
+        }
 
         // сортировка по возрастанию цены
         usort($offers, static function($a, $b) {

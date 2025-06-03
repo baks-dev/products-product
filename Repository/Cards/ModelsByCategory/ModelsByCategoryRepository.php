@@ -768,9 +768,19 @@ final class ModelsByCategoryRepository implements ModelsByCategoryInterface
                         type: UserProfileStatus::TYPE,
                     );
             }
-
         }
 
+
+        /** Только в наличии */
+        $dbal->andWhere("
+            CASE
+                WHEN product_modification_quantity.quantity IS NOT NULL THEN (product_modification_quantity.quantity - product_modification_quantity.reserve)
+                WHEN product_variation_quantity.quantity IS NOT NULL THEN (product_variation_quantity.quantity - product_variation_quantity.reserve)
+                WHEN product_offer_quantity.quantity IS NOT NULL THEN (product_offer_quantity.quantity - product_offer_quantity.reserve)
+                WHEN product_price.quantity  IS NOT NULL THEN (product_price.quantity - product_price.reserve)
+                ELSE 0
+            END > 0
+        ");
 
         /** Используем индекс сортировки для поднятия в топ списка */
         $dbal->addOrderBy('product_info.sort', 'DESC');

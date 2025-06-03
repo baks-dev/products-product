@@ -2,36 +2,77 @@
 
 <div class="modal-dialog modal-dialog-centered " style="max-width: 800px;">
     {{ form_start(form) }}
-    <div class="modal-content p-3 border-bottom border-5 border-primary">
+    <div class="modal-content p-3 border-bottom border-5 border-danger">
         <div class="modal-header">
             <h5 class="modal-title">
-                {{ 'Изменить количество товаров'|trans }}
+                {{ 'Изменить остаток всех товаров'|trans }}
             </h5>
         </div>
 
         <div class="modal-body">
+
             <div class="d-flex gap-3 align-items-center">
-                <div class="w-100">
-                    {{ form_row(form.category, { placeholder: 'Все категории ...', attr: { 'data-select' : 'select2', class: 'mb-0' } }) }}
-                </div>
-                <div class="w-100">
-                    {{ form_row(form.quantity) }}
+                <div class="w-100 mb-3">
+                    {{ form_row(form.category, {
+                        label : 'Категория продукции',
+                        placeholder: 'Выберите категорию из спсика ...',
+                        attr: { 'data-select' : 'select2', class: 'mb-0' }
+                    }) }}
                 </div>
             </div>
 
-            <div class="d-flex gap-3 align-items-center">
-                <div class="w-100">
-                    {{ form_row(form.offer, { placeholder: 'Все торговые предложения ...', attr: { 'data-select' : 'select2', class: 'mb-0' } }) }}
-                </div>
-                <div class="w-100">
-                    {{ form_row(form.variation, { placeholder: 'Все вариации ...', attr: { 'data-select' : 'select2', class: 'mb-0' } }) }}
-                </div>
-                <div class="w-100">
-                    {{ form_row(form.modification, { placeholder: 'Все модификации ...', attr: { 'data-select' : 'select2', class: 'mb-0' } }) }}
-                </div>
+            <div id="{{ form.vars.name }}_replace" class="d-none gap-3 align-items-center mb-3">
+
+                {% if form.offer.vars.priority > 0 %}
+                    <div class="w-100">
+                        {{ form_row(form.offer, {
+                            placeholder: 'Выберите '~form.offer.vars.label~' ...',
+                            attr: { 'data-select' : 'select2', class: 'mb-0' } }) }}
+                    </div>
+                {% else %}
+                    {{ form_row(form.offer) }}
+                {% endif %}
+
+                {% if form.variation.vars.priority > 0 %}
+                    <div class="w-100">
+                        {{ form_row(form.variation, {
+
+                            placeholder: 'Выберите '~form.variation.vars.label~' ...',
+                            attr: { 'data-select' : 'select2', class: 'mb-0' } }) }}
+                    </div>
+                {% else %}
+                    {{ form_row(form.variation) }}
+                {% endif %}
+
+                {% if form.modification.vars.priority > 0 %}
+                    <div class="w-100">
+                        {{ form_row(form.modification, {
+                            placeholder: 'Выберите '~form.modification.vars.label~' ...',
+                            attr: { 'data-select' : 'select2', class: 'mb-0' }
+                        }) }}
+                    </div>
+                {% else %}
+                    {{ form_row(form.modification) }}
+                {% endif %}
 
             </div>
 
+            <div class="w-100">
+                {{ form_row(form.quantity) }}
+            </div>
+        </div>
+
+        <div class="alert alert-warning rounded-4" role="alert">
+            <div class="d-flex align-items-baseline gap-3">
+                <div>
+                    <div class="icon rounded-circle bg-contain p-2 bg-danger text-white"
+                         style="width: 10px; height: 10px;"><span class="small">!</span></div>
+                </div>
+                <div class="lh-1 small">
+                    Согласившись, Вы присваиваете всем товарам с указанными параметрами статус <strong>"В
+                        наличии"</strong> на указанное количество!
+                </div>
+            </div>
         </div>
 
         <div class="modal-footer">
@@ -41,7 +82,7 @@
                     {{ 'btn.cancel'|trans({}, 'core.btn') }}
                 </button>
                 {{ form_widget(form.submit, { label: '
-                    <span>'~ 'btn.save'|trans({}, 'core.btn') ~'</span>
+                    <span>'~ 'Присвоить всем товаром остаток'|trans({}, 'core.btn') ~'</span>
                     <span class="spinner-border spinner-border-sm vertical-middle d-none"></span>
 			    '}) }}
             </div>

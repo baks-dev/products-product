@@ -1,16 +1,16 @@
 /*
- * Copyright 2025.  Baks.dev <admin@baks.dev>
- *
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *
+ *  
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *
+ *  
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -40,6 +40,7 @@ executeFunc(function productQuantityForm()
     {
         changeObjectCategory(form);
     }, false);
+
 
     let $addButtonStock = document.getElementById(form.name + '_submit');
     $addButtonStock.addEventListener('click',  function(e)
@@ -112,28 +113,38 @@ async function changeObjectCategory(forms)
             var parser = new DOMParser();
             var result = parser.parseFromString(data, 'text/html');
 
-            offer = result.getElementById('products_quantity_form_offer');
+            let replace = document.getElementById(forms.name + "_replace");
+
+            if(typeof replace === "undefined")
+            {
+                return;
+            }
+
+            replace.classList.remove("d-none");
+            replace.classList.add("d-flex");
+
+            offer = result.getElementById(forms.name + "_offer");
 
             if(offer)
             {
-                document.getElementById('products_quantity_form_offer').replaceWith(offer);
-                new NiceSelect(document.getElementById('products_quantity_form_offer'), {searchable: true});
+                document.getElementById(forms.name + "_offer").replaceWith(offer);
+                new NiceSelect(document.getElementById(forms.name + "_offer"), {searchable : true});
             }
 
-            variation = result.getElementById('products_quantity_form_variation');
+            variation = result.getElementById(forms.name + "_variation");
 
             if(variation)
             {
-                document.getElementById('products_quantity_form_variation').replaceWith(variation);
-                new NiceSelect(document.getElementById('products_quantity_form_variation'), {searchable: true});
+                document.getElementById(forms.name + "_variation").replaceWith(variation);
+                new NiceSelect(document.getElementById(forms.name + "_variation"), {searchable : true});
             }
 
-            modification = result.getElementById('products_quantity_form_modification');
+            modification = result.getElementById(forms.name + "_modification");
 
             if(modification)
             {
-                document.getElementById('products_quantity_form_modification').replaceWith(modification);
-                new NiceSelect(document.getElementById('products_quantity_form_modification'), {searchable: true});
+                document.getElementById(forms.name + "_modification").replaceWith(modification);
+                new NiceSelect(document.getElementById(forms.name + "_modification"), {searchable : true});
             }
 
             enableElementsForm(forms);
