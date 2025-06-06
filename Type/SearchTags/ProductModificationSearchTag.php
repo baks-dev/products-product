@@ -21,54 +21,48 @@
  *  THE SOFTWARE.
  */
 
-namespace BaksDev\Products\Product\Type\RedisTags;
+namespace BaksDev\Products\Product\Type\SearchTags;
 
-use BaksDev\Core\Contracts\Search\PrepareDocumentInterface;
-use BaksDev\Core\Contracts\Search\SearchIndexTagInterface;
-use BaksDev\Core\Contracts\Search\ToIndexResultInterface;
 use BaksDev\Products\Product\Repository\Search\AllProductsToIndex\AllProductsToIndexResult;
-use BaksDev\Search\RedisSearchDocuments\EntityDocument;
+use BaksDev\Search\Repository\DataToIndexResult\DataToIndexResultInterface;
+use BaksDev\Search\EntityDocument\EntityDocumentInterface;
+use BaksDev\Search\SearchDocuments\PrepareDocumentInterface;
+use BaksDev\Search\SearchIndex\SearchIndexTagInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-#[AutoconfigureTag('baks.redis-tags')]
-class ProductVariationRedisSearchTag extends AbstractProductRedisSearchTag implements SearchIndexTagInterface, PrepareDocumentInterface
+#[AutoconfigureTag('baks.search-tags')]
+class ProductModificationSearchTag extends AbstractProductSearchTag implements SearchIndexTagInterface, PrepareDocumentInterface
 {
 
     public const string TAG = 'products-product';
 
-    public const string INDEX_ID = 'product_variation_id';
-
-    public function getValue(): string
+    public function getModuleName(): string
     {
         return self::TAG;
     }
 
-    public function getIndexId(): string
-    {
-        return self::INDEX_ID;
-    }
-
     public static function sort(): int
     {
-        return 3;
+        return 4;
     }
 
     /**
-     * Подготовка сущности по множественным вариантам торгового предложения
+     * Подготовка сущности по модификации множественного варианта
      */
-    public function prepareDocument(ToIndexResultInterface $item): EntityDocument
+    public function prepareDocument(DataToIndexResultInterface $item): EntityDocumentInterface
     {
-        /** @var AllProductsToIndexResult $item */
-        $documentId = $item->getProductVariationId();
-        $entityDocument = new EntityDocument($documentId);
+        /** @var AllProductsToIndexResult  $item */
+        $documentId = $item->getProductModificationId();
 
-        $transformed_value = $item->getTransformedValue($this->switcher);
+        $this->entityDocument->setEntityId($documentId);
 
-        $entityDocument
-            ->setEntityIndex($transformed_value)
-            ->setSearchTag($this->getValue());
+        $textSearch = $item->setTextSearch($this->switcher);
 
-        return $entityDocument;
+        $this->entityDocument
+            ->setEntityIndex($textSearch)
+            ->setSearchTag($this->getModuleName());
+
+        return $this->entityDocument;
     }
 
 }

@@ -24,6 +24,10 @@
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use BaksDev\Products\Product\BaksDevProductsProductBundle;
+use BaksDev\Products\Product\Repository\Search\AllProducts\SearchAllProductsRepository;
+use BaksDev\Products\Product\Repository\Search\AllProductsToIndex\AllProductsToIndexRepository;
+use BaksDev\Search\Repository\DataToIndex\DataToIndexInterface;
+use BaksDev\Search\Repository\SearchRepository\SearchRepositoryInterface;
 
 return static function(ContainerConfigurator $container) {
 
@@ -42,7 +46,16 @@ return static function(ContainerConfigurator $container) {
             BaksDevProductsProductBundle::PATH.'**'.DIRECTORY_SEPARATOR.'*Test.php',
         ]);
 
+    $services
+        ->set(SearchRepositoryInterface::class)
+        ->class(SearchAllProductsRepository::class);
+
+    $services
+        ->set(DataToIndexInterface::class)
+        ->class(AllProductsToIndexRepository::class);
+
     $NAMESPACE = BaksDevProductsProductBundle::NAMESPACE;
     $PATH = BaksDevProductsProductBundle::PATH;
-    $services->load($NAMESPACE.'Type\RedisTags\\', $PATH.implode(DIRECTORY_SEPARATOR, ['Type', 'RedisTags']));
+    $services->load($NAMESPACE.'Type\SearchTags\\', $PATH.implode(DIRECTORY_SEPARATOR, ['Type', 'SearchTags']));
 };
+

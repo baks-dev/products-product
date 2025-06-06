@@ -21,20 +21,22 @@
  *  THE SOFTWARE.
  */
 
-namespace BaksDev\Products\Product\Type\RedisTags;
+namespace BaksDev\Products\Product\Type\SearchTags;
 
 use BaksDev\Core\Form\Search\SearchDTO;
 use BaksDev\Core\Services\Switcher\Switcher;
-use BaksDev\Products\Product\Repository\Search\AllProducts\SearchAllProductsInterface;
-use BaksDev\Products\Product\Repository\Search\AllProductsToIndex\AllProductsToIndexInterface;
+use BaksDev\Search\Repository\DataToIndex\DataToIndexInterface;
+use BaksDev\Search\Repository\SearchRepository\SearchRepositoryInterface;
+use BaksDev\Search\EntityDocument\EntityDocumentInterface;
 use Generator;
 
-abstract class AbstractProductRedisSearchTag
+abstract class AbstractProductSearchTag
 {
     public function __construct(
-        protected readonly AllProductsToIndexInterface $allProductsToIndexRepository,
-        protected readonly SearchAllProductsInterface $searchAllProducts,
-        protected readonly Switcher $switcher
+        protected readonly DataToIndexInterface $allProductsToIndexRepository,
+        protected readonly SearchRepositoryInterface $searchAllProducts,
+        protected readonly Switcher $switcher,
+        protected readonly EntityDocumentInterface $entityDocument
     ) {}
 
     /**

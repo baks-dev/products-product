@@ -24,7 +24,7 @@
 namespace BaksDev\Search\Repository\AllProducts;
 
 use BaksDev\Core\Form\Search\SearchDTO;
-use BaksDev\Products\Product\Repository\Search\AllProducts\SearchAllProductsInterface;
+use \BaksDev\Search\Repository\SearchRepository\SearchRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
@@ -36,8 +36,8 @@ class SearchAllProductsRepositoryTest extends KernelTestCase
 {
     public function testFindUserProductInvariablesViewed()
     {
-        /** @var SearchAllProductsInterface $repository */
-        $repository = self::getContainer()->get(SearchAllProductsInterface::class);
+        /** @var SearchRepositoryInterface $repository */
+        $repository = self::getContainer()->get(SearchRepositoryInterface::class);
 
         $search = new SearchDTO();
         //        $search->setQuery('triangle');

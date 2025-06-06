@@ -39,7 +39,7 @@ use BaksDev\Reference\Currency\Type\Currency;
 use BaksDev\Reference\Money\Type\Money;
 use Symfony\Component\DependencyInjection\Attribute\Exclude;
 
-/** @see AllSearchAllProductsRepository */
+/** @see SearchAllProductsRepository */
 #[Exclude]
 final readonly class SearchAllResult implements ProductCardResultInterface
 {

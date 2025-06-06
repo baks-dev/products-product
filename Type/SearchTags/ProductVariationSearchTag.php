@@ -21,60 +21,49 @@
  *  THE SOFTWARE.
  */
 
-namespace BaksDev\Products\Product\Type\RedisTags;
+namespace BaksDev\Products\Product\Type\SearchTags;
 
-use BaksDev\Core\Contracts\Search\PrepareDocumentInterface;
-use BaksDev\Core\Contracts\Search\SearchIndexTagInterface;
-use BaksDev\Core\Contracts\Search\ToIndexResultInterface;
 use BaksDev\Products\Product\Repository\Search\AllProductsToIndex\AllProductsToIndexResult;
-use BaksDev\Search\RedisSearchDocuments\EntityDocument;
+use BaksDev\Search\Repository\DataToIndexResult\DataToIndexResultInterface;
+use BaksDev\Search\EntityDocument\EntityDocumentInterface;
+use BaksDev\Search\SearchDocuments\PrepareDocumentInterface;
+use BaksDev\Search\SearchIndex\SearchIndexTagInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-#[AutoconfigureTag('baks.redis-tags')]
-class ProductOfferRedisSearchTag extends AbstractProductRedisSearchTag implements SearchIndexTagInterface, PrepareDocumentInterface
+#[AutoconfigureTag('baks.search-tags')]
+class ProductVariationSearchTag extends AbstractProductSearchTag implements SearchIndexTagInterface, PrepareDocumentInterface
 {
 
     public const string TAG = 'products-product';
 
-    public const string INDEX_ID = 'product_offer_id';
+    public static function sort(): int
+    {
+        return 3;
+    }
 
-    public function getValue(): string
+    public function getModuleName(): string
     {
         return self::TAG;
     }
 
-    public function getIndexId(): string
-    {
-        return self::INDEX_ID;
-    }
-
-    public static function sort(): int
-    {
-        return 2;
-    }
-
-    /** Класс подготовливающий запрос */
-    public function getPrepareClass(): string
-    {
-        return EntityDocument::class;
-    }
-
     /**
-     * Подготовка сущности по торговым предложениям
+     * Подготовка сущности по множественным вариантам торгового предложения
      */
-    public function prepareDocument(ToIndexResultInterface $item): EntityDocument
+    public function prepareDocument(DataToIndexResultInterface $item): EntityDocumentInterface
     {
         /** @var AllProductsToIndexResult $item */
-        $documentId = $item->getProductOfferId();
-        $entityDocument = new EntityDocument($documentId);
+        $documentId = $item->getProductVariationId();
 
-        $transformed_value = $item->getTransformedValue($this->switcher);
+        $this->entityDocument->setEntityId($documentId);
 
-        $entityDocument
-            ->setEntityIndex($transformed_value)
-            ->setSearchTag($this->getValue());
+        $textSearch = $item->setTextSearch($this->switcher);
 
-        return $entityDocument;
+        $this->entityDocument
+            ->setEntityIndex($textSearch)
+            ->setSearchTag($this->getModuleName());
+
+        return $this->entityDocument;
+
     }
 
 }

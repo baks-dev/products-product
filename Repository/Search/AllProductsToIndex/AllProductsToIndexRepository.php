@@ -34,6 +34,7 @@ use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModific
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
+use BaksDev\Search\Repository\DataToIndex\DataToIndexInterface;
 use BaksDev\Users\Profile\UserProfile\Entity\UserProfile;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Generator;
@@ -41,7 +42,7 @@ use Generator;
 /**
  * Используется для команды индексации товаров, ТП, вариаций и модификаций
  */
-final readonly class AllProductsToIndexRepository implements AllProductsToIndexInterface
+final readonly class AllProductsToIndexRepository implements DataToIndexInterface
 {
 
     public function __construct(

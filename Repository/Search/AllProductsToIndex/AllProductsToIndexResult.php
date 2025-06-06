@@ -23,15 +23,14 @@
 
 namespace BaksDev\Products\Product\Repository\Search\AllProductsToIndex;
 
-
-use BaksDev\Core\Contracts\Search\ToIndexResultInterface;
+use BaksDev\Core\Services\Switcher\Switcher;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
-use BaksDev\Core\Services\Switcher\Switcher;
+use BaksDev\Search\Repository\DataToIndexResult\DataToIndexResultInterface;
 
-final readonly class AllProductsToIndexResult implements ToIndexResultInterface
+final readonly class AllProductsToIndexResult implements DataToIndexResultInterface
 {
     public function __construct(
         private string|null $id,
@@ -87,7 +86,7 @@ final readonly class AllProductsToIndexResult implements ToIndexResultInterface
         return new ProductModificationUid($this->product_modification_id);
     }
 
-    public function getTransformedValue(Switcher $switcher): string
+    public function setTextSearch(Switcher $switcher): string
     {
         $product_article = mb_strtolower(str_replace('-', ' ', $this->getProductArticle()));
         $product_name = mb_strtolower($this->getProductName());
@@ -98,4 +97,5 @@ final readonly class AllProductsToIndexResult implements ToIndexResultInterface
 
         return $product_article.' '.$product_name.' '.$transl_article.' '.$transl_name;
     }
+
 }
