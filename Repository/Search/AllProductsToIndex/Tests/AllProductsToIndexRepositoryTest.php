@@ -1,8 +1,7 @@
 <?php
 
 namespace BaksDev\Products\Product\Repository\Search\AllProductsToIndex\Tests;
-use BaksDev\Article\Repository\AllArticleToIndex\AllArticleToIndexInterface;
-use BaksDev\Products\Product\Repository\Search\AllProductsToIndex\AllProductsToIndexInterface;
+use \BaksDev\Search\Repository\DataToIndex\DataToIndexInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
@@ -13,8 +12,8 @@ class AllProductsToIndexRepositoryTest extends KernelTestCase
 {
     public function testAllProductsToIndex()
     {
-        /** @var AllProductsToIndexInterface $repository */
-        $repository = self::getContainer()->get(AllProductsToIndexInterface::class);
+        /** @var DataToIndexInterface $repository */
+        $repository = self::getContainer()->get(DataToIndexInterface::class);
 
         $result = $repository->toArray();
 

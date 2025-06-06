@@ -57,9 +57,9 @@ use BaksDev\Products\Product\Entity\ProductInvariable;
 use BaksDev\Products\Product\Entity\Property\ProductProperty;
 use BaksDev\Products\Product\Entity\Seo\ProductSeo;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
-use BaksDev\Products\Product\Type\RedisTags\ProductRedisSearchTag;
-use BaksDev\Search\Index\RedisSearchIndexHandler;
-use BaksDev\Search\Index\RedisSearchIndexInterface;
+use BaksDev\Products\Product\Type\SearchTags\ProductSearchTag;
+use BaksDev\Search\Index\SearchIndexInterface;
+use BaksDev\Search\Repository\SearchRepository\SearchRepositoryInterface;
 use BaksDev\Users\Profile\UserProfile\Entity\Info\UserProfileInfo;
 use BaksDev\Users\Profile\UserProfile\Repository\UserProfileTokenStorage\UserProfileTokenStorageInterface;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
@@ -71,7 +71,10 @@ use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Target;
 
-final class SearchAllProductsRepository implements SearchAllProductsInterface
+/**
+ * Используется для нахождения сущностей в БД по индексу
+ */
+final class SearchAllProductsRepository implements SearchRepositoryInterface
 {
     const int MAX_RESULTS = 10;
 
@@ -83,7 +86,7 @@ final class SearchAllProductsRepository implements SearchAllProductsInterface
         #[Target('productsProductLogger')] private LoggerInterface $logger,
         private readonly DBALQueryBuilder $DBALQueryBuilder,
         private readonly UserProfileTokenStorageInterface $userProfileTokenStorage,
-        private readonly ?RedisSearchIndexInterface $redisSearchIndexHandler = null,
+        private readonly ?SearchIndexInterface $SearchIndexHandler = null,
     ) {}
 
     /** Максимальное количество записей в результате */
@@ -641,14 +644,14 @@ final class SearchAllProductsRepository implements SearchAllProductsInterface
         /** Задать префикс и суффикс для реализации варианта "содержит" */
         $search = '*'.$search.'*';
 
-        /** Получим ids из Redis */
-        $resultProducts = $this->redisSearchIndexHandler
-            ->handleSearchQuery($search, ProductRedisSearchTag::TAG);
+        /** Получим ids из индекса */
+        $resultProducts = $this->SearchIndexHandler !== null ? $this->SearchIndexHandler
+            ->handleSearchQuery($search, ProductSearchTag::TAG) : false;
 
 
-        if($this->redisSearchIndexHandler instanceof RedisSearchIndexHandler && $resultProducts !== false)
+        if($this->SearchIndexHandler instanceof SearchIndexInterface && $resultProducts !== false)
         {
-            /** По полученным из Redis ids фильтруем: */
+            /** Фильтруем по полученным из индекса ids: */
 
             /** Товары */
             $dbal->where('product.id IN (:uuids)')
@@ -686,12 +689,12 @@ final class SearchAllProductsRepository implements SearchAllProductsInterface
         }
 
         /**
-         * В случае если не найден результат в RedisSearch - пробуем найти по базе
+         * В случае если не найден результат в индексе - пробуем найти по базе
          */
 
         if($resultProducts === false)
         {
-            $this->logger->warning('Поиск по RedisSearch не найден, пробуем найти по базе данных');
+            $this->logger->warning('Поиск по индексу не найден, пробуем найти по базе данных');
 
             $searchBuilder = $dbal->createSearchQueryBuilder($this->search);
 
