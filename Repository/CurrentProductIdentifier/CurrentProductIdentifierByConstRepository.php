@@ -30,6 +30,7 @@ use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Product\Entity\Product;
+use BaksDev\Products\Product\Entity\ProductInvariable;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
@@ -140,70 +141,90 @@ final class CurrentProductIdentifierByConstRepository implements CurrentProductI
             ->setParameter(
                 'product',
                 $this->product,
-                ProductUid::TYPE
+                ProductUid::TYPE,
             );
 
 
-        if($this->offer)
-        {
-            $current
-                ->addSelect('current_offer.id AS offer')
-                ->addSelect('current_offer.const AS offer_const')
-                ->addSelect('current_offer.value AS offer_value')
-                ->leftJoin(
-                    'product',
-                    ProductOffer::class,
-                    'current_offer',
-                    'current_offer.const = :offer_const AND current_offer.event = product.event'
-                )
-                ->setParameter(
-                    'offer_const',
-                    $this->offer,
-                    ProductOfferConst::TYPE
-                );
-
-            if($this->variation)
-            {
-
-                $current
-                    ->addSelect('current_variation.id AS variation')
-                    ->addSelect('current_variation.const AS variation_const')
-                    ->addSelect('current_variation.value AS variation_value')
-                    ->leftJoin(
-                        'current_offer',
-                        ProductVariation::class,
-                        'current_variation',
-                        'current_variation.const = :variation_const AND current_variation.offer = current_offer.id'
-                    )
-                    ->setParameter(
-                        'variation_const',
-                        $this->variation,
-                        ProductVariationConst::TYPE
-                    );
+        $current
+            ->addSelect('current_offer.id AS offer')
+            ->addSelect('current_offer.const AS offer_const')
+            ->addSelect('current_offer.value AS offer_value')
+            ->leftJoin(
+                'product',
+                ProductOffer::class,
+                'current_offer',
+                'current_offer.const = :offer_const AND current_offer.event = product.event',
+            )
+            ->setParameter(
+                'offer_const',
+                $this->offer,
+                ProductOfferConst::TYPE,
+            );
 
 
-                if($this->modification)
-                {
-                    $current
-                        ->addSelect('current_modification.id AS modification')
-                        ->addSelect('current_modification.const AS modification_const')
-                        ->addSelect('current_modification.value AS modification_value')
-                        ->leftJoin(
-                            'current_variation',
-                            ProductModification::class,
-                            'current_modification',
-                            'current_modification.const = :modification_const AND current_modification.variation = current_variation.id'
-                        )->setParameter(
-                            'modification_const',
-                            $this->modification,
-                            ProductModificationConst::TYPE
-                        );
-                }
-            }
-        }
+        $current
+            ->addSelect('current_variation.id AS variation')
+            ->addSelect('current_variation.const AS variation_const')
+            ->addSelect('current_variation.value AS variation_value')
+            ->leftJoin(
+                'current_offer',
+                ProductVariation::class,
+                'current_variation',
+                'current_variation.const = :variation_const AND current_variation.offer = current_offer.id',
+            )
+            ->setParameter(
+                'variation_const',
+                $this->variation,
+                ProductVariationConst::TYPE,
+            );
+
+
+        $current
+            ->addSelect('current_modification.id AS modification')
+            ->addSelect('current_modification.const AS modification_const')
+            ->addSelect('current_modification.value AS modification_value')
+            ->leftJoin(
+                'current_variation',
+                ProductModification::class,
+                'current_modification',
+                'current_modification.const = :modification_const AND current_modification.variation = current_variation.id',
+            )->setParameter(
+                'modification_const',
+                $this->modification,
+                ProductModificationConst::TYPE,
+            );
+
+        /** Product Invariable */
+        $current
+            ->addSelect('product_invariable.id AS product_invariable')
+            ->leftJoin(
+                'current_modification',
+                ProductInvariable::class,
+                'product_invariable',
+                '
+                    product_invariable.product = product.id
+                    AND
+                        CASE 
+                            WHEN current_offer.const IS NOT NULL 
+                            THEN product_invariable.offer = current_offer.const
+                            ELSE product_invariable.offer IS NULL
+                        END
+                    AND 
+                        CASE
+                            WHEN current_variation.const IS NOT NULL 
+                            THEN product_invariable.variation = current_variation.const
+                            ELSE product_invariable.variation IS NULL
+                        END
+                    AND
+                        CASE
+                            WHEN current_modification.const IS NOT NULL 
+                            THEN product_invariable.modification = current_modification.const
+                            ELSE product_invariable.modification IS NULL
+                        END
+                ');
 
         return $current
-            ->enableCache('products-product', 5)
+            ->enableCache('products-product')
             ->fetchHydrate(CurrentProductIdentifierResult::class);
 
     }

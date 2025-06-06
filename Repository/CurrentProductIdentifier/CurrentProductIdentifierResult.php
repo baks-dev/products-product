@@ -27,6 +27,7 @@ namespace BaksDev\Products\Product\Repository\CurrentProductIdentifier;
 
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
+use BaksDev\Products\Product\Type\Invariable\ProductInvariableUid;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
@@ -36,81 +37,36 @@ use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModifi
 
 final class CurrentProductIdentifierResult
 {
-    /** ID продукта */
-    private ProductUid $product;
-
-    /** ID события продукта */
-    private ProductEventUid $event;
-
-    /** Торговое предложение */
-    private ProductOfferUid|null|false $offer = null;
-    private ProductOfferConst|null|false $offerConst = null;
-    private string|null|false $offerValue = null;
-
-    /** Множественный вариант торгового предложения */
-    private ProductVariationUid|null|false $variation = null;
-    private ProductVariationConst|null|false $variationConst = null;
-    private string|null|false $variationValue = null;
-
-    /** Модификация множественного варианта торгового предложения */
-    private ProductModificationUid|null|false $modification = null;
-    private ProductModificationConst|null|false $modificationConst = null;
-    private string|null|false $modificationValue = null;
-
-
     public function __construct(
-        string $id,
-        string $event,
+
+        /** ID продукта */
+        private readonly string $id,
+        private readonly string $event,
 
         /** Торговое предложение */
-        ?string $offer = null,
-        ?string $offer_const = null,
-        ?string $offer_value = null,
+        private ?string $offer = null,
+        private ?string $offer_const = null,
+        private ?string $offer_value = null,
 
         /** Множественный вариант торгового предложения */
-        ?string $variation = null,
-        ?string $variation_const = null,
-        ?string $variation_value = null,
+        private ?string $variation = null,
+        private ?string $variation_const = null,
+        private ?string $variation_value = null,
 
         /** Модификация множественного варианта торгового предложения */
-        ?string $modification = null,
-        ?string $modification_const = null,
-        ?string $modification_value = null,
-    )
-    {
+        private ?string $modification = null,
+        private ?string $modification_const = null,
+        private ?string $modification_value = null,
 
-        $this->product = new ProductUid($id);
-        $this->event = new ProductEventUid($event);
-
-        if($offer)
-        {
-            $this->offer = new ProductOfferUid($offer);
-            $this->offerConst = new ProductOfferConst($offer_const);
-            $this->offerValue = $offer_value ?: false;
-        }
-
-        if($variation)
-        {
-            $this->variation = new ProductVariationUid($variation);
-            $this->variationConst = new ProductVariationConst($variation_const);
-            $this->variationValue = $variation_value ?: false;
-        }
-
-        if($modification)
-        {
-            $this->modification = new ProductModificationUid($modification);
-            $this->modificationConst = new ProductModificationConst($modification_const);
-            $this->modificationValue = $modification_value ?: false;
-        }
-
-    }
+        private ?string $product_invariable = null,
+    ) {}
 
     /**
      * Product
      */
     public function getProduct(): ProductUid
     {
-        return $this->product;
+        return new ProductUid($this->id);
     }
 
     /**
@@ -118,7 +74,7 @@ final class CurrentProductIdentifierResult
      */
     public function getEvent(): ProductEventUid
     {
-        return $this->event;
+        return new ProductEventUid($this->event);
     }
 
     /**
@@ -126,7 +82,7 @@ final class CurrentProductIdentifierResult
      */
     public function getOffer(): ProductOfferUid|false
     {
-        return $this->offer ?: false;
+        return $this->offer ? new ProductOfferUid($this->offer) : false;
     }
 
     /**
@@ -134,7 +90,7 @@ final class CurrentProductIdentifierResult
      */
     public function getOfferConst(): ProductOfferConst|false
     {
-        return $this->offerConst ?: false;
+        return $this->offer_const ? new ProductOfferConst($this->offer_const) : false;
     }
 
     /**
@@ -142,7 +98,7 @@ final class CurrentProductIdentifierResult
      */
     public function getVariation(): ProductVariationUid|false
     {
-        return $this->variation ?: false;
+        return $this->variation ? new ProductVariationUid($this->variation) : false;
     }
 
     /**
@@ -150,7 +106,7 @@ final class CurrentProductIdentifierResult
      */
     public function getVariationConst(): ProductVariationConst|false
     {
-        return $this->variationConst ?: false;
+        return $this->variation_const ? new ProductVariationConst($this->variation_const) : false;
     }
 
     /**
@@ -158,7 +114,7 @@ final class CurrentProductIdentifierResult
      */
     public function getModification(): ProductModificationUid|false
     {
-        return $this->modification ?: false;
+        return $this->modification ? new ProductModificationUid($this->modification) : false;
     }
 
     /**
@@ -166,7 +122,7 @@ final class CurrentProductIdentifierResult
      */
     public function getModificationConst(): ProductModificationConst|false
     {
-        return $this->modificationConst ?: false;
+        return $this->modification_const ? new ProductModificationConst($this->modification_const) : false;
     }
 
     /**
@@ -174,7 +130,7 @@ final class CurrentProductIdentifierResult
      */
     public function getOfferValue(): false|string|null
     {
-        return $this->offerValue;
+        return $this->offer_value;
     }
 
     /**
@@ -182,7 +138,7 @@ final class CurrentProductIdentifierResult
      */
     public function getVariationValue(): false|string|null
     {
-        return $this->variationValue;
+        return $this->variation_value;
     }
 
     /**
@@ -190,6 +146,12 @@ final class CurrentProductIdentifierResult
      */
     public function getModificationValue(): false|string|null
     {
-        return $this->modificationValue;
+        return $this->modification_value;
     }
+
+    public function getProductInvariable(): ProductInvariableUid|false
+    {
+        return $this->product_invariable ? new ProductInvariableUid($this->product_invariable) : false;
+    }
+
 }

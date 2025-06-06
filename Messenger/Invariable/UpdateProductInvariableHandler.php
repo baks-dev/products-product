@@ -57,7 +57,7 @@ final readonly class UpdateProductInvariableHandler
     {
         $products = $this->allProductsIdentifier
             ->forProduct($message->getId())
-            ->findAll();
+            ->findAllArray();
 
         if(false === $products)
         {

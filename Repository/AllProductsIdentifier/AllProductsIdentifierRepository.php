@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -101,21 +101,7 @@ final class AllProductsIdentifierRepository implements AllProductsIdentifierInte
         return $this;
     }
 
-
-    /**
-     * Метод возвращает все идентификаторы продукции с её торговыми предложениями
-     * @return Generator<array{
-     *  "product_id",
-     *  "product_event" ,
-     *  "offer_id" ,
-     *  "offer_const",
-     *  "variation_id" ,
-     *  "variation_const" ,
-     *  "modification_id",
-     *  "modification_const"}
-     *  >|false }
-     */
-    public function findAll(): Generator|false
+    private function builder(): DBALQueryBuilder
     {
         $dbal = $this->DBALQueryBuilder->createQueryBuilder(self::class);
 
@@ -131,7 +117,7 @@ final class AllProductsIdentifierRepository implements AllProductsIdentifierInte
                 ->setParameter(
                     'product',
                     $this->product,
-                    ProductUid::TYPE
+                    ProductUid::TYPE,
                 );
         }
 
@@ -146,12 +132,12 @@ final class AllProductsIdentifierRepository implements AllProductsIdentifierInte
                 'product',
                 ProductOffer::class,
                 'offer',
-                'offer.event = product.event AND offer.const = :offer_const'
+                'offer.event = product.event AND offer.const = :offer_const',
             )
                 ->setParameter(
                     'offer_const',
                     $this->offerConst,
-                    ProductOfferConst::TYPE
+                    ProductOfferConst::TYPE,
                 );
         }
         else
@@ -160,7 +146,7 @@ final class AllProductsIdentifierRepository implements AllProductsIdentifierInte
                 'product',
                 ProductOffer::class,
                 'offer',
-                'offer.event = product.event'
+                'offer.event = product.event',
             );
         }
 
@@ -175,12 +161,12 @@ final class AllProductsIdentifierRepository implements AllProductsIdentifierInte
                 'offer',
                 ProductVariation::class,
                 'variation',
-                'variation.offer = offer.id AND variation.const = :variation_const'
+                'variation.offer = offer.id AND variation.const = :variation_const',
             )
                 ->setParameter(
                     'variation_const',
                     $this->offerVariation,
-                    ProductVariationConst::TYPE
+                    ProductVariationConst::TYPE,
                 );
         }
         else
@@ -190,7 +176,7 @@ final class AllProductsIdentifierRepository implements AllProductsIdentifierInte
                     'offer',
                     ProductVariation::class,
                     'variation',
-                    'variation.offer = offer.id'
+                    'variation.offer = offer.id',
                 );
         }
 
@@ -205,12 +191,12 @@ final class AllProductsIdentifierRepository implements AllProductsIdentifierInte
                     'variation',
                     ProductModification::class,
                     'modification',
-                    'modification.variation = variation.id AND modification.const = :modification_const'
+                    'modification.variation = variation.id AND modification.const = :modification_const',
                 )
                 ->setParameter(
                     'modification_const',
                     $this->offerModification,
-                    ProductModificationConst::TYPE
+                    ProductModificationConst::TYPE,
                 );
         }
         else
@@ -220,10 +206,56 @@ final class AllProductsIdentifierRepository implements AllProductsIdentifierInte
                     'variation',
                     ProductModification::class,
                     'modification',
-                    'modification.variation = variation.id'
+                    'modification.variation = variation.id',
                 );
         }
 
-        return $dbal->fetchAllGenerator();
+        return $dbal;
+    }
+
+
+    /**
+     * Метод возвращает все идентификаторы продукции с её торговыми предложениями
+     *
+     * @return Generator{int, ProductsIdentifierResult}|false
+     */
+    public function findAll(): Generator|false
+    {
+        return $this
+            ->builder()
+            ->fetchAllHydrate(ProductsIdentifierResult::class);
+    }
+
+    /**
+     * Метод возвращает все идентификаторы продукции с её торговыми предложениями
+     *
+     * @return array<int, ProductsIdentifierResult>|false
+     */
+    public function toArray(): array|false
+    {
+        $data = $this->findAll();
+
+        return $data ? iterator_to_array($data) : false;
+    }
+
+    /**
+     * Метод возвращает все идентификаторы продукции с её торговыми предложениями
+     *
+     * @return Generator<array{
+     *  "product_id",
+     *  "product_event" ,
+     *  "offer_id" ,
+     *  "offer_const",
+     *  "variation_id" ,
+     *  "variation_const" ,
+     *  "modification_id",
+     *  "modification_const"}
+     *  >|false }
+     * @deprecated см. метод $this->findAll()
+     *
+     */
+    public function findAllArray(): Generator|false
+    {
+        return $this->builder()->fetchAllGenerator();
     }
 }
