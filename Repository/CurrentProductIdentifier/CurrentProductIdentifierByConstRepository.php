@@ -145,6 +145,11 @@ final class CurrentProductIdentifierByConstRepository implements CurrentProductI
             );
 
 
+        /**
+         * ProductOffer
+         */
+
+
         $current
             ->addSelect('current_offer.id AS offer')
             ->addSelect('current_offer.const AS offer_const')
@@ -153,14 +158,24 @@ final class CurrentProductIdentifierByConstRepository implements CurrentProductI
                 'product',
                 ProductOffer::class,
                 'current_offer',
-                'current_offer.const = :offer_const AND current_offer.event = product.event',
-            )
-            ->setParameter(
+                'current_offer.event = product.event'.
+                (($this->offer instanceof ProductOfferConst) ? ' AND current_offer.const = :offer_const' : ''),
+            );
+
+
+        if($this->offer instanceof ProductOfferConst)
+        {
+            $current->setParameter(
                 'offer_const',
                 $this->offer,
                 ProductOfferConst::TYPE,
             );
+        }
 
+
+        /**
+         * ProductVariation
+         */
 
         $current
             ->addSelect('current_variation.id AS variation')
@@ -170,14 +185,23 @@ final class CurrentProductIdentifierByConstRepository implements CurrentProductI
                 'current_offer',
                 ProductVariation::class,
                 'current_variation',
-                'current_variation.const = :variation_const AND current_variation.offer = current_offer.id',
-            )
-            ->setParameter(
+                'current_variation.offer = current_offer.id'.
+                (($this->variation instanceof ProductVariationConst) ? ' AND current_variation.const = :variation_const' : ''),
+            );
+
+        if($this->variation instanceof ProductVariationConst)
+        {
+            $current->setParameter(
                 'variation_const',
                 $this->variation,
                 ProductVariationConst::TYPE,
             );
+        }
 
+
+        /**
+         * ProductModification
+         */
 
         $current
             ->addSelect('current_modification.id AS modification')
@@ -187,12 +211,19 @@ final class CurrentProductIdentifierByConstRepository implements CurrentProductI
                 'current_variation',
                 ProductModification::class,
                 'current_modification',
-                'current_modification.const = :modification_const AND current_modification.variation = current_variation.id',
-            )->setParameter(
+                'current_modification.variation = current_variation.id'.
+                (($this->modification instanceof ProductModificationConst) ? ' AND current_modification.const = :modification_const' : ''),
+            );
+
+        if($this->modification instanceof ProductModificationConst)
+        {
+            $current->setParameter(
                 'modification_const',
                 $this->modification,
                 ProductModificationConst::TYPE,
             );
+        }
+
 
         /** Product Invariable */
         $current
@@ -222,6 +253,7 @@ final class CurrentProductIdentifierByConstRepository implements CurrentProductI
                             ELSE product_invariable.modification IS NULL
                         END
                 ');
+
 
         return $current
             ->enableCache('products-product')
