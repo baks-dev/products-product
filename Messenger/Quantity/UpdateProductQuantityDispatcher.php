@@ -1,17 +1,17 @@
 <?php
 /*
- * Copyright 2025.  Baks.dev <admin@baks.dev>
- *
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *
+ *  
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *
+ *  
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Messenger\Quantity;
 
+use BaksDev\Products\Product\Entity\Offers\Quantity\ProductOfferQuantity;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Quantity\ProductModificationQuantity;
 use BaksDev\Products\Product\Entity\Offers\Variation\Quantity\ProductVariationQuantity;
 use BaksDev\Products\Product\Entity\Price\ProductPrice;
@@ -43,25 +44,32 @@ use BaksDev\Products\Product\UseCase\Admin\Quantity\UpdateProductQuantityHandler
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use BaksDev\Products\Product\Entity\Offers\Quantity\ProductOfferQuantity;
 
+/**
+ * Обновляет количество продукта Quantity в зависимости от вложенности торгового предложения
+ */
 #[AsMessageHandler(priority: 0)]
 final readonly class UpdateProductQuantityDispatcher
 {
     public function __construct(
+        #[Target('productsProductLogger')] private LoggerInterface $logger,
         private UpdateModificationQuantityHandler $UpdateModificationQuantityHandler,
         private UpdateVariationQuantityHandler $UpdateVariationQuantityHandler,
         private UpdateOfferQuantityHandler $UpdateOfferQuantityHandler,
         private UpdateProductQuantityHandler $UpdateProductQuantityHandler,
-        #[Target('productsProductLogger')] private LoggerInterface $logger,
     ) {}
 
     /**
-     * Метод обновляет количесто продукта
+     * Метод обновляет количество продукта
      */
     public function __invoke(UpdateProductQuantityMessage $message): void
     {
-        if($message->getModification() instanceof ProductModificationUid)
+
+        /**
+         * Если передан Modification - ищем количественный учет ModificationQuantity
+         */
+
+        if(true === ($message->getModification() instanceof ProductModificationUid))
         {
             $updateModificationQuantityDTO = new UpdateModificationQuantityDTO(
                 $message->getModification(),
@@ -96,7 +104,14 @@ final readonly class UpdateProductQuantityDispatcher
             );
         }
 
-        if(empty($message->getModification()) && $message->getVariation() instanceof ProductVariationUid)
+        /**
+         * Если Modification === FALSE, но передан Variation - ищем количественный учет VariationQuantity
+         */
+
+        if(
+            false === ($message->getModification() instanceof ProductModificationUid) &&
+            true === ($message->getVariation() instanceof ProductVariationUid)
+        )
         {
             $updateVariationQuantityDTO = new UpdateVariationQuantityDTO(
                 $message->getVariation(),
@@ -131,7 +146,15 @@ final readonly class UpdateProductQuantityDispatcher
             );
         }
 
-        if(empty($message->getVariation()) && $message->getOffer() instanceof ProductOfferUid)
+
+        /**
+         * Если Variation === FALSE, но передан Offer - ищем количественный учет OfferQuantity
+         */
+
+        if(
+            false === ($message->getVariation() instanceof ProductVariationUid) &&
+            true === ($message->getOffer() instanceof ProductOfferUid)
+        )
         {
             $updateOfferQuantityDTO = new UpdateOfferQuantityDTO(
                 $message->getOffer(),
@@ -166,7 +189,14 @@ final readonly class UpdateProductQuantityDispatcher
             );
         }
 
-        if(empty($message->getOffer()) && $message->getEvent() instanceof ProductEventUid)
+        /**
+         * Если Offer === FALSE, но передан Event - ищем количественный учет ProductPrice
+         */
+
+        if(
+            false === ($message->getOffer() instanceof ProductOfferUid) &&
+            true === ($message->getEvent() instanceof ProductEventUid)
+        )
         {
             $updateProductQuantityDTO = new UpdateProductQuantityDTO(
                 $message->getEvent(),

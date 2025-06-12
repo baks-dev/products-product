@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -25,32 +25,33 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Messenger\Quantity;
 
+use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
-use BaksDev\Products\Product\Type\Event\ProductEventUid;
 
 final readonly class UpdateProductQuantityMessage
 {
     private string $event;
 
-    private ?string $offer;
+    private string|false $offer;
 
-    private ?string $variation;
+    private string|false $variation;
 
-    private ?string $modification;
+    private string|false $modification;
 
     public function __construct(
         ProductEventUid $event,
         private int $quantity,
-        ?ProductOfferUid $offer,
-        ?ProductVariationUid $variation,
-        ?ProductModificationUid $modification,
+
+        ProductOfferUid|null|false $offer,
+        ProductVariationUid|null|false $variation,
+        ProductModificationUid|null|false $modification,
     ) {
         $this->event = (string) $event;
-        $this->offer = empty($offer) ? null : (string) $offer;
-        $this->variation = empty($variation) ? null : (string) $variation;
-        $this->modification = empty($modification) ? null : (string) $modification;
+        $this->offer = empty($offer) ? false : (string) $offer;
+        $this->variation = empty($variation) ? false : (string) $variation;
+        $this->modification = empty($modification) ? false : (string) $modification;
     }
 
     public function getEvent(): ProductEventUid
@@ -58,19 +59,19 @@ final readonly class UpdateProductQuantityMessage
         return new ProductEventUid($this->event);
     }
 
-    public function getOffer(): ?ProductOfferUid
+    public function getOffer(): ProductOfferUid|false
     {
-        return $this->offer === null ? null : new ProductOfferUid($this->offer);
+        return $this->offer ? new ProductOfferUid($this->offer) : false;
     }
 
-    public function getVariation(): ?ProductVariationUid
+    public function getVariation(): ProductVariationUid|false
     {
-        return $this->variation === null ? null : new ProductVariationUid($this->variation);
+        return $this->variation ? new ProductVariationUid($this->variation) : false;
     }
 
-    public function getModification(): ?ProductModificationUid
+    public function getModification(): ProductModificationUid|false
     {
-        return $this->modification === null ? null : new ProductModificationUid($this->modification);
+        return $this->modification ? new ProductModificationUid($this->modification) : false;
     }
 
     public function getQuantity(): int

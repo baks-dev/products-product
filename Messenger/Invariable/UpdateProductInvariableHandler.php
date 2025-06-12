@@ -30,10 +30,6 @@ use BaksDev\Products\Product\Entity\ProductInvariable;
 use BaksDev\Products\Product\Messenger\ProductMessage;
 use BaksDev\Products\Product\Repository\AllProductsIdentifier\AllProductsIdentifierInterface;
 use BaksDev\Products\Product\Repository\ProductInvariable\ProductInvariableInterface;
-use BaksDev\Products\Product\Type\Id\ProductUid;
-use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
-use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
-use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
 use BaksDev\Products\Product\UseCase\Admin\Invariable\ProductInvariableDTO;
 use BaksDev\Products\Product\UseCase\Admin\Invariable\ProductInvariableHandler;
 use Psr\Log\LoggerInterface;
@@ -57,20 +53,20 @@ final readonly class UpdateProductInvariableHandler
     {
         $products = $this->allProductsIdentifier
             ->forProduct($message->getId())
-            ->findAllArray();
+            ->findAll();
 
-        if(false === $products)
+        if(false === $products || false === $products->valid())
         {
             return;
         }
 
-        foreach($products as $product)
+        foreach($products as $ProductsIdentifierResult)
         {
             $ProductInvariableUid = $this->productInvariable
-                ->product($product['product_id'])
-                ->offer($product['offer_const'])
-                ->variation($product['variation_const'])
-                ->modification($product['modification_const'])
+                ->product($ProductsIdentifierResult->getProductId())
+                ->offer($ProductsIdentifierResult->getProductOfferConst())
+                ->variation($ProductsIdentifierResult->getProductVariationConst())
+                ->modification($ProductsIdentifierResult->getProductModificationConst())
                 ->find();
 
             if(false === $ProductInvariableUid)
@@ -78,10 +74,10 @@ final readonly class UpdateProductInvariableHandler
                 $ProductInvariableDTO = new ProductInvariableDTO();
 
                 $ProductInvariableDTO
-                    ->setProduct(new ProductUid($product['product_id']))
-                    ->setOffer($product['offer_const'] ? new ProductOfferConst($product['offer_const']) : null)
-                    ->setVariation($product['variation_const'] ? new ProductVariationConst($product['variation_const']) : null)
-                    ->setModification($product['modification_const'] ? new ProductModificationConst($product['modification_const']) : null);
+                    ->setProduct($ProductsIdentifierResult->getProductId())
+                    ->setOffer($ProductsIdentifierResult->getProductOfferConst())
+                    ->setVariation($ProductsIdentifierResult->getProductVariationConst())
+                    ->setModification($ProductsIdentifierResult->getProductModificationConst());
 
                 $handle = $this->productInvariableHandler->handle($ProductInvariableDTO);
 

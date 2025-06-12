@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -95,9 +95,9 @@ final class ProductInvariableDTO //implements ProductInvariableInterface
         return $this->offer;
     }
 
-    public function setOffer(?ProductOfferConst $offer): self
+    public function setOffer(ProductOfferConst|false|null $offer): self
     {
-        $this->offer = $offer;
+        $this->offer = $offer ?: null;
         return $this;
     }
 
@@ -109,9 +109,9 @@ final class ProductInvariableDTO //implements ProductInvariableInterface
         return $this->variation;
     }
 
-    public function setVariation(?ProductVariationConst $variation): self
+    public function setVariation(ProductVariationConst|false|null $variation): self
     {
-        $this->variation = $variation;
+        $this->variation = $variation ?: null;
         return $this;
     }
 
@@ -123,9 +123,9 @@ final class ProductInvariableDTO //implements ProductInvariableInterface
         return $this->modification;
     }
 
-    public function setModification(?ProductModificationConst $modification): self
+    public function setModification(ProductModificationConst|false|null $modification): self
     {
-        $this->modification = $modification;
+        $this->modification = $modification ?: null;
         return $this;
     }
 

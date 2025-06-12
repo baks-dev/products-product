@@ -28,10 +28,6 @@ namespace BaksDev\Products\Product\Command\Upgrade;
 use BaksDev\Products\Product\Entity\ProductInvariable;
 use BaksDev\Products\Product\Repository\AllProductsIdentifier\AllProductsIdentifierInterface;
 use BaksDev\Products\Product\Repository\ProductInvariable\ProductInvariableInterface;
-use BaksDev\Products\Product\Type\Id\ProductUid;
-use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
-use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
-use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
 use BaksDev\Products\Product\UseCase\Admin\Invariable\ProductInvariableDTO;
 use BaksDev\Products\Product\UseCase\Admin\Invariable\ProductInvariableHandler;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -69,29 +65,17 @@ class UpgradeProductInvariableCommand extends Command
         $progressIndicator = new ProgressIndicator($output);
         $progressIndicator->start('Processing...');
 
-        $products = $this->allProductsIdentifier->findAllArray();
+        $products = $this->allProductsIdentifier->findAll();
 
-        /** @var array{
-         * "product_id",
-         * "product_event" ,
-         * "offer_id" ,
-         * "offer_const",
-         * "variation_id" ,
-         * "variation_const" ,
-         * "modification_id",
-         * "modification_const"
-         * } $product
-         */
-
-        foreach($products as $product)
+        foreach($products as $ProductsIdentifierResult)
         {
             $progressIndicator->advance();
 
             $ProductInvariableUid = $this->productInvariable
-                ->product($product['product_id'])
-                ->offer($product['offer_const'])
-                ->variation($product['variation_const'])
-                ->modification($product['modification_const'])
+                ->product($ProductsIdentifierResult->getProductId())
+                ->offer($ProductsIdentifierResult->getProductOfferConst())
+                ->variation($ProductsIdentifierResult->getProductVariationConst())
+                ->modification($ProductsIdentifierResult->getProductModificationConst())
                 ->find();
 
             if(false === $ProductInvariableUid)
@@ -99,10 +83,10 @@ class UpgradeProductInvariableCommand extends Command
                 $ProductInvariableDTO = new ProductInvariableDTO();
 
                 $ProductInvariableDTO
-                    ->setProduct(new ProductUid($product['product_id']))
-                    ->setOffer($product['offer_const'] ? new ProductOfferConst($product['offer_const']) : null)
-                    ->setVariation($product['variation_const'] ? new ProductVariationConst($product['variation_const']) : null)
-                    ->setModification($product['modification_const'] ? new ProductModificationConst($product['modification_const']) : null);
+                    ->setProduct($ProductsIdentifierResult->getProductId())
+                    ->setOffer($ProductsIdentifierResult->getProductOfferConst())
+                    ->setVariation($ProductsIdentifierResult->getProductVariationConst())
+                    ->setModification($ProductsIdentifierResult->getProductModificationConst());
 
                 $handle = $this->productInvariableHandler->handle($ProductInvariableDTO);
 
