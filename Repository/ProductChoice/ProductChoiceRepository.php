@@ -27,6 +27,8 @@ namespace BaksDev\Products\Product\Repository\ProductChoice;
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Core\Doctrine\ORMQueryBuilder;
+use BaksDev\Products\Category\Entity\CategoryProduct;
+use BaksDev\Products\Category\Entity\Info\CategoryProductInfo;
 use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Entity\Active\ProductActive;
 use BaksDev\Products\Product\Entity\Category\ProductCategory;
@@ -37,6 +39,7 @@ use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModific
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Quantity\ProductModificationQuantity;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Product\Entity\Offers\Variation\Quantity\ProductVariationQuantity;
+use BaksDev\Products\Product\Entity\Photo\ProductPhoto;
 use BaksDev\Products\Product\Entity\Price\ProductPrice;
 use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
@@ -235,6 +238,24 @@ final class ProductChoiceRepository implements ProductChoiceInterface
                     value: $category,
                     type: CategoryProductUid::TYPE
                 );
+
+            $dbal->join(
+                'category',
+                CategoryProduct::class,
+                'category_product',
+                'category_product.id = category.category'
+            );
+
+            $dbal->leftJoin(
+                    'category_product',
+                    CategoryProductInfo::class,
+                    'category_info',
+                    'category_info.event = category_product.event'
+            );
+        }
+        else
+        {
+            $dbal->select('NULL AS category_url');
         }
 
 
@@ -272,6 +293,7 @@ final class ProductChoiceRepository implements ProductChoiceInterface
             'product_modification',
             'product_modification.variation = product_variation.id'
         );
+
 
         /**
          * Quantity
@@ -325,6 +347,42 @@ final class ProductChoiceRepository implements ProductChoiceInterface
             END
 
         AS option');
+
+        /* Фото продукта */
+        $dbal->leftJoin(
+            'product',
+            ProductPhoto::class,
+            'product_photo',
+            'product_photo.event = product.event'
+        );
+
+        $dbal
+            ->addSelect(
+            "JSON_AGG
+                (DISTINCT
+                    JSONB_BUILD_OBJECT
+                    (
+                        'product_url', info.url,
+                        'product_image', CONCAT ( '/upload/".$dbal->table(ProductPhoto::class)."' , '/', product_photo.name),
+                        'product_image_cdn', product_photo.cdn,
+                        'product_image_ext', product_photo.ext,
+                        'product_price', product_price.price,
+                        'product_currency', product_price.currency,
+                        'category_url', CASE
+                            WHEN (:category)::UUID IS NOT NULL
+                            THEN category_info.url
+                            ELSE
+                            NULL
+                        END
+                    )
+                ) AS params"
+
+            )
+            ->setParameter(
+                key: 'category',
+                value: $category,
+                type: CategoryProductUid::TYPE
+            );
 
         $dbal->allGroupByExclude();
 

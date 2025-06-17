@@ -41,6 +41,8 @@ final class ProductOfferUid extends Uid
 
     private mixed $characteristic;
 
+    private ?string $params;
+
 
     public function __construct(
         AbstractUid|self|string|null $value = null,
@@ -48,6 +50,7 @@ final class ProductOfferUid extends Uid
         mixed $option = null,
         mixed $property = null,
         mixed $characteristic = null,
+        ?string $params = null,
     )
     {
         parent::__construct($value);
@@ -56,6 +59,7 @@ final class ProductOfferUid extends Uid
         $this->option = $option;
         $this->property = $property;
         $this->characteristic = $characteristic;
+        $this->params = $params;
     }
 
 
@@ -79,6 +83,16 @@ final class ProductOfferUid extends Uid
     public function getCharacteristic(): mixed
     {
         return $this->characteristic;
+    }
+
+    public function getParams(): ?array
+    {
+        if(true === empty($this->params) || false === json_validate($this->params))
+        {
+            return null;
+        }
+
+        return json_decode($this->params, true);
     }
 
 }

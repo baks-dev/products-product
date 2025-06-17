@@ -29,12 +29,15 @@ use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Core\Doctrine\ORMQueryBuilder;
 use BaksDev\Products\Category\Entity\Offers\CategoryProductOffers;
 use BaksDev\Products\Category\Entity\Offers\Trans\CategoryProductOffersTrans;
+use BaksDev\Products\Product\Entity\Offers\Image\ProductOfferImage;
+use BaksDev\Products\Product\Entity\Offers\Price\ProductOfferPrice;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\Quantity\ProductOfferQuantity;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Quantity\ProductModificationQuantity;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Product\Entity\Offers\Variation\Quantity\ProductVariationQuantity;
+use BaksDev\Products\Product\Entity\Photo\ProductPhoto;
 use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
@@ -226,9 +229,46 @@ final readonly class ProductOfferChoiceRepository implements ProductOfferChoiceI
 
         AS option');
 
+        /**
+         * Фото торговых предложений
+         */
+        $dbal->leftJoin(
+            'product_offer',
+            ProductOfferImage::class,
+            'product_offer_images',
+            'product_offer_images.offer = product_offer.id'
+        );
+
+        /**
+         * Цена торгового предложения
+         */
+        $dbal->leftJoin(
+            'product_offer',
+            ProductOfferPrice::class,
+            'product_offer_price',
+            'product_offer_price.offer = product_offer.id'
+        );
+
         /** Свойства конструктора объекта гидрации */
         $dbal->addSelect('category_offer_trans.name AS property');
         $dbal->addSelect('category_offer.reference AS characteristic');
+
+        $dbal->addSelect(
+            "JSON_AGG
+            (DISTINCT
+                JSONB_BUILD_OBJECT
+                (
+                    'product_image', CONCAT ( '/upload/".$dbal->table(ProductOfferImage::class)."' , '/', product_offer_images.name),
+                    'product_image_cdn', product_offer_images.cdn,
+                    'product_image_ext', product_offer_images.ext,
+                    'product_article', product_offer.article,
+                    'product_price', product_offer_price.price,
+                    'product_currency', product_offer_price.currency,
+                    'product_offer_value', product_offer.value,
+                    'product_offer_postfix', product_offer.postfix
+                )
+            ) AS params"
+        );
 
         $dbal->allGroupByExclude();
 
