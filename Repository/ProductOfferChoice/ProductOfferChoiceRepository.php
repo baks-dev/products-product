@@ -236,7 +236,7 @@ final readonly class ProductOfferChoiceRepository implements ProductOfferChoiceI
             'product_offer',
             ProductOfferImage::class,
             'product_offer_images',
-            'product_offer_images.offer = product_offer.id'
+            'product_offer_images.offer = product_offer.id AND product_offer_images.root = true'
         );
 
         /**

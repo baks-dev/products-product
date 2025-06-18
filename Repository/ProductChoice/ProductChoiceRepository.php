@@ -253,11 +253,6 @@ final class ProductChoiceRepository implements ProductChoiceInterface
                     'category_info.event = category_product.event'
             );
         }
-        else
-        {
-            $dbal->select('NULL AS category_url');
-        }
-
 
         $dbal->leftJoin(
             'product',
@@ -353,7 +348,7 @@ final class ProductChoiceRepository implements ProductChoiceInterface
             'product',
             ProductPhoto::class,
             'product_photo',
-            'product_photo.event = product.event'
+            'product_photo.event = product.event AND product_photo.root = true'
         );
 
         $dbal

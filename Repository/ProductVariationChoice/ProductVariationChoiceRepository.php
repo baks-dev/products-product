@@ -302,7 +302,7 @@ final class ProductVariationChoiceRepository implements ProductVariationChoiceIn
             'product_variation',
             ProductVariationImage::class,
             'product_variation_images',
-            'product_variation_images.variation = product_variation.id'
+            'product_variation_images.variation = product_variation.id AND product_variation_images.root = true'
         );
 
         /**
