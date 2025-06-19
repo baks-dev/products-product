@@ -29,6 +29,8 @@ use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Core\Doctrine\ORMQueryBuilder;
 use BaksDev\Products\Category\Entity\Offers\Variation\CategoryProductVariation;
 use BaksDev\Products\Category\Entity\Offers\Variation\Trans\CategoryProductVariationTrans;
+use BaksDev\Products\Product\Entity\Offers\Image\ProductOfferImage;
+use BaksDev\Products\Product\Entity\Offers\Price\ProductOfferPrice;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\Quantity\ProductOfferQuantity;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
@@ -41,6 +43,8 @@ use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use Generator;
+use BaksDev\Products\Product\Entity\Offers\Variation\Image\ProductVariationImage;
+use BaksDev\Products\Product\Entity\Offers\Variation\Price\ProductVariationPrice;
 
 final class ProductVariationChoiceRepository implements ProductVariationChoiceInterface
 {
@@ -291,10 +295,46 @@ final class ProductVariationChoiceRepository implements ProductVariationChoiceIn
 
         AS option');
 
+        /**
+         * Фото торговых предложений
+         */
+        $dbal->leftJoin(
+            'product_variation',
+            ProductVariationImage::class,
+            'product_variation_images',
+            'product_variation_images.variation = product_variation.id AND product_variation_images.root = true'
+        );
+
+        /**
+         * Цена торгового предложения
+         */
+        $dbal->leftJoin(
+            'product_variation',
+            ProductVariationPrice::class,
+            'product_variation_price',
+            'product_variation_price.variation = product_variation.id'
+        );
 
         $dbal->addSelect('category_variation_trans.name AS property');
         $dbal->addSelect('category_variation.reference AS characteristic');
 
+        $dbal->addSelect(
+            "JSON_AGG
+            (DISTINCT
+                JSONB_BUILD_OBJECT
+                (
+                    'product_image', CONCAT ( '/upload/".$dbal->table(ProductVariationImage::class)."' , '/', product_variation_images.name),
+                    'product_image_cdn', product_variation_images.cdn,
+                    'product_image_ext', product_variation_images.ext,
+                    'product_article', product_variation.article,
+                    'product_price', product_variation_price.price,
+                    'product_currency', product_variation_price.currency,
+                    'product_variation_value', product_variation.value,
+                    'product_variation_postfix', product_variation.postfix
+                )
+            ) AS params"
+        );
+        
         $dbal->allGroupByExclude();
 
         return $dbal->fetchAllHydrate(ProductVariationUid::class);

@@ -29,16 +29,22 @@ use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Core\Doctrine\ORMQueryBuilder;
 use BaksDev\Products\Category\Entity\Offers\Variation\Modification\CategoryProductModification;
 use BaksDev\Products\Category\Entity\Offers\Variation\Modification\Trans\CategoryProductModificationTrans;
+use BaksDev\Products\Product\Entity\Offers\Image\ProductOfferImage;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
+use BaksDev\Products\Product\Entity\Offers\Variation\Image\ProductVariationImage;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Quantity\ProductModificationQuantity;
+use BaksDev\Products\Product\Entity\Offers\Variation\Price\ProductVariationPrice;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
+use BaksDev\Products\Product\Entity\Photo\ProductPhoto;
 use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
 use Generator;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Image\ProductModificationImage;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Price\ProductModificationPrice;
 
 final class ProductModificationChoiceRepository implements ProductModificationChoiceInterface
 {
@@ -265,6 +271,38 @@ final class ProductModificationChoiceRepository implements ProductModificationCh
                 'modification_quantity.modification = modification.id AND modification_quantity.quantity > 0 '
             );
 
+        /* Фото продукта */
+        $dbal
+            ->leftJoin(
+                'modification',
+                ProductModificationImage::class,
+                'product_modification_image',
+                'product_modification_image.modification = modification.id AND product_modification_image.root = true'
+            );
+
+        $dbal->leftJoin(
+            'modification',
+            ProductModificationPrice::class,
+            'product_modification_price',
+            'product_modification_price.modification = modification.id'
+        );
+
+        $dbal->addSelect(
+            "JSON_AGG
+            (DISTINCT
+                JSONB_BUILD_OBJECT
+                (
+                    'product_image', CONCAT ( '/upload/".$dbal->table(ProductModificationImage::class)."' , '/', product_modification_image.name),
+                    'product_image_cdn', product_modification_image.cdn,
+                    'product_image_ext', product_modification_image.ext,
+                    'product_article', modification.article,
+                    'product_price', product_modification_price.price,
+                    'product_currency', product_modification_price.currency,
+                    'product_modification_value', modification.value,
+                    'product_modification_postfix', modification.postfix
+                )
+            ) AS params"
+        );
 
         /** Свойства конструктора объекта гидрации */
 
