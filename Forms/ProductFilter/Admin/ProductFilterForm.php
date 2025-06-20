@@ -67,11 +67,6 @@ final class ProductFilterForm extends AbstractType
     {
         $builder->add('all', CheckboxType::class);
 
-        /** Если в приложении участвует сырье - добавляем фильтр по сырью */
-        if(class_exists(BaksDevMaterialsCatalogBundle::class))
-        {
-            $builder->add('materials', CheckboxType::class);
-        }
 
         /**
          * Категория
@@ -84,6 +79,12 @@ final class ProductFilterForm extends AbstractType
             /** @var ProductFilterDTO $data */
             $data = $event->getData();
             $builder = $event->getForm();
+
+            /** Если в приложении участвует сырье - добавляем фильтр по сырью */
+            if(class_exists(BaksDevMaterialsCatalogBundle::class) && false === is_null($data->getMaterials()))
+            {
+                $builder->add('materials', CheckboxType::class);
+            }
 
             if($this->session === false)
             {
@@ -180,8 +181,8 @@ final class ProductFilterForm extends AbstractType
                                 'label' => $offerField->getOption(),
                                 'priority' => 200,
                                 'required' => false,
-                                'translation_domain' => $inputOffer->domain()
-                            ]
+                                'translation_domain' => $inputOffer->domain(),
+                            ],
                         );
 
 
@@ -205,7 +206,7 @@ final class ProductFilterForm extends AbstractType
                                         'label' => $variationField->getOption(),
                                         'priority' => 199,
                                         'required' => false,
-                                    ]
+                                    ],
                                 );
 
                                 /** Модификации множественных вариантов торгового предложения */
@@ -228,7 +229,7 @@ final class ProductFilterForm extends AbstractType
                                                 'label' => $modificationField->getOption(),
                                                 'priority' => 198,
                                                 'required' => false,
-                                            ]
+                                            ],
                                         );
                                     }
                                 }
@@ -365,13 +366,13 @@ final class ProductFilterForm extends AbstractType
 
 
                 // $this->request->getSession()->set('catalog_filter', $session);
-            }
+            },
         );
 
 
         $builder->addEventListener(
             FormEvents::PRE_SET_DATA,
-            function(FormEvent $event): void {}
+            function(FormEvent $event): void {},
         );
 
 
@@ -385,7 +386,7 @@ final class ProductFilterForm extends AbstractType
                 'validation_groups' => false,
                 'method' => 'POST',
                 'attr' => ['class' => 'w-100'],
-            ]
+            ],
         );
     }
 }

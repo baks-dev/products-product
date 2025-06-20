@@ -68,7 +68,7 @@ final class ProductFilterDTO implements ProductFilterInterface
     /**
      * Показать только без сырья
      */
-    private bool $materials = false;
+    private bool|null $materials = false;
 
 
     private ?bool $all = null;
@@ -219,18 +219,24 @@ final class ProductFilterDTO implements ProductFilterInterface
         return $this;
     }
 
-    public function setMaterials(bool|null $materials): self
-    {
-        $this->materials = (bool) $materials;
-        return $this;
-    }
-
     /**
      * Materials
      */
-    public function getMaterials(): bool
+    public function setMaterials(bool|null $materials): self
+    {
+        $this->materials = $materials === true;
+        return $this;
+    }
+
+    public function getMaterials(): bool|null
     {
         return $this->materials;
+    }
+
+    public function hiddenMaterials(): self
+    {
+        $this->materials = null;
+        return $this;
     }
 
 }
