@@ -42,8 +42,16 @@ interface ProductDetailByUidInterface
 
     public function modification(ProductModification|ProductModificationUid|string|null|false $modification): self;
 
+
     /**
      * Метод возвращает детальную информацию о продукте по его идентификаторам события, ТП, вариантов и модификаций.
+     */
+    public function findResult(): ProductDetailByUidResult|false;
+
+    /**
+     * Метод возвращает детальную информацию о продукте по его идентификаторам события, ТП, вариантов и модификаций.
+     *
+     * @deprecated findResult()
      */
     public function find(): array|false;
 }

@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Repository\ProductDetail;
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
+use BaksDev\Ozon\Orders\Type\ProfileType\TypeProfileFbsOzon;
 use BaksDev\Products\Category\Entity\CategoryProduct;
 use BaksDev\Products\Category\Entity\Info\CategoryProductInfo;
 use BaksDev\Products\Category\Entity\Offers\CategoryProductOffers;
@@ -159,12 +160,9 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
         return $this;
     }
 
-    /**
-     * Метод возвращает детальную информацию о продукте по его идентификаторам события, ТП, вариантов и модификаций.
-     */
-    public function find(): array|false
-    {
 
+    private function builder(): DBALQueryBuilder
+    {
         if(false === $this->event)
         {
             throw new InvalidArgumentException('Invalid Argument ProductEvent');
@@ -183,7 +181,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
             ->setParameter(
                 'event',
                 $this->event,
-                ProductEventUid::TYPE
+                ProductEventUid::TYPE,
             );
 
 
@@ -195,7 +193,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
                 'product_event',
                 ProductActive::class,
                 'product_active',
-                'product_active.event = product_event.id'
+                'product_active.event = product_event.id',
             );
 
 
@@ -206,7 +204,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
                 'product_event',
                 ProductDescription::class,
                 'product_desc',
-                'product_desc.event = product_event.id AND product_desc.device = :device '
+                'product_desc.event = product_event.id AND product_desc.device = :device ',
             )
             ->setParameter('device', 'pc');
 
@@ -215,7 +213,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
             'product_event',
             ProductPrice::class,
             'product_price',
-            'product_price.event = product_event.id'
+            'product_price.event = product_event.id',
         );
 
         /* ProductInfo */
@@ -226,7 +224,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
                 'product_event',
                 ProductInfo::class,
                 'product_info',
-                'product_info.product = product_event.main '
+                'product_info.product = product_event.main ',
             );
 
         /* Торговое предложение */
@@ -240,7 +238,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
             'product_event',
             ProductOffer::class,
             'product_offer',
-            'product_offer.event = product_event.id '.($this->offer ? ' AND product_offer.id = :product_offer' : '').' '
+            'product_offer.event = product_event.id '.($this->offer ? ' AND product_offer.id = :product_offer' : '').' ',
         );
 
         if($this->offer)
@@ -253,7 +251,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
                 'product_event',
                 ProductTrans::class,
                 'product_trans',
-                'product_trans.event = product_event.id AND product_trans.local = :local'
+                'product_trans.event = product_event.id AND product_trans.local = :local',
             );
 
         /* Название продукта */
@@ -271,7 +269,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
             'product_offer',
             ProductOfferPrice::class,
             'product_offer_price',
-            'product_offer_price.offer = product_offer.id'
+            'product_offer_price.offer = product_offer.id',
         );
 
         /* Получаем тип торгового предложения */
@@ -281,7 +279,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
                 'product_offer',
                 CategoryProductOffers::class,
                 'category_offer',
-                'category_offer.id = product_offer.category_offer'
+                'category_offer.id = product_offer.category_offer',
             );
 
         /* Получаем название торгового предложения */
@@ -292,7 +290,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
                 'category_offer',
                 CategoryProductOffersTrans::class,
                 'category_offer_trans',
-                'category_offer_trans.offer = category_offer.id AND category_offer_trans.local = :local'
+                'category_offer_trans.offer = category_offer.id AND category_offer_trans.local = :local',
             );
 
         /* Наличие и резерв торгового предложения */
@@ -300,7 +298,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
             'product_offer',
             ProductOfferQuantity::class,
             'product_offer_quantity',
-            'product_offer_quantity.offer = product_offer.id'
+            'product_offer_quantity.offer = product_offer.id',
         );
 
         //ProductCategoryOffers
@@ -316,7 +314,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
             'product_offer',
             ProductVariation::class,
             'product_variation',
-            'product_variation.offer = product_offer.id'.($this->variation ? ' AND product_variation.id = :product_variation' : '').' '
+            'product_variation.offer = product_offer.id'.($this->variation ? ' AND product_variation.id = :product_variation' : '').' ',
         );
 
         if($this->variation)
@@ -329,7 +327,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
             'product_variation',
             ProductVariationPrice::class,
             'product_variation_price',
-            'product_variation_price.variation = product_variation.id'
+            'product_variation_price.variation = product_variation.id',
         );
 
         /* Получаем тип множественного варианта */
@@ -339,7 +337,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
                 'product_variation',
                 CategoryProductVariation::class,
                 'category_offer_variation',
-                'category_offer_variation.id = product_variation.category_variation'
+                'category_offer_variation.id = product_variation.category_variation',
             );
 
         /* Получаем название множественного варианта */
@@ -350,7 +348,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
                 'category_offer_variation',
                 CategoryProductVariationTrans::class,
                 'category_offer_variation_trans',
-                'category_offer_variation_trans.variation = category_offer_variation.id AND category_offer_variation_trans.local = :local'
+                'category_offer_variation_trans.variation = category_offer_variation.id AND category_offer_variation_trans.local = :local',
             );
 
 
@@ -359,7 +357,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
             'category_offer_variation',
             ProductVariationQuantity::class,
             'product_variation_quantity',
-            'product_variation_quantity.variation = product_variation.id'
+            'product_variation_quantity.variation = product_variation.id',
         );
 
         /* Модификация множественного варианта торгового предложения */
@@ -373,7 +371,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
             'product_variation',
             ProductModification::class,
             'product_modification',
-            'product_modification.variation = product_variation.id'.($this->modification ? ' AND product_modification.id = :product_modification' : '').' '
+            'product_modification.variation = product_variation.id'.($this->modification ? ' AND product_modification.id = :product_modification' : '').' ',
         );
 
         if($this->modification)
@@ -386,7 +384,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
             'product_modification',
             ProductModificationPrice::class,
             'product_modification_price',
-            'product_modification_price.modification = product_modification.id'
+            'product_modification_price.modification = product_modification.id',
         );
 
         /* Получаем тип модификации множественного варианта */
@@ -396,7 +394,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
                 'product_modification',
                 CategoryProductModification::class,
                 'category_offer_modification',
-                'category_offer_modification.id = product_modification.category_modification'
+                'category_offer_modification.id = product_modification.category_modification',
             );
 
         /* Получаем название типа модификации */
@@ -409,7 +407,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
                 'category_offer_modification_trans',
                 '
             category_offer_modification_trans.modification = category_offer_modification.id AND 
-            category_offer_modification_trans.local = :local'
+            category_offer_modification_trans.local = :local',
             );
 
         /* Наличие и резерв модификации множественного варианта */
@@ -417,7 +415,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
             'category_offer_modification',
             ProductModificationQuantity::class,
             'product_modification_quantity',
-            'product_modification_quantity.modification = product_modification.id'
+            'product_modification_quantity.modification = product_modification.id',
         );
 
 
@@ -450,28 +448,28 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
             'product_event',
             ProductPhoto::class,
             'product_photo',
-            'product_photo.event = product_event.id AND product_photo.root = true'
+            'product_photo.event = product_event.id AND product_photo.root = true',
         );
 
         $dbal->leftJoin(
             'product_offer',
             ProductOfferImage::class,
             'product_offer_images',
-            'product_offer_images.offer = product_offer.id AND product_offer_images.root = true'
+            'product_offer_images.offer = product_offer.id AND product_offer_images.root = true',
         );
 
         $dbal->leftJoin(
             'product_variation',
             ProductVariationImage::class,
             'product_variation_image',
-            'product_variation_image.variation = product_variation.id AND product_variation_image.root = true'
+            'product_variation_image.variation = product_variation.id AND product_variation_image.root = true',
         );
 
         $dbal->leftJoin(
             'product_modification',
             ProductModificationImage::class,
             'product_modification_image',
-            'product_modification_image.modification = product_modification.id AND product_modification_image.root = true'
+            'product_modification_image.modification = product_modification.id AND product_modification_image.root = true',
         );
 
 
@@ -492,7 +490,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
 					
 			   ELSE NULL
 			END AS product_image
-		"
+		",
         );
 
         /* Флаг загрузки файла CDN */
@@ -578,7 +576,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
 			   
 			   ELSE NULL
 			END AS product_currency
-		'
+		',
         );
 
         /* Наличие продукта */
@@ -601,7 +599,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
 	
 			   ELSE 0
 			END AS product_quantity
-		'
+		',
         );
 
 
@@ -610,7 +608,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
             'product_event',
             ProductCategory::class,
             'product_event_category',
-            'product_event_category.event = product_event.id AND product_event_category.root = true'
+            'product_event_category.event = product_event.id AND product_event_category.root = true',
         );
 
 
@@ -618,7 +616,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
             'product_event_category',
             CategoryProduct::class,
             'category',
-            'category.id = product_event_category.category'
+            'category.id = product_event_category.category',
         );
 
         $dbal->addSelect('category_trans.name AS category_name')->addGroupBy('category_trans.name');
@@ -627,7 +625,7 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
             'category',
             CategoryProductTrans::class,
             'category_trans',
-            'category_trans.event = category.event AND category_trans.local = :local'
+            'category_trans.event = category.event AND category_trans.local = :local',
         );
 
         $dbal->addSelect('category_info.url AS category_url')->addGroupBy('category_info.url');
@@ -635,14 +633,14 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
             'category',
             CategoryProductInfo::class,
             'category_info',
-            'category_info.event = category.event'
+            'category_info.event = category.event',
         );
 
         $dbal->leftJoin(
             'category',
             CategoryProductSection::class,
             'category_section',
-            'category_section.event = category.event'
+            'category_section.event = category.event',
         );
 
         /* Свойства, участвующие в карточке */
@@ -651,21 +649,21 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
             'category_section',
             CategoryProductSectionField::class,
             'category_section_field',
-            'category_section_field.section = category_section.id AND (category_section_field.public = TRUE OR category_section_field.name = TRUE )'
+            'category_section_field.section = category_section.id AND (category_section_field.public = TRUE OR category_section_field.name = TRUE )',
         );
 
         $dbal->leftJoin(
             'category_section_field',
             CategoryProductSectionFieldTrans::class,
             'category_section_field_trans',
-            'category_section_field_trans.field = category_section_field.id AND category_section_field_trans.local = :local'
+            'category_section_field_trans.field = category_section_field.id AND category_section_field_trans.local = :local',
         );
 
         $dbal->leftJoin(
             'category_section_field',
             ProductProperty::class,
             'product_property',
-            'product_property.event = product_event.id AND product_property.field = category_section_field.const'
+            'product_property.event = product_event.id AND product_property.field = category_section_field.const',
         );
 
         $dbal->addSelect(
@@ -688,10 +686,36 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
 				)
 			
 		)
-			AS category_section_field"
+			AS category_section_field",
         );
 
         $dbal->allGroupByExclude();
+
+        return $dbal;
+    }
+
+
+    /**
+     * Метод возвращает детальную информацию о продукте по его идентификаторам события, ТП, вариантов и модификаций.
+     */
+    public function findResult(): ProductDetailByUidResult|false
+    {
+        $dbal = $this->builder();
+
+        return $dbal
+            ->enableCache('products-product')
+            ->fetchHydrate(ProductDetailByUidResult::class);
+    }
+
+
+    /**
+     * Метод возвращает детальную информацию о продукте по его идентификаторам события, ТП, вариантов и модификаций.
+     *
+     * @deprecated findResult()
+     */
+    public function find(): array|false
+    {
+        $dbal = $this->builder();
 
         /* Кешируем результат DBAL */
         return $dbal
