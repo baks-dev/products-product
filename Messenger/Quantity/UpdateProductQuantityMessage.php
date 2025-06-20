@@ -43,7 +43,7 @@ final readonly class UpdateProductQuantityMessage
     public function __construct(
         ProductEventUid $event,
         private int $quantity,
-
+        private int $reserve,
         ProductOfferUid|null|false $offer,
         ProductVariationUid|null|false $variation,
         ProductModificationUid|null|false $modification,
@@ -77,5 +77,10 @@ final readonly class UpdateProductQuantityMessage
     public function getQuantity(): int
     {
         return $this->quantity;
+    }
+
+    public function getReserve(): int
+    {
+        return $this->reserve;
     }
 }

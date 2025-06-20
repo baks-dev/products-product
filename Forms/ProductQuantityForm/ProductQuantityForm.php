@@ -23,37 +23,35 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\UseCase\Admin\Quantity;
+namespace BaksDev\Products\Product\Forms\ProductQuantityForm;
 
-use BaksDev\Core\Entity\AbstractHandler;
-use BaksDev\Products\Product\Entity\Price\ProductPrice;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
-final class UpdateProductQuantityHandler extends AbstractHandler
+final class ProductQuantityForm extends AbstractType
 {
-    public function handle(UpdateProductQuantityDTO $command): ProductPrice|string|false
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $product = $this
-            ->getRepository(ProductPrice::class)
-            ->findOneBy(['event' => $command->getEvent()]);
+        $builder->add('total', IntegerType::class);
+        $builder->add('reserve', IntegerType::class);
 
-        if(empty($product) === false)
-        {
-            $product->setQuantity($command->getQuantity());
-            $product->setReserve($command->getReserve());
+        /* Сохранить ******************************************************/
+        $builder->add(
+            'product_quantity_form_edit',
+            SubmitType::class,
+            ['label' => 'Save', 'label_html' => true, 'attr' => ['class' => 'btn-primary']]
+        );
+    }
 
-            /** Валидация всех объектов */
-            $this->validatorCollection->add($product);
-
-            if($this->validatorCollection->isInvalid())
-            {
-                return $this->validatorCollection->getErrorUniqid();
-            }
-
-            $this->flush();
-
-            return $product;
-        }
-
-        return false;
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => ProductQuantityDTO::class,
+            'method' => 'POST',
+            'attr' => ['class' => 'w-100'],
+        ]);
     }
 }

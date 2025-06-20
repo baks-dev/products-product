@@ -22,7 +22,7 @@
 
 executeFunc(function productQuantityForm()
 {
-    const form = document.forms.products_quantity_form;
+    const form = document.forms.all_products_quantity_form;
 
     if(typeof form === 'undefined')
     {

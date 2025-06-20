@@ -602,6 +602,16 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
 		',
         );
 
+        $dbal->addSelect("
+			COALESCE(
+                NULLIF(product_modification_quantity.reserve, 0),
+                NULLIF(product_variation_quantity.reserve, 0),
+                NULLIF(product_offer_quantity.reserve, 0),
+                NULLIF(product_price.reserve, 0),
+                0
+            ) AS product_reserve
+		");
+
 
         /* Категория */
         $dbal->join(
