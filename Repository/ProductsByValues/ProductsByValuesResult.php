@@ -38,6 +38,8 @@ final readonly class ProductsByValuesResult
         private string $product,
         private string $event,
         private string $product_url,
+        private int $product_quantity,
+        private int $product_reserve,
         private ?string $product_offer_uid,
         private ?string $product_offer_value,
         private ?string $product_offer_postfix,
@@ -107,5 +109,15 @@ final readonly class ProductsByValuesResult
     public function getProductModificationPostfix(): ?string
     {
         return $this->product_modification_postfix;
+    }
+
+    public function getProductQuantity(): int
+    {
+        return $this->product_quantity;
+    }
+
+    public function getProductReserve(): int
+    {
+        return $this->product_reserve;
     }
 }

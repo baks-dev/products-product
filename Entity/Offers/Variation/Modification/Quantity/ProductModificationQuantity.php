@@ -24,7 +24,6 @@
 namespace BaksDev\Products\Product\Entity\Offers\Variation\Modification\Quantity;
 
 use BaksDev\Core\Entity\EntityEvent;
-use BaksDev\Products\Product\Entity\Offers\Offer\Offer;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -144,8 +143,16 @@ class ProductModificationQuantity extends EntityEvent
     /**
      * Quantity
      */
-    public function getQuantity(): int
+    public function getQuantity(): ?int
     {
         return $this->quantity;
+    }
+
+    /**
+     * Reserve
+     */
+    public function getReserve(): ?int
+    {
+        return $this->reserve;
     }
 }

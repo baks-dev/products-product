@@ -73,7 +73,8 @@ final readonly class UpdateProductQuantityDispatcher
         {
             $updateModificationQuantityDTO = new UpdateModificationQuantityDTO(
                 $message->getModification(),
-                $message->getQuantity()
+                $message->getQuantity(),
+                $message->getReserve(),
             );
 
             $product = $this->UpdateModificationQuantityHandler->handle($updateModificationQuantityDTO);
@@ -115,7 +116,8 @@ final readonly class UpdateProductQuantityDispatcher
         {
             $updateVariationQuantityDTO = new UpdateVariationQuantityDTO(
                 $message->getVariation(),
-                $message->getQuantity()
+                $message->getQuantity(),
+                $message->getReserve(),
             );
 
             $product = $this->UpdateVariationQuantityHandler->handle($updateVariationQuantityDTO);
@@ -158,7 +160,8 @@ final readonly class UpdateProductQuantityDispatcher
         {
             $updateOfferQuantityDTO = new UpdateOfferQuantityDTO(
                 $message->getOffer(),
-                $message->getQuantity()
+                $message->getQuantity(),
+                $message->getReserve(),
             );
 
             $product = $this->UpdateOfferQuantityHandler->handle($updateOfferQuantityDTO);
@@ -200,7 +203,8 @@ final readonly class UpdateProductQuantityDispatcher
         {
             $updateProductQuantityDTO = new UpdateProductQuantityDTO(
                 $message->getEvent(),
-                $message->getQuantity()
+                $message->getQuantity(),
+                $message->getReserve(),
             );
 
             $product = $this->UpdateProductQuantityHandler->handle($updateProductQuantityDTO);

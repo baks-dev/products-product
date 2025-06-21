@@ -26,7 +26,6 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\UseCase\Admin\Quantity\Offer\Tests;
 
 use BaksDev\Products\Product\Entity\Offers\Quantity\ProductOfferQuantity;
-use BaksDev\Products\Product\Entity\Price\ProductPrice;
 use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailByInvariableInterface;
 use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailByInvariableResult;
 use BaksDev\Products\Product\Type\Invariable\ProductInvariableUid;
@@ -49,6 +48,7 @@ final class UpdateOfferQuantityTest extends KernelTestCase
     {
         /** Получение данных о тестируемом товаре */
         $quantity = rand(0, 10);
+        $reserve = rand(0, 10);
 
         /** @var ProductDetailByInvariableInterface $productDetailByInvariable */
         $productDetailByInvariable = self::getContainer()->get(ProductDetailByInvariableInterface::class);
@@ -61,7 +61,8 @@ final class UpdateOfferQuantityTest extends KernelTestCase
         $handler = self::getContainer()->get(UpdateOfferQuantityHandler::class);
         $dto = new UpdateOfferQuantityDTO(
             $offer,
-            $quantity
+            $quantity,
+            $reserve,
         );
 
         $result = $handler->handle($dto);
@@ -69,5 +70,6 @@ final class UpdateOfferQuantityTest extends KernelTestCase
         self::assertTrue($result instanceof ProductOfferQuantity);
 
         self::assertTrue($result->getQuantity() === $quantity);
+        self::assertTrue($result->getReserve() === $reserve);
     }
 }

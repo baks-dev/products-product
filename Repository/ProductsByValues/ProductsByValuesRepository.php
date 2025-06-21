@@ -38,6 +38,7 @@ use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModific
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Quantity\ProductModificationQuantity;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Product\Entity\Offers\Variation\Quantity\ProductVariationQuantity;
+use BaksDev\Products\Product\Entity\Price\ProductPrice;
 use BaksDev\Products\Product\Entity\Product;
 use Generator;
 use InvalidArgumentException;
@@ -129,6 +130,14 @@ final class ProductsByValuesRepository implements ProductsByValuesInterface
             ProductEvent::class,
             'product_event',
             'product_event.id = product.event'
+        );
+
+        $dbal
+            ->leftJoin(
+            'product_event',
+            ProductPrice::class,
+            'product_price',
+            'product_event.id = product_price.event'
         );
 
         /** ProductInfo */
@@ -247,6 +256,36 @@ final class ProductsByValuesRepository implements ProductsByValuesInterface
             'product_modification_quantity',
             'product_modification_quantity.modification = product_offer_modification.id'
         );
+
+        /** Наличие продукта */
+        $dbal->addSelect('
+			CASE
+
+			   WHEN product_modification_quantity.quantity > 0 AND product_modification_quantity.quantity > product_modification_quantity.reserve 
+			   THEN (product_modification_quantity.quantity - product_modification_quantity.reserve)
+
+			   WHEN product_variation_quantity.quantity > 0 AND product_variation_quantity.quantity > product_variation_quantity.reserve  
+			   THEN (product_variation_quantity.quantity - product_variation_quantity.reserve)
+			
+			   WHEN product_offer_quantity.quantity > 0 AND product_offer_quantity.quantity > product_offer_quantity.reserve 
+			   THEN (product_offer_quantity.quantity - product_offer_quantity.reserve)
+
+			   WHEN product_price.quantity > 0 AND product_price.quantity > product_price.reserve 
+			   THEN (product_price.quantity - product_price.reserve)
+
+			   ELSE 0
+			END AS product_quantity
+		');
+
+        $dbal->addSelect('
+			COALESCE(
+                NULLIF(product_modification_quantity.reserve, 0),
+                NULLIF(product_variation_quantity.reserve, 0),
+                NULLIF(product_offer_quantity.reserve, 0),
+                NULLIF(product_price.reserve, 0),
+                0
+            ) AS product_reserve
+		');
 
         return $dbal;
     }

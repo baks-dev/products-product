@@ -31,7 +31,8 @@ final readonly class UpdateVariationQuantityDTO
 {
     public function __construct(
         private ProductVariationUid $variation,
-        private int $quantity
+        private int $quantity,
+        private int $reserve,
     ) {}
 
     public function getVariation(): ProductVariationUid
@@ -42,5 +43,10 @@ final readonly class UpdateVariationQuantityDTO
     public function getQuantity(): int
     {
         return $this->quantity;
+    }
+
+    public function getReserve(): int
+    {
+        return $this->reserve;
     }
 }

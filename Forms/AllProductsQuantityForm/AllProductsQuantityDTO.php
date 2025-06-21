@@ -23,11 +23,11 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\Forms\ProductsQuantityForm;
+namespace BaksDev\Products\Product\Forms\AllProductsQuantityForm;
 
 use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 
-final class ProductsQuantityDTO
+final class AllProductsQuantityDTO
 {
     private ?CategoryProductUid $category = null;
 

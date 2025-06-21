@@ -84,6 +84,7 @@ class ProductDetailByUidResult
         private ?string $product_currency,
 
         private ?int $product_quantity,
+        private ?int $product_reserve,
 
         private ?string $product_offer_postfix = null,
         private ?string $product_variation_postfix = null,
@@ -346,5 +347,10 @@ class ProductDetailByUidResult
     public function getProductQuantity(): int|null
     {
         return $this->product_quantity;
+    }
+
+    public function getProductReserve(): int|null
+    {
+        return $this->product_reserve;
     }
 }

@@ -166,4 +166,9 @@ class ProductPrice extends EntityEvent
         $this->quantity = $quantity ?: 0;
     }
 
+    /** Возвращает текущее состояние резерва */
+    public function getReserve(): ?int
+    {
+        return $this->reserve;
+    }
 }

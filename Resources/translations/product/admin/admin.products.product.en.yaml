@@ -4,7 +4,6 @@ admin:
     new: 'Add product'
     edit: 'Edit product'
     delete: 'Delete products'
-    quantity: 'Change product quantity'
 
   breadcrumb:
     index: 'Product Catalog'
@@ -12,17 +11,18 @@ admin:
     edit: 'Edit product'
     delete: 'Delete a product'
 
-
   form:
     label:
       trans:
         name: 'Product name'
       url: 'Product symbol code'
+
   success:
     new: 'Product added successfully'
     update: 'Product updated successfully'
     delete: 'Product successfully removed to cart'
     restore: 'The product was successfully restored'
+
   danger:
     new: '%s: Error adding product'
     update: '%s: Error updating product'

@@ -28,7 +28,6 @@ namespace BaksDev\Products\Product\UseCase\Admin\Quantity;
 use BaksDev\Products\Product\Entity\Event\ProductEventInterface;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\UseCase\Admin\Quantity\Price\ProductPriceDTO;
-use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /** @see ProductEvent */

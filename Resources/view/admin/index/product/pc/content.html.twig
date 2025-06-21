@@ -42,7 +42,7 @@
             {% if
                 constant('BaksDev\\Materials\\Catalog\\BaksDevMaterialsCatalogBundle::NAMESPACE') is defined and
                 (is_granted('ROLE_PRODUCT_QUANTITY') or is_granted('ROLE_ADMIN') ) %}
-                <button data-href="{{ path('products-product:admin.quantity') }}"
+                <button data-href="{{ path('products-product:admin.quantity.all') }}"
                         class="btn btn-outline-danger modal-link disabled"
                         data-bs-toggle="modal"
                         data-bs-target="#modal"

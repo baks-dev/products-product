@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\Forms\ProductsQuantityForm;
+namespace BaksDev\Products\Product\Forms\AllProductsQuantityForm;
 
 use BaksDev\Core\Services\Fields\FieldsChoice;
 use BaksDev\Products\Category\Repository\CategoryChoice\CategoryChoiceInterface;
@@ -42,7 +42,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-final class ProductsQuantityForm extends AbstractType
+final class AllProductsQuantityForm extends AbstractType
 {
     public function __construct(
         private readonly CategoryChoiceInterface $categoryChoice,
@@ -210,7 +210,7 @@ final class ProductsQuantityForm extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'data_class' => ProductsQuantityDTO::class,
+                'data_class' => AllProductsQuantityDTO::class,
                 'method' => 'POST',
                 'attr' => ['class' => 'w-100'],
             ]
