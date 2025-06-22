@@ -67,7 +67,6 @@ use InvalidArgumentException;
 
 final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterface
 {
-
     private array|bool $events = false;
 
     private array|bool $offers = false;
@@ -104,6 +103,10 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
     {
         foreach($offers as $offer)
         {
+            if(empty($offer))
+            {
+                continue;
+            }
 
             if(is_string($offer))
             {
@@ -124,6 +127,10 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
     {
         foreach($variations as $variation)
         {
+            if(empty($variation))
+            {
+                continue;
+            }
 
             if(is_string($variation))
             {
@@ -145,6 +152,10 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
     {
         foreach($modifications as $modification)
         {
+            if(empty($modification))
+            {
+                continue;
+            }
 
             if(is_string($modification))
             {
