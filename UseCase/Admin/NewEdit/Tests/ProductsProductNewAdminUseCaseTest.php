@@ -79,6 +79,7 @@ use Symfony\Component\HttpFoundation\File\File;
  * @group products-product
  * @group products-product-usecase
  * @group products-product-repository
+ * @group products-product-controller
  */
 #[When(env: 'test')]
 class ProductsProductNewAdminUseCaseTest extends KernelTestCase

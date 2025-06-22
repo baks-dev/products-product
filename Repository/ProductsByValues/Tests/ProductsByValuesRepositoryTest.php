@@ -81,6 +81,9 @@ final class ProductsByValuesRepositoryTest extends KernelTestCase
         self::assertInstanceOf(ProductEventUid::class, $result->getEvent());
         self::assertIsString($result->getProductUrl());
 
+        self::assertIsInt($result->getProductQuantity());
+        self::assertIsInt($result->getProductReserve());
+
         self::assertTrue(
             $result->getProductOfferUid() === null ||
             $result->getProductOfferUid() instanceof ProductOfferUid

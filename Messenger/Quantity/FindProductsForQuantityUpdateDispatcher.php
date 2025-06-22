@@ -59,6 +59,7 @@ final readonly class FindProductsForQuantityUpdateDispatcher
             $message = new UpdateProductQuantityMessage(
                 $product->getEvent(),
                 $message->getQuantity(),
+                $product->getProductReserve(),
                 $product->getProductOfferUid(),
                 $product->getProductVariationUid(),
                 $product->getProductModificationUid(),

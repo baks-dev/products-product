@@ -31,6 +31,7 @@ use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
+use Generator;
 
 interface ProductDetailByUidInterface
 {
@@ -44,7 +45,8 @@ interface ProductDetailByUidInterface
 
 
     /**
-     * Метод возвращает детальную информацию о продукте по его идентификаторам события, ТП, вариантов и модификаций.
+     * Метод возвращает детальную информацию о продукте по его идентификаторам события, ТП, вариантов и модификаций в
+     * виде ассоциативного массива.
      */
     public function findResult(): ProductDetailByUidResult|false;
 

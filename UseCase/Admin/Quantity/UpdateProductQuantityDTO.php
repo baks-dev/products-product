@@ -31,7 +31,8 @@ final readonly class UpdateProductQuantityDTO
 {
     public function __construct(
         private ProductEventUid $event,
-        private int $quantity
+        private int $quantity,
+        private int $reserve,
     ) {}
 
     public function getQuantity(): int
@@ -42,5 +43,10 @@ final readonly class UpdateProductQuantityDTO
     public function getEvent(): ProductEventUid
     {
         return $this->event;
+    }
+
+    public function getReserve(): int
+    {
+        return $this->reserve;
     }
 }

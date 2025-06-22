@@ -48,6 +48,7 @@ final class UpdateProductQuantityTest extends KernelTestCase
     {
         /** Получение данных о тестируемом товаре */
         $quantity = rand(0, 10);
+        $reserve = rand(0, 10);
 
         /** @var ProductDetailByInvariableInterface $productDetailByInvariable */
         $productDetailByInvariable = self::getContainer()->get(ProductDetailByInvariableInterface::class);
@@ -60,7 +61,8 @@ final class UpdateProductQuantityTest extends KernelTestCase
         $handler = self::getContainer()->get(UpdateProductQuantityHandler::class);
         $dto = new UpdateProductQuantityDTO(
             $event,
-            $quantity
+            $quantity,
+            $reserve,
         );
 
         $result = $handler->handle($dto);
@@ -68,5 +70,6 @@ final class UpdateProductQuantityTest extends KernelTestCase
         self::assertTrue($result instanceof ProductPrice);
 
         self::assertTrue($result->getQuantity() === $quantity);
+        self::assertTrue($result->getReserve() === $reserve);
     }
 }

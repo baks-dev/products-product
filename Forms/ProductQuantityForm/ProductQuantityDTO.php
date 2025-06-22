@@ -23,37 +23,52 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\UseCase\Admin\Quantity;
+namespace BaksDev\Products\Product\Forms\ProductQuantityForm;
 
-use BaksDev\Core\Entity\AbstractHandler;
-use BaksDev\Products\Product\Entity\Price\ProductPrice;
+use BaksDev\Products\Stocks\Type\Total\ProductStockTotalUid;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
+use Symfony\Component\Validator\Constraints as Assert;
 
-final class UpdateProductQuantityHandler extends AbstractHandler
+/** @see ProductQuantityForm */
+final class ProductQuantityDTO
 {
-    public function handle(UpdateProductQuantityDTO $command): ProductPrice|string|false
+    /** Общее количество на данном складе */
+    #[Assert\NotBlank]
+    #[Assert\PositiveOrZero]
+    #[Assert\GreaterThanOrEqual(propertyPath: "reserve")]
+    private int $total = 0;
+
+    /** Зарезервировано на данном складе */
+    #[Assert\NotBlank]
+    #[Assert\PositiveOrZero]
+    private int $reserve = 0;
+
+
+    /**
+     * Total
+     */
+    public function getTotal(): int
     {
-        $product = $this
-            ->getRepository(ProductPrice::class)
-            ->findOneBy(['event' => $command->getEvent()]);
+        return $this->total;
+    }
 
-        if(empty($product) === false)
-        {
-            $product->setQuantity($command->getQuantity());
-            $product->setReserve($command->getReserve());
+    public function setTotal(int $total): self
+    {
+        $this->total = $total;
+        return $this;
+    }
 
-            /** Валидация всех объектов */
-            $this->validatorCollection->add($product);
+    /**
+     * Reserve
+     */
+    public function getReserve(): int
+    {
+        return $this->reserve;
+    }
 
-            if($this->validatorCollection->isInvalid())
-            {
-                return $this->validatorCollection->getErrorUniqid();
-            }
-
-            $this->flush();
-
-            return $product;
-        }
-
-        return false;
+    public function setReserve(int $reserve): self
+    {
+        $this->reserve = $reserve;
+        return $this;
     }
 }

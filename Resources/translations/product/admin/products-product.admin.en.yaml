@@ -4,6 +4,7 @@ page:
   edit: 'Edit product'
   rename: 'Rename the product'
   delete: 'Delete products'
+  quantity: 'Change product quantity'
 
 breadcrumb:
   index: 'Product Catalog'
@@ -11,6 +12,7 @@ breadcrumb:
   edit: 'Edit product'
   rename: 'Rename the product'
   delete: 'Delete a product'
+  quantity: 'Change product quantity'
 
 
 form:
@@ -26,6 +28,9 @@ success:
   rename: 'Product successfully renamed'
   delete: 'Product successfully removed to cart'
   restore: 'The product was successfully restored'
+  quantity:
+    product: 'Product quantity updated successfully'
+    all: 'Request for quantity change accepted'
 
 danger:
   new: '%s: Error adding product'
@@ -34,3 +39,8 @@ danger:
   rename: '%s: Error updating product'
   delete: '%s: Error deleting product'
   restore: '%s: Error while restoring product'
+  quantity:
+    product: '%s: Error updating quantity'
+
+btn:
+  quantity: 'Edit quantity'

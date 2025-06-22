@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\Controller\Admin\Tests;
+namespace BaksDev\Products\Product\Controller\Admin\Quantity\Tests;
 
 use BaksDev\Users\User\Tests\TestUserAccount;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -34,7 +34,7 @@ use Symfony\Component\DependencyInjection\Attribute\When;
  * @group products-product-controller
  */
 #[When(env: 'test')]
-final class QuantityAdminTest extends WebTestCase
+final class AllProductsQuantityAdminTest extends WebTestCase
 {
     private const string URL = '/admin/products/quantity/';
     private const string ROLE = 'ROLE_PRODUCT_QUANTITY';

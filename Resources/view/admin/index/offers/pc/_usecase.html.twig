@@ -83,6 +83,26 @@ value="{{ item.event }}">
 
         {% endif %}
 
+        {# Изменить количество #}
+        {% if  is_granted(ROLE~'_QUANTITY') or is_granted('ROLE_ADMIN') %}
+
+            <li class="list-group-item d-flex justify-content-between bg-transparent border-0 text-truncate rounded-5">
+                <a href="{{ path('products-product:admin.quantity.product', {
+                    product: item.event,
+                    offer: item.product_offer_id,
+                    variation: item.product_variation_id,
+                    modification: item.product_modification_id
+                }) }}"
+                   class="text-decoration-none text-dark w-100 modal-link disabled"
+                   data-bs-toggle="modal"
+                   data-bs-target="#modal"
+                   title="{{ 'btn.quantity'|trans({}, 'products-product.admin') }}">
+                    {{ 'btn.quantity'|trans({}, 'products-product.admin') }}
+                </a>
+            </li>
+
+        {% endif %}
+
     </ul>
 </div>
 
