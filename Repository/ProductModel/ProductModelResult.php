@@ -19,6 +19,7 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 declare(strict_types=1);
@@ -32,7 +33,10 @@ use BaksDev\Reference\Money\Type\Money;
 use Deprecated;
 use Symfony\Component\DependencyInjection\Attribute\Exclude;
 
-/** @see ProductModelRepository */
+/**
+ * @see ProductModelRepository
+ * @see ProductModelOfferResult
+ */
 #[Exclude]
 final readonly class ProductModelResult
 {
@@ -59,7 +63,10 @@ final readonly class ProductModelResult
         private bool|null $category_cover_cdn,
         private string|null $category_cover_dir,
         private string|null $category_section_field,
+
         private string|null $profile_discount = null,
+        private string|null $project_discount = null,
+
     ) {}
 
     public function getProductId(): ProductUid
@@ -256,8 +263,14 @@ final readonly class ProductModelResult
 
         $price = new Money($minPrice, true);
 
-        // применяем скидку пользователя из профиля
-        if(false === is_null($this->profile_discount))
+        /** Скидка магазина */
+        if(false === empty($this->project_discount))
+        {
+            $price->applyString($this->project_discount);
+        }
+
+        /** Скидка пользователя */
+        if(false === empty($this->profile_discount))
         {
             $price->applyString($this->profile_discount);
         }

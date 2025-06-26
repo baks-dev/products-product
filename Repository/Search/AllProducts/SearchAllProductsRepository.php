@@ -19,6 +19,7 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 namespace BaksDev\Products\Product\Repository\Search\AllProducts;
@@ -60,11 +61,8 @@ use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Type\SearchTags\ProductSearchTag;
 use BaksDev\Search\Index\SearchIndexInterface;
 use BaksDev\Search\Repository\SearchRepository\SearchRepositoryInterface;
-use BaksDev\Users\Profile\UserProfile\Entity\Info\UserProfileInfo;
-use BaksDev\Users\Profile\UserProfile\Repository\UserProfileTokenStorage\UserProfileTokenStorageInterface;
-use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
-use BaksDev\Users\Profile\UserProfile\Type\UserProfileStatus\Status\UserProfileStatusActive;
-use BaksDev\Users\Profile\UserProfile\Type\UserProfileStatus\UserProfileStatus;
+use BaksDev\Users\Profile\UserProfile\Entity\Discount\UserProfileDiscount;
+use BaksDev\Users\Profile\UserProfile\Entity\UserProfile;
 use Doctrine\DBAL\ArrayParameterType;
 use Generator;
 use InvalidArgumentException;
@@ -85,7 +83,6 @@ final class SearchAllProductsRepository implements SearchRepositoryInterface
     public function __construct(
         #[Target('productsProductLogger')] private LoggerInterface $logger,
         private readonly DBALQueryBuilder $DBALQueryBuilder,
-        private readonly UserProfileTokenStorageInterface $userProfileTokenStorage,
         private readonly ?SearchIndexInterface $SearchIndexHandler = null,
     ) {}
 
@@ -603,35 +600,53 @@ final class SearchAllProductsRepository implements SearchRepositoryInterface
             ');
 
         /** Персональная скидка из профиля авторизованного пользователя */
-        if(true === $this->userProfileTokenStorage->isUser())
+        if(true === $dbal->bindCurrentProfile())
         {
-            $profile = $this->userProfileTokenStorage->getProfileCurrent();
 
-            if($profile instanceof UserProfileUid)
-            {
-                $dbal
-                    ->addSelect('profile_info.discount AS profile_discount')
-                    ->leftJoin(
-                        'product',
-                        UserProfileInfo::class,
-                        'profile_info',
+            $dbal
+                ->join(
+                    'product',
+                    UserProfile::class,
+                    'current_profile',
+                    '
+                        current_profile.id = :'.$dbal::CURRENT_PROFILE_KEY
+                );
+
+            $dbal
+                ->addSelect('current_profile_discount.value AS profile_discount')
+                ->leftJoin(
+                    'current_profile',
+                    UserProfileDiscount::class,
+                    'current_profile_discount',
+                    '
+                        current_profile_discount.event = current_profile.event
                         '
-                        profile_info.profile = :profile AND 
-                        profile_info.status = :profile_status'
-                    )
-                    ->setParameter(
-                        key: 'profile',
-                        value: $profile,
-                        type: UserProfileUid::TYPE)
-                    /** Активный статус профиля */
-                    ->setParameter(
-                        key: 'profile_status',
-                        value: UserProfileStatusActive::class,
-                        type: UserProfileStatus::TYPE
-                    );
-            }
+                );
         }
 
+        /** Общая скидка (наценка) из профиля магазина */
+        if(true === $dbal->bindProjectProfile())
+        {
+
+            $dbal
+                ->join(
+                    'product',
+                    UserProfile::class,
+                    'project_profile',
+                    '
+                        project_profile.id = :'.$dbal::PROJECT_PROFILE_KEY
+                );
+
+            $dbal
+                ->addSelect('project_profile_discount.value AS project_discount')
+                ->leftJoin(
+                    'project_profile',
+                    UserProfileDiscount::class,
+                    'project_profile_discount',
+                    '
+                        project_profile_discount.event = project_profile.event'
+                );
+        }
 
         /** Поиск */
         $search = str_replace('-', ' ', $this->search->getQuery());

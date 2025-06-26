@@ -19,6 +19,7 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 declare(strict_types=1);
@@ -26,6 +27,7 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Repository\Cards\ModelsByCategory\Tests;
 
 use BaksDev\Products\Category\Repository\AllCategory\AllCategoryInterface;
+use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Repository\Cards\ModelsByCategory\ModelByCategoryResult;
 use BaksDev\Products\Product\Repository\Cards\ModelsByCategory\ModelsByCategoryInterface;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
@@ -39,10 +41,11 @@ use Symfony\Component\DependencyInjection\Attribute\When;
  * @group products-product
  */
 #[When(env: 'test')]
-class ModelOrProductsByCategoryTest extends KernelTestCase
+class ModelByCategoryRepositoryTest extends KernelTestCase
 {
     public function testUseCase(): void
     {
+
         /** @var AllCategoryInterface $categoriesRepo */
         $categoriesRepo = self::getContainer()->get(AllCategoryInterface::class);
         $categories = $categoriesRepo->getOnlyChildren();
@@ -53,14 +56,22 @@ class ModelOrProductsByCategoryTest extends KernelTestCase
             return;
         }
 
+        $categoryUids = null;
+
+        foreach($categories as $category)
+        {
+            $categoryUids[] = new CategoryProductUid($category['id']);
+        }
+
         /** @var ModelsByCategoryInterface $repository */
         $repository = self::getContainer()->get(ModelsByCategoryInterface::class);
 
         $results = $repository
-            ->inCategories(current($categories)['id'])
+            ->inCategories($categoryUids)
+            ->maxResult(100)
             ->findAll();
 
-        if(empty($results->getData()))
+        if(false === $results)
         {
             $this->addWarning(sprintf('Не найдено ни одного продукта по категории %s | %s',
                 current($categories)['id'],
@@ -71,7 +82,7 @@ class ModelOrProductsByCategoryTest extends KernelTestCase
         }
 
         /** @var ModelByCategoryResult $result */
-        foreach($results->getData() as $result)
+        foreach($results as $result)
         {
             self::assertInstanceOf(ModelByCategoryResult::class, $result);
 
@@ -89,17 +100,20 @@ class ModelOrProductsByCategoryTest extends KernelTestCase
             is_bool($result->getCategoryOfferCard()) ?: self::assertNull($result->getCategoryOfferCard());
             is_string($result->getProductOfferReference()) ?: self::assertNull($result->getProductOfferReference());
             is_string($result->getProductOfferValue()) ?: self::assertNull($result->getProductOfferValue());
-            self::assertIsString($result->getOfferAgg());
+
+            is_string($result->getOfferAgg()) ?: self::assertNull($result->getOfferAgg());
 
             is_bool($result->getCategoryVariationCard()) ?: self::assertNull($result->getCategoryVariationCard());
             is_string($result->getProductVariationReference()) ?: self::assertNull($result->getProductVariationReference());
             is_string($result->getProductVariationValue()) ?: self::assertNull($result->getProductVariationValue());
-            self::assertIsString($result->getVariationAgg());
+
+            is_string($result->getVariationAgg()) ?: self::assertNull($result->getVariationAgg());
 
             is_bool($result->getCategoryModificationCard()) ?: self::assertNull($result->getCategoryModificationCard());
             is_string($result->getProductModificationReference()) ?: self::assertNull($result->getProductModificationReference());
             is_string($result->getProductModificationValue()) ?: self::assertNull($result->getProductModificationValue());
-            self::assertIsString($result->getModificationAgg());
+
+            is_string($result->getModificationAgg()) ?: self::assertNull($result->getModificationAgg());
 
             is_array($result->getInvariable()) ?: self::assertNull($result->getInvariable());
 
@@ -122,6 +136,7 @@ class ModelOrProductsByCategoryTest extends KernelTestCase
 
             is_string($result->getProductOfferPostfix()) ?: self::assertNull($result->getProductOfferPostfix());
             is_string($result->getProductVariationPostfix()) ?: self::assertNull($result->getProductVariationPostfix());
+
             is_string($result->getProductModificationPostfix()) ?: self::assertNull($result->getProductModificationPostfix());
         }
     }

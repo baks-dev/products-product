@@ -19,20 +19,21 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Repository\Cards\ModelsOrProductsByCategory;
 
-use BaksDev\Products\Product\Repository\Cards\ModelsOrProductsCardResultInterface;
+use BaksDev\Products\Product\Repository\Cards\ModelsOrProductsCardResultInterfaceProduct;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Reference\Currency\Type\Currency;
 use BaksDev\Reference\Money\Type\Money;
 
-/** @see ModelsByCategoryRepository */
-final readonly class ModelOrProductByCategoryResult implements ModelsOrProductsCardResultInterface
+/** @see ModelsOrProductsByCategoryRepository */
+final readonly class ModelOrProductByCategoryResult implements ModelsOrProductsCardResultInterfaceProduct
 {
     public function __construct(
         private string $product_id,
@@ -74,6 +75,8 @@ final readonly class ModelOrProductByCategoryResult implements ModelsOrProductsC
         private string|null $category_section_field,
 
         private string|null $profile_discount = null,
+        private string|null $project_discount = null,
+
     ) {}
 
     public function getProductId(): ProductUid
@@ -229,7 +232,13 @@ final readonly class ModelOrProductByCategoryResult implements ModelsOrProductsC
 
         $price = new Money($this->product_price, true);
 
-        // применяем скидку пользователя из профиля
+        /** Скидка магазина */
+        if(false === empty($this->project_discount))
+        {
+            $price->applyString($this->project_discount);
+        }
+
+        /** Скидка пользователя */
         if(false === empty($this->profile_discount))
         {
             $price->applyString($this->profile_discount);
@@ -247,7 +256,13 @@ final readonly class ModelOrProductByCategoryResult implements ModelsOrProductsC
 
         $price = new Money($this->product_old_price, true);
 
-        // применяем скидку пользователя из профиля
+        /** Скидка магазина */
+        if(false === empty($this->project_discount))
+        {
+            $price->applyString($this->project_discount);
+        }
+
+        /** Скидка пользователя */
         if(false === empty($this->profile_discount))
         {
             $price->applyString($this->profile_discount);

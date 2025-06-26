@@ -25,7 +25,7 @@
 namespace BaksDev\Products\Product\Repository\Cards;
 
 use BaksDev\Products\Category\Type\Event\CategoryProductEventUid;
-use BaksDev\Products\Product\Repository\RepositoryResultInterface;
+use BaksDev\Products\Product\Repository\ProductPriceResultInterface;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Product\Type\Invariable\ProductInvariableUid;
@@ -37,7 +37,7 @@ use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductM
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
 use BaksDev\Reference\Currency\Type\Currency;
 
-interface ProductCardResultInterface extends RepositoryResultInterface
+interface ProductCardResultInterfaceProduct extends ProductPriceResultInterface
 {
     public function getProductId(): ProductUid;
 

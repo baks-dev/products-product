@@ -19,6 +19,7 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 namespace BaksDev\Products\Product\Repository\ProductsDetailByUids\Tests;
@@ -35,11 +36,12 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 
 /**
  * @group products-product
+ * @group products-product-repository
  */
 #[When(env: 'test')]
 class ProductsDetailByUidsRepositoryTest extends KernelTestCase
 {
-    public function testToArray()
+    public function testFindAll()
     {
         /** @var ProductsDetailByUidsRepository $repository */
         $repository = self::getContainer()->get(ProductsDetailByUidsRepository::class);
@@ -48,15 +50,23 @@ class ProductsDetailByUidsRepositoryTest extends KernelTestCase
         $offers = [ProductOfferUid::TEST];
         $variations = [ProductVariationUid::TEST];
         $modifications = [ProductModificationUid::TEST];
-        $repository->events($events)
+
+        $results = $repository
+            ->events($events)
             ->offers($offers)
             ->variations($variations)
-            ->modifications($modifications);
+            ->modifications($modifications)
+            ->findAll();
 
-        $result = $repository->findAll();
+        if(false === $results)
+        {
+            self::assertTrue(true);
+            return;
+        }
 
         /** @var ProductsDetailByUidsResult $item */
-        foreach($result as $item) {
+        foreach($results as $item)
+        {
             self::assertInstanceOf(ProductsDetailByUidsResult::class, $item);
             self::assertInstanceOf(ProductUid::class, $item->getProductId());
             self::assertInstanceOf(ProductOfferUid::class, $item->getProductOfferUid());
