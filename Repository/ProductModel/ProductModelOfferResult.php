@@ -19,13 +19,14 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Repository\ProductModel;
 
-use BaksDev\Products\Product\Repository\RepositoryResultInterface;
+use BaksDev\Products\Product\Repository\ProductPriceResultInterface;
 use BaksDev\Products\Product\Type\Invariable\ProductInvariableUid;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
@@ -34,11 +35,10 @@ use BaksDev\Reference\Money\Type\Money;
 use Symfony\Component\DependencyInjection\Attribute\Exclude;
 
 /**
- * @see ProductModelRepository
  * @see ProductModelResult
  */
 #[Exclude]
-final readonly class ProductModelOfferResult implements RepositoryResultInterface
+final readonly class ProductModelOfferResult implements ProductPriceResultInterface
 {
     public function __construct(
         private string|null $offer_uid,
@@ -68,6 +68,8 @@ final readonly class ProductModelOfferResult implements RepositoryResultInterfac
         private ?int $quantity,
 
         private string|null $profile_discount = null,
+        private string|null $project_discount = null,
+
     ) {}
 
     public function getProductOfferUid(): ProductOfferUid|null
@@ -184,7 +186,13 @@ final readonly class ProductModelOfferResult implements RepositoryResultInterfac
 
         $price = new Money($this->price, true);
 
-        // применяем скидку пользователя из профиля
+        /** Скидка магазина */
+        if(false === empty($this->project_discount))
+        {
+            $price->applyString($this->project_discount);
+        }
+
+        /** Скидка пользователя */
         if(false === empty($this->profile_discount))
         {
             $price->applyString($this->profile_discount);
@@ -202,7 +210,13 @@ final readonly class ProductModelOfferResult implements RepositoryResultInterfac
 
         $price = new Money($this->old_price, true);
 
-        // применяем скидку пользователя из профиля
+        /** Скидка магазина */
+        if(false === empty($this->project_discount))
+        {
+            $price->applyString($this->project_discount);
+        }
+
+        /** Скидка пользователя */
         if(false === empty($this->profile_discount))
         {
             $price->applyString($this->profile_discount);

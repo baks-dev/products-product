@@ -19,20 +19,21 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Repository\Cards\ModelsByCategory;
 
-use BaksDev\Products\Product\Repository\Cards\ModelsOrProductsCardResultInterface;
+use BaksDev\Products\Product\Repository\Cards\ModelsOrProductsCardResultInterfaceProduct;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Reference\Currency\Type\Currency;
 use BaksDev\Reference\Money\Type\Money;
 
 /** @see ModelsByCategoryRepository */
-final readonly class ModelByCategoryResult implements ModelsOrProductsCardResultInterface
+final readonly class ModelByCategoryResult implements ModelsOrProductsCardResultInterfaceProduct
 {
     public function __construct(
         private string $product_id,
@@ -64,7 +65,7 @@ final readonly class ModelByCategoryResult implements ModelsOrProductsCardResult
         private ?bool $product_image_cdn,
 
         private string|null $profile_discount = null,
-
+        private string|null $project_discount = null,
     ) {}
 
     public function getProductId(): ProductUid
@@ -107,12 +108,12 @@ final readonly class ModelByCategoryResult implements ModelsOrProductsCardResult
         return $this->product_offer_reference;
     }
 
-    public function getProductOfferValue(): ?string
+    public function getProductOfferValue(): null
     {
         return null;
     }
 
-    public function getOfferAgg(): ?string
+    public function getOfferAgg(): null
     {
         return null;
     }
@@ -127,12 +128,12 @@ final readonly class ModelByCategoryResult implements ModelsOrProductsCardResult
         return $this->product_variation_reference;
     }
 
-    public function getProductVariationValue(): ?string
+    public function getProductVariationValue(): null
     {
         return null;
     }
 
-    public function getVariationAgg(): ?string
+    public function getVariationAgg(): null
     {
         return null;
     }
@@ -147,17 +148,17 @@ final readonly class ModelByCategoryResult implements ModelsOrProductsCardResult
         return $this->product_modification_reference;
     }
 
-    public function getProductModificationValue(): ?string
+    public function getProductModificationValue(): null
     {
         return null;
     }
 
-    public function getModificationAgg(): ?string
+    public function getModificationAgg(): null
     {
         return null;
     }
 
-    public function getInvariable(): array|null
+    public function getInvariable(): null
     {
         return null;
     }
@@ -191,7 +192,13 @@ final readonly class ModelByCategoryResult implements ModelsOrProductsCardResult
 
         $price = new Money($this->product_price, true);
 
-        // применяем скидку пользователя из профиля
+        /** Скидка магазина */
+        if(false === empty($this->project_discount))
+        {
+            $price->applyString($this->project_discount);
+        }
+
+        /** Скидка пользователя */
         if(false === empty($this->profile_discount))
         {
             $price->applyString($this->profile_discount);
@@ -209,7 +216,13 @@ final readonly class ModelByCategoryResult implements ModelsOrProductsCardResult
 
         $price = new Money($this->product_old_price, true);
 
-        // применяем скидку пользователя из профиля
+        /** Скидка магазина */
+        if(false === empty($this->project_discount))
+        {
+            $price->applyString($this->project_discount);
+        }
+
+        /** Скидка пользователя */
         if(false === empty($this->profile_discount))
         {
             $price->applyString($this->profile_discount);
@@ -223,27 +236,27 @@ final readonly class ModelByCategoryResult implements ModelsOrProductsCardResult
         return new Currency($this->product_currency);
     }
 
-    public function getCategorySectionField(): array|null
+    public function getCategorySectionField(): null
     {
         return null;
     }
 
-    public function getProductQuantity(): ?int
+    public function getProductQuantity(): null
     {
         return null;
     }
 
-    public function getProductOfferPostfix(): ?string
+    public function getProductOfferPostfix(): null
     {
         return null;
     }
 
-    public function getProductVariationPostfix(): ?string
+    public function getProductVariationPostfix(): null
     {
         return null;
     }
 
-    public function getProductModificationPostfix(): ?string
+    public function getProductModificationPostfix(): null
     {
         return null;
     }
