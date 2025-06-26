@@ -95,7 +95,7 @@ final class ModelOrProductRepository implements ModelOrProductInterface
     {
         $result = $this->findAll();
 
-        return (true === $result->valid()) ? iterator_to_array($result) : false;
+        return false !== $result && (true === $result->valid()) ? iterator_to_array($result) : false;
     }
 
     /** @return Generator<int, ModelOrProductResult>|false */
