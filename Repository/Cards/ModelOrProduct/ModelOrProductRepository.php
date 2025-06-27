@@ -69,8 +69,7 @@ final class ModelOrProductRepository implements ModelOrProductInterface
     private int|false $maxResult = false;
 
     public function __construct(
-        private readonly DBALQueryBuilder $DBALQueryBuilder,
-        private readonly UserProfileTokenStorageInterface $userProfileTokenStorage,
+        private readonly DBALQueryBuilder $DBALQueryBuilder
     ) {}
 
     /** Максимальное количество записей в результате */
