@@ -183,7 +183,9 @@ final class ProductHandler extends AbstractHandler
         $this->flush();
 
         /* Отправляем событие в шину  */
-        $this->messageDispatch->dispatch(
+        $this->messageDispatch
+            ->addClearCacheOther('avito-board')
+            ->dispatch(
             message: new ProductMessage($this->main->getId(), $this->main->getEvent(), $command->getEvent()),
             transport: 'products-product',
         );
