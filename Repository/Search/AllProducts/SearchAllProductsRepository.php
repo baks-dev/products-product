@@ -132,7 +132,7 @@ final class SearchAllProductsRepository implements SearchRepositoryInterface
             'product',
             ProductEvent::class,
             'product_event',
-            'product_event.id = product.event'
+            'product_event.id = product.event',
         );
 
         $dbal
@@ -141,7 +141,7 @@ final class SearchAllProductsRepository implements SearchRepositoryInterface
                 'product_event',
                 ProductTrans::class,
                 'product_trans',
-                'product_trans.event = product_event.id AND product_trans.local = :local'
+                'product_trans.event = product_event.id AND product_trans.local = :local',
             );
 
         /* Базовая Цена товара */
@@ -149,7 +149,7 @@ final class SearchAllProductsRepository implements SearchRepositoryInterface
             'product',
             ProductPrice::class,
             'product_price',
-            'product_price.event = product.event'
+            'product_price.event = product.event',
         );
 
         $dbal
@@ -158,7 +158,7 @@ final class SearchAllProductsRepository implements SearchRepositoryInterface
                 'product',
                 ProductInfo::class,
                 'product_info',
-                'product_info.product = product.id '
+                'product_info.product = product.id ',
             );
 
         $dbal
@@ -167,7 +167,7 @@ final class SearchAllProductsRepository implements SearchRepositoryInterface
                 'product',
                 ProductSeo::class,
                 'seo',
-                'seo.event = product.event'
+                'seo.event = product.event',
             );
 
 
@@ -182,7 +182,7 @@ final class SearchAllProductsRepository implements SearchRepositoryInterface
                 'product_event',
                 ProductOffer::class,
                 'product_offer',
-                'product_offer.event = product_event.id'
+                'product_offer.event = product_event.id',
             );
 
         /* Цена торгового предо жения */
@@ -190,7 +190,7 @@ final class SearchAllProductsRepository implements SearchRepositoryInterface
             'product_offer',
             ProductOfferPrice::class,
             'product_offer_price',
-            'product_offer_price.offer = product_offer.id'
+            'product_offer_price.offer = product_offer.id',
         );
 
         /* Тип торгового предложения */
@@ -200,7 +200,7 @@ final class SearchAllProductsRepository implements SearchRepositoryInterface
                 'product_offer',
                 CategoryProductOffers::class,
                 'category_offer',
-                'category_offer.id = product_offer.category_offer'
+                'category_offer.id = product_offer.category_offer',
             );
 
 
@@ -215,7 +215,7 @@ final class SearchAllProductsRepository implements SearchRepositoryInterface
                 'product_offer',
                 ProductVariation::class,
                 'product_variation',
-                'product_variation.offer = product_offer.id'
+                'product_variation.offer = product_offer.id',
             );
 
         /* Цена множественного варианта */
@@ -223,7 +223,7 @@ final class SearchAllProductsRepository implements SearchRepositoryInterface
             'product_variation',
             ProductVariationPrice::class,
             'product_variation_price',
-            'product_variation_price.variation = product_variation.id'
+            'product_variation_price.variation = product_variation.id',
         );
 
 
@@ -234,7 +234,7 @@ final class SearchAllProductsRepository implements SearchRepositoryInterface
                 'product_variation',
                 CategoryProductVariation::class,
                 'category_variation',
-                'category_variation.id = product_variation.category_variation'
+                'category_variation.id = product_variation.category_variation',
             );
 
 
@@ -248,7 +248,7 @@ final class SearchAllProductsRepository implements SearchRepositoryInterface
                 'product_variation',
                 ProductModification::class,
                 'product_modification',
-                'product_modification.variation = product_variation.id '
+                'product_modification.variation = product_variation.id ',
             );
 
         /* Цена модификации множественного варианта */
@@ -256,7 +256,7 @@ final class SearchAllProductsRepository implements SearchRepositoryInterface
             'product_modification',
             ProductModificationPrice::class,
             'product_modification_price',
-            'product_modification_price.modification = product_modification.id'
+            'product_modification_price.modification = product_modification.id',
         );
 
         /** Получаем тип модификации множественного варианта */
@@ -266,7 +266,7 @@ final class SearchAllProductsRepository implements SearchRepositoryInterface
                 'product_modification',
                 CategoryProductModification::class,
                 'category_modification',
-                'category_modification.id = product_modification.category_modification'
+                'category_modification.id = product_modification.category_modification',
             );
 
 
@@ -289,7 +289,7 @@ final class SearchAllProductsRepository implements SearchRepositoryInterface
             'product_event',
             ProductPhoto::class,
             'product_photo',
-            'product_photo.event = product_event.id AND product_photo.root = true'
+            'product_photo.event = product_event.id AND product_photo.root = true',
         )
             ->addGroupBy('product_photo.ext');
 
@@ -297,7 +297,7 @@ final class SearchAllProductsRepository implements SearchRepositoryInterface
             'product_offer',
             ProductOfferImage::class,
             'product_offer_images',
-            'product_offer_images.offer = product_offer.id AND product_offer_images.root = true'
+            'product_offer_images.offer = product_offer.id AND product_offer_images.root = true',
         )
             ->addGroupBy('product_offer_images.ext');
 
@@ -305,7 +305,7 @@ final class SearchAllProductsRepository implements SearchRepositoryInterface
             'product_offer',
             ProductVariationImage::class,
             'product_variation_image',
-            'product_variation_image.variation = product_variation.id AND product_variation_image.root = true'
+            'product_variation_image.variation = product_variation.id AND product_variation_image.root = true',
         )
             ->addGroupBy('product_variation_image.ext');
 
@@ -313,7 +313,7 @@ final class SearchAllProductsRepository implements SearchRepositoryInterface
             'product_modification',
             ProductModificationImage::class,
             'product_modification_image',
-            'product_modification_image.modification = product_modification.id AND product_modification_image.root = true'
+            'product_modification_image.modification = product_modification.id AND product_modification_image.root = true',
         )
             ->addGroupBy('product_modification_image.ext');
 
@@ -374,7 +374,7 @@ final class SearchAllProductsRepository implements SearchRepositoryInterface
             
             ELSE NULL
             END
-			AS product_root_image"
+			AS product_root_image",
         );
 
         /* Стоимость продукта */
@@ -432,14 +432,14 @@ final class SearchAllProductsRepository implements SearchRepositoryInterface
             'product_event_category',
             '
                     product_event_category.event = product_event.id AND 
-                    product_event_category.root = true'
+                    product_event_category.root = true',
         );
 
         $dbal->leftJoin(
             'product_event_category',
             CategoryProduct::class,
             'category',
-            'category.id = product_event_category.category'
+            'category.id = product_event_category.category',
         );
 
         $dbal
@@ -451,7 +451,7 @@ final class SearchAllProductsRepository implements SearchRepositoryInterface
                 'category',
                 CategoryProductInfo::class,
                 'category_info',
-                'category_info.event = category.event'
+                'category_info.event = category.event',
             );
 
         $dbal
@@ -460,14 +460,14 @@ final class SearchAllProductsRepository implements SearchRepositoryInterface
                 'category',
                 CategoryProductTrans::class,
                 'category_trans',
-                'category_trans.event = category.event AND category_trans.local = :local'
+                'category_trans.event = category.event AND category_trans.local = :local',
             );
 
         $dbal->leftJoin(
             'category',
             CategoryProductSection::class,
             'category_section',
-            'category_section.event = category.event'
+            'category_section.event = category.event',
         );
 
         /** Свойства, участвующие в карточке */
@@ -475,21 +475,21 @@ final class SearchAllProductsRepository implements SearchRepositoryInterface
             'category_section',
             CategoryProductSectionField::class,
             'category_section_field',
-            'category_section_field.section = category_section.id AND (category_section_field.card = TRUE OR category_section_field.photo = TRUE OR category_section_field.name = TRUE )'
+            'category_section_field.section = category_section.id AND (category_section_field.card = TRUE OR category_section_field.photo = TRUE OR category_section_field.name = TRUE )',
         );
 
         $dbal->leftJoin(
             'category_section_field',
             CategoryProductSectionFieldTrans::class,
             'category_section_field_trans',
-            'category_section_field_trans.field = category_section_field.id AND category_section_field_trans.local = :local'
+            'category_section_field_trans.field = category_section_field.id AND category_section_field_trans.local = :local',
         );
 
         $dbal->leftJoin(
             'category_section_field',
             ProductProperty::class,
             'product_property',
-            'product_property.event = product.event AND product_property.field = category_section_field.const'
+            'product_property.event = product.event AND product_property.field = category_section_field.const',
         );
 
         $dbal->addSelect("JSON_AGG
@@ -507,7 +507,7 @@ final class SearchAllProductsRepository implements SearchRepositoryInterface
                         )
                     
                 )
-			    AS category_section_field"
+			    AS category_section_field",
         );
 
 
@@ -520,7 +520,7 @@ final class SearchAllProductsRepository implements SearchRepositoryInterface
             'product_offer',
             ProductOfferQuantity::class,
             'product_offer_quantity',
-            'product_offer_quantity.offer = product_offer.id'
+            'product_offer_quantity.offer = product_offer.id',
         );
 
         /** Наличие и резерв множественного варианта */
@@ -528,7 +528,7 @@ final class SearchAllProductsRepository implements SearchRepositoryInterface
             'product_variation',
             ProductVariationQuantity::class,
             'product_variation_quantity',
-            'product_variation_quantity.variation = product_variation.id'
+            'product_variation_quantity.variation = product_variation.id',
         );
 
         /** Наличие и резерв модификации множественного варианта */
@@ -537,7 +537,7 @@ final class SearchAllProductsRepository implements SearchRepositoryInterface
                 'product_modification',
                 ProductModificationQuantity::class,
                 'product_modification_quantity',
-                'product_modification_quantity.modification = product_modification.id'
+                'product_modification_quantity.modification = product_modification.id',
             );
 
 
@@ -570,7 +570,7 @@ final class SearchAllProductsRepository implements SearchRepositoryInterface
                 '
                     product_active.event = product.event AND 
                     product_active.active IS TRUE    
-                '
+                ',
             );
 
         /** Product Invariable */
@@ -608,7 +608,7 @@ final class SearchAllProductsRepository implements SearchRepositoryInterface
                     UserProfile::class,
                     'current_profile',
                     '
-                        current_profile.id = :'.$dbal::CURRENT_PROFILE_KEY
+                        current_profile.id = :'.$dbal::CURRENT_PROFILE_KEY,
                 );
 
             $dbal
@@ -619,7 +619,7 @@ final class SearchAllProductsRepository implements SearchRepositoryInterface
                     'current_profile_discount',
                     '
                         current_profile_discount.event = current_profile.event
-                        '
+                        ',
                 );
         }
 
@@ -633,7 +633,7 @@ final class SearchAllProductsRepository implements SearchRepositoryInterface
                     UserProfile::class,
                     'project_profile',
                     '
-                        project_profile.id = :'.$dbal::PROJECT_PROFILE_KEY
+                        project_profile.id = :'.$dbal::PROJECT_PROFILE_KEY,
                 );
 
             $dbal
@@ -643,7 +643,7 @@ final class SearchAllProductsRepository implements SearchRepositoryInterface
                     UserProfileDiscount::class,
                     'project_profile_discount',
                     '
-                        project_profile_discount.event = project_profile.event'
+                        project_profile_discount.event = project_profile.event',
                 );
         }
 
@@ -668,28 +668,28 @@ final class SearchAllProductsRepository implements SearchRepositoryInterface
             /** Фильтруем по полученным из индекса ids: */
 
             /** Товары */
-            $dbal->where('product.id IN (:uuids)')
+            $dbal->orWhere('product.id IN (:uuids)')
                 ->setParameter(
                     key: 'uuids',
                     value: $resultProducts ? array_column($resultProducts, 'id') : [],
                     type: ArrayParameterType::STRING);
 
             /** Торговые предложения */
-            $dbal->where('product_offer.id IN (:uuids)')
+            $dbal->orWhere('product_offer.id IN (:uuids)')
                 ->setParameter(
                     key: 'uuids',
                     value: $resultProducts ? array_column($resultProducts, 'id') : [],
                     type: ArrayParameterType::STRING);
 
             /** Множественные варианты торгового предложения */
-            $dbal->where('product_variation.id IN (:uuids)')
+            $dbal->orWhere('product_variation.id IN (:uuids)')
                 ->setParameter(
                     key: 'uuids',
                     value: $resultProducts ? array_column($resultProducts, 'id') : [],
                     type: ArrayParameterType::STRING);
 
             /** Модификации множественного варианта */
-            $dbal->where('product_modification.id IN (:uuids)')
+            $dbal->orWhere('product_modification.id IN (:uuids)')
                 ->setParameter(
                     key: 'uuids',
                     value: $resultProducts ? array_column($resultProducts, 'id') : [],
