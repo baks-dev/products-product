@@ -584,6 +584,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 
         $dbal
             ->addSelect('category_info.url AS category_url')
+            ->addSelect('category_info.threshold AS category_threshold')
             ->join(
                 'category',
                 CategoryProductInfo::class,
