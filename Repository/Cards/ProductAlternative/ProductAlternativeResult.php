@@ -72,6 +72,7 @@ final readonly class ProductAlternativeResult implements ProductCardResultInterf
         private string $category_name,
         private string $category_url,
         private string $category_section_field,
+        private int|null $category_threshold,
         private string|null $product_invariable_id,
 
         private string|null $profile_discount = null,
@@ -309,6 +310,11 @@ final readonly class ProductAlternativeResult implements ProductCardResultInterf
         }
 
         return $sectionFields;
+    }
+
+    public function getCategoryThreshold(): ?int
+    {
+        return $this->category_threshold;
     }
 
     public function getProductInvariableId(): ProductInvariableUid|null
