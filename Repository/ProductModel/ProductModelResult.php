@@ -63,6 +63,7 @@ final readonly class ProductModelResult
         private bool|null $category_cover_cdn,
         private string|null $category_cover_dir,
         private string|null $category_section_field,
+        private int|null $category_threshold,
 
         private string|null $profile_discount = null,
         private string|null $project_discount = null,
@@ -220,6 +221,11 @@ final readonly class ProductModelResult
         }
 
         return $sectionFields;
+    }
+
+    public function getCategoryThreshold(): ?int
+    {
+        return $this->category_threshold;
     }
 
     /** Helpers */
