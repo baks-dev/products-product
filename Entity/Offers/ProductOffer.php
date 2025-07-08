@@ -26,6 +26,11 @@ namespace BaksDev\Products\Product\Entity\Offers;
 use BaksDev\Core\Entity\EntityEvent;
 use BaksDev\Products\Category\Type\Offers\Id\CategoryProductOffersUid;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
+use BaksDev\Products\Product\Entity\Offers\Cost\ProductOfferCost;
+use BaksDev\Products\Product\Entity\Offers\Image\ProductOfferImage;
+use BaksDev\Products\Product\Entity\Offers\Price\ProductOfferPrice;
+use BaksDev\Products\Product\Entity\Offers\Quantity\ProductOfferQuantity;
+use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Product\Type\Barcode\ProductBarcode;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
@@ -78,7 +83,7 @@ class ProductOffer extends EntityEvent
     private ?ProductBarcode $barcode = null;
 
     /** Заполненное значение */
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[ORM\Column(type: Types::STRING, nullable: true)]
     private ?string $value = null;
 
     /** Артикул */
@@ -91,32 +96,39 @@ class ProductOffer extends EntityEvent
 
     /** Стоимость торгового предложения */
     #[Assert\Valid]
-    #[ORM\OneToOne(targetEntity: Price\ProductOfferPrice::class, mappedBy: 'offer', cascade: ['all'], fetch: 'EAGER')]
-    private ?Price\ProductOfferPrice $price = null;
+    #[ORM\OneToOne(targetEntity: ProductOfferPrice::class, mappedBy: 'offer', cascade: ['all'], fetch: 'EAGER')]
+    private ?ProductOfferPrice $price;
+
+    /** Себестоимость торгового предложения (закупка) */
+    #[Assert\Valid]
+    #[ORM\OneToOne(targetEntity: ProductOfferCost::class, mappedBy: 'offer', cascade: ['all'], fetch: 'EAGER')]
+    private ?ProductOfferCost $cost;
 
     /** Количественный учет */
     #[Assert\Valid]
-    #[ORM\OneToOne(targetEntity: Quantity\ProductOfferQuantity::class, mappedBy: 'offer', cascade: ['all'], fetch: 'EAGER')]
-    private ?Quantity\ProductOfferQuantity $quantity = null;
+    #[ORM\OneToOne(targetEntity: ProductOfferQuantity::class, mappedBy: 'offer', cascade: ['all'], fetch: 'EAGER')]
+    private ?ProductOfferQuantity $quantity;
 
     /** Дополнительные фото торгового предложения */
     #[Assert\Valid]
-    #[ORM\OneToMany(targetEntity: Image\ProductOfferImage::class, mappedBy: 'offer', cascade: ['all'], fetch: 'EAGER')]
+    #[ORM\OneToMany(targetEntity: ProductOfferImage::class, mappedBy: 'offer', cascade: ['all'], fetch: 'EAGER')]
     #[ORM\OrderBy(['root' => 'DESC'])]
     private Collection $image;
 
     /** Коллекция вариаций в торговом предложении  */
     #[Assert\Valid]
     #[ORM\OrderBy(['value' => 'ASC'])]
-    #[ORM\OneToMany(targetEntity: Variation\ProductVariation::class, mappedBy: 'offer', cascade: ['all'], fetch: 'EAGER')]
+    #[ORM\OneToMany(targetEntity: ProductVariation::class, mappedBy: 'offer', cascade: ['all'], fetch: 'EAGER')]
     private Collection $variation;
 
     public function __construct(ProductEvent $event)
     {
         $this->id = clone new ProductOfferUid();
         $this->event = $event;
-        $this->price = new Price\ProductOfferPrice($this);
-        $this->quantity = new Quantity\ProductOfferQuantity($this);
+
+        $this->price = new ProductOfferPrice($this);
+        $this->cost = new ProductOfferCost($this);
+        $this->quantity = new ProductOfferQuantity($this);
     }
 
     public function __clone()

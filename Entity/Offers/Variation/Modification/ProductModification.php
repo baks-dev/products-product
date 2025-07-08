@@ -25,6 +25,10 @@ namespace BaksDev\Products\Product\Entity\Offers\Variation\Modification;
 
 use BaksDev\Core\Entity\EntityEvent;
 use BaksDev\Products\Category\Type\Offers\Modification\CategoryProductModificationUid;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Cost\ProductModificationCost;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Image\ProductModificationImage;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Price\ProductModificationPrice;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Quantity\ProductModificationQuantity;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Product\Type\Barcode\ProductBarcode;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
@@ -73,7 +77,7 @@ class ProductModification extends EntityEvent
     private ?CategoryProductModificationUid $categoryModification = null;
 
     /** Заполненное значение */
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[ORM\Column(type: Types::STRING, nullable: true)]
     private ?string $value = null;
 
     /** Артикул */
@@ -86,17 +90,22 @@ class ProductModification extends EntityEvent
 
     /** Стоимость модификации */
     #[Assert\Valid]
-    #[ORM\OneToOne(targetEntity: Price\ProductModificationPrice::class, mappedBy: 'modification', cascade: ['all'], fetch: 'EAGER')]
-    private ?Price\ProductModificationPrice $price = null;
+    #[ORM\OneToOne(targetEntity: ProductModificationPrice::class, mappedBy: 'modification', cascade: ['all'])]
+    private ?ProductModificationPrice $price;
+
+    /** Себестоимость модификации */
+    #[Assert\Valid]
+    #[ORM\OneToOne(targetEntity: ProductModificationCost::class, mappedBy: 'modification', cascade: ['all'])]
+    private ?ProductModificationCost $cost;
 
     /** Количественный учет */
     #[Assert\Valid]
-    #[ORM\OneToOne(targetEntity: Quantity\ProductModificationQuantity::class, mappedBy: 'modification', cascade: ['all'], fetch: 'EAGER')]
-    private ?Quantity\ProductModificationQuantity $quantity = null;
+    #[ORM\OneToOne(targetEntity: ProductModificationQuantity::class, mappedBy: 'modification', cascade: ['all'])]
+    private ?ProductModificationQuantity $quantity;
 
     /** Дополнительные фото модификации */
     #[Assert\Valid]
-    #[ORM\OneToMany(targetEntity: Image\ProductModificationImage::class, mappedBy: 'modification', cascade: ['all'], fetch: 'EAGER')]
+    #[ORM\OneToMany(targetEntity: ProductModificationImage::class, mappedBy: 'modification', cascade: ['all'])]
     #[ORM\OrderBy(['root' => 'DESC'])]
     private Collection $image;
 
@@ -104,8 +113,10 @@ class ProductModification extends EntityEvent
     {
         $this->id = clone new ProductModificationUid();
         $this->variation = $variation;
-        $this->price = new Price\ProductModificationPrice($this);
-        $this->quantity = new Quantity\ProductModificationQuantity($this);
+
+        $this->price = new ProductModificationPrice($this);
+        $this->cost = new ProductModificationCost($this);
+        $this->quantity = new ProductModificationQuantity($this);
     }
 
     public function __clone()

@@ -26,6 +26,11 @@ namespace BaksDev\Products\Product\Entity\Offers\Variation;
 use BaksDev\Core\Entity\EntityEvent;
 use BaksDev\Products\Category\Type\Offers\Variation\CategoryProductVariationUid;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
+use BaksDev\Products\Product\Entity\Offers\Variation\Cost\ProductVariationCost;
+use BaksDev\Products\Product\Entity\Offers\Variation\Image\ProductVariationImage;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
+use BaksDev\Products\Product\Entity\Offers\Variation\Price\ProductVariationPrice;
+use BaksDev\Products\Product\Entity\Offers\Variation\Quantity\ProductVariationQuantity;
 use BaksDev\Products\Product\Type\Barcode\ProductBarcode;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
@@ -73,7 +78,7 @@ class ProductVariation extends EntityEvent
     private ?CategoryProductVariationUid $categoryVariation = null;
 
     /** Заполненное значение */
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[ORM\Column(type: Types::STRING, nullable: true)]
     private ?string $value = null;
 
     /** Артикул */
@@ -85,23 +90,27 @@ class ProductVariation extends EntityEvent
     private ?string $postfix = null;
 
     /** Стоимость торгового предложения */
-    #[ORM\OneToOne(targetEntity: Price\ProductVariationPrice::class, mappedBy: 'variation', cascade: ['all'], fetch: 'EAGER')]
-    private ?Price\ProductVariationPrice $price = null;
+    #[ORM\OneToOne(targetEntity: ProductVariationPrice::class, mappedBy: 'variation', cascade: ['all'])]
+    private ?ProductVariationPrice $price;
+
+    /** Себестоимость множественного варианта торгового предложения (закупка) */
+    #[ORM\OneToOne(targetEntity: ProductVariationCost::class, mappedBy: 'variation', cascade: ['all'])]
+    private ?ProductVariationCost $cost;
 
     /** Количественный учет */
-    #[ORM\OneToOne(targetEntity: Quantity\ProductVariationQuantity::class, mappedBy: 'variation', cascade: ['all'], fetch: 'EAGER')]
-    private ?Quantity\ProductVariationQuantity $quantity = null;
+    #[ORM\OneToOne(targetEntity: ProductVariationQuantity::class, mappedBy: 'variation', cascade: ['all'])]
+    private ?ProductVariationQuantity $quantity;
 
     /** Дополнительные фото торгового предложения */
     #[Assert\Valid]
-    #[ORM\OneToMany(targetEntity: Image\ProductVariationImage::class, mappedBy: 'variation', cascade: ['all'], fetch: 'EAGER')]
+    #[ORM\OneToMany(targetEntity: ProductVariationImage::class, mappedBy: 'variation', cascade: ['all'])]
     #[ORM\OrderBy(['root' => 'DESC'])]
     private Collection $image;
 
     /** Коллекция вариаций в торговом предложении  */
     #[Assert\Valid]
     #[ORM\OrderBy(['value' => 'ASC'])]
-    #[ORM\OneToMany(targetEntity: Modification\ProductModification::class, mappedBy: 'variation', cascade: ['all'], fetch: 'EAGER')]
+    #[ORM\OneToMany(targetEntity: ProductModification::class, mappedBy: 'variation', cascade: ['all'])]
     private Collection $modification;
 
     public function __construct(ProductOffer $offer)
@@ -109,6 +118,7 @@ class ProductVariation extends EntityEvent
         $this->id = clone new ProductVariationUid();
         $this->offer = $offer;
         $this->price = new Price\ProductVariationPrice($this);
+        $this->cost = new ProductVariationCost($this);
         $this->quantity = new Quantity\ProductVariationQuantity($this);
     }
 
