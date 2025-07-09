@@ -8,70 +8,71 @@
             {{ prototype_modification_collection }}
         {% endif %}
 
-<div class='d-flex justify-content-between align-items-end gap-3'>
+<div class='d-flex flex-column  gap-3 mt-3'>
 
-
-    {{ form_row(form.offer.vars.prototype.variation.vars.prototype.modification.vars.prototype.DeleteModification,{
-        label: '<span class="svg-icon svg-icon-2">
+    <div class="d-flex gap-2">
+        {{ form_row(form.offer.vars.prototype.variation.vars.prototype.modification.vars.prototype.DeleteModification,{
+            label: '<span class="svg-icon svg-icon-2">
 						<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25" fill="none">
 							<rect opacity="0.5" x="7.05025" y="15.5356" width="12" height="2" rx="1" transform="rotate(-45 7.05025 15.5356)" fill="currentColor"></rect>
 							<rect x="8.46447" y="7.05029" width="12" height="2" rx="1" transform="rotate(45 8.46447 7.05029)" fill="currentColor"></rect>
 						</svg>
 					</span>',
-        attr: {
-            class: 'btn-outline-danger btn-sm border-0 del-item-modification',
-            'data-index': 'item_'~form.offer.vars.prototype.variation.vars.prototype.modification.vars.prototype.vars.id
+            attr: {
+                class: 'btn-outline-danger btn-sm border-0 del-item-modification',
+                'data-index': 'item_'~form.offer.vars.prototype.variation.vars.prototype.modification.vars.prototype.vars.id
 
-        }
+            }
 
-    }) }}
+        }) }}
 
-    <div class='w-100'>
-        {{ form_widget(form.offer.vars.prototype.variation.vars.prototype.modification.vars.prototype.value) }}
-    </div>
-
-    {% if modification_first.postfix is defined %}
-        <div class='w-50'>
-            {{ form_row(form.offer.vars.prototype.variation.vars.prototype.modification.vars.prototype.postfix,
-                { label : false, attr : { placeholder :  modification_first.postfix.vars.attr.placeholder }
-                }) }}
+        <div class='w-100'>
+            {{ form_widget(form.offer.vars.prototype.variation.vars.prototype.modification.vars.prototype.value) }}
         </div>
-    {% endif %}
 
-    {% if modification_first.article is defined %}
-        <div class='w-100 d-flex align-items-end'>
-
-            <div class="mb-3">
-                {# Генератор артикула #}
-                <button type="button" class="btn btn-sm btn-link ps-0 article-generate" title="Генерировать артикул"
-
-                        data-id="{{ form.offer.vars.prototype.variation.vars.prototype.modification.vars.prototype.article.vars.id }}"
-                        data-offer="{{ form.offer.vars.prototype.value.vars.id }}"
-                        data-offerpostfix="{{ form.offer.vars.prototype.postfix.vars.id }}"
-
-                        data-variation="{{ form.offer.vars.prototype.variation.vars.prototype.value.vars.id }}"
-                        data-variationpostfix="{{ form.offer.vars.prototype.variation.vars.prototype.postfix.vars.id }}"
-
-                        data-modification="{{ form.offer.vars.prototype.variation.vars.prototype.modification.vars.prototype.value.vars.id }}"
-                        data-modificationpostfix="{{ form.offer.vars.prototype.variation.vars.prototype.modification.vars.prototype.postfix.vars.id }}"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
-                         class="bi bi-box-arrow-in-right" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd"
-                              d="M6 3.5a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 0-1 0v2A1.5 1.5 0 0 0 6.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-8A1.5 1.5 0 0 0 5 3.5v2a.5.5 0 0 0 1 0v-2z"/>
-                        <path fill-rule="evenodd"
-                              d="M11.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H1.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/>
-                    </svg>
-                </button>
+        {% if modification_first.postfix is defined %}
+            <div class='w-100'>
+                {{ form_row(form.offer.vars.prototype.variation.vars.prototype.modification.vars.prototype.postfix,
+                    { label : false, attr : { placeholder :  modification_first.postfix.vars.attr.placeholder }
+                    }) }}
             </div>
+        {% endif %}
+    </div>
+    <div class="d-flex gap-2">
+        {% if modification_first.article is defined %}
+            <div class='w-100 d-flex align-items-end'>
 
-            {{ form_row(form.offer.vars.prototype.variation.vars.prototype.modification.vars.prototype.article, { label : false, attr : { placeholder : 'Артикул' }}) }}
+                <div class="mb-3">
+                    {# Генератор артикула #}
+                    <button type="button" class="btn btn-sm btn-link ps-0 article-generate" title="Генерировать артикул"
 
-        </div>
-    {% endif %}
+                            data-id="{{ form.offer.vars.prototype.variation.vars.prototype.modification.vars.prototype.article.vars.id }}"
+                            data-offer="{{ form.offer.vars.prototype.value.vars.id }}"
+                            data-offerpostfix="{{ form.offer.vars.prototype.postfix.vars.id }}"
 
-    {% if modification_first.price is defined %}
-        <div class="input-group mb-3 w-75">
+                            data-variation="{{ form.offer.vars.prototype.variation.vars.prototype.value.vars.id }}"
+                            data-variationpostfix="{{ form.offer.vars.prototype.variation.vars.prototype.postfix.vars.id }}"
+
+                            data-modification="{{ form.offer.vars.prototype.variation.vars.prototype.modification.vars.prototype.value.vars.id }}"
+                            data-modificationpostfix="{{ form.offer.vars.prototype.variation.vars.prototype.modification.vars.prototype.postfix.vars.id }}"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
+                             class="bi bi-box-arrow-in-right" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd"
+                                  d="M6 3.5a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 0-1 0v2A1.5 1.5 0 0 0 6.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-8A1.5 1.5 0 0 0 5 3.5v2a.5.5 0 0 0 1 0v-2z"/>
+                            <path fill-rule="evenodd"
+                                  d="M11.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H1.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/>
+                        </svg>
+                    </button>
+                </div>
+
+                {{ form_row(form.offer.vars.prototype.variation.vars.prototype.modification.vars.prototype.article, { label : false, attr : { placeholder : 'Артикул' }}) }}
+
+            </div>
+        {% endif %}
+
+        {% if modification_first.price is defined %}
+            <div class="input-group mb-3 w-75">
 
 						<span class="input-group-text"
                               id="basic-addon3"
@@ -87,12 +88,13 @@
 							</svg>
 						</span>
 
-            {{ form_widget(form.offer.vars.prototype.variation.vars.prototype.modification.vars.prototype.price.price, { attr: { 'placeholder' : 'Стоимость' } }) }}
+                {{ form_widget(form.offer.vars.prototype.variation.vars.prototype.modification.vars.prototype.price.price, { attr: { 'placeholder' : 'Стоимость' } }) }}
 
-        </div>
+            </div>
 
-        <div class="w-50">{{ form_row(form.offer.vars.prototype.variation.vars.prototype.modification.vars.prototype.price.currency) }}</div>
-    {% endif %}
+            <div class="w-50">{{ form_row(form.offer.vars.prototype.variation.vars.prototype.modification.vars.prototype.price.currency) }}</div>
+        {% endif %}
+    </div>
 
 
     {# {% if modification_first.quantity is defined %}
