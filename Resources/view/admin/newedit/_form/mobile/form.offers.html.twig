@@ -1,4 +1,3 @@
-
 <div id="collection-offer">
 
     {% set selectOfffer = app.request.get('offfer') %}
@@ -10,7 +9,7 @@
     {% endfor %}
 </div>
 
-<div class="position-sticky d-flex align-items-center gap-3 z-index-4 w-75" style="bottom: 3rem;">
+<div class="position-sticky d-flex flex-column align-items-center gap-3 z-index-4 bg-white" style="bottom: 7rem;">
     <button type="button" id="offer_addCollection"
             class="btn btn-sm btn-outline-primary border-0 add_collection"
             data-prototype="prototype.offer"
@@ -33,7 +32,7 @@
 
 
     {# Поиск по артикулам  #}
-    <div class="w-25 position-relative">
+    <div class=" position-relative">
         <input type="search" class="form-control w-100 d-none" autocomplete="off" id="searcherOffer"
                placeholder="Перейти к артикулу...">
 
