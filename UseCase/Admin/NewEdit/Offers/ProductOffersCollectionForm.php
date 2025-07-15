@@ -26,6 +26,10 @@ namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers;
 use BaksDev\Core\Services\Reference\ReferenceChoice;
 use BaksDev\Products\Category\Type\Offers\Id\CategoryProductOffersUid;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Cost\ProductOfferCostForm;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Image\ProductOfferImageCollectionForm;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Price\ProductOfferPriceForm;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\ProductVariationCollectionForm;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
@@ -39,13 +43,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class ProductOffersCollectionForm extends AbstractType
 {
-    private ReferenceChoice $reference;
 
-    public function __construct(ReferenceChoice $reference)
-    {
-        $this->reference = $reference;
-    }
-
+    public function __construct(private readonly ReferenceChoice $reference) {}
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -54,6 +53,7 @@ final class ProductOffersCollectionForm extends AbstractType
         $modification = $options['modification'];
 
         $builder->add('categoryOffer', HiddenType::class);
+        $builder->add('const', HiddenType::class);
 
         $builder->get('categoryOffer')->addModelTransformer(
             new CallbackTransformer(
@@ -62,12 +62,10 @@ final class ProductOffersCollectionForm extends AbstractType
                 },
                 function($categoryOffer) {
                     return new CategoryProductOffersUid($categoryOffer);
-                }
-            )
+                },
+            ),
         );
 
-
-        $builder->add('const', HiddenType::class);
 
         $builder->get('const')->addModelTransformer(
             new CallbackTransformer(
@@ -76,8 +74,8 @@ final class ProductOffersCollectionForm extends AbstractType
                 },
                 function($const) {
                     return new ProductOfferConst($const);
-                }
-            )
+                },
+            ),
         );
 
         $builder->add('name', TextType::class, ['required' => false]);
@@ -88,12 +86,14 @@ final class ProductOffersCollectionForm extends AbstractType
 
         $builder->add('value', TextType::class, ['label' => $offer?->name, 'attr' => ['class' => 'mb-3']]);
 
-        $builder->add('price', Price\ProductOfferPriceForm::class, ['label' => false]);
+        $builder->add('price', ProductOfferPriceForm::class, ['label' => false]);
+
+        $builder->add('cost', ProductOfferCostForm::class, ['label' => false]);
 
 
         /** Торговые предложения */
         $builder->add('image', CollectionType::class, [
-            'entry_type' => Image\ProductOfferImageCollectionForm::class,
+            'entry_type' => ProductOfferImageCollectionForm::class,
             'entry_options' => [
                 'label' => false,
             ],
@@ -128,7 +128,7 @@ final class ProductOffersCollectionForm extends AbstractType
                                     'required' => false,
                                     //'mapped' => false,
                                     //'attr' => [ 'data-select' => 'select2' ],
-                                ]
+                                ],
                             );
                         }
                     }
@@ -166,18 +166,19 @@ final class ProductOffersCollectionForm extends AbstractType
                     if(!$offer?->price)
                     {
                         $form->remove('price');
+                        $form->remove('cost');
                     }
                 }
 
 
-            }
+            },
         );
 
         if($variation)
         {
             /** Множественные варианты торгового предложения */
             $builder->add('variation', CollectionType::class, [
-                'entry_type' => Variation\ProductVariationCollectionForm::class,
+                'entry_type' => ProductVariationCollectionForm::class,
                 'entry_options' => [
                     'label' => false,
                     'variation' => $variation,

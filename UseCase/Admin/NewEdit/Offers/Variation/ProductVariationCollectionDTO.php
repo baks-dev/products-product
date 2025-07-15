@@ -27,6 +27,11 @@ use BaksDev\Products\Category\Type\Offers\Variation\CategoryProductVariationUid;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariationInterface;
 use BaksDev\Products\Product\Type\Barcode\ProductBarcode;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Cost\ProductVariationCostDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Image\ProductVariationImageCollectionDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification\ProductModificationCollectionDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Price\ProductVariationPriceDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Quantity\ProductVariationQuantityDTO;
 use Doctrine\Common\Collections\ArrayCollection;
 use ReflectionProperty;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -56,11 +61,14 @@ final class ProductVariationCollectionDTO implements ProductVariationInterface
 
     /** Стоимость торгового предложения */
     #[Assert\Valid]
-    private ?Price\ProductVariationPriceDTO $price = null;
+    private ?ProductVariationPriceDTO $price = null;
+
+    #[Assert\Valid]
+    private ?ProductVariationCostDTO $cost = null;
 
     /** Количественный учет */
     #[Assert\Valid]
-    private Quantity\ProductVariationQuantityDTO $quantity;
+    private ProductVariationQuantityDTO $quantity;
 
     /** Дополнительные фото торгового предложения */
     #[Assert\Valid]
@@ -75,7 +83,7 @@ final class ProductVariationCollectionDTO implements ProductVariationInterface
     {
         $this->image = new ArrayCollection();
         $this->modification = new ArrayCollection();
-        $this->quantity = new Quantity\ProductVariationQuantityDTO();
+        $this->quantity = new ProductVariationQuantityDTO();
     }
 
 
@@ -163,21 +171,32 @@ final class ProductVariationCollectionDTO implements ProductVariationInterface
 
     /** Стоимость торгового предложения */
 
-    public function getPrice(): ?Price\ProductVariationPriceDTO
+    public function getPrice(): ?ProductVariationPriceDTO
     {
         return $this->price;
     }
 
 
-    public function setPrice(?Price\ProductVariationPriceDTO $price): void
+    public function setPrice(?ProductVariationPriceDTO $price): void
     {
         $this->price = $price;
+    }
+
+    public function getCost(): ?ProductVariationCostDTO
+    {
+        return $this->cost;
+    }
+
+    public function setCost(?ProductVariationCostDTO $cost): self
+    {
+        $this->cost = $cost;
+        return $this;
     }
 
 
     /** Количественный учет */
 
-    public function getQuantity(): Quantity\ProductVariationQuantityDTO
+    public function getQuantity(): ProductVariationQuantityDTO
     {
         return $this->quantity;
     }
@@ -190,9 +209,9 @@ final class ProductVariationCollectionDTO implements ProductVariationInterface
     }
 
 
-    public function addImage(Image\ProductVariationImageCollectionDTO $image): void
+    public function addImage(ProductVariationImageCollectionDTO $image): void
     {
-        $filter = $this->image->filter(function(Image\ProductVariationImageCollectionDTO $element) use ($image) {
+        $filter = $this->image->filter(function(ProductVariationImageCollectionDTO $element) use ($image) {
             return !$image->file && $image->getName() === $element->getName();
         });
 
@@ -203,7 +222,7 @@ final class ProductVariationCollectionDTO implements ProductVariationInterface
     }
 
 
-    public function removeImage(Image\ProductVariationImageCollectionDTO $image): void
+    public function removeImage(ProductVariationImageCollectionDTO $image): void
     {
         $this->image->removeElement($image);
     }
@@ -217,7 +236,7 @@ final class ProductVariationCollectionDTO implements ProductVariationInterface
     }
 
 
-    public function addModification(Modification\ProductModificationCollectionDTO $modification): void
+    public function addModification(ProductModificationCollectionDTO $modification): void
     {
         if(!$this->modification->contains($modification))
         {
@@ -226,7 +245,7 @@ final class ProductVariationCollectionDTO implements ProductVariationInterface
     }
 
 
-    public function removeModification(Modification\ProductModificationCollectionDTO $modification): void
+    public function removeModification(ProductModificationCollectionDTO $modification): void
     {
         $this->modification->removeElement($modification);
     }

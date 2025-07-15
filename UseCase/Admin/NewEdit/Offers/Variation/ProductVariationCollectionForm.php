@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,8 @@ namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation;
 use BaksDev\Core\Services\Reference\ReferenceChoice;
 use BaksDev\Products\Category\Type\Offers\Variation\CategoryProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Cost\ProductVariationCostForm;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Price\ProductOfferVariationPriceForm;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
@@ -88,7 +90,9 @@ final class ProductVariationCollectionForm extends AbstractType
 
         $builder->add('value', TextType::class, ['label' => $variation->name, 'attr' => ['class' => 'mb-3']]);
 
-        $builder->add('price', Price\ProductOfferVariationPriceForm::class, ['label' => false]);
+        $builder->add('price', ProductOfferVariationPriceForm::class, ['label' => false]);
+
+        $builder->add('cost', ProductVariationCostForm::class, ['label' => false]);
 
         /** Торговые предложения */
         $builder->add('image', CollectionType::class, [
@@ -169,6 +173,7 @@ final class ProductVariationCollectionForm extends AbstractType
                     if(!$variation->price)
                     {
                         $form->remove('price');
+                        $form->remove('cost');
                     }
                 }
             }

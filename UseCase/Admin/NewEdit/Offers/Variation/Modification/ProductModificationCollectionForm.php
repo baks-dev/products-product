@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,9 @@ namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modifi
 use BaksDev\Core\Services\Reference\ReferenceChoice;
 use BaksDev\Products\Category\Type\Offers\Modification\CategoryProductModificationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification\Cost\ProductModificationCostForm;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification\Image\ProductOfferVariationModificationImageCollectionForm;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification\Price\ProductOfferVariationModificationPriceForm;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
@@ -87,13 +90,13 @@ final class ProductModificationCollectionForm extends AbstractType
 
         $builder->add('value', TextType::class, ['label' => $modification->name, 'attr' => ['class' => 'mb-3']]);
 
-        $builder->add('price', Price\ProductOfferVariationModificationPriceForm::class, ['label' => false]);
+        $builder->add('price', ProductOfferVariationModificationPriceForm::class, ['label' => false]);
 
-        //$builder->add('quantity', Quantity\ProductOfferVariationModificationQuantityForm::class, ['label' => false]);
+        $builder->add('cost', ProductModificationCostForm::class, ['label' => false]);
 
         /** Торговые предложения */
         $builder->add('image', CollectionType::class, [
-            'entry_type' => Image\ProductOfferVariationModificationImageCollectionForm::class,
+            'entry_type' => ProductOfferVariationModificationImageCollectionForm::class,
             'entry_options' => [
                 'label' => false,
             ],
@@ -168,6 +171,7 @@ final class ProductModificationCollectionForm extends AbstractType
                     if(!$modification->price)
                     {
                         $form->remove('price');
+                        $form->remove('cost');
                     }
                 }
             }

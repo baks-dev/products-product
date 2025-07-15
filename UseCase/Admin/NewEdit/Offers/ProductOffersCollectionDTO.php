@@ -28,6 +28,11 @@ use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\ProductOffersInterface;
 use BaksDev\Products\Product\Type\Barcode\ProductBarcode;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Cost\ProductOfferCostDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Image\ProductOfferImageCollectionDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Price\ProductOfferPriceDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Quantity\ProductOfferQuantityDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\ProductVariationCollectionDTO;
 use Doctrine\Common\Collections\ArrayCollection;
 use ReflectionProperty;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -61,11 +66,15 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
 
     /** Стоимость торгового предложения */
     #[Assert\Valid]
-    private ?Price\ProductOfferPriceDTO $price = null;
+    private ?ProductOfferPriceDTO $price = null;
+
+    /** Себестоимость торгового предложения */
+    #[Assert\Valid]
+    private ?ProductOfferCostDTO $cost = null;
 
     /** Количественный учет */
     #[Assert\Valid]
-    private Quantity\ProductOfferQuantityDTO $quantity;
+    private ProductOfferQuantityDTO $quantity;
 
     /** Дополнительные фото торгового предложения */
     #[Assert\Valid]
@@ -80,7 +89,7 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
     {
         $this->image = new ArrayCollection();
         $this->variation = new ArrayCollection();
-        $this->quantity = new Quantity\ProductOfferQuantityDTO();
+        $this->quantity = new ProductOfferQuantityDTO();
     }
 
 
@@ -152,19 +161,33 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
 
     /** Стоимость торгового предложения */
 
-    public function getPrice(): ?Price\ProductOfferPriceDTO
+
+    public function getPrice(): ?ProductOfferPriceDTO
     {
         return $this->price;
     }
 
-    public function setPrice(?Price\ProductOfferPriceDTO $price): void
+    public function setPrice(?ProductOfferPriceDTO $price): self
     {
         $this->price = $price;
+        return $this;
     }
+
+    public function getCost(): ?ProductOfferCostDTO
+    {
+        return $this->cost;
+    }
+
+    public function setCost(?ProductOfferCostDTO $cost): self
+    {
+        $this->cost = $cost;
+        return $this;
+    }
+
 
     /** Количественный учет */
 
-    public function getQuantity(): Quantity\ProductOfferQuantityDTO
+    public function getQuantity(): ProductOfferQuantityDTO
     {
         return $this->quantity;
     }
@@ -176,10 +199,10 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
         return $this->image;
     }
 
-    public function addImage(Image\ProductOfferImageCollectionDTO $image): void
+    public function addImage(ProductOfferImageCollectionDTO $image): void
     {
 
-        $filter = $this->image->filter(function(Image\ProductOfferImageCollectionDTO $element) use ($image) {
+        $filter = $this->image->filter(function(ProductOfferImageCollectionDTO $element) use ($image) {
             return !$image->file && $image->getName() === $element->getName();
         });
 
@@ -188,11 +211,9 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
             $this->image->add($image);
 
         }
-
-
     }
 
-    public function removeImage(Image\ProductOfferImageCollectionDTO $image): void
+    public function removeImage(ProductOfferImageCollectionDTO $image): void
     {
         $this->image->removeElement($image);
     }
@@ -204,10 +225,10 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
         return $this->variation;
     }
 
-    public function addVariation(Variation\ProductVariationCollectionDTO $variation): void
+    public function addVariation(ProductVariationCollectionDTO $variation): void
     {
 
-        $filter = $this->variation->filter(function(Variation\ProductVariationCollectionDTO $element) use (
+        $filter = $this->variation->filter(function(ProductVariationCollectionDTO $element) use (
             $variation
         ) {
             return $variation->getValue() === $element->getValue() && $variation->getBarcode() === $element->getBarcode();
@@ -232,7 +253,7 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
         $this->value = $value;
     }
 
-    public function removeVariation(Variation\ProductVariationCollectionDTO $variation): void
+    public function removeVariation(ProductVariationCollectionDTO $variation): void
     {
         $this->variation->removeElement($variation);
     }

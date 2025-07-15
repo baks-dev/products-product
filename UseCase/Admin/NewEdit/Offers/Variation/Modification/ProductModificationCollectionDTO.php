@@ -27,6 +27,10 @@ use BaksDev\Products\Category\Type\Offers\Modification\CategoryProductModificati
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModificationInterface;
 use BaksDev\Products\Product\Type\Barcode\ProductBarcode;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification\Cost\ProductModificationCostDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification\Image\ProductModificationImageCollectionDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification\Price\ProductModificationPriceDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification\Quantity\ProductModificationQuantityDTO;
 use Doctrine\Common\Collections\ArrayCollection;
 use ReflectionProperty;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -56,11 +60,14 @@ final class ProductModificationCollectionDTO implements ProductModificationInter
 
     /** Стоимость торгового предложения */
     #[Assert\Valid]
-    private ?Price\ProductModificationPriceDTO $price = null;
+    private ?ProductModificationPriceDTO $price = null;
+
+    #[Assert\Valid]
+    private ?ProductModificationCostDTO $cost = null;
 
     /** Количественный учет */
     #[Assert\Valid]
-    private Quantity\ProductModificationQuantityDTO $quantity;
+    private ProductModificationQuantityDTO $quantity;
 
     /** Дополнительные фото торгового предложения */
     #[Assert\Valid]
@@ -70,7 +77,7 @@ final class ProductModificationCollectionDTO implements ProductModificationInter
     public function __construct()
     {
         $this->image = new ArrayCollection();
-        $this->quantity = new Quantity\ProductModificationQuantityDTO();
+        $this->quantity = new ProductModificationQuantityDTO();
     }
 
 
@@ -158,21 +165,33 @@ final class ProductModificationCollectionDTO implements ProductModificationInter
 
     /** Стоимость торгового предложения */
 
-    public function getPrice(): ?Price\ProductModificationPriceDTO
+    public function getPrice(): ?ProductModificationPriceDTO
     {
         return $this->price;
     }
 
 
-    public function setPrice(?Price\ProductModificationPriceDTO $price): void
+    public function setPrice(?ProductModificationPriceDTO $price): self
     {
         $this->price = $price;
+        return $this;
+    }
+
+    public function getCost(): ?ProductModificationCostDTO
+    {
+        return $this->cost;
+    }
+
+    public function setCost(?ProductModificationCostDTO $cost): self
+    {
+        $this->cost = $cost;
+        return $this;
     }
 
 
     /** Количественный учет */
 
-    public function getQuantity(): Quantity\ProductModificationQuantityDTO
+    public function getQuantity(): ProductModificationQuantityDTO
     {
         return $this->quantity;
     }
@@ -185,7 +204,7 @@ final class ProductModificationCollectionDTO implements ProductModificationInter
     }
 
 
-    public function addImage(Image\ProductModificationImageCollectionDTO $image): void
+    public function addImage(ProductModificationImageCollectionDTO $image): void
     {
         $filter = $this->image->filter(function(Image\ProductModificationImageCollectionDTO $element) use ($image) {
             return !$image->file && $image->getName() === $element->getName();
