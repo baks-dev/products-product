@@ -60,7 +60,7 @@ use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Type\SearchTags\ProductSearchTag;
 use BaksDev\Search\Index\SearchIndexInterface;
 use BaksDev\Search\Repository\SearchRepository\SearchRepositoryInterface;
-use BaksDev\Users\Profile\UserProfile\Entity\Discount\UserProfileDiscount;
+use BaksDev\Users\Profile\UserProfile\Entity\Event\Discount\UserProfileDiscount;
 use BaksDev\Users\Profile\UserProfile\Entity\UserProfile;
 use Doctrine\DBAL\ArrayParameterType;
 use Generator;
