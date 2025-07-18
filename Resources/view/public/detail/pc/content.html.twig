@@ -1,4 +1,4 @@
-{% set arr_property = card.category_section_field|json_decode %}
+{% set arr_property = card.categorySectionField %}
 
 <main class="main d-print-none container px-4">
     <div class="mt-3">
@@ -7,24 +7,24 @@
 
     <h1 class="h3 text-uppercase fw-bolder">
 
-        {{ card.product_name }}
+        {{ card.productName }}
 
         {# Значение множественного варианта ТП #}
-        {{ card.product_variation_value|call_twig_func(card.product_variation_reference~'_render') ~
-        card.product_modification_value|call_twig_func(card.product_modification_reference~'_render') }}
+        {{ card.productVariationValue|call_twig_func(card.productVariationReference~'_render') ~
+        card.productModificationValue|call_twig_func(card.productModificationReference~'_render') }}
 
         {# Значение торгового предложения #}
-        {{ card.product_offer_value|call_twig_func(card.product_offer_reference~'_render') }}
+        {{ card.productOfferValue|call_twig_func(card.productOfferReference~'_render') }}
 
 
 
 
         {# Постфикс торгового предложения #}
-        {{ card.product_offer_postfix }}
+        {{ card.productOfferPostfix }}
         {# Постфикс множественного варианта #}
-        {{ card.product_variation_postfix }}
+        {{ card.productVariationPostfix }}
         {# Постфикс модификации #}
-        {{ card.product_modification_postfix }}
+        {{ card.productModificationPostfix }}
 
         {# Свойства, учавствующие в названии #}
         {% for name_property in arr_property | filter(props => props.field_name == true) %}
@@ -39,7 +39,7 @@
         {# Озывы и рейтинг  #}
         {# {{ include(_self|replace({ "content.html.twig": "rating.html.twig" })) }} #}
 
-        <span class="small">Артикул: {{ card.product_article }}</span>
+        <span class="small">Артикул: {{ card.productArticle }}</span>
 
         {# Свойства, учавствующие в превью карточки #}
         {% for name_property in  arr_property | filter(props => props.field_card is defined and props.field_card == true) %}
@@ -47,7 +47,7 @@
         {% endfor %}
 
         {# Если дата начала активности меньше 1 месяца - НОВИНКА  #}
-        {% if date() < card.active_from|date_modify("+1 month") %}
+        {% if date() < card.productActiveFrom|date_modify("+1 month") %}
             <span class="badge bg-success rounded-2">Новинка</span>
         {% endif %}
 
@@ -65,7 +65,7 @@
 
             {# ГЛАВНОЕ ФОТО #}
 
-            {% set product_photo = card.product_images|json_decode %}
+            {% set product_photo = card.productImages %}
             {% set root_image = null %}
 
 
@@ -93,7 +93,7 @@
             <div id="img-product" data-bs-toggle="modal" data-bs-target="#lightboxModal"
                  class="icon rounded-5 border lazy bg-cover shadow-none" style="width: 350px; height: 350px;"
                  data-bg="{{ image_path }}"
-                 title="{{ card.product_name }}"
+                 title="{{ card.productName }}"
             >
 
             </div>
@@ -121,7 +121,7 @@
                     <button class="btn btn-link icon bg-cover rounded-4 lazy img-product m-0"
                             data-bg="{{ image_path }}"
                             style="width: 70px; height: 70px;"
-                            aria-label="{{ card.product_name }}"
+                            aria-label="{{ card.productName }}"
                     ></button>
 
 
@@ -225,7 +225,7 @@
             </button>
         </li>
 
-        {% if card.product_preview or card.product_description %}
+        {% if card.productPreview or card.productDescription %}
             {# Описание #}
             <li class="nav-item" role="presentation">
                 <button class="btn nav-link fw-bolder" id="pills-profile-tab" data-bs-toggle="pill"
@@ -273,13 +273,13 @@
 
 
             {# Описание  #}
-            {% if card.product_preview or card.product_description %}
+            {% if card.productPreview or card.productDescription %}
                 <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab"
                      tabindex="0">
                     <h3 class="h5 text-uppercase fw-bolder py-3">Описание</h3>
 
-                    {{ card.product_preview|raw }}
-                    {{ card.product_description|raw }}
+                    {{ card.productPreview|raw }}
+                    {{ card.productDescription|raw }}
 
                 </div>
             {% endif %}

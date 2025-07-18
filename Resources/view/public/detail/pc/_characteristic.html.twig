@@ -7,7 +7,7 @@
 
 
     {# Торговое предложение #}
-    {% if card.product_offer_value %}
+    {% if card.productOfferValue %}
 
 
         {% set iterate = iterate + 1 %}
@@ -19,11 +19,11 @@
 
             <div class="w-50 d-flex gap-3 align-items-center">
                 {# Модель #}
-                <a href="{{ path('products-product:public.model', { category: card.category_url, url: card.url }) }}"
+                <a href="{{ path('products-product:public.model', { category: card.categoryUrl, url: card.productUrl }) }}"
                    class="text-muted"
-                   aria-label="{{ card.product_name }}"
-                   title="{{ card.product_name }}">
-                    {{ card.product_name }}
+                   aria-label="{{ card.productName }}"
+                   title="{{ card.productName }}">
+                    {{ card.productName }}
                 </a>
             </div>
         </div>
@@ -33,11 +33,11 @@
         <div class="d-flex justify-content-between p-2 rounded-4 {{ cycle([odd, even], iterate) }}">
             <div class="w-50">
                 {# Название торгового предложения #}
-                {{ card.product_offer_name }}
+                {{ card.productOfferName }}
             </div>
             <div class="w-50 d-flex gap-3 align-items-center">
                 {# Значение торгового предложения #}
-                {{ card.product_offer_value|call_twig_func(card.product_offer_reference~'_render') }}
+                {{ card.productOfferValue|call_twig_func(card.productOfferReference~'_render') }}
             </div>
         </div>
 
@@ -45,7 +45,7 @@
 
 
 
-    {% if card.product_offer_postfix %}
+    {% if card.productOfferPostfix %}
 
         {% set iterate = iterate + 1 %}
 
@@ -54,11 +54,11 @@
             <div class="d-flex justify-content-between p-2 rounded-4 {{ cycle([odd, even], iterate) }}">
                 <div class="w-50">
                     {# Название модификации #}
-                    {{ card.product_offer_name_postfix }}
+                    {{ card.productOfferNamePostfix }}
                 </div>
                 <div class="w-50 d-flex gap-3 align-items-center">
                     {# Значение модификации множественного варианта ТП #}
-                    {{ card.product_offer_postfix }}
+                    {{ card.productOfferPostfix }}
                 </div>
             </div>
         </div>
@@ -68,7 +68,7 @@
 
 
     {# Множественный вариант  #}
-    {% if card.product_variation_value %}
+    {% if card.productVariationValue %}
 
         {% set iterate = iterate + 1 %}
 
@@ -77,18 +77,18 @@
             <div class="d-flex justify-content-between p-2 rounded-4 {{ cycle([odd, even], iterate) }}">
                 <div class="w-50">
                     {# Название множественного варианта ТП #}
-                    {{ card.product_variation_name }}
+                    {{ card.productVariationName }}
                 </div>
                 <div class="w-50 d-flex gap-3 align-items-center">
                     {# Значение множественного варианта ТП #}
-                    {{ card.product_variation_value|call_twig_func(card.product_variation_reference) }}
+                    {{ card.productVariationValue|call_twig_func(card.productVariationReference) }}
                 </div>
             </div>
         </div>
     {% endif %}
 
 
-    {% if card.product_variation_postfix %}
+    {% if card.productVariationPostfix %}
 
         {% set iterate = iterate + 1 %}
 
@@ -97,11 +97,11 @@
             <div class="d-flex justify-content-between p-2 rounded-4 {{ cycle([odd, even], iterate) }}">
                 <div class="w-50">
                     {# Название модификации #}
-                    {{ card.product_variation_name_postfix }}
+                    {{ card.productVariationNamePostfix }}
                 </div>
                 <div class="w-50 d-flex gap-3 align-items-center">
                     {# Значение модификации множественного варианта ТП #}
-                    {{ card.product_variation_postfix }}
+                    {{ card.productVariationPostfix }}
                 </div>
             </div>
         </div>
@@ -109,7 +109,7 @@
 
 
     {# Модификация множественного варианта  #}
-    {% if card.product_modification_value %}
+    {% if card.productModificationValue %}
 
         {% set iterate = iterate + 1 %}
 
@@ -118,18 +118,18 @@
             <div class="d-flex justify-content-between p-2 rounded-4 {{ cycle([odd, even], iterate) }}">
                 <div class="w-50">
                     {# Название модификации #}
-                    {{ card.product_modification_name }}
+                    {{ card.productModificationName }}
                 </div>
                 <div class="w-50 d-flex gap-3 align-items-center">
                     {# Значение модификации множественного варианта ТП #}
-                    {{ card.product_modification_value|call_twig_func(card.product_modification_reference) }}
+                    {{ card.productModificationValue|call_twig_func(card.productModificationReference) }}
                 </div>
             </div>
         </div>
     {% endif %}
 
 
-    {% if card.product_modification_postfix %}
+    {% if card.productModificationPostfix %}
 
         {% set iterate = iterate + 1 %}
 
@@ -138,11 +138,11 @@
             <div class="d-flex justify-content-between p-2 rounded-4 {{ cycle([odd, even], iterate) }}">
                 <div class="w-50">
                     {# Название модификации #}
-                    {{ card.product_modification_name_postfix }}
+                    {{ card.productModificationNamePostfix }}
                 </div>
                 <div class="w-50 d-flex gap-3 align-items-center">
                     {# Значение модификации множественного варианта ТП #}
-                    {{ card.product_modification_postfix }}
+                    {{ card.productModificationPostfix }}
                 </div>
             </div>
         </div>

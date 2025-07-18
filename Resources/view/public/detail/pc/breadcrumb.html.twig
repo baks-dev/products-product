@@ -22,35 +22,35 @@
 
 
         <li class="breadcrumb-item">
-            <a href="{{ path('products-product:public.catalog.category', { category : card.category_url }) }}"
+            <a href="{{ path('products-product:public.catalog.category', { category : card.categoryUrl }) }}"
                class="text-muted"
-               aria-label="{{ card.category_name }}"
-               title="{{ card.category_name }}">
-                {{ card.category_name }}
+               aria-label="{{ card.categoryName }}"
+               title="{{ card.categoryName }}">
+                {{ card.categoryName }}
             </a>
         </li>
 
 
         {% set breadcrumb_active_name =
-            card.product_variation_value|call_twig_func(card.product_variation_reference) ~
-            card.product_modification_value|call_twig_func(card.product_modification_reference) ~
-            card.product_offer_value|call_twig_func(card.product_offer_reference) %}
+            card.productVariationValue|call_twig_func(card.productVariationReference) ~
+            card.productModificationValue|call_twig_func(card.productModificationReference) ~
+            card.productOfferValue|call_twig_func(card.productOfferReference) %}
 
         {% if breadcrumb_active_name %}
 
             <li class="breadcrumb-item">
                 <a href="{{ path('products-product:public.model', {
-                    category: card.category_url,
-                    url: card.url
+                    category: card.categoryUrl,
+                    url: card.productUrl
                 }) }}" class="text-muted"
-                   aria-label="{{ card.product_name }}"
-                   title="{{ card.product_name }}">
-                    {{ card.product_name }}
+                   aria-label="{{ card.productName }}"
+                   title="{{ card.productName }}">
+                    {{ card.productName }}
                 </a>
             </li>
 
         {% else %}
-            {% set breadcrumb_active_name = card.product_name %}
+            {% set breadcrumb_active_name = card.productName %}
         {% endif %}
 
 
