@@ -3,12 +3,12 @@
 <div class="mb-2 bg-light rounded-4 w-100 gap-3 px-5 py-4">
 
 
-    {% if card.product_quantity %}
+    {% if card.productQuantity %}
 
 
-        {% if card.product_price %}
+        {% if card.productPrice %}
 
-            {% set discount_price = user_profile_discount(card.product_price) %}
+            {% set discount_price = user_profile_discount(card.productPrice) %}
 
             <div class="d-flex align-items-center justify-content-around gap-3">
                 <div class="card-price d-flex flex-column align-items-end">
@@ -17,18 +17,18 @@
                         {% if discount_price %}
 
                             <span class='text-decoration-line-through text-danger'>
-							{{ money(card.product_price, card.product_currency) }}
+							{{ money(card.productPrice, card.productCurrency) }}
 						</span>
 
                         {% else %} &nbsp; {% endif %}
 
                     </small>
                     <span class="fw-bolder lh-1 h3">
-						{% if card.product_price and ( card.product_quantity is null or card.product_quantity < 1 ) %}
+						{% if card.productPrice and ( card.productQuantity is null or card.productQuantity < 1 ) %}
                             от
                         {% endif %}
 
-                        {{ discount_price ? money(discount_price, card.product_currency) : money(card.product_price, card.product_currency) }}
+                        {{ discount_price ? money(discount_price, card.productCurrency) : money(card.productPrice, card.productCurrency) }}
 					
 					</span>
                 </div>
@@ -57,16 +57,16 @@
             </div>
 
 
-            {% set default_count = card.product_quantity < 4 ? card.product_quantity : 4 %}
+            {% set default_count = card.productQuantity < 4 ? card.productQuantity : 4 %}
 
             {{ form_row(basket.price.total, { label : false,
                 attr: {
                     style : 'width: 60px;',
                     class:  'form-control-lg mx-1 total',
                     value : default_count,
-                    'data-max': card.product_quantity,
+                    'data-max': card.productQuantity,
                     'data-discount' : baks_profile.profile_discount is defined ? baks_profile.profile_discount,
-                    'data-currency' : card.product_currency,
+                    'data-currency' : card.productCurrency,
                     'aria-label' : 'Количество в заказе'
                 }
             }) }}
@@ -83,12 +83,28 @@
 
 
             <div class="mb-3">
-                <button
+
+                {% if(false == product_in_basket(
+                    card.productEvent,
+                    card.productOfferUid,
+                    card.productVariationUid,
+                    card.productModificationUid
+                )) %}
+                    <button
                         type="submit"
-                        class="btn btn-lg btn-primary text-nowrap">
-                    <span class="h6 text-uppercase px-3 basket-text">В корзину</span>
-                    <span class="spinner-border spinner-border-sm vertical-middle d-none"></span>
-                </button>
+                        class="btn btn-lg btn-primary text-nowrap"
+                    >
+                        <span class="h6 text-uppercase px-3 basket-text">В корзину</span>
+                        <span class="spinner-border spinner-border-sm vertical-middle d-none"></span>
+                    </button>
+                {% else %}
+                    <a
+                        href="{{ path('orders-order:public.basket') }}"
+                        class="btn btn-lg btn-secondary text-nowrap"
+                    >
+                        <span class="h6 text-uppercase px-3 basket-text">Перейти в корзину</span>
+                    </a>
+                {% endif %}
             </div>
 
 
@@ -147,7 +163,7 @@
         {% set order_modification = null %}
 
         {% set order_price = null %}
-        {% set offer_search = card.product_offer_value is defined ? card.product_offer_value %}
+        {% set offer_search = card.productOfferValue is defined ? card.productOfferValue %}
 
 
         {% set search_text %}
@@ -162,15 +178,15 @@
 
 
             {# Торговые предложения, соответствующие запросу #}
-            {% if offer.product_offer_value == card.product_offer_value %}
+            {% if offer.productOfferValue == card.productOfferValue %}
 
 
-                {% if offer.product_variation_name %}
+                {% if offer.productVariationName %}
 
-                    {% if offer.product_modification_name %}
+                    {% if offer.productModificationName %}
 
                         {# Показываем модификацию, если не равен текущему  #}
-                        {% if card.product_modification_value != offer.product_modification_value %}
+                        {% if card.productModificationValue != offer.productModificationValue %}
 
                             {% if search_text %}
                                 {{ search_text }}
@@ -179,17 +195,17 @@
 
 
                             <a href='{{ path('products-product:public.detail', {
-                                category : card.category_url ,
+                                category : card.categoryUrl ,
                                 url : card.url ,
-                                offer: offer.product_offer_value,
-                                variation: offer.product_variation_value,
-                                modification: offer.product_modification_value
+                                offer: offer.productOfferValue,
+                                variation: offer.productVariationValue,
+                                modification: offer.productModificationValue
                             }) }}' class="btn btn-link btn-sm lh-1 text-decoration-none">
 
-                                {{ offer.product_variation_value|call_twig_func(offer.product_variation_reference~'_render') }}
-                                {{ offer.product_modification_value|call_twig_func(offer.product_modification_reference~'_render') }}
+                                {{ offer.productVariationValue|call_twig_func(offer.productVariationReference~'_render') }}
+                                {{ offer.productModificationValue|call_twig_func(offer.productModificationReference~'_render') }}
 
-                                {{ offer.product_offer_value|call_twig_func(offer.product_offer_reference~'_render') }}
+                                {{ offer.productOfferValue|call_twig_func(offer.productOfferReference~'_render') }}
                             </a>
 
 
@@ -201,7 +217,7 @@
 
 
                         {# Показываем вариант, если он не равен текущему  #}
-                        {% if card.product_variation_value != offer.product_variation_value %}
+                        {% if card.productVariationValue != offer.productVariationValue %}
 
                             {% if search_text %}
                                 {{ search_text }}
@@ -209,14 +225,14 @@
                             {% endif %}
 
                             <a href='{{ path('products-product:public.detail', {
-                                category: card.category_url,
+                                category: card.categoryUrl,
                                 url : card.url ,
-                                offer: offer.product_offer_value,
-                                variation: offer.product_variation_value
+                                offer: offer.productOfferValue,
+                                variation: offer.productVariationValue
                             }) }}' class="btn btn-link btn-sm lh-1 text-decoration-none">
-                                {{ offer.product_variation_value|call_twig_func(offer.product_variation_reference~'_render') }}
+                                {{ offer.productVariationValue|call_twig_func(offer.productVariationReference~'_render') }}
 
-                                {{ offer.product_offer_value|call_twig_func(offer.product_offer_reference~'_render') }}
+                                {{ offer.productOfferValue|call_twig_func(offer.productOfferReference~'_render') }}
                             </a>
                         {% endif %}
 
@@ -226,7 +242,7 @@
                 {% else %}
 
 
-                    {% if order_offer is null or order_offer != offer.product_offer_value %}
+                    {% if order_offer is null or order_offer != offer.productOfferValue %}
 
                         {% if search_text %}
                             {{ search_text }}
@@ -234,16 +250,16 @@
                         {% endif %}
 
                         <a href='{{ path('products-product:public.detail', {
-                            category : card.category_url,
+                            category : card.categoryUrl,
                             url : card.url,
-                            offer: offer.product_offer_value
+                            offer: offer.productOfferValue
                         }) }}' class="btn btn-link btn-sm lh-1 text-decoration-none">
-                            {{ offer.product_offer_value|call_twig_func(offer.product_offer_reference) }}
+                            {{ offer.productOfferValue|call_twig_func(offer.productOfferReference) }}
 
                         </a>
                     {% endif %}
 
-                    {% set order_offer = offer.product_offer_value %}
+                    {% set order_offer = offer.productOfferValue %}
 
                 {% endif %}
 
@@ -269,7 +285,7 @@
     <div class="d-flex flex-column gap-3 small">
         <div class="d-flex gap-3">
 
-            {% if card.product_quantity %}
+            {% if card.productQuantity %}
                 <span class="text-success fw-bolder">
 				<svg xmlns="http://www.w3.org/2000/svg" width="7" height="7" fill="currentColor"
                      class="bi bi-circle-fill me-1" viewBox="0 0 16 16">
@@ -279,7 +295,7 @@
 				В наличии
 			</span>
 
-                {% if card.product_quantity > 20 %}
+                {% if card.productQuantity > 20 %}
                     <span class="text-muted">Более 20 шт.</span>
                 {% else %}
                     <span class="text-warning">Менее 20 шт.</span>
@@ -347,9 +363,9 @@
 
 
 	{% if
-        (offer is not null and card.product_offer_value is null) or
-        (variation is not null and card.product_variation_value is null) or
-        (modification is not null and card.product_modification_value is null) %}
+        (offer is not null and card.productOfferValue is null) or
+        (variation is not null and card.productVariationValue is null) or
+        (modification is not null and card.productModificationValue is null) %}
 
         Такого товара не существует. Возможно Вы искали
 
@@ -361,14 +377,14 @@
             {% for offer in offers %}
 
                 {% if order_offer is null %}
-                    {{ offer.product_offer_name }}:  {{ offer.product_offer_value|call_twig_func(offer.product_offer_reference) }}
+                    {{ offer.productOfferName }}:  {{ offer.productOfferValue|call_twig_func(offer.productOfferReference) }}
                 {% endif %}
 
 
-                {% if order_offer is null or order_offer != offer.product_offer_value %}
+                {% if order_offer is null or order_offer != offer.productOfferValue %}
                     <button class="btn btn-link btn-sm lh-1 text-decoration-none">
 					<span class="icon rounded-circle bg-contain p-1 mb-2 {{ order_offer is not null ? 'shadow-none' }} ">
-						{{ offer.product_offer_value|call_twig_func(offer.product_offer_reference) }}
+						{{ offer.productOfferValue|call_twig_func(offer.productOfferReference) }}
 					</span>
                     </button>
                 {% endif %}
@@ -378,7 +394,7 @@
                     {% set order_price = offer.product_price %}
                 {% endif %}
 
-                {% set order_offer = offer.product_offer_value %}
+                {% set order_offer = offer.productOfferValue %}
             {% endfor %}
         </div>
 
@@ -390,23 +406,23 @@
         <div class='d-flex gap-3'>
             {% for offer in offers %}
 
-                {% if offer.product_variation_name %}
+                {% if offer.productVariationName %}
 
                     {% if order_variation is null %}
-                        {{ offer.product_variation_name }} \ {{ offer.product_modification_name }}
+                        {{ offer.productVariationName }} \ {{ offer.productModificationName }}
                     {% endif %}
 
-                    {% if order_variation is null or order_variation != offer.product_offer_value~offer.product_variation_value %}
+                    {% if order_variation is null or order_variation != offer.productOfferValue~offer.productVariationValue %}
 
                         <button class="btn btn-link btn-sm lh-1 text-decoration-none">
 
-                            {{ offer.product_variation_value|call_twig_func(offer.category_offer_variation) }}
+                            {{ offer.productVariationValue|call_twig_func(offer.categoryOfferVariation) }}
 
                         </button>
 
                     {% endif %}
 
-                    {% set order_variation = offer.product_offer_value~offer.product_variation_value %}
+                    {% set order_variation = offer.productOfferValue~offer.productVariationValue %}
                 {% endif %}
 
             {% endfor %}
@@ -423,7 +439,7 @@
                         {# {{ money(random(1000000, 2000000), card.product_currency) }} #}
                     </small>
                     <span class="fw-bolder lh-1 h3">
-					цена от {{ money(order_price, card.product_currency) }}
+					цена от {{ money(order_price, card.productCurrency) }}
 				</span>
                 </div>
             </div>

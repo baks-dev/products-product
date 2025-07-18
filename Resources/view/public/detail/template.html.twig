@@ -1,42 +1,42 @@
 {# ---- ШАБЛОН ------------------------------------------------------------ #}
 {% extends Template('/user/base.html.twig') %}
 
-{% if card.seo_title %}
-    {% set PRODUCT_NAME = card.seo_title|trans({
-        '%PRODUCT_NAME%' : card.product_name,
-        '%PRODUCT_OFFER%' : card.product_offer_value|call_twig_func(card.product_offer_reference),
-        '%PRODUCT_VARIATION%' : card.product_variation_value|call_twig_func(card.product_variation_reference),
-        '%PRODUCT_MOD%' : card.product_modification_value|call_twig_func(card.product_modification_reference),
+{% if card.productSeoTitle %}
+    {% set PRODUCT_NAME = card.productSeoTitle|trans({
+        '%PRODUCT_NAME%' : card.productName,
+        '%PRODUCT_OFFER%' : card.productOfferValue|call_twig_func(card.productOfferReference),
+        '%PRODUCT_VARIATION%' : card.productVariationValue|call_twig_func(card.productVariationReference),
+        '%PRODUCT_MOD%' : card.productModificationValue|call_twig_func(card.productModificationReference),
     }) %}
 {% else %}
-    {% set PRODUCT_NAME = card.product_name %}
-    {% set PRODUCT_NAME = PRODUCT_NAME ~ ' ' ~ card.product_offer_value|call_twig_func(card.product_offer_reference) %}
-    {% set PRODUCT_NAME = PRODUCT_NAME ~ ' ' ~ card.product_variation_value|call_twig_func(card.product_variation_reference)
-        ~ card.product_modification_value|call_twig_func(card.product_modification_reference) %}
-    {% set PRODUCT_NAME = PRODUCT_NAME ~ ' ' ~card.product_modification_postfix %}
+    {% set PRODUCT_NAME = card.productName %}
+    {% set PRODUCT_NAME = PRODUCT_NAME ~ ' ' ~ card.productOfferValue|call_twig_func(card.productOfferReference) %}
+    {% set PRODUCT_NAME = PRODUCT_NAME ~ ' ' ~ card.productVariationValue|call_twig_func(card.productVariationReference)
+        ~ card.productModificationValue|call_twig_func(card.productModificationReference) %}
+    {% set PRODUCT_NAME = PRODUCT_NAME ~ ' ' ~card.productModificationPostfix %}
 {% endif %}
 
 
-{% if card.seo_description %}
-    {% set PRODUCT_DESC = card.seo_description|trans({
-        '%PRODUCT_NAME%' : card.product_name,
-        '%PRODUCT_OFFER%' : card.product_offer_value|call_twig_func(card.product_offer_reference)|trim,
-        '%PRODUCT_VARIATION%' : card.product_variation_value|call_twig_func(card.product_variation_reference)|trim,
-        '%PRODUCT_MOD%' : card.product_modification_value|call_twig_func(card.product_modification_reference)|trim,
+{% if card.productSeoDescription %}
+    {% set PRODUCT_DESC = card.productSeoDescription|trans({
+        '%PRODUCT_NAME%' : card.productName,
+        '%PRODUCT_OFFER%' : card.productOfferValue|call_twig_func(card.productOfferReference)|trim,
+        '%PRODUCT_VARIATION%' : card.productVariationValue|call_twig_func(card.productVariationReference)|trim,
+        '%PRODUCT_MOD%' : card.productModificationValue|call_twig_func(card.productModificationReference)|trim,
     })|trim %}
 {% else %}
-    {% set PRODUCT_DESC = card.product_preview|striptags %}
+    {% set PRODUCT_DESC = card.productPreview|striptags %}
 {% endif %}
 
-{% if card.seo_keywords %}
-    {% set PRODUCT_KEYWORDS = card.seo_keywords|trans({
-        '%PRODUCT_NAME%' : card.product_name,
-        '%PRODUCT_OFFER%' : card.product_offer_value|call_twig_func(card.product_offer_reference)|trim,
-        '%PRODUCT_VARIATION%' : card.product_variation_value|call_twig_func(card.product_variation_reference)|trim,
-        '%PRODUCT_MOD%' : card.product_modification_value|call_twig_func(card.product_modification_reference)|trim,
+{% if card.productSeoKeywords %}
+    {% set PRODUCT_KEYWORDS = card.productSeoKeywords|trans({
+        '%PRODUCT_NAME%' : card.productName,
+        '%PRODUCT_OFFER%' : card.productOfferValue|call_twig_func(card.productOfferReference)|trim,
+        '%PRODUCT_VARIATION%' : card.productVariationValue|call_twig_func(card.productVariationReference)|trim,
+        '%PRODUCT_MOD%' : card.productModificationValue|call_twig_func(card.productModificationReference)|trim,
     })|trim %}
 {% else %}
-    {% set PRODUCT_KEYWORDS = 'Купить ' ~ card.product_name ~ ' по выгодной цене' %}
+    {% set PRODUCT_KEYWORDS = 'Купить ' ~ card.productName ~ ' по выгодной цене' %}
 {% endif %}
 
 {% block title %}{{ PRODUCT_NAME }}{% endblock %}
@@ -50,17 +50,17 @@
     <link rel="canonical" href="{{ absolute_url(path('products-product:public.detail', {
         category : card.category_url,
         url : card.url ,
-        offer: card.product_offer_value,
-        variation: card.product_variation_value,
-        modification: card.product_modification_value,
-        postfix:  (card.product_modification_postfix ?: card.product_variation_postfix ?: card.product_offer_postfix ?: null )|replace({ '/': '-' })
+        offer: card.productOfferValue,
+        variation: card.productVariationValue,
+        modification: card.productModificationValue,
+        postfix:  (card.productModificationPostfix ?: card.productVariationPostfix ?: card.productOfferPostfix ?: null )|replace({ '/': '-' })
     })) }}">
 
 
-    {% set product_modification_image = card.product_modification_image|json_decode %}
-    {% set product_variation_image = card.product_variation_image|json_decode %}
-    {% set product_offer_images = card.product_offer_images|json_decode %}
-    {% set product_photo = card.product_photo|json_decode %}
+    {% set product_modification_image = card.productModificationImage|json_decode %}
+    {% set product_variation_image = card.productVariationImage|json_decode %}
+    {% set product_offer_images = card.productOfferImages|json_decode %}
+    {% set product_photo = card.productPhoto|json_decode %}
     {% set root_image = null %}
 
     {# Определяем главное фото #}
@@ -121,13 +121,13 @@
 			"description": "{{ PRODUCT_DESC }}",
 			"brand": {
 				"@type": "Brand",
-				"name": "{{ card.category_name }}"
+				"name": "{{ card.categoryName }}"
 			},
 			"offers": {
 				"@type": "Offer",
 				"url": "{{ app.request.uri }}",
-				"priceCurrency": "{{ card.product_currency|upper }}",
-				"price": "{{ card.product_price / 100 }}",
+				"priceCurrency": "{{ card.productCurrency|upper }}",
+				"price": "{{ card.productPrice / 100 }}",
 				"availability": "https://schema.org/InStock",
 				"itemCondition": "https://schema.org/NewCondition"
 			}
