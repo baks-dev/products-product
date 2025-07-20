@@ -586,18 +586,19 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
 			CASE
 			
 			   WHEN product_modification_quantity.quantity > 0 AND product_modification_quantity.quantity > product_modification_quantity.reserve 
-			   THEN (product_modification_quantity.quantity - product_modification_quantity.reserve)
+			   THEN product_modification_quantity.quantity
 
 			   WHEN product_variation_quantity.quantity > 0 AND product_variation_quantity.quantity > product_variation_quantity.reserve  
-			   THEN (product_variation_quantity.quantity - product_variation_quantity.reserve)
+			   THEN product_variation_quantity.quantity 
 			
 			   WHEN product_offer_quantity.quantity > 0 AND product_offer_quantity.quantity > product_offer_quantity.reserve 
-			   THEN (product_offer_quantity.quantity - product_offer_quantity.reserve)
+			   THEN product_offer_quantity.quantity
 
 			   WHEN product_price.quantity > 0 AND product_price.quantity > product_price.reserve 
-			   THEN (product_price.quantity - product_price.reserve)
+			   THEN product_price.quantity
 	
 			   ELSE 0
+			   
 			END AS product_quantity
 		',
         );

@@ -217,7 +217,7 @@ final class AllProductsIdentifierRepository implements AllProductsIdentifierInte
     /**
      * Метод возвращает все идентификаторы продукции с её торговыми предложениями
      *
-     * @return Generator{int, ProductsIdentifierResult}|false
+     * @return Generator<int, ProductsIdentifierResult>|false
      */
     public function findAll(): Generator|false
     {
