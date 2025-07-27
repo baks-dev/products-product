@@ -26,7 +26,6 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Repository\ProductDetailByValue;
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
-use BaksDev\Products\Category\BaksDevProductsCategoryBundle;
 use BaksDev\Products\Category\Entity\CategoryProduct;
 use BaksDev\Products\Category\Entity\Cover\CategoryProductCover;
 use BaksDev\Products\Category\Entity\Info\CategoryProductInfo;
@@ -595,7 +594,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
          * Если подключен модуль складского учета и передан идентификатор профиля
          */
 
-        if(true === ($this->profile instanceof UserProfileUid) && class_exists(BaksDevProductsStocksBundle::class))
+        if($this->profile && class_exists(BaksDevProductsStocksBundle::class))
         {
 
             $dbal
@@ -703,33 +702,30 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
         }
 
 
-
-
-
-        /** Наличие продукта */
-        $dbal->addSelect(
-            '
-			CASE
-			   WHEN product_modification_quantity.quantity > 0 AND product_modification_quantity.quantity > product_modification_quantity.reserve 
-			   THEN (product_modification_quantity.quantity - product_modification_quantity.reserve)
-
-			   WHEN product_variation_quantity.quantity > 0 AND product_variation_quantity.quantity > product_variation_quantity.reserve  
-			   THEN (product_variation_quantity.quantity - product_variation_quantity.reserve)
-			
-			   WHEN product_offer_quantity.quantity > 0 AND product_offer_quantity.quantity > product_offer_quantity.reserve 
-			   THEN (product_offer_quantity.quantity - product_offer_quantity.reserve)
-
-			   WHEN product_price.quantity > 0 AND product_price.quantity > product_price.reserve 
-			   THEN (product_price.quantity - product_price.reserve)
-			   
-			   ELSE 0
-			END AS product_quantity
-		'
-        )
-            ->addGroupBy('product_modification_quantity.reserve')
-            ->addGroupBy('product_variation_quantity.reserve')
-            ->addGroupBy('product_offer_quantity.reserve')
-            ->addGroupBy('product_price.reserve');
+        //        /** Наличие продукта */
+        //        $dbal->addSelect(
+        //            '
+        //			CASE
+        //			   WHEN product_modification_quantity.quantity > 0 AND product_modification_quantity.quantity > product_modification_quantity.reserve
+        //			   THEN (product_modification_quantity.quantity - product_modification_quantity.reserve)
+        //
+        //			   WHEN product_variation_quantity.quantity > 0 AND product_variation_quantity.quantity > product_variation_quantity.reserve
+        //			   THEN (product_variation_quantity.quantity - product_variation_quantity.reserve)
+        //
+        //			   WHEN product_offer_quantity.quantity > 0 AND product_offer_quantity.quantity > product_offer_quantity.reserve
+        //			   THEN (product_offer_quantity.quantity - product_offer_quantity.reserve)
+        //
+        //			   WHEN product_price.quantity > 0 AND product_price.quantity > product_price.reserve
+        //			   THEN (product_price.quantity - product_price.reserve)
+        //
+        //			   ELSE 0
+        //			END AS product_quantity
+        //		'
+        //        )
+        //            ->addGroupBy('product_modification_quantity.reserve')
+        //            ->addGroupBy('product_variation_quantity.reserve')
+        //            ->addGroupBy('product_offer_quantity.reserve')
+        //            ->addGroupBy('product_price.reserve');
 
         /** Категория */
         $dbal->join(
