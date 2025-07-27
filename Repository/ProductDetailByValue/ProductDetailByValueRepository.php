@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Repository\ProductDetailByValue;
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
+use BaksDev\Products\Category\BaksDevProductsCategoryBundle;
 use BaksDev\Products\Category\Entity\CategoryProduct;
 use BaksDev\Products\Category\Entity\Cover\CategoryProductCover;
 use BaksDev\Products\Category\Entity\Info\CategoryProductInfo;
@@ -65,10 +66,14 @@ use BaksDev\Products\Product\Entity\Seo\ProductSeo;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
+use BaksDev\Products\Stocks\BaksDevProductsStocksBundle;
+use BaksDev\Products\Stocks\Entity\Total\ProductStockTotal;
 use BaksDev\Users\Profile\UserProfile\Entity\Event\Discount\UserProfileDiscount;
 use BaksDev\Users\Profile\UserProfile\Entity\UserProfile;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Deprecated;
 use InvalidArgumentException;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /** @see ProductDetailByValueResult */
 final class ProductDetailByValueRepository implements ProductDetailByValueInterface
@@ -85,6 +90,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
 
     public function __construct(
         private readonly DBALQueryBuilder $DBALQueryBuilder,
+        #[Autowire(env: 'PROJECT_PROFILE')] private readonly ?string $profile = null,
     ) {}
 
     /** Фильтрация по продукту */
@@ -318,14 +324,6 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'category_offer_trans.offer = category_offer.id AND category_offer_trans.local = :local'
             );
 
-        /** Наличие и резерв торгового предложения */
-        $dbal->leftJoin(
-            'product_offer',
-            ProductOfferQuantity::class,
-            'product_offer_quantity',
-            'product_offer_quantity.offer = product_offer.id'
-        );
-
         /** Множественные варианты торгового предложения */
         $dbal
             ->addSelect('product_variation.id as product_variation_uid')
@@ -367,13 +365,6 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'category_variation_trans.variation = category_variation.id AND category_variation_trans.local = :local'
             );
 
-        /** Наличие и резерв множественного варианта */
-        $dbal->leftJoin(
-            'category_variation',
-            ProductVariationQuantity::class,
-            'product_variation_quantity',
-            'product_variation_quantity.variation = product_variation.id'
-        );
 
         /** Модификация множественного варианта торгового предложения */
         $dbal
@@ -416,13 +407,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'category_modification_trans.modification = category_modification.id AND category_modification_trans.local = :local'
             );
 
-        /** Наличие и резерв модификации множественного варианта */
-        $dbal->leftJoin(
-            'category_modification',
-            ProductModificationQuantity::class,
-            'product_modification_quantity',
-            'product_modification_quantity.modification = product_modification.id'
-        );
+
 
         /** Базовая Цена товара */
         $dbal->leftJoin(
@@ -541,7 +526,6 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                             'product_img_cdn', product_offer_images.cdn
                         )
                         
-                    /*ORDER BY product_photo.root DESC, product_photo.id*/
                 )
                 
             WHEN product_photo.ext IS NOT NULL THEN
@@ -555,7 +539,6 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                             'product_img_cdn', product_photo.cdn
                         )
                     
-                    /*ORDER BY product_photo.root DESC, product_photo.id*/
                 )
             
             ELSE NULL
@@ -605,6 +588,123 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
 			END AS product_currency
 		'
         );
+
+
+        /**
+         * Наличие продукции на складе
+         * Если подключен модуль складского учета и передан идентификатор профиля
+         */
+
+        if(true === ($this->profile instanceof UserProfileUid) && class_exists(BaksDevProductsStocksBundle::class))
+        {
+
+            $dbal
+                ->addSelect("JSON_AGG ( 
+                        DISTINCT JSONB_BUILD_OBJECT (
+                            'total', stock.total, 
+                            'reserve', stock.reserve 
+                        )) FILTER (WHERE stock.total > stock.reserve)
+            
+                        AS product_quantity",
+                )
+                ->leftJoin(
+                    'product_modification',
+                    ProductStockTotal::class,
+                    'stock',
+                    '
+                    stock.profile = :profile AND
+                    stock.product = product.id 
+                    
+                    AND
+                        
+                        CASE 
+                            WHEN product_offer.const IS NOT NULL 
+                            THEN stock.offer = product_offer.const
+                            ELSE stock.offer IS NULL
+                        END
+                            
+                    AND 
+                    
+                        CASE
+                            WHEN product_variation.const IS NOT NULL 
+                            THEN stock.variation = product_variation.const
+                            ELSE stock.variation IS NULL
+                        END
+                        
+                    AND
+                    
+                        CASE
+                            WHEN product_modification.const IS NOT NULL 
+                            THEN stock.modification = product_modification.const
+                            ELSE stock.modification IS NULL
+                        END
+                    
+                    
+                ',
+                )
+                ->setParameter(
+                    'profile',
+                    $this->profile,
+                    UserProfileUid::TYPE,
+                );
+
+        }
+        else
+        {
+            /** Наличие и резерв торгового предложения */
+            $dbal->leftJoin(
+                'product_offer',
+                ProductOfferQuantity::class,
+                'product_offer_quantity',
+                'product_offer_quantity.offer = product_offer.id',
+            );
+
+            /** Наличие и резерв множественного варианта */
+            $dbal->leftJoin(
+                'category_variation',
+                ProductVariationQuantity::class,
+                'product_variation_quantity',
+                'product_variation_quantity.variation = product_variation.id',
+            );
+
+            /** Наличие и резерв модификации множественного варианта */
+            $dbal->leftJoin(
+                'category_modification',
+                ProductModificationQuantity::class,
+                'product_modification_quantity',
+                'product_modification_quantity.modification = product_modification.id',
+            );
+
+            $dbal
+                ->addSelect("JSON_AGG (
+                        DISTINCT JSONB_BUILD_OBJECT (
+                            
+                            
+                            'total', COALESCE(
+                                            product_modification_quantity.quantity, 
+                                            product_variation_quantity.quantity, 
+                                            product_offer_quantity.quantity, 
+                                            product_price.quantity,
+                                            0
+                                        ), 
+                            
+                            
+                            'reserve', COALESCE(
+                                            product_modification_quantity.reserve, 
+                                            product_variation_quantity.reserve, 
+                                            product_offer_quantity.reserve, 
+                                            product_price.reserve,
+                                            0
+                                        )
+                        ) )
+            
+                        AS product_quantity",
+                );
+        }
+
+
+
+
 
         /** Наличие продукта */
         $dbal->addSelect(

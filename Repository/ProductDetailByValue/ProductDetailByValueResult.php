@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 declare(strict_types=1);
@@ -92,7 +91,7 @@ final readonly class ProductDetailByValueResult implements ProductPriceResultInt
         private int|null $product_price,
         private int|null $product_old_price,
         private string|null $product_currency,
-        private int|null $product_quantity,
+        private string|null $product_quantity,
 
         private string|null $category_id,
         private string|null $category_name,
@@ -390,8 +389,31 @@ final readonly class ProductDetailByValueResult implements ProductPriceResultInt
 
     public function getProductQuantity(): ?int
     {
-        return $this->product_quantity;
+        if(empty($this->product_quantity))
+        {
+            return 0;
+        }
+
+        if(false === json_validate($this->product_quantity))
+        {
+            return 0;
+        }
+
+        $decode = json_decode($this->product_quantity, false, 512, JSON_THROW_ON_ERROR);
+
+        $quantity = 0;
+
+        foreach($decode as $item)
+        {
+            $quantity += (empty($item->total) ? 0 : $item->total);
+            $quantity -= (empty($item->reserve) ? 0 : $item->reserve);
+        }
+
+        return max($quantity, 0);
     }
+
+
+
 
     public function getCategoryId(): ?CategoryProductUid
     {
