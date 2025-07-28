@@ -30,6 +30,7 @@ use BaksDev\Products\Product\Type\Barcode\ProductBarcode;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Cost\ProductOfferCostDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Image\ProductOfferImageCollectionDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Opt\ProductOfferOptDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Price\ProductOfferPriceDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Quantity\ProductOfferQuantityDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\ProductVariationCollectionDTO;
@@ -71,6 +72,10 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
     /** Себестоимость торгового предложения */
     #[Assert\Valid]
     private ?ProductOfferCostDTO $cost = null;
+
+    /** Себестоимость торгового предложения (по курсу) */
+    #[Assert\Valid]
+    private ?ProductOfferOptDTO $opt = null;
 
     /** Количественный учет */
     #[Assert\Valid]
@@ -184,6 +189,17 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
         return $this;
     }
 
+
+    public function getOpt(): ?ProductOfferOptDTO
+    {
+        return $this->opt;
+    }
+
+    public function setOpt(?ProductOfferOptDTO $opt): self
+    {
+        $this->opt = $opt;
+        return $this;
+    }
 
     /** Количественный учет */
 

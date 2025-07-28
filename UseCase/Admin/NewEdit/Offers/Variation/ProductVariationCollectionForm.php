@@ -27,6 +27,7 @@ use BaksDev\Core\Services\Reference\ReferenceChoice;
 use BaksDev\Products\Category\Type\Offers\Variation\CategoryProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Cost\ProductVariationCostForm;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Opt\ProductVariationOptForm;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Price\ProductOfferVariationPriceForm;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
@@ -93,6 +94,8 @@ final class ProductVariationCollectionForm extends AbstractType
         $builder->add('price', ProductOfferVariationPriceForm::class, ['label' => false]);
 
         $builder->add('cost', ProductVariationCostForm::class, ['label' => false]);
+
+        $builder->add('opt', ProductVariationOptForm::class, ['label' => false]);
 
         /** Торговые предложения */
         $builder->add('image', CollectionType::class, [
@@ -174,6 +177,7 @@ final class ProductVariationCollectionForm extends AbstractType
                     {
                         $form->remove('price');
                         $form->remove('cost');
+                        $form->remove('opt');
                     }
                 }
             }

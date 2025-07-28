@@ -29,6 +29,7 @@ use BaksDev\Products\Product\Type\Barcode\ProductBarcode;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification\Cost\ProductModificationCostDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification\Image\ProductModificationImageCollectionDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification\Opt\ProductModificationOptDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification\Price\ProductModificationPriceDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification\Quantity\ProductModificationQuantityDTO;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -64,6 +65,9 @@ final class ProductModificationCollectionDTO implements ProductModificationInter
 
     #[Assert\Valid]
     private ?ProductModificationCostDTO $cost = null;
+
+    #[Assert\Valid]
+    private ?ProductModificationOptDTO $opt = null;
 
     /** Количественный учет */
     #[Assert\Valid]
@@ -185,6 +189,17 @@ final class ProductModificationCollectionDTO implements ProductModificationInter
     public function setCost(?ProductModificationCostDTO $cost): self
     {
         $this->cost = $cost;
+        return $this;
+    }
+
+    public function getOpt(): ?ProductModificationOptDTO
+    {
+        return $this->opt;
+    }
+
+    public function setOpt(?ProductModificationOptDTO $opt): self
+    {
+        $this->opt = $opt;
         return $this;
     }
 

@@ -70,6 +70,16 @@ class ProductVariationCost extends EntityEvent
         return (string) $this->variation;
     }
 
+    public function getCost(): ?Money
+    {
+        return $this->cost;
+    }
+
+    public function getCurrency(): ?Currency
+    {
+        return $this->currency;
+    }
+
     /** @return ProductVariationCostInterface */
     public function getDto($dto): mixed
     {

@@ -35,6 +35,8 @@ use BaksDev\Products\Product\Entity\Material\ProductMaterial;
 use BaksDev\Products\Product\Entity\Modify\ProductModify;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Photo\ProductPhoto;
+use BaksDev\Products\Product\Entity\Price\Cost\ProductPriceCost;
+use BaksDev\Products\Product\Entity\Price\Opt\ProductPriceOpt;
 use BaksDev\Products\Product\Entity\Price\ProductPrice;
 use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Entity\Property\ProductProperty;
@@ -88,6 +90,16 @@ class ProductEvent extends EntityEvent
     #[Assert\Valid]
     #[ORM\OneToOne(targetEntity: ProductPrice::class, mappedBy: 'event', cascade: ['all'], fetch: 'EAGER')]
     private ?ProductPrice $price = null;
+
+    /** Себестоимость по курсу */
+    #[ORM\OneToOne(targetEntity: ProductPriceCost::class, mappedBy: 'event', cascade: ['all'])]
+    private ?ProductPriceCost $cost = null;
+
+    /** Себестоимость по курсу */
+    #[ORM\OneToOne(targetEntity: ProductPriceOpt::class, mappedBy: 'event', cascade: ['all'])]
+    private ?ProductPriceOpt $opt = null;
+
+
 
     /** Модификатор */
     #[ORM\OneToOne(targetEntity: ProductModify::class, mappedBy: 'event', cascade: ['all'], fetch: 'EAGER')]

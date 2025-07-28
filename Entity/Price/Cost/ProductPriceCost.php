@@ -23,13 +23,13 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\Entity\Offers\Cost;
+namespace BaksDev\Products\Product\Entity\Price\Cost;
 
 
 use BaksDev\Core\Entity\EntityEvent;
 use BaksDev\Core\Entity\EntityState;
 use BaksDev\Files\Resources\Upload\UploadEntityInterface;
-use BaksDev\Products\Product\Entity\Offers\ProductOffer;
+use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Reference\Currency\Type\Currency;
 use BaksDev\Reference\Money\Type\Money;
 use Doctrine\DBAL\Types\Types;
@@ -38,21 +38,19 @@ use InvalidArgumentException;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * ProductOfferCost
+ * ProductPriceCost
  *
- * @see ProductOffer
+ * @see ProductEvent
  */
 #[ORM\Entity]
-#[ORM\Table(name: 'product_offer_cost')]
-class ProductOfferCost extends EntityEvent
+#[ORM\Table(name: 'product_price_cost')]
+class ProductPriceCost extends EntityEvent
 {
-    /** ID торгового предложения */
-    #[Assert\NotBlank]
-    #[Assert\Type(ProductOffer::class)]
+    /** ID события */
     #[ORM\Id]
-    #[ORM\OneToOne(targetEntity: ProductOffer::class, inversedBy: 'cost')]
-    #[ORM\JoinColumn(name: 'offer', referencedColumnName: "id")]
-    private ProductOffer $offer;
+    #[ORM\OneToOne(targetEntity: ProductEvent::class, inversedBy: 'cost')]
+    #[ORM\JoinColumn(name: 'event', referencedColumnName: 'id')]
+    private ProductEvent $event;
 
     /** Себестоимость */
     #[Assert\Type(Money::class)]
@@ -64,14 +62,14 @@ class ProductOfferCost extends EntityEvent
     #[ORM\Column(name: 'currency', type: Currency::TYPE, length: 3, nullable: true)]
     private ?Currency $currency;
 
-    public function __construct(ProductOffer $offer)
+    public function __construct(ProductEvent $event)
     {
-        $this->offer = $offer;
+        $this->event = $event;
     }
 
     public function __toString(): string
     {
-        return (string) $this->offer;
+        return (string) $this->event;
     }
 
     public function getCost(): ?Money
@@ -84,7 +82,7 @@ class ProductOfferCost extends EntityEvent
         return $this->currency;
     }
 
-    /** @return ProductOfferCostInterface */
+    /** @return ProductPriceCostInterface */
     public function getDto($dto): mixed
     {
         if(is_string($dto) && class_exists($dto))
@@ -92,7 +90,7 @@ class ProductOfferCost extends EntityEvent
             $dto = new $dto();
         }
 
-        if($dto instanceof ProductOfferCostInterface)
+        if($dto instanceof ProductPriceCostInterface)
         {
             return parent::getDto($dto);
         }
@@ -100,10 +98,10 @@ class ProductOfferCost extends EntityEvent
         throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
     }
 
-    /** @var ProductOfferCostInterface $dto */
+    /** @var ProductPriceCostInterface $dto */
     public function setEntity($dto): mixed
     {
-        if($dto instanceof ProductOfferCostInterface)
+        if($dto instanceof ProductPriceCostInterface)
         {
             return parent::setEntity($dto);
         }

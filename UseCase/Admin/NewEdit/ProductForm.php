@@ -30,6 +30,8 @@ use BaksDev\Products\Category\Repository\CategoryOffersForm\CategoryOffersFormIn
 use BaksDev\Products\Category\Repository\CategoryPropertyById\CategoryPropertyByIdInterface;
 use BaksDev\Products\Category\Repository\CategoryVariationForm\CategoryVariationFormInterface;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Category\CategoryCollectionDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Price\Cost\ProductPriceCostForm;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Price\Opt\ProductPriceOptForm;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Property\PropertyCollectionDTO;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Form\AbstractType;
@@ -60,6 +62,10 @@ final class ProductForm extends AbstractType
         $builder->add('active', Active\ActiveForm::class, ['label' => false]);
 
         $builder->add('price', Price\PriceForm::class, ['label' => false]);
+
+        $builder->add('cost', ProductPriceCostForm::class, ['label' => false]);
+
+        $builder->add('opt', ProductPriceOptForm::class, ['label' => false]);
 
         /* CATEGORIES CollectionType */
         $builder->add('category', CollectionType::class, [

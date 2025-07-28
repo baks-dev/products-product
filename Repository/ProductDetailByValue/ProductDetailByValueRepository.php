@@ -597,7 +597,6 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
 
         if($this->region && class_exists(BaksDevProductsStocksBundle::class))
         {
-
             /* Получаем все профили данного региона */
 
             $dbal
@@ -628,7 +627,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                             'reserve', stock.reserve 
                         )) FILTER (WHERE stock.total > stock.reserve)
             
-                        AS product_quantity",
+                        AS product_quantity_stocks",
                 )
                 ->leftJoin(
                     'product_region_total',
@@ -666,36 +665,36 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 ',
                 );
 
-
         }
-        else
-        {
-            /** Наличие и резерв торгового предложения */
-            $dbal->leftJoin(
-                'product_offer',
-                ProductOfferQuantity::class,
-                'product_offer_quantity',
-                'product_offer_quantity.offer = product_offer.id',
-            );
 
-            /** Наличие и резерв множественного варианта */
-            $dbal->leftJoin(
-                'category_variation',
-                ProductVariationQuantity::class,
-                'product_variation_quantity',
-                'product_variation_quantity.variation = product_variation.id',
-            );
+        /** Наличие и резерв продукции в карточке */
 
-            /** Наличие и резерв модификации множественного варианта */
-            $dbal->leftJoin(
-                'category_modification',
-                ProductModificationQuantity::class,
-                'product_modification_quantity',
-                'product_modification_quantity.modification = product_modification.id',
-            );
+        /** Наличие и резерв торгового предложения */
+        $dbal->leftJoin(
+            'product_offer',
+            ProductOfferQuantity::class,
+            'product_offer_quantity',
+            'product_offer_quantity.offer = product_offer.id',
+        );
 
-            $dbal
-                ->addSelect("JSON_AGG (
+        /** Наличие и резерв множественного варианта */
+        $dbal->leftJoin(
+            'category_variation',
+            ProductVariationQuantity::class,
+            'product_variation_quantity',
+            'product_variation_quantity.variation = product_variation.id',
+        );
+
+        /** Наличие и резерв модификации множественного варианта */
+        $dbal->leftJoin(
+            'category_modification',
+            ProductModificationQuantity::class,
+            'product_modification_quantity',
+            'product_modification_quantity.modification = product_modification.id',
+        );
+
+        $dbal
+            ->addSelect("JSON_AGG (
                         DISTINCT JSONB_BUILD_OBJECT (
                             
                             
@@ -718,34 +717,9 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                         ) )
             
                         AS product_quantity",
-                );
-        }
+            );
 
 
-        //        /** Наличие продукта */
-        //        $dbal->addSelect(
-        //            '
-        //			CASE
-        //			   WHEN product_modification_quantity.quantity > 0 AND product_modification_quantity.quantity > product_modification_quantity.reserve
-        //			   THEN (product_modification_quantity.quantity - product_modification_quantity.reserve)
-        //
-        //			   WHEN product_variation_quantity.quantity > 0 AND product_variation_quantity.quantity > product_variation_quantity.reserve
-        //			   THEN (product_variation_quantity.quantity - product_variation_quantity.reserve)
-        //
-        //			   WHEN product_offer_quantity.quantity > 0 AND product_offer_quantity.quantity > product_offer_quantity.reserve
-        //			   THEN (product_offer_quantity.quantity - product_offer_quantity.reserve)
-        //
-        //			   WHEN product_price.quantity > 0 AND product_price.quantity > product_price.reserve
-        //			   THEN (product_price.quantity - product_price.reserve)
-        //
-        //			   ELSE 0
-        //			END AS product_quantity
-        //		'
-        //        )
-        //            ->addGroupBy('product_modification_quantity.reserve')
-        //            ->addGroupBy('product_variation_quantity.reserve')
-        //            ->addGroupBy('product_offer_quantity.reserve')
-        //            ->addGroupBy('product_price.reserve');
 
         /** Категория */
         $dbal->join(

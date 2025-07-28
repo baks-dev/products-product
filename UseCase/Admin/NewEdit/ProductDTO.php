@@ -34,6 +34,8 @@ use BaksDev\Products\Product\UseCase\Admin\NewEdit\Files\FilesCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Info\InfoDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Materials\ProductMaterialDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Photo\PhotoCollectionDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Price\Cost\ProductPriceCostDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Price\Opt\ProductPriceOptDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Price\PriceDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Property\PropertyCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Seo\SeoCollectionDTO;
@@ -87,11 +89,21 @@ final class ProductDTO implements ProductEventInterface
     #[Assert\Valid]
     private ArrayCollection $material;
 
+    #[Assert\Valid]
+    private ProductPriceCostDTO $cost;
+
+    #[Assert\Valid]
+    private ProductPriceOptDTO $opt;
+
+
     public function __construct()
     {
         $this->info = new InfoDTO();
         $this->active = new ActiveDTO();
         $this->price = new PriceDTO();
+
+        $this->cost = new ProductPriceCostDTO();
+        $this->opt = new ProductPriceOptDTO();
 
         $this->category = new ArrayCollection();
         $this->file = new ArrayCollection();
@@ -550,4 +562,13 @@ final class ProductDTO implements ProductEventInterface
         }
     }
 
+    public function getCost(): ProductPriceCostDTO
+    {
+        return $this->cost;
+    }
+
+    public function getOpt(): ProductPriceOptDTO
+    {
+        return $this->opt;
+    }
 }

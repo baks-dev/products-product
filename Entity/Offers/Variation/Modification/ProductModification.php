@@ -27,6 +27,7 @@ use BaksDev\Core\Entity\EntityEvent;
 use BaksDev\Products\Category\Type\Offers\Modification\CategoryProductModificationUid;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Cost\ProductModificationCost;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Image\ProductModificationImage;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Opt\ProductModificationOpt;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Price\ProductModificationPrice;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Quantity\ProductModificationQuantity;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
@@ -97,6 +98,11 @@ class ProductModification extends EntityEvent
     #[Assert\Valid]
     #[ORM\OneToOne(targetEntity: ProductModificationCost::class, mappedBy: 'modification', cascade: ['all'])]
     private ?ProductModificationCost $cost;
+
+    /** Себестоимость модификации по курсу */
+    #[Assert\Valid]
+    #[ORM\OneToOne(targetEntity: ProductModificationOpt::class, mappedBy: 'modification', cascade: ['all'])]
+    private ?ProductModificationOpt $opt;
 
     /** Количественный учет */
     #[Assert\Valid]

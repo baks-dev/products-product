@@ -28,6 +28,7 @@ use BaksDev\Products\Category\Type\Offers\Id\CategoryProductOffersUid;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Cost\ProductOfferCostForm;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Image\ProductOfferImageCollectionForm;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Opt\ProductOfferOptForm;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Price\ProductOfferPriceForm;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\ProductVariationCollectionForm;
 use Symfony\Component\Form\AbstractType;
@@ -89,6 +90,8 @@ final class ProductOffersCollectionForm extends AbstractType
         $builder->add('price', ProductOfferPriceForm::class, ['label' => false]);
 
         $builder->add('cost', ProductOfferCostForm::class, ['label' => false]);
+
+        $builder->add('opt', ProductOfferOptForm::class, ['label' => false]);
 
 
         /** Торговые предложения */
@@ -167,6 +170,7 @@ final class ProductOffersCollectionForm extends AbstractType
                     {
                         $form->remove('price');
                         $form->remove('cost');
+                        $form->remove('opt');
                     }
                 }
 

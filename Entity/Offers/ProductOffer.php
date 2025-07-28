@@ -28,6 +28,7 @@ use BaksDev\Products\Category\Type\Offers\Id\CategoryProductOffersUid;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Offers\Cost\ProductOfferCost;
 use BaksDev\Products\Product\Entity\Offers\Image\ProductOfferImage;
+use BaksDev\Products\Product\Entity\Offers\Opt\ProductOfferOpt;
 use BaksDev\Products\Product\Entity\Offers\Price\ProductOfferPrice;
 use BaksDev\Products\Product\Entity\Offers\Quantity\ProductOfferQuantity;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
@@ -96,29 +97,35 @@ class ProductOffer extends EntityEvent
 
     /** Стоимость торгового предложения */
     #[Assert\Valid]
-    #[ORM\OneToOne(targetEntity: ProductOfferPrice::class, mappedBy: 'offer', cascade: ['all'], fetch: 'EAGER')]
+    #[ORM\OneToOne(targetEntity: ProductOfferPrice::class, mappedBy: 'offer', cascade: ['all'])]
     private ?ProductOfferPrice $price;
 
     /** Себестоимость торгового предложения (закупка) */
     #[Assert\Valid]
-    #[ORM\OneToOne(targetEntity: ProductOfferCost::class, mappedBy: 'offer', cascade: ['all'], fetch: 'EAGER')]
+    #[ORM\OneToOne(targetEntity: ProductOfferCost::class, mappedBy: 'offer', cascade: ['all'])]
     private ?ProductOfferCost $cost;
+
+    /** Себестоимость торгового предложения по курсу */
+    #[Assert\Valid]
+    #[ORM\OneToOne(targetEntity: ProductOfferOpt::class, mappedBy: 'offer', cascade: ['all'])]
+    private ?ProductOfferOpt $opt;
+
 
     /** Количественный учет */
     #[Assert\Valid]
-    #[ORM\OneToOne(targetEntity: ProductOfferQuantity::class, mappedBy: 'offer', cascade: ['all'], fetch: 'EAGER')]
+    #[ORM\OneToOne(targetEntity: ProductOfferQuantity::class, mappedBy: 'offer', cascade: ['all'])]
     private ?ProductOfferQuantity $quantity;
 
     /** Дополнительные фото торгового предложения */
     #[Assert\Valid]
-    #[ORM\OneToMany(targetEntity: ProductOfferImage::class, mappedBy: 'offer', cascade: ['all'], fetch: 'EAGER')]
+    #[ORM\OneToMany(targetEntity: ProductOfferImage::class, mappedBy: 'offer', cascade: ['all'])]
     #[ORM\OrderBy(['root' => 'DESC'])]
     private Collection $image;
 
     /** Коллекция вариаций в торговом предложении  */
     #[Assert\Valid]
     #[ORM\OrderBy(['value' => 'ASC'])]
-    #[ORM\OneToMany(targetEntity: ProductVariation::class, mappedBy: 'offer', cascade: ['all'], fetch: 'EAGER')]
+    #[ORM\OneToMany(targetEntity: ProductVariation::class, mappedBy: 'offer', cascade: ['all'])]
     private Collection $variation;
 
     public function __construct(ProductEvent $event)

@@ -1,17 +1,17 @@
 <?php
 /*
  *  Copyright 2025.  Baks.dev <admin@baks.dev>
- *
+ *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *
+ *  
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *
+ *  
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -28,6 +28,7 @@ use BaksDev\Products\Category\Type\Offers\Modification\CategoryProductModificati
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification\Cost\ProductModificationCostForm;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification\Image\ProductOfferVariationModificationImageCollectionForm;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification\Opt\ProductModificationOptForm;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification\Price\ProductOfferVariationModificationPriceForm;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
@@ -93,6 +94,8 @@ final class ProductModificationCollectionForm extends AbstractType
         $builder->add('price', ProductOfferVariationModificationPriceForm::class, ['label' => false]);
 
         $builder->add('cost', ProductModificationCostForm::class, ['label' => false]);
+
+        $builder->add('opt', ProductModificationOptForm::class, ['label' => false]);
 
         /** Торговые предложения */
         $builder->add('image', CollectionType::class, [
@@ -172,6 +175,7 @@ final class ProductModificationCollectionForm extends AbstractType
                     {
                         $form->remove('price');
                         $form->remove('cost');
+                        $form->remove('opt');
                     }
                 }
             }

@@ -29,6 +29,7 @@ use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\Variation\Cost\ProductVariationCost;
 use BaksDev\Products\Product\Entity\Offers\Variation\Image\ProductVariationImage;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
+use BaksDev\Products\Product\Entity\Offers\Variation\Opt\ProductVariationOpt;
 use BaksDev\Products\Product\Entity\Offers\Variation\Price\ProductVariationPrice;
 use BaksDev\Products\Product\Entity\Offers\Variation\Quantity\ProductVariationQuantity;
 use BaksDev\Products\Product\Type\Barcode\ProductBarcode;
@@ -96,6 +97,10 @@ class ProductVariation extends EntityEvent
     /** Себестоимость множественного варианта торгового предложения (закупка) */
     #[ORM\OneToOne(targetEntity: ProductVariationCost::class, mappedBy: 'variation', cascade: ['all'])]
     private ?ProductVariationCost $cost;
+
+    /** Себестоимость множественного варианта по курсу */
+    #[ORM\OneToOne(targetEntity: ProductVariationOpt::class, mappedBy: 'variation', cascade: ['all'])]
+    private ?ProductVariationOpt $opt;
 
     /** Количественный учет */
     #[ORM\OneToOne(targetEntity: ProductVariationQuantity::class, mappedBy: 'variation', cascade: ['all'])]

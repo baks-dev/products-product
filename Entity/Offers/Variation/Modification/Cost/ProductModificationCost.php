@@ -72,6 +72,16 @@ class ProductModificationCost extends EntityEvent
         return (string) $this->modification;
     }
 
+    public function getCost(): ?Money
+    {
+        return $this->cost;
+    }
+
+    public function getCurrency(): ?Currency
+    {
+        return $this->currency;
+    }
+
     /** @return ProductModificationCostInterface */
     public function getDto($dto): mixed
     {

@@ -93,6 +93,7 @@ final readonly class ProductDetailByValueResult implements ProductPriceResultInt
         private string|null $product_currency,
         private string|null $product_quantity,
 
+
         private string|null $category_id,
         private string|null $category_name,
         private string|null $category_url,
@@ -108,7 +109,7 @@ final readonly class ProductDetailByValueResult implements ProductPriceResultInt
 
         private string|null $profile_discount = null,
         private string|null $project_discount = null,
-
+        private string|null $product_quantity_stocks = null,
     ) {}
 
     public function getProductId(): ProductUid
@@ -385,6 +386,31 @@ final readonly class ProductDetailByValueResult implements ProductPriceResultInt
     public function getProductCurrency(): ?string
     {
         return $this->product_currency;
+    }
+
+    public function getProductQuantityStocks(): ?int
+    {
+        if(empty($this->product_quantity_stocks))
+        {
+            return 0;
+        }
+
+        if(false === json_validate($this->product_quantity_stocks))
+        {
+            return 0;
+        }
+
+        $decode = json_decode($this->product_quantity_stocks, false, 512, JSON_THROW_ON_ERROR);
+
+        $quantity = 0;
+
+        foreach($decode as $item)
+        {
+            $quantity += (empty($item->total) ? 0 : $item->total);
+            $quantity -= (empty($item->reserve) ? 0 : $item->reserve);
+        }
+
+        return max($quantity, 0);
     }
 
     public function getProductQuantity(): ?int

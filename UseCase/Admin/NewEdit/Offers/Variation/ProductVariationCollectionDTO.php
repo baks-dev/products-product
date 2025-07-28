@@ -30,6 +30,7 @@ use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Cost\ProductVariationCostDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Image\ProductVariationImageCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification\ProductModificationCollectionDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Opt\ProductVariationOptDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Price\ProductVariationPriceDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Quantity\ProductVariationQuantityDTO;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -65,6 +66,9 @@ final class ProductVariationCollectionDTO implements ProductVariationInterface
 
     #[Assert\Valid]
     private ?ProductVariationCostDTO $cost = null;
+
+    #[Assert\Valid]
+    private ?ProductVariationOptDTO $opt = null;
 
     /** Количественный учет */
     #[Assert\Valid]
@@ -193,6 +197,16 @@ final class ProductVariationCollectionDTO implements ProductVariationInterface
         return $this;
     }
 
+    public function getOpt(): ?ProductVariationOptDTO
+    {
+        return $this->opt;
+    }
+
+    public function setOpt(?ProductVariationOptDTO $opt): self
+    {
+        $this->opt = $opt;
+        return $this;
+    }
 
     /** Количественный учет */
 
