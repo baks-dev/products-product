@@ -1,0 +1,17 @@
+<section class="container py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fs-14 text-uppercase fw-bold mb-0">
+            лучшие предложения
+        </h2>
+    </div>
+
+    {# КАРТОЧКИ ПРОДУКТОВ #}
+    <div class="d-flex overflow-x-auto scroll-none gap-2">
+        {% for bestSeller in bestSellers|slice(0,4) %}
+            {{ include(_self|replace({ "content.html.twig" : "includes/best_seller.html.twig" }), {bestSeller}, with_context = false) }}
+        {% endfor %}
+    </div>
+
+</section>
+

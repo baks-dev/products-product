@@ -1,0 +1,94 @@
+{# @var card \BaksDev\Products\Product\Repository\ProductDetailByValue\ProductDetailByValueResult #}
+
+{# Персональная скидка #}
+{% set Price = card.productPrice %}
+
+{# Старая цена #}
+{% set OldPrice = card.productOldPrice %}
+
+{# Рассчет скидки #}
+{% set discount = card.discountPercent %}
+
+{# Рассчет наличия и количества #}
+{% set productQuantity = '' %}
+{% set inStock = true %}
+{% set quantity = card.productQuantity %}
+
+{# {% if quantity == 0 %} #}
+{#     {% set productQuantity = 'Нет в наличии' %} #}
+{#     {% set inStock = false %} #}
+{# {% elseif quantity > 20 %} #}
+{#     {% set productQuantity = 'Более 20 шт.' %} #}
+{# {% elseif quantity < 20 %} #}
+{#     {% set productQuantity = 'Менее 20 шт.' %} #}
+{# {% else %} #}
+{#     {% set productQuantity = (quantity)~' шт.' %} #}
+{# {% endif %} #}
+
+ {% if quantity == 0 %}
+     {% set productQuantity = 'Нет в наличии' %}
+     {% set inStock = false %}
+ {% elseif quantity > card.categoryThreshold %}
+     {% set productQuantity = 'Более ' ~card.categoryThreshold~' шт.' %}
+ {% elseif quantity < card.categoryThreshold %}
+     {% set productQuantity = 'Менее ' ~card.categoryThreshold~' шт.' %}
+ {% else %}
+     {% set productQuantity = (quantity)~' шт.' %}
+ {% endif %}
+
+
+    {% if inStock == true %}
+        <div class="border rounded-4 text-center p-3 mb-5">
+
+            {# Старая цена #}
+            {% if OldPrice and OldPrice.value > Price.value %}
+                <p class="text-danger fw-bold mb-0 me-5 lh-1">
+                    <del class="me-2">
+                        {{ money(OldPrice, card.productCurrency) }}
+                    </del>
+                </p>
+            {% endif %}
+
+            {# Текущая цена #}
+            <p class="fw-bold fs-30 mb-3 d-flex align-items-center justify-content-center gap-4 lh-1">
+                {{ money(Price, card.productCurrency) }}
+
+                {% if discount is not null %}
+                    <span class="badge bg-danger text-uppercase rounded-5 fs-11 h-100 py-2">скидка {{ discount }} % </span>
+                {% endif %}
+            </p>
+
+            {# Добаление товаров в корзину #}
+            {{ include(_self|replace({ "_includes/product_price.html.twig" : "_form/add_basket.html.twig" })) }}
+
+            <p class="text-success fw-bold mb-0 lh-1">
+
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                     class="bi bi-check-lg"
+                     viewBox="0 0 16 16">
+                    <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022Z"></path>
+                </svg>
+
+                В наличии
+                <span class="text-secondary fw-normal fs-12">
+                   <div class="icon rounded-circle bg-contain p-2 bg-primary text-white"
+                        style="width: 10px; height: 10px;"><span class="small">!</span></div> {{ productQuantity }}
+                </span>
+            </p>
+
+        </div>
+
+    {% else %}
+
+        <div class="alert alert-warning rounded-4" role="alert">
+            <div class="d-flex align-items-baseline gap-3">
+                <div>
+                    <div class="icon rounded-circle bg-contain p-2 bg-danger text-white"
+                         style="width: 10px; height: 10px;"><span class="small">!</span></div>
+                </div>
+                <div class="text-danger lh-1"> Нет в наличии в данном регионе
+                </div>
+            </div>
+        </div>
+
+    {% endif %}

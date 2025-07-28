@@ -1,0 +1,66 @@
+{# @var bestseller \BaksDev\Products\Product\Repository\BestSellerProducts\BestSellerProductsResult #}
+
+{# Старая цена #}
+{% set OldPrice = bestSeller.productOldPrice %}
+
+{# Персональная скидка #}
+{% set Price = bestSeller.productPrice %}
+
+{# Главная картинка продукта #}
+{% set RootImg = bestSeller.productImagesSortByRoot|first %}
+
+{# ОБЛОЖКА #}
+{% set ImagePath = '/assets/img/blank.svg' %}
+{% if RootImg.img_ext is defined and RootImg.img_ext is not null %}
+    {% set ImagePath = cdn_image_path(RootImg.img, RootImg.img_ext, RootImg.img_cdn) %}
+{% endif %}
+
+<div class="col mb-3">
+    <div class="card border p-4 rounded-5 justify-content-between"
+         style="height: 470px;  background: url({{ ImagePath }}); background-size: 80%, contain;  background-position: 150% center,center;  background-repeat: no-repeat;">
+
+        {# Ссылка на продукт #}
+        <a class="card-title text-uppercase text-decoration-none fs-18 w-75 fw-bold"
+           href="{{ path('products-product:public.detail', {
+               category: bestSeller.categoryUrl,
+               url: bestSeller.productUrl,
+               offer: bestSeller.productOfferValue,
+               variation: bestSeller.productVariationValue,
+               modification: bestSeller.productModificationValue,
+               postfix: (bestSeller.productModificationPostfix ?: bestSeller.productVariationPostfix ?: bestSeller.productOfferPostfix ?: null )|replace({ '/': '-' }),
+           }) }}">
+
+
+            {# Название продукта #}
+            {{ bestSeller.product_name }}
+
+            <br>
+            {{ bestSeller.productOfferValue|call_twig_func(bestSeller.productOfferReference~'_render')
+            ~ bestSeller.productModificationValue|call_twig_func(bestSeller.productModificationReference~'_render') }}
+
+            {{ bestSeller.productOfferValue|call_twig_func(bestSeller.productOfferReference~'_render') }}
+
+            {{ (bestSeller.productModificationPostfix ?: bestSeller.productVariationPostfix ?: bestSeller.productOfferPostfix ?: null ) }}
+        </a>
+
+        <div class="bg-white border rounded-5 fw-medium px-3 py-2 d-flex gap-2"
+             style="width: max-content;">
+
+            {# ЦЕНА #}
+            <p class="fs-24 mb-0 lh-1">
+                {{ money(Price, bestSeller.product_currency) }}
+            </p>
+
+            {# СТАРАЯ ЦЕНА #}
+            {% if OldPrice and (OldPrice.value is not empty and OldPrice.value > 0) %}
+                <span class="text-black" style="font-size: 11px;">
+                    <del>
+                        {{ money(OldPrice, bestSeller.product_currency) }}
+                    </del>
+                </span>
+            {% endif %}
+
+        </div>
+
+    </div>
+</div>

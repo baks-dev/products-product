@@ -67,7 +67,9 @@ use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Stocks\BaksDevProductsStocksBundle;
 use BaksDev\Products\Stocks\Entity\Total\ProductStockTotal;
+use BaksDev\Reference\Region\Type\Id\RegionUid;
 use BaksDev\Users\Profile\UserProfile\Entity\Event\Discount\UserProfileDiscount;
+use BaksDev\Users\Profile\UserProfile\Entity\Event\Region\UserProfileRegion;
 use BaksDev\Users\Profile\UserProfile\Entity\UserProfile;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Deprecated;
@@ -89,7 +91,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
 
     public function __construct(
         private readonly DBALQueryBuilder $DBALQueryBuilder,
-        #[Autowire(env: 'PROJECT_PROFILE')] private readonly ?string $profile = null,
+        #[Autowire(env: 'PROJECT_REGION')] private readonly ?string $region = null,
     ) {}
 
     /** Фильтрация по продукту */
@@ -233,7 +235,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'product',
                 ProductActive::class,
                 'product_active',
-                'product_active.event = product.event'
+                'product_active.event = product.event',
             );
 
         $dbal
@@ -244,7 +246,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'product',
                 ProductSeo::class,
                 'product_seo',
-                'product_seo.event = product.event AND product_seo.local = :local'
+                'product_seo.event = product.event AND product_seo.local = :local',
             );
 
         $dbal
@@ -253,7 +255,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'product',
                 ProductTrans::class,
                 'product_trans',
-                'product_trans.event = product.event AND product_trans.local = :local'
+                'product_trans.event = product.event AND product_trans.local = :local',
             );
 
         $dbal
@@ -263,7 +265,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'product',
                 ProductDescription::class,
                 'product_desc',
-                'product_desc.event = product.event AND product_desc.device = :device '
+                'product_desc.event = product.event AND product_desc.device = :device ',
             )->setParameter('device', 'pc');
 
         /** ProductInfo */
@@ -273,7 +275,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'product',
                 ProductInfo::class,
                 'product_info',
-                'product_info.product = product.id '
+                'product_info.product = product.id ',
             );
 
         /** Торговое предложение */
@@ -288,7 +290,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'product_offer',
                 'product_offer.event = product.event '.
                 ($this->offer ? ' AND product_offer.value = :product_offer_value' : '').
-                ($this->postfix ? ' AND ( product_offer.postfix = :postfix OR product_offer.postfix IS NULL )' : '')
+                ($this->postfix ? ' AND ( product_offer.postfix = :postfix OR product_offer.postfix IS NULL )' : ''),
             );
 
         if($this->postfix)
@@ -309,7 +311,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'product_offer',
                 CategoryProductOffers::class,
                 'category_offer',
-                'category_offer.id = product_offer.category_offer'
+                'category_offer.id = product_offer.category_offer',
             );
 
         /** Получаем название торгового предложения */
@@ -320,7 +322,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'category_offer',
                 CategoryProductOffersTrans::class,
                 'category_offer_trans',
-                'category_offer_trans.offer = category_offer.id AND category_offer_trans.local = :local'
+                'category_offer_trans.offer = category_offer.id AND category_offer_trans.local = :local',
             );
 
         /** Множественные варианты торгового предложения */
@@ -335,7 +337,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'product_variation',
                 'product_variation.offer = product_offer.id'.
                 ($this->variation ? ' AND product_variation.value = :product_variation_value' : '').
-                ($this->postfix ? ' AND ( product_variation.postfix = :postfix OR product_variation.postfix IS NULL )' : '')
+                ($this->postfix ? ' AND ( product_variation.postfix = :postfix OR product_variation.postfix IS NULL )' : ''),
             );
 
         if($this->variation)
@@ -350,7 +352,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'product_variation',
                 CategoryProductVariation::class,
                 'category_variation',
-                'category_variation.id = product_variation.category_variation'
+                'category_variation.id = product_variation.category_variation',
             );
 
         /** Получаем название множественного варианта */
@@ -361,7 +363,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'category_variation',
                 CategoryProductVariationTrans::class,
                 'category_variation_trans',
-                'category_variation_trans.variation = category_variation.id AND category_variation_trans.local = :local'
+                'category_variation_trans.variation = category_variation.id AND category_variation_trans.local = :local',
             );
 
 
@@ -377,7 +379,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'product_modification',
                 'product_modification.variation = product_variation.id'.
                 ($this->modification ? ' AND product_modification.value = :product_modification_value' : '').
-                ($this->postfix ? ' AND ( product_modification.postfix = :postfix OR product_modification.postfix IS NULL )' : '')
+                ($this->postfix ? ' AND ( product_modification.postfix = :postfix OR product_modification.postfix IS NULL )' : ''),
             );
 
         if($this->modification)
@@ -392,7 +394,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'product_modification',
                 CategoryProductModification::class,
                 'category_modification',
-                'category_modification.id = product_modification.category_modification'
+                'category_modification.id = product_modification.category_modification',
             );
 
         /** Получаем название типа модификации */
@@ -403,9 +405,8 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'category_modification',
                 CategoryProductModificationTrans::class,
                 'category_modification_trans',
-                'category_modification_trans.modification = category_modification.id AND category_modification_trans.local = :local'
+                'category_modification_trans.modification = category_modification.id AND category_modification_trans.local = :local',
             );
-
 
 
         /** Базовая Цена товара */
@@ -413,7 +414,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             'product',
             ProductPrice::class,
             'product_price',
-            'product_price.event = product.event'
+            'product_price.event = product.event',
         );
 
         /** Цена торгового предо жения */
@@ -421,7 +422,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             'product_offer',
             ProductOfferPrice::class,
             'product_offer_price',
-            'product_offer_price.offer = product_offer.id'
+            'product_offer_price.offer = product_offer.id',
         );
 
         /** Цена множественного варианта */
@@ -429,7 +430,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             'product_variation',
             ProductVariationPrice::class,
             'product_variation_price',
-            'product_variation_price.variation = product_variation.id'
+            'product_variation_price.variation = product_variation.id',
         );
 
         /** Цена модификации множественного варианта */
@@ -437,7 +438,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             'product_modification',
             ProductModificationPrice::class,
             'product_modification_price',
-            'product_modification_price.modification = product_modification.id'
+            'product_modification_price.modification = product_modification.id',
         );
 
         /** Артикул продукта */
@@ -455,7 +456,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             'product',
             ProductPhoto::class,
             'product_photo',
-            'product_photo.event = product.event'
+            'product_photo.event = product.event',
         )
             ->addGroupBy('product_photo.ext');
 
@@ -465,7 +466,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             'product_offer',
             ProductOfferImage::class,
             'product_offer_images',
-            'product_offer_images.offer = product_offer.id'
+            'product_offer_images.offer = product_offer.id',
         )
             ->addGroupBy('product_offer_images.ext');
 
@@ -474,7 +475,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             'product_offer',
             ProductVariationImage::class,
             'product_variation_image',
-            'product_variation_image.variation = product_variation.id'
+            'product_variation_image.variation = product_variation.id',
         )
             ->addGroupBy('product_variation_image.ext');
 
@@ -483,7 +484,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             'product_modification',
             ProductModificationImage::class,
             'product_modification_image',
-            'product_modification_image.modification = product_modification.id'
+            'product_modification_image.modification = product_modification.id',
         )
             ->addGroupBy('product_modification_image.ext');
 
@@ -542,7 +543,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             
             ELSE NULL
             END
-			AS product_images"
+			AS product_images",
         );
 
         /** Стоимость продукта */
@@ -585,7 +586,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
 			   
 			   ELSE NULL
 			END AS product_currency
-		'
+		',
         );
 
 
@@ -594,8 +595,31 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
          * Если подключен модуль складского учета и передан идентификатор профиля
          */
 
-        if($this->profile && class_exists(BaksDevProductsStocksBundle::class))
+        if($this->region && class_exists(BaksDevProductsStocksBundle::class))
         {
+
+            /* Получаем все профили данного региона */
+
+            $dbal
+                ->leftJoin(
+                    'product',
+                    UserProfileRegion::class,
+                    'product_profile_region',
+                    'product_profile_region.value = :region',
+                )->setParameter(
+                    'region',
+                    $this->region,
+                    RegionUid::TYPE,
+                );
+
+
+            $dbal
+                ->leftJoin(
+                    'product_profile_region',
+                    UserProfile::class,
+                    'product_region_total',
+                    'product_region_total.event = product_profile_region.event',
+                );
 
             $dbal
                 ->addSelect("JSON_AGG ( 
@@ -607,11 +631,11 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                         AS product_quantity",
                 )
                 ->leftJoin(
-                    'product_modification',
+                    'product_region_total',
                     ProductStockTotal::class,
                     'stock',
                     '
-                    stock.profile = :profile AND
+                    stock.profile = product_region_total.id AND
                     stock.product = product.id 
                     
                     AND
@@ -640,12 +664,8 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                     
                     
                 ',
-                )
-                ->setParameter(
-                    'profile',
-                    $this->profile,
-                    UserProfileUid::TYPE,
                 );
+
 
         }
         else
@@ -732,7 +752,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             'product',
             ProductCategory::class,
             'product_event_category',
-            'product_event_category.event = product.event AND product_event_category.root = true'
+            'product_event_category.event = product.event AND product_event_category.root = true',
         );
 
         $dbal
@@ -741,7 +761,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'product_event_category',
                 CategoryProduct::class,
                 'category',
-                'category.id = product_event_category.category'
+                'category.id = product_event_category.category',
             );
 
         $dbal
@@ -750,7 +770,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'category',
                 CategoryProductTrans::class,
                 'category_trans',
-                'category_trans.event = category.event AND category_trans.local = :local'
+                'category_trans.event = category.event AND category_trans.local = :local',
             );
 
         $dbal
@@ -762,14 +782,14 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'category',
                 CategoryProductInfo::class,
                 'category_info',
-                'category_info.event = category.event'
+                'category_info.event = category.event',
             );
 
         $dbal->leftJoin(
             'category',
             CategoryProductSection::class,
             'category_section',
-            'category_section.event = category.event'
+            'category_section.event = category.event',
         );
 
         /** Свойства, участвующие в карточке */
@@ -777,14 +797,14 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             'category_section',
             CategoryProductSectionField::class,
             'category_section_field',
-            'category_section_field.section = category_section.id'
+            'category_section_field.section = category_section.id',
         );
 
         $dbal->leftJoin(
             'category_section_field',
             CategoryProductSectionFieldTrans::class,
             'category_section_field_trans',
-            'category_section_field_trans.field = category_section_field.id AND category_section_field_trans.local = :local'
+            'category_section_field_trans.field = category_section_field.id AND category_section_field_trans.local = :local',
         );
 
         /** Обложка категории */
@@ -804,14 +824,14 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
 					CONCAT ( '/upload/".$dbal->table(CategoryProductCover::class)."' , '/', category_cover.name)
 			   ELSE NULL
 			END AS category_cover_path
-		"
+		",
         );
 
         $dbal->leftJoin(
             'category_section_field',
             ProductProperty::class,
             'product_property',
-            'product_property.event = product.event AND product_property.field = category_section_field.const'
+            'product_property.event = product.event AND product_property.field = category_section_field.const',
         );
 
         $dbal->addSelect(
@@ -835,7 +855,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
 				)
 			
 		)
-			AS category_section_field"
+			AS category_section_field",
         );
 
         /** Product Invariable */
@@ -879,7 +899,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                     UserProfile::class,
                     'current_profile',
                     '
-                        current_profile.id = :'.$dbal::CURRENT_PROFILE_KEY
+                        current_profile.id = :'.$dbal::CURRENT_PROFILE_KEY,
                 );
 
             $dbal
@@ -890,7 +910,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                     'current_profile_discount',
                     '
                         current_profile_discount.event = current_profile.event
-                        '
+                        ',
                 );
         }
 
@@ -904,7 +924,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                     UserProfile::class,
                     'project_profile',
                     '
-                        project_profile.id = :'.$dbal::PROJECT_PROFILE_KEY
+                        project_profile.id = :'.$dbal::PROJECT_PROFILE_KEY,
                 );
 
             $dbal
@@ -914,7 +934,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                     UserProfileDiscount::class,
                     'project_profile_discount',
                     '
-                        project_profile_discount.event = project_profile.event'
+                        project_profile_discount.event = project_profile.event',
                 );
         }
 
@@ -931,6 +951,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
      * @param ?string $modification - значение модификации множественного варианта ТП
      *
      * Метод возвращает детальную информацию о продукте и его заполненному значению ТП, вариантов и модификаций.
+     *
      * @deprecated
      */
     #[Deprecated]
@@ -958,7 +979,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'product',
                 ProductActive::class,
                 'product_active',
-                'product_active.event = product.event'
+                'product_active.event = product.event',
             );
 
 
@@ -969,7 +990,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'product_event',
                 ProductDescription::class,
                 'product_desc',
-                'product_desc.event = product_event.id AND product_desc.device = :device '
+                'product_desc.event = product_event.id AND product_desc.device = :device ',
             )->setParameter('device', 'pc');
 
 
@@ -978,7 +999,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             'product_event',
             ProductPrice::class,
             'product_price',
-            'product_price.event = product_event.id'
+            'product_price.event = product_event.id',
         );
 
         /** ProductInfo */
@@ -988,7 +1009,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'product',
                 ProductInfo::class,
                 'product_info',
-                'product_info.product = product.id '
+                'product_info.product = product.id ',
             );
 
         /** Торговое предложение */
@@ -1000,7 +1021,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'product',
                 ProductOffer::class,
                 'product_offer',
-                'product_offer.event = product.event '.($offer ? ' AND product_offer.value = :product_offer_value' : '').' '
+                'product_offer.event = product.event '.($offer ? ' AND product_offer.value = :product_offer_value' : '').' ',
             );
 
         if($offer)
@@ -1013,7 +1034,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             'product_offer',
             ProductOfferPrice::class,
             'product_offer_price',
-            'product_offer_price.offer = product_offer.id'
+            'product_offer_price.offer = product_offer.id',
         );
 
         /** Получаем тип торгового предложения */
@@ -1023,7 +1044,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'product_offer',
                 CategoryProductOffers::class,
                 'category_offer',
-                'category_offer.id = product_offer.category_offer'
+                'category_offer.id = product_offer.category_offer',
             );
 
         /** Получаем название торгового предложения */
@@ -1034,7 +1055,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'category_offer',
                 CategoryProductOffersTrans::class,
                 'category_offer_trans',
-                'category_offer_trans.offer = category_offer.id AND category_offer_trans.local = :local'
+                'category_offer_trans.offer = category_offer.id AND category_offer_trans.local = :local',
             );
 
         /** Наличие и резерв торгового предложения */
@@ -1042,7 +1063,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             'product_offer',
             ProductOfferQuantity::class,
             'product_offer_quantity',
-            'product_offer_quantity.offer = product_offer.id'
+            'product_offer_quantity.offer = product_offer.id',
         );
 
         /** Множественные варианты торгового предложения */
@@ -1054,7 +1075,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'product_offer',
                 ProductVariation::class,
                 'product_variation',
-                'product_variation.offer = product_offer.id'.($variation ? ' AND product_variation.value = :product_variation_value' : '').' '
+                'product_variation.offer = product_offer.id'.($variation ? ' AND product_variation.value = :product_variation_value' : '').' ',
             );
 
         if($variation)
@@ -1067,7 +1088,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             'product_variation',
             ProductVariationPrice::class,
             'product_variation_price',
-            'product_variation_price.variation = product_variation.id'
+            'product_variation_price.variation = product_variation.id',
         );
 
         /** Получаем тип множественного варианта */
@@ -1077,7 +1098,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'product_variation',
                 CategoryProductVariation::class,
                 'category_variation',
-                'category_variation.id = product_variation.category_variation'
+                'category_variation.id = product_variation.category_variation',
             );
 
         /** Получаем название множественного варианта */
@@ -1088,7 +1109,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'category_variation',
                 CategoryProductVariationTrans::class,
                 'category_variation_trans',
-                'category_variation_trans.variation = category_variation.id AND category_variation_trans.local = :local'
+                'category_variation_trans.variation = category_variation.id AND category_variation_trans.local = :local',
             );
 
         /* Наличие и резерв множественного варианта */
@@ -1096,7 +1117,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             'category_variation',
             ProductVariationQuantity::class,
             'product_variation_quantity',
-            'product_variation_quantity.variation = product_variation.id'
+            'product_variation_quantity.variation = product_variation.id',
         );
 
         /** Модификация множественного варианта торгового предложения */
@@ -1108,7 +1129,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'product_variation',
                 ProductModification::class,
                 'product_modification',
-                'product_modification.variation = product_variation.id'.($modification ? ' AND product_modification.value = :product_modification_value' : '').' '
+                'product_modification.variation = product_variation.id'.($modification ? ' AND product_modification.value = :product_modification_value' : '').' ',
             );
 
         if($modification)
@@ -1121,7 +1142,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             'product_modification',
             ProductModificationPrice::class,
             'product_modification_price',
-            'product_modification_price.modification = product_modification.id'
+            'product_modification_price.modification = product_modification.id',
         );
 
         /** Получаем тип модификации множественного варианта */
@@ -1131,7 +1152,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'product_modification',
                 CategoryProductModification::class,
                 'category_modification',
-                'category_modification.id = product_modification.category_modification'
+                'category_modification.id = product_modification.category_modification',
             );
 
         /** Получаем название типа модификации */
@@ -1142,7 +1163,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'category_modification',
                 CategoryProductModificationTrans::class,
                 'category_modification_trans',
-                'category_modification_trans.modification = category_modification.id AND category_modification_trans.local = :local'
+                'category_modification_trans.modification = category_modification.id AND category_modification_trans.local = :local',
             );
 
         /** Наличие и резерв модификации множественного варианта */
@@ -1150,7 +1171,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             'category_modification',
             ProductModificationQuantity::class,
             'product_modification_quantity',
-            'product_modification_quantity.modification = product_modification.id'
+            'product_modification_quantity.modification = product_modification.id',
         );
 
 
@@ -1159,7 +1180,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'product',
                 ProductTrans::class,
                 'product_trans',
-                'product_trans.event = product.event AND product_trans.local = :local'
+                'product_trans.event = product.event AND product_trans.local = :local',
             );
 
         /** Название продукта */
@@ -1186,7 +1207,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             'product_modification_image',
             '
 			product_modification_image.modification = product_modification.id
-			'
+			',
         );
 
         $dbal->addSelect(
@@ -1203,7 +1224,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
 
 					) END
 			) AS product_modification_image
-	"
+	",
         );
 
         /* Фото вариантов */
@@ -1214,7 +1235,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             'product_variation_image',
             '
 			product_variation_image.variation = product_variation.id
-			'
+			',
         );
 
         $dbal->addSelect(
@@ -1231,7 +1252,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
 
 					) END
 			) AS product_variation_image
-	"
+	",
         );
 
         /* Фот оторговых предложений */
@@ -1244,7 +1265,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
 			
 			product_offer_images.offer = product_offer.id
 			
-		'
+		',
         );
 
         $dbal->addSelect(
@@ -1263,7 +1284,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
 
 				 /*ORDER BY product_photo.root DESC, product_photo.id*/
 			) AS product_offer_images
-	"
+	",
         );
 
         /* Фот опродукта */
@@ -1275,7 +1296,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             '
 	
 			product_photo.event = product_event.id
-			'
+			',
         );
 
         $dbal->addSelect(
@@ -1295,7 +1316,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
 
 				 /*ORDER BY product_photo.root DESC, product_photo.id*/
 			) AS product_photo
-	"
+	",
         );
 
         /* Стоимость продукта */
@@ -1341,7 +1362,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
 			   
 			   ELSE NULL
 			END AS product_currency
-		'
+		',
         );
 
         /* Наличие продукта */
@@ -1366,7 +1387,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
 			   
 			END AS product_quantity
             
-		'
+		',
         )
             ->addGroupBy('product_modification_quantity.reserve')
             ->addGroupBy('product_variation_quantity.reserve')
@@ -1379,7 +1400,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             'product_event',
             ProductCategory::class,
             'product_event_category',
-            'product_event_category.event = product_event.id AND product_event_category.root = true'
+            'product_event_category.event = product_event.id AND product_event_category.root = true',
         );
 
 
@@ -1387,7 +1408,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             'product_event_category',
             CategoryProduct::class,
             'category',
-            'category.id = product_event_category.category'
+            'category.id = product_event_category.category',
         );
 
         $dbal
@@ -1396,7 +1417,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'category',
                 CategoryProductTrans::class,
                 'category_trans',
-                'category_trans.event = category.event AND category_trans.local = :local'
+                'category_trans.event = category.event AND category_trans.local = :local',
             );
 
         $dbal->addSelect('category_info.url AS category_url');
@@ -1404,14 +1425,14 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             'category',
             CategoryProductInfo::class,
             'category_info',
-            'category_info.event = category.event'
+            'category_info.event = category.event',
         );
 
         $dbal->leftJoin(
             'category',
             CategoryProductSection::class,
             'category_section',
-            'category_section.event = category.event'
+            'category_section.event = category.event',
         );
 
         /* Свойства, учавствующие в карточке */
@@ -1420,21 +1441,21 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             'category_section',
             CategoryProductSectionField::class,
             'category_section_field',
-            'category_section_field.section = category_section.id AND (category_section_field.public = TRUE OR category_section_field.name = TRUE )'
+            'category_section_field.section = category_section.id AND (category_section_field.public = TRUE OR category_section_field.name = TRUE )',
         );
 
         $dbal->leftJoin(
             'category_section_field',
             CategoryProductSectionFieldTrans::class,
             'category_section_field_trans',
-            'category_section_field_trans.field = category_section_field.id AND category_section_field_trans.local = :local'
+            'category_section_field_trans.field = category_section_field.id AND category_section_field_trans.local = :local',
         );
 
         $dbal->leftJoin(
             'category_section_field',
             ProductProperty::class,
             'product_property',
-            'product_property.event = product.event AND product_property.field = category_section_field.const'
+            'product_property.event = product.event AND product_property.field = category_section_field.const',
         );
 
         $dbal->addSelect(
@@ -1458,7 +1479,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
 				)
 			
 		)
-			AS category_section_field"
+			AS category_section_field",
         );
 
         /* Кешируем результат DBAL */

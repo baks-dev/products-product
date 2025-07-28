@@ -1,0 +1,10 @@
+{% for product in search_result %}
+
+    <div class="col">
+
+        {#        {% include Template('@products-product/public/' ~baks_settings.device~ '/card-product-result.html.twig') with {product} only %} #}
+        {% include Template('@products-product/public/' ~baks_settings.device~ '/card_product.html.twig') with {product} only %}
+
+    </div>
+
+{% endfor %}

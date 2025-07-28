@@ -1,0 +1,78 @@
+{# @var card \BaksDev\Products\Product\Repository\ProductDetailByValue\ProductDetailByValueResult #}
+
+{% if card.productImagesSortByRoot is not null %}
+    {% set photos = card.productImagesSortByRoot %}
+{% else %}
+    {% set photos = ['/assets/img/blank.svg'] %}
+{% endif %}
+
+<div class="carousel slide d-flex position-relative"
+     id="productPageCarousel"
+     data-bs-wrap="true"
+     style="height: 310px;">
+
+    {#    {% include Template(_self|replace({ "product_images_carousel.html.twig" : "product_images_carousel_scroll.html.twig" })) with {'producPhotos':newProducPhotos} only %} #}
+
+    <button class="btn position-absolute p-0 carousel-scroll-btn-up z-3 {{ photos|length > 3 ? '' : 'd-none' }}"
+            id='scroll-up' aria-label="Кнопка скролла вверх">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+             class="bi bi-arrow-up-circle-fill" viewBox="0 0 16 16">
+            <path d="M16 8A8 8 0 1 0 0 8a8 8 0 0 0 16 0zm-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V11.5z"></path>
+        </svg>
+    </button>
+    <button class="btn position-absolute p-0 carousel-scroll-btn-down z-3 {{ photos > 3 ? '' : 'd-none' }}"
+            id='scroll-down' aria-label="Кнопка скролла вниз">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+             class="bi bi-arrow-down-circle-fill" viewBox="0 0 16 16">
+            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"></path>
+        </svg>
+    </button>
+
+    {# КАРУСЕЛЬ ВСЕХ ИЗОБРАЖЕНИЙ #}
+    <div class="carousel-indicators product-carousel-indicators overflow-y-scroll scroll-none gap-2 justify-content-between flex-column m-0 me-2 scroll-container">
+        {% for key, photo in photos %}
+
+            {# Обложка #}
+            {% if photo.product_img_ext is defined and photo.product_img_ext is not null %}
+                {% set image_path = cdn_image_path(photo.product_img, photo.product_img_ext, photo.product_img_cdn , 'medium') %}
+            {% endif %}
+
+            <button type="button" class="{{ key == 0 ? 'active' : '' }} rounded-3  border m-0"
+                    data-bs-target="#productPageCarousel"
+                    data-bs-slide-to="{{ key }}">
+                <img
+                        class="rounded-3 lazy"
+                        src="/assets/img/empty.png"
+                        data-src="{{ image_path }}"
+                        alt="Изображение товара"
+                >
+            </button>
+        {% endfor %}
+    </div>
+
+    {# ВЫБРАННОЕ ИЗОБРАЖЕНИЕ #}
+    <div class="carousel-inner carousel-inner-product rounded-4 border ">
+        {% for key, photo in photos %}
+
+            {# Обложка  #}
+            {% if photo.product_img_ext is defined and photo.product_img_ext is not null %}
+                {% set image_path = cdn_image_path(photo.product_img, photo.product_img_ext, photo.product_img_cdn , 'medium') %}
+            {% endif %}
+
+            <div class="carousel-item {{ key == 0 ? 'active' : '' }} h-100 lazy bg-contain" style="cursor: pointer"
+                 data-bg="{{ image_path }}"
+                 data-bs-toggle="modal"
+                 data-bs-target="#ModalProductCarousel">
+            </div>
+        {% endfor %}
+        {# В избранное #}
+        {% if card.productInvariableId is not null %}
+            <div class="position-absolute badge-position badge z-3 ">
+                {{ render_favorite_button(card.productInvariableId) }}
+            </div>
+        {% endif %}
+
+
+    </div>
+
+</div>

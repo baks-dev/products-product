@@ -14,25 +14,15 @@
 {# ОБЛОЖКА #}
 {% set ImagePath = '/assets/img/blank.svg' %}
 
-{% if RootImg.img_ext is defined and RootImg.img_ext is not null %}
-    {% set ImagePath = cdn_image_path(RootImg.img, RootImg.img_ext, RootImg.img_cdn) %}
+{% if rootImg.img_ext is defined and rootImg.img_ext is not null %}
+    {% set bestSellerImg = cdn_image_path(rootImg.img, rootImg.img_ext, rootImg.img_cdn) %}
 {% endif %}
 
-<h3 class="fs-18 text-uppercase fw-bold mb-4">
-    лидер продаж
-</h3>
-
-<div class="border rounded-4 p-4 mb-3 ">
-    <div class="position-relative mb-3">
-        <img
-                class="w-100 lazy"
-                src="/assets/img/empty.png"
-                data-src="{{ ImagePath }}"
-                alt="Изображение товара"
-        >
-    </div>
-
-    <div class="d-flex align-items-center justify-content-between mb-3 gap-3">
+<div class="col mb-3">
+    <div class="card border p-4 rounded-5 justify-content-between"
+         style="height: 409px;
+                 background: url({{ bestSellerImg }});
+                 background-size: 80%, contain;  background-position: 150% center,center;  background-repeat: no-repeat;">
 
         <a class="text-black fw-bold text-uppercase mb-0 list-group-item best-offers-item"
            href="{{ path('products-product:public.detail', {
@@ -55,16 +45,21 @@
             {{ (Bestseller.productModificationPostfix ?: Bestseller.productVariationPostfix ?: Bestseller.productOfferPostfix ?: null ) }}
         </a>
 
+        <div class="bg-white border rounded-5 fw-medium px-3 py-2 d-flex gap-2"
+             style="width: max-content;">
+
+            {# ЦЕНА #}
+            <p class="fs-24 mb-0 lh-1">
+                {{ money(Price, Bestseller.productCurrency) }}
+            </p>
+
+            {% if OldPrice and (OldPrice.value is not empty and OldPrice.value > 0) %}
+                <p class="card-text text-danger small m-0 fw-bold mb-1">
+                    <del>{{ money(OldPrice, Bestseller.productCurrency) }}</del>
+                </p>
+            {% endif %}
+
+        </div>
+
     </div>
-
-    <p class="fs-5 fw-bold text-uppercase  mb-3 lh-1 d-flex align-items-top">
-        {{ money(Price, Bestseller.productCurrency) }}
-    </p>
-
-    {% if OldPrice and (OldPrice.value is not empty and OldPrice.value > 0) %}
-        <p class="card-text text-danger small m-0 fw-bold mb-1">
-            <del>{{ money(OldPrice, Bestseller.productCurrency) }}</del>
-        </p>
-    {% endif %}
-
 </div>

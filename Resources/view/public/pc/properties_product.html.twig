@@ -1,0 +1,26 @@
+{# @var card \BaksDev\Products\Product\Repository\ProductDetailByValue\ProductDetailByValueResult #}
+
+{% set properties = card.categorySectionField|filter(v => v.field_value != 'false' and v.field_value != '' and v.field_value != null) %}
+
+{# <dl class="text-secondary"> #}
+{#    {% for key,property in properties %} #}
+
+{#        <dt>{{ property.field_trans }}</dt> #}
+
+{#        <dd>{{ property.field_value|call_twig_func(property.field_type~'_template') }}</dd> #}
+
+{#    {% endfor %} #}
+{# </dl> #}
+
+<div class="row row-cols-2 gy-3 mb-4">
+    {% for key,property in properties %}
+        <div class="col">
+            <div class="h-100 d-flex align-items-center fw-medium">
+                {{ property.field_trans }}
+            </div>
+        </div>
+        <div class="col">
+            {{ property.field_value|call_twig_func(property.field_type~'_template') }}
+        </div>
+    {% endfor %}
+</div>
