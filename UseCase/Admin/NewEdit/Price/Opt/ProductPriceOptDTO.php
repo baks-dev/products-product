@@ -39,4 +39,10 @@ final class ProductPriceOptDTO implements ProductPriceOptInterface
     {
         return $this->price;
     }
+
+    public function setPrice(?Money $price): self
+    {
+        $this->price = $price;
+        return $this;
+    }
 }
