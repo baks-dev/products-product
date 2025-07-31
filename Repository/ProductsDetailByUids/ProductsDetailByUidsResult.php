@@ -14,20 +14,6 @@ class ProductsDetailByUidsResult
         private ?string $main,
         private ?string $url,
         private ?string $product_name,
-        private ?string $product_offer_uid,
-        private ?string $product_offer_value,
-        private ?string $product_offer_reference,
-        private ?string $product_offer_name,
-
-        private ?string $product_variation_uid,
-        private ?string $product_variation_value,
-        private ?string $product_variation_reference,
-        private ?string $product_variation_name,
-
-        private ?string $product_modification_uid,
-        private ?string $product_modification_value,
-        private ?string $product_modification_reference,
-        private ?string $product_modification_name,
 
         private ?string $product_article,
 
@@ -38,10 +24,26 @@ class ProductsDetailByUidsResult
         private ?string $category_url,
         private ?string $category_section_field,
 
+        private ?string $product_offer_uid = null,
+        private ?string $product_offer_value = null,
+        private ?string $product_offer_reference = null,
+        private ?string $product_offer_name = null,
+
+
+        private ?string $product_variation_uid = null,
+        private ?string $product_variation_value = null,
+        private ?string $product_variation_reference = null,
+        private ?string $product_variation_name = null,
+
+        private ?string $product_modification_uid = null,
+        private ?string $product_modification_value = null,
+        private ?string $product_modification_reference = null,
+        private ?string $product_modification_name = null,
+
         private ?string $product_offer_postfix = null,
         private ?string $product_variation_postfix = null,
         private ?string $product_modification_postfix = null,
-        private bool $product_image_cdn = false,
+        private ?bool $product_image_cdn = false,
 
         private int $product_total = 0,
 
@@ -177,7 +179,7 @@ class ProductsDetailByUidsResult
     {
         return $this->product_offer_reference;
     }
-    
+
     public function getProductImage(): ?string
     {
         return $this->product_image;
@@ -203,5 +205,6 @@ class ProductsDetailByUidsResult
         $this->product_total = $product_total;
         return $this;
     }
+
 
 }
