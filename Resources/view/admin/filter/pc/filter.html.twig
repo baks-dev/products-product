@@ -53,7 +53,7 @@
 
     {% if filter.vars.data.invisible is defined and filter.vars.data.invisible == false %}
 
-        <div class="w-25">
+        <div class="w-25" style="min-width: 175px;">
             {{ form_widget(filter.category, { placeholder: 'Все категории ...', attr: { 'data-select' : 'select2', class: 'mb-0' } }) }}
         </div>
 
