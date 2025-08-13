@@ -172,8 +172,8 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
             ->createQueryBuilder(self::class)
             ->bindLocal();
 
-        $dbal->select('product_event.main'); //->groupBy('product_event.main');
-        $dbal->addSelect('product_event.id'); //->addGroupBy('product_event.id');
+        $dbal->select('product_event.main');
+        $dbal->addSelect('product_event.id');
 
         $dbal
             ->from(ProductEvent::class, 'product_event')
@@ -585,16 +585,16 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
             '
 			CASE
 			
-			   WHEN product_modification_quantity.quantity > 0 AND product_modification_quantity.quantity > product_modification_quantity.reserve 
+			   WHEN product_modification_quantity.quantity > 0
 			   THEN product_modification_quantity.quantity
 
-			   WHEN product_variation_quantity.quantity > 0 AND product_variation_quantity.quantity > product_variation_quantity.reserve  
+			   WHEN product_variation_quantity.quantity > 0
 			   THEN product_variation_quantity.quantity 
 			
-			   WHEN product_offer_quantity.quantity > 0 AND product_offer_quantity.quantity > product_offer_quantity.reserve 
+			   WHEN product_offer_quantity.quantity > 0
 			   THEN product_offer_quantity.quantity
 
-			   WHEN product_price.quantity > 0 AND product_price.quantity > product_price.reserve 
+			   WHEN product_price.quantity > 0
 			   THEN product_price.quantity
 	
 			   ELSE 0
