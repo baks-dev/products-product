@@ -29,32 +29,54 @@ use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Core\Doctrine\ORMQueryBuilder;
 use BaksDev\Products\Category\Entity\Offers\Variation\Modification\CategoryProductModification;
 use BaksDev\Products\Category\Entity\Offers\Variation\Modification\Trans\CategoryProductModificationTrans;
-use BaksDev\Products\Product\Entity\Offers\Image\ProductOfferImage;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
-use BaksDev\Products\Product\Entity\Offers\Variation\Image\ProductVariationImage;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Image\ProductModificationImage;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Price\ProductModificationPrice;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Quantity\ProductModificationQuantity;
-use BaksDev\Products\Product\Entity\Offers\Variation\Price\ProductVariationPrice;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
-use BaksDev\Products\Product\Entity\Photo\ProductPhoto;
 use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
+use BaksDev\Products\Stocks\BaksDevProductsStocksBundle;
+use BaksDev\Products\Stocks\Entity\Total\ProductStockTotal;
+use BaksDev\Users\Profile\UserProfile\Entity\UserProfile;
+use BaksDev\Users\Profile\UserProfile\Repository\UserProfileTokenStorage\UserProfileTokenStorageInterface;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Generator;
-use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Image\ProductModificationImage;
-use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Price\ProductModificationPrice;
 
 final class ProductModificationChoiceRepository implements ProductModificationChoiceInterface
 {
+    private UserProfileUid|false $profile = false;
+
     public function __construct(
         private readonly ORMQueryBuilder $ORMQueryBuilder,
-        private readonly DBALQueryBuilder $DBALQueryBuilder
+        private readonly DBALQueryBuilder $DBALQueryBuilder,
+        private readonly UserProfileTokenStorageInterface $UserProfileTokenStorage,
     ) {}
 
+    public function profile(UserProfile|UserProfileUid|string $profile): self
+    {
+        if(is_string($profile))
+        {
+            $profile = new UserProfileUid($profile);
+        }
+
+        if($profile instanceof UserProfile)
+        {
+            $profile = $profile->getId();
+        }
+
+        $this->profile = $profile;
+
+        return $this;
+    }
+
     /**
-     * Метод возвращает все постоянные идентификаторы CONST модификаций множественных вариантов торговых предложений продукта
+     * Метод возвращает все постоянные идентификаторы CONST модификаций множественных вариантов торговых предложений
+     * продукта
      */
     public function fetchProductModificationConstByVariationConst(ProductVariationConst|string $const): Generator
     {
@@ -70,59 +92,59 @@ final class ProductModificationChoiceRepository implements ProductModificationCh
 
 
         $dbal
-            ->from(ProductVariation::class, 'variation')
-            ->where('variation.const = :const')
+            ->from(ProductVariation::class, 'product_variation')
+            ->where('product_variation.const = :const')
             ->setParameter('const', $const, ProductVariationConst::TYPE);
 
         $dbal->join(
-            'variation',
+            'product_variation',
             ProductOffer::class,
-            'offer',
-            'offer.id = variation.offer'
+            'product_offer',
+            'product_offer.id = product_variation.offer',
         );
 
         $dbal->join(
-            'offer',
+            'product_offer',
             Product::class,
             'product',
-            'product.event = offer.event'
+            'product.event = product_offer.event',
         );
 
         $dbal->join(
-            'variation',
+            'product_variation',
             ProductModification::class,
-            'modification',
-            'modification.variation = variation.id'
+            'product_modification',
+            'product_modification.variation = product_variation.id',
         );
 
         // Тип торгового предложения
 
         $dbal->join(
-            'modification',
+            'product_modification',
             CategoryProductModification::class,
             'category_modification',
-            'category_modification.id = modification.category_modification'
+            'category_modification.id = product_modification.category_modification',
         );
 
         $dbal->leftJoin(
             'category_modification',
             CategoryProductModificationTrans::class,
             'category_modification_trans',
-            'category_modification_trans.modification = category_modification.id AND category_modification_trans.local = :local'
+            'category_modification_trans.modification = category_modification.id AND category_modification_trans.local = :local',
         );
 
         /** Свойства конструктора объекта гидрации */
 
-        $dbal->addSelect('modification.const AS value');
-        $dbal->addSelect('modification.value AS attr');
+        $dbal->addSelect('product_modification.const AS value');
+        $dbal->addSelect('product_modification.value AS attr');
 
         $dbal->addSelect('category_modification_trans.name AS option');
         $dbal->addSelect('category_modification.reference AS property');
 
-        $dbal->addSelect('modification.postfix AS characteristic');
+        $dbal->addSelect('product_modification.postfix AS characteristic');
 
 
-        $dbal->orderBy('modification.value');
+        $dbal->orderBy('product_modification.value');
 
         return $dbal
             ->enableCache('products-product', 86400)
@@ -141,8 +163,8 @@ final class ProductModificationChoiceRepository implements ProductModificationCh
             ->bindLocal();
 
         $select = sprintf('new %s(
-            modification.id, 
-            modification.value, 
+            product_modification.id, 
+            product_modification.value, 
             trans.name, 
             category_modification.reference
         )', ProductModificationUid::class);
@@ -150,34 +172,34 @@ final class ProductModificationChoiceRepository implements ProductModificationCh
         $qb->select($select);
 
         $qb
-            ->from(ProductVariation::class, 'variation')
-            ->where('variation.id = :variation')
+            ->from(ProductVariation::class, 'product_variation')
+            ->where('product_variation.id = :variation')
             ->setParameter(
                 key: 'variation',
                 value: $variation,
-                type: ProductVariationUid::TYPE
+                type: ProductVariationUid::TYPE,
             );
 
         $qb->join(
             ProductOffer::class,
-            'offer',
+            'product_offer',
             'WITH',
-            'offer.id = variation.offer'
+            'product_offer.id = product_variation.offer',
         );
 
         $qb->join(
             Product::class,
             'product',
             'WITH',
-            'product.event = offer.event'
+            'product.event = product_offer.event',
         );
 
 
         $qb->join(
             ProductModification::class,
-            'modification',
+            'product_modification',
             'WITH',
-            'modification.variation = variation.id'
+            'product_modification.variation = product_variation.id',
         );
 
         // Тип торгового предложения
@@ -186,14 +208,14 @@ final class ProductModificationChoiceRepository implements ProductModificationCh
             CategoryProductModification::class,
             'category_modification',
             'WITH',
-            'category_modification.id = modification.categoryModification'
+            'category_modification.id = product_modification.categoryModification',
         );
 
         $qb->leftJoin(
             CategoryProductModificationTrans::class,
             'trans',
             'WITH',
-            'trans.modification = category_modification.id AND trans.local = :local'
+            'trans.modification = category_modification.id AND trans.local = :local',
         );
 
         return $qb->getResult();
@@ -214,43 +236,43 @@ final class ProductModificationChoiceRepository implements ProductModificationCh
             ->bindLocal();
 
         $dbal
-            ->from(ProductVariation::class, 'variation')
-            ->where('variation.id = :variation')
+            ->from(ProductVariation::class, 'product_variation')
+            ->where('product_variation.id = :variation')
             ->setParameter(
                 key: 'variation',
                 value: $variation,
-                type: ProductVariationUid::TYPE
+                type: ProductVariationUid::TYPE,
             );
 
         $dbal->join(
-            'variation',
+            'product_variation',
             ProductOffer::class,
-            'offer',
-            'offer.id = variation.offer'
+            'product_offer',
+            'product_offer.id = product_variation.offer',
         );
 
         $dbal->join(
-            'offer',
+            'product_offer',
             Product::class,
             'product',
-            'product.event = offer.event'
+            'product.event = product_offer.event',
         );
 
 
         $dbal->join(
-            'variation',
+            'product_variation',
             ProductModification::class,
-            'modification',
-            'modification.variation = variation.id'
+            'product_modification',
+            'product_modification.variation = product_variation.id',
         );
 
         // Тип торгового предложения
 
         $dbal->join(
-            'modification',
+            'product_modification',
             CategoryProductModification::class,
             'category_modification',
-            'category_modification.id = modification.category_modification'
+            'category_modification.id = product_modification.category_modification',
         );
 
         $dbal->leftJoin(
@@ -258,33 +280,89 @@ final class ProductModificationChoiceRepository implements ProductModificationCh
             CategoryProductModificationTrans::class,
             'category_modification_trans',
             'category_modification_trans.modification = category_modification.id
-             AND category_modification_trans.local = :local'
+             AND category_modification_trans.local = :local',
         );
 
 
-        $dbal
-            ->addSelect('SUM(modification_quantity.quantity - modification_quantity.reserve) AS option')
-            ->join(
-                'modification',
-                ProductModificationQuantity::class,
-                'modification_quantity',
-                'modification_quantity.modification = modification.id AND modification_quantity.quantity > 0 '
-            );
+        if(class_exists(BaksDevProductsStocksBundle::class))
+        {
+
+            $dbal
+                ->addSelect("SUM(stock.total - stock.reserve) AS option")
+                ->leftJoin(
+                    'product_modification',
+                    ProductStockTotal::class,
+                    'stock',
+                    '
+                    stock.profile = :profile AND
+                    stock.product = product.id 
+                    
+                    AND
+                        
+                        CASE 
+                            WHEN product_offer.const IS NOT NULL 
+                            THEN stock.offer = product_offer.const
+                            ELSE stock.offer IS NULL
+                        END
+                            
+                    AND 
+                    
+                        CASE
+                            WHEN product_variation.const IS NOT NULL 
+                            THEN stock.variation = product_variation.const
+                            ELSE stock.variation IS NULL
+                        END
+                        
+                    AND
+                    
+                        CASE
+                            WHEN product_modification.const IS NOT NULL 
+                            THEN stock.modification = product_modification.const
+                            ELSE stock.modification IS NULL
+                        END
+                ',
+                )
+                ->setParameter(
+                    key: 'profile',
+                    value: $this->profile instanceof UserProfileUid ? $this->profile : $this->UserProfileTokenStorage->getProfile(),
+                    type: UserProfileUid::TYPE,
+                );
+
+            $dbal->having('SUM(stock.total - stock.reserve) > 0');
+
+        }
+        else
+        {
+
+            $dbal
+                ->addSelect('SUM(modification_quantity.quantity - modification_quantity.reserve) AS option')
+                ->join(
+                    'product_modification',
+                    ProductModificationQuantity::class,
+                    'modification_quantity',
+                    'modification_quantity.modification = product_modification.id AND modification_quantity.quantity > 0 ',
+                );
+
+
+            $dbal->having('SUM(modification_quantity.quantity - modification_quantity.reserve) > 0');
+
+        }
+
 
         /* Фото продукта */
         $dbal
             ->leftJoin(
-                'modification',
+                'product_modification',
                 ProductModificationImage::class,
                 'product_modification_image',
-                'product_modification_image.modification = modification.id AND product_modification_image.root = true'
+                'product_modification_image.modification = product_modification.id AND product_modification_image.root = true',
             );
 
         $dbal->leftJoin(
-            'modification',
+            'product_modification',
             ProductModificationPrice::class,
             'product_modification_price',
-            'product_modification_price.modification = modification.id'
+            'product_modification_price.modification = product_modification.id',
         );
 
         $dbal->addSelect(
@@ -295,19 +373,19 @@ final class ProductModificationChoiceRepository implements ProductModificationCh
                     'product_image', CONCAT ( '/upload/".$dbal->table(ProductModificationImage::class)."' , '/', product_modification_image.name),
                     'product_image_cdn', product_modification_image.cdn,
                     'product_image_ext', product_modification_image.ext,
-                    'product_article', modification.article,
+                    'product_article', product_modification.article,
                     'product_price', product_modification_price.price,
                     'product_currency', product_modification_price.currency,
-                    'product_modification_value', modification.value,
-                    'product_modification_postfix', modification.postfix
+                    'product_modification_value', product_modification.value,
+                    'product_modification_postfix', product_modification.postfix
                 )
-            ) AS params"
+            ) AS params",
         );
 
         /** Свойства конструктора объекта гидрации */
 
-        $dbal->addSelect('modification.id AS value');
-        $dbal->addSelect("CONCAT(modification.value, ' ', modification.postfix) AS attr");
+        $dbal->addSelect('product_modification.id AS value');
+        $dbal->addSelect("CONCAT(product_modification.value, ' ', product_modification.postfix) AS attr");
 
         $dbal->addSelect('category_modification_trans.name AS property');
         $dbal->addSelect('category_modification.reference AS characteristic');

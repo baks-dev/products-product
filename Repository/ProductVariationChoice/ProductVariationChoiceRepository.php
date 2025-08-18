@@ -29,12 +29,12 @@ use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Core\Doctrine\ORMQueryBuilder;
 use BaksDev\Products\Category\Entity\Offers\Variation\CategoryProductVariation;
 use BaksDev\Products\Category\Entity\Offers\Variation\Trans\CategoryProductVariationTrans;
-use BaksDev\Products\Product\Entity\Offers\Image\ProductOfferImage;
-use BaksDev\Products\Product\Entity\Offers\Price\ProductOfferPrice;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\Quantity\ProductOfferQuantity;
+use BaksDev\Products\Product\Entity\Offers\Variation\Image\ProductVariationImage;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Quantity\ProductModificationQuantity;
+use BaksDev\Products\Product\Entity\Offers\Variation\Price\ProductVariationPrice;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Product\Entity\Offers\Variation\Quantity\ProductVariationQuantity;
 use BaksDev\Products\Product\Entity\Product;
@@ -42,16 +42,39 @@ use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
+use BaksDev\Products\Stocks\BaksDevProductsStocksBundle;
+use BaksDev\Products\Stocks\Entity\Total\ProductStockTotal;
+use BaksDev\Users\Profile\UserProfile\Entity\UserProfile;
+use BaksDev\Users\Profile\UserProfile\Repository\UserProfileTokenStorage\UserProfileTokenStorageInterface;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Generator;
-use BaksDev\Products\Product\Entity\Offers\Variation\Image\ProductVariationImage;
-use BaksDev\Products\Product\Entity\Offers\Variation\Price\ProductVariationPrice;
 
 final class ProductVariationChoiceRepository implements ProductVariationChoiceInterface
 {
+    private UserProfileUid|false $profile = false;
+
     public function __construct(
         private readonly ORMQueryBuilder $ORMQueryBuilder,
         private readonly DBALQueryBuilder $DBALQueryBuilder,
+        private readonly UserProfileTokenStorageInterface $UserProfileTokenStorage,
     ) {}
+
+    public function profile(UserProfile|UserProfileUid|string $profile): self
+    {
+        if(is_string($profile))
+        {
+            $profile = new UserProfileUid($profile);
+        }
+
+        if($profile instanceof UserProfile)
+        {
+            $profile = $profile->getId();
+        }
+
+        $this->profile = $profile;
+
+        return $this;
+    }
 
     /**
      * Метод возвращает все постоянные идентификаторы CONST множественных вариантов торговых предложений продукта
@@ -79,14 +102,14 @@ final class ProductVariationChoiceRepository implements ProductVariationChoiceIn
             'offer',
             Product::class,
             'product',
-            'product.event = offer.event'
+            'product.event = offer.event',
         );
 
         $dbal->join(
             'offer',
             ProductVariation::class,
             'variation',
-            'variation.offer = offer.id'
+            'variation.offer = offer.id',
         );
 
         // Тип торгового предложения
@@ -95,14 +118,14 @@ final class ProductVariationChoiceRepository implements ProductVariationChoiceIn
             'variation',
             CategoryProductVariation::class,
             'category_variation',
-            'category_variation.id = variation.category_variation'
+            'category_variation.id = variation.category_variation',
         );
 
         $dbal->leftJoin(
             'category_variation',
             CategoryProductVariationTrans::class,
             'category_variation_trans',
-            'category_variation_trans.variation = category_variation.id AND category_variation_trans.local = :local'
+            'category_variation_trans.variation = category_variation.id AND category_variation_trans.local = :local',
         );
 
 
@@ -148,7 +171,7 @@ final class ProductVariationChoiceRepository implements ProductVariationChoiceIn
             ->setParameter(
                 key: 'offer',
                 value: $offer,
-                type: ProductOfferUid::TYPE
+                type: ProductOfferUid::TYPE,
             );
 
 
@@ -156,7 +179,7 @@ final class ProductVariationChoiceRepository implements ProductVariationChoiceIn
             Product::class,
             'product',
             'WITH',
-            'product.event = offer.event'
+            'product.event = offer.event',
         );
 
 
@@ -164,7 +187,7 @@ final class ProductVariationChoiceRepository implements ProductVariationChoiceIn
             ProductVariation::class,
             'variation',
             'WITH',
-            'variation.offer = offer.id'
+            'variation.offer = offer.id',
         );
 
         // Тип торгового предложения
@@ -173,14 +196,14 @@ final class ProductVariationChoiceRepository implements ProductVariationChoiceIn
             CategoryProductVariation::class,
             'category_variation',
             'WITH',
-            'category_variation.id = variation.categoryVariation'
+            'category_variation.id = variation.categoryVariation',
         );
 
         $qb->leftJoin(
             CategoryProductVariationTrans::class,
             'trans',
             'WITH',
-            'trans.variation = category_variation.id AND trans.local = :local'
+            'trans.variation = category_variation.id AND trans.local = :local',
         );
 
         /* Кешируем результат ORM */
@@ -209,21 +232,21 @@ final class ProductVariationChoiceRepository implements ProductVariationChoiceIn
             ->setParameter(
                 key: 'offer',
                 value: $offer,
-                type: ProductOfferUid::TYPE
+                type: ProductOfferUid::TYPE,
             );
 
         $dbal->join(
             'product_offer',
             Product::class,
             'product',
-            'product.event = product_offer.event'
+            'product.event = product_offer.event',
         );
 
         $dbal->join(
             'product_offer',
             ProductVariation::class,
             'product_variation',
-            'product_variation.offer = product_offer.id'
+            'product_variation.offer = product_offer.id',
         );
 
         // Тип множественного варианта предложения
@@ -232,14 +255,14 @@ final class ProductVariationChoiceRepository implements ProductVariationChoiceIn
             'product_variation',
             CategoryProductVariation::class,
             'category_variation',
-            'category_variation.id = product_variation.category_variation'
+            'category_variation.id = product_variation.category_variation',
         );
 
         $dbal->leftJoin(
             'category_variation',
             CategoryProductVariationTrans::class,
             'category_variation_trans',
-            'category_variation_trans.variation = category_variation.id AND category_variation_trans.local = :local'
+            'category_variation_trans.variation = category_variation.id AND category_variation_trans.local = :local',
         );
 
 
@@ -247,33 +270,115 @@ final class ProductVariationChoiceRepository implements ProductVariationChoiceIn
             'product_variation',
             ProductModification::class,
             'product_modification',
-            'product_modification.variation = product_variation.id'
+            'product_modification.variation = product_variation.id',
         );
 
-        /**
-         * Quantity
-         */
 
-        $dbal->leftJoin(
-            'product_offer',
-            ProductOfferQuantity::class,
-            'product_offer_quantity',
-            'product_offer_quantity.offer = product_offer.id'
-        );
+        if(class_exists(BaksDevProductsStocksBundle::class))
+        {
 
-        $dbal->leftJoin(
-            'product_variation',
-            ProductVariationQuantity::class,
-            'product_variation_quantity',
-            'product_variation_quantity.variation = product_variation.id'
-        );
+            $dbal
+                ->addSelect("SUM(stock.total - stock.reserve) AS option")
+                ->leftJoin(
+                    'product_modification',
+                    ProductStockTotal::class,
+                    'stock',
+                    '
+                    stock.profile = :profile AND
+                    stock.product = product.id 
+                    
+                    AND
+                        
+                        CASE 
+                            WHEN product_offer.const IS NOT NULL 
+                            THEN stock.offer = product_offer.const
+                            ELSE stock.offer IS NULL
+                        END
+                            
+                    AND 
+                    
+                        CASE
+                            WHEN product_variation.const IS NOT NULL 
+                            THEN stock.variation = product_variation.const
+                            ELSE stock.variation IS NULL
+                        END
+                        
+                    AND
+                    
+                        CASE
+                            WHEN product_modification.const IS NOT NULL 
+                            THEN stock.modification = product_modification.const
+                            ELSE stock.modification IS NULL
+                        END
+                ',
+                )
+                ->setParameter(
+                    key: 'profile',
+                    value: $this->profile instanceof UserProfileUid ? $this->profile : $this->UserProfileTokenStorage->getProfile(),
+                    type: UserProfileUid::TYPE,
+                );
 
-        $dbal->leftJoin(
-            'product_modification',
-            ProductModificationQuantity::class,
-            'product_modification_quantity',
-            'product_modification_quantity.modification = product_modification.id'
-        );
+            $dbal->having('SUM(stock.total - stock.reserve) > 0');
+
+        }
+        else
+        {
+            /**
+             * Quantity
+             */
+
+            $dbal
+                ->leftJoin(
+                    'product_offer',
+                    ProductOfferQuantity::class,
+                    'product_offer_quantity',
+                    'product_offer_quantity.offer = product_offer.id',
+                );
+
+            $dbal
+                ->leftJoin(
+                    'product_variation',
+                    ProductVariationQuantity::class,
+                    'product_variation_quantity',
+                    'product_variation_quantity.variation = product_variation.id',
+                );
+
+            $dbal
+                ->leftJoin(
+                    'product_modification',
+                    ProductModificationQuantity::class,
+                    'product_modification_quantity',
+                    'product_modification_quantity.modification = product_modification.id',
+                );
+
+
+            $dbal->addSelect('
+
+                CASE
+                   WHEN SUM(product_modification_quantity.quantity - product_modification_quantity.reserve) > 0
+                   THEN SUM(product_modification_quantity.quantity - product_modification_quantity.reserve)
+    
+                   WHEN SUM(product_variation_quantity.quantity - product_variation_quantity.reserve) > 0
+                   THEN SUM(product_variation_quantity.quantity - product_variation_quantity.reserve)
+
+                   ELSE 0
+                END
+    
+            AS option');
+
+
+            $dbal->having('
+             CASE
+                   WHEN SUM(product_modification_quantity.quantity - product_modification_quantity.reserve) > 0
+                   THEN SUM(product_modification_quantity.quantity - product_modification_quantity.reserve)
+    
+                   WHEN SUM(product_variation_quantity.quantity - product_variation_quantity.reserve) > 0
+                   THEN SUM(product_variation_quantity.quantity - product_variation_quantity.reserve)
+    
+                   ELSE 0
+                END > 0');
+
+        }
 
 
         /** Свойства конструктора объекта гидрации */
@@ -281,19 +386,6 @@ final class ProductVariationChoiceRepository implements ProductVariationChoiceIn
         $dbal->addSelect('product_variation.id AS value');
         $dbal->addSelect("CONCAT(product_variation.value, ' ', product_variation.postfix) AS attr");
 
-        $dbal->addSelect('
-
-            CASE
-               WHEN SUM(product_modification_quantity.quantity - product_modification_quantity.reserve) > 0
-               THEN SUM(product_modification_quantity.quantity - product_modification_quantity.reserve)
-
-               WHEN SUM(product_variation_quantity.quantity - product_variation_quantity.reserve) > 0
-               THEN SUM(product_variation_quantity.quantity - product_variation_quantity.reserve)
-
-               ELSE 0
-            END
-
-        AS option');
 
         /**
          * Фото торговых предложений
@@ -302,7 +394,7 @@ final class ProductVariationChoiceRepository implements ProductVariationChoiceIn
             'product_variation',
             ProductVariationImage::class,
             'product_variation_images',
-            'product_variation_images.variation = product_variation.id AND product_variation_images.root = true'
+            'product_variation_images.variation = product_variation.id AND product_variation_images.root = true',
         );
 
         /**
@@ -312,7 +404,7 @@ final class ProductVariationChoiceRepository implements ProductVariationChoiceIn
             'product_variation',
             ProductVariationPrice::class,
             'product_variation_price',
-            'product_variation_price.variation = product_variation.id'
+            'product_variation_price.variation = product_variation.id',
         );
 
         $dbal->addSelect('category_variation_trans.name AS property');
@@ -332,9 +424,9 @@ final class ProductVariationChoiceRepository implements ProductVariationChoiceIn
                     'product_variation_value', product_variation.value,
                     'product_variation_postfix', product_variation.postfix
                 )
-            ) AS params"
+            ) AS params",
         );
-        
+
         $dbal->allGroupByExclude();
 
         return $dbal->fetchAllHydrate(ProductVariationUid::class);
