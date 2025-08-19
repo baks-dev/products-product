@@ -416,6 +416,23 @@ final readonly class ProductDetailByValueResult implements ProductPriceResultInt
         return max($quantity, 0);
     }
 
+
+    public function isProductExistRegion()
+    {
+        if(empty($this->product_quantity_stocks))
+        {
+            return false;
+        }
+
+        if(false === json_validate($this->product_quantity_stocks))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+
     public function getProductQuantity(): ?int
     {
         if(empty($this->product_quantity))
