@@ -37,6 +37,8 @@ use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
 use BaksDev\Reference\Money\Type\Money;
+use DateInterval;
+use DateTimeImmutable;
 use Symfony\Component\DependencyInjection\Attribute\Exclude;
 
 /** @see ProductDetailByValueRepository */
@@ -110,6 +112,7 @@ final readonly class ProductDetailByValueResult implements ProductPriceResultInt
         private string|null $profile_discount = null,
         private string|null $project_discount = null,
         private string|null $product_quantity_stocks = null,
+        private string|null $product_region_delivery = null,
     ) {}
 
     public function getProductId(): ProductUid
@@ -439,8 +442,6 @@ final readonly class ProductDetailByValueResult implements ProductPriceResultInt
     }
 
 
-
-
     public function getCategoryId(): ?CategoryProductUid
     {
         if(is_null($this->category_id))
@@ -566,5 +567,46 @@ final readonly class ProductDetailByValueResult implements ProductPriceResultInt
         }
 
         return $discountPercent;
+    }
+
+    public function getProductRegionDelivery(): DateTimeImmutable
+    {
+        /** По умолчанию доставка завтра */
+        $tomorrow = new DateTimeImmutable('+ 1 day');
+
+        if(is_null($this->product_region_delivery))
+        {
+            return $tomorrow;
+        }
+
+        if(false === json_validate($this->product_region_delivery))
+        {
+            return $tomorrow;
+        }
+
+        $delivery = json_decode($this->product_region_delivery, false, 512, JSON_THROW_ON_ERROR);
+
+        if(null === current($delivery))
+        {
+            return $tomorrow;
+        }
+
+        // Сортировка массива элементов с изображениями по root = true
+
+        usort($delivery, function($a, $b) {
+            return $a->day <=> $b->day;
+        });
+
+        $delivery = current($delivery);
+
+        $delivery = new DateTimeImmutable($delivery->value)
+            ->add(DateInterval::createFromDateString(sprintf('%s days', $delivery->day)));
+
+        if($tomorrow > $delivery)
+        {
+            return $tomorrow;
+        }
+
+        return $delivery;
     }
 }

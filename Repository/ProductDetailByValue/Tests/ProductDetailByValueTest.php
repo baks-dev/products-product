@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 declare(strict_types=1);
@@ -27,7 +26,10 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Repository\ProductDetailByValue\Tests;
 
 use BaksDev\Products\Product\Repository\ProductDetailByValue\ProductDetailByValueInterface;
+use BaksDev\Products\Product\Repository\ProductDetailByValue\ProductDetailByValueResult;
 use BaksDev\Products\Product\Type\Id\ProductUid;
+use ReflectionClass;
+use ReflectionMethod;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
@@ -43,15 +45,28 @@ class ProductDetailByValueTest extends KernelTestCase
         /** @var ProductDetailByValueInterface $repository */
         $repository = self::getContainer()->get(ProductDetailByValueInterface::class);
 
-        $result = $repository
+        $ProductDetailByValueResult = $repository
             ->byProduct('01876b34-ed23-7c18-ba48-9071e8646a08')
             ->byOfferValue('01876b34-eccb-7188-887f-0738cae05232')
             ->byVariationValue('01876b34-ecce-7c46-9f63-fc184b6527ee')
             ->byModificationValue('01876b34-ecd2-762c-9834-b6a914a020ba')
             ->find();
 
-        //                dump($result);
-        //                dd();
+
+        // Вызываем все геттеры
+        $reflectionClass = new ReflectionClass(ProductDetailByValueResult::class);
+        $methods = $reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC);
+
+        foreach($methods as $method)
+        {
+            // Методы без аргументов
+            if($method->getNumberOfParameters() === 0)
+            {
+                // Вызываем метод
+                $data = $method->invoke($ProductDetailByValueResult);
+                // dump($data);
+            }
+        }
 
         self::assertTrue(true);
     }
@@ -70,7 +85,7 @@ class ProductDetailByValueTest extends KernelTestCase
                 product: new ProductUid('01876b34-ed23-7c18-ba48-9071e8646a08'),
                 offer: '01876b34-eccb-7188-887f-0738cae05232',
                 variation: '01876b34-ecce-7c46-9f63-fc184b6527ee',
-                modification: '01876b34-ecd2-762c-9834-b6a914a020ba'
+                modification: '01876b34-ecd2-762c-9834-b6a914a020ba',
             );
 
         //        dump($result);

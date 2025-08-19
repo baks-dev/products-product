@@ -68,6 +68,7 @@ use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Stocks\BaksDevProductsStocksBundle;
 use BaksDev\Products\Stocks\Entity\Total\ProductStockTotal;
 use BaksDev\Reference\Region\Type\Id\RegionUid;
+use BaksDev\Users\Profile\UserProfile\Entity\Event\Delivery\UserProfileDelivery;
 use BaksDev\Users\Profile\UserProfile\Entity\Event\Discount\UserProfileDiscount;
 use BaksDev\Users\Profile\UserProfile\Entity\Event\Region\UserProfileRegion;
 use BaksDev\Users\Profile\UserProfile\Entity\UserProfile;
@@ -452,40 +453,44 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
 		');
 
         /** Фото продукта */
-        $dbal->leftJoin(
-            'product',
-            ProductPhoto::class,
-            'product_photo',
-            'product_photo.event = product.event',
-        )
+        $dbal
+            ->leftJoin(
+                'product',
+                ProductPhoto::class,
+                'product_photo',
+                'product_photo.event = product.event',
+            )
             ->addGroupBy('product_photo.ext');
 
 
         /** Фото торговых предложений */
-        $dbal->leftJoin(
-            'product_offer',
-            ProductOfferImage::class,
-            'product_offer_images',
-            'product_offer_images.offer = product_offer.id',
-        )
+        $dbal
+            ->leftJoin(
+                'product_offer',
+                ProductOfferImage::class,
+                'product_offer_images',
+                'product_offer_images.offer = product_offer.id',
+            )
             ->addGroupBy('product_offer_images.ext');
 
         /** Фото вариантов */
-        $dbal->leftJoin(
-            'product_offer',
-            ProductVariationImage::class,
-            'product_variation_image',
-            'product_variation_image.variation = product_variation.id',
-        )
+        $dbal
+            ->leftJoin(
+                'product_offer',
+                ProductVariationImage::class,
+                'product_variation_image',
+                'product_variation_image.variation = product_variation.id',
+            )
             ->addGroupBy('product_variation_image.ext');
 
         /** Фото модификаций */
-        $dbal->leftJoin(
-            'product_modification',
-            ProductModificationImage::class,
-            'product_modification_image',
-            'product_modification_image.modification = product_modification.id',
-        )
+        $dbal
+            ->leftJoin(
+                'product_modification',
+                ProductModificationImage::class,
+                'product_modification_image',
+                'product_modification_image.modification = product_modification.id',
+            )
             ->addGroupBy('product_modification_image.ext');
 
         /** Агрегация фотографий */
@@ -586,8 +591,10 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
 			   
 			   ELSE NULL
 			END AS product_currency
-		',
-        );
+		');
+
+
+        /** Получаем информацию о магазине */
 
 
         /**
@@ -619,6 +626,24 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                     'product_region_total',
                     'product_region_total.event = product_profile_region.event',
                 );
+
+
+            $dbal
+                ->addSelect("JSON_AGG ( 
+                        DISTINCT JSONB_BUILD_OBJECT (
+                            'value', product_region_delivery.value, 
+                            'day', product_region_delivery.day 
+                        )) FILTER (WHERE product_region_delivery.day IS NOT NULL)
+            
+                        AS product_region_delivery",
+                )
+                ->leftJoin(
+                    'product_profile_region',
+                    UserProfileDelivery::class,
+                    'product_region_delivery',
+                    'product_region_delivery.event = product_profile_region.event',
+                );
+
 
             $dbal
                 ->addSelect("JSON_AGG ( 
@@ -660,10 +685,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                             THEN stock.modification = product_modification.const
                             ELSE stock.modification IS NULL
                         END
-                    
-                    
-                ',
-                );
+                ');
 
         }
 
@@ -718,7 +740,6 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             
                         AS product_quantity",
             );
-
 
 
         /** Категория */
@@ -778,28 +799,28 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             'category_section_field',
             CategoryProductSectionFieldTrans::class,
             'category_section_field_trans',
-            'category_section_field_trans.field = category_section_field.id AND category_section_field_trans.local = :local',
+            'category_section_field_trans.field = category_section_field.id 
+            AND category_section_field_trans.local = :local',
         );
 
         /** Обложка категории */
-        $dbal->addSelect('category_cover.ext AS category_cover_ext');
-        $dbal->addSelect('category_cover.cdn AS category_cover_cdn');
-        $dbal->leftJoin(
-            'category',
-            CategoryProductCover::class,
-            'category_cover',
-            'category_cover.event = category.event',
-        );
+        $dbal
+            ->addSelect("
+                CASE
+                   WHEN category_cover.name IS NOT NULL THEN
+                        CONCAT ( '/upload/".$dbal->table(CategoryProductCover::class)."' , '/', category_cover.name)
+                   ELSE NULL
+                END AS category_cover_path
+		    ")
+            ->addSelect('category_cover.ext AS category_cover_ext')
+            ->addSelect('category_cover.cdn AS category_cover_cdn')
+            ->leftJoin(
+                'category',
+                CategoryProductCover::class,
+                'category_cover',
+                'category_cover.event = category.event',
+            );
 
-        $dbal->addSelect(
-            "
-			CASE
-			   WHEN category_cover.name IS NOT NULL THEN
-					CONCAT ( '/upload/".$dbal->table(CategoryProductCover::class)."' , '/', category_cover.name)
-			   ELSE NULL
-			END AS category_cover_path
-		",
-        );
 
         $dbal->leftJoin(
             'category_section_field',
@@ -810,25 +831,25 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
 
         $dbal->addSelect(
             "JSON_AGG
-		( DISTINCT
-			
-				JSONB_BUILD_OBJECT
-				(
-				
-					'0', category_section_field.sort, /* сортирвока */
-				
-					'field_uid', category_section_field.id,
-					'field_const', category_section_field.const,
-					'field_name', category_section_field.name,
-					'field_alternative', category_section_field.alternative,
-					'field_public', category_section_field.public,
-					'field_card', category_section_field.card,
-					'field_type', category_section_field.type,
-					'field_trans', category_section_field_trans.name,
-					'field_value', product_property.value
-				)
-			
-		)
+            ( DISTINCT
+                
+                    JSONB_BUILD_OBJECT
+                    (
+                    
+                        '0', category_section_field.sort, /* сортирвока */
+                    
+                        'field_uid', category_section_field.id,
+                        'field_const', category_section_field.const,
+                        'field_name', category_section_field.name,
+                        'field_alternative', category_section_field.alternative,
+                        'field_public', category_section_field.public,
+                        'field_card', category_section_field.card,
+                        'field_type', category_section_field.type,
+                        'field_trans', category_section_field_trans.name,
+                        'field_value', product_property.value
+                    )
+                
+            )
 			AS category_section_field",
         );
 
