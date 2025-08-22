@@ -128,9 +128,7 @@ final class OfferController extends AbstractController
             'other' => $otherProducts,
             'fields' => $fields,
             'all_search' => $allSearchForm->createView(),
-        ],
-        //routingName: 'public.catalog.category'
-        );
+        ]);
 
     }
 
