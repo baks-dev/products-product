@@ -107,6 +107,9 @@ return static function(ContainerConfigurator $container, DoctrineConfig $doctrin
     $services->set(ProductModificationUid::class)->class(ProductModificationUid::class);
     $services->set(ProductModificationConst::class)->class(ProductModificationConst::class);
 
+    $services->set(ProductInvariableUid::class)->class(ProductInvariableUid::class);
+
+
     $services->set(MaterialUid::class)->class(MaterialUid::class);
 
     $emDefault = $doctrine->orm()->entityManager('default')->autoMapping(true);
