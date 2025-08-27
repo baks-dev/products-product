@@ -74,6 +74,8 @@ final readonly class ModelOrProductByCategoryResult implements ModelsOrProductsC
 
         private string|null $category_section_field,
 
+        private string|int|null $promotion_price = null,
+
         private string|null $profile_discount = null,
         private string|null $project_discount = null,
 
@@ -232,6 +234,14 @@ final readonly class ModelOrProductByCategoryResult implements ModelsOrProductsC
 
         $price = new Money($this->product_price, true);
 
+        /** Кастомная цена */
+        $promotionPrice = $this->minPromotionPrice();
+
+        if($promotionPrice instanceof Money)
+        {
+            $price = $promotionPrice;
+        }
+
         /** Скидка магазина */
         if(false === empty($this->project_discount))
         {
@@ -255,6 +265,14 @@ final readonly class ModelOrProductByCategoryResult implements ModelsOrProductsC
         }
 
         $price = new Money($this->product_old_price, true);
+
+        /** Кастомная цена */
+        $promotionPrice = $this->minPromotionPrice();
+
+        if($promotionPrice instanceof Money)
+        {
+            $price = $promotionPrice;
+        }
 
         /** Скидка магазина */
         if(false === empty($this->project_discount))
@@ -317,5 +335,52 @@ final readonly class ModelOrProductByCategoryResult implements ModelsOrProductsC
     public function getProductModificationPostfix(): ?string
     {
         return $this->product_modification_postfix;
+    }
+
+    /** Helpers */
+
+    /**
+     * Метод возвращает минимальную стоимость с учетом применения кастомной скидки (надбавки)
+     */
+    private function minPromotionPrice(): ?Money
+    {
+        if(true === empty($this->promotion_price))
+        {
+            return null;
+        }
+
+        if(false === json_validate($this->promotion_price))
+        {
+            return null;
+        }
+
+        $promotionPrice = json_decode($this->promotion_price, true, 512, JSON_THROW_ON_ERROR);
+
+        if(is_null($promotionPrice))
+        {
+            return null;
+        }
+
+        $promotionPrice = array_filter($promotionPrice, fn($value) => null !== $value);
+
+        if(true === empty($promotionPrice))
+        {
+            return null;
+        }
+
+        /** Создаем массив с ценами и применяем кастомную скидку (надбавку) */
+        $promotionPriceMoney = array_map(function(array $element) {
+            $money = new Money($element['price'], true);
+            $money->applyString($element['promo']);
+
+            return $money;
+        }, $promotionPrice);
+
+        // сортировка по возрастанию цены - от меньшей к большей
+        usort($promotionPriceMoney, static function(Money $a, Money $b) {
+            return $a->getValue() <=> $b->getValue();
+        });
+
+        return current($promotionPriceMoney);
     }
 }

@@ -19,6 +19,7 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 declare(strict_types=1);
@@ -51,14 +52,21 @@ use BaksDev\Products\Product\Entity\Offers\Variation\Quantity\ProductVariationQu
 use BaksDev\Products\Product\Entity\Photo\ProductPhoto;
 use BaksDev\Products\Product\Entity\Price\ProductPrice;
 use BaksDev\Products\Product\Entity\Product;
+use BaksDev\Products\Product\Entity\ProductInvariable;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
+use BaksDev\Products\Promotion\Entity\Event\Invariable\ProductPromotionInvariable;
+use BaksDev\Products\Promotion\Entity\Event\Period\ProductPromotionPeriod;
+use BaksDev\Products\Promotion\Entity\Event\Price\ProductPromotionPrice;
+use BaksDev\Products\Promotion\Entity\Event\ProductPromotionEvent;
+use BaksDev\Products\Promotion\Entity\ProductPromotion;
 use BaksDev\Users\Profile\UserProfile\Entity\Event\Discount\UserProfileDiscount;
 use BaksDev\Users\Profile\UserProfile\Entity\UserProfile;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Doctrine\DBAL\ArrayParameterType;
 use Generator;
 use InvalidArgumentException;
 
-/** @see ModelByCategoryResult */
+/** @see ModelsByCategoryResult */
 final class ModelsByCategoryRepository implements ModelsByCategoryInterface
 {
     private array|false $categories = false;
@@ -97,7 +105,7 @@ final class ModelsByCategoryRepository implements ModelsByCategoryInterface
         return $this;
     }
 
-    /** @return Generator<int, ModelByCategoryResult>|false */
+    /** @return Generator<int, ModelsByCategoryResult>|false */
     public function findAll(): Generator|false
     {
         $dbal = $this->builder();
@@ -106,7 +114,7 @@ final class ModelsByCategoryRepository implements ModelsByCategoryInterface
 
         $dbal->enableCache('products-product');
 
-        $result = $dbal->fetchAllHydrate(ModelByCategoryResult::class);
+        $result = $dbal->fetchAllHydrate(ModelsByCategoryResult::class);
 
         return (true === $result->valid()) ? $result : false;
     }
@@ -450,32 +458,32 @@ final class ModelsByCategoryRepository implements ModelsByCategoryInterface
             );
 
         /** Product Invariable */
-        //        $dbal
-        //            ->leftJoin(
-        //                'product_variation',
-        //                ProductInvariable::class,
-        //                'product_invariable',
-        //                '
-        //                            product_invariable.product = product.id
-        //                            AND
-        //                                CASE
-        //                                    WHEN product_offer.const IS NOT NULL THEN product_invariable.offer = product_offer.const
-        //                                    ELSE product_invariable.offer IS NULL
-        //                                END
-        //                            AND
-        //                                CASE
-        //                                    WHEN product_variation.const IS NOT NULL THEN product_invariable.variation = product_variation.const
-        //                                    ELSE product_invariable.variation IS NULL
-        //                                END
-        //                            AND
-        //                                CASE
-        //                                    WHEN product_modification.const IS NOT NULL THEN product_invariable.modification = product_modification.const
-        //                                    ELSE product_invariable.modification IS NULL
-        //                                END
-        //                        ');
+        $dbal
+            ->leftJoin(
+                'product_variation',
+                ProductInvariable::class,
+                'product_invariable',
+                '
+                                    product_invariable.product = product.id
+                                    AND
+                                        CASE
+                                            WHEN product_offer.const IS NOT NULL THEN product_invariable.offer = product_offer.const
+                                            ELSE product_invariable.offer IS NULL
+                                        END
+                                    AND
+                                        CASE
+                                            WHEN product_variation.const IS NOT NULL THEN product_invariable.variation = product_variation.const
+                                            ELSE product_invariable.variation IS NULL
+                                        END
+                                    AND
+                                        CASE
+                                            WHEN product_modification.const IS NOT NULL THEN product_invariable.modification = product_modification.const
+                                            ELSE product_invariable.modification IS NULL
+                                        END
+                                ');
 
         /** Агрегация Invariable */
-        //$dbal->addSelect('JSON_AGG( DISTINCT product_invariable.id) AS invariable');
+        $dbal->addSelect('JSON_AGG( DISTINCT product_invariable.id) AS invariable');
 
 
         // Фото продукта
@@ -689,6 +697,83 @@ final class ModelsByCategoryRepository implements ModelsByCategoryInterface
         //        			AS category_section_field",
         //        );
 
+        /**
+         * ProductsPromotion
+         */
+
+        if(true === $dbal->isProjectProfile())
+        {
+            $dbal
+                ->leftJoin(
+                    'product_invariable',
+                    ProductPromotionInvariable::class,
+                    'product_promotion_invariable',
+                    '
+                        product_promotion_invariable.product = product_invariable.id
+                        AND
+                        product_promotion_invariable.profile = :'.$dbal::PROJECT_PROFILE_KEY,
+                );
+
+            $dbal
+                ->leftJoin(
+                    'product_promotion_invariable',
+                    ProductPromotion::class,
+                    'product_promotion',
+                    'product_promotion.id = product_promotion_invariable.main',
+                );
+
+            $dbal
+                ->leftJoin(
+                    'product_promotion',
+                    ProductPromotionEvent::class,
+                    'product_promotion_event',
+                    '
+                        product_promotion_event.main = product_promotion.id',
+                );
+
+            $dbal
+                ->leftJoin(
+                    'product_promotion_event',
+                    ProductPromotionPrice::class,
+                    'product_promotion_price',
+                    'product_promotion_price.event = product_promotion.event',
+                );
+
+            $dbal
+                ->leftJoin(
+                    'product_promotion_event',
+                    ProductPromotionPeriod::class,
+                    'product_promotion_period',
+                    '
+                        product_promotion_period.event = product_promotion.event',
+                );
+
+            $dbal->addSelect(
+                "
+                    JSON_AGG
+                    ( DISTINCT
+                        CASE
+                            WHEN
+                                CURRENT_DATE >= product_promotion_period.date_start
+                                AND
+                                    (
+                                        product_promotion_period.date_end IS NULL OR CURRENT_DATE <= product_promotion_period.date_end
+                                    )
+                            THEN
+                            JSONB_BUILD_OBJECT
+                                ( 
+                                    'promo', product_promotion_price.value,
+                                    'price', COALESCE(
+                                                    product_modification_price.price, 
+                                                    product_variation_price.price, 
+                                                    product_offer_price.price, 
+                                                    product_price.price)
+                                )
+                        END 
+                    )
+                    AS promotion_price"
+            );
+        }
 
         /** Минимальная стоимость или 0 */
         $dbal->addSelect('

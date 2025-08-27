@@ -233,17 +233,12 @@ final readonly class ProductModelResult
     /** Минимальная цена из торговых предложений */
     public function getMinPrice(): ?Money
     {
-        if(is_null($this->product_offers))
+        $offers = $this->getProductOffersResult();
+
+        if(is_null($offers))
         {
             return null;
         }
-
-        if(false === json_validate((string) $this->product_offers))
-        {
-            return null;
-        }
-
-        $offers = json_decode($this->product_offers, null, 512, JSON_THROW_ON_ERROR);
 
         if(empty(current($offers)))
         {
@@ -251,8 +246,9 @@ final readonly class ProductModelResult
         }
 
         // продукты только в наличии
-        $offers = array_filter($offers, static function(object $offer) {
-            return $offer->quantity !== null and $offer->quantity > 0;
+        $offers = array_filter($offers, static function(ProductModelOfferResult $offer) {
+
+            return $offer->getProductQuantity() !== null and $offer->getProductQuantity() > 0;
         });
 
         if(empty($offers))
@@ -261,27 +257,25 @@ final readonly class ProductModelResult
         }
 
         // сортировка по возрастанию цены
-        usort($offers, static function($a, $b) {
-            return $a->price <=> $b->price;
+        usort($offers, static function(ProductModelOfferResult $a, ProductModelOfferResult $b) {
+            return $a->getProductPrice() <=> $b->getProductPrice();
         });
 
-        $minPrice = current($offers)->price;
-
-        $price = new Money($minPrice, true);
+        $minPrice = current($offers)->getProductPrice();
 
         /** Скидка магазина */
         if(false === empty($this->project_discount))
         {
-            $price->applyString($this->project_discount);
+            $minPrice->applyString($this->project_discount);
         }
 
         /** Скидка пользователя */
         if(false === empty($this->profile_discount))
         {
-            $price->applyString($this->profile_discount);
+            $minPrice->applyString($this->profile_discount);
         }
 
-        return $price;
+        return $minPrice;
     }
 
     /** Валюта из торговых предложений */
@@ -456,5 +450,4 @@ final readonly class ProductModelResult
 
         return $outOfStock;
     }
-
 }

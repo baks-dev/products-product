@@ -29,12 +29,15 @@ namespace BaksDev\Products\Product\Repository\BestSellerProducts\Tests;
 use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Repository\BestSellerProducts\BestSellerProductsInterface;
 use BaksDev\Products\Product\Type\Invariable\ProductInvariableUid;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 /**
  * @group products-product
+ * @group products-product-repo
  */
+#[Group('products-product')]
 #[When(env: 'test')]
 class BestSellerProductsRepositoryTest extends KernelTestCase
 {

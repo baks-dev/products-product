@@ -67,6 +67,9 @@ final readonly class ProductModelOfferResult implements ProductPriceResultInterf
         private string $currency,
         private ?int $quantity,
 
+        private string|int|null $promotion_price = null,
+        private ?bool $promotion_active = null,
+
         private string|null $profile_discount = null,
         private string|null $project_discount = null,
 
@@ -186,6 +189,12 @@ final readonly class ProductModelOfferResult implements ProductPriceResultInterf
 
         $price = new Money($this->price, true);
 
+        /** Кастомная цена */
+        if(false === empty($this->promotion_price) && true === $this->promotion_active)
+        {
+            $price->applyString($this->promotion_price);
+        }
+
         /** Скидка магазина */
         if(false === empty($this->project_discount))
         {
@@ -209,6 +218,12 @@ final readonly class ProductModelOfferResult implements ProductPriceResultInterf
         }
 
         $price = new Money($this->old_price, true);
+
+        /** Кастомная цена */
+        if(false === empty($this->promotion_price) && true === $this->promotion_active)
+        {
+            $price->applyString($this->promotion_price);
+        }
 
         /** Скидка магазина */
         if(false === empty($this->project_discount))

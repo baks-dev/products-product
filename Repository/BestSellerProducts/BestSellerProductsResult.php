@@ -69,6 +69,9 @@ final readonly class BestSellerProductsResult implements ProductPriceResultInter
         private string $product_images,
         private string|null $product_invariable_id,
 
+        private ?bool $promotion_active = null,
+        private string|int|null $promotion_price = null,
+
         private string|null $profile_discount = null,
         private string|null $project_discount = null,
 
@@ -188,6 +191,12 @@ final readonly class BestSellerProductsResult implements ProductPriceResultInter
 
         $price = new Money($this->product_price, true);
 
+        /** Кастомная цена */
+        if(false === empty($this->promotion_price) && true === $this->promotion_active)
+        {
+            $price->applyString($this->promotion_price);
+        }
+
         /** Скидка магазина */
         if(false === empty($this->project_discount))
         {
@@ -211,6 +220,12 @@ final readonly class BestSellerProductsResult implements ProductPriceResultInter
         }
 
         $price = new Money($this->product_old_price, true);
+
+        /** Кастомная цена */
+        if(false === empty($this->promotion_price) && true === $this->promotion_active)
+        {
+            $price->applyString($this->promotion_price);
+        }
 
         /** Скидка магазина */
         if(false === empty($this->project_discount))

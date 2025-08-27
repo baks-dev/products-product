@@ -19,6 +19,7 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 declare(strict_types=1);
@@ -57,9 +58,16 @@ use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Entity\ProductInvariable;
 use BaksDev\Products\Product\Entity\Property\ProductProperty;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
+use BaksDev\Products\Promotion\Entity\Event\Invariable\ProductPromotionInvariable;
+use BaksDev\Products\Promotion\Entity\Event\Period\ProductPromotionPeriod;
+use BaksDev\Products\Promotion\Entity\Event\Price\ProductPromotionPrice;
+use BaksDev\Products\Promotion\Entity\Event\ProductPromotionEvent;
+use BaksDev\Products\Promotion\Entity\ProductPromotion;
 use BaksDev\Users\Profile\UserProfile\Entity\Event\Discount\UserProfileDiscount;
 use BaksDev\Users\Profile\UserProfile\Entity\UserProfile;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Generator;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /** @see ModelOrProductResult */
 final class ModelOrProductRepository implements ModelOrProductInterface
@@ -69,7 +77,7 @@ final class ModelOrProductRepository implements ModelOrProductInterface
     private int|false $maxResult = false;
 
     public function __construct(
-        private readonly DBALQueryBuilder $DBALQueryBuilder
+        private readonly DBALQueryBuilder $DBALQueryBuilder,
     ) {}
 
     /** Максимальное количество записей в результате */
@@ -634,6 +642,84 @@ final class ModelOrProductRepository implements ModelOrProductInterface
             );
         }
 
+        /**
+         * ProductsPromotion
+         */
+
+        if(true === $dbal->isProjectProfile())
+        {
+            $dbal
+                ->leftJoin(
+                    'product_invariable',
+                    ProductPromotionInvariable::class,
+                    'product_promotion_invariable',
+                    '
+                        product_promotion_invariable.product = product_invariable.id
+                        AND
+                        product_promotion_invariable.profile = :'.$dbal::PROJECT_PROFILE_KEY,
+                );
+
+            $dbal
+                ->leftJoin(
+                    'product_promotion_invariable',
+                    ProductPromotion::class,
+                    'product_promotion',
+                    'product_promotion.id = product_promotion_invariable.main',
+                );
+
+            $dbal
+                ->leftJoin(
+                    'product_promotion',
+                    ProductPromotionEvent::class,
+                    'product_promotion_event',
+                    '
+                        product_promotion_event.main = product_promotion.id',
+                );
+
+            $dbal
+                ->leftJoin(
+                    'product_promotion_event',
+                    ProductPromotionPrice::class,
+                    'product_promotion_price',
+                    'product_promotion_price.event = product_promotion.event',
+                );
+
+            $dbal
+                ->leftJoin(
+                    'product_promotion_event',
+                    ProductPromotionPeriod::class,
+                    'product_promotion_period',
+                    '
+                        product_promotion_period.event = product_promotion.event',
+                );
+
+            $dbal->addSelect(
+                "
+                    JSON_AGG
+                    ( DISTINCT
+                        CASE
+                            WHEN
+                                CURRENT_DATE >= product_promotion_period.date_start
+                                AND
+                                    (
+                                        product_promotion_period.date_end IS NULL OR CURRENT_DATE <= product_promotion_period.date_end
+                                    )
+                            THEN
+                            JSONB_BUILD_OBJECT
+                                ( 
+                                    'promo', product_promotion_price.value,
+                                    'price', COALESCE(
+                                                    product_modification_price.price, 
+                                                    product_variation_price.price, 
+                                                    product_offer_price.price, 
+                                                    product_price.price)
+                                )
+                        END 
+                    )
+                    AS promotion_price"
+            );
+        }
+
         /** Минимальная стоимость */
         $dbal->addSelect('
             COALESCE(
@@ -643,6 +729,7 @@ final class ModelOrProductRepository implements ModelOrProductInterface
                 MIN(product_price.price)
             ) AS product_price
 		');
+
 
         /** Старая цена */
         $dbal->addSelect('
@@ -779,9 +866,6 @@ final class ModelOrProductRepository implements ModelOrProductInterface
         {
             $dbal->setMaxResults($this->maxResult);
         }
-
-
-        //        dd($dbal->fetchAllAssociative());
 
         return $dbal;
     }

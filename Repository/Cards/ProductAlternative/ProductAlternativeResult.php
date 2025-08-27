@@ -65,9 +65,11 @@ final readonly class ProductAlternativeResult implements ProductCardResultInterf
         private string $product_url,
         private string|null $article,
         private string $product_images,
+
         private int|null $product_price,
         private int|null $product_old_price,
         private string|null $product_currency,
+
         private int|null $quantity,
         private string $category_name,
         private string $category_url,
@@ -75,9 +77,11 @@ final readonly class ProductAlternativeResult implements ProductCardResultInterf
         private int|null $category_threshold,
         private string|null $product_invariable_id,
 
+        private ?bool $promotion_active = null,
+        private string|int|null $promotion_price = null,
+
         private string|null $profile_discount = null,
         private string|null $project_discount = null,
-
     ) {}
 
     public function getProductId(): ProductUid
@@ -231,6 +235,12 @@ final readonly class ProductAlternativeResult implements ProductCardResultInterf
 
         $price = new Money($this->product_price, true);
 
+        /** Кастомная цена */
+        if(false === empty($this->promotion_price) && true === $this->promotion_active)
+        {
+            $price->applyString($this->promotion_price);
+        }
+
         /** Скидка магазина */
         if(false === empty($this->project_discount))
         {
@@ -254,6 +264,12 @@ final readonly class ProductAlternativeResult implements ProductCardResultInterf
         }
 
         $price = new Money($this->product_old_price, true);
+
+        /** Кастомная цена */
+        if(false === empty($this->promotion_price) && true === $this->promotion_active)
+        {
+            $price->applyString($this->promotion_price);
+        }
 
         /** Скидка магазина */
         if(false === empty($this->project_discount))

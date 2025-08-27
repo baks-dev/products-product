@@ -19,6 +19,7 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 declare(strict_types=1);
@@ -108,6 +109,9 @@ final readonly class ProductDetailByValueResult implements ProductPriceResultInt
         private string|null $category_section_field,
 
         private string|null $product_invariable_id,
+
+        private ?bool $promotion_active = null,
+        private string|int|null $promotion_price = null,
 
         private string|null $profile_discount = null,
         private string|null $project_discount = null,
@@ -345,7 +349,14 @@ final readonly class ProductDetailByValueResult implements ProductPriceResultInt
             return false;
         }
 
+        /** Оригинальная цена */
         $price = new Money($this->product_price, true);
+
+        /** Кастомная цена */
+        if(false === empty($this->promotion_price) && true === $this->promotion_active)
+        {
+            $price->applyString($this->promotion_price);
+        }
 
         /** Скидка магазина */
         if(false === empty($this->project_discount))
@@ -370,6 +381,12 @@ final readonly class ProductDetailByValueResult implements ProductPriceResultInt
         }
 
         $price = new Money($this->product_old_price, true);
+
+        /** Кастомная цена */
+        if(false === empty($this->promotion_price) && true === $this->promotion_active)
+        {
+            $price->applyString($this->promotion_price);
+        }
 
         /** Скидка магазина */
         if(false === empty($this->project_discount))

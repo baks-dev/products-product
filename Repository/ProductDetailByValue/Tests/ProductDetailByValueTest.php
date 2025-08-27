@@ -19,6 +19,7 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 declare(strict_types=1);
@@ -28,6 +29,7 @@ namespace BaksDev\Products\Product\Repository\ProductDetailByValue\Tests;
 use BaksDev\Products\Product\Repository\ProductDetailByValue\ProductDetailByValueInterface;
 use BaksDev\Products\Product\Repository\ProductDetailByValue\ProductDetailByValueResult;
 use BaksDev\Products\Product\Type\Id\ProductUid;
+use PHPUnit\Framework\Attributes\Group;
 use ReflectionClass;
 use ReflectionMethod;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -36,6 +38,7 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 /**
  * @group products-product
  */
+#[Group('products-product')]
 #[When(env: 'test')]
 class ProductDetailByValueTest extends KernelTestCase
 {

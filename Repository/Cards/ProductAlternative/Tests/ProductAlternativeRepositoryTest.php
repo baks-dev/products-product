@@ -27,6 +27,7 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Repository\Cards\ProductAlternative\Tests;
 
 use BaksDev\Products\Product\Repository\Cards\ProductAlternative\ProductAlternativeInterface;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
@@ -34,6 +35,7 @@ use Symfony\Component\DependencyInjection\Attribute\When;
  * @group products-product
  * @group products-product-repo
  */
+#[Group('products-product')]
 #[When(env: 'test')]
 class ProductAlternativeRepositoryTest extends KernelTestCase
 {
@@ -43,7 +45,7 @@ class ProductAlternativeRepositoryTest extends KernelTestCase
         $ProductAlternative = self::getContainer()->get(ProductAlternativeInterface::class);
 
         $result = $ProductAlternative
-            ->setMaxResult(1)
+            ->setMaxResult(100)
             ->forOfferValue('19')
             //            ->analyze()
             ->toArray();

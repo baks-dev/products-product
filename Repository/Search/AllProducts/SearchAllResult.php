@@ -77,6 +77,7 @@ final readonly class SearchAllResult implements ProductCardResultInterfaceProduc
 
         private int|null $product_price,
         private int|null $product_old_price,
+
         private int|null $product_quantity,
         private int|null $product_reserve,
 
@@ -89,6 +90,9 @@ final readonly class SearchAllResult implements ProductCardResultInterfaceProduc
         private string|null $category_section_field,
 
         private string|null $product_invariable_id,
+
+        private ?bool $promotion_active = null,
+        private string|int|null $promotion_price = null,
 
         private string|null $profile_discount = null,
         private string|null $project_discount = null,
@@ -232,7 +236,8 @@ final readonly class SearchAllResult implements ProductCardResultInterfaceProduc
 
     public function getProductImages(): ?array
     {
-        if (is_null($this->product_root_image) || json_validate($this->product_root_image) === false) {
+        if(is_null($this->product_root_image) || json_validate($this->product_root_image) === false)
+        {
             return null;
         }
         $images = json_decode($this->product_root_image, true, 512, JSON_THROW_ON_ERROR);
@@ -252,7 +257,14 @@ final readonly class SearchAllResult implements ProductCardResultInterfaceProduc
             return false;
         }
 
+        /** Оригинальная цена */
         $price = new Money($this->product_price, true);
+
+        /** Кастомная цена */
+        if(false === empty($this->promotion_price) && true === $this->promotion_active)
+        {
+            $price->applyString($this->promotion_price);
+        }
 
         /** Скидка магазина */
         if(false === empty($this->project_discount))
@@ -277,6 +289,13 @@ final readonly class SearchAllResult implements ProductCardResultInterfaceProduc
         }
 
         $price = new Money($this->product_old_price, true);
+
+        /** Кастомная цена */
+        if(false === empty($this->promotion_price) && true === $this->promotion_active)
+        {
+            $price->applyString($this->promotion_price);
+        }
+
 
         /** Скидка магазина */
         if(false === empty($this->project_discount))
