@@ -19,6 +19,7 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 declare(strict_types=1);
@@ -63,9 +64,17 @@ use BaksDev\Products\Product\Entity\Property\ProductProperty;
 use BaksDev\Products\Product\Entity\Seo\ProductSeo;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Type\Id\ProductUid;
+use BaksDev\Products\Promotion\Entity\Event\Invariable\ProductPromotionInvariable;
+use BaksDev\Products\Promotion\Entity\Event\Period\ProductPromotionPeriod;
+use BaksDev\Products\Promotion\Entity\Event\Price\ProductPromotionPrice;
+use BaksDev\Products\Promotion\Entity\Event\ProductPromotionEvent;
+use BaksDev\Products\Promotion\Entity\ProductPromotion;
 use BaksDev\Users\Profile\UserProfile\Entity\Event\Discount\UserProfileDiscount;
 use BaksDev\Users\Profile\UserProfile\Entity\UserProfile;
+use BaksDev\Users\Profile\UserProfile\Repository\UserProfileTokenStorage\UserProfileTokenStorageInterface;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use InvalidArgumentException;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /** @see ProductModelResult */
 final class ProductModelRepository implements ProductModelInterface
@@ -456,6 +465,74 @@ final class ProductModelRepository implements ProductModelInterface
                 );
         }
 
+        /**
+         * ProductsPromotion
+         */
+
+        $promotionPriceSelect = "'promotion_price', NULL,";
+        $promotionActiveSelect = "'promotion_active', NULL,";
+
+        if(true === $dbal->isProjectProfile())
+        {
+            $promotionPriceSelect = "'promotion_price', product_promotion_price.value,";
+            $promotionActiveSelect = "'promotion_active',  
+                                CASE
+                                    WHEN 
+                                        CURRENT_DATE >= product_promotion_period.date_start
+                                        AND
+                                         (
+                                            product_promotion_period.date_end IS NULL OR CURRENT_DATE <= product_promotion_period.date_end
+                                         )
+                                    THEN true
+                                    ELSE false
+                                END,";
+
+            $dbal
+                ->leftJoin(
+                    'product_invariable',
+                    ProductPromotionInvariable::class,
+                    'product_promotion_invariable',
+                    '
+                        product_promotion_invariable.product = product_invariable.id
+                        AND
+                        product_promotion_invariable.profile = :'.$dbal::PROJECT_PROFILE_KEY,
+                );
+
+            $dbal
+                ->leftJoin(
+                    'product_promotion_invariable',
+                    ProductPromotion::class,
+                    'product_promotion',
+                    'product_promotion.id = product_promotion_invariable.main',
+                );
+
+            $dbal
+                ->leftJoin(
+                    'product_promotion',
+                    ProductPromotionEvent::class,
+                    'product_promotion_event',
+                    '
+                        product_promotion_event.main = product_promotion.id',
+                );
+
+            $dbal
+                ->leftJoin(
+                    'product_promotion_event',
+                    ProductPromotionPrice::class,
+                    'product_promotion_price',
+                    'product_promotion_price.event = product_promotion.event',
+                );
+
+            $dbal
+                ->leftJoin(
+                    'product_promotion_event',
+                    ProductPromotionPeriod::class,
+                    'product_promotion_period',
+                    '
+                        product_promotion_period.event = product_promotion.event',
+                );
+        }
+
         /** Продукты внутри категории */
         $dbal->addSelect(
             "JSON_AGG
@@ -504,6 +581,10 @@ final class ProductModelRepository implements ProductModelInterface
         						/* Project Discount */
         						{$projectDiscountSelect}
         						
+        						/* Кастомная цена */
+        						{$promotionPriceSelect}
+        						{$promotionActiveSelect}
+                        
         						'price', CASE
         						   WHEN product_modification_price.price IS NOT NULL AND product_modification_price.price > 0 THEN product_modification_price.price
         						   WHEN product_variation_price.price IS NOT NULL AND product_variation_price.price > 0 THEN product_variation_price.price

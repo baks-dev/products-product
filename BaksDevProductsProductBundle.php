@@ -28,10 +28,10 @@ namespace BaksDev\Products\Product;
 
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 
+/** Индекс сортировки 99 */
 class BaksDevProductsProductBundle extends AbstractBundle
 {
     public const string NAMESPACE = __NAMESPACE__.'\\';
 
     public const string PATH = __DIR__.DIRECTORY_SEPARATOR;
-
 }

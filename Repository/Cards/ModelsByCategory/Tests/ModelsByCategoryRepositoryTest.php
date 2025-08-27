@@ -28,20 +28,23 @@ namespace BaksDev\Products\Product\Repository\Cards\ModelsByCategory\Tests;
 
 use BaksDev\Products\Category\Repository\AllCategory\AllCategoryInterface;
 use BaksDev\Products\Category\Type\Id\CategoryProductUid;
-use BaksDev\Products\Product\Repository\Cards\ModelsByCategory\ModelByCategoryResult;
 use BaksDev\Products\Product\Repository\Cards\ModelsByCategory\ModelsByCategoryInterface;
+use BaksDev\Products\Product\Repository\Cards\ModelsByCategory\ModelsByCategoryResult;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Reference\Currency\Type\Currency;
 use BaksDev\Reference\Money\Type\Money;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 /**
  * @group products-product
+ * @group products-product-repo
  */
+#[Group('products-product')]
 #[When(env: 'test')]
-class ModelByCategoryRepositoryTest extends KernelTestCase
+class ModelsByCategoryRepositoryTest extends KernelTestCase
 {
     public function testUseCase(): void
     {
@@ -81,10 +84,10 @@ class ModelByCategoryRepositoryTest extends KernelTestCase
             return;
         }
 
-        /** @var ModelByCategoryResult $result */
+        /** @var ModelsByCategoryResult $result */
         foreach($results as $result)
         {
-            self::assertInstanceOf(ModelByCategoryResult::class, $result);
+            self::assertInstanceOf(ModelsByCategoryResult::class, $result);
 
             self::assertInstanceOf(ProductUid::class, $result->getProductId());
             self::assertInstanceOf(ProductEventUid::class, $result->getProductEvent());

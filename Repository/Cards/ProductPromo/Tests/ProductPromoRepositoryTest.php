@@ -27,13 +27,15 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Repository\Cards\ProductPromo\Tests;
 
 use BaksDev\Products\Product\Repository\Cards\ProductPromo\ProductPromoInterface;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 /**
  * @group products-product
- * @group products-product-cards
+ * @group products-product-repo
  */
+#[Group('products-product')]
 #[When(env: 'test')]
 class ProductPromoRepositoryTest extends KernelTestCase
 {
@@ -47,8 +49,6 @@ class ProductPromoRepositoryTest extends KernelTestCase
             ->maxResult(1000)
             //            ->analyze()
             ->toArray();
-
-        //        dd($result);
 
         self::assertTrue(true);
     }

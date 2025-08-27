@@ -30,12 +30,15 @@ use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Repository\ProductModel\ProductModelInterface;
 use BaksDev\Products\Product\Repository\ProductModel\ProductModelResult;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 /**
  * @group products-product
+ * @group products-product-repo
  */
+#[Group('products-product')]
 #[When(env: 'test')]
 class ProductModelRepositoryTest extends KernelTestCase
 {

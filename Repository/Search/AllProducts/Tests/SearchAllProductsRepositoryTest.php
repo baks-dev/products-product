@@ -19,18 +19,22 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 namespace BaksDev\Search\Repository\AllProducts;
 
 use BaksDev\Core\Form\Search\SearchDTO;
-use \BaksDev\Search\Repository\SearchRepository\SearchRepositoryInterface;
+use BaksDev\Search\Repository\SearchRepository\SearchRepositoryInterface;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 /**
  * @group products-search
+ * @group products-search-repo
  */
+#[Group('products-search')]
 #[When(env: 'test')]
 class SearchAllProductsRepositoryTest extends KernelTestCase
 {
@@ -47,9 +51,6 @@ class SearchAllProductsRepositoryTest extends KernelTestCase
         $result = $repository
             ->search($search)
             ->findAll();
-
-//                dd($result);
-//                dd(iterator_to_array($result));
 
         self::assertTrue(true);
     }

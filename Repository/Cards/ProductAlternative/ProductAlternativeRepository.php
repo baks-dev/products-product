@@ -19,6 +19,7 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 declare(strict_types=1);
@@ -59,6 +60,11 @@ use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Entity\ProductInvariable;
 use BaksDev\Products\Product\Entity\Property\ProductProperty;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
+use BaksDev\Products\Promotion\Entity\Event\Invariable\ProductPromotionInvariable;
+use BaksDev\Products\Promotion\Entity\Event\Period\ProductPromotionPeriod;
+use BaksDev\Products\Promotion\Entity\Event\Price\ProductPromotionPrice;
+use BaksDev\Products\Promotion\Entity\Event\ProductPromotionEvent;
+use BaksDev\Products\Promotion\Entity\ProductPromotion;
 use BaksDev\Users\Profile\UserProfile\Entity\Event\Discount\UserProfileDiscount;
 use BaksDev\Users\Profile\UserProfile\Entity\UserProfile;
 use Generator;
@@ -775,6 +781,71 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                         (product_modification.const IS NULL AND product_invariable.modification IS NULL)
                    )
             ');
+
+
+        /**
+         * ProductsPromotion
+         */
+        if(true === $dbal->isProjectProfile())
+        {
+            $dbal
+                ->leftJoin(
+                    'product_invariable',
+                    ProductPromotionInvariable::class,
+                    'product_promotion_invariable',
+                    '
+                        product_promotion_invariable.product = product_invariable.id
+                        AND
+                        product_promotion_invariable.profile = :'.$dbal::PROJECT_PROFILE_KEY,
+                );
+
+            $dbal
+                ->leftJoin(
+                    'product_promotion_invariable',
+                    ProductPromotion::class,
+                    'product_promotion',
+                    'product_promotion.id = product_promotion_invariable.main',
+                );
+
+            $dbal
+                ->leftJoin(
+                    'product_promotion',
+                    ProductPromotionEvent::class,
+                    'product_promotion_event',
+                    '
+                        product_promotion_event.main = product_promotion.id',
+                );
+
+            $dbal
+                ->addSelect('product_promotion_price.value AS promotion_price')
+                ->leftJoin(
+                    'product_promotion_event',
+                    ProductPromotionPrice::class,
+                    'product_promotion_price',
+                    'product_promotion_price.event = product_promotion.event',
+                );
+
+            $dbal
+                ->addSelect('
+                CASE
+                    WHEN 
+                        CURRENT_DATE >= product_promotion_period.date_start
+                        AND
+                         (
+                            product_promotion_period.date_end IS NULL OR CURRENT_DATE <= product_promotion_period.date_end
+                         )
+                    THEN true
+                    ELSE false
+                END AS promotion_active
+            ')
+                ->leftJoin(
+                    'product_promotion_event',
+                    ProductPromotionPeriod::class,
+                    'product_promotion_period',
+                    '
+                        product_promotion_period.event = product_promotion.event',
+                );
+        }
 
         /** Персональная скидка из профиля авторизованного пользователя */
         if(true === $dbal->bindCurrentProfile())
