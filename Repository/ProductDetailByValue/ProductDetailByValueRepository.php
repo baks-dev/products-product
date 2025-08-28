@@ -66,6 +66,7 @@ use BaksDev\Products\Product\Entity\Seo\ProductSeo;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
+use BaksDev\Products\Promotion\BaksDevProductsPromotionBundle;
 use BaksDev\Products\Promotion\Entity\Event\Invariable\ProductPromotionInvariable;
 use BaksDev\Products\Promotion\Entity\Event\Period\ProductPromotionPeriod;
 use BaksDev\Products\Promotion\Entity\Event\Price\ProductPromotionPrice;
@@ -894,7 +895,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
         /**
          * ProductsPromotion
          */
-        if(true === $dbal->isProjectProfile())
+        if(true === class_exists(BaksDevProductsPromotionBundle::class) && true === $dbal->isProjectProfile())
         {
             $dbal
                 ->leftJoin(

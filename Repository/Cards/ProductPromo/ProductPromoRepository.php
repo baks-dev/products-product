@@ -61,6 +61,7 @@ use BaksDev\Products\Product\Entity\ProductInvariable;
 use BaksDev\Products\Product\Entity\Property\ProductProperty;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Forms\ProductCategoryFilter\User\ProductCategoryFilterDTO;
+use BaksDev\Products\Promotion\BaksDevProductsPromotionBundle;
 use BaksDev\Products\Promotion\Entity\Event\Invariable\ProductPromotionInvariable;
 use BaksDev\Products\Promotion\Entity\Event\Period\ProductPromotionPeriod;
 use BaksDev\Products\Promotion\Entity\Event\Price\ProductPromotionPrice;
@@ -705,7 +706,7 @@ final class ProductPromoRepository implements ProductPromoInterface
         /**
          * ProductsPromotion
          */
-        if(true === $dbal->isProjectProfile())
+        if(true === class_exists(BaksDevProductsPromotionBundle::class) && true === $dbal->isProjectProfile())
         {
             $dbal
                 ->leftJoin(
