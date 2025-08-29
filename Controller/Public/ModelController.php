@@ -21,11 +21,17 @@
  *  THE SOFTWARE.
  */
 
+declare(strict_types=1);
+
 namespace BaksDev\Products\Product\Controller\Public;
 
 use BaksDev\Core\Controller\AbstractController;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
 use BaksDev\Products\Product\Repository\ProductModel\ProductModelInterface;
+use BaksDev\Products\Review\Form\Status\ReviewStatusDTO;
+use BaksDev\Products\Review\Repository\AllReviews\AllReviewsInterface;
+use BaksDev\Products\Review\Type\Status\ReviewStatus;
+use BaksDev\Products\Review\Type\Status\ReviewStatus\Collection\ReviewStatusActive;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -40,19 +46,31 @@ final class ModelController extends AbstractController
         Request $request,
         #[MapEntity(mapping: ['url' => 'url'])] ProductInfo $info,
         ProductModelInterface $productModel,
+        AllReviewsInterface $AllReviewsRepository,
         string|null $offer = null,
         string|null $variation = null,
     ): Response
     {
 
         $card = $productModel
-            ->byProduct($info)
+            ->byProduct($info->getProduct())
             ->byOffer($offer)
             ->byVariation($variation)
             ->find();
 
+
+        /** Отзывы */
+        $statusDTO = new ReviewStatusDTO()->setStatus(new ReviewStatus(ReviewStatusActive::PARAM));
+
+        // Получаем список
+        $ProductsReviews = $AllReviewsRepository
+            ->filter($statusDTO)
+            ->product($info->getProduct())
+            ->findPaginator();
+
         return $this->render([
             'card' => $card,
+            'reviews' => $ProductsReviews,
         ]);
 
     }

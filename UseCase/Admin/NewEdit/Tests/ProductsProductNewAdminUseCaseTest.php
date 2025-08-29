@@ -74,14 +74,24 @@ use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\File;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * @group products-product
  * @group products-product-usecase
  * @group products-product-repository
  * @group products-product-controller
+ *
+ * @group products-review
+ * @group products-review-repository
  */
 #[When(env: 'test')]
+#[Group('products-product')]
+#[Group('products-product-usecase')]
+#[Group('products-product-repository')]
+#[Group('products-product-controller')]
+#[Group('products-review')]
+#[Group('products-review-repository')]
 class ProductsProductNewAdminUseCaseTest extends KernelTestCase
 {
     public const string OFFER_VALUE = '100';
