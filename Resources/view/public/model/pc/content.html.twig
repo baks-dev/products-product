@@ -6,7 +6,7 @@
     </div>
 
     <h1 class="h3 text-uppercase fw-bolder">
-        {{ card.product_name }}
+        {{ card.productName }}
     </h1>
 
     <div class="d-flex align-items-center gap-3">
@@ -21,7 +21,7 @@
         {% endfor %}
 
         {# Если дата начала активности меньше 1 месяца - НОВИНКА  #}
-        {% if date() < card.active_from|date_modify("+1 month") %}
+        {% if date() < card.productActiveFrom|date_modify("+1 month") %}
             <span class="badge bg-success rounded-2">Новинка</span>
         {% endif %}
 
@@ -40,7 +40,7 @@
             {# ГЛАВНОЕ ФОТО #}
 
 
-            {% set product_photo = card.product_images|json_decode %}
+            {% set product_photo = card.productImages %}
             {% set root_image = null %}
 
 
@@ -66,7 +66,7 @@
             <div id="img-product" data-bs-toggle="modal" data-bs-target="#lightboxModal"
                  class="icon rounded-5 border lazy bg-cover shadow-none" style="width: 350px; height: 350px;"
                  data-bg="{{ image_path }}"
-                 title="{{ card.product_name }}"
+                 title="{{ card.productName }}"
             >
 
             </div>
@@ -93,7 +93,7 @@
                     <button class="btn btn-link icon bg-cover rounded-4 lazy border-0 img-product m-0"
                             data-bg="{{ image_path }}"
                             style="width: 70px; height: 70px;"
-                            title="{{ card.product_name }}"
+                            title="{{ card.productName }}"
                     ></button>
 
                 {% endfor %}
@@ -121,16 +121,16 @@
                 {# Обложка  #}
                 {% set image_path = '/assets/img/blank.svg' %}
 
-                {% if card.category_cover_ext is defined and card.category_cover_ext is not null %}
-                    {% set img_host = card.category_cover_cdn == true  ? CDN_HOST : '' %}
-                    {% set img_dir = card.category_cover_dir %}
-                    {% set img_file = (img_host is empty ? '/image.' : '/small.') ~ card.category_cover_ext %}
+                {% if card.categoryCoverExt is defined and card.categoryCoverExt is not null %}
+                    {% set img_host = card.categoryCoverCdn == true  ? CDN_HOST : '' %}
+                    {% set img_dir = card.categoryCoverDir %}
+                    {% set img_file = (img_host is empty ? '/image.' : '/small.') ~ card.categoryCoverExt %}
                     {% set image_path = img_host ~ img_dir ~ img_file %}
                 {% endif %}
 
 
-                <a href="{{ path('products-product:public.catalog.category', { category : card.category_url }) }}"
-                   title="{{ card.category_name }}">
+                <a href="{{ path('products-product:public.catalog.category', { category : card.categoryUrl }) }}"
+                   title="{{ card.categoryName }}">
 
                     <img data-src="{{ image_path }}"
                          src="/assets/img/empty.png" alt="..." class="lazy" style='max-width: 250px;'>
@@ -158,12 +158,12 @@
 
     <div class="">
         <div class="mt-5">
-            {{ card.product_preview|raw }}
+            {{ card.productPreview|raw }}
         </div>
     </div>
 
 
-    {% if card.product_description %}
+    {% if card.productDescription %}
 
         <div class="accordion d-flex" style="--bs-accordion-btn-focus-box-shadow: none;">
             <div class="d-flex justify-content-start">
@@ -180,7 +180,7 @@
             <div id="collapseThree" class="accordion-collapse collapse"
                  data-bs-parent="#accordionExample">
                 <div class="accordion-body px-0">
-                    {{ card.product_description|raw }}
+                    {{ card.productDescription|raw }}
                 </div>
             </div>
         </div>
@@ -265,9 +265,12 @@
 		</li> #}
     </ul>
 
-    <div class="d-flex justify-content-between gap-3">
 
-        <div class="tab-content w-100" id="pills-tabContent">
+
+
+    <div class="d-flex justify-content-between gap-3">
+        <div class="col-9">
+            <div class="tab-content w-100" id="pills-tabContent">
 
             {% if presence %}
 
@@ -337,22 +340,18 @@
             </div>
 
         </div>
+        </div>
 
-        {# <div class="w-50">
+        <div class="col-3">
 
-			<h5 class="text-uppercase fw-bolder py-3">Характеристики шины</h5>
+            {{ product_average_rating(card.productId) }}
 
-			{{ include(_self|replace({ "content.html.twig": "_rating.rewiews.html.twig" })) }}
-
-			<a href="#" class="side-bar-image rounded-4 overflow-hidden w-100 mt-4 d-flex"
-			   title="Место вашей рекламы"
-			>
-				<img src="/img/adimage.webp" class="w-100" alt="Место вашей рекламы">
-			</a>
-		</div> #}
-
+        </div>
     </div>
 
+    <div class="d-flex flex-column gap-3 mt-3">
+        {{ include(Template('@products-review:public/_includes/pc/reviews.section.html.twig')) }}
+    </div>
 
 </main>
 

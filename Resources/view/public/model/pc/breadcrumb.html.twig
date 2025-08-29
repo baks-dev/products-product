@@ -22,20 +22,20 @@
 
 
         <li class="breadcrumb-item">
-            <a href="{{ path('products-product:public.catalog.category', { category : card.category_url }) }}"
+            <a href="{{ path('products-product:public.catalog.category', { category : card.categoryUrl }) }}"
                class="text-muted"
-               aria-label="{{ card.category_name }}"
-               title="{{ card.category_name }}">
-                {{ card.category_name }}
+               aria-label="{{ card.categoryName }}"
+               title="{{ card.categoryName }}">
+                {{ card.categoryName }}
             </a>
         </li>
 
         <li class="breadcrumb-item active text-primary"
             aria-current="page"
-            aria-label="{{ card.product_name }}"
-            title="{{ card.product_name }}">
+            aria-label="{{ card.productName }}"
+            title="{{ card.productName }}">
             {# Значение торгового предложения #}
-            {{ card.product_name }}
+            {{ card.productName }}
         </li>
 
 

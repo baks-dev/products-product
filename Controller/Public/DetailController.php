@@ -21,6 +21,8 @@
  *  THE SOFTWARE.
  */
 
+declare(strict_types=1);
+
 namespace BaksDev\Products\Product\Controller\Public;
 
 use BaksDev\Core\Controller\AbstractController;
@@ -33,6 +35,10 @@ use BaksDev\Products\Product\Repository\Cards\ProductAlternative\ProductAlternat
 use BaksDev\Products\Product\Repository\ProductDetailByValue\ProductDetailByValueInterface;
 use BaksDev\Products\Product\Repository\ProductDetailByValue\ProductDetailByValueResult;
 use BaksDev\Products\Product\Repository\ProductDetailOffer\ProductDetailOfferInterface;
+use BaksDev\Products\Review\Form\Status\ReviewStatusDTO;
+use BaksDev\Products\Review\Repository\AllReviews\AllReviewsInterface;
+use BaksDev\Products\Review\Type\Status\ReviewStatus;
+use BaksDev\Products\Review\Type\Status\ReviewStatus\Collection\ReviewStatusActive;
 use DateTimeImmutable;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
@@ -52,6 +58,7 @@ final class DetailController extends AbstractController
         ProductDetailByValueInterface $productDetail,
         ProductDetailOfferInterface $productDetailOffer,
         ProductAlternativeInterface $productAlternative,
+        AllReviewsInterface $AllReviewsRepository,
         ?string $offer = null,
         ?string $variation = null,
         ?string $modification = null,
@@ -159,6 +166,16 @@ final class DetailController extends AbstractController
             'action' => $this->generateUrl('search:public.search'),
         ]);
 
+
+        /** Отзывы */
+        $statusDTO = new ReviewStatusDTO()->setStatus(new ReviewStatus(ReviewStatusActive::PARAM));
+
+        // Получаем список
+        $ProductsReviews = $AllReviewsRepository
+            ->filter($statusDTO)
+            ->product($productCard->getProductId())
+            ->findPaginator();
+
         return $this->render([
             'card' => $productCard,
             'offers' => $productOffer,
@@ -168,6 +185,7 @@ final class DetailController extends AbstractController
             'modification' => $modification,
             'basket' => $form?->createView(),
             'all_search' => $allSearchForm->createView(),
+            'reviews' => $ProductsReviews,
         ]);
     }
 }

@@ -55,14 +55,14 @@
                             <div>
 
                                 <a href="{{ path('products-product:public.detail', {
-                                    category: card.category_url,
-                                    url: card.url,
+                                    category: card.categoryUrl,
+                                    url: card.productUrl,
                                     offer : offers.offer_value,
                                     variation : offers.variation_value,
                                     modification : offers.modification_value,
                                     postfix:  (offers.modification_postfix ?: offers.variation_postfix ?: offers.offer_postfix ?: null )|replace({ '/': '-' })
                                 }) }}">
-                                    {{ card.product_name }}
+                                    {{ card.productName }}
                                 </a>
 
                             </div>
@@ -114,7 +114,7 @@
 
                             {% if offers.price %}
                                 <a href="{{ path('orders-order:public.add', {
-                                    product: card.event,
+                                    product: card.productEvent,
                                     offer : offers.offer_uid,
                                     variation : offers.variation_uid,
                                     modification : offers.modification_uid
@@ -200,13 +200,13 @@
                                     <td>
                                         <div>
                                             <a href="{{ path('products-product:public.detail', {
-                                                category: card.category_url,
-                                                url: card.url,
+                                                category: card.categoryUrl,
+                                                url: card.productUrl,
                                                 offer : offers.offer_value,
                                                 variation : offers.variation_value,
                                                 modification : offers.modification_value
                                             }) }}">
-                                                {{ card.product_name }}
+                                                {{ card.productName }}
                                             </a>
                                         </div>
                                         <div class="d-flex gap-1">
@@ -261,7 +261,7 @@
 
 
                                             <a href="{{ path('orders-order:public.add', {
-                                                product: card.event,
+                                                product: card.productEvent,
                                                 offer : offers.offer_uid,
                                                 variation : offers.variation_uid,
                                                 modification : offers.modification_uid
