@@ -26,13 +26,11 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Repository\CurrentProductByArticle\Tests;
 
 use BaksDev\Products\Product\Repository\CurrentProductByArticle\ProductConstByArticleInterface;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
-
-/**
- * @group products-product
- */
+#[Group('products-product')]
 #[When(env: 'test')]
 class ProductConstByArticleTest extends KernelTestCase
 {

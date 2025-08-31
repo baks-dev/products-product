@@ -26,13 +26,21 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\UseCase\Admin\Delete\Tests;
 
 use BaksDev\Products\Category\UseCase\Admin\NewEdit\Tests\CategoryProductNewTest;
+use BaksDev\Products\Product\Controller\Admin\Tests\DeleteAdminControllerTest;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Repository\CurrentProductEvent\CurrentProductEventInterface;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Product\UseCase\Admin\Delete\ProductDeleteDTO;
 use BaksDev\Products\Product\UseCase\Admin\Delete\ProductDeleteHandler;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Tests\ProductsProductEditAdminUseCaseTest;
+use BaksDev\Products\Product\UseCase\Admin\Quantity\Offer\Tests\UpdateOfferQuantityTest;
+use BaksDev\Products\Product\UseCase\Admin\Quantity\Offer\Variation\Modification\Tests\UpdateModificationQuantityTest;
+use BaksDev\Products\Product\UseCase\Admin\Quantity\Offer\Variation\Tests\UpdateVariationQuantityTest;
+use BaksDev\Products\Product\UseCase\Admin\Quantity\Tests\UpdateProductQuantityTest;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\DependsOnClass;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
@@ -41,17 +49,7 @@ use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\DependencyInjection\Attribute\When;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-/**
- * @group products-product
- * @group products-product-usecase
- *
- * @depends BaksDev\Products\Product\UseCase\Admin\Quantity\Tests\UpdateProductQuantityTest::class
- * @depends BaksDev\Products\Product\UseCase\Admin\Quantity\Offer\Tests\UpdateOfferQuantityTest::class
- * @depends BaksDev\Products\Product\UseCase\Admin\Quantity\Offer\Variation\Tests\UpdateVariationQuantityTest::class
- * @depends BaksDev\Products\Product\UseCase\Admin\Quantity\Offer\Variation\Modification\Tests\UpdateModificationQuantityTest::class
- * @depends BaksDev\Products\Product\Controller\Admin\Tests\DeleteAdminControllerTest::class
- * @depends BaksDev\Products\Product\UseCase\Admin\NewEdit\Tests\ProductsProductEditAdminUseCaseTest::class
- */
+#[Group('products-product')]
 #[When(env: 'test')]
 class ProductsProductDeleteAdminUseCaseTest extends KernelTestCase
 {
@@ -84,6 +82,12 @@ class ProductsProductDeleteAdminUseCaseTest extends KernelTestCase
         CategoryProductNewTest::setUpBeforeClass();
     }
 
+    #[DependsOnClass(UpdateProductQuantityTest::class)]
+    #[DependsOnClass(UpdateOfferQuantityTest::class)]
+    #[DependsOnClass(UpdateVariationQuantityTest::class)]
+    #[DependsOnClass(UpdateModificationQuantityTest::class)]
+    #[DependsOnClass(DeleteAdminControllerTest::class)]
+    #[DependsOnClass(ProductsProductEditAdminUseCaseTest::class)]
     public function testUseCase(): void
     {
         // Бросаем событие консольной комманды

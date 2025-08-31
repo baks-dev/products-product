@@ -24,10 +24,11 @@
 namespace BaksDev\Products\Product\Controller\Public\Tests;
 
 use BaksDev\Users\User\Tests\TestUserAccount;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
-/** @group products-product */
+#[Group('products-product')]
 #[When(env: 'test')]
 final class CatalogPublicControllerTest extends WebTestCase
 {

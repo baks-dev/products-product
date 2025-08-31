@@ -64,6 +64,7 @@ use BaksDev\Reference\Money\Type\Money;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
@@ -74,24 +75,9 @@ use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\File;
-use PHPUnit\Framework\Attributes\Group;
 
-/**
- * @group products-product
- * @group products-product-usecase
- * @group products-product-repository
- * @group products-product-controller
- *
- * @group products-review
- * @group products-review-repository
- */
-#[When(env: 'test')]
 #[Group('products-product')]
-#[Group('products-product-usecase')]
-#[Group('products-product-repository')]
-#[Group('products-product-controller')]
-#[Group('products-review')]
-#[Group('products-review-repository')]
+#[When(env: 'test')]
 class ProductsProductNewAdminUseCaseTest extends KernelTestCase
 {
     public const string OFFER_VALUE = '100';
@@ -130,14 +116,12 @@ class ProductsProductNewAdminUseCaseTest extends KernelTestCase
 
         /** Создаем тестовую категорию */
         CategoryProductNewTest::setUpBeforeClass();
-        (new CategoryProductNewTest())->testUseCase();
+        new CategoryProductNewTest('')->testUseCase();
 
     }
 
-
     public function testUseCase(): void
     {
-
         /** @var ContainerBagInterface $containerBag */
         $container = self::getContainer();
         $containerBag = $container->get(ContainerBagInterface::class);
@@ -543,4 +527,5 @@ class ProductsProductNewAdminUseCaseTest extends KernelTestCase
         self::assertTrue(($handle instanceof Product));
 
     }
+
 }

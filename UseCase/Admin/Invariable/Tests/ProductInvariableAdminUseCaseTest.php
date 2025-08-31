@@ -34,15 +34,11 @@ use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductM
 use BaksDev\Products\Product\UseCase\Admin\Invariable\ProductInvariableDTO;
 use BaksDev\Products\Product\UseCase\Admin\Invariable\ProductInvariableHandler;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
-
-/**
- * @group products-product
- * @group products-product-repository
- * @group products-product-usecase
- */
+#[Group('products-product')]
 #[When(env: 'test')]
 class ProductInvariableAdminUseCaseTest extends KernelTestCase
 {

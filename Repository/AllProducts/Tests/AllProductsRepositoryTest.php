@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 declare(strict_types=1);
@@ -27,12 +26,11 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Repository\AllProducts\Tests;
 
 use BaksDev\Products\Product\Repository\AllProducts\AllProductsRepository;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
-/**
- * @group products-product
- */
+#[Group('products-product')]
 #[When(env: 'test')]
 class AllProductsRepositoryTest extends KernelTestCase
 {

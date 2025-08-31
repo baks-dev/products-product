@@ -26,15 +26,12 @@ namespace BaksDev\Products\Product\Controller\Admin\Tests;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Tests\ProductsProductNewAdminUseCaseTest;
 use BaksDev\Users\User\Tests\TestUserAccount;
+use PHPUnit\Framework\Attributes\DependsOnClass;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
-/**
- * @group products-product
- * @group products-product-usecase
- *
- * @depends BaksDev\Products\Product\UseCase\Admin\NewEdit\Tests\ProductsProductNewAdminUseCaseTest::class
- */
+#[Group('products-product')]
 #[When(env: 'test')]
 final class EditAdminControllerTest extends WebTestCase
 {
@@ -43,9 +40,9 @@ final class EditAdminControllerTest extends WebTestCase
 
 
     /** Доступ по роли */
+    #[DependsOnClass(ProductsProductNewAdminUseCaseTest::class)]
     public function testRoleSuccessful(): void
     {
-
         self::ensureKernelShutdown();
         $client = static::createClient();
 
@@ -55,10 +52,10 @@ final class EditAdminControllerTest extends WebTestCase
         $client->request('GET', sprintf(self::URL, ProductEventUid::TEST));
 
         self::assertResponseIsSuccessful();
-
     }
 
     // доступ по роли ROLE_ADMIN
+    #[DependsOnClass(ProductsProductNewAdminUseCaseTest::class)]
     public function testRoleAdminSuccessful(): void
     {
 
@@ -75,6 +72,7 @@ final class EditAdminControllerTest extends WebTestCase
     }
 
     // доступ по роли ROLE_USER
+    #[DependsOnClass(ProductsProductNewAdminUseCaseTest::class)]
     public function testRoleUserDeny(): void
     {
 
@@ -90,6 +88,7 @@ final class EditAdminControllerTest extends WebTestCase
     }
 
     /** Доступ по без роли */
+    #[DependsOnClass(ProductsProductNewAdminUseCaseTest::class)]
     public function testGuestFiled(): void
     {
 

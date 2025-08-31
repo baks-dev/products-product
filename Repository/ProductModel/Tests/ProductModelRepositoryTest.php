@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 declare(strict_types=1);
@@ -30,14 +29,11 @@ use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Repository\ProductModel\ProductModelInterface;
 use BaksDev\Products\Product\Repository\ProductModel\ProductModelResult;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
-/**
- * @group products-product
- * @group products-product-repo
- */
 #[Group('products-product')]
 #[When(env: 'test')]
 class ProductModelRepositoryTest extends KernelTestCase
@@ -160,9 +156,9 @@ class ProductModelRepositoryTest extends KernelTestCase
     }
 
     /**
-     * @depends testProductOffersKeys
      * Тестирование алиасов в результате применения функции JSONB_BUILD_OBJECT
      */
+    #[Depends('testProductOffersKeys')]
     public function testProductPhotoKeys(): void
     {
         $result = self::$result->getProductImages();
@@ -196,9 +192,9 @@ class ProductModelRepositoryTest extends KernelTestCase
     }
 
     /**
-     * @depends testProductPhotoKeys
      * Тестирование алиасов в результате применения функции JSONB_BUILD_OBJECT
      */
+    #[Depends('testProductPhotoKeys')]
     public function testSectionFieldKeys(): void
     {
         $result = self::$result->getCategorySectionField();

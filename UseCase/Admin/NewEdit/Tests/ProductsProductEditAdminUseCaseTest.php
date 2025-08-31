@@ -54,6 +54,8 @@ use BaksDev\Reference\Currency\Type\Currency;
 use BaksDev\Reference\Money\Type\Money;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use DateTimeImmutable;
+use PHPUnit\Framework\Attributes\DependsOnClass;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
@@ -62,15 +64,11 @@ use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\DependencyInjection\Attribute\When;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-/**
- * @group products-product
- * @group products-product-usecase
- *
- * @depends BaksDev\Products\Product\UseCase\Admin\NewEdit\Tests\ProductsProductNewAdminUseCaseTest::class
- */
+#[Group('products-product')]
 #[When(env: 'test')]
 class ProductsProductEditAdminUseCaseTest extends KernelTestCase
 {
+    #[DependsOnClass(ProductsProductNewAdminUseCaseTest::class)]
     public function testUseCase(): void
     {
         // Бросаем событие консольной комманды

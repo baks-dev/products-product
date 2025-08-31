@@ -28,22 +28,24 @@ namespace BaksDev\Products\Product\Repository\ProductDetail\Tests;
 use BaksDev\Core\Type\Field\InputField;
 use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailByInvariableInterface;
 use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailByInvariableResult;
+use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Invariable\ProductInvariableUid;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
-use BaksDev\Products\Product\Type\Event\ProductEventUid;
+use BaksDev\Products\Product\UseCase\Admin\Invariable\Tests\ProductInvariableAdminUseCaseTest;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Tests\ProductsProductNewAdminUseCaseTest;
+use PHPUnit\Framework\Attributes\DependsOnClass;
+use PHPUnit\Framework\Attributes\Group;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\DependencyInjection\Attribute\When;
 
-/**
- * @group products-product
- * @group products-product-repository
- *
- * @depends BaksDev\Products\Product\UseCase\Admin\NewEdit\Tests\ProductsProductNewAdminUseCaseTest::class
- * @depends BaksDev\Products\Product\UseCase\Admin\Invariable\Tests\ProductInvariableAdminUseCaseTest::class
- */
+#[Group('products-product')]
+#[When(env: 'test')]
 final class ProductDetailByInvariableRepositoryTest extends KernelTestCase
 {
+    #[DependsOnClass(ProductsProductNewAdminUseCaseTest::class)]
+    #[DependsOnClass(ProductInvariableAdminUseCaseTest::class)]
     public function testFind(): void
     {
         /** @var ProductDetailByInvariableInterface $productDetailByInvariable */

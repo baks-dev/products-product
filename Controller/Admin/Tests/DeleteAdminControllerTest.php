@@ -26,15 +26,12 @@ namespace BaksDev\Products\Product\Controller\Admin\Tests;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Users\User\Tests\TestUserAccount;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\DependsOnClass;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
-/**
- * @group products-product
- * @group products-product-usecase
- *
- * @depends BaksDev\Products\Product\Controller\Admin\Tests\EditAdminControllerTest::class
- */
+#[Group('products-product')]
 #[When(env: 'test')]
 final class DeleteAdminControllerTest extends WebTestCase
 {
@@ -44,6 +41,7 @@ final class DeleteAdminControllerTest extends WebTestCase
 
 
     /** Доступ по роли */
+    #[DependsOnClass(EditAdminControllerTest::class)]
     public function testRoleSuccessful(): void
     {
 
@@ -64,6 +62,7 @@ final class DeleteAdminControllerTest extends WebTestCase
     }
 
     // доступ по роли ROLE_ADMIN
+    #[DependsOnClass(EditAdminControllerTest::class)]
     public function testRoleAdminSuccessful(): void
     {
 
@@ -83,6 +82,7 @@ final class DeleteAdminControllerTest extends WebTestCase
     }
 
     // доступ по роли ROLE_USER
+    #[DependsOnClass(EditAdminControllerTest::class)]
     public function testRoleUserDeny(): void
     {
 
@@ -103,6 +103,7 @@ final class DeleteAdminControllerTest extends WebTestCase
     }
 
     /** Доступ по без роли */
+    #[DependsOnClass(EditAdminControllerTest::class)]
     public function testGuestFiled(): void
     {
 

@@ -26,13 +26,12 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Type\Material\Tests;
 
 use BaksDev\Products\Product\Type\Material\MaterialUid;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 use Symfony\Component\Uid\Uuid;
 
-/**
- * @group materials-catalog
- */
+#[Group('products-product')]
 #[When(env: 'test')]
 final class MaterialUidTests extends TestCase
 {

@@ -26,12 +26,11 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Controller\Admin\Tests;
 
 use BaksDev\Users\User\Tests\TestUserAccount;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
-/**
- * @group products-product
- */
+#[Group('products-product')]
 #[When(env: 'test')]
 final class IndexAdminControllerTest extends WebTestCase
 {
