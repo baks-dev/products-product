@@ -84,11 +84,22 @@
                 {{ include(_self|replace({ "content.html.twig" : "_includes/alternatives.html.twig" }), {alternative}, with_context = false) }}
             </div>
             <div class="col-3">
-                {# ЛИДЕР ПРОДАЖ #}
-                {{ render_one_best_seller(card.categoryId, card.productInvariableId) }}
+
+                {{ product_average_rating(card.productId) }}
 
                 {# РЕКЛАМНЫЙ БАННЕР #}
                 {# {% include Template('/public/'~(baks_settings.device ?: 'pc')~'/_includes/banners/ad_banner.html.twig') %} #}
+            </div>
+        </div>
+
+        <div class="d-flex flex-column gap-3 mt-3">
+            <div class="col-9">
+                {{ include(Template('@products-review:public/_includes/pc/reviews.section.html.twig')) }}
+            </div>
+
+            <div class="col-3">
+                {# ЛИДЕР ПРОДАЖ #}
+                {{ render_one_best_seller(card.categoryId, card.productInvariableId) }}
             </div>
         </div>
 
