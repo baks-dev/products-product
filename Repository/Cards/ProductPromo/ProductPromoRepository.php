@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 declare(strict_types=1);
@@ -139,10 +138,12 @@ final class ProductPromoRepository implements ProductPromoInterface
 
     /**
      * Метод возвращает продукты по условию - старая цена продукта больше текущей цены
+     *
+     * @return Generator<ProductPromoResult>|false
      */
     public function findAll(string $expr = 'AND'): Generator|false
     {
-        if(false == $this->maxResult)
+        if(false === $this->maxResult)
         {
             throw new InvalidArgumentException('Не передан обязательный параметр запроса $maxResult');
         }

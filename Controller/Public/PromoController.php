@@ -43,10 +43,10 @@ final class PromoController extends AbstractController
     {
         $promoProducts = $productPromoRepository
             ->maxResult(16)
-            ->toArray();
+            ->findAll();
 
         return $this->render([
-            'promoProducts' => $promoProducts
+            'promoProducts' => $promoProducts,
         ]);
     }
 }

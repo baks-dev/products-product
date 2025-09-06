@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 namespace BaksDev\Products\Product\Repository\Search\AllProducts;
@@ -723,48 +722,34 @@ final class SearchAllProductsRepository implements SearchRepositoryInterface
         $search = str_replace('-', ' ', $this->search->getQuery());
 
         /** Очистить поисковую строку от всех НЕ буквенных/числовых символов */
-        $search = preg_replace('/[^ a-zа-яё\d]/ui', '', $search);
+        $search = preg_replace('/[^ a-zа-яё\d]/ui', ' ', $search);
 
         $this->logger->info(sprintf('Строка поиска: %s', $search));
 
         /** Задать префикс и суффикс для реализации варианта "содержит" */
-        $search = '*'.$search.'*';
+        $search = '*'.trim($search).'*';
 
         /** Получим ids из индекса */
-        $resultProducts = $this->SearchIndexHandler !== null ? $this->SearchIndexHandler
-            ->handleSearchQuery($search, ProductSearchTag::TAG) : false;
+        $resultProducts = $this->SearchIndexHandler instanceof SearchIndexInterface
+            ? $this->SearchIndexHandler->handleSearchQuery($search, ProductSearchTag::TAG)
+            : false;
 
 
         if($this->SearchIndexHandler instanceof SearchIndexInterface && $resultProducts !== false)
         {
             /** Фильтруем по полученным из индекса ids: */
 
+            $ids = array_column($resultProducts, 'id');
+
             /** Товары */
-            $dbal->orWhere('product.id IN (:uuids)')
+            $dbal->andWhere('(
+            product.id IN (:uuids) 
+            OR product_offer.id IN (:uuids)) 
+            OR product_variation.id IN (:uuids) 
+            OR product_modification.id IN (:uuids))')
                 ->setParameter(
                     key: 'uuids',
-                    value: $resultProducts ? array_column($resultProducts, 'id') : [],
-                    type: ArrayParameterType::STRING);
-
-            /** Торговые предложения */
-            $dbal->orWhere('product_offer.id IN (:uuids)')
-                ->setParameter(
-                    key: 'uuids',
-                    value: $resultProducts ? array_column($resultProducts, 'id') : [],
-                    type: ArrayParameterType::STRING);
-
-            /** Множественные варианты торгового предложения */
-            $dbal->orWhere('product_variation.id IN (:uuids)')
-                ->setParameter(
-                    key: 'uuids',
-                    value: $resultProducts ? array_column($resultProducts, 'id') : [],
-                    type: ArrayParameterType::STRING);
-
-            /** Модификации множественного варианта */
-            $dbal->orWhere('product_modification.id IN (:uuids)')
-                ->setParameter(
-                    key: 'uuids',
-                    value: $resultProducts ? array_column($resultProducts, 'id') : [],
+                    value: $ids,
                     type: ArrayParameterType::STRING);
 
             if(is_array($resultProducts))

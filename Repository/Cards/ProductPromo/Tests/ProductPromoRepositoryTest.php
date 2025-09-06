@@ -26,7 +26,10 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Repository\Cards\ProductPromo\Tests;
 
 use BaksDev\Products\Product\Repository\Cards\ProductPromo\ProductPromoInterface;
+use BaksDev\Products\Product\Repository\Cards\ProductPromo\ProductPromoResult;
 use PHPUnit\Framework\Attributes\Group;
+use ReflectionClass;
+use ReflectionMethod;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
@@ -41,9 +44,30 @@ class ProductPromoRepositoryTest extends KernelTestCase
         $repository = self::getContainer()->get(ProductPromoInterface::class);
 
         $result = $repository
-            ->maxResult(1000)
-            //            ->analyze()
-            ->toArray();
+            ->maxResult(100)
+            ->findAll();
+
+        if(false === $result->valid())
+        {
+            return;
+        }
+
+        $ProductPromoResult = $result->current();
+
+        // Вызываем все геттеры
+        $reflectionClass = new ReflectionClass(ProductPromoResult::class);
+        $methods = $reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC);
+
+        foreach($methods as $method)
+        {
+            // Методы без аргументов
+            if($method->getNumberOfParameters() === 0)
+            {
+                // Вызываем метод
+                $data = $method->invoke($ProductPromoResult);
+                // dump($data);
+            }
+        }
 
         self::assertTrue(true);
     }

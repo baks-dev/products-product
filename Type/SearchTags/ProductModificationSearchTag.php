@@ -24,8 +24,8 @@
 namespace BaksDev\Products\Product\Type\SearchTags;
 
 use BaksDev\Products\Product\Repository\Search\AllProductsToIndex\AllProductsToIndexResult;
-use BaksDev\Search\Repository\DataToIndexResult\DataToIndexResultInterface;
 use BaksDev\Search\EntityDocument\EntityDocumentInterface;
+use BaksDev\Search\Repository\DataToIndexResult\DataToIndexResultInterface;
 use BaksDev\Search\SearchDocuments\PrepareDocumentInterface;
 use BaksDev\Search\SearchIndex\SearchIndexTagInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
@@ -33,7 +33,6 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 #[AutoconfigureTag('baks.search-tags')]
 class ProductModificationSearchTag extends AbstractProductSearchTag implements SearchIndexTagInterface, PrepareDocumentInterface
 {
-
     public const string TAG = 'products-product';
 
     public function getModuleName(): string
