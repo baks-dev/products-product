@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 declare(strict_types=1);
@@ -982,18 +981,10 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                     'product_promotion.id = product_promotion_invariable.main',
                 );
 
-            $dbal
-                ->leftJoin(
-                    'product_promotion',
-                    ProductPromotionEvent::class,
-                    'product_promotion_event',
-                    '
-                        product_promotion_event.main = product_promotion.id',
-                );
 
             $dbal
                 ->leftJoin(
-                    'product_promotion_event',
+                    'product_promotion',
                     ProductPromotionPrice::class,
                     'product_promotion_price',
                     'product_promotion_price.event = product_promotion.event',
@@ -1001,7 +992,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
 
             $dbal
                 ->leftJoin(
-                    'product_promotion_event',
+                    'product_promotion',
                     ProductPromotionPeriod::class,
                     'product_promotion_period',
                     '
