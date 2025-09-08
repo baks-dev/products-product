@@ -164,14 +164,7 @@ final class ProductDetailByConstRepository implements ProductDetailByConstInterf
         return $this;
     }
 
-
-    /**
-     * Метод возвращает детальную информацию о продукте по его неизменяемым идентификаторам по иерархии
-     * 1. модификаций множественного варианта торгового предложения
-     * 2. множественного варианта торгового предложения
-     * 3. торгового предложения,
-     */
-    public function find(): array|false
+    public function builder(): DBALQueryBuilder
     {
         if($this->product === false)
         {
@@ -704,11 +697,42 @@ final class ProductDetailByConstRepository implements ProductDetailByConstInterf
 
         $dbal->allGroupByExclude();
 
+        return $dbal;
+    }
+
+    /**
+     * Метод возвращает детальную информацию о продукте по его неизменяемым идентификаторам по иерархии
+     * 1. модификаций множественного варианта торгового предложения
+     * 2. множественного варианта торгового предложения
+     * 3. торгового предложения,
+     * возвращая при этом массив
+     * @deprecated
+     */
+    public function find(): array|false
+    {
+        $dbal = $this->builder();
+
         $result = $dbal
             ->enableCache('products-product')
             ->fetchAssociative();
 
         return empty($result) ? false : $result;
+    }
 
+    /**
+     * Метод возвращает детальную информацию о продукте по его неизменяемым идентификаторам по иерархии
+     * 1. модификаций множественного варианта торгового предложения
+     * 2. множественного варианта торгового предложения
+     * 3. торгового предложения,
+     * гидрируя всё на объект резалта
+     * @see ProductDetailByConstResult
+     */
+    public function findResult(): ProductDetailByConstResult|false
+    {
+        $dbal = $this->builder();
+
+        return $dbal
+            ->enableCache('products-product')
+            ->fetchHydrate(ProductDetailByConstResult::class);
     }
 }
