@@ -283,9 +283,4 @@ class ProductEvent extends EntityEvent
     {
         return $this->info;
     }
-
-    public function getMaterial(): Collection
-    {
-        return $this->material;
-    }
 }
