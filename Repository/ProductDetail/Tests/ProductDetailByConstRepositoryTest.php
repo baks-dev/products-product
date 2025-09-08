@@ -25,16 +25,25 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Repository\ProductDetail\Tests;
 
+use BaksDev\Core\Type\Field\InputField;
 use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailByConstInterface;
+use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailByConstResult;
+use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
+use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
+use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
+use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
+use DateTimeImmutable;
+use BaksDev\Reference\Money\Type\Money;
 
 #[Group('products-product')]
+#[Group('products-product-repository')]
 #[When(env: 'test')]
 class ProductDetailByConstRepositoryTest extends KernelTestCase
 {
@@ -49,7 +58,6 @@ class ProductDetailByConstRepositoryTest extends KernelTestCase
             ->variationConst(new ProductVariationConst('01876b34-ecce-7c46-9f63-fc184b6527ee'))
             ->modificationConst(new ProductModificationConst('01876b34-ecd2-762c-9834-b6a914a020ba'))
             ->find();
-
 
         $array_keys = [
             "id",
@@ -95,7 +103,6 @@ class ProductDetailByConstRepositoryTest extends KernelTestCase
             "category_section_field",
         ];
 
-
         foreach($current as $key => $value)
         {
             self::assertTrue(in_array($key, $array_keys), sprintf('Появился новый ключ %s', $key));
@@ -110,8 +117,6 @@ class ProductDetailByConstRepositoryTest extends KernelTestCase
         /**
          * category_section_field
          */
-
-
         self::assertTrue(json_validate($current['category_section_field']));
         $current = json_decode($current['category_section_field'], true);
         $current = current($current);
@@ -138,5 +143,139 @@ class ProductDetailByConstRepositoryTest extends KernelTestCase
         {
             self::assertTrue(array_key_exists($key, $current), sprintf('Неизвестный новый ключ %s', $key));
         }
+    }
+
+    public function testUseCaseResult()
+    {
+        /** @var ProductDetailByConstInterface $OneProductDetailByConst */
+        $OneProductDetailByConst = self::getContainer()->get(ProductDetailByConstInterface::class);
+
+        $result = $OneProductDetailByConst
+            ->product(new ProductUid(ProductUid::TEST))
+            ->offerConst(new ProductOfferConst(ProductOfferConst::TEST))
+            ->variationConst(new ProductVariationConst(ProductVariationConst::TEST))
+            ->modificationConst(new ProductModificationConst(ProductModificationConst::TEST))
+            ->findResult();
+
+        self::assertInstanceOf(ProductDetailByConstResult::class, $result);
+
+        self::assertInstanceOf(ProductUid::class, $result->getId());
+        self::assertInstanceOf(ProductEventUid::class, $result->getEvent());
+
+        self::assertIsInt($result->getProductQuantity());
+        self::assertTrue(
+            $result->getProductOldPrice() instanceof Money
+            || false === $result->getProductOldPrice()
+        );
+
+        self::assertIsBool($result->getActive());
+        self::assertInstanceOf(DateTimeImmutable::class, $result->getActiveFrom());
+        self::assertInstanceOf(DateTimeImmutable::class, $result->getActiveTo());
+
+        self::assertTrue(is_string($result->getProductPreview()) || null === $result->getProductPreview());
+        self::assertTrue(
+            is_string($result->getProductDescription())
+            || null === $result->getProductDescription()
+        );
+        self::assertTrue(is_string($result->getProductUrl()) || null === $result->getProductUrl());
+
+        self::assertTrue(
+            $result->getProductOfferUid() === null ||
+            $result->getProductOfferUid() instanceof ProductOfferUid
+        );
+        self::assertTrue(
+            $result->getProductOfferConst() instanceof ProductOfferConst
+            || null === $result->getProductOfferConst()
+        );
+        self::assertTrue(
+            $result->getProductOfferValue() === null ||
+            is_string($result->getProductOfferValue())
+        );
+        self::assertTrue(
+            $result->getProductOfferPostfix() === null ||
+            is_string($result->getProductOfferPostfix())
+        );
+        self::assertTrue(
+            $result->getProductOfferReference() === null ||
+            $result->getProductOfferReference() instanceof InputField
+        );
+        self::assertTrue($result->getProductOfferName() === null || is_string($result->getProductOfferName()));
+        self::assertTrue(
+            $result->getProductOfferNamePostfix() === null
+            || is_string($result->getProductOfferNamePostfix())
+        );
+
+        self::assertTrue(
+            $result->getProductVariationUid() === null ||
+            $result->getProductVariationUid() instanceof ProductVariationUid
+        );
+        self::assertTrue(
+            $result->getProductVariationConst() === null ||
+            $result->getProductVariationConst() instanceof ProductVariationConst
+        );
+        self::assertTrue(
+            $result->getProductVariationValue() === null ||
+            is_string($result->getProductVariationValue())
+        );
+        self::assertTrue(
+            $result->getProductVariationPostfix() === null ||
+            is_string($result->getProductVariationPostfix())
+        );
+        self::assertTrue(
+            $result->getProductVariationReference() === null ||
+            $result->getProductVariationReference() instanceof InputField
+        );
+        self::assertTrue(
+            $result->getProductVariationName() === null
+            || is_string($result->getProductVariationName())
+        );
+        self::assertTrue(
+            $result->getProductVariationNamePostfix() === null
+            || is_string($result->getProductVariationNamePostfix())
+        );
+
+        self::assertTrue(
+            $result->getProductModificationUid() === null ||
+            $result->getProductModificationUid() instanceof ProductModificationUid
+        );
+        self::assertTrue(
+            $result->getProductModificationConst() === null ||
+            $result->getProductModificationConst() instanceof ProductModificationConst
+        );
+        self::assertTrue(
+            $result->getProductModificationValue() === null ||
+            is_string($result->getProductModificationValue())
+        );
+        self::assertTrue(
+            $result->getProductModificationPostfix() === null ||
+            is_string($result->getProductModificationPostfix())
+        );
+        self::assertTrue(
+            $result->getProductModificationReference() === null ||
+            $result->getProductModificationReference() instanceof InputField
+        );
+        self::assertTrue(
+            $result->getProductModificationName() === null
+            || is_string($result->getProductModificationName())
+        );
+        self::assertTrue(
+            $result->getProductModificationNamePostfix() === null
+            || is_string($result->getProductModificationNamePostfix())
+        );
+
+        self::assertTrue($result->getProductArticle() === null || is_string($result->getProductArticle()));
+        self::assertTrue($result->getProductImage() === null || is_string($result->getProductImage()));
+        self::assertTrue($result->getProductImageExt() === null || is_string($result->getProductImageExt()));
+        self::assertTrue($result->getProductImageCdn() === null || is_bool($result->getProductImageCdn()));
+
+        self::assertTrue($result->getCategoryName() === null || is_string($result->getCategoryName()));
+        self::assertTrue($result->getCategoryUrl() === null || is_string($result->getCategoryUrl()));
+        self::assertTrue(
+            $result->getCategorySectionField() === null ||
+            is_array($result->getCategorySectionField())
+        );
+
+        self::assertTrue($result->getProductPrice() instanceof Money || false === $result->getProductPrice());
+        self::assertTrue($result->getProductCurrency() === null || is_string($result->getProductCurrency()));
     }
 }
