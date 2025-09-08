@@ -732,10 +732,11 @@ final class SearchAllProductsRepository implements SearchRepositoryInterface
 
             /** Товары */
             $dbal->andWhere('(
-            product.id IN (:uuids) 
-            OR product_offer.id IN (:uuids)) 
-            OR product_variation.id IN (:uuids) 
-            OR product_modification.id IN (:uuids))')
+                product.id IN (:uuids) 
+                OR product_offer.id IN (:uuids)
+                OR product_variation.id IN (:uuids) 
+                OR product_modification.id IN (:uuids)
+            )')
                 ->setParameter(
                     key: 'uuids',
                     value: $ids,
