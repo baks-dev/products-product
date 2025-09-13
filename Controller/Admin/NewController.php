@@ -90,7 +90,7 @@ final class NewController extends AbstractController
             $this->addFlash(
                 'admin.page.new',
                 $handle instanceof Product ? 'admin.success.new' : 'admin.danger.new',
-                'admin.products.product',
+                'products-product.admin',
                 $handle
             );
 

@@ -31,3 +31,6 @@ ROLE_PRODUCT_QUANTITY:
   name: 'Изменить все остатки'
   desc: ''
 
+ROLE_PRODUCT_COST:
+  name: 'Закупочные цены'
+  desc: ''

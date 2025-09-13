@@ -128,9 +128,10 @@ class ProductPrice extends EntityEvent
     }
 
     /** Присваиваем резерву указанное количество */
-    public function setReserve(?int $reserve): void
+    public function setReserve(?int $reserve): self
     {
         $this->reserve = $reserve ?: 0;
+        return $this;
     }
 
 
@@ -161,9 +162,10 @@ class ProductPrice extends EntityEvent
     }
 
     /** Присваиваем наличию указанное количество */
-    public function setQuantity(?int $quantity): void
+    public function setQuantity(?int $quantity): self
     {
         $this->quantity = $quantity ?: 0;
+        return $this;
     }
 
     /** Возвращает текущее состояние резерва */

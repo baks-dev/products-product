@@ -30,6 +30,7 @@ use BaksDev\Core\Controller\AbstractController;
 use BaksDev\Core\Form\Search\SearchDTO;
 use BaksDev\Core\Form\Search\SearchForm;
 use BaksDev\Core\Listeners\Event\Security\RoleSecurity;
+use BaksDev\Products\Product\Repository\Search\AllProductsToIndex\AllProductsToIndexRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -37,27 +38,17 @@ use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[AsController]
-//#[RoleSecurity('ROLE_PRODUCTS')]
 final class IndexController extends AbstractController
 {
-    #[Route('/api/admin/products/{page<\d+>}', name: 'api.admin.index', methods: ['GET', 'POST'])]
+    #[Route('/api/admin/products', name: 'api.admin.index', methods: ['GET', 'POST'])]
     public function index(
         Request $request,
+        AllProductsToIndexRepository $AllProductsToIndexRepository,
         int $page = 0,
     ): Response
     {
-        return new JsonResponse([
-            [
-                'article' => 'TI501-14-175-65-86T',
-                'name' => 'Triangle IcelynX TI501 175/65 R14 86T',
-                'price' => 1245,
-            ],
+        $result = $AllProductsToIndexRepository->findAll();
 
-            [
-                'article' => 'TI501-14-175-70-88T',
-                'name' => 'Triangle IcelynX TI501 175/70 R14 88T',
-                'price' => 54321,
-            ],
-        ]);
+        return new JsonResponse($result);
     }
 }

@@ -32,32 +32,33 @@ final class UpdateVariationQuantityHandler extends AbstractHandler
 {
     public function handle(UpdateVariationQuantityDTO $command): ProductVariationQuantity|string|false
     {
-        $product = $this
+        $ProductVariationQuantity = $this
             ->getRepository(ProductVariationQuantity::class)
             ->findOneBy(['variation' => (string) $command->getVariation()]);
 
-        if(empty($product) === false)
+        if(false === ($ProductVariationQuantity instanceof ProductVariationQuantity))
         {
-            $product->setQuantity($command->getQuantity());
-            $product->setReserve($command->getReserve());
-
-            /** Валидация всех объектов */
-            $this->validatorCollection->add($product);
-
-            if($this->validatorCollection->isInvalid())
-            {
-                return $this->validatorCollection->getErrorUniqid();
-            }
-
-            $this->flush();
-
-            $this->messageDispatch
-                ->addClearCacheOther('products-product')
-                ->addClearCacheOther('avito-board');
-
-            return $product;
+            return false;
         }
 
-        return false;
+        $ProductVariationQuantity
+            ->setQuantity($command->getQuantity())
+            ->setReserve($command->getReserve());
+
+        /** Валидация всех объектов */
+        $this->validatorCollection->add($ProductVariationQuantity);
+
+        if($this->validatorCollection->isInvalid())
+        {
+            return $this->validatorCollection->getErrorUniqid();
+        }
+
+        $this->flush();
+
+        $this->messageDispatch
+            ->addClearCacheOther('products-product')
+            ->addClearCacheOther('avito-board');
+
+        return $ProductVariationQuantity;
     }
 }

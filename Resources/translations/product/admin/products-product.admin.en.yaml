@@ -1,46 +1,50 @@
-page:
-  index: 'Product Catalog'
-  new: 'Add product'
-  edit: 'Edit product'
-  rename: 'Rename the product'
-  delete: 'Delete products'
-  quantity: 'Change product quantity'
+Page:
+  Index: 'Product Catalog'
+  New: 'Add a product'
+  EDIT: 'Edit the product'
+  Rename: 'Rename the product'
+  Delete: 'Delete products'
+  Quantity: 'Change the number of products'
+  Cost: 'Change the cost of products'
 
-breadcrumb:
-  index: 'Product Catalog'
-  new: 'Add product'
-  edit: 'Edit product'
-  rename: 'Rename the product'
-  delete: 'Delete a product'
-  quantity: 'Change product quantity'
+Breadcrumb:
+  Index: 'Product Catalog'
+  New: 'Add a product'
+  EDIT: 'Edit the product'
+  Rename: 'Rename the product'
+  Delete: 'Delete the product'
+  Quantity: 'Change the number of products'
+  Cost: 'Change the cost of products'
 
+Form:
+  Label:
+    Trans:
+      NAME: 'Product name'
+    url: 'symbolic product code'
 
-form:
-  label:
-    trans:
-      name: 'Product name'
-    url: 'Product symbol code'
+Success:
+  New: 'The product is successfully added'
+  Update: 'The product is successfully updated'
+  EDIT: 'The product is successfully updated'
+  Rename: 'The product is successfully renamed'
+  Delete: 'The product is successfully removed into the basket'
+  Restore: 'The product is successfully restored'
+  COST: 'Request to change the cost is accepted'
+  Quantity:
+    Product: 'The amount of product is successfully updated'
+    all: 'Request to change quantity is accepted'
 
-success:
-  new: 'Product added successfully'
-  update: 'Product updated successfully'
-  edit: 'Product updated successfully'
-  rename: 'Product successfully renamed'
-  delete: 'Product successfully removed to cart'
-  restore: 'The product was successfully restored'
-  quantity:
-    product: 'Product quantity updated successfully'
-    all: 'Request for quantity change accepted'
+Danger:
+  New: '%S: Error when adding a product'
+  Update: '%S: Error when updating the product'
+  EDIT: '%S: Error when updating the product'
+  Rename: '%S: Error when updating the product'
+  Delete: '%S: Error when removing the product'
+  RESTORE: '%S: Error when restoring the product'
+  COST: '%S: Error updating the cost of product'
+  Quantity:
+    Product: '%S: error updating the quantity of the product'
 
-danger:
-  new: '%s: Error adding product'
-  update: '%s: Error updating product'
-  edit: '%s: Error while updating product'
-  rename: '%s: Error updating product'
-  delete: '%s: Error deleting product'
-  restore: '%s: Error while restoring product'
-  quantity:
-    product: '%s: Error updating quantity'
-
-btn:
-  quantity: 'Edit quantity'
+BTN:
+  Quantity: 'Change quantity'
+  Cost: 'Change the cost'
