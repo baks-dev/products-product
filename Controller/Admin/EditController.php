@@ -96,8 +96,8 @@ final class EditController extends AbstractController
             $handle = $productHandler->handle($ProductDTO);
 
             $this->addFlash(
-                'admin.page.edit',
-                $handle instanceof Product ? 'admin.success.edit' : 'admin.danger.edit',
+                'page.edit',
+                $handle instanceof Product ? 'success.edit' : 'danger.edit',
                 'products-product.admin',
                 $handle
             );

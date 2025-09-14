@@ -64,8 +64,8 @@ final class DeleteController extends AbstractController
             $handle = $productDeleteHandler->handle($ProductDeleteDTO);
 
             $this->addFlash(
-                'admin.page.delete',
-                $handle instanceof Product ? 'admin.success.delete' : 'admin.danger.delete',
+                'page.delete',
+                $handle instanceof Product ? 'success.delete' : 'danger.delete',
                 'products-product.admin',
                 $handle
             );

@@ -43,7 +43,7 @@
 
             {#  Название товара  #}
             {{ form_row(translate.name, {
-                label : 'admin.form.label.trans.name'|trans,
+                label : 'form.label.trans.name'|trans,
                 attr : { 'data-lang' : 'product_form_trans_'~translate.vars.value.local }
             }) }}
 
@@ -51,7 +51,7 @@
     {% endfor %}
 
     {# Символьный код продукта #}
-    {{ form_row(form.info.url, { label : 'admin.form.label.url'|trans } ) }}
+    {{ form_row(form.info.url, { label : 'form.label.url'|trans } ) }}
 
 </div>
 

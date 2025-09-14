@@ -69,8 +69,8 @@ final class RenameController extends AbstractController
             $handle = $renameProductHandler->handle($RenameProductDTO);
 
             $this->addFlash(
-                'admin.page.edit',
-                $handle instanceof Product ? 'admin.success.rename' : 'admin.danger.rename',
+                'page.edit',
+                $handle instanceof Product ? 'success.rename' : 'danger.rename',
                 'products-product.admin',
                 $handle
             );

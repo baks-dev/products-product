@@ -88,8 +88,8 @@ final class NewController extends AbstractController
             $handle = $productHandler->handle($ProductDTO);
 
             $this->addFlash(
-                'admin.page.new',
-                $handle instanceof Product ? 'admin.success.new' : 'admin.danger.new',
+                'page.new',
+                $handle instanceof Product ? 'success.new' : 'danger.new',
                 'products-product.admin',
                 $handle
             );
