@@ -49,6 +49,45 @@ final class IndexController extends AbstractController
     {
         $result = $AllProductsToIndexRepository->findAll();
 
-        return new JsonResponse($result);
+        $data = null;
+
+        foreach($result as $item)
+        {
+            $arrName = explode(' ', $item->getproductName());
+            $arrArticle = explode('-', $item->getProductArticle());
+
+            /** Поиск по полному названию */
+
+            $combined = [];
+
+            foreach($arrName as $value)
+            {
+                $combined[$value] = true;
+            }
+
+            foreach($arrArticle as $value)
+            {
+                $combined[$value] = true;
+            }
+
+            $combined = array_keys($combined);
+
+            $search = implode(' ', $combined);
+
+            /** Здесь можно применить фильтр для поиска */
+
+            $search = str_replace([' WL', ' SA', ' Z507', ' S AECO'], '', $search);
+
+            $search = preg_replace_callback('/\b(1[3-9]|2[0-4])\b/', function($matches) {
+                return 'R'.$matches[1];
+            }, $search);
+
+            $data[] = [
+                'search' => $search,
+                'article' => $item->getProductArticle(),
+            ];
+        }
+
+        return new JsonResponse($data);
     }
 }

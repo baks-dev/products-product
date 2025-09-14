@@ -52,6 +52,11 @@ final readonly class AllProductsToIndexResult implements DataToIndexResultInterf
         return new ProductUid($this->id);
     }
 
+    public function getProductArticle(): ?string
+    {
+        return $this->product_article;
+    }
+
     public function getProductOfferId(): ProductOfferUid|null
     {
         if(is_null($this->product_offer_id))
@@ -61,6 +66,7 @@ final readonly class AllProductsToIndexResult implements DataToIndexResultInterf
 
         return new ProductOfferUid($this->product_offer_id);
     }
+
 
     public function getProductVariationId(): ProductVariationUid|null
     {
@@ -81,6 +87,27 @@ final readonly class AllProductsToIndexResult implements DataToIndexResultInterf
 
         return new ProductModificationUid($this->product_modification_id);
     }
+
+    public function getProductName(): ?string
+    {
+        return $this->product_name;
+    }
+
+    public function getProductOfferValue(): ?string
+    {
+        return $this->product_offer_value;
+    }
+
+    public function getProductVariationValue(): ?string
+    {
+        return $this->product_variation_value;
+    }
+
+    public function getProductModificationValue(): ?string
+    {
+        return $this->product_modification_value;
+    }
+
 
     public function setTextSearch(Switcher $switcher): string
     {
