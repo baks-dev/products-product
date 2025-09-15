@@ -76,15 +76,16 @@ final class PriceController extends AbstractController
             return new JsonResponse(['status' => 403], status: 403);
         }
 
-        $content = json_decode($request->getContent(), false, 512, JSON_THROW_ON_ERROR);
-
-        if(false === json_validate($content))
+        if(false === json_validate($request->getContent()))
         {
             $logger->critical('Ошибка валидации JSON', [$request->getContent(), self::class.':'.__LINE__]);
             return new JsonResponse(['status' => 500], status: 500);
         }
 
+
         /** Получаем продукт по артикулу */
+
+        $content = json_decode($request->getContent(), false, 512, JSON_THROW_ON_ERROR);
 
         $CurrentProductDTO = $ProductConstByArticle->find($content->article);
 
@@ -96,15 +97,20 @@ final class PriceController extends AbstractController
 
         /** Получаем детальную информацию о продукте */
 
-        $ProductDetailByUidInterface
+        $ProductDetailByUidResult = $ProductDetailByUidInterface
             ->event($CurrentProductDTO->getEvent())
             ->offer($CurrentProductDTO->getOffer())
             ->variation($CurrentProductDTO->getVariation())
             ->modification($CurrentProductDTO->getModification())
             ->findResult();
 
-        if(false === ($ProductDetailByUidInterface instanceof ProductDetailByUidResult))
+        if(false === ($ProductDetailByUidResult instanceof ProductDetailByUidResult))
         {
+            $logger->critical(sprintf('%s: Продукт по артикулу не найден', $content->article), [
+                var_export($CurrentProductDTO, true),
+                self::class.':'.__LINE__,
+            ]);
+
             return new JsonResponse(['status' => 404], status: 404);
         }
 
@@ -122,9 +128,14 @@ final class PriceController extends AbstractController
         }
 
 
-        $price = new Money($content->price)->getRoundValue(100); // округлить до соток пример
+        $price = floor($content->price / 50) * 50;
 
-        if(false === ($ProductDetailByUidInterface->getProductPrice() instanceof Money))
+        if((int) $price === $content->price)
+        {
+            $price -= 50;
+        }
+
+        if(false === ($ProductDetailByUidResult->getProductPrice() instanceof Money))
         {
             /** Выставляем рекомендуемую стоимость */
 
@@ -135,12 +146,12 @@ final class PriceController extends AbstractController
             return new JsonResponse(['status' => 200]);
         }
 
-        if($price !== $ProductDetailByUidInterface->getProductPrice()->getValue())
+        if($price !== $ProductDetailByUidResult->getProductPrice()->getValue())
         {
             $logger->critical(
                 sprintf('%s: %s => %s (рекомендуемая стоимость)',
                     $content->article,
-                    $ProductDetailByUidInterface->getProductPrice()->getValue(),
+                    $ProductDetailByUidResult->getProductPrice()->getValue(),
                     $price,
                 ), [self::class.':'.__LINE__],
             );
