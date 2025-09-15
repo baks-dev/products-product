@@ -30,6 +30,16 @@ use BaksDev\Core\Controller\AbstractController;
 use BaksDev\Core\Form\Search\SearchDTO;
 use BaksDev\Core\Form\Search\SearchForm;
 use BaksDev\Core\Listeners\Event\Security\RoleSecurity;
+use BaksDev\Products\Product\Repository\CurrentProductByArticle\CurrentProductDTO;
+use BaksDev\Products\Product\Repository\CurrentProductByArticle\ProductConstByArticleInterface;
+use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailByUidInterface;
+use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailByUidResult;
+use BaksDev\Reference\Money\Type\Money;
+use BaksDev\Users\Profile\UserProfile\Repository\UserProfileById\UserProfileByIdInterface;
+use BaksDev\Users\Profile\UserProfile\Repository\UserProfileById\UserProfileResult;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -42,10 +52,102 @@ final class PriceController extends AbstractController
     /** Метод запроса на изменение цены  */
     #[Route('/api/admin/price', name: 'api.admin.price', methods: ['POST'])]
     public function index(
+        #[Target('productsProductLogger')] LoggerInterface $logger,
         Request $request,
-        int $page = 0,
+        UserProfileByIdInterface $UserProfileById,
+        ProductConstByArticleInterface $ProductConstByArticle,
+        ProductDetailByUidInterface $ProductDetailByUidInterface
     ): Response
     {
-        return new Response();
+        $profile = $request->headers->get('Authorization');
+
+        if(empty($profile))
+        {
+            return new JsonResponse(['status' => 403], status: 403);
+        }
+
+        /** Получаем профиль пользователя */
+
+        $UserProfileResult = $UserProfileById->profile(new UserProfileUid($profile))->find();
+
+        if(false === ($UserProfileResult instanceof UserProfileResult))
+        {
+            $logger->critical('Профиль авторизации не найден', [$profile, self::class.':'.__LINE__]);
+            return new JsonResponse(['status' => 403], status: 403);
+        }
+
+        $content = json_decode($request->getContent(), false, 512, JSON_THROW_ON_ERROR);
+
+        if(false === json_validate($content))
+        {
+            $logger->critical('Ошибка валидации JSON', [$request->getContent(), self::class.':'.__LINE__]);
+            return new JsonResponse(['status' => 500], status: 500);
+        }
+
+        /** Получаем продукт по артикулу */
+
+        $CurrentProductDTO = $ProductConstByArticle->find($content->article);
+
+        if(false === ($CurrentProductDTO instanceof CurrentProductDTO))
+        {
+            $logger->critical('Продукт по артикулу не найден', [$content->article, self::class.':'.__LINE__]);
+            return new JsonResponse(['status' => 404], status: 404);
+        }
+
+        /** Получаем детальную информацию о продукте */
+
+        $ProductDetailByUidInterface
+            ->event($CurrentProductDTO->getEvent())
+            ->offer($CurrentProductDTO->getOffer())
+            ->variation($CurrentProductDTO->getVariation())
+            ->modification($CurrentProductDTO->getModification())
+            ->findResult();
+
+        if(false === ($ProductDetailByUidInterface instanceof ProductDetailByUidResult))
+        {
+            return new JsonResponse(['status' => 404], status: 404);
+        }
+
+
+        /** Нет в наличии */
+        if(empty($content->price))
+        {
+            /** Выставляем стоимость по рыночной цене */
+
+            $logger->critical(
+                sprintf('%s: => %s', $content->article, 'Нет в наличии! Выставляем рыночную стоимость!'),
+                [self::class.':'.__LINE__]);
+
+            return new JsonResponse(['status' => 200]);
+        }
+
+
+        $price = new Money($content->price)->getRoundValue(100); // округлить до соток пример
+
+        if(false === ($ProductDetailByUidInterface->getProductPrice() instanceof Money))
+        {
+            /** Выставляем рекомендуемую стоимость */
+
+            $logger->critical(
+                sprintf('%s: => %s (рекомендуемая стоимость)', $content->article, $price),
+                [self::class.':'.__LINE__]);
+
+            return new JsonResponse(['status' => 200]);
+        }
+
+        if($price !== $ProductDetailByUidInterface->getProductPrice()->getValue())
+        {
+            $logger->critical(
+                sprintf('%s: %s => %s (рекомендуемая стоимость)',
+                    $content->article,
+                    $ProductDetailByUidInterface->getProductPrice()->getValue(),
+                    $price,
+                ), [self::class.':'.__LINE__],
+            );
+
+            return new JsonResponse(['status' => 200]);
+        }
+
+        return new JsonResponse(['status' => 200]);
     }
 }
