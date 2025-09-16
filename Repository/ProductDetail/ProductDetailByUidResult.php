@@ -305,12 +305,12 @@ class ProductDetailByUidResult
 
     public function getProductPrice(): Money|false
     {
-        if(empty($this->price))
+        if(empty($this->product_price))
         {
             return false;
         }
 
-        $price = new Money($this->price, true);
+        $price = new Money($this->product_price, true);
 
         // применяем скидку пользователя из профиля
         if(false === empty($this->profile_discount))
