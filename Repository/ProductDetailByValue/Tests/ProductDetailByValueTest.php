@@ -27,7 +27,6 @@ namespace BaksDev\Products\Product\Repository\ProductDetailByValue\Tests;
 
 use BaksDev\Products\Product\Repository\ProductDetailByValue\ProductDetailByValueInterface;
 use BaksDev\Products\Product\Repository\ProductDetailByValue\ProductDetailByValueResult;
-use BaksDev\Products\Product\Type\Id\ProductUid;
 use PHPUnit\Framework\Attributes\Group;
 use ReflectionClass;
 use ReflectionMethod;
@@ -68,26 +67,5 @@ class ProductDetailByValueTest extends KernelTestCase
         }
 
         self::assertTrue(true);
-    }
-
-    public function testFetchProductAssociative(): void
-    {
-
-        self::assertTrue(true);
-        return;
-
-        /** @var ProductDetailByValueInterface $repository */
-        $repository = self::getContainer()->get(ProductDetailByValueInterface::class);
-
-        $result = $repository
-            ->fetchProductAssociative(
-                product: new ProductUid('01876b34-ed23-7c18-ba48-9071e8646a08'),
-                offer: '01876b34-eccb-7188-887f-0738cae05232',
-                variation: '01876b34-ecce-7c46-9f63-fc184b6527ee',
-                modification: '01876b34-ecd2-762c-9834-b6a914a020ba',
-            );
-
-        //        dump($result);
-        //        dd();
     }
 }

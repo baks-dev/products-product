@@ -51,13 +51,12 @@ final class NotFoundController extends AbstractController
     ): Response
     {
         $productCard = $productDetail
-            ->fetchProductAssociative(
-                $info->getProduct(),
-                $offer,
-                $variation,
-                $modification,
-                $postfix
-            );
+            ->byProduct($info->getProduct())
+            ->byOfferValue($offer)
+            ->byVariationValue($variation)
+            ->byModificationValue($modification)
+            ->byPostfix($postfix)
+            ->find();
 
         /** Другие ТП данного продукта */
         $productOffer = $productDetailOffer->fetchProductOfferAssociative($info->getProduct());
@@ -68,9 +67,9 @@ final class NotFoundController extends AbstractController
                 'offers' => $productOffer,
                 'offer' => $offer,
                 'variation' => $variation,
-                'modification' => $modification
+                'modification' => $modification,
             ],
-            response: new Response(status: 404)
+            response: new Response(status: 404),
         );
     }
 }
