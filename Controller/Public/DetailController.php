@@ -40,6 +40,7 @@ use BaksDev\Products\Review\Repository\AllReviews\AllReviewsInterface;
 use BaksDev\Products\Review\Type\Status\ReviewStatus;
 use BaksDev\Products\Review\Type\Status\ReviewStatus\Collection\ReviewStatusActive;
 use DateTimeImmutable;
+use InvalidArgumentException;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -73,6 +74,11 @@ final class DetailController extends AbstractController
             ->byModificationValue($modification)
             ->byPostfix($postfix)
             ->find();
+
+        if(false === ($productCard instanceof ProductDetailByValueResult))
+        {
+            throw new InvalidArgumentException('Page Not Found', code: 404);
+        }
 
         /** Другие ТП данного продукта */
         $productOffer = $productDetailOffer->fetchProductOfferAssociative($info->getProduct());
@@ -154,7 +160,7 @@ final class DetailController extends AbstractController
                         'offer' => $productCard->getProductOfferUid(),
                         'variation' => $productCard->getProductVariationUid(),
                         'modification' => $productCard->getProductModificationUid(),
-                    ]
+                    ],
                 ),
             ]);
         }

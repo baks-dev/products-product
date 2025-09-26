@@ -124,7 +124,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             return $this;
         }
 
-        $this->offer = $offer;
+        $this->offer = trim($offer);
 
         return $this;
     }
@@ -138,7 +138,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             return $this;
         }
 
-        $this->variation = $variation;
+        $this->variation = trim($variation);
 
         return $this;
     }
@@ -152,7 +152,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             return $this;
         }
 
-        $this->modification = $modification;
+        $this->modification = trim($modification);
 
         return $this;
     }
@@ -166,7 +166,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             return $this;
         }
 
-        $this->postfix = $postfix;
+        $this->postfix = trim($postfix);
 
         return $this;
     }
