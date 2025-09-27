@@ -166,7 +166,9 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             return $this;
         }
 
+        $postfix = mb_strtolower($postfix);
         $this->postfix = trim($postfix);
+
 
         return $this;
     }
@@ -267,7 +269,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'product_offer',
                 'product_offer.event = product.event '.
                 ($this->offer ? ' AND product_offer.value = :product_offer_value' : '').
-                ($this->postfix ? ' AND ( product_offer.postfix = :postfix OR product_offer.postfix IS NULL )' : ''),
+                ($this->postfix ? ' AND ( LOWER(product_offer.postfix) = :postfix OR product_offer.postfix IS NULL )' : ''),
             );
 
         if($this->offer)
@@ -320,7 +322,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'product_variation',
                 'product_variation.offer = product_offer.id'.
                 ($this->variation ? ' AND product_variation.value = :product_variation_value' : '').
-                ($this->postfix ? ' AND ( product_variation.postfix = :postfix OR product_variation.postfix IS NULL )' : ''),
+                ($this->postfix ? ' AND ( LOWER(product_variation.postfix) = :postfix OR product_variation.postfix IS NULL )' : ''),
             );
 
         if($this->variation)
@@ -366,7 +368,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'product_modification',
                 'product_modification.variation = product_variation.id'.
                 ($this->modification ? ' AND product_modification.value = :product_modification_value' : '').
-                ($this->postfix ? ' AND ( product_modification.postfix = :postfix OR product_modification.postfix IS NULL )' : ''),
+                ($this->postfix ? ' AND ( LOWER(product_modification.postfix) = :postfix OR product_modification.postfix IS NULL )' : ''),
             );
 
         if($this->modification)
