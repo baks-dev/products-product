@@ -712,6 +712,7 @@ final class SearchAllProductsRepository implements SearchRepositoryInterface
 
         /** Очистить поисковую строку от всех НЕ буквенных/числовых символов */
         $search = preg_replace('/[^ a-zа-яё\d]/ui', ' ', $search);
+        $search = preg_replace('/\br(\d+)\b/i', '$1', $search);  // Заменяем R или r в начале строки, за которым следует цифра
 
         $this->logger->info(sprintf('Строка поиска: %s', $search));
 
