@@ -4,7 +4,7 @@
     {% if headers %}
         <h3>Нaйдено в products:</h3>
     {% endif %}
-    {% set image_path = '/assets/img/blank.svg' %}
+    {% set image_path = '/assets/'~version~'/img/blank.svg' %}
     <div class="row row-cols-2 g-2 mb-5 rounded-4">
         {% for product in search_result %}
             <div class="col">

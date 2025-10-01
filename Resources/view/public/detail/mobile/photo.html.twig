@@ -15,7 +15,7 @@
             <div class="carousel-item {{ loop.first ? 'active' }}">
 
                 {# Обложка  #}
-                {% set image_path = '/assets/img/blank.svg' %}
+                {% set image_path = '/assets/'~version~'/img/blank.svg' %}
 
                 {% if product_images.product_img is defined and product_images.product_img is not null %}
                     {% set img_host =  product_images.product_img_cdn == true  ? CDN_HOST : '' %}
@@ -28,7 +28,7 @@
                 <div class="rounded-5 lazy bg-contain my-3"
                      data-bg="{{ image_path }}"
                      title="{{ card.product_name }}"
-                     style="width: 100%; height: 250px; background-image: url('/assets/img/empty.webp');"
+                     style="width: 100%; height: 250px; background-image: url('/assets/{{ version }}/img/empty.webp');"
                 >
 
                 </div>

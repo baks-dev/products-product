@@ -5,7 +5,7 @@
 {% if card.productImagesSortByRoot is not null %}
     {% set photos = card.productImagesSortByRoot %}
 {% else %}
-    {% set photos = ['/assets/img/blank.svg'] %}
+    {% set photos = ['/assets/{{ version }}/img/blank.svg'] %}
 {% endif %}
 
 <div class="modal fade"
@@ -29,7 +29,7 @@
 
                         {% for key, photo in photos %}
 
-                            {% set image_path = '/assets/img/blank.svg' %}
+                            {% set image_path = '/assets/'~version~'/img/blank.svg' %}
 
                             {% if photo.product_img_ext is defined and photo.product_img_ext is not null %}
                                 {% set image_path = cdn_image_path(photo.product_img, photo.product_img_ext, photo.product_img_cdn) %}
@@ -37,7 +37,7 @@
 
                             <div class="carousel-item {{ key == 0 ? 'active' : '' }}">
                                 <img style="height: 50vh; max-height: 100%;"
-                                     src="/assets/img/empty.png"
+                                     src="/assets/{{ version }}/img/empty.png"
                                      data-src="{{ image_path }}"
                                      class="d-block m-auto lazy"
                                      alt="Изображение товара">

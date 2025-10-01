@@ -1,7 +1,7 @@
 {# @var card \BaksDev\Products\Product\Repository\ProductDetailByValue\ProductDetailByValueResult #}
 
 {# Обложка категории  #}
-{% set categoryCover = '/assets/img/blank.svg' %}
+{% set categoryCover = '/assets/'~version~'/img/blank.svg' %}
 {% if card.categoryCoverCdn is not null %}
     {% set categoryCover = cdn_image_path(card.categoryCoverPath, card.categoryCoverExt, card.categoryCoverCdn) %}
 {% endif %}
@@ -60,7 +60,7 @@
 
                         <img
                                 class="lazy"
-                                src="/assets/img/empty.png"
+                                src="/assets/{{ version }}/img/empty.png"
                                 data-src="{{ categoryCover }}"
                                 style="height: auto; width: 180px;"
                                 alt="{{ card.categoryName }}">

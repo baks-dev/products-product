@@ -24,7 +24,8 @@
     <div class="d-flex justify-content-between p-1 rounded-3 bg-light">
         <div class="w-50">Сезонность</div>
         <div class="w-50">
-            Летние шины <img data-src="/temp/img/sun.png" src="/assets/img/empty.png" class="lazy m-1" alt="..."
+            Летние шины <img data-src="/temp/img/sun.png" src="/assets/{{ version }}/img/empty.png" class="lazy m-1"
+                             alt="..."
                              style="width: 13px; height: 13px;">
         </div>
     </div>
@@ -60,7 +61,7 @@
         <a href="{{ path('core:public.homepage') }}"
            aria-label="{{ 'breadcrumb.homepage.user'|trans({}, 'core') }}"
            title="{{ 'breadcrumb.homepage.user'|trans({}, 'core') }}">
-            <img data-src="/logo.webp" src="/assets/img/empty.png" alt="..." class="lazy img-fluid">
+            <img data-src="/logo.webp" src="/assets/{{ version }}/img/empty.png" alt="..." class="lazy img-fluid">
         </a>
     </div>
 

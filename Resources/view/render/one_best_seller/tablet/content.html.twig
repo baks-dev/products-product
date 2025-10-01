@@ -12,7 +12,7 @@
 {% set RootImg = Bestseller.productImagesSortByRoot|first %}
 
 {# ОБЛОЖКА #}
-{% set ImagePath = '/assets/img/blank.svg' %}
+{% set ImagePath = '/assets/'~version~'/img/blank.svg' %}
 
 {% if rootImg.img_ext is defined and rootImg.img_ext is not null %}
     {% set bestSellerImg = cdn_image_path(rootImg.img, rootImg.img_ext, rootImg.img_cdn) %}

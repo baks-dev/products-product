@@ -17,7 +17,7 @@
                         <div class=''>
 
                             {# Обложка  #}
-                            {% set image_path = '/assets/img/blank.svg' %}
+                            {% set image_path = '/assets/'~version~'/img/blank.svg' %}
 
                             {% if parent.parent_category_cover_ext is defined and parent.parent_category_cover_ext is not null %}
                                 {% set img_host =  parent.parent_category_cover_cdn == true  ? CDN_HOST : '' %}
@@ -29,7 +29,7 @@
 
                             <span class="icon rounded-circle bg-contain lazy p-1 entered lazy"
                                   style="width: 43px; height: 43px;
-										background-image: url('/assets/img/empty.svg');"
+                                          background-image: url('/assets/{{ version }}/img/empty.svg');"
                                   data-bg="{{ image_path }}"
                             >
 								</span>

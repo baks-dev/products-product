@@ -11,5 +11,5 @@
 {% endblock %}
 
 {% block javascript %}
-<script nonce='{{ csp_nonce() }}' async  data-src="/assets/products_product/cost.js?v={{ version }}" class="lazy"></script>
+<script nonce='{{ csp_nonce() }}' async  data-src="/assets/{{ version }}/products-product/cost.js?v={{ version }}" class="lazy"></script>
 {% endblock %}

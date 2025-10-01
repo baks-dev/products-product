@@ -12,7 +12,7 @@
 {% set RootImg = Bestseller.productImagesSortByRoot|first %}
 
 {# ОБЛОЖКА #}
-{% set ImagePath = '/assets/img/blank.svg' %}
+{% set ImagePath = '/assets/'~version~'/img/blank.svg' %}
 
 {% if RootImg.img_ext is defined and RootImg.img_ext is not null %}
     {% set ImagePath = cdn_image_path(RootImg.img, RootImg.img_ext, RootImg.img_cdn) %}
@@ -26,7 +26,7 @@
     <div class="position-relative mb-3">
         <img
                 class="w-100 lazy"
-                src="/assets/img/empty.png"
+                src="/assets/{{ version }}/img/empty.png"
                 data-src="{{ ImagePath }}"
                 alt="Изображение товара"
         >

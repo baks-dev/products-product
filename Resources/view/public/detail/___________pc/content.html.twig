@@ -76,7 +76,7 @@
             {% endif %}
 
             {# Обложка #}
-            {% set image_path = '/assets/img/blank.svg' %}
+            {% set image_path = '/assets/'~version~'/img/blank.svg' %}
 
             {% if root_image %}
 
@@ -108,7 +108,7 @@
 
 
                     {# Обложка #}
-                    {% set image_path = '/assets/img/blank.svg' %}
+                    {% set image_path = '/assets/'~version~'/img/blank.svg' %}
 
                     {% if product_images.product_img_ext is defined and product_images.product_img_ext is not null %}
                         {% set img_host =  product_images.product_img_cdn == true  ? CDN_HOST : '' %}
@@ -152,7 +152,7 @@
 					</svg> #}
                     <img data-src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9IiNCMUI2QkIiIHZpZXdCb3g9IjAgMCAxNiAxNiI+PHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBkPSJNOCAxLjMxNEMxMi40MzgtMy4yNDggMjMuNTM0IDQuNzM1IDggMTUtNy41MzQgNC43MzYgMy41NjItMy4yNDggOCAxLjMxNHoiPjwvcGF0aD48L3N2Zz4K"
                          width="20" height="20"
-                         src="/assets/img/empty.png"
+                         src="/assets/{{ version }}/img/empty.png"
                          class="lazy"
                          alt="Добавить в избранное"
                     >
@@ -170,7 +170,7 @@
             {# <div class="card text-bg-dark rounded-4 overflow-hidden mt-3" style="height: 150px;">
 				<img
 						data-src="/temp/img/discount-img/disc-img-01.webp"
-						src="/assets/img/empty.png"
+						src="/assets/{{ version }}/img/empty.png"
 						class="card-img lazy" alt="...">
 				<div class="card-img-overlay d-flex flex-column">
 					<h3 class="card-title h5">супер-пупер акция! надо брать.</h3>

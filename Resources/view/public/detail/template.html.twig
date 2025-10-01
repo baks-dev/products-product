@@ -5,7 +5,7 @@
 {% if card.productImagesSortByRoot is not null %}
     {% set photos = card.productImagesSortByRoot %}
 {% else %}
-    {% set photos = ['/assets/img/blank.svg'] %}
+    {% set photos = ['/assets/{{ version }}/img/blank.svg'] %}
 {% endif %}
 
 
@@ -110,7 +110,7 @@
 {% endblock %}
 
 {% block stylesheets %}
-    <link href="/assets/plugins/nice-select2/nice-select2.min.css" rel="stylesheet">
+    <link href="/assets/{{ version }}/plugins/nice-select2/nice-select2.min.css" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -120,17 +120,17 @@
 {% endblock %}
 
 {% block javascript %}
-<script nonce='{{ csp_nonce() }}'  data-src='/assets/plugins/nice-select2/nice-select2.min.js?v={{ version }}' class='lazy'></script>
+<script nonce='{{ csp_nonce() }}'  data-src='/assets/{{ version }}/plugins/nice-select2/nice-select2.min.js?v={{ version }}' class='lazy'></script>
 
-<script nonce="{{ csp_nonce() }}" data-src="/assets/blackdragon/js/scroll.js" class="lazy"></script>
-<script nonce="{{ csp_nonce() }}" data-src="/assets/blackdragon/js/clickOnCarousel.js" class="lazy"></script>
+<script nonce="{{ csp_nonce() }}" data-src="/assets/{{ version }}//js/scroll.js" class="lazy"></script>
+<script nonce="{{ csp_nonce() }}" data-src="/assets/{{ version }}//js/clickOnCarousel.js" class="lazy"></script>
 
 {# Для корзины #}
 {# Добавление в коризину из формы #}
-<script nonce="{{ csp_nonce() }}" data-src="/assets/orders-order/orders_basket.min.js?v={{ version }}" class='lazy'></script>
+<script nonce="{{ csp_nonce() }}" data-src="/assets/{{ version }}/orders-order/orders_basket.min.js?v={{ version }}" class='lazy'></script>
 {# Редактирование количества товара в форме #}
-<script nonce="{{ csp_nonce() }}" data-src="/assets/orders-order/basket_items.min.js?v={{ version }}" class='lazy'></script>
+<script nonce="{{ csp_nonce() }}" data-src="/assets/{{ version }}/orders-order/basket_items.min.js?v={{ version }}" class='lazy'></script>
 {# Форма добавления в корзину в модальном окне #}
-<script nonce="{{ csp_nonce() }}" data-src="/assets/orders-order/modal_basket.min.js?v={{ version }}" class='lazy'></script>
+<script nonce="{{ csp_nonce() }}" data-src="/assets/{{ version }}/orders-order/modal_basket.min.js?v={{ version }}" class='lazy'></script>
 
 {% endblock %}

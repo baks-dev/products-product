@@ -3,7 +3,7 @@
 {% if card.productImagesSortByRoot is not null %}
     {% set photos = card.productImagesSortByRoot %}
 {% else %}
-    {% set photos = ['/assets/img/blank.svg'] %}
+    {% set photos = ['/assets/{{ version }}/img/blank.svg'] %}
 {% endif %}
 
 <div class="carousel slide d-flex position-relative"
@@ -42,7 +42,7 @@
                     data-bs-slide-to="{{ key }}">
                 <img
                         class="rounded-3 lazy"
-                        src="/assets/img/empty.png"
+                        src="/assets/{{ version }}/img/empty.png"
                         data-src="{{ image_path }}"
                         alt="Изображение товара"
                 >

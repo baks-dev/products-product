@@ -21,7 +21,7 @@
                         {% for product_images in product_photo | filter(img => img.product_img_ext is defined) %}
 
                             {# Обложка #}
-                            {% set image_path = '/assets/img/blank.svg' %}
+                            {% set image_path = '/assets/'~version~'/img/blank.svg' %}
 
                             {% if product_images.product_img_ext is defined and product_images.product_img_ext is not null %}
                                 {% set img_host =  product_images.product_img_cdn == true  ? CDN_HOST : '' %}

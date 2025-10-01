@@ -53,7 +53,7 @@
 
 
             {# Обложка  #}
-            {% set image_path = '/assets/img/blank.svg' %}
+            {% set image_path = '/assets/'~version~'/img/blank.svg' %}
 
             {% if root_image.product_img_ext is defined and root_image.product_img_ext is not null %}
                 {% set img_host = root_image.product_img_cdn == true  ? CDN_HOST : '' %}
@@ -81,7 +81,7 @@
 
 
                     {# Обложка  #}
-                    {% set image_path = '/assets/img/blank.svg' %}
+                    {% set image_path = '/assets/'~version~'/img/blank.svg' %}
 
                     {% if product_images.product_img_ext is defined and product_images.product_img_ext is not null %}
                         {% set img_host = product_images.product_img_cdn == true  ? CDN_HOST : '' %}
@@ -119,7 +119,7 @@
 
 
                 {# Обложка  #}
-                {% set image_path = '/assets/img/blank.svg' %}
+                {% set image_path = '/assets/'~version~'/img/blank.svg' %}
 
                 {% if card.categoryCoverExt is defined and card.categoryCoverExt is not null %}
                     {% set img_host = card.categoryCoverCdn == true  ? CDN_HOST : '' %}
@@ -133,7 +133,7 @@
                    title="{{ card.categoryName }}">
 
                     <img data-src="{{ image_path }}"
-                         src="/assets/img/empty.png" alt="..." class="lazy" style='max-width: 250px;'>
+                         src="/assets/{{ version }}/img/empty.png" alt="..." class="lazy" style='max-width: 250px;'>
                 </a>
             </div>
 

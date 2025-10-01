@@ -83,7 +83,7 @@
 {% endif %}
 
 {# Обложка продукта #}
-{% set card_image_path = '/assets/img/blank.svg' %}
+{% set card_image_path = '/assets/'~version~'/img/blank.svg' %}
 
 {% if card.productRootImages is not null %}
     {% set image = card.productRootImages|first %}

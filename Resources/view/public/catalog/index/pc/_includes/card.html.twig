@@ -5,7 +5,7 @@
 {# {% set product = card %} #}
 
 {# Обложка продукта #}
-{% set image_path = '/assets/img/blank.svg' %}
+{% set image_path = '/assets/'~version~'/img/blank.svg' %}
 {% if product.productImages is not null %}
     {% set image = product.productImages|first %}
     {% set image_path = cdn_image_path(image.img, image.img_ext, image.img_cdn) %}

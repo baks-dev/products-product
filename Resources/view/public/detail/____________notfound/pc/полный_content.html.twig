@@ -88,7 +88,7 @@
 
 
             {# Обложка #}
-            {% set image_path = '/assets/img/blank.svg' %}
+            {% set image_path = '/assets/'~version~'/img/blank.svg' %}
 
             {% if root_image.product_img_ext is defined and root_image.product_img_ext is not null %}
                 {% set img_host =  root_image.product_img_cdn == true  ? CDN_HOST : '' %}
@@ -120,7 +120,7 @@
                         {% set unique = unique|merge([modification_image.product_img]) %}
 
                         {# Обложка #}
-                        {% set image_path = '/assets/img/blank.svg' %}
+                        {% set image_path = '/assets/'~version~'/img/blank.svg' %}
 
                         {% if modification_image.product_img_ext is defined and modification_image.product_img_ext is not null %}
                             {% set img_host =  modification_image.product_img_cdn == true  ? CDN_HOST : '' %}
@@ -149,7 +149,7 @@
                         {% set unique = unique|merge([variation_image.product_img]) %}
 
                         {# Обложка #}
-                        {% set image_path = '/assets/img/blank.svg' %}
+                        {% set image_path = '/assets/'~version~'/img/blank.svg' %}
 
                         {% if variation_image.product_img_ext is defined and variation_image.product_img_ext is not null %}
                             {% set img_host =  variation_image.product_img_cdn == true  ? CDN_HOST : '' %}
@@ -179,7 +179,7 @@
                         {% set unique = unique|merge([offer_images.product_img]) %}
 
                         {# Обложка #}
-                        {% set image_path = '/assets/img/blank.svg' %}
+                        {% set image_path = '/assets/'~version~'/img/blank.svg' %}
 
                         {% if offer_images.product_img_ext is defined and offer_images.product_img_ext is not null %}
                             {% set img_host =  offer_images.product_img_cdn == true  ? CDN_HOST : '' %}
@@ -213,7 +213,7 @@
                         {% set unique = unique|merge([product_images.product_img]) %}
 
                         {# Обложка #}
-                        {% set image_path = '/assets/img/blank.svg' %}
+                        {% set image_path = '/assets/'~version~'/img/blank.svg' %}
 
                         {% if product_images.product_img_ext is defined and product_images.product_img_ext is not null %}
                             {% set img_host =  product_images.product_img_cdn == true  ? CDN_HOST : '' %}
@@ -374,7 +374,8 @@
             <div class="d-flex justify-content-between mt-3 mb-3">
                 <h3>от {{ money(order_price, card.product_currency) }}</h3>
                 <a href="/" aria-label="Лого" title="Лого">
-                    <img data-src="/logo.webp" src="/assets/img/empty.png" alt="..." height="50" class="lazy">
+                    <img data-src="/logo.webp" src="/assets/{{ version }}/img/empty.png" alt="..." height="50"
+                         class="lazy">
                 </a>
             </div>
 

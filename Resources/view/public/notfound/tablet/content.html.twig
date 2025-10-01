@@ -87,7 +87,7 @@
             {% endif %}
 
 
-            {% set image_path = '/assets/img/blank.svg' %}
+            {% set image_path = '/assets/'~version~'/img/blank.svg' %}
 
             {% if root_image.product_img is defined and root_image.product_img is not null %}
                 {% set img_host =  root_image.product_img_cdn == true  ? CDN_HOST : '' %}
@@ -114,7 +114,7 @@
                 {% for modification_image in product_modification_image | filter(img => img.product_img_ext is defined) | sort((a, b) => a.product_img_root < b.product_img_root) %}
 
 
-                    {% set image_path = '/assets/img/blank.svg' %}
+                    {% set image_path = '/assets/'~version~'/img/blank.svg' %}
 
                     {% if modification_image.product_img_ext is defined and modification_image.product_img_ext is not null %}
                         {% set img_host =  CDN_HOST == true  ? CDN_HOST : '' %}
@@ -134,7 +134,7 @@
 
                 {% for variation_image in product_variation_image | filter(img => img.product_img_ext is defined) | sort((a, b) => a.product_img_root < b.product_img_root) %}
 
-                    {% set image_path = '/assets/img/blank.svg' %}
+                    {% set image_path = '/assets/'~version~'/img/blank.svg' %}
 
                     {% if variation_image.product_img_ext is defined and variation_image.product_img_ext is not null %}
                         {% set img_host =  variation_image.product_img_cdn == true  ? CDN_HOST : '' %}
@@ -155,7 +155,7 @@
 
                 {% for offer_images in product_offer_images | filter(img => img.product_img_ext is defined) %}
 
-                    {% set image_path = '/assets/img/blank.svg' %}
+                    {% set image_path = '/assets/'~version~'/img/blank.svg' %}
 
                     {% if offer_images.product_img_ext is defined and offer_images.product_img_ext is not null %}
                         {% set img_host =  offer_images.product_img_cdn == true  ? CDN_HOST : '' %}
@@ -176,7 +176,7 @@
 
                 {% for product_images in product_photo | filter(img => img.product_img_ext is defined) | sort((a, b) => a.product_img_root < b.product_img_root) %}
 
-                    {% set image_path = '/assets/img/blank.svg' %}
+                    {% set image_path = '/assets/'~version~'/img/blank.svg' %}
 
                     {% if product_images.product_img_ext is defined and product_images.product_img_ext is not null %}
                         {% set img_host =  product_images.product_img_cdn == true  ? CDN_HOST : '' %}
@@ -341,7 +341,8 @@
             <div class="d-flex justify-content-between mt-3 mb-3">
                 <h3>от {{ money(order_price, card.product_currency) }}</h3>
                 <a href="/" aria-label="Лого" title="Лого">
-                    <img data-src="/logo.webp" src="/assets/img/empty.png" alt="..." height="50" class="lazy">
+                    <img data-src="/logo.webp" src="/assets/{{ version }}/img/empty.png" alt="..." height="50"
+                         class="lazy">
                 </a>
             </div>
 

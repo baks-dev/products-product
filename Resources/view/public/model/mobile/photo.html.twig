@@ -36,7 +36,7 @@
 
 
             {# Обложка #}
-            {% set image_path = '/assets/img/blank.svg' %}
+            {% set image_path = '/assets/'~version~'/img/blank.svg' %}
 
             {% if root_image.product_img_ext is defined and root_image.product_img_ext is not null %}
                 {% set img_host =  root_image.product_img_cdn == true  ? CDN_HOST : '' %}
@@ -61,7 +61,7 @@
         {% for modification_image in product_modification_image | filter(img => img.product_img_ext is defined) %}
 
             {# Обложка #}
-            {% set image_path = '/assets/img/blank.svg' %}
+            {% set image_path = '/assets/'~version~'/img/blank.svg' %}
 
             {% if modification_image.product_img_ext is defined and modification_image.product_img_ext is not null %}
                 {% set img_host =  modification_image.product_img_cdn == true  ? CDN_HOST : '' %}
@@ -83,7 +83,7 @@
         {% for variation_image in product_variation_image | filter(img => img.product_img_ext is defined) %}
 
             {# Обложка #}
-            {% set image_path = '/assets/img/blank.svg' %}
+            {% set image_path = '/assets/'~version~'/img/blank.svg' %}
 
             {% if variation_image.product_img_ext is defined and variation_image.product_img_ext is not null %}
                 {% set img_host =  variation_image.product_img_cdn == true  ? CDN_HOST : '' %}
@@ -111,7 +111,7 @@
 
 
             {# Обложка #}
-            {% set image_path = '/assets/img/blank.svg' %}
+            {% set image_path = '/assets/'~version~'/img/blank.svg' %}
 
             {% if offer_images.product_img_ext is defined and offer_images.product_img_ext is not null %}
                 {% set img_host =  offer_images.product_img_cdn == true  ? CDN_HOST : '' %}
@@ -135,7 +135,7 @@
 
 
             {# Обложка #}
-            {% set image_path = '/assets/img/blank.svg' %}
+            {% set image_path = '/assets/'~version~'/img/blank.svg' %}
 
             {% if product_images.product_img_ext is defined and product_images.product_img_ext is not null %}
                 {% set img_host =  product_images.product_img_cdn == true  ? CDN_HOST : '' %}
