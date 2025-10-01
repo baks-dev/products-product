@@ -73,7 +73,6 @@ final class AllProductsRepository implements AllProductsInterface
     public function __construct(
         private readonly DBALQueryBuilder $DBALQueryBuilder,
         private readonly PaginatorInterface $paginator,
-        private ?ElasticGetIndex $elasticGetIndex = null
     ) {}
 
     public function search(SearchDTO $search): self
