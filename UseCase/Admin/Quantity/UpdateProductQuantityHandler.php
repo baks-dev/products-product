@@ -41,10 +41,12 @@ final class UpdateProductQuantityHandler extends AbstractHandler
             return false;
         }
 
+        $ProductPrice->setQuantity($command->getQuantity());
 
-        $ProductPrice
-            ->setQuantity($command->getQuantity())
-            ->setReserve($command->getReserve());
+        if($command->getReserve() !== false)
+        {
+            $ProductPrice->setReserve($command->getReserve());
+        }
 
         /** Валидация всех объектов */
         $this->validatorCollection->add($ProductPrice);

@@ -41,9 +41,12 @@ final class UpdateVariationQuantityHandler extends AbstractHandler
             return false;
         }
 
-        $ProductVariationQuantity
-            ->setQuantity($command->getQuantity())
-            ->setReserve($command->getReserve());
+        $ProductVariationQuantity->setQuantity($command->getQuantity());
+
+        if($command->getReserve() !== false)
+        {
+            $ProductVariationQuantity->setReserve($command->getReserve());
+        }
 
         /** Валидация всех объектов */
         $this->validatorCollection->add($ProductVariationQuantity);

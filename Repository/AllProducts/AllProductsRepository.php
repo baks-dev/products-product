@@ -58,9 +58,12 @@ use BaksDev\Products\Product\Entity\Property\ProductProperty;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Forms\ProductFilter\Admin\ProductFilterDTO;
 use BaksDev\Products\Product\Forms\ProductFilter\Admin\Property\ProductFilterPropertyDTO;
+use BaksDev\Products\Product\Type\SearchTags\ProductSearchTag;
+use BaksDev\Search\Index\SearchIndexInterface;
 use BaksDev\Users\Profile\UserProfile\Entity\Event\Personal\UserProfilePersonal;
 use BaksDev\Users\Profile\UserProfile\Entity\UserProfile;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
+use Doctrine\DBAL\ArrayParameterType;
 use Override;
 
 //use BaksDev\Products\Category\Entity as CategoryEntity;
@@ -73,6 +76,7 @@ final class AllProductsRepository implements AllProductsInterface
     public function __construct(
         private readonly DBALQueryBuilder $DBALQueryBuilder,
         private readonly PaginatorInterface $paginator,
+        private readonly ?SearchIndexInterface $SearchIndexHandler = null,
     ) {}
 
     public function search(SearchDTO $search): self
@@ -572,45 +576,72 @@ final class AllProductsRepository implements AllProductsInterface
             }
         }
 
-        if($this->search->getQuery())
+        if(($this->search instanceof SearchDTO) && $this->search->getQuery())
         {
-            /** Поиск по модификации */
-            $result = $this->elasticGetIndex ? $this->elasticGetIndex->handle(ProductModification::class, $this->search->getQuery(), 1) : false;
 
-            if($result)
+            /** Поиск по индексам */
+            $search = str_replace('-', ' ', $this->search->getQuery());
+
+            /** Очистить поисковую строку от всех НЕ буквенных/числовых символов */
+            $search = preg_replace('/[^ a-zа-яё\d]/ui', ' ', $search);
+            $search = preg_replace('/\br(\d+)\b/i', '$1', $search);  // Заменяем R или r в начале строки, за которым следует цифра
+
+            /** Задать префикс и суффикс для реализации варианта "содержит" */
+            $search = '*'.trim($search).'*';
+
+            /** Получим ids из индекса */
+            $resultProducts = $this->SearchIndexHandler instanceof SearchIndexInterface
+                ? $this->SearchIndexHandler->handleSearchQuery($search, ProductSearchTag::TAG)
+                : false;
+
+            if($this->SearchIndexHandler instanceof SearchIndexInterface && $resultProducts !== false)
             {
-                $counter = $result['hits']['total']['value'];
+                /** Фильтруем по полученным из индекса ids: */
 
-                if($counter)
-                {
-                    /** Идентификаторы */
-                    $data = array_column($result['hits']['hits'], "_source");
+                $ids = array_column($resultProducts, 'id');
 
-                    $dbal
-                        ->createSearchQueryBuilder($this->search)
-                        ->addSearchInArray('product_modification.id', array_column($data, "id"));
+                /** Товары */
+                $dbal
+                    ->andWhere('(
+                        product.id IN (:uuids) 
+                        OR product_offer.id IN (:uuids)
+                        OR product_variation.id IN (:uuids) 
+                        OR product_modification.id IN (:uuids)
+                    )')
+                    ->setParameter(
+                        key: 'uuids',
+                        value: $ids,
+                        type: ArrayParameterType::STRING,
+                    );
 
-                    return $this->paginator->fetchAllAssociative($dbal);
-                }
+                $dbal->addOrderBy('CASE WHEN product.id IN (:uuids) THEN 0 ELSE 1 END');
+                $dbal->addOrderBy('CASE WHEN product_offer.id IN (:uuids) THEN 0 ELSE 1 END');
+                $dbal->addOrderBy('CASE WHEN product_variation.id IN (:uuids)  THEN 0 ELSE 1 END');
+                $dbal->addOrderBy('CASE WHEN product_modification.id IN (:uuids)  THEN 0 ELSE 1 END');
             }
 
-            $dbal
-                ->createSearchQueryBuilder($this->search)
-                ->addSearchEqualUid('product.id')
-                ->addSearchEqualUid('product.event')
-                ->addSearchEqualUid('product_variation.id')
-                ->addSearchEqualUid('product_modification.id')
-                ->addSearchLike('product_trans.name')
-                //->addSearchLike('product_trans.preview')
-                ->addSearchLike('product_info.article')
-                ->addSearchLike('product_offer.article')
-                ->addSearchLike('product_modification.article')
-                ->addSearchLike('product_modification.article')
-                ->addSearchLike('product_variation.article');
+
+            if($resultProducts === false)
+            {
+                $dbal
+                    ->createSearchQueryBuilder($this->search)
+                    ->addSearchEqualUid('product.id')
+                    ->addSearchEqualUid('product.event')
+                    ->addSearchEqualUid('product_variation.id')
+                    ->addSearchEqualUid('product_modification.id')
+                    ->addSearchLike('product_trans.name')
+                    ->addSearchLike('product_info.article')
+                    ->addSearchLike('product_offer.article')
+                    ->addSearchLike('product_modification.article')
+                    ->addSearchLike('product_modification.article')
+                    ->addSearchLike('product_variation.article');
+            }
 
         }
-
-        $dbal->orderBy('product.event');
+        else
+        {
+            $dbal->orderBy('product.event');
+        }
 
         return $this->paginator->fetchAllAssociative($dbal);
 
@@ -987,46 +1018,72 @@ final class AllProductsRepository implements AllProductsInterface
             }
         }
 
-        if($this->search->getQuery())
+        if(($this->search instanceof SearchDTO) && $this->search->getQuery())
         {
 
-            /** Поиск по продукции */
-            $result = $this->elasticGetIndex ? $this->elasticGetIndex->handle(Product::class, $this->search->getQuery(), 1) : false;
+            /** Поиск по индексам */
+            $search = str_replace('-', ' ', $this->search->getQuery());
 
-            if($result)
+            /** Очистить поисковую строку от всех НЕ буквенных/числовых символов */
+            $search = preg_replace('/[^ a-zа-яё\d]/ui', ' ', $search);
+            $search = preg_replace('/\br(\d+)\b/i', '$1', $search);  // Заменяем R или r в начале строки, за которым следует цифра
+
+            /** Задать префикс и суффикс для реализации варианта "содержит" */
+            $search = '*'.trim($search).'*';
+
+            /** Получим ids из индекса */
+            $resultProducts = $this->SearchIndexHandler instanceof SearchIndexInterface
+                ? $this->SearchIndexHandler->handleSearchQuery($search, ProductSearchTag::TAG)
+                : false;
+
+            if($this->SearchIndexHandler instanceof SearchIndexInterface && $resultProducts !== false)
             {
-                $counter = $result['hits']['total']['value'];
+                /** Фильтруем по полученным из индекса ids: */
 
-                if($counter)
-                {
-                    /** Идентификаторы */
-                    $data = array_column($result['hits']['hits'], "_source");
+                $ids = array_column($resultProducts, 'id');
 
-                    $dbal
-                        ->createSearchQueryBuilder($this->search)
-                        ->addSearchInArray('product.id', array_column($data, "id"));
+                /** Товары */
+                $dbal
+                    ->andWhere('(
+                        product.id IN (:uuids) 
+                        OR product_offer.id IN (:uuids)
+                        OR product_variation.id IN (:uuids) 
+                        OR product_modification.id IN (:uuids)
+                    )')
+                    ->setParameter(
+                        key: 'uuids',
+                        value: $ids,
+                        type: ArrayParameterType::STRING,
+                    );
 
-                    return $this->paginator->fetchAllAssociative($dbal);
-                }
+                $dbal->addOrderBy('CASE WHEN product.id IN (:uuids) THEN 0 ELSE 1 END');
+                $dbal->addOrderBy('CASE WHEN product_offer.id IN (:uuids) THEN 0 ELSE 1 END');
+                $dbal->addOrderBy('CASE WHEN product_variation.id IN (:uuids)  THEN 0 ELSE 1 END');
+                $dbal->addOrderBy('CASE WHEN product_modification.id IN (:uuids)  THEN 0 ELSE 1 END');
             }
 
-
-            $dbal
-                ->createSearchQueryBuilder($this->search)
-                ->addSearchEqualUid('product.id')
-                ->addSearchEqualUid('product.event')
-                ->addSearchEqualUid('product_variation.id')
-                ->addSearchEqualUid('product_modification.id')
-                ->addSearchLike('product_trans.name')
-                ->addSearchLike('product_info.article')
-                ->addSearchLike('product_offer.article')
-                ->addSearchLike('product_modification.article')
-                ->addSearchLike('product_modification.article')
-                ->addSearchLike('product_variation.article');
-
+            if($resultProducts === false)
+            {
+                $dbal
+                    ->createSearchQueryBuilder($this->search)
+                    ->addSearchEqualUid('product.id')
+                    ->addSearchEqualUid('product.event')
+                    ->addSearchEqualUid('product_variation.id')
+                    ->addSearchEqualUid('product_modification.id')
+                    ->addSearchLike('product_trans.name')
+                    ->addSearchLike('product_info.article')
+                    ->addSearchLike('product_offer.article')
+                    ->addSearchLike('product_modification.article')
+                    ->addSearchLike('product_modification.article')
+                    ->addSearchLike('product_variation.article');
+            }
+        }
+        else
+        {
+            $dbal->orderBy('product.event');
         }
 
-        $dbal->orderBy('product.event');
+
 
         $dbal->allGroupByExclude();
 

@@ -41,9 +41,12 @@ final class UpdateModificationQuantityHandler extends AbstractHandler
             return false;
         }
 
-        $ProductModificationQuantity
-            ->setQuantity($command->getQuantity())
-            ->setReserve($command->getReserve());
+        $ProductModificationQuantity->setQuantity($command->getQuantity());
+
+        if($command->getReserve() !== false)
+        {
+            $ProductModificationQuantity->setReserve($command->getReserve());
+        }
 
         /** Валидация всех объектов */
         $this->validatorCollection->add($ProductModificationQuantity);

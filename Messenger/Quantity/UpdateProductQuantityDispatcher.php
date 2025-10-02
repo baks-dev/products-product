@@ -29,6 +29,8 @@ use BaksDev\Products\Product\Entity\Offers\Quantity\ProductOfferQuantity;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Quantity\ProductModificationQuantity;
 use BaksDev\Products\Product\Entity\Offers\Variation\Quantity\ProductVariationQuantity;
 use BaksDev\Products\Product\Entity\Price\ProductPrice;
+use BaksDev\Products\Product\Repository\CurrentProductIdentifier\CurrentProductIdentifierInterface;
+use BaksDev\Products\Product\Repository\CurrentProductIdentifier\CurrentProductIdentifierResult;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
@@ -57,6 +59,7 @@ final readonly class UpdateProductQuantityDispatcher
         private UpdateVariationQuantityHandler $UpdateVariationQuantityHandler,
         private UpdateOfferQuantityHandler $UpdateOfferQuantityHandler,
         private UpdateProductQuantityHandler $UpdateProductQuantityHandler,
+        private CurrentProductIdentifierInterface $CurrentProductIdentifierRepository,
     ) {}
 
     /**
@@ -64,6 +67,26 @@ final readonly class UpdateProductQuantityDispatcher
      */
     public function __invoke(UpdateProductQuantityMessage $message): void
     {
+        /**
+         * Получаем текущие идентификаторы на случай изменения карточки
+         */
+        $CurrentProductIdentifierResult = $this->CurrentProductIdentifierRepository
+            ->forEvent($message->getEvent())
+            ->forOffer($message->getOffer())
+            ->forVariation($message->getVariation())
+            ->forModification($message->getModification())
+            ->find();
+
+        if(false === $CurrentProductIdentifierResult instanceof CurrentProductIdentifierResult)
+        {
+            $this->logger->critical(
+                'products-product: Невозможно изменить остаток карточки товара: карточка не найдена',
+                [$message, self::class.':'.__LINE__],
+            );
+
+            return;
+        }
+
 
         /**
          * Если передан Modification - ищем количественный учет ModificationQuantity
@@ -72,7 +95,7 @@ final readonly class UpdateProductQuantityDispatcher
         if(true === ($message->getModification() instanceof ProductModificationUid))
         {
             $updateModificationQuantityDTO = new UpdateModificationQuantityDTO(
-                $message->getModification(),
+                $CurrentProductIdentifierResult->getModification(),
                 $message->getQuantity(),
                 $message->getReserve(),
             );
@@ -92,7 +115,7 @@ final readonly class UpdateProductQuantityDispatcher
             if(is_string($product))
             {
                 $this->logger->critical(
-                    'products-product: Ошибка обновления количества модификации товара : ',
+                    'products-product: Ошибка обновления количества модификации товара: ',
                     [self::class.':'.__LINE__, var_export($message, true)],
                 );
 
@@ -100,9 +123,11 @@ final readonly class UpdateProductQuantityDispatcher
             }
 
             $this->logger->critical(
-                'products-product: Модификация товара не была найдена : ',
+                'products-product: Модификация товара не была найдена для обновления остатка: ',
                 [self::class.':'.__LINE__, var_export($message, true)],
             );
+
+            return;
         }
 
         /**
@@ -115,7 +140,7 @@ final readonly class UpdateProductQuantityDispatcher
         )
         {
             $updateVariationQuantityDTO = new UpdateVariationQuantityDTO(
-                $message->getVariation(),
+                $CurrentProductIdentifierResult->getVariation(),
                 $message->getQuantity(),
                 $message->getReserve(),
             );
@@ -125,7 +150,7 @@ final readonly class UpdateProductQuantityDispatcher
             if($product instanceof ProductVariationQuantity)
             {
                 $this->logger->info(
-                    'products-product: Количество множественного варианта товара успешно изменено :',
+                    'products-product: Количество множественного варианта товара успешно изменено:',
                     [self::class.':'.__LINE__, var_export($message, true)],
                 );
 
@@ -135,7 +160,7 @@ final readonly class UpdateProductQuantityDispatcher
             if(is_string($product))
             {
                 $this->logger->critical(
-                    'products-product: Ошибка обновления количества множественного варианта товара : ',
+                    'products-product: Ошибка обновления количества множественного варианта товара: ',
                     [self::class.':'.__LINE__, var_export($message, true)],
                 );
 
@@ -143,9 +168,11 @@ final readonly class UpdateProductQuantityDispatcher
             }
 
             $this->logger->critical(
-                'products-product: Множественный вариант товара не был найден : ',
+                'products-product: Множественный вариант товара не был найден для обновления остатка: ',
                 [self::class.':'.__LINE__, var_export($message, true)],
             );
+
+            return;
         }
 
 
@@ -159,7 +186,7 @@ final readonly class UpdateProductQuantityDispatcher
         )
         {
             $updateOfferQuantityDTO = new UpdateOfferQuantityDTO(
-                $message->getOffer(),
+                $CurrentProductIdentifierResult->getOffer(),
                 $message->getQuantity(),
                 $message->getReserve(),
             );
@@ -169,7 +196,7 @@ final readonly class UpdateProductQuantityDispatcher
             if($product instanceof ProductOfferQuantity)
             {
                 $this->logger->info(
-                    'products-product: Количество торгового предложения товара успешно изменено :',
+                    'products-product: Количество торгового предложения товара успешно изменено:',
                     [self::class.':'.__LINE__, var_export($message, true)],
                 );
 
@@ -179,7 +206,7 @@ final readonly class UpdateProductQuantityDispatcher
             if(is_string($product))
             {
                 $this->logger->critical(
-                    'products-product: Ошибка обновления количества торгового предложения товара : ',
+                    'products-product: Ошибка обновления количества торгового предложения товара: ',
                     [self::class.':'.__LINE__, var_export($message, true)],
                 );
 
@@ -187,9 +214,11 @@ final readonly class UpdateProductQuantityDispatcher
             }
 
             $this->logger->critical(
-                'products-product: Торговое предложение товара не было найдено : ',
+                'products-product: Торговое предложение товара не было найдено для обновления остатка: ',
                 [self::class.':'.__LINE__, var_export($message, true)],
             );
+
+            return;
         }
 
         /**
@@ -202,7 +231,7 @@ final readonly class UpdateProductQuantityDispatcher
         )
         {
             $updateProductQuantityDTO = new UpdateProductQuantityDTO(
-                $message->getEvent(),
+                $CurrentProductIdentifierResult->getEvent(),
                 $message->getQuantity(),
                 $message->getReserve(),
             );
@@ -230,7 +259,7 @@ final readonly class UpdateProductQuantityDispatcher
             }
 
             $this->logger->critical(
-                'products-product: Товар не был найден : ',
+                'products-product: Товар не был найден для обновления остатка : ',
                 [self::class.':'.__LINE__, var_export($message, true)],
             );
         }

@@ -41,10 +41,13 @@ final class UpdateOfferQuantityHandler extends AbstractHandler
             return false;
         }
 
+        $ProductOfferQuantity->setQuantity($command->getQuantity());
 
-        $ProductOfferQuantity
-            ->setQuantity($command->getQuantity())
-            ->setReserve($command->getReserve());
+        if($command->getReserve() !== false)
+        {
+            $ProductOfferQuantity->setReserve($command->getReserve());
+        }
+
 
         /** Валидация всех объектов */
         $this->validatorCollection->add($ProductOfferQuantity);
