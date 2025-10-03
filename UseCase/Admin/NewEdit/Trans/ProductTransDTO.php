@@ -36,7 +36,7 @@ final class ProductTransDTO implements ProductTransInterface
 
     /** Название продукта (строка с точкой, нижнее подчеркивание тире процент скобки) */
     #[Assert\NotBlank]
-    #[Assert\Regex(pattern: '/^[\w \/\.\"\'\,\?\!\_\-\(\)\%]+$/iu')]
+    #[Assert\Regex(pattern: '/^[\w \/\.\:\"\'\,\?\!\_\-\(\)\%]+$/iu')]
     private ?string $name = null;
 
 
