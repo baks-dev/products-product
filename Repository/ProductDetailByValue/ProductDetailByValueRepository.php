@@ -766,6 +766,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             ->addSelect('category_info.minimal AS category_minimal')
             ->addSelect('category_info.input AS category_input')
             ->addSelect('category_info.threshold AS category_threshold')
+            ->addSelect('category_info.step AS category_step')
             ->leftJoin(
                 'category',
                 CategoryProductInfo::class,
