@@ -61,6 +61,7 @@
             class:  'form-control-lg mx-1 total',
             value : default_count,
             'data-max': card.product_quantity,
+            'data-step': card.categoryStep,
             'data-discount' : baks_profile.profile_discount is defined ? baks_profile.profile_discount,
             'data-currency' : card.product_currency,
             'aria-label' : 'Количество в заказе'

@@ -103,6 +103,7 @@ final readonly class ProductDetailByValueResult implements ProductPriceResultInt
         private int|null $category_minimal,
         private int|null $category_input,
         private int|null $category_threshold,
+        private int|null $category_step,
         private string|null $category_cover_ext,
         private bool|null $category_cover_cdn,
         private string|null $category_cover_path,
@@ -510,6 +511,12 @@ final readonly class ProductDetailByValueResult implements ProductPriceResultInt
     {
         return $this->category_threshold;
     }
+
+    public function getCategoryStep(): ?int
+    {
+        return $this->category_step;
+    }
+
 
     public function getCategoryCoverExt(): ?string
     {
