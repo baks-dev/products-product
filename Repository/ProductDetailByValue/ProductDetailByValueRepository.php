@@ -169,8 +169,6 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             return $this;
         }
 
-        $postfix = str_replace('-', '/', $postfix);
-
         $postfix = mb_strtolower($postfix);
         $this->postfix = trim($postfix);
 
@@ -184,6 +182,11 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
         if(false === ($this->productUid instanceof ProductUid))
         {
             throw new InvalidArgumentException('Не передан обязательный параметр запроса $productUid');
+        }
+
+        if($this->postfix)
+        {
+            $this->postfix = str_replace('-', '/', $this->postfix);
         }
 
         $dbal = $this->DBALQueryBuilder
@@ -280,7 +283,6 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             );
         }
 
-
         if($this->postfix)
         {
             $dbal->setParameter(
@@ -288,7 +290,6 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 value: $this->postfix,
             );
         }
-
 
         /** Получаем тип торгового предложения */
         $dbal
