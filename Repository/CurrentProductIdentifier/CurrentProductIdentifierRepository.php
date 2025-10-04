@@ -173,9 +173,10 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
             );
 
 
-        if($this->offer)
+        if($this->offer instanceof ProductOfferUid)
         {
-            $dbal->leftJoin(
+            /** получаем событие ProductOffer  */
+            $dbal->join(
                 'product',
                 ProductOffer::class,
                 'offer',
@@ -193,21 +194,32 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
                 ->addSelect('current_offer.id AS offer')
                 ->addSelect('current_offer.const AS offer_const')
                 ->addSelect('current_offer.value AS offer_value')
-                ->leftJoin(
+                ->join(
                     'offer',
                     ProductOffer::class,
                     'current_offer',
-                    'current_offer.const = offer.const AND current_offer.event = product.event',
+                    '
+                        current_offer.const = offer.const 
+                        AND current_offer.event = product.event
+                    ',
                 );
 
-            if($this->variation)
-            {
 
-                $dbal->leftJoin(
+            /**
+             *  ProductVariation
+             */
+
+            if($this->variation instanceof ProductVariationUid)
+            {
+                /** получаем событие ProductVariation  */
+                $dbal->join(
                     'offer',
                     ProductVariation::class,
                     'variation',
-                    'variation.id = :variation AND variation.offer = offer.id',
+                    '
+                        variation.id = :variation 
+                        AND variation.offer = offer.id
+                    ',
                 )
                     ->setParameter(
                         'variation',
@@ -215,26 +227,37 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
                         ProductVariationUid::TYPE,
                     );
 
+                /** Определяем активное состояние ProductVariation */
                 $dbal
                     ->addSelect('current_variation.id AS variation')
                     ->addSelect('current_variation.const AS variation_const')
                     ->addSelect('current_variation.value AS variation_value')
-                    ->leftJoin(
+                    ->join(
                         'variation',
                         ProductVariation::class,
                         'current_variation',
-                        'current_variation.const = variation.const AND current_variation.offer = current_offer.id',
+                        '
+                            current_variation.const = variation.const 
+                            AND current_variation.offer = current_offer.id
+                        ',
                     );
 
+                /**
+                 *  ProductModification
+                 */
 
-                if($this->modification)
+                if($this->modification instanceof ProductModificationUid)
                 {
+                    /** получаем событие ProductModification  */
                     $dbal
-                        ->leftJoin(
+                        ->join(
                             'variation',
                             ProductModification::class,
                             'modification',
-                            'modification.id = :modification AND modification.variation = variation.id',
+                            '
+                                modification.id = :modification 
+                                AND modification.variation = variation.id
+                            ',
                         )
                         ->setParameter(
                             'modification',
@@ -246,11 +269,14 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
                         ->addSelect('current_modification.id AS modification')
                         ->addSelect('current_modification.const AS modification_const')
                         ->addSelect('current_modification.value AS modification_value')
-                        ->leftJoin(
+                        ->join(
                             'modification',
                             ProductModification::class,
                             'current_modification',
-                            'current_modification.const = modification.const AND current_modification.variation = current_variation.id',
+                            '
+                                current_modification.const = modification.const 
+                                AND current_modification.variation = current_variation.id
+                            ',
                         );
                 }
             }

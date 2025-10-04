@@ -124,6 +124,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             return $this;
         }
 
+        $offer = mb_strtolower($offer);
         $this->offer = trim($offer);
 
         return $this;
@@ -138,6 +139,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             return $this;
         }
 
+        $variation = mb_strtolower($variation);
         $this->variation = trim($variation);
 
         return $this;
@@ -152,6 +154,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             return $this;
         }
 
+        $modification = mb_strtolower($modification);
         $this->modification = trim($modification);
 
         return $this;
@@ -166,6 +169,8 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             return $this;
         }
 
+        $postfix = str_replace('-', '/', $postfix);
+
         $postfix = mb_strtolower($postfix);
         $this->postfix = trim($postfix);
 
@@ -179,11 +184,6 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
         if(false === ($this->productUid instanceof ProductUid))
         {
             throw new InvalidArgumentException('Не передан обязательный параметр запроса $productUid');
-        }
-
-        if($this->postfix)
-        {
-            $this->postfix = str_replace('-', '/', $this->postfix);
         }
 
         $dbal = $this->DBALQueryBuilder
@@ -267,9 +267,9 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'product',
                 ProductOffer::class,
                 'product_offer',
-                'product_offer.event = product.event '.
-                ($this->offer ? ' AND product_offer.value = :product_offer_value' : '').
-                ($this->postfix ? ' AND ( LOWER(product_offer.postfix) = :postfix OR product_offer.postfix IS NULL )' : ''),
+                'product_offer.event = product.event '
+                .($this->offer ? ' AND LOWER(product_offer.value) = :product_offer_value' : '')
+                .($this->postfix ? ' AND ( LOWER(product_offer.postfix) = :postfix OR product_offer.postfix IS NULL )' : ''),
             );
 
         if($this->offer)
@@ -279,6 +279,7 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 value: $this->offer,
             );
         }
+
 
         if($this->postfix)
         {
@@ -320,9 +321,9 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'product_offer',
                 ProductVariation::class,
                 'product_variation',
-                'product_variation.offer = product_offer.id'.
-                ($this->variation ? ' AND product_variation.value = :product_variation_value' : '').
-                ($this->postfix ? ' AND ( LOWER(product_variation.postfix) = :postfix OR product_variation.postfix IS NULL )' : ''),
+                'product_variation.offer = product_offer.id'
+                .($this->variation ? ' AND LOWER(product_variation.value) = :product_variation_value' : '')
+                .($this->postfix ? ' AND ( LOWER(product_variation.postfix) = :postfix OR product_variation.postfix IS NULL )' : ''),
             );
 
         if($this->variation)
@@ -366,9 +367,9 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'product_variation',
                 ProductModification::class,
                 'product_modification',
-                'product_modification.variation = product_variation.id'.
-                ($this->modification ? ' AND product_modification.value = :product_modification_value' : '').
-                ($this->postfix ? ' AND ( LOWER(product_modification.postfix) = :postfix OR product_modification.postfix IS NULL )' : ''),
+                'product_modification.variation = product_variation.id'
+                .($this->modification ? ' AND LOWER(product_modification.value) = :product_modification_value' : '')
+                .($this->postfix ? ' AND ( LOWER(product_modification.postfix) = :postfix OR product_modification.postfix IS NULL )' : ''),
             );
 
         if($this->modification)
@@ -982,8 +983,9 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
 
         $dbal->allGroupByExclude(['product_modification_postfix']);
 
-        $dbal->enableCache('products-product', 86400);
-        $result = $dbal->fetchHydrate(ProductDetailByValueResult::class);
+        $result = $dbal
+            ->enableCache('products-product', '1 day')
+            ->fetchHydrate(ProductDetailByValueResult::class);
 
         return ($result instanceof ProductDetailByValueResult) ? $result : false;
     }

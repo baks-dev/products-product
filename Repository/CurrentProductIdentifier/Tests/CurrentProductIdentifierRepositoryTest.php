@@ -32,10 +32,13 @@ use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModific
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Repository\CurrentProductIdentifier\CurrentProductIdentifierInterface;
+use BaksDev\Products\Product\Repository\CurrentProductIdentifier\CurrentProductIdentifierResult;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\ProductDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\ProductHandler;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
+use ReflectionClass;
+use ReflectionMethod;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
@@ -141,13 +144,29 @@ class CurrentProductIdentifierRepositoryTest extends KernelTestCase
         /** @var CurrentProductIdentifierInterface $CurrentProductIdentifier */
         $CurrentProductIdentifier = self::getContainer()->get(CurrentProductIdentifierInterface::class);
 
-        $result = $CurrentProductIdentifier
+        $CurrentProductIdentifierResult = $CurrentProductIdentifier
             ->forEvent(self::$result['event'])
             ->find();
 
 
-        self::assertNotFalse($result);
-        self::assertTrue($result->getEvent()->equals(self::$new['event']));
+        // Вызываем все геттеры
+        $reflectionClass = new ReflectionClass(CurrentProductIdentifierResult::class);
+        $methods = $reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC);
+
+        foreach($methods as $method)
+        {
+            // Методы без аргументов
+            if($method->getNumberOfParameters() === 0)
+            {
+                // Вызываем метод
+                $data = $method->invoke($CurrentProductIdentifierResult);
+                //dump($data);
+            }
+        }
+
+
+        self::assertNotFalse($CurrentProductIdentifierResult);
+        self::assertTrue($CurrentProductIdentifierResult->getEvent()->equals(self::$new['event']));
 
     }
 
@@ -158,16 +177,30 @@ class CurrentProductIdentifierRepositoryTest extends KernelTestCase
         /** @var CurrentProductIdentifierInterface $CurrentProductIdentifier */
         $CurrentProductIdentifier = self::getContainer()->get(CurrentProductIdentifierInterface::class);
 
-        $result = $CurrentProductIdentifier
+        $CurrentProductIdentifierResult = $CurrentProductIdentifier
             ->forEvent(self::$result['event'])
             ->forOffer(self::$result['offer'])
             ->find();
 
-        self::assertNotFalse($result);
+        // Вызываем все геттеры
+        $reflectionClass = new ReflectionClass(CurrentProductIdentifierResult::class);
+        $methods = $reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC);
 
+        foreach($methods as $method)
+        {
+            // Методы без аргументов
+            if($method->getNumberOfParameters() === 0)
+            {
+                // Вызываем метод
+                $data = $method->invoke($CurrentProductIdentifierResult);
+                //dump($data);
+            }
+        }
 
-        self::assertTrue($result->getEvent()->equals(self::$new['event']));
-        self::assertTrue($result->getOffer()->equals(self::$new['offer']));
+        self::assertNotFalse($CurrentProductIdentifierResult);
+
+        self::assertTrue($CurrentProductIdentifierResult->getEvent()->equals(self::$new['event']));
+        self::assertTrue($CurrentProductIdentifierResult->getOffer()->equals(self::$new['offer']));
 
     }
 
@@ -180,17 +213,32 @@ class CurrentProductIdentifierRepositoryTest extends KernelTestCase
         /** @var CurrentProductIdentifierInterface $CurrentProductIdentifier */
         $CurrentProductIdentifier = self::getContainer()->get(CurrentProductIdentifierInterface::class);
 
-        $result = $CurrentProductIdentifier
+        $CurrentProductIdentifierResult = $CurrentProductIdentifier
             ->forEvent(self::$result['event'])
             ->forOffer(self::$result['offer'])
             ->forVariation(self::$result['variation'])
             ->find();
 
-        self::assertNotFalse($result);
+        // Вызываем все геттеры
+        $reflectionClass = new ReflectionClass(CurrentProductIdentifierResult::class);
+        $methods = $reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC);
 
-        self::assertTrue($result->getEvent()->equals(self::$new['event']));
-        self::assertTrue($result->getOffer()->equals(self::$new['offer']));
-        self::assertTrue($result->getVariation()->equals(self::$new['variation']));
+        foreach($methods as $method)
+        {
+            // Методы без аргументов
+            if($method->getNumberOfParameters() === 0)
+            {
+                // Вызываем метод
+                $data = $method->invoke($CurrentProductIdentifierResult);
+                //dump($data);
+            }
+        }
+
+        self::assertNotFalse($CurrentProductIdentifierResult);
+
+        self::assertTrue($CurrentProductIdentifierResult->getEvent()->equals(self::$new['event']));
+        self::assertTrue($CurrentProductIdentifierResult->getOffer()->equals(self::$new['offer']));
+        self::assertTrue($CurrentProductIdentifierResult->getVariation()->equals(self::$new['variation']));
     }
 
 
@@ -202,19 +250,34 @@ class CurrentProductIdentifierRepositoryTest extends KernelTestCase
         /** @var CurrentProductIdentifierInterface $CurrentProductIdentifier */
         $CurrentProductIdentifier = self::getContainer()->get(CurrentProductIdentifierInterface::class);
 
-        $result = $CurrentProductIdentifier
+        $CurrentProductIdentifierResult = $CurrentProductIdentifier
             ->forEvent(self::$result['event'])
             ->forOffer(self::$result['offer'])
             ->forVariation(self::$result['variation'])
             ->forModification(self::$result['modification'])
             ->find();
 
-        self::assertNotFalse($result);
+        // Вызываем все геттеры
+        $reflectionClass = new ReflectionClass(CurrentProductIdentifierResult::class);
+        $methods = $reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC);
 
-        self::assertTrue($result->getEvent()->equals(self::$new['event']));
-        self::assertTrue($result->getOffer()->equals(self::$new['offer']));
-        self::assertTrue($result->getVariation()->equals(self::$new['variation']));
-        self::assertTrue($result->getModification()->equals(self::$new['modification']));
+        foreach($methods as $method)
+        {
+            // Методы без аргументов
+            if($method->getNumberOfParameters() === 0)
+            {
+                // Вызываем метод
+                $data = $method->invoke($CurrentProductIdentifierResult);
+                dump($data);
+            }
+        }
+
+        self::assertNotFalse($CurrentProductIdentifierResult);
+
+        self::assertTrue($CurrentProductIdentifierResult->getEvent()->equals(self::$new['event']));
+        self::assertTrue($CurrentProductIdentifierResult->getOffer()->equals(self::$new['offer']));
+        self::assertTrue($CurrentProductIdentifierResult->getVariation()->equals(self::$new['variation']));
+        self::assertTrue($CurrentProductIdentifierResult->getModification()->equals(self::$new['modification']));
 
 
     }
