@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -45,13 +45,12 @@ final class ExportController extends AbstractController
         AllProductsByCategoryInterface $productsByCategory
     ): Response
     {
-
         $response = $this->render(
             [
                 'category' => $allCategory->findAll(),
-                'settings' => $settingsMain->getSettingsMainAssociative($request->getHost(), $request->getLocale()),
-                'products' => $productsByCategory->fetchAllProductByCategory()],
-            file: 'export.html.twig'
+                'settings' => $settingsMain->getSettingsMainAssociative(),
+                'products' => $productsByCategory->forCategory(false)->fetchAllProductByCategory()],
+            file: 'export.html.twig',
         );
 
         $response->headers->set('Content-Type', 'text/xml');
@@ -71,10 +70,10 @@ final class ExportController extends AbstractController
 
         $response = $this->render(
             [
-                'settings' => $settingsMain->getSettingsMainAssociative($request->getHost(), $request->getLocale()),
+                'settings' => $settingsMain->getSettingsMainAssociative(),
                 'category' => $allCategory->findAll(),
-                'products' => $productsByCategory->fetchAllProductByCategory()],
-            file: 'catalog.html.twig'
+                'products' => $productsByCategory->forCategory(false)->fetchAllProductByCategory()],
+            file: 'catalog.html.twig',
         );
         $response->headers->set('Content-Type', 'text/xml');
 
@@ -92,9 +91,9 @@ final class ExportController extends AbstractController
 
         $response = $this->render(
             [
-                'settings' => $settingsMain->getSettingsMainAssociative($request->getHost(), $request->getLocale()),
-                'products' => $productsByCategory->fetchAllProductByCategory()],
-            file: 'terms.html.twig'
+                'settings' => $settingsMain->getSettingsMainAssociative(),
+                'products' => $productsByCategory->forCategory(false)->fetchAllProductByCategory()],
+            file: 'terms.html.twig',
         );
         $response->headers->set('Content-Type', 'text/xml');
 
@@ -109,7 +108,10 @@ final class ExportController extends AbstractController
     ): Response
     {
 
-        $response = $this->render(['urls' => $productsByCategory->fetchAllProductByCategory($category)]);
+        $response = $this->render(['urls' => $productsByCategory
+            ->forCategory($category)
+            ->fetchAllProductByCategory()]);
+
         $response->headers->set('Content-Type', 'text/xml');
 
         return $response;

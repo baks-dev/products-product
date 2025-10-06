@@ -26,7 +26,10 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Repository\AllProductsByCategory\Tests;
 
 use BaksDev\Products\Product\Repository\AllProductsByCategory\AllProductsByCategoryInterface;
+use BaksDev\Products\Product\Repository\AllProductsByCategory\AllProductsByCategoryResult;
 use PHPUnit\Framework\Attributes\Group;
+use ReflectionClass;
+use ReflectionMethod;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
@@ -37,116 +40,31 @@ class AllProductsByCategoryTest extends KernelTestCase
     public function testUseCase(): void
     {
         self::assertTrue(true);
-        return;
-
 
         /** @var AllProductsByCategoryInterface $AllProductsByCategory */
         $AllProductsByCategory = self::getContainer()->get(AllProductsByCategoryInterface::class);
 
-        $result = $AllProductsByCategory
-            ->category('0189784d-4f53-7010-b89d-73765e7bfda5')
-            ->analyze()
-            ->find();
+        $result = $AllProductsByCategory->fetchAllProductByCategory();
 
-        $array_keys = [
-            "category_url",
-            "category_name",
-            "id",
-            "event",
-            "active_from",
-            "product_name",
-            "product_preview", "product_description",
-            "url",
-            "sort",
-            "product_offer_quantity",
-            "product_variation_quantity",
-            "product_modification_quantity",
-
-            "product_offers",
-
-
-            "product_image",
-            "product_image_ext",
-            "product_image_cdn",
-            "product_price",
-            "product_old_price",
-            "product_currency",
-            "product_quantity",
-            "category_section_field",
-
-        ];
-
-
-        $current = current($result);
-
-        foreach($current as $key => $value)
+        foreach($result as $AllProductsByCategoryResult)
         {
-            self::assertTrue(in_array($key, $array_keys), sprintf('Появился новый ключ %s', $key));
+            // Вызываем все геттеры
+            $reflectionClass = new ReflectionClass(AllProductsByCategoryResult::class);
+            $methods = $reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC);
+
+            foreach($methods as $method)
+            {
+                // Методы без аргументов
+                if($method->getNumberOfParameters() === 0)
+                {
+                    // Вызываем метод
+                    $data = $method->invoke($AllProductsByCategoryResult);
+                    //dump($data);
+                }
+            }
+
+            break;
         }
-
-        foreach($array_keys as $key)
-        {
-            self::assertTrue(array_key_exists($key, $current));
-        }
-
-
-        $array_product_offers = [
-            "0",
-            "offer_uid",
-            "offer_value",
-            "offer_article",
-            "offer_postfix",
-            "variation_uid",
-            "offer_reference",
-            "variation_value",
-            "modification_uid",
-            "variation_article",
-            "variation_postfix",
-            "modification_value",
-            "variation_reference",
-            "modification_article",
-            "modification_postfix",
-            "modification_reference",
-        ];
-
-        $product_offers = json_decode($current["product_offers"], true, 512, JSON_THROW_ON_ERROR);
-        $current_product_offers = current($product_offers);
-
-        foreach($current_product_offers as $key => $value)
-        {
-            self::assertTrue(in_array($key, $array_product_offers), sprintf('Появился новый ключ %s', $key));
-        }
-
-        foreach($array_product_offers as $key)
-        {
-            self::assertTrue(array_key_exists($key, $current_product_offers), sprintf('Отсутствует ключ %s', $key));
-        }
-
-
-        $array_category_section_field = [
-            "0",
-            "field_card",
-            "field_name",
-            "field_type",
-            "field_photo",
-            "field_trans",
-            "field_value",
-        ];
-
-
-        $category_section_field = json_decode($current["category_section_field"], true, 512, JSON_THROW_ON_ERROR);
-        $current_category_section_field = current($category_section_field);
-
-        foreach($current_category_section_field as $key => $value)
-        {
-            self::assertTrue(in_array($key, $array_category_section_field), sprintf('Появился новый ключ %s', $key));
-        }
-
-        foreach($array_category_section_field as $key)
-        {
-            self::assertTrue(array_key_exists($key, $current_category_section_field), sprintf('Отсутствует ключ %s', $key));
-        }
-
     }
 
 }

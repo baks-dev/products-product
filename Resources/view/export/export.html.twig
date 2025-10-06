@@ -6,6 +6,7 @@
         <company>{{ settings.description is defined ? settings.description : 'Добро пожаловать' }}</company>
         <url>{{ absolute_url(path('core:public.homepage')) }}</url>
         <platform>Symfony</platform>
+
         <categories>
             {% for id, cat in category %}
                 <category id='{{ id }}'>{{ cat.category_name }}</category>
@@ -20,69 +21,76 @@
             <option cost="200" days="1"/>
         </pickup-options> #}
 
+
+        {# @var card \BaksDev\Products\Product\Repository\AllProductsByCategory\AllProductsByCategoryResult #}
+
         <offers>
             {% for card in products|filter(v => v.product_price > 0) %}
 
-                {% set arr_property = card.category_section_field|json_decode %}
+                {% set arr_property = card.categorySectionField %}
 
-                <offer id='{{ card.product_id }}' available='{{ card.product_quantity > 0 ? 'true' : 'false' }}'>
+                <offer id='{{ card.productId }}' available='{{ card.productQuantity > 0 ? 'true' : 'false' }}'>
 
-                    <name>{{ card.product_name }}
+                    <name>{{ card.productName }}
                         {# Значение множественного варианта ТП #}
-                        {{ card.variation_value|call_twig_func(card.variation_reference) ~ card.modification_value|call_twig_func(card.modification_reference) }}
+                        {{ card.variationValue|call_twig_func(card.variationReference) ~ card.modificationValue|call_twig_func(card.modificationReference) }}
                         {# Значение торгового предложения #}
-                        {{ card.offer_value|call_twig_func(card.offer_reference) }}
+                        {{ card.offerValue|call_twig_func(card.offerReference) }}
                         {# Постфикс торгового предложения #}
-                        {{ card.offer_postfix }}
+                        {{ card.offerPostfix }}
                         {# Постфикс множественного варианта #}
-                        {{ card.variation_postfix }}
+                        {{ card.variationPostfix }}
                         {# Постфикс модификации #}
-                        {{ card.modification_postfix }}
+                        {{ card.modificationPostfix }}
                     </name>
 
                     {# Бренд #}
-                    <vendor>{{ card.category_name }}</vendor>
-                    <vendorCode>{{ card.product_article }}</vendorCode>
+                    <vendor>{{ card.categoryName }}</vendor>
+                    <vendorCode>{{ card.productArticle }}</vendorCode>
 
                     <url>{{ absolute_url(path('products-product:public.detail', {
-                            category: card.category_url,
-                            url: card.url,
-                            offer: card.offer_value ?: null,
-                            variation: card.variation_value ?: null,
-                            modification: card.modification_value ?: null,
-                            postfix:  (card.modification_postfix ?: card.variation_postfix ?: card.offer_postfix ?: null )|replace({ '/': '-' })
+                            category: card.categoryUrl,
+                            url: card.productUrl,
+                            offer: card.offerValue ?: null,
+                            variation: card.variationValue ?: null,
+                            modification: card.modificationValue ?: null,
+                            postfix:  (card.modificationPostfix ?: card.variationPostfix ?: card.offerPostfix ?: null )|replace({ '/': '-' })
                         } )) }}</url>
 
-                    <price>{{ (card.product_price / 100) ?: 'по запросу' }}</price>
-                    <currencyId>{{ card.product_currency|upper }}</currencyId>
-                    {# <oldprice>9990</oldprice> #}
+                    <price>{{ card.productPrice.roundValue ?: 'по запросу' }}</price>
+                    <currencyId>{{ card.productCurrency|upper }}</currencyId>
+
+                    {% if card.productOldPrice %}
+                        <oldprice>{{ card.productOldPrice }}</oldprice>
+                    {% endif %}
+
                     {# <enable_auto_discounts>true</enable_auto_discounts> #}
 
-                    <categoryId>{{ card.category }}</categoryId>
+                    <categoryId>{{ card.categoryId }}</categoryId>
 
                     {# Обложка  #}
-                    {% set image_path = '/assets/{{ version }}/img/empty.png' %}
-
-                    {% if card.product_image_ext is defined and card.product_image_ext is not null %}
-                        {% set img_host =  card.product_image_cdn == true  ? CDN_HOST : '' %}
-                        {% set img_dir = card.product_image %}
-                        {% set img_file = (img_host is empty ? '/image.' : '/original.') ~ card.product_image_ext %}
-                        {% set image_path = img_host ~ img_dir ~ img_file %}
-                    {% endif %}
+                    {% set image_path = cdn_image_path(card.productImage, card.productImageExt, card.productImageCdn, 'large') %}
 
                     <picture>{{ absolute_url(image_path) }}</picture>
 
-
                     {# Свойства, учавствующие в ПРЕВЬЮ #}
-                    {% for name_property in arr_property | filter(preview => preview.field_card == true) %}
+                    {% if arr_property %}
+                        {% for name_property in arr_property | filter(preview => preview.field_card == true) %}
 
-                        {% set var = name_property.field_value|call_twig_func(name_property.field_type) %}
-                        {% if var %}
-                            <param name="{{ name_property.field_trans }}">{{ var }}</param>
+                            {% set var = name_property.field_value|call_twig_func(name_property.field_type) %}
+                            {% if var %}
+                                <param name="{{ name_property.field_trans }}">{{ var }}</param>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+
+                    <stock>
+                        {% if card.productQuantity > 20 %}
+                            более 20
+                        {% else %}
+                            менее 20
                         {% endif %}
-                    {% endfor %}
-
-                    {# <stock>более 20</stock> #}
+                    </stock>
 
                     <description>
                         <![CDATA[
@@ -95,14 +103,18 @@
                     {# <barcode>4601546021298</barcode> #}
                     {# <param name='Цвет'>белый</param> #}
 
-                    {% if card.product_parameter_weight is defined and card.product_parameter_weight is not empty %}
+                    {% if card.productBarcode %}
+                        <barcode>{{ card.productBarcode }}</barcode>
+                    {% endif %}
+
+                    {% if card.productWeight is not empty %}
 
                         {# Вес товара с упаковкой в килограммах #}
-                        <weight>{{ card.product_parameter_weight / 100 }}</weight>
+                        <weight>{{ card.productWeight }}</weight>
 
                         {# Длина, ширина, высота в упаковке в сантиметрах. (20.1/20.551/22.5) #}
-                        <dimensions>{{ card.product_parameter_length / 10 }}/{{ card.product_parameter_width / 10 }}
-                            /{{ card.product_parameter_height / 10 }}</dimensions>
+                        <dimensions>{{ card.productLength }}/{{ card.productWidth }}
+                            /{{ card.productHeight / 10 }}</dimensions>
 
                     {% endif %}
 

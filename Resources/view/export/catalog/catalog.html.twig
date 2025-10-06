@@ -17,35 +17,29 @@
             {% endfor %}
         </categories>
 
+        {# @var card \BaksDev\Products\Product\Repository\AllProductsByCategory\AllProductsByCategoryResult #}
+
         <offers>
             {% for card in products %}
 
-                {% set arr_property = card.category_section_field|json_decode %}
-
-                <offer id='{{ card.product_id }}' available='{{ card.product_quantity ? 'true' : 'false' }}'>
-                    <name>{{ card.product_name }}
+                <offer id='{{ card.productId }}' available='{{ card.productQuantity ? 'true' : 'false' }}'>
+                    <name>{{ card.productName }}
                         {# Значение множественного варианта ТП #}
-                        {{ card.variation_value|call_twig_func(card.variation_reference) ~ card.modification_value|call_twig_func(card.modification_reference) }}
+                        {{ card.variationValue|call_twig_func(card.variationReference) ~ card.modificationValue|call_twig_func(card.modificationReference) }}
                         {# Значение торгового предложения #}
-                        {{ card.offer_value|call_twig_func(card.offer_reference) }}
+                        {{ card.offerValue|call_twig_func(card.offerReference) }}
                         {# Постфикс торгового предложения #}
-                        {{ card.offer_postfix }}
+                        {{ card.offerPostfix }}
                         {# Постфикс множественного варианта #}
-                        {{ card.variation_postfix }}
+                        {{ card.variationPostfix }}
                         {# Постфикс модификации #}
-                        {{ card.modification_postfix }}</name>
-                    <vendor>{{ card.product_name }}</vendor>
-                    <vendorCode>{{ card.product_article }}</vendorCode>
-                    <categoryId>{{ card.category }}</categoryId>
-                    {# Обложка  #}
-                    {% set image_path = '/assets/{{ version }}/img/empty.png' %}
+                        {{ card.modificationPostfix }}</name>
+                    <vendor>{{ card.productName }}</vendor>
+                    <vendorCode>{{ card.productArticle }}</vendorCode>
+                    <categoryId>{{ card.categoryId }}</categoryId>
 
-                    {% if card.product_image_ext is defined and card.product_image_ext is not null %}
-                        {% set img_host =  card.product_image_cdn == true  ? CDN_HOST : '' %}
-                        {% set img_dir = card.product_image %}
-                        {% set img_file = (img_host is empty ? '/image.' : '/original.') ~ card.product_image_ext %}
-                        {% set image_path = img_host ~ img_dir ~ img_file %}
-                    {% endif %}
+                    {# Обложка  #}
+                    {% set image_path = cdn_image_path(card.productImage, card.productImageExt, card.productImageCdn, 'large') %}
 
                     <picture>{{ absolute_url(image_path) }}</picture>
                     <description>
@@ -56,19 +50,24 @@
                     {# <manufacturer_warranty>true</manufacturer_warranty> #}
                     {# <country_of_origin>Китай</country_of_origin> #}
 
-                    {% if card.product_barcode %}
-                        <barcode>{{ card.product_barcode }}</barcode>
+                    {% if card.productBarcode %}
+                        <barcode>{{ card.productBarcode }}</barcode>
                     {% else %}
-                        <barcode>{{ barcode(card.product_article) }}</barcode>
+                        <barcode>{{ barcode(card.productArticle) }}</barcode>
                     {% endif %}
 
                     {# Свойства, учавствующие в ПРЕВЬЮ #}
-                    {% for name_property in arr_property | filter(preview => preview.field_card == true) %}
-                        {% set var = name_property.field_value|call_twig_func(name_property.field_type) %}
-                        {% if var %}
-                            <param name='{{ name_property.field_trans }}'>{{ var }}</param>
-                        {% endif %}
-                    {% endfor %}
+                    {% set arr_property = card.category_section_field %}
+
+                    {% if arr_property %}
+                        {% for name_property in arr_property | filter(preview => preview.field_card == true) %}
+                            {% set var = name_property.field_value|call_twig_func(name_property.field_type) %}
+                            {% if var %}
+                                <param name='{{ name_property.field_trans }}'>{{ var }}</param>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+
 
                     {# <weight>3.6</weight> #}
                     {# <dimensions>20.1/20.5/22.5</dimensions> #}
