@@ -71,6 +71,7 @@ final class AllProductsByCategoryResult
         private string $product_currency, //  "rur"
         private int $product_quantity, //  0
 
+
         private string $category, //  "01876af0-ddfc-70c3-ab25-5f85f55a9907",
         private string $category_url, //  "triangle"
         private string $category_name, //  "Triangle"
@@ -88,6 +89,10 @@ final class AllProductsByCategoryResult
         private ?int $product_parameter_width, //  450
         private ?int $product_parameter_height, //  225
         private ?int $product_parameter_weight, //  1000
+
+        private ?int $project_discount = null,
+        private ?bool $promotion_active = null,
+        private string|int|null $promotion_price = null,
 
     ) {}
 
@@ -215,7 +220,21 @@ final class AllProductsByCategoryResult
 
     public function getProductPrice(): Money
     {
-        return new Money($this->product_price, true);
+        $price = new Money($this->product_price, true);
+
+        /** Кастомная цена */
+        if(false === empty($this->promotion_price) && true === $this->promotion_active)
+        {
+            $price->applyString($this->promotion_price);
+        }
+
+        /** Скидка магазина */
+        if(false === empty($this->project_discount))
+        {
+            $price->applyString($this->project_discount);
+        }
+
+        return $price;
     }
 
     public function getProductOldPrice(): Money|false
@@ -269,24 +288,24 @@ final class AllProductsByCategoryResult
     }
 
 
-    public function getProductLength(): ?int
+    public function getProductLength(): int|float|null
     {
-        return $this->product_parameter_length ? $this->product_parameter_length / 10 : null;
+        return $this->product_parameter_length ? ($this->product_parameter_length * 0.1) : null;
     }
 
-    public function getProductWidth(): ?int
+    public function getProductWidth(): int|float|null
     {
-        return $this->product_parameter_width ? $this->product_parameter_width / 10 : null;
+        return $this->product_parameter_width ? ($this->product_parameter_width * 0.1) : null;
     }
 
-    public function getProductHeight(): ?int
+    public function getProductHeight(): int|float|null
     {
-        return $this->product_parameter_height ? $this->product_parameter_height / 10 : null;
+        return $this->product_parameter_height ? ($this->product_parameter_height * 0.1) : null;
     }
 
-    public function getProductWeight(): ?int
+    public function getProductWeight(): int|float|null
     {
-        return $this->product_parameter_weight ? $this->product_parameter_weight / 100 : null;
+        return $this->product_parameter_weight ? ($this->product_parameter_weight * 0.01) : null;
     }
 
 
