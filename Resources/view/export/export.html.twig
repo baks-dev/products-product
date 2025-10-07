@@ -25,7 +25,7 @@
         {# @var card \BaksDev\Products\Product\Repository\AllProductsByCategory\AllProductsByCategoryResult #}
 
         <offers>
-            {% for card in products|filter(v => v.product_price > 0) %}
+            {% for card in products|filter(v => v.productPrice.roundValue > 0) %}
 
                 {% set arr_property = card.categorySectionField %}
 
