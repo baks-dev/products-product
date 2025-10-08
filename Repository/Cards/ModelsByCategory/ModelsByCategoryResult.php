@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 declare(strict_types=1);
@@ -64,6 +63,7 @@ final readonly class ModelsByCategoryResult implements ModelsOrProductsCardResul
         private ?bool $product_image_cdn,
 
         private ?string $invariable = null,
+
         private string|int|null $promotion_price = null,
         private string|null $profile_discount = null,
         private string|null $project_discount = null,

@@ -44,7 +44,8 @@ final class AllProductsByCategoryResult
         private string $url, //  "triangle_effexsport_th202"
         private int $sort, //  900
         private string $product_name, //  "Triangle EffeXSport XL TH202"
-        private string $preview, //  "<p><strong>Triangle EffeXSport TH202</strong> – это новая разработка Triangle ....
+        private ?string $preview,
+        //  "<p><strong>Triangle EffeXSport TH202</strong> – это новая разработка Triangle ....
         private string $product_article, //  "TH202-16-195-45-84W"
         private string $product_barcode, //  "2744652835819"
 
@@ -57,14 +58,22 @@ final class AllProductsByCategoryResult
         private ?string $offer_value, //  "16"
         private ?string $offer_postfix, //  null
         private ?string $offer_reference, //  "tire_radius_field"
+        private ?string $offer_name, //  "tire_radius_field"
+        private ?string $offer_name_postfix, //  "tire_radius_field"
+
 
         private ?string $variation_value, //  "195"
         private ?string $variation_postfix, //  null
         private ?string $variation_reference, //  "tire_width_field"
+        private ?string $variation_name, //  "tire_width_field"
+        private ?string $variation_name_postfix, //  "tire_width_field"
+
 
         private ?string $modification_value, //  "45"
         private ?string $modification_postfix, //  "84W"
         private ?string $modification_reference, //  "tire_profile_field"
+        private ?string $modification_name,
+        private ?string $modification_name_postfix,
 
         private int $product_price, //  530000
         private int $product_old_price, //  0
@@ -90,10 +99,10 @@ final class AllProductsByCategoryResult
         private ?int $product_parameter_height, //  225
         private ?int $product_parameter_weight, //  1000
 
-        private ?int $project_discount = null,
-        private ?bool $promotion_active = null,
-        private string|int|null $promotion_price = null,
+        private string|null $project_discount = null,
 
+        private string|int|null $promotion_price = null,
+        private ?bool $promotion_active = null,
     ) {}
 
     public function getProductId(): ProductUid
@@ -129,7 +138,7 @@ final class AllProductsByCategoryResult
         return $this->product_name;
     }
 
-    public function getPreview(): string
+    public function getPreview(): ?string
     {
         return $this->preview;
     }
@@ -184,6 +193,17 @@ final class AllProductsByCategoryResult
         return $this->offer_reference;
     }
 
+    public function getOfferName(): ?string
+    {
+        return $this->offer_name;
+    }
+
+    public function getOfferNamePostfix(): ?string
+    {
+        return $this->offer_name_postfix;
+    }
+
+
     /** Variation */
 
     public function getVariationValue(): ?string
@@ -201,6 +221,18 @@ final class AllProductsByCategoryResult
         return $this->variation_reference;
     }
 
+    public function getVariationName(): ?string
+    {
+        return $this->variation_name;
+    }
+
+    public function getVariationNamePostfix(): ?string
+    {
+        return $this->variation_name_postfix;
+    }
+
+
+
     /** Modification */
 
     public function getModificationValue(): ?string
@@ -217,6 +249,18 @@ final class AllProductsByCategoryResult
     {
         return $this->modification_reference;
     }
+
+    public function getModificationName(): ?string
+    {
+        return $this->modification_name;
+    }
+
+    public function getModificationNamePostfix(): ?string
+    {
+        return $this->modification_name_postfix;
+    }
+
+
 
     public function getProductPrice(): Money
     {

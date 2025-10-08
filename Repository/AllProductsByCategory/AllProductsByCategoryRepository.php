@@ -35,8 +35,11 @@ use BaksDev\Products\Category\Entity\CategoryProduct;
 use BaksDev\Products\Category\Entity\Event\CategoryProductEvent;
 use BaksDev\Products\Category\Entity\Info\CategoryProductInfo;
 use BaksDev\Products\Category\Entity\Offers\CategoryProductOffers;
+use BaksDev\Products\Category\Entity\Offers\Trans\CategoryProductOffersTrans;
 use BaksDev\Products\Category\Entity\Offers\Variation\CategoryProductVariation;
 use BaksDev\Products\Category\Entity\Offers\Variation\Modification\CategoryProductModification;
+use BaksDev\Products\Category\Entity\Offers\Variation\Modification\Trans\CategoryProductModificationTrans;
+use BaksDev\Products\Category\Entity\Offers\Variation\Trans\CategoryProductVariationTrans;
 use BaksDev\Products\Category\Entity\Section\CategoryProductSection;
 use BaksDev\Products\Category\Entity\Section\Field\CategoryProductSectionField;
 use BaksDev\Products\Category\Entity\Section\Field\Trans\CategoryProductSectionFieldTrans;
@@ -286,6 +289,18 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
             );
 
 
+        /* Получаем название торгового предложения */
+        $dbal
+            ->addSelect('category_offer_trans.name as offer_name')
+            ->addSelect('category_offer_trans.postfix as offer_name_postfix')
+            ->leftJoin(
+                'category_offer',
+                CategoryProductOffersTrans::class,
+                'category_offer_trans',
+                'category_offer_trans.offer = category_offer.id AND category_offer_trans.local = :local',
+            );
+
+
         /**
          * Множественный вариант
          */
@@ -324,6 +339,16 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
                 'category_variation.id = product_variation.category_variation',
             );
 
+        /* Получаем название множественного варианта */
+        $dbal
+            ->addSelect('category_variation_trans.name as variation_name')
+            ->addSelect('category_variation_trans.postfix as variation_name_postfix')
+            ->leftJoin(
+                'category_variation',
+                CategoryProductVariationTrans::class,
+                'category_variation_trans',
+                'category_variation_trans.variation = category_variation.id AND category_variation_trans.local = :local',
+            );
 
         /**
          * Модификация множественного варианта торгового предложения
@@ -363,6 +388,18 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
                 'category_modification',
                 'category_modification.id = product_modification.category_modification',
             );
+
+        /* Получаем название типа модификации */
+        $dbal
+            ->addSelect('category_modification_trans.name as modification_name')
+            ->addSelect('category_modification_trans.postfix as modification_name_postfix')
+            ->leftJoin(
+                'category_modification',
+                CategoryProductModificationTrans::class,
+                'category_modification_trans',
+                'category_modification_trans.modification = category_modification.id AND category_modification_trans.local = :local',
+            );
+
 
 
         /** Цена товара */

@@ -59,7 +59,7 @@ class AllProductsByCategoryTest extends KernelTestCase
                 {
                     // Вызываем метод
                     $data = $method->invoke($AllProductsByCategoryResult);
-                    //dump($data);
+                    dump($data);
                 }
             }
 

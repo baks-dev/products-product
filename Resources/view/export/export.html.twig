@@ -33,9 +33,9 @@
 
                     <name>{{ card.productName }}
                         {# Значение множественного варианта ТП #}
-                        {{ card.variationValue|call_twig_func(card.variationReference) ~ card.modificationValue|call_twig_func(card.modificationReference) }}
+                        {{ card.variationValue|call_twig_func(card.variationReference~'_render') ~ card.modificationValue|call_twig_func(card.modificationReference~'_render') }}
                         {# Значение торгового предложения #}
-                        {{ card.offerValue|call_twig_func(card.offerReference) }}
+                        {{ card.offerValue|call_twig_func(card.offerReference~'_render') }}
                         {# Постфикс торгового предложения #}
                         {{ card.offerPostfix }}
                         {# Постфикс множественного варианта #}
@@ -73,6 +73,33 @@
 
                     <picture>{{ absolute_url(image_path) }}</picture>
 
+                    <param name="Модель">{{ card.productName }}</param>
+
+                    {% if card.offerName %}
+                        <param name="{{ card.offerName }}">{{ card.offerValue }}</param>
+                    {% endif %}
+
+                    {% if card.variationName %}
+                        <param name="{{ card.variationName }}">{{ card.variationValue }}</param>
+                    {% endif %}
+
+                    {% if card.modificationName %}
+                        <param name="{{ card.modificationName }}">{{ card.modificationValue }}</param>
+                    {% endif %}
+
+                    {% if card.offerNamePostfix %}
+                        <param name="{{ card.offerNamePostfix }}">{{ card.offerPostfix }}</param>
+                    {% endif %}
+
+                    {% if card.variationNamePostfix %}
+                        <param name="{{ card.variationNamePostfix }}">{{ card.variationPostfix }}</param>
+                    {% endif %}
+
+                    {% if card.modificationNamePostfix %}
+                        <param name="{{ card.modificationNamePostfix }}">{{ card.modificationPostfix }}</param>
+                    {% endif %}
+
+
                     {# Свойства, учавствующие в ПРЕВЬЮ #}
                     {% if arr_property %}
                         {% for name_property in arr_property | filter(preview => preview.field_card == true) %}
@@ -84,11 +111,15 @@
                         {% endfor %}
                     {% endif %}
 
+                    {# Свойства торгового предложения #}
+
                     <stock>
-                        {% if card.productQuantity > 20 %}
-                            более 20
+                        {% if card.productQuantity > 10 %}
+                            более 10
+                        {% elseif card.productQuantity > 0 %}
+                            {{ card.productQuantity }}
                         {% else %}
-                            менее 20
+                            нет в наличии
                         {% endif %}
                     </stock>
 
