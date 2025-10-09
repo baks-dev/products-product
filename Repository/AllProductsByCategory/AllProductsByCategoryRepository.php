@@ -96,8 +96,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
 
     public function __construct(
         private readonly DBALQueryBuilder $DBALQueryBuilder,
-        private readonly PaginatorInterface $paginator,
-        private readonly UserProfileTokenStorageInterface $UserProfileTokenStorage
+        private readonly PaginatorInterface $paginator
     ) {}
 
     /** Фильтра по offer, variation, modification в зависимости от настроек */
@@ -120,24 +119,6 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
         return $this;
     }
 
-    public function forProfile(UserProfile|UserProfileUid|null|false $profile): self
-    {
-        if(empty($profile))
-        {
-            $this->category = false;
-            return $this;
-        }
-
-        if($profile instanceof UserProfile)
-        {
-            $profile = $profile->getId();
-        }
-
-        $this->profile = $profile;
-
-        return $this;
-    }
-
     public function forCategory(CategoryProduct|CategoryProductUid|null|false $category): self
     {
         if(empty($category))
@@ -156,6 +137,24 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
         return $this;
     }
 
+    public function forProfile(UserProfile|UserProfileUid|null|false $profile): self
+    {
+        if(empty($profile))
+        {
+            $this->profile = false;
+            return $this;
+        }
+
+        if($profile instanceof UserProfile)
+        {
+            $profile = $profile->getId();
+        }
+
+        $this->profile = $profile;
+
+        return $this;
+    }
+
     /** Метод возвращает все товары в категории */
     public function fetchAllProductByCategory(): Generator|false
     {
@@ -169,7 +168,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
         {
             $dbal->from(Product::class, 'product');
 
-            $dbal->leftJoin(
+            $dbal->join(
                 'product',
                 ProductCategory::class,
                 'product_category',
@@ -401,7 +400,6 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
             );
 
 
-
         /** Цена товара */
         $dbal->leftJoin(
             'product',
@@ -477,6 +475,63 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
 			   ELSE 0
 			END AS product_quantity
 		');
+
+        /**
+         * Если имеется складской учет и передан идентификатор профиля магазина
+         */
+        if(class_exists(BaksDevProductsStocksBundle::class) && true === ($this->profile instanceof UserProfileUid))
+        {
+            $dbal
+                ->addSelect("JSON_AGG ( 
+                        DISTINCT JSONB_BUILD_OBJECT (
+                            'total', stock.total, 
+                            'reserve', stock.reserve 
+                        )) AS stocks_quantity",
+                )
+                ->leftJoin(
+                    'product_modification',
+                    ProductStockTotal::class,
+                    'stock',
+                    '
+                    stock.profile = :stock_profile AND
+                    stock.product = product.id 
+                    
+                    AND
+                        
+                        CASE 
+                            WHEN product_offer.const IS NOT NULL 
+                            THEN stock.offer = product_offer.const
+                            ELSE stock.offer IS NULL
+                        END
+                            
+                    AND 
+                    
+                        CASE
+                            WHEN product_variation.const IS NOT NULL 
+                            THEN stock.variation = product_variation.const
+                            ELSE stock.variation IS NULL
+                        END
+                        
+                    AND
+                    
+                        CASE
+                            WHEN product_modification.const IS NOT NULL 
+                            THEN stock.modification = product_modification.const
+                            ELSE stock.modification IS NULL
+                        END
+                ')
+                ->setParameter(
+                    key: 'stock_profile',
+                    value: $this->profile,
+                    type: UserProfileUid::TYPE,
+                );
+
+
+        }
+
+
+
+
 
 
         $dbal
@@ -863,6 +918,8 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
         $dbal->addOrderBy('product_info.sort', 'DESC');
 
         $dbal->allGroupByExclude();
+
+        //$dbal->setMaxResults(1000);
 
         //        return $dbal
         //            ->enableCache('products-product', 86400)

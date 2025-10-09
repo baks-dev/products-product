@@ -39,7 +39,7 @@ final class AllProductsByCategoryResult
     public function __construct(
 
         private string $id, //  "018954cb-0a6e-744a-97f0-128e7f05d76d",
-        private string $product_invariable, //  "018db273-839c-72dd-bb36-de5c523881be"
+        private ?string $product_invariable, //  "018db273-839c-72dd-bb36-de5c523881be"
 
         private string $url, //  "triangle_effexsport_th202"
         private int $sort, //  900
@@ -78,12 +78,13 @@ final class AllProductsByCategoryResult
         private int $product_price, //  530000
         private int $product_old_price, //  0
         private string $product_currency, //  "rur"
+
         private int $product_quantity, //  0
 
 
-        private string $category, //  "01876af0-ddfc-70c3-ab25-5f85f55a9907",
-        private string $category_url, //  "triangle"
-        private string $category_name, //  "Triangle"
+        private ?string $category, //  "01876af0-ddfc-70c3-ab25-5f85f55a9907",
+        private ?string $category_url, //  "triangle"
+        private ?string $category_name, //  "Triangle"
         private ?string $category_desc, //  "Triangle Group"
 
 
@@ -101,6 +102,8 @@ final class AllProductsByCategoryResult
 
         private string|null $project_discount = null,
 
+        private ?string $stocks_quantity = null, //  0
+
         private string|int|null $promotion_price = null,
         private ?bool $promotion_active = null,
     ) {}
@@ -110,17 +113,17 @@ final class AllProductsByCategoryResult
         return new ProductUid($this->id);
     }
 
-    public function getProductInvariable(): ProductInvariableUid
+    public function getProductInvariable(): ProductInvariableUid|false
     {
-        return new ProductInvariableUid($this->product_invariable);
+        return $this->product_invariable ? new ProductInvariableUid($this->product_invariable) : false;
     }
 
-    public function getCategoryId(): CategoryProductUid
+    public function getCategoryId(): CategoryProductUid|false
     {
-        return new CategoryProductUid($this->category);
+        return $this->category ? new CategoryProductUid($this->category) : false;
     }
 
-    public function getProductUrl(): string
+    public function getProductUrl(): ?string
     {
         return $this->url;
     }
@@ -136,6 +139,14 @@ final class AllProductsByCategoryResult
     public function getProductName(): string
     {
         return $this->product_name;
+    }
+
+    public function getModelName(): string|false
+    {
+        $model = str_replace($this->category_name, '', $this->product_name);
+        $model = trim($model);
+
+        return empty($model) || $model === $this->product_name ? false : $model;
     }
 
     public function getPreview(): ?string
@@ -232,7 +243,6 @@ final class AllProductsByCategoryResult
     }
 
 
-
     /** Modification */
 
     public function getModificationValue(): ?string
@@ -261,7 +271,6 @@ final class AllProductsByCategoryResult
     }
 
 
-
     public function getProductPrice(): Money
     {
         $price = new Money($this->product_price, true);
@@ -286,7 +295,6 @@ final class AllProductsByCategoryResult
         return $this->product_old_price ? new Money($this->product_old_price, true) : false;
     }
 
-
     public function getProductCurrency(): Currency
     {
         return new Currency($this->product_currency);
@@ -297,13 +305,38 @@ final class AllProductsByCategoryResult
         return max($this->product_quantity, 0);
     }
 
+    public function getStocksQuantity(): int
+    {
+        if(empty($this->stocks_quantity))
+        {
+            return 0;
+        }
 
-    public function getCategoryUrl(): string
+        if(false === json_validate($this->stocks_quantity))
+        {
+            return 0;
+        }
+
+        $quantity = json_decode($this->stocks_quantity, false, 512, JSON_THROW_ON_ERROR);
+
+        $total = 0;
+
+        foreach($quantity as $stock)
+        {
+            $total += $stock->total;
+            $total -= $stock->reserve;
+        }
+
+        return max($total, 0);
+    }
+
+
+    public function getCategoryUrl(): ?string
     {
         return $this->category_url;
     }
 
-    public function getCategoryName(): string
+    public function getCategoryName(): ?string
     {
         return $this->category_name;
     }

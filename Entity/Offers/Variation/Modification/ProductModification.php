@@ -187,4 +187,9 @@ class ProductModification extends EntityEvent
     {
         return $this->image;
     }
+
+    public function getBarcode(): ?ProductBarcode
+    {
+        return $this->barcode;
+    }
 }

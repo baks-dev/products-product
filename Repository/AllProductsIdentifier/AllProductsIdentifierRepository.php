@@ -128,6 +128,8 @@ final class AllProductsIdentifierRepository implements AllProductsIdentifierInte
 
         if($this->offerConst)
         {
+
+
             $dbal->join(
                 'product',
                 ProductOffer::class,

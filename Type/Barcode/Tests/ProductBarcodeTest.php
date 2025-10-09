@@ -36,6 +36,14 @@ use Symfony\Component\Uid\UuidV7;
 #[When(env: 'test')]
 final class ProductBarcodeTest extends TestCase
 {
+    public function testBarcodeProductSign()
+    {
+        $customValue = '(01)04660425462256(21)3;4TfdlZg*;=1(91)EE11(92)SDqzfvyaZHeAogGO5ptNrX0lwofieadNvlr1wvffI61=';
+        $barcode = new ProductBarcode($customValue);
+
+        $this->assertTrue($customValue, $barcode->equals('04660425462256'));
+    }
+
     public function testBarcodeGeneration()
     {
         $barcode = new ProductBarcode();
@@ -43,7 +51,9 @@ final class ProductBarcodeTest extends TestCase
 
         $customValue = '0123456789012';
         $barcode = new ProductBarcode($customValue);
+
         $this->assertEquals($customValue, $barcode->getValue());
+
     }
 
 

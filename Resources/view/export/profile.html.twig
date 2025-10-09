@@ -29,7 +29,7 @@
 
                 {% set arr_property = card.categorySectionField %}
 
-                <offer id='{{ card.productId }}' available='{{ card.productQuantity > 0 ? 'true' : 'false' }}'>
+                <offer id='{{ card.productId }}' available='{{ card.stocksQuantity > 0 ? 'true' : 'false' }}'>
 
                     <name>{{ card.productName }}
                         {# Значение множественного варианта ТП #}
@@ -116,10 +116,10 @@
                     {# Свойства торгового предложения #}
 
                     <stock>
-                        {% if card.productQuantity > 10 %}
+                        {% if card.stocksQuantity > 10 %}
                             более 10
-                        {% elseif card.productQuantity > 0 %}
-                            {{ card.productQuantity }}
+                        {% elseif card.stocksQuantity > 0 %}
+                            {{ card.stocksQuantity }}
                         {% else %}
                             нет в наличии
                         {% endif %}

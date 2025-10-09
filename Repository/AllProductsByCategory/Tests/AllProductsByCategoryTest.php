@@ -27,6 +27,7 @@ namespace BaksDev\Products\Product\Repository\AllProductsByCategory\Tests;
 
 use BaksDev\Products\Product\Repository\AllProductsByCategory\AllProductsByCategoryInterface;
 use BaksDev\Products\Product\Repository\AllProductsByCategory\AllProductsByCategoryResult;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use PHPUnit\Framework\Attributes\Group;
 use ReflectionClass;
 use ReflectionMethod;
@@ -44,7 +45,9 @@ class AllProductsByCategoryTest extends KernelTestCase
         /** @var AllProductsByCategoryInterface $AllProductsByCategory */
         $AllProductsByCategory = self::getContainer()->get(AllProductsByCategoryInterface::class);
 
-        $result = $AllProductsByCategory->fetchAllProductByCategory();
+        $result = $AllProductsByCategory
+            ->forProfile(new UserProfileUid('0197f935-a3c8-701a-9dfb-5e6f951e4c6e'))
+            ->fetchAllProductByCategory();
 
         foreach($result as $AllProductsByCategoryResult)
         {
@@ -59,11 +62,9 @@ class AllProductsByCategoryTest extends KernelTestCase
                 {
                     // Вызываем метод
                     $data = $method->invoke($AllProductsByCategoryResult);
-                    dump($data);
+                    //dump($data);
                 }
             }
-
-            break;
         }
     }
 

@@ -21,7 +21,7 @@
  *  THE SOFTWARE.
  */
 
-namespace BaksDev\Products\Product\Controller;
+namespace BaksDev\Products\Product\Controller\Public\Export;
 
 use BaksDev\Core\Controller\AbstractController;
 use BaksDev\Core\Repository\SettingsMain\SettingsMainInterface;
@@ -37,9 +37,9 @@ use Symfony\Component\Routing\Attribute\Route;
 #[AsController]
 final class ExportController extends AbstractController
 {
-
-    #[Route('/catalog.xml', name: 'export.catalog', methods: ['GET'])]
-    public function catalog(
+    /** Экспорт каталога с остатками в карточке */
+    #[Route('/export.xml', name: 'export', methods: ['GET'])]
+    public function export(
         Request $request,
         SettingsMainInterface $settingsMain,
         AllCategoryByMenuInterface $allCategory,
@@ -47,53 +47,22 @@ final class ExportController extends AbstractController
     ): Response
     {
 
+        $products = $productsByCategory
+            ->forCategory(false)
+            ->forProfile(false)
+            ->fetchAllProductByCategory();
+
         $response = $this->render(
             [
-                'settings' => $settingsMain->getSettingsMainAssociative(),
                 'category' => $allCategory->findAll(),
-                'products' => $productsByCategory->forCategory(false)->fetchAllProductByCategory()],
-            file: 'catalog.html.twig',
-        );
-        $response->headers->set('Content-Type', 'text/xml');
-
-        return $response;
-    }
-
-
-    #[Route('/terms.xml', name: 'export.terms', methods: ['GET'])]
-    public function terms(
-        Request $request,
-        SettingsMainInterface $settingsMain,
-        AllProductsByCategoryInterface $productsByCategory
-    ): Response
-    {
-
-        $response = $this->render(
-            [
                 'settings' => $settingsMain->getSettingsMainAssociative(),
-                'products' => $productsByCategory->forCategory(false)->fetchAllProductByCategory()],
-            file: 'terms.html.twig',
+                'products' => $products],
+            dir: 'export',
+            file: 'export.html.twig',
         );
-        $response->headers->set('Content-Type', 'text/xml');
-
-        return $response;
-    }
-
-
-    #[Route('/export.json', name: 'export.json', methods: ['GET'])]
-    public function json(
-        #[ParamConverter(CategoryProductUid::class)] $category,
-        AllProductsByCategoryInterface $productsByCategory
-    ): Response
-    {
-
-        $response = $this->render(['urls' => $productsByCategory
-            ->forCategory($category)
-            ->fetchAllProductByCategory()]);
 
         $response->headers->set('Content-Type', 'text/xml');
 
         return $response;
     }
-
 }

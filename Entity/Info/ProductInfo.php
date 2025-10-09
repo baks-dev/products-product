@@ -125,4 +125,9 @@ class ProductInfo extends EntityReadonly
     {
         $this->url = uniqid($this->url.'_', false);
     }
+
+    public function getBarcode(): ?ProductBarcode
+    {
+        return $this->barcode;
+    }
 }

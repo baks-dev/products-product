@@ -21,7 +21,7 @@
  *  THE SOFTWARE.
  */
 
-namespace BaksDev\Products\Product\Controller;
+namespace BaksDev\Products\Product\Controller\Public\Export;
 
 use BaksDev\Core\Controller\AbstractController;
 use BaksDev\Core\Repository\SettingsMain\SettingsMainInterface;
@@ -29,71 +29,41 @@ use BaksDev\Core\Type\UidType\ParamConverter;
 use BaksDev\Products\Category\Repository\AllCategoryByMenu\AllCategoryByMenuInterface;
 use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Repository\AllProductsByCategory\AllProductsByCategoryInterface;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[AsController]
-final class ExportController extends AbstractController
+final class ExportProfileController extends AbstractController
 {
-
-    #[Route('/catalog.xml', name: 'export.catalog', methods: ['GET'])]
-    public function catalog(
+    /** Экспорт каталога с остатками на складе */
+    #[Route('/export/{profile}.xml', name: 'export.profile', methods: ['GET'])]
+    public function profile(
         Request $request,
         SettingsMainInterface $settingsMain,
         AllCategoryByMenuInterface $allCategory,
-        AllProductsByCategoryInterface $productsByCategory
+        AllProductsByCategoryInterface $productsByCategory,
+        #[ParamConverter(UserProfileUid::class)] UserProfileUid $profile,
     ): Response
     {
+        $products = $productsByCategory
+            ->forProfile($profile)
+            ->forCategory(false)
+            ->fetchAllProductByCategory();
 
         $response = $this->render(
             [
-                'settings' => $settingsMain->getSettingsMainAssociative(),
                 'category' => $allCategory->findAll(),
-                'products' => $productsByCategory->forCategory(false)->fetchAllProductByCategory()],
-            file: 'catalog.html.twig',
-        );
-        $response->headers->set('Content-Type', 'text/xml');
-
-        return $response;
-    }
-
-
-    #[Route('/terms.xml', name: 'export.terms', methods: ['GET'])]
-    public function terms(
-        Request $request,
-        SettingsMainInterface $settingsMain,
-        AllProductsByCategoryInterface $productsByCategory
-    ): Response
-    {
-
-        $response = $this->render(
-            [
                 'settings' => $settingsMain->getSettingsMainAssociative(),
-                'products' => $productsByCategory->forCategory(false)->fetchAllProductByCategory()],
-            file: 'terms.html.twig',
+                'products' => $products],
+            dir: 'export',
+            file: 'profile.html.twig',
         );
-        $response->headers->set('Content-Type', 'text/xml');
-
-        return $response;
-    }
-
-
-    #[Route('/export.json', name: 'export.json', methods: ['GET'])]
-    public function json(
-        #[ParamConverter(CategoryProductUid::class)] $category,
-        AllProductsByCategoryInterface $productsByCategory
-    ): Response
-    {
-
-        $response = $this->render(['urls' => $productsByCategory
-            ->forCategory($category)
-            ->fetchAllProductByCategory()]);
 
         $response->headers->set('Content-Type', 'text/xml');
 
         return $response;
     }
-
 }

@@ -198,4 +198,9 @@ class ProductVariation extends EntityEvent
         return $this->modification;
     }
 
+    public function getBarcode(): ?ProductBarcode
+    {
+        return $this->barcode;
+    }
+
 }

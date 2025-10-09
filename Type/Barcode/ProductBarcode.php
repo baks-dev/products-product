@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -36,6 +36,15 @@ final class ProductBarcode
 
     public function __construct(?string $value = null)
     {
+        /** Делаем проверку строки, не передан ли код маркировки «Честный знак» */
+
+        preg_match_all('/\((\d{2})\)((?:(?!\(\d{2}\)).)*)/', $value, $matches, PREG_SET_ORDER);
+
+        if(count($matches) === 4 && isset($matches[0][2]))
+        {
+            $value = $matches[0][2];
+        }
+
         if($value)
         {
             $this->value = $value;
@@ -146,9 +155,9 @@ final class ProductBarcode
         return $this->value;
     }
 
-    //    public static function generate(): string
-    //    {
-    //        $uid = new UuidV7();
-    //        return self::uuid_barcode($uid);
-    //    }
+    public function equals(mixed $value): bool
+    {
+        return $this->value === (string) $value;
+    }
+
 }
