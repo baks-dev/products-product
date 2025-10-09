@@ -56,7 +56,8 @@ final class ExportController extends AbstractController
             [
                 'category' => $allCategory->findAll(),
                 'settings' => $settingsMain->getSettingsMainAssociative(),
-                'products' => $products],
+                'products' => $products,
+            ],
             dir: 'export',
             file: 'export.html.twig',
         );
