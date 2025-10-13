@@ -86,6 +86,7 @@ final class AllProductsByCategoryResult
         private ?string $category_url, //  "triangle"
         private ?string $category_name, //  "Triangle"
         private ?string $category_desc, //  "Triangle Group"
+        private ?int $category_threshold, //  "Triangle Group"
 
 
         //  "[{"0": 100, "field_uid": "01985d78-dbfb-79ba-89a0-ede2de932c6b", "field_card": true, "field_name": false,
@@ -344,6 +345,16 @@ final class AllProductsByCategoryResult
     public function getCategoryDesc(): ?string
     {
         return $this->category_desc;
+    }
+
+    public function getCategoryThreshold(): int
+    {
+        if(empty($this->category_threshold))
+        {
+            return 0;
+        }
+
+        return $this->category_threshold;
     }
 
     /**

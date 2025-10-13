@@ -529,11 +529,6 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
 
         }
 
-
-
-
-
-
         $dbal
             ->addSelect('product_invariable.id AS product_invariable')
             ->leftJoin(
@@ -758,9 +753,9 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
             'category.id = product_category.category',
         );
 
-
         $dbal
             ->addSelect('category_info.url AS category_url')
+            ->addSelect('category_info.threshold AS category_threshold')
             ->leftJoin(
                 'category',
                 CategoryProductInfo::class,
