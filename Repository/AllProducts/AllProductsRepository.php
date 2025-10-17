@@ -576,6 +576,7 @@ final class AllProductsRepository implements AllProductsInterface
             }
         }
 
+
         if(($this->search instanceof SearchDTO) && $this->search->getQuery())
         {
 
@@ -594,7 +595,7 @@ final class AllProductsRepository implements AllProductsInterface
                 ? $this->SearchIndexHandler->handleSearchQuery($search, ProductSearchTag::TAG)
                 : false;
 
-            if($this->SearchIndexHandler instanceof SearchIndexInterface && $resultProducts !== false)
+            if($this->SearchIndexHandler instanceof SearchIndexInterface && false === empty($resultProducts))
             {
                 /** Фильтруем по полученным из индекса ids: */
 
@@ -621,7 +622,7 @@ final class AllProductsRepository implements AllProductsInterface
             }
 
 
-            if($resultProducts === false)
+            if(empty($resultProducts))
             {
                 $dbal
                     ->createSearchQueryBuilder($this->search)
@@ -1036,7 +1037,7 @@ final class AllProductsRepository implements AllProductsInterface
                 ? $this->SearchIndexHandler->handleSearchQuery($search, ProductSearchTag::TAG)
                 : false;
 
-            if($this->SearchIndexHandler instanceof SearchIndexInterface && $resultProducts !== false)
+            if($this->SearchIndexHandler instanceof SearchIndexInterface && false === empty($resultProducts))
             {
                 /** Фильтруем по полученным из индекса ids: */
 
@@ -1061,29 +1062,27 @@ final class AllProductsRepository implements AllProductsInterface
                 $dbal->addOrderBy('CASE WHEN product_variation.id IN (:uuids)  THEN 0 ELSE 1 END');
                 $dbal->addOrderBy('CASE WHEN product_modification.id IN (:uuids)  THEN 0 ELSE 1 END');
             }
-
-            if($resultProducts === false)
-            {
-                $dbal
-                    ->createSearchQueryBuilder($this->search)
-                    ->addSearchEqualUid('product.id')
-                    ->addSearchEqualUid('product.event')
-                    ->addSearchEqualUid('product_variation.id')
-                    ->addSearchEqualUid('product_modification.id')
-                    ->addSearchLike('product_trans.name')
-                    ->addSearchLike('product_info.article')
-                    ->addSearchLike('product_offer.article')
-                    ->addSearchLike('product_modification.article')
-                    ->addSearchLike('product_modification.article')
-                    ->addSearchLike('product_variation.article');
-            }
         }
         else
         {
             $dbal->orderBy('product.event');
         }
 
-
+        if(empty($resultProducts))
+        {
+            $dbal
+                ->createSearchQueryBuilder($this->search)
+                ->addSearchEqualUid('product.id')
+                ->addSearchEqualUid('product.event')
+                ->addSearchEqualUid('product_variation.id')
+                ->addSearchEqualUid('product_modification.id')
+                ->addSearchLike('product_trans.name')
+                ->addSearchLike('product_info.article')
+                ->addSearchLike('product_offer.article')
+                ->addSearchLike('product_modification.article')
+                ->addSearchLike('product_modification.article')
+                ->addSearchLike('product_variation.article');
+        }
 
         $dbal->allGroupByExclude();
 
