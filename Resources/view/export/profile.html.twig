@@ -115,10 +115,10 @@
 
                     {# Свойства торгового предложения #}
 
-                    {% if card.productQuantity > card.getCategoryThreshold %}
+                    {% if card.stocksQuantity > card.getCategoryThreshold %}
                         {% set stock = 'более '~card.getCategoryThreshold %}
-                    {% elseif card.productQuantity > 0 %}
-                        {% set stock = card.productQuantity %}
+                    {% elseif card.stocksQuantity > 0 %}
+                        {% set stock = card.stocksQuantity %}
                     {% else %}
                         {% set stock = 'нет в наличии' %}
                     {% endif %}
