@@ -19,12 +19,14 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification;
 
 use BaksDev\Core\Services\Reference\ReferenceChoice;
 use BaksDev\Products\Category\Type\Offers\Modification\CategoryProductModificationUid;
+use BaksDev\Products\Product\Type\Barcode\ProductBarcode;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification\Cost\ProductModificationCostForm;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification\Image\ProductOfferVariationModificationImageCollectionForm;
@@ -84,7 +86,6 @@ final class ProductModificationCollectionForm extends AbstractType
             )
         );
 
-
         $builder->add('article', TextType::class);
 
         $builder->add('postfix', TextType::class);
@@ -96,6 +97,22 @@ final class ProductModificationCollectionForm extends AbstractType
         $builder->add('cost', ProductModificationCostForm::class, ['label' => false]);
 
         $builder->add('opt', ProductModificationOptForm::class, ['label' => false]);
+
+        /**
+         * Штрихкод - для конкретной вложенности
+         */
+        $builder->add('barcode', TextType::class, ['required' => true]);
+
+        $builder->get('barcode')->addModelTransformer(
+            new CallbackTransformer(
+                function(?ProductBarcode $barcode) {
+                    return $barcode instanceof ProductBarcode ? $barcode : new ProductBarcode(ProductBarcode::generate());
+                },
+                function(?string $barcode) {
+                    return null === $barcode ? new ProductBarcode(ProductBarcode::generate()) : new ProductBarcode($barcode);
+                }
+            )
+        );
 
         /** Торговые предложения */
         $builder->add('image', CollectionType::class, [

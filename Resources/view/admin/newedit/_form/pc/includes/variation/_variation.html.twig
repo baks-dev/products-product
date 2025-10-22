@@ -12,6 +12,7 @@
 <div class='d-flex justify-content-between align-items-end gap-3'>
 
 
+    {# Кнопка удаления элемента #}
     {{ form_row(variation.DeleteVariation, {
         label: '<span class="svg-icon svg-icon-2">
 						<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25" fill="none">
@@ -25,8 +26,8 @@
         }
     }) }}
 
-
-    <div class='w-100'>
+    {# Значение variation #}
+    <div class='w-50'>
 
         {{ form_row(variation.value,
             variation.value.vars.data and loop.first ? { label : variation.value.vars.label } : { label : false, attr:  { placeholder : variation.value.vars.label } }
@@ -34,6 +35,18 @@
 
     </div>
 
+    {# Штрихкод #}
+    {% if variation.barcode is defined %}
+
+        <div class='w-50'>
+            {{ form_row(variation.barcode,
+                variation.barcode.vars.data and loop.first ? { label : 'Штрихкод' } : { label : false, attr:  { placeholder : 'Штрихкод' } }
+            ) }}
+        </div>
+
+    {% endif %}
+
+    {# Постфикс #}
     {% if variation.postfix is defined %}
         <div class='w-50'>
             {{ form_row(variation.postfix,  { label : variation.postfix.vars.data ? variation.postfix.vars.attr.placeholder : false } ) }}
@@ -41,6 +54,7 @@
     {% endif %}
 
 
+    {# Стоимость #}
     {% if variation.article is defined %}
 
         <div class='w-100 d-flex align-items-end'>
@@ -106,36 +120,12 @@
         <div class="w-50">{{ form_row(variation.price.currency) }}</div>
     {% endif %}
 
-
-    {# {% if variation.quantity is defined %}
-		<div class="w-75">
-
-
-			{{ form_row(variation.quantity.quantity,
-				variation.quantity.quantity.vars.data is not null and loop.first ? { label : 'Наличие'|trans, attr: { min: 0 } } : { label : false, attr:  { placeholder : 'Наличие'|trans, min: 0  } }
-			) }}
-
-
-		</div>
-
-		<div class="w-75">
-
-			{{ form_row(variation.quantity.reserve,
-				variation.quantity.reserve.vars.data is not null and loop.first ? { label : 'Резерв'|trans, attr: { min: 0 } } : { label : false, attr:  { placeholder : 'Резерв'|trans, min: 0 } }
-			) }}
-
-		</div>
-
-	{% endif %} #}
-
-
 </div>
 
 
 {# МОДИФИКАЦИИ #}
 
 {% if variation.modification is defined %}
-
 
 
     <div class="card w-100 border-light mb-3">
@@ -156,6 +146,7 @@
                 </div>
             {% endfor %}
         </div>
+
 
         <div class="card-footer border-light bg-body d-flex justify-content-between align-items-center gap-5">
 

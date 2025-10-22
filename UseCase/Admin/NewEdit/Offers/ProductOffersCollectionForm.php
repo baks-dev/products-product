@@ -19,12 +19,16 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers;
 
 use BaksDev\Core\Services\Reference\ReferenceChoice;
+use BaksDev\Products\Category\Repository\CategoryOffersForm\CategoryOffersFormDTO;
+use BaksDev\Products\Category\Repository\CategoryVariationForm\CategoryVariationFormDTO;
 use BaksDev\Products\Category\Type\Offers\Id\CategoryProductOffersUid;
+use BaksDev\Products\Product\Type\Barcode\ProductBarcode;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Cost\ProductOfferCostForm;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Image\ProductOfferImageCollectionForm;
@@ -93,6 +97,24 @@ final class ProductOffersCollectionForm extends AbstractType
 
         $builder->add('opt', ProductOfferOptForm::class, ['label' => false]);
 
+        /**
+         * Штрихкод - для конкретной вложенности
+         */
+        if($offer instanceof CategoryOffersFormDTO && null === $variation && null === $modification)
+        {
+            $builder->add('barcode', TextType::class, ['required' => true]);
+
+            $builder->get('barcode')->addModelTransformer(
+                new CallbackTransformer(
+                    function(?ProductBarcode $barcode) {
+                        return $barcode instanceof ProductBarcode ? $barcode : new ProductBarcode(ProductBarcode::generate());
+                    },
+                    function(?string $barcode) {
+                        return null === $barcode ? new ProductBarcode(ProductBarcode::generate()) : new ProductBarcode($barcode);
+                    }
+                )
+            );
+        }
 
         /** Торговые предложения */
         $builder->add('image', CollectionType::class, [
@@ -116,7 +138,7 @@ final class ProductOffersCollectionForm extends AbstractType
                 if($data)
                 {
 
-                    /* Если ТП - справочник - перобразуем поле ChoiceType   */
+                    /* Если ТП - справочник - преобразуем поле ChoiceType   */
                     if($offer?->reference)
                     {
                         $reference = $this->reference->getChoice($offer->reference);

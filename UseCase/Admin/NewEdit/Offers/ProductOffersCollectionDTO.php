@@ -19,6 +19,7 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers;
@@ -50,7 +51,7 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
     private readonly ProductOfferConst $const;
 
     /** Штрихкод товара */
-    private readonly ProductBarcode $barcode;
+    private ProductBarcode $barcode;
 
     /** Индивидуальное название */
     private ?string $name = null;
@@ -138,16 +139,13 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
 
     public function setBarcode(?ProductBarcode $barcode): self
     {
-        if(false === (new ReflectionProperty(self::class, 'barcode')->isInitialized($this)))
+        if(is_null($barcode))
         {
-            if(is_null($barcode))
-            {
-                $barcode = new ProductBarcode(ProductBarcode::generate());
-            }
-
-            $this->barcode = $barcode;
+            $barcode = new ProductBarcode(ProductBarcode::generate());
         }
 
+
+        $this->barcode = $barcode;
         return $this;
     }
 
