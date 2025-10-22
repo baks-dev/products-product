@@ -19,12 +19,15 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation;
 
 use BaksDev\Core\Services\Reference\ReferenceChoice;
+use BaksDev\Products\Category\Repository\CategoryVariationForm\CategoryVariationFormDTO;
 use BaksDev\Products\Category\Type\Offers\Variation\CategoryProductVariationUid;
+use BaksDev\Products\Product\Type\Barcode\ProductBarcode;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Cost\ProductVariationCostForm;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Opt\ProductVariationOptForm;
@@ -96,6 +99,25 @@ final class ProductVariationCollectionForm extends AbstractType
         $builder->add('cost', ProductVariationCostForm::class, ['label' => false]);
 
         $builder->add('opt', ProductVariationOptForm::class, ['label' => false]);
+
+        /**
+         * Штрихкод - для конкретной вложенности
+         */
+        if($variation instanceof CategoryVariationFormDTO && null === $modification)
+        {
+            $builder->add('barcode', TextType::class, ['required' => true]);
+
+            $builder->get('barcode')->addModelTransformer(
+                new CallbackTransformer(
+                    function(?ProductBarcode $barcode) {
+                        return $barcode instanceof ProductBarcode ? $barcode : new ProductBarcode(ProductBarcode::generate());
+                    },
+                    function(?string $barcode) {
+                        return null === $barcode ? new ProductBarcode(ProductBarcode::generate()) : new ProductBarcode($barcode);
+                    }
+                )
+            );
+        }
 
         /** Торговые предложения */
         $builder->add('image', CollectionType::class, [

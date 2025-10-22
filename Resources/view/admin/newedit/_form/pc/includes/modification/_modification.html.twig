@@ -11,7 +11,7 @@
 
 <div class='d-flex justify-content-between align-items-end gap-3'>
 
-
+    {# Кнопка удаления элемента #}
     {{ form_row(modification.DeleteModification, {
         label: '<span class="svg-icon svg-icon-2">
 						<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25" fill="none">
@@ -25,14 +25,14 @@
         }
     }) }}
 
-
-    <div class='w-100'>
+    {# Значение modification #}
+    <div class='w-25'>
         {{ form_row(modification.value,
             modification.value.vars.data and loop.first ? { label : modification.value.vars.label } : { label : false, attr:  { placeholder : modification.value.vars.label } }
         ) }}
     </div>
 
-
+    {# Постфикс #}
     {% if modification.postfix is defined %}
         <div class='w-50'>
             {{ form_row(modification.postfix,
@@ -41,8 +41,8 @@
         </div>
     {% endif %}
 
+    {# Артикул #}
     {% if modification.article is defined %}
-
 
         <div class='w-100 d-flex align-items-end'>
 
@@ -80,13 +80,21 @@
 
         </div>
 
+    {% endif %}
+
+    {# Barcode #}
+    {% if modification.barcode is defined %}
+
+        <div class='w-50'>
+            {{ form_row(modification.barcode,
+                modification.barcode.vars.data and loop.first ? { label : 'Штрихкод' } : { label : false, attr:  { placeholder : 'Штрихкод' } }
+            ) }}
+        </div>
 
     {% endif %}
 
 
-
     {# Скрытые элементы #}
-
     <div class="accordion accordion-flush mb-3" id="accordion{{ modification.cost.cost.vars.id }}">
         <h2 class="accordion-header">
             <button class="btn collapsed" type="button" data-bs-toggle="collapse"
@@ -111,7 +119,7 @@
          data-bs-parent="#accordion{{ modification.cost.cost.vars.id }}">
         <div class="d-flex justify-content-between align-items-end gap-3">
 
-
+            {# Себестоимость продукта #}
             {% if modification.cost is defined %}
 
                 <div class="mb-3 w-50">
@@ -145,9 +153,7 @@
 
             {% endif %}
 
-
-
-
+            {# Cтоимость продукта #}
             {% if modification.price is defined %}
 
                 <div class="mb-3 w-50">
@@ -174,7 +180,7 @@
 
                 <div class="mb-3 w-50">
 
-                {% if modification.price.price.vars.data %}
+                    {% if modification.price.price.vars.data %}
                         {{ form_label(modification.price.price, 'Стоимость продажи') }}
                     {% endif %}
 
