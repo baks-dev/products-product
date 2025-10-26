@@ -37,7 +37,11 @@ interface AllProductsByCategoryInterface
     /** Фильтра по offer, variation, modification в зависимости от настроек */
     public function filter(ProductCategoryFilterDTO $filter): self;
 
-    /** Фильтр по свойствам категории */
+    /**
+     * Фильтр по свойствам категории
+     *
+     * @deprecated
+     */
     public function property(?array $property): self;
 
     public function forProfile(UserProfile|UserProfileUid|null|false $profile): self;

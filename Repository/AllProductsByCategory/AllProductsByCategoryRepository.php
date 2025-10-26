@@ -106,7 +106,10 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
         return $this;
     }
 
-    /** Фильтр по свойствам категории */
+    /**
+     * @deprecated
+     * Фильтр по свойствам категории
+     */
     public function property(?array $property): self
     {
         if(empty($property))

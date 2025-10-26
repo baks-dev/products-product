@@ -41,7 +41,6 @@ use Symfony\Component\Routing\Exception\RouteNotFoundException;
 #[AsController]
 final class ModificationController extends AbstractController
 {
-    /** @depricate */
     #[Route('/catalog/{category}/modification/{offer}/{variation}/{modification}/{page<\d+>}', name: 'public.catalog.modification')]
     public function index(
         Request $request,
@@ -98,26 +97,30 @@ final class ModificationController extends AbstractController
             }
         }
 
-
         $otherProducts = false;
+
         $Products = $productsByCategory
             ->filter($ProductCategoryFilterDTO)
-            ->property($property)
-            ->fetchAllProductByCategoryAssociative($CategoryUid, 'AND');
+            ->forCategory($CategoryUid)
+            ->fetchAllProductByCategory();
 
-        /** Если список пуст - пробуем предложить другие варианты */
-        if(!$Products->getData())
-        {
-            $Products = $productsByCategory
-                ->filter($ProductCategoryFilterDTO)
-                ->property($property)
-                ->fetchAllProductByCategoryAssociative($CategoryUid, 'OR');
 
-            if($Products->getData())
-            {
-                $otherProducts = true;
-            }
-        }
+        //            ->property($property)
+        //            ->fetchAllProductByCategoryAssociative($CategoryUid, 'AND');
+
+        //        /** Если список пуст - пробуем предложить другие варианты */
+        //        if(!$Products->getData())
+        //        {
+        //            $Products = $productsByCategory
+        //                ->filter($ProductCategoryFilterDTO)
+        //                ->property($property)
+        //                ->fetchAllProductByCategoryAssociative($CategoryUid, 'OR');
+        //
+        //            if($Products->getData())
+        //            {
+        //                $otherProducts = true;
+        //            }
+        //        }
 
         // Поиск по всему сайту
         $allSearch = new SearchDTO();

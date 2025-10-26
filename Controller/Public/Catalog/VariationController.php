@@ -41,7 +41,6 @@ use Symfony\Component\Routing\Exception\RouteNotFoundException;
 #[AsController]
 final class VariationController extends AbstractController
 {
-    /** @depricate */
     #[Route('/catalog/{category}/variation/{offer}/{variation}/{page<\d+>}', name: 'public.catalog.variation')]
     public function index(
         Request $request,
@@ -69,7 +68,7 @@ final class VariationController extends AbstractController
         $filterForm = $this->createForm(
             ProductCategoryFilterForm::class,
             $ProductCategoryFilterDTO,
-            ['action' => $this->generateUrl('products-product:public.catalog.category', ['category' => $category])]
+            ['action' => $this->generateUrl('products-product:public.catalog.category', ['category' => $category])],
         );
         $filterForm->handleRequest($request);
 
@@ -97,24 +96,28 @@ final class VariationController extends AbstractController
 
 
         $otherProducts = false;
+
         $Products = $productsByCategory
             ->filter($ProductCategoryFilterDTO)
-            ->property($property)
-            ->fetchAllProductByCategoryAssociative($CategoryUid, 'AND');
+            ->forCategory($CategoryUid)
+            ->fetchAllProductByCategory();
 
-        /** Если список пуст - пробуем предложить другие варианты */
-        if(!$Products->getData())
-        {
-            $Products = $productsByCategory
-                ->filter($ProductCategoryFilterDTO)
-                ->property($property)
-                ->fetchAllProductByCategoryAssociative($CategoryUid, 'OR');
+        //            ->property($property)
+        //            ->fetchAllProductByCategoryAssociative($CategoryUid, 'AND');
 
-            if($Products->getData())
-            {
-                $otherProducts = true;
-            }
-        }
+        //        /** Если список пуст - пробуем предложить другие варианты */
+        //        if(!$Products->getData())
+        //        {
+        //            $Products = $productsByCategory
+        //                ->filter($ProductCategoryFilterDTO)
+        //                ->property($property)
+        //                ->fetchAllProductByCategoryAssociative($CategoryUid, 'OR');
+        //
+        //            if($Products->getData())
+        //            {
+        //                $otherProducts = true;
+        //            }
+        //        }
 
         // Поиск по всему сайту
         $allSearch = new SearchDTO();
