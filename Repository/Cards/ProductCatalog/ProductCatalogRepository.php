@@ -218,7 +218,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
 
 
         /** ФИЛЬТР СВОЙСТВ */
-        if($this->property)
+        if(false || $this->property)
         {
             if($expr === 'AND')
             {
