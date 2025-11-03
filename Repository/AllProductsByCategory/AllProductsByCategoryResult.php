@@ -144,8 +144,15 @@ final class AllProductsByCategoryResult
 
     public function getModelName(): string|false
     {
-        $model = str_replace($this->category_name, '', $this->product_name);
-        $model = trim($model);
+        $category_name = explode(' ', $this->category_name);
+
+        $model = $this->product_name;
+
+        foreach($category_name as $category)
+        {
+            $model = str_replace($category, '', $model);
+            $model = trim($model);
+        }
 
         return empty($model) || $model === $this->product_name ? false : $model;
     }

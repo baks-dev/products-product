@@ -6,7 +6,7 @@
     {# {{ include(_self|replace({ "prototype.variation.html.twig": "image/prototype.collection.html.twig" })) }} #}
 {% endif %}
 
-<div class='d-flex justify-content-between align-items-end gap-3'>
+<div class='d-flex  align-items-end gap-3'>
 
     {# Кнопка удаления элемента #}
     {{ form_row(form.offer.vars.prototype.variation.vars.prototype.DeleteVariation,{
@@ -24,14 +24,14 @@
     }) }}
 
     {# Значение variation #}
-    <div class='w-50'>
+    <div class='w-100'>
         {{ form_widget(form.offer.vars.prototype.variation.vars.prototype.value) }}
     </div>
 
     {# Штрихкод #}
     {% if variation_first.barcode is defined %}
 
-        <div class='w-50'>
+        <div class='w-100'>
             {{ form_row(form.offer.vars.prototype.variation.vars.prototype.barcode, { label: false, attr : { placeholder : 'Штрихкод' }}) }}
         </div>
 

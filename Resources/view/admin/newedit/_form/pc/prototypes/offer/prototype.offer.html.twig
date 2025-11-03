@@ -46,12 +46,12 @@
 
             <div class='d-flex justify-content-between align-items-end gap-3'>
 
-                <div class='w-100 mb-3'>
-                    {{ form_widget(form.offer.vars.prototype.name, { attr:  { 'placeholder' : 'Название торгового предложения' } }) }}
-                </div>
-
                 <div class='w-100'>
                     {{ form_widget(form.offer.vars.prototype.value, { attr:  { 'placeholder' : form.offer.vars.prototype.value.vars.label } }) }}
+                </div>
+
+                <div class='w-100 mb-3'>
+                    {{ form_widget(form.offer.vars.prototype.name, { attr:  { 'placeholder' : 'Название торгового предложения' } }) }}
                 </div>
 
                 {% if (form.offer|first).postfix is defined %}
