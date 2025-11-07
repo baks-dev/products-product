@@ -169,7 +169,7 @@ final readonly class UpdateProductQuantityDispatcher
 
             $this->logger->critical(
                 'products-product: Множественный вариант товара не был найден для обновления остатка: ',
-                [self::class.':'.__LINE__, var_export($message, true)],
+                [self::class.':'.__LINE__, var_export($message, true), var_export($product, true)],
             );
 
             return;
