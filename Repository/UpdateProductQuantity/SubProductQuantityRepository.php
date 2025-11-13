@@ -34,7 +34,7 @@ use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Quantity\Produ
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Product\Entity\Offers\Variation\Quantity\ProductVariationQuantity;
 use BaksDev\Products\Product\Entity\Price\ProductPrice;
-use BaksDev\Products\Product\Repository\CurrentProductIdentifier\CurrentProductIdentifierInterface;
+use BaksDev\Products\Product\Repository\CurrentProductIdentifier\CurrentProductIdentifierByEventInterface;
 use BaksDev\Products\Product\Repository\CurrentProductIdentifier\CurrentProductIdentifierResult;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
@@ -60,7 +60,7 @@ final class SubProductQuantityRepository implements SubProductQuantityInterface
 
     public function __construct(
         private readonly DBALQueryBuilder $DBALQueryBuilder,
-        private readonly CurrentProductIdentifierInterface $currentProductIdentifier
+        private readonly CurrentProductIdentifierByEventInterface $currentProductIdentifier
     ) {}
 
     /** Указываем количество добавленного резерва */

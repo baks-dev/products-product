@@ -142,12 +142,12 @@ class CurrentProductIdentifierByConstRepositoryTest extends KernelTestCase
         $CurrentProductIdentifierByConstInterface = self::getContainer()->get(CurrentProductIdentifierByConstInterface::class);
 
 
-        $result = $CurrentProductIdentifierByConstInterface
+        $CurrentProductIdentifierResult = $CurrentProductIdentifierByConstInterface
             ->forProduct(self::$result['id'])
             ->find();
 
-        self::assertTrue($result->getProduct()->equals(self::$new['id']));
-        self::assertTrue($result->getEvent()->equals(self::$new['event']));
+        self::assertTrue($CurrentProductIdentifierResult->getProduct()->equals(self::$new['id']));
+        self::assertTrue($CurrentProductIdentifierResult->getEvent()->equals(self::$new['event']));
 
     }
 
@@ -159,15 +159,15 @@ class CurrentProductIdentifierByConstRepositoryTest extends KernelTestCase
         $CurrentProductIdentifierByConstInterface = self::getContainer()->get(CurrentProductIdentifierByConstInterface::class);
 
 
-        $result = $CurrentProductIdentifierByConstInterface
+        $CurrentProductIdentifierResult = $CurrentProductIdentifierByConstInterface
             ->forProduct(self::$result['id'])
             ->forOfferConst(self::$result['offer_const'])
             ->find();
 
-        self::assertTrue($result->getProduct()->equals(self::$new['id']));
-        self::assertTrue($result->getEvent()->equals(self::$new['event']));
-        self::assertTrue($result->getOffer()->equals(self::$new['offer']));
-        self::assertTrue($result->getOfferConst()->equals(self::$new['offer_const']));
+        self::assertTrue($CurrentProductIdentifierResult->getProduct()->equals(self::$new['id']));
+        self::assertTrue($CurrentProductIdentifierResult->getEvent()->equals(self::$new['event']));
+        self::assertTrue($CurrentProductIdentifierResult->getOffer()->equals(self::$new['offer']));
+        self::assertTrue($CurrentProductIdentifierResult->getOfferConst()->equals(self::$new['offer_const']));
 
     }
 
@@ -180,18 +180,20 @@ class CurrentProductIdentifierByConstRepositoryTest extends KernelTestCase
         /** @var CurrentProductIdentifierByConstInterface $CurrentProductIdentifierByConstInterface */
         $CurrentProductIdentifierByConstInterface = self::getContainer()->get(CurrentProductIdentifierByConstInterface::class);
 
-        $result = $CurrentProductIdentifierByConstInterface
+        $CurrentProductIdentifierResult = $CurrentProductIdentifierByConstInterface
             ->forProduct(self::$result['id'])
             ->forOfferConst(self::$result['offer_const'])
             ->forVariationConst(self::$result['variation_const'])
             ->find();
 
-        self::assertTrue($result->getProduct()->equals(self::$new['id']));
-        self::assertTrue($result->getEvent()->equals(self::$new['event']));
-        self::assertTrue($result->getOffer()->equals(self::$new['offer']));
-        self::assertTrue($result->getOfferConst()->equals(self::$new['offer_const']));
-        self::assertTrue($result->getVariation()->equals(self::$new['variation']));
-        self::assertTrue($result->getVariationConst()->equals(self::$new['variation_const']));
+        self::assertTrue($CurrentProductIdentifierResult->getProduct()->equals(self::$new['id']));
+        self::assertTrue($CurrentProductIdentifierResult->getEvent()->equals(self::$new['event']));
+        self::assertTrue($CurrentProductIdentifierResult->getOffer()->equals(self::$new['offer']));
+        self::assertTrue($CurrentProductIdentifierResult->getOfferConst()->equals(self::$new['offer_const']));
+        self::assertTrue($CurrentProductIdentifierResult->getVariation()->equals(self::$new['variation']));
+        self::assertTrue($CurrentProductIdentifierResult->getVariationConst()->equals(self::$new['variation_const']));
+
+
     }
 
 
@@ -204,21 +206,22 @@ class CurrentProductIdentifierByConstRepositoryTest extends KernelTestCase
         $CurrentProductIdentifierByConstInterface = self::getContainer()->get(CurrentProductIdentifierByConstInterface::class);
 
 
-        $result = $CurrentProductIdentifierByConstInterface
+        $CurrentProductIdentifierResult = $CurrentProductIdentifierByConstInterface
             ->forProduct(self::$result['id'])
             ->forOfferConst(self::$result['offer_const'])
             ->forVariationConst(self::$result['variation_const'])
             ->forModificationConst(self::$result['modification_const'])
             ->find();
 
-        self::assertTrue($result->getProduct()->equals(self::$new['id']));
-        self::assertTrue($result->getEvent()->equals(self::$new['event']));
-        self::assertTrue($result->getOffer()->equals(self::$new['offer']));
-        self::assertTrue($result->getOfferConst()->equals(self::$new['offer_const']));
-        self::assertTrue($result->getVariation()->equals(self::$new['variation']));
-        self::assertTrue($result->getVariationConst()->equals(self::$new['variation_const']));
-        self::assertTrue($result->getModification()->equals(self::$new['modification']));
-        self::assertTrue($result->getModificationConst()->equals(self::$new['modification_const']));
+
+        self::assertTrue($CurrentProductIdentifierResult->getProduct()->equals(self::$new['id']));
+        self::assertTrue($CurrentProductIdentifierResult->getEvent()->equals(self::$new['event']));
+        self::assertTrue($CurrentProductIdentifierResult->getOffer()->equals(self::$new['offer']));
+        self::assertTrue($CurrentProductIdentifierResult->getOfferConst()->equals(self::$new['offer_const']));
+        self::assertTrue($CurrentProductIdentifierResult->getVariation()->equals(self::$new['variation']));
+        self::assertTrue($CurrentProductIdentifierResult->getVariationConst()->equals(self::$new['variation_const']));
+        self::assertTrue($CurrentProductIdentifierResult->getModification()->equals(self::$new['modification']));
+        self::assertTrue($CurrentProductIdentifierResult->getModificationConst()->equals(self::$new['modification_const']));
 
     }
 }

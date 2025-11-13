@@ -31,13 +31,14 @@ use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Product\Entity\Product;
+use BaksDev\Products\Product\Entity\ProductInvariable;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
 use InvalidArgumentException;
 
-final class CurrentProductIdentifierRepository implements CurrentProductIdentifierInterface
+final class CurrentProductIdentifierByEventRepository implements CurrentProductIdentifierByEventInterface
 {
     private ProductEventUid|false $event = false;
 
@@ -172,6 +173,11 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
                 'product.id = event.main',
             );
 
+        /** Объявляем предварительно переменные Invariable */
+        $fromAlias = 'product';
+        $conditionOffer = 'product_invariable.offer IS NULL';
+        $conditionVariation = 'product_invariable.variation IS NULL';
+        $conditionModification = 'product_invariable.modification IS NULL';
 
         if($this->offer instanceof ProductOfferUid)
         {
@@ -203,6 +209,9 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
                         AND current_offer.event = product.event
                     ',
                 );
+
+            $fromAlias = 'current_offer';
+            $conditionOffer = 'product_invariable.offer = offer.const';
 
 
             /**
@@ -242,6 +251,10 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
                         ',
                     );
 
+                $fromAlias = 'current_variation';
+                $conditionVariation = 'product_invariable.variation = variation.const';
+
+
                 /**
                  *  ProductModification
                  */
@@ -278,9 +291,28 @@ final class CurrentProductIdentifierRepository implements CurrentProductIdentifi
                                 AND current_modification.variation = current_variation.id
                             ',
                         );
+
+
+                    $fromAlias = 'current_modification';
+                    $conditionModification = 'product_invariable.modification = modification.const';
                 }
             }
         }
+
+        /** Product Invariable */
+        $dbal
+            ->addSelect('product_invariable.id AS product_invariable')
+            ->leftJoin(
+                $fromAlias,
+                ProductInvariable::class,
+                'product_invariable',
+                '
+                    product_invariable.product = product.id
+                    AND '.$conditionOffer.'
+                    AND '.$conditionVariation.'
+                    AND '.$conditionModification.'
+                ');
+
 
         return $dbal->fetchHydrate(CurrentProductIdentifierResult::class);
 

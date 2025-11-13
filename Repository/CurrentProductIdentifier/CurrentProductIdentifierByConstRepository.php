@@ -145,6 +145,12 @@ final class CurrentProductIdentifierByConstRepository implements CurrentProductI
             );
 
 
+        /** Объявляем предварительно переменные Invariable */
+        $fromAlias = 'product';
+        $conditionOffer = 'product_invariable.offer IS NULL';
+        $conditionVariation = 'product_invariable.variation IS NULL';
+        $conditionModification = 'product_invariable.modification IS NULL';
+
         /**
          * ProductOffer
          */
@@ -165,6 +171,9 @@ final class CurrentProductIdentifierByConstRepository implements CurrentProductI
 
         if($this->offer instanceof ProductOfferConst)
         {
+            $fromAlias = 'current_offer';
+            $conditionOffer = 'product_invariable.offer = current_offer.const';
+
             $current->setParameter(
                 'offer_const',
                 $this->offer,
@@ -196,6 +205,9 @@ final class CurrentProductIdentifierByConstRepository implements CurrentProductI
                 $this->variation,
                 ProductVariationConst::TYPE,
             );
+
+            $fromAlias = 'current_variation';
+            $conditionVariation = 'product_invariable.variation = current_variation.const';
         }
 
 
@@ -222,6 +234,9 @@ final class CurrentProductIdentifierByConstRepository implements CurrentProductI
                 $this->modification,
                 ProductModificationConst::TYPE,
             );
+
+            $fromAlias = 'current_modification';
+            $conditionModification = 'product_invariable.modification = current_modification.const';
         }
 
 
@@ -229,29 +244,14 @@ final class CurrentProductIdentifierByConstRepository implements CurrentProductI
         $current
             ->addSelect('product_invariable.id AS product_invariable')
             ->leftJoin(
-                'current_modification',
+                $fromAlias,
                 ProductInvariable::class,
                 'product_invariable',
                 '
                     product_invariable.product = product.id
-                    AND
-                        CASE 
-                            WHEN current_offer.const IS NOT NULL 
-                            THEN product_invariable.offer = current_offer.const
-                            ELSE product_invariable.offer IS NULL
-                        END
-                    AND 
-                        CASE
-                            WHEN current_variation.const IS NOT NULL 
-                            THEN product_invariable.variation = current_variation.const
-                            ELSE product_invariable.variation IS NULL
-                        END
-                    AND
-                        CASE
-                            WHEN current_modification.const IS NOT NULL 
-                            THEN product_invariable.modification = current_modification.const
-                            ELSE product_invariable.modification IS NULL
-                        END
+                    AND '.$conditionOffer.'
+                    AND '.$conditionVariation.'
+                    AND '.$conditionModification.'
                 ');
 
 

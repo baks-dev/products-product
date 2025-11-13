@@ -31,7 +31,7 @@ use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Product\Entity\Product;
-use BaksDev\Products\Product\Repository\CurrentProductIdentifier\CurrentProductIdentifierInterface;
+use BaksDev\Products\Product\Repository\CurrentProductIdentifier\CurrentProductIdentifierByEventInterface;
 use BaksDev\Products\Product\Repository\CurrentProductIdentifier\CurrentProductIdentifierResult;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\ProductDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\ProductHandler;
@@ -49,7 +49,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 #[Group('products-product')]
 #[When(env: 'test')]
-class CurrentProductIdentifierRepositoryTest extends KernelTestCase
+class CurrentProductIdentifierByEventRepositoryTest extends KernelTestCase
 {
     private static array|false $result;
     private static array|false $new;
@@ -97,6 +97,7 @@ class CurrentProductIdentifierRepositoryTest extends KernelTestCase
 
         /**
          * Обновляем событие
+         *
          * @var EntityManagerInterface $EntityManagerInterface
          */
         $EntityManagerInterface = self::getContainer()->get(EntityManagerInterface::class);
@@ -141,8 +142,8 @@ class CurrentProductIdentifierRepositoryTest extends KernelTestCase
 
     public static function testEvent(): void
     {
-        /** @var CurrentProductIdentifierInterface $CurrentProductIdentifier */
-        $CurrentProductIdentifier = self::getContainer()->get(CurrentProductIdentifierInterface::class);
+        /** @var CurrentProductIdentifierByEventInterface $CurrentProductIdentifier */
+        $CurrentProductIdentifier = self::getContainer()->get(CurrentProductIdentifierByEventInterface::class);
 
         $CurrentProductIdentifierResult = $CurrentProductIdentifier
             ->forEvent(self::$result['event'])
@@ -174,8 +175,8 @@ class CurrentProductIdentifierRepositoryTest extends KernelTestCase
 
     public static function testOffer(): void
     {
-        /** @var CurrentProductIdentifierInterface $CurrentProductIdentifier */
-        $CurrentProductIdentifier = self::getContainer()->get(CurrentProductIdentifierInterface::class);
+        /** @var CurrentProductIdentifierByEventInterface $CurrentProductIdentifier */
+        $CurrentProductIdentifier = self::getContainer()->get(CurrentProductIdentifierByEventInterface::class);
 
         $CurrentProductIdentifierResult = $CurrentProductIdentifier
             ->forEvent(self::$result['event'])
@@ -210,8 +211,8 @@ class CurrentProductIdentifierRepositoryTest extends KernelTestCase
 
     public static function testVariation(): void
     {
-        /** @var CurrentProductIdentifierInterface $CurrentProductIdentifier */
-        $CurrentProductIdentifier = self::getContainer()->get(CurrentProductIdentifierInterface::class);
+        /** @var CurrentProductIdentifierByEventInterface $CurrentProductIdentifier */
+        $CurrentProductIdentifier = self::getContainer()->get(CurrentProductIdentifierByEventInterface::class);
 
         $CurrentProductIdentifierResult = $CurrentProductIdentifier
             ->forEvent(self::$result['event'])
@@ -247,8 +248,8 @@ class CurrentProductIdentifierRepositoryTest extends KernelTestCase
 
     public static function testModification(): void
     {
-        /** @var CurrentProductIdentifierInterface $CurrentProductIdentifier */
-        $CurrentProductIdentifier = self::getContainer()->get(CurrentProductIdentifierInterface::class);
+        /** @var CurrentProductIdentifierByEventInterface $CurrentProductIdentifier */
+        $CurrentProductIdentifier = self::getContainer()->get(CurrentProductIdentifierByEventInterface::class);
 
         $CurrentProductIdentifierResult = $CurrentProductIdentifier
             ->forEvent(self::$result['event'])
@@ -268,7 +269,7 @@ class CurrentProductIdentifierRepositoryTest extends KernelTestCase
             {
                 // Вызываем метод
                 $data = $method->invoke($CurrentProductIdentifierResult);
-                dump($data);
+                //dump($data);
             }
         }
 
@@ -278,7 +279,6 @@ class CurrentProductIdentifierRepositoryTest extends KernelTestCase
         self::assertTrue($CurrentProductIdentifierResult->getOffer()->equals(self::$new['offer']));
         self::assertTrue($CurrentProductIdentifierResult->getVariation()->equals(self::$new['variation']));
         self::assertTrue($CurrentProductIdentifierResult->getModification()->equals(self::$new['modification']));
-
 
     }
 }

@@ -32,7 +32,7 @@ use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
 
-interface CurrentProductIdentifierInterface
+interface CurrentProductIdentifierByEventInterface
 {
     public function forEvent(ProductEvent|ProductEventUid|string $event): self;
 
