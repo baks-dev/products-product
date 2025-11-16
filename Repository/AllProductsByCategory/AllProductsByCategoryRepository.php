@@ -530,6 +530,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
                 );
 
 
+            $dbal->andWhere('(stock.total - stock.reserve) > 0');
         }
 
         $dbal
