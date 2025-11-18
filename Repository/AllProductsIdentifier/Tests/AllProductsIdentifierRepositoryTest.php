@@ -28,8 +28,6 @@ namespace BaksDev\Products\Product\Repository\AllProductsIdentifier\Tests;
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Products\Product\Repository\AllProductsIdentifier\AllProductsIdentifierInterface;
 use BaksDev\Products\Product\Repository\AllProductsIdentifier\ProductsIdentifierResult;
-use BaksDev\Products\Product\Type\Event\ProductEventUid;
-use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
@@ -38,6 +36,8 @@ use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductM
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
+use ReflectionClass;
+use ReflectionMethod;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
@@ -53,26 +53,30 @@ class AllProductsIdentifierRepositoryTest extends KernelTestCase
         $AllProductsIdentifier = self::getContainer()->get(AllProductsIdentifierInterface::class);
         $result = $AllProductsIdentifier->findAll();
 
-        foreach($result as $data)
+        foreach($result as $ProductsIdentifierResult)
         {
-            if(false === ($data->getProductModificationId() instanceof ProductModificationUid))
+            if(false === ($ProductsIdentifierResult->getProductModificationId() instanceof ProductModificationUid))
             {
                 continue;
             }
 
-            self::assertInstanceOf(ProductUid::class, $data->getProductId());
-            self::assertInstanceOf(ProductEventUid::class, $data->getProductEvent());
 
-            $data->getProductOfferId() ? self::assertInstanceOf(ProductOfferUid::class, $data->getProductOfferId()) : self::assertFalse($data->getProductOfferId());
-            $data->getProductOfferConst() ? self::assertInstanceOf(ProductOfferConst::class, $data->getProductOfferConst()) : self::assertFalse($data->getProductOfferConst());
+            // Вызываем все геттеры
+            $reflectionClass = new ReflectionClass(ProductsIdentifierResult::class);
+            $methods = $reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC);
 
-            $data->getProductVariationId() ? self::assertInstanceOf(ProductVariationUid::class, $data->getProductVariationId()) : self::assertFalse($data->getProductVariationId());
-            $data->getProductVariationConst() ? self::assertInstanceOf(ProductVariationConst::class, $data->getProductVariationConst()) : self::assertFalse($data->getProductVariationConst());
+            foreach($methods as $method)
+            {
+                // Методы без аргументов
+                if($method->getNumberOfParameters() === 0)
+                {
+                    // Вызываем метод
+                    $data = $method->invoke($ProductsIdentifierResult);
+                    // dump($data);
+                }
+            }
 
-            $data->getProductModificationId() ? self::assertInstanceOf(ProductModificationUid::class, $data->getProductModificationId()) : self::assertFalse($data->getProductModificationId());
-            $data->getProductModificationConst() ? self::assertInstanceOf(ProductModificationConst::class, $data->getProductModificationConst()) : self::assertFalse($data->getProductModificationConst());
-
-            self::$data = $data;
+            self::$data = $ProductsIdentifierResult;
 
             break;
         }
@@ -90,11 +94,9 @@ class AllProductsIdentifierRepositoryTest extends KernelTestCase
 
         foreach($result as $data)
         {
-            self::assertInstanceOf(ProductUid::class, $data->getProductId());
             self::assertTrue($data->getProductId()->equals(self::$data->getProductId()));
-
-            self::assertInstanceOf(ProductEventUid::class, $data->getProductEvent());
             self::assertTrue($data->getProductEvent()->equals(self::$data->getProductEvent()));
+
         }
 
         self::assertTrue(true);
@@ -111,10 +113,7 @@ class AllProductsIdentifierRepositoryTest extends KernelTestCase
 
         foreach($result as $data)
         {
-            self::assertInstanceOf(ProductUid::class, $data->getProductId());
             self::assertTrue($data->getProductId()->equals(self::$data->getProductId()));
-
-            self::assertInstanceOf(ProductEventUid::class, $data->getProductEvent());
             self::assertTrue($data->getProductEvent()->equals(self::$data->getProductEvent()));
 
             self::assertInstanceOf(ProductOfferUid::class, $data->getProductOfferId());
@@ -140,13 +139,8 @@ class AllProductsIdentifierRepositoryTest extends KernelTestCase
 
         foreach($result as $data)
         {
-            self::assertInstanceOf(ProductUid::class, $data->getProductId());
             self::assertTrue($data->getProductId()->equals(self::$data->getProductId()));
-
-
-            self::assertInstanceOf(ProductEventUid::class, $data->getProductEvent());
             self::assertTrue($data->getProductEvent()->equals(self::$data->getProductEvent()));
-
 
             self::assertInstanceOf(ProductOfferUid::class, $data->getProductOfferId());
             self::assertTrue($data->getProductOfferId()->equals(self::$data->getProductOfferId()));
@@ -178,13 +172,8 @@ class AllProductsIdentifierRepositoryTest extends KernelTestCase
 
         foreach($result as $data)
         {
-            self::assertInstanceOf(ProductUid::class, $data->getProductId());
             self::assertTrue($data->getProductId()->equals(self::$data->getProductId()));
-
-
-            self::assertInstanceOf(ProductEventUid::class, $data->getProductEvent());
             self::assertTrue($data->getProductEvent()->equals(self::$data->getProductEvent()));
-
 
             self::assertInstanceOf(ProductOfferUid::class, $data->getProductOfferId());
             self::assertTrue($data->getProductOfferId()->equals(self::$data->getProductOfferId()));

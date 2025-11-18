@@ -27,6 +27,7 @@ namespace BaksDev\Products\Product\Repository\AllProductsIdentifier;
 
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
+use BaksDev\Products\Product\Type\Invariable\ProductInvariableUid;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
@@ -50,6 +51,10 @@ final readonly class ProductsIdentifierResult
 
         private ?string $modification_id,
         private ?string $modification_const,
+
+        private ?string $invariable,
+
+
     ) {}
 
     public function getProductId(): ProductUid
@@ -90,5 +95,10 @@ final readonly class ProductsIdentifierResult
     public function getProductModificationConst(): ProductModificationConst|false
     {
         return $this->modification_const ? new ProductModificationConst($this->modification_const) : false;
+    }
+
+    public function getProductInvariable(): ProductInvariableUid|false
+    {
+        return $this->invariable ? new ProductInvariableUid($this->invariable) : false;
     }
 }
