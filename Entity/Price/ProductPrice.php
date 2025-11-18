@@ -45,7 +45,7 @@ class ProductPrice extends EntityEvent
     private ProductEvent $event;
 
     /** Стоимость */
-    #[ORM\Column(type: Money::TYPE, nullable: true)]
+    #[ORM\Column(type: Money::TYPE, nullable: true, options: ['default' => 0])]
     private ?Money $price;
 
     /** Стоимость */
@@ -172,5 +172,11 @@ class ProductPrice extends EntityEvent
     public function getReserve(): ?int
     {
         return $this->reserve;
+    }
+
+    public function setPrice(?Money $price): self
+    {
+        $this->price = $price;
+        return $this;
     }
 }

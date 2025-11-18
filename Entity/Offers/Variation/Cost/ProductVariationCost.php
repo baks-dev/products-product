@@ -53,7 +53,7 @@ class ProductVariationCost extends EntityEvent
     private ProductVariation $variation;
 
     /** Себестоимость */
-    #[ORM\Column(type: Money::TYPE, nullable: true)]
+    #[ORM\Column(type: Money::TYPE, nullable: true, options: ['default' => 0])]
     private ?Money $cost;
 
     /** Валюта */

@@ -55,7 +55,7 @@ class ProductModificationCost extends EntityEvent
     private ProductModification $modification;
 
     /** Себестоимость */
-    #[ORM\Column(type: Money::TYPE, nullable: true)]
+    #[ORM\Column(type: Money::TYPE, nullable: true, options: ['default' => 0])]
     private ?Money $cost;
 
     /** Валюта */

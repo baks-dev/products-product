@@ -205,7 +205,7 @@ final class CurrentProductIdentifierByEventRepository implements CurrentProductI
                     ProductOffer::class,
                     'current_offer',
                     '
-                        current_offer.const = offer.const 
+                        current_offer.const = offer.const
                         AND current_offer.event = product.event
                     ',
                 );
@@ -226,7 +226,7 @@ final class CurrentProductIdentifierByEventRepository implements CurrentProductI
                     ProductVariation::class,
                     'variation',
                     '
-                        variation.id = :variation 
+                        variation.id = :variation
                         AND variation.offer = offer.id
                     ',
                 )
@@ -246,7 +246,7 @@ final class CurrentProductIdentifierByEventRepository implements CurrentProductI
                         ProductVariation::class,
                         'current_variation',
                         '
-                            current_variation.const = variation.const 
+                            current_variation.const = variation.const
                             AND current_variation.offer = current_offer.id
                         ',
                     );
@@ -268,7 +268,7 @@ final class CurrentProductIdentifierByEventRepository implements CurrentProductI
                             ProductModification::class,
                             'modification',
                             '
-                                modification.id = :modification 
+                                modification.id = :modification
                                 AND modification.variation = variation.id
                             ',
                         )
@@ -287,7 +287,7 @@ final class CurrentProductIdentifierByEventRepository implements CurrentProductI
                             ProductModification::class,
                             'current_modification',
                             '
-                                current_modification.const = modification.const 
+                                current_modification.const = modification.const
                                 AND current_modification.variation = current_variation.id
                             ',
                         );

@@ -48,7 +48,7 @@ class ProductOfferPrice extends EntityEvent
 
     /** Стоимость */
     #[Assert\Type(Money::class)]
-    #[ORM\Column(type: Money::TYPE, nullable: true)]
+    #[ORM\Column(type: Money::TYPE, nullable: true, options: ['default' => 0])]
     private ?Money $price;
 
     /** Стоимость */
@@ -71,6 +71,12 @@ class ProductOfferPrice extends EntityEvent
     public function __toString(): string
     {
         return (string) $this->offer;
+    }
+
+    public function setPrice(Money $price): self
+    {
+        $this->price = $price;
+        return $this;
     }
 
     public function getDto($dto): mixed

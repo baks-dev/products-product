@@ -89,6 +89,9 @@ final class ProductVariationCollectionDTO implements ProductVariationInterface
         $this->image = new ArrayCollection();
         $this->modification = new ArrayCollection();
         $this->quantity = new ProductVariationQuantityDTO();
+        $this->price = new ProductVariationPriceDTO();
+        $this->cost = new ProductVariationCostDTO();
+        $this->opt = new ProductVariationOptDTO();
     }
 
 

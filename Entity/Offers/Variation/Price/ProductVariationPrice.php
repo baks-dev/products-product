@@ -44,7 +44,7 @@ class ProductVariationPrice extends EntityEvent
     private ProductVariation $variation;
 
     /** Стоимость */
-    #[ORM\Column(type: Money::TYPE, nullable: true)]
+    #[ORM\Column(type: Money::TYPE, nullable: true, options: ['default' => 0])]
     private ?Money $price;
 
     /** Стоимость */
@@ -65,6 +65,12 @@ class ProductVariationPrice extends EntityEvent
     public function __toString(): string
     {
         return (string) $this->variation;
+    }
+
+    public function setPrice(Money $price): self
+    {
+        $this->price = $price;
+        return $this;
     }
 
     public function getDto($dto): mixed

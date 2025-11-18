@@ -25,17 +25,11 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Entity\Offers\Variation\Opt;
 
-
 use BaksDev\Core\Entity\EntityEvent;
-use BaksDev\Core\Entity\EntityState;
-use BaksDev\Files\Resources\Upload\UploadEntityInterface;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
-use BaksDev\Reference\Currency\Type\Currency;
 use BaksDev\Reference\Money\Type\Money;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use InvalidArgumentException;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * ProductVariationOpt
@@ -53,7 +47,7 @@ class ProductVariationOpt extends EntityEvent
     private ProductVariation $variation;
 
     /** Оптовая стоимость (валюта берется из розницы) */
-    #[ORM\Column(type: Money::TYPE, nullable: true)]
+    #[ORM\Column(type: Money::TYPE, nullable: true, options: ['default' => 0])]
     private ?Money $price = null;
 
     public function __construct(ProductVariation $variation)
@@ -70,6 +64,13 @@ class ProductVariationOpt extends EntityEvent
     {
         return $this->price;
     }
+
+    public function setPrice(Money $price): self
+    {
+        $this->price = $price;
+        return $this;
+    }
+
 
     /** @return ProductVariationOptInterface */
     public function getDto($dto): mixed

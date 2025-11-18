@@ -52,7 +52,7 @@ class ProductPriceOpt extends EntityEvent
     private ProductEvent $event;
 
     /** Оптовая стоимость (валюта берется из розницы) */
-    #[ORM\Column(type: Money::TYPE, nullable: true)]
+    #[ORM\Column(type: Money::TYPE, nullable: true, options: ['default' => 0])]
     private ?Money $price = null;
 
     public function __construct(ProductEvent $event)
@@ -69,6 +69,13 @@ class ProductPriceOpt extends EntityEvent
     {
         return $this->price;
     }
+
+    public function setPrice(?Money $price): self
+    {
+        $this->price = $price;
+        return $this;
+    }
+
 
     /** @return ProductPriceOptInterface */
     public function getDto($dto): mixed

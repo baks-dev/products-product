@@ -39,6 +39,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 #[Group('products-product')]
+#[Group('products-product-usecase')]
 #[When(env: 'test')]
 class ProductInvariableAdminUseCaseTest extends KernelTestCase
 {

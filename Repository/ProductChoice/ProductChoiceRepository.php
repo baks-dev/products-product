@@ -308,28 +308,28 @@ final class ProductChoiceRepository implements ProductChoiceInterface
                     'stock',
                     '
                     stock.profile = :profile AND
-                    stock.product = product.id 
-                    
+                    stock.product = product.id
+
                     AND
-                        
-                        CASE 
-                            WHEN product_offer.const IS NOT NULL 
+
+                        CASE
+                            WHEN product_offer.const IS NOT NULL
                             THEN stock.offer = product_offer.const
                             ELSE stock.offer IS NULL
                         END
-                            
-                    AND 
-                    
+
+                    AND
+
                         CASE
-                            WHEN product_variation.const IS NOT NULL 
+                            WHEN product_variation.const IS NOT NULL
                             THEN stock.variation = product_variation.const
                             ELSE stock.variation IS NULL
                         END
-                        
+
                     AND
-                    
+
                         CASE
-                            WHEN product_modification.const IS NOT NULL 
+                            WHEN product_modification.const IS NOT NULL
                             THEN stock.modification = product_modification.const
                             ELSE stock.modification IS NULL
                         END
@@ -374,19 +374,19 @@ final class ProductChoiceRepository implements ProductChoiceInterface
                 CASE
                    WHEN SUM(product_modification_quantity.quantity - product_modification_quantity.reserve) > 0
                    THEN SUM(product_modification_quantity.quantity - product_modification_quantity.reserve)
-    
+
                    WHEN SUM(product_variation_quantity.quantity - product_variation_quantity.reserve) > 0
                    THEN SUM(product_variation_quantity.quantity - product_variation_quantity.reserve)
-    
+
                    WHEN SUM(product_offer_quantity.quantity - product_offer_quantity.reserve) > 0
                    THEN SUM(product_offer_quantity.quantity - product_offer_quantity.reserve)
-    
+
                    WHEN SUM(product_price.quantity - product_price.reserve) > 0
                    THEN SUM(product_price.quantity - product_price.reserve)
-    
+
                    ELSE 0
                 END
-    
+
             AS option');
 
 
@@ -394,16 +394,16 @@ final class ProductChoiceRepository implements ProductChoiceInterface
              CASE
                    WHEN SUM(product_modification_quantity.quantity - product_modification_quantity.reserve) > 0
                    THEN SUM(product_modification_quantity.quantity - product_modification_quantity.reserve)
-    
+
                    WHEN SUM(product_variation_quantity.quantity - product_variation_quantity.reserve) > 0
                    THEN SUM(product_variation_quantity.quantity - product_variation_quantity.reserve)
-    
+
                    WHEN SUM(product_offer_quantity.quantity - product_offer_quantity.reserve) > 0
                    THEN SUM(product_offer_quantity.quantity - product_offer_quantity.reserve)
-    
+
                    WHEN SUM(product_price.quantity - product_price.reserve) > 0
                    THEN SUM(product_price.quantity - product_price.reserve)
-    
+
                    ELSE 0
                 END > 0');
 
@@ -452,7 +452,7 @@ final class ProductChoiceRepository implements ProductChoiceInterface
 
         $dbal->allGroupByExclude();
 
-
+        
         return $dbal
             ->enableCache('products-product', 60)
             ->fetchAllHydrate(ProductEventUid::class);

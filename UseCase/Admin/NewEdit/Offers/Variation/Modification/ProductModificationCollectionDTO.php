@@ -83,6 +83,9 @@ final class ProductModificationCollectionDTO implements ProductModificationInter
     {
         $this->image = new ArrayCollection();
         $this->quantity = new ProductModificationQuantityDTO();
+        $this->price = new ProductModificationPriceDTO();
+        $this->cost = new ProductModificationCostDTO();
+        $this->opt = new ProductModificationOptDTO();
     }
 
 

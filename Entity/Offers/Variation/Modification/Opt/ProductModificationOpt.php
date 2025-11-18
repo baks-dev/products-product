@@ -59,7 +59,7 @@ class ProductModificationOpt extends EntityEvent
     private ProductModification $modification;
 
     /** Оптовая стоимость (валюта берется из розницы) */
-    #[ORM\Column(type: Money::TYPE, nullable: true)]
+    #[ORM\Column(type: Money::TYPE, nullable: true, options: ['default' => 0])]
     private ?Money $price = null;
 
     public function __construct(ProductModification $modification)
@@ -75,6 +75,12 @@ class ProductModificationOpt extends EntityEvent
     public function getPrice(): ?Money
     {
         return $this->price;
+    }
+
+    public function setPrice(?Money $price): self
+    {
+        $this->price = $price;
+        return $this;
     }
 
     /** @return ProductModificationOptInterface */
