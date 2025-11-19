@@ -39,6 +39,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'product_invariable')]
+#[ORM\Index(columns: ['product'])]
 #[ORM\UniqueConstraint(columns: ['product', 'offer', 'variation', 'modification'])]
 class ProductInvariable extends EntityState
 {

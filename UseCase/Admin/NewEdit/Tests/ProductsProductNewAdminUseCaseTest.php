@@ -44,6 +44,7 @@ use BaksDev\Products\Product\UseCase\Admin\NewEdit\Category\CategoryCollectionDT
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Description\ProductDescriptionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Info\InfoDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Image\ProductOfferImageCollectionDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Opt\ProductOfferOptDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Price\ProductOfferPriceDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\ProductOffersCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Image\ProductVariationImageCollectionDTO;
@@ -349,6 +350,12 @@ class ProductsProductNewAdminUseCaseTest extends KernelTestCase
 
         $ProductOffersCollectionDTO->setConst($ProductOfferConst = new ProductOfferConst());
         self::assertSame($ProductOfferConst, $ProductOffersCollectionDTO->getConst());
+
+
+        $ProductOfferOptDTO = new ProductOfferOptDTO();
+        $ProductOfferOptDTO->setPrice(null);
+        $ProductOffersCollectionDTO->setOpt($ProductOfferOptDTO);
+
 
 
         /**

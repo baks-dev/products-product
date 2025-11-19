@@ -30,6 +30,7 @@ use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Product\Entity\Product;
+use BaksDev\Products\Product\Entity\ProductInvariable;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
@@ -211,6 +212,37 @@ final class AllProductsIdentifierRepository implements AllProductsIdentifierInte
                     'modification.variation = variation.id',
                 );
         }
+
+
+        /** ProductInvariable */
+        $dbal
+            ->addSelect('product_invariable.id AS invariable')
+            ->leftJoin(
+                'modification',
+                ProductInvariable::class,
+                'product_invariable',
+                '
+                    product_invariable.product = product.id AND 
+                    
+                    (
+                        (offer.const IS NOT NULL AND product_invariable.offer = offer.const) OR 
+                        (offer.const IS NULL AND product_invariable.offer IS NULL)
+                    )
+                    
+                    AND
+                     
+                    (
+                        (variation.const IS NOT NULL AND product_invariable.variation = variation.const) OR 
+                        (variation.const IS NULL AND product_invariable.variation IS NULL)
+                    )
+                     
+                   AND
+                   
+                   (
+                        (modification.const IS NOT NULL AND product_invariable.modification = modification.const) OR 
+                        (modification.const IS NULL AND product_invariable.modification IS NULL)
+                   )
+            ');
 
         return $dbal;
     }

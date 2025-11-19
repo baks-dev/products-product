@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 declare(strict_types=1);
@@ -325,17 +324,17 @@ final readonly class ModelOrProductResult implements ModelsOrProductsCardResultI
 
     public function getProductOfferPostfix(): ?string
     {
-        return $this->product_offer_postfix;
+        return $this->category_offer_card ? $this->product_offer_postfix : null;
     }
 
     public function getProductVariationPostfix(): ?string
     {
-        return $this->product_variation_postfix;
+        return $this->category_variation_card ? $this->product_variation_postfix : null;
     }
 
     public function getProductModificationPostfix(): ?string
     {
-        return $this->product_modification_postfix;
+        return $this->category_modification_card ? $this->product_modification_postfix : null;
     }
 
     /** Helpers */
