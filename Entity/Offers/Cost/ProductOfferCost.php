@@ -56,7 +56,7 @@ class ProductOfferCost extends EntityEvent
 
     /** Себестоимость */
     #[Assert\Type(Money::class)]
-    #[ORM\Column(type: Money::TYPE, nullable: true)]
+    #[ORM\Column(type: Money::TYPE, nullable: true, options: ['default' => 0])]
     private ?Money $cost;
 
     /** Валюта */

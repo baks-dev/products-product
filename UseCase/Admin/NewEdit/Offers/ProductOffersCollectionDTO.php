@@ -96,6 +96,9 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
         $this->image = new ArrayCollection();
         $this->variation = new ArrayCollection();
         $this->quantity = new ProductOfferQuantityDTO();
+        $this->price = new ProductOfferPriceDTO();
+        $this->cost = new ProductOfferCostDTO();
+        $this->opt = new ProductOfferOptDTO();
     }
 
 

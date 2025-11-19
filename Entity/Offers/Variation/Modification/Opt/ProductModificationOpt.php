@@ -27,11 +27,8 @@ namespace BaksDev\Products\Product\Entity\Offers\Variation\Modification\Opt;
 
 
 use BaksDev\Core\Entity\EntityEvent;
-use BaksDev\Core\Entity\EntityState;
-use BaksDev\Files\Resources\Upload\UploadEntityInterface;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
 use BaksDev\Reference\Money\Type\Money;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use InvalidArgumentException;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -59,7 +56,7 @@ class ProductModificationOpt extends EntityEvent
     private ProductModification $modification;
 
     /** Оптовая стоимость (валюта берется из розницы) */
-    #[ORM\Column(type: Money::TYPE, nullable: true)]
+    #[ORM\Column(type: Money::TYPE, nullable: true, options: ['default' => 0])]
     private ?Money $price = null;
 
     public function __construct(ProductModification $modification)

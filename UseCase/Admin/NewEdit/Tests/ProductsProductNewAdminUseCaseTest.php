@@ -54,6 +54,7 @@ use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Price\ProductVariationPriceDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\ProductVariationCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Photo\PhotoCollectionDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Price\Opt\ProductPriceOptDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Price\PriceDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\ProductDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\ProductHandler;
@@ -78,6 +79,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\File;
 
 #[Group('products-product')]
+#[Group('products-product-usecase')]
 #[When(env: 'test')]
 class ProductsProductNewAdminUseCaseTest extends KernelTestCase
 {

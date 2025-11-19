@@ -95,7 +95,7 @@ class ProductEvent extends EntityEvent
     #[ORM\OneToOne(targetEntity: ProductPriceCost::class, mappedBy: 'event', cascade: ['all'])]
     private ?ProductPriceCost $cost = null;
 
-    /** Себестоимость по курсу */
+    /** Оптовая цена по курсу */
     #[ORM\OneToOne(targetEntity: ProductPriceOpt::class, mappedBy: 'event', cascade: ['all'])]
     private ?ProductPriceOpt $opt = null;
 
@@ -251,6 +251,8 @@ class ProductEvent extends EntityEvent
     {
         return $this->offer;
     }
+
+
 
     /**
      * Photo

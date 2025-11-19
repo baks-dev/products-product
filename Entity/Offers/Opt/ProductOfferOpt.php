@@ -25,13 +25,9 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Entity\Offers\Opt;
 
-
 use BaksDev\Core\Entity\EntityEvent;
-use BaksDev\Core\Entity\EntityState;
-use BaksDev\Files\Resources\Upload\UploadEntityInterface;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Reference\Money\Type\Money;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use InvalidArgumentException;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -41,10 +37,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @see ProductOfferOptEvent
  */
-
-// /** ProductOfferOpt */
-// #[ORM\OneToOne(targetEntity: ProductOfferOpt::class, mappedBy: 'event', cascade: ['all'])]
-// private ?ProductOfferOpt $target = null;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'product_offer_opt')]
@@ -59,7 +51,7 @@ class ProductOfferOpt extends EntityEvent
     private ProductOffer $offer;
 
     /** Оптовая стоимость (валюта берется из розницы) */
-    #[ORM\Column(type: Money::TYPE, nullable: true)]
+    #[ORM\Column(type: Money::TYPE, nullable: true, options: ['default' => 0])]
     private ?Money $price = null;
 
     public function __construct(ProductOffer $offer)
