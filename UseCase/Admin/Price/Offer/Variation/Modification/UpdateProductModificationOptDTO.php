@@ -25,40 +25,41 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\UseCase\Admin\Price\Offer\Variation\Modification;
 
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Opt\ProductModificationOptInterface;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
 use BaksDev\Reference\Money\Type\Money;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class UpdateProductModificationOptDTO
+final class UpdateProductModificationOptDTO implements ProductModificationOptInterface
 {
     /** Идентификатор */
     #[Assert\Uuid]
     #[Assert\NotBlank]
-    private ?ProductModificationUid $modification = null;
+    private ?ProductModificationUid $modificationId = null;
 
     /** Оптовая цена */
     #[Assert\Valid]
-    private ?Money $opt = null;
+    private ?Money $price = null;
 
     public function getModification(): ?ProductModificationUid
     {
-        return $this->modification;
+        return $this->modificationId;
     }
 
-    public function setModification(ProductModificationUid $modification): self
+    public function setModification(ProductModificationUid $modificationId): self
     {
-        $this->modification = $modification;
+        $this->modificationId = $modificationId;
         return $this;
     }
 
-    public function setOpt(Money $opt): self
+    public function setPrice(Money $price): self
     {
-        $this->opt = $opt;
+        $this->price = $price;
         return $this;
     }
 
-    public function getOpt(): ?Money
+    public function getPrice(): ?Money
     {
-        return $this->opt;
+        return $this->price;
     }
 }

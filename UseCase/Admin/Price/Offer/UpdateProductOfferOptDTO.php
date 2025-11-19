@@ -25,40 +25,41 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\UseCase\Admin\Price\Offer;
 
+use BaksDev\Products\Product\Entity\Offers\Opt\ProductOfferOptInterface;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Reference\Money\Type\Money;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class UpdateProductOfferOptDTO
+final class UpdateProductOfferOptDTO implements ProductOfferOptInterface
 {
     /** Торговое предложение */
     #[Assert\Uuid]
     #[Assert\NotBlank]
-    private ?ProductOfferUid $offer = null;
+    private ?ProductOfferUid $offerId = null;
 
     /** Оптовая цена */
     #[Assert\Valid]
-    private ?Money $opt = null;
+    private ?Money $price = null;
 
     public function getOffer(): ?ProductOfferUid
     {
-        return $this->offer;
+        return $this->offerId;
     }
 
-    public function setOffer(ProductOfferUid $offer): self
+    public function setOffer(ProductOfferUid $offerId): self
     {
-        $this->offer = $offer;
+        $this->offerId = $offerId;
         return $this;
     }
 
-    public function setOpt(Money $opt): self
+    public function setPrice(Money $price): self
     {
-        $this->opt = $opt;
+        $this->price = $price;
         return $this;
     }
 
-    public function getOpt(): ?Money
+    public function getPrice(): ?Money
     {
-        return $this->opt;
+        return $this->price;
     }
 }

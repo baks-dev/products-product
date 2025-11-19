@@ -60,7 +60,7 @@ final class UpdateProductOfferOptTest extends KernelTestCase
 
         $updateProductOfferOptDTO = new UpdateProductOfferOptDTO()
             ->setOffer(new ProductOfferUid($offerId))
-            ->setOpt(new Money(10000));
+            ->setPrice(new Money(10000));
 
         /** @var UpdateProductOfferOptHandler $UpdateProductOfferOptHandler */
         $UpdateProductOfferOptHandler = self::getContainer()->get(UpdateProductOfferOptHandler::class);

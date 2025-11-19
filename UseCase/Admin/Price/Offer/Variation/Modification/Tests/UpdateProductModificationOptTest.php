@@ -63,7 +63,7 @@ final class UpdateProductModificationOptTest extends KernelTestCase
 
         $updateProductModificationOptDTO = new UpdateProductModificationOptDTO()
             ->setModification($modificationId)
-            ->setOpt(new Money(10000));
+            ->setPrice(new Money(10000));
 
         /** @var UpdateProductModificationOptHandler $UpdateProductModificationOptHandler */
         $UpdateProductModificationOptHandler = self::getContainer()->get(UpdateProductModificationOptHandler::class);

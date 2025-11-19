@@ -25,40 +25,41 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\UseCase\Admin\Price;
 
+use BaksDev\Products\Product\Entity\Price\Opt\ProductPriceOptInterface;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Reference\Money\Type\Money;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class UpdateProductOptDTO
+final class UpdateProductOptDTO implements ProductPriceOptInterface
 {
     /** Событие продукта */
     #[Assert\Uuid]
     #[Assert\NotBlank]
-    private ?ProductEventUid $event = null;
+    private ?ProductEventUid $product = null;
 
     /** Оптовая цена */
     #[Assert\Valid]
-    private ?Money $opt = null;
+    private ?Money $price = null;
 
     public function getEvent(): ?ProductEventUid
     {
-        return $this->event;
+        return $this->product;
     }
 
-    public function setEvent(ProductEventUid $event): self
+    public function setEvent(ProductEventUid $product): self
     {
-        $this->event = $event;
+        $this->product = $product;
         return $this;
     }
 
-    public function setOpt(Money $opt): self
+    public function setPrice(Money $price): self
     {
-        $this->opt = $opt;
+        $this->price = $price;
         return $this;
     }
 
-    public function getOpt(): ?Money
+    public function getPrice(): ?Money
     {
-        return $this->opt;
+        return $this->price;
     }
 }

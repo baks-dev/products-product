@@ -41,7 +41,7 @@ final class UpdateProductModificationPriceHandler extends AbstractHandler
             return false;
         }
 
-        $productModificationPrice->setPrice($command->getPrice());
+        $productModificationPrice->setEntity($command);
 
 
         /** Валидация всех объектов */

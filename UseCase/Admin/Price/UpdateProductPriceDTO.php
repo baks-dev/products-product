@@ -25,16 +25,17 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\UseCase\Admin\Price;
 
+use BaksDev\Products\Product\Entity\Price\ProductPriceInterface;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Reference\Money\Type\Money;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class UpdateProductPriceDTO
+final class UpdateProductPriceDTO implements ProductPriceInterface
 {
     /** Событие продукта */
     #[Assert\Uuid]
     #[Assert\NotBlank]
-    private ?ProductEventUid $event = null;
+    private ?ProductEventUid $product = null;
 
     /** Розничная цена */
     #[Assert\Valid]
@@ -42,12 +43,12 @@ final class UpdateProductPriceDTO
 
     public function getEvent(): ?ProductEventUid
     {
-        return $this->event;
+        return $this->product;
     }
 
-    public function setEvent(ProductEventUid $event): self
+    public function setEvent(ProductEventUid $product): self
     {
-        $this->event = $event;
+        $this->product = $product;
         return $this;
     }
 

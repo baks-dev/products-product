@@ -29,7 +29,7 @@ use BaksDev\Products\Product\Entity\Offers\Opt\ProductOfferOpt;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Opt\ProductModificationOpt;
 use BaksDev\Products\Product\Entity\Offers\Variation\Opt\ProductVariationOpt;
 use BaksDev\Products\Product\Entity\Price\Opt\ProductPriceOpt;
-use BaksDev\Products\Product\Repository\CurrentProductIdentifier\CurrentProductIdentifierInterface;
+use BaksDev\Products\Product\Repository\CurrentProductIdentifier\CurrentProductIdentifierByEventInterface;
 use BaksDev\Products\Product\Repository\CurrentProductIdentifier\CurrentProductIdentifierResult;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
@@ -56,7 +56,7 @@ final readonly class UpdateProductOptDispatcher
         private UpdateProductOfferOptHandler $UpdateProductOfferOptHandler,
         private UpdateProductVariationOptHandler $UpdateProductVariationOptHandler,
         private UpdateProductModificationOptHandler $UpdateProductModificationOptHandler,
-        private CurrentProductIdentifierInterface $CurrentProductIdentifierRepository,
+        private CurrentProductIdentifierByEventInterface $CurrentProductIdentifierRepository,
     ) {}
 
     /**
@@ -92,7 +92,7 @@ final readonly class UpdateProductOptDispatcher
         {
             $updateProductModificationOptDTO = new UpdateProductModificationOptDTO()
                 ->setModification($message->getModification())
-                ->setOpt($message->getOpt());
+                ->setPrice($message->getOpt());
 
             $opt = $this->UpdateProductModificationOptHandler->handle($updateProductModificationOptDTO);
 
@@ -135,7 +135,7 @@ final readonly class UpdateProductOptDispatcher
         {
             $updateProductVariationOptDTO = new UpdateProductVariationOptDTO()
                 ->setVariation($message->getVariation())
-                ->setOpt($message->getOpt());
+                ->setPrice($message->getOpt());
 
             $opt = $this->UpdateProductVariationOptHandler->handle($updateProductVariationOptDTO);
 
@@ -178,7 +178,7 @@ final readonly class UpdateProductOptDispatcher
         {
             $updateProductOfferOptDTO = new UpdateProductOfferOptDTO()
                 ->setOffer($message->getOffer())
-                ->setOpt($message->getOpt());
+                ->setPrice($message->getOpt());
 
             $opt = $this->UpdateProductOfferOptHandler->handle($updateProductOfferOptDTO);
 
@@ -221,7 +221,7 @@ final readonly class UpdateProductOptDispatcher
         {
             $updateProductOptDTO = new UpdateProductOptDTO()
                 ->setEvent($message->getEvent())
-                ->setOpt($message->getOpt());
+                ->setPrice($message->getOpt());
 
             $opt = $this->UpdateProductOptHandler->handle($updateProductOptDTO);
 

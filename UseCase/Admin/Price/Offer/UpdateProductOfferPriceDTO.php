@@ -25,16 +25,17 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\UseCase\Admin\Price\Offer;
 
+use BaksDev\Products\Product\Entity\Offers\Price\ProductOfferPriceInterface;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Reference\Money\Type\Money;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class UpdateProductOfferPriceDTO
+final class UpdateProductOfferPriceDTO implements ProductOfferPriceInterface
 {
     /** Идентификатор */
     #[Assert\Uuid]
     #[Assert\NotBlank]
-    private ?ProductOfferUid $offer = null;
+    private ?ProductOfferUid $offerId = null;
 
     /** Розничная цена торгового предложения */
     #[Assert\Valid]
@@ -42,12 +43,12 @@ final class UpdateProductOfferPriceDTO
 
     public function getOffer(): ?ProductOfferUid
     {
-        return $this->offer;
+        return $this->offerId;
     }
 
-    public function setOffer(ProductOfferUid $offer): self
+    public function setOffer(ProductOfferUid $offerId): self
     {
-        $this->offer = $offer;
+        $this->offerId = $offerId;
         return $this;
     }
 

@@ -173,10 +173,4 @@ class ProductPrice extends EntityEvent
     {
         return $this->reserve;
     }
-
-    public function setPrice(?Money $price): self
-    {
-        $this->price = $price;
-        return $this;
-    }
 }

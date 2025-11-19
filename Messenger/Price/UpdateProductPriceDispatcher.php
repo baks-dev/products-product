@@ -29,7 +29,7 @@ use BaksDev\Products\Product\Entity\Offers\Price\ProductOfferPrice;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Price\ProductModificationPrice;
 use BaksDev\Products\Product\Entity\Offers\Variation\Price\ProductVariationPrice;
 use BaksDev\Products\Product\Entity\Price\ProductPrice;
-use BaksDev\Products\Product\Repository\CurrentProductIdentifier\CurrentProductIdentifierInterface;
+use BaksDev\Products\Product\Repository\CurrentProductIdentifier\CurrentProductIdentifierByEventInterface;
 use BaksDev\Products\Product\Repository\CurrentProductIdentifier\CurrentProductIdentifierResult;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
@@ -56,7 +56,7 @@ final readonly class UpdateProductPriceDispatcher
         private UpdateProductOfferPriceHandler $UpdateProductOfferPriceHandler,
         private UpdateProductVariationPriceHandler $UpdateProductVariationPriceHandler,
         private UpdateProductModificationPriceHandler $UpdateProductModificationPriceHandler,
-        private CurrentProductIdentifierInterface $CurrentProductIdentifierRepository,
+        private CurrentProductIdentifierByEventInterface $CurrentProductIdentifierRepository,
     ) {}
 
     /**
