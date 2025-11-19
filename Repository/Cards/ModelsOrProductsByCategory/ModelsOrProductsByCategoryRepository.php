@@ -1139,6 +1139,15 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                 );
         }
 
+        $dbal->andWhere('
+            COALESCE(
+                NULLIF(product_modification_price.price, 0),
+                NULLIF(product_variation_price.price, 0),
+                NULLIF(product_offer_price.price, 0),
+                NULLIF(product_price.price, 0),
+                0
+            ) <> 0');
+
         $dbal->allGroupByExclude();
 
         /** Используем индекс сортировки для поднятия в топ списка */
