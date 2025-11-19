@@ -73,12 +73,6 @@ class ProductOfferPrice extends EntityEvent
         return (string) $this->offer;
     }
 
-    public function setPrice(Money $price): self
-    {
-        $this->price = $price;
-        return $this;
-    }
-
     public function getDto($dto): mixed
     {
         $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;

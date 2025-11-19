@@ -74,12 +74,6 @@ class ProductModificationOpt extends EntityEvent
         return $this->price;
     }
 
-    public function setPrice(?Money $price): self
-    {
-        $this->price = $price;
-        return $this;
-    }
-
     /** @return ProductModificationOptInterface */
     public function getDto($dto): mixed
     {
