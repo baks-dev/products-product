@@ -67,10 +67,9 @@ class AllProductsToIndexRepositoryTest extends KernelTestCase
                 {
                     // Вызываем метод
                     $data = $method->invoke($AllProductsToIndexResult);
-                    dump($data);
+                    //dump($data);
                 }
             }
-
 
             break;
         }
