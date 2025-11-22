@@ -32,6 +32,7 @@ use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Product\Entity\Product;
+use BaksDev\Products\Product\Entity\Property\ProductProperty;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Search\Repository\DataToIndex\DataToIndexInterface;
 use BaksDev\Users\Profile\UserProfile\Entity\UserProfile;
@@ -56,18 +57,6 @@ final readonly class AllProductsToIndexRepository implements DataToIndexInterfac
 
     public function findAll(): Generator|false
     {
-        $dbal = $this->builder();
-
-        $dbal->enableCache('products-product', '1 day');
-
-        $result = $dbal->fetchAllHydrate(AllProductsToIndexResult::class);
-
-        return (true === $result->valid()) ? $result : false;
-    }
-
-    public function builder(UserProfileUid|string|null $profile = null): DBALQueryBuilder
-    {
-
         $dbal = $this->DBALQueryBuilder
             ->createQueryBuilder(self::class)
             ->bindLocal();
@@ -91,7 +80,7 @@ final readonly class AllProductsToIndexRepository implements DataToIndexInterfac
                 'product',
                 ProductInfo::class,
                 'product_info',
-                'product_info.product = product.id'
+                'product_info.product = product.id',
             );
 
 
@@ -107,13 +96,13 @@ final readonly class AllProductsToIndexRepository implements DataToIndexInterfac
             );
 
         /** Тип торгового предложения */
-        $dbal
-            ->leftJoin(
-                'product_offer',
-                CategoryProductOffers::class,
-                'category_offer',
-                'category_offer.id = product_offer.category_offer'
-            );
+        //        $dbal
+        //            ->leftJoin(
+        //                'product_offer',
+        //                CategoryProductOffers::class,
+        //                'category_offer',
+        //                'category_offer.id = product_offer.category_offer'
+        //            );
 
 
         /** Множественные варианты торгового предложения */
@@ -124,18 +113,18 @@ final readonly class AllProductsToIndexRepository implements DataToIndexInterfac
                 'product_offer',
                 ProductVariation::class,
                 'product_variation',
-                'product_variation.offer = product_offer.id'
+                'product_variation.offer = product_offer.id',
             );
 
 
         /** Тип множественного варианта торгового предложения */
-        $dbal
-            ->leftJoin(
-                'product_variation',
-                CategoryProductVariation::class,
-                'category_variation',
-                'category_variation.id = product_variation.category_variation'
-            );
+        //        $dbal
+        //            ->leftJoin(
+        //                'product_variation',
+        //                CategoryProductVariation::class,
+        //                'category_variation',
+        //                'category_variation.id = product_variation.category_variation'
+        //            );
 
         /** Модификация множественного варианта */
         $dbal
@@ -145,16 +134,27 @@ final readonly class AllProductsToIndexRepository implements DataToIndexInterfac
                 'product_variation',
                 ProductModification::class,
                 'product_modification',
-                'product_modification.variation = product_variation.id '
+                'product_modification.variation = product_variation.id ',
             );
 
         /** Получаем тип модификации множественного варианта */
+        //        $dbal
+        //            ->leftJoin(
+        //                'product_modification',
+        //                CategoryProductModification::class,
+        //                'category_modification',
+        //                'category_modification.id = product_modification.category_modification'
+        //            );
+
+
+        /** Значения свойств */
         $dbal
+            ->addSelect('JSON_AGG( DISTINCT product_property.value) AS property')
             ->leftJoin(
-                'product_modification',
-                CategoryProductModification::class,
-                'category_modification',
-                'category_modification.id = product_modification.category_modification'
+                'product',
+                ProductProperty::class,
+                'product_property',
+                'product_property.event = product.event',
             );
 
 
@@ -169,8 +169,12 @@ final readonly class AllProductsToIndexRepository implements DataToIndexInterfac
             ) AS product_article
 		");
 
-        return $dbal;
+        $dbal->allGroupByExclude();
 
+        $dbal->enableCache('products-product', '1 day');
+
+        $result = $dbal->fetchAllHydrate(AllProductsToIndexResult::class);
+
+        return (true === $result->valid()) ? $result : false;
     }
-
 }

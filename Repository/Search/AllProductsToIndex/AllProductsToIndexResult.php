@@ -24,11 +24,13 @@
 namespace BaksDev\Products\Product\Repository\Search\AllProductsToIndex;
 
 use BaksDev\Core\Services\Switcher\Switcher;
+use BaksDev\Core\Type\UidType\Uid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
 use BaksDev\Search\Repository\DataToIndexResult\DataToIndexResultInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final readonly class AllProductsToIndexResult implements DataToIndexResultInterface
 {
@@ -45,6 +47,8 @@ final readonly class AllProductsToIndexResult implements DataToIndexResultInterf
 
         private string|null $product_modification_id = null,
         private string|null $product_modification_value = null,
+
+        private string|null $property = null,
     ) {}
 
     public function getProductId(): ProductUid
@@ -109,7 +113,7 @@ final readonly class AllProductsToIndexResult implements DataToIndexResultInterf
     }
 
 
-    public function setTextSearch(Switcher $switcher): string
+    public function setTextSearch(Switcher $switcher, ?TranslatorInterface $translator = null): string
     {
         $product_article = str_replace('-', ' ', $this->product_article);
 
@@ -119,7 +123,6 @@ final readonly class AllProductsToIndexResult implements DataToIndexResultInterf
         $transl_offer = $switcher->toRus($this->product_offer_value);
         $transl_variation = $switcher->toRus($this->product_variation_value);
         $transl_modification = $switcher->toRus($this->product_modification_value);
-
 
         $search = explode(' ',
             $product_article
@@ -137,6 +140,17 @@ final readonly class AllProductsToIndexResult implements DataToIndexResultInterf
             .' '.$this->product_modification_value
             .' '.$transl_modification,
         );
+
+        if(json_validate($this->property))
+        {
+            $decode = json_decode($this->property, true, 512, JSON_THROW_ON_ERROR);
+
+            $property = array_filter($decode, static function($element) {
+                return false === empty($element) && false === Uid::isUid($element);
+            });
+
+            $search = array_merge($search, $property);
+        }
 
         return implode(' ', array_unique($search));
     }

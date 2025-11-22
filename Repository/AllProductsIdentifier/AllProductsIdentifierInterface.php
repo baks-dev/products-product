@@ -45,7 +45,6 @@ interface AllProductsIdentifierInterface
     public function forModificationConst(ProductModificationConst|string $offerModification): self;
 
 
-
     /**
      * Метод возвращает все идентификаторы продукции с её торговыми предложениями
      */
@@ -56,9 +55,4 @@ interface AllProductsIdentifierInterface
     /**  @return array<int, ProductsIdentifierResult>|false */
     public function toArray(): array|false;
 
-
-    /**
-     * Метод возвращает все идентификаторы продукции с её торговыми предложениями
-     */
-    public function findAllArray(): Generator|false;
 }

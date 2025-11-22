@@ -22,8 +22,14 @@
  */
 
 namespace BaksDev\Products\Product\Repository\Search\AllProductsToIndex\Tests;
+
+use BaksDev\Core\Services\Switcher\Switcher;
+use BaksDev\Products\Product\Repository\Search\AllProductsToIndex\AllProductsToIndexRepository;
+use BaksDev\Products\Product\Repository\Search\AllProductsToIndex\AllProductsToIndexResult;
 use BaksDev\Search\Repository\DataToIndex\DataToIndexInterface;
 use PHPUnit\Framework\Attributes\Group;
+use ReflectionClass;
+use ReflectionMethod;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
@@ -33,13 +39,41 @@ class AllProductsToIndexRepositoryTest extends KernelTestCase
 {
     public function testAllProductsToIndex()
     {
-        /** @var DataToIndexInterface $repository */
-        $repository = self::getContainer()->get(DataToIndexInterface::class);
-
-        $result = $repository->toArray();
-
-//        dd($result);
-
         self::assertTrue(true);
+
+        /** @var DataToIndexInterface $repository */
+        $repository = self::getContainer()->get(AllProductsToIndexRepository::class);
+
+
+        $result = $repository->findAll();
+
+        if(false === $result || false === $result->valid())
+        {
+            return;
+        }
+
+        foreach($result as $AllProductsToIndexResult)
+        {
+            $AllProductsToIndexResult->setTextSearch(self::getContainer()->get(Switcher::class));
+
+            // Вызываем все геттеры
+            $reflectionClass = new ReflectionClass(AllProductsToIndexResult::class);
+            $methods = $reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC);
+
+            foreach($methods as $method)
+            {
+                // Методы без аргументов
+                if($method->getNumberOfParameters() === 0)
+                {
+                    // Вызываем метод
+                    $data = $method->invoke($AllProductsToIndexResult);
+                    dump($data);
+                }
+            }
+
+
+            break;
+        }
+
     }
 }

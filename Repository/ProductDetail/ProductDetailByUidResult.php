@@ -63,6 +63,7 @@ class ProductDetailByUidResult
 
 
         private ?string $product_article,
+        private ?string $product_card_article,
 
         private ?string $product_image,
         private ?string $product_image_ext,
@@ -352,5 +353,10 @@ class ProductDetailByUidResult
     public function getProductReserve(): int|null
     {
         return $this->product_reserve;
+    }
+
+    public function getProductCardArticle(): ?string
+    {
+        return $this->product_card_article;
     }
 }

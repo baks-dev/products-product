@@ -102,7 +102,13 @@ final class AllProductsIdentifierRepository implements AllProductsIdentifierInte
         return $this;
     }
 
-    private function builder(): DBALQueryBuilder
+
+    /**
+     * Метод возвращает все идентификаторы продукции с её торговыми предложениями
+     *
+     * @return Generator<int, ProductsIdentifierResult>|false
+     */
+    public function findAll(): Generator|false
     {
         $dbal = $this->DBALQueryBuilder->createQueryBuilder(self::class);
 
@@ -244,20 +250,9 @@ final class AllProductsIdentifierRepository implements AllProductsIdentifierInte
                    )
             ');
 
-        return $dbal;
-    }
+        $dbal->addOrderBy('product.id');
 
-
-    /**
-     * Метод возвращает все идентификаторы продукции с её торговыми предложениями
-     *
-     * @return Generator<int, ProductsIdentifierResult>|false
-     */
-    public function findAll(): Generator|false
-    {
-        return $this
-            ->builder()
-            ->fetchAllHydrate(ProductsIdentifierResult::class);
+        return $dbal->fetchAllHydrate(ProductsIdentifierResult::class);
     }
 
     /**
@@ -270,26 +265,5 @@ final class AllProductsIdentifierRepository implements AllProductsIdentifierInte
         $data = $this->findAll();
 
         return $data ? iterator_to_array($data) : false;
-    }
-
-    /**
-     * Метод возвращает все идентификаторы продукции с её торговыми предложениями
-     *
-     * @return Generator<array{
-     *  "product_id",
-     *  "product_event" ,
-     *  "offer_id" ,
-     *  "offer_const",
-     *  "variation_id" ,
-     *  "variation_const" ,
-     *  "modification_id",
-     *  "modification_const"}
-     *  >|false }
-     * @deprecated см. метод $this->findAll()
-     *
-     */
-    public function findAllArray(): Generator|false
-    {
-        return $this->builder()->fetchAllGenerator();
     }
 }

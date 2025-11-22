@@ -430,6 +430,8 @@ final class ProductDetailByUidRepository implements ProductDetailByUidInterface
             ) AS product_article
 		');
 
+        $dbal->addSelect('product_info.article AS product_card_article');
+
         /* Штрихкод продукта */
 
         $dbal->addSelect('
