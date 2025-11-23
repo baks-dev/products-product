@@ -27,6 +27,7 @@ use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Products\Category\Entity\Offers\CategoryProductOffers;
 use BaksDev\Products\Category\Entity\Offers\Variation\CategoryProductVariation;
 use BaksDev\Products\Category\Entity\Offers\Variation\Modification\CategoryProductModification;
+use BaksDev\Products\Product\Entity\Category\ProductCategory;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
@@ -82,6 +83,18 @@ final readonly class AllProductsToIndexRepository implements DataToIndexInterfac
                 'product_info',
                 'product_info.product = product.id',
             );
+
+
+        /** ProductInfo */
+        $dbal
+            ->addSelect('product_category.category AS category')
+            ->leftJoin(
+                'product',
+                ProductCategory::class,
+                'product_category',
+                'product_category.event = product.event AND product_category.root = true',
+            );
+
 
 
         /** Торговое предложение */

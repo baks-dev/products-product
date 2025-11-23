@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Controller\Public;
 
 use BaksDev\Core\Controller\AbstractController;
+use BaksDev\Core\Form\Search\SearchDTO;
 use BaksDev\Products\Category\Repository\AllCategory\AllCategoryInterface;
 use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Forms\ProductCategoryFilter\User\ProductCategoryFilterDTO;
@@ -82,6 +83,30 @@ final class CatalogController extends AbstractController
         $productFilterForm = $this->createForm(ProductCategoryFilterForm::class, $productCategoryFilterDTO);
         $productFilterForm->handleRequest($request);
 
+
+        /**
+         * ПОИСК ПО ИНДЕКСАМ
+         */
+
+        /** Получаем POST значения из формы */
+        $formName = $productFilterForm->getName();
+        $formData = $request->get($formName);
+        $searchText = null;
+
+        if(false === empty($formData))
+        {
+            $searchValues = array_filter($formData, static function($value, $key) {
+                return false === empty($value) && false === Uid::isUid($value) && $key !== '_token';
+            }, ARRAY_FILTER_USE_BOTH);
+
+            $searchText = implode(' ', $searchValues);
+        }
+
+        $SearchDTO = new SearchDTO()->setQuery($searchText);
+
+
+
+
         /** Свойства продукции, участвующие в фильтрации */
         $propertyFields = null;
         if($productFilterForm->isSubmitted() && $productFilterForm->isValid())
@@ -111,6 +136,7 @@ final class CatalogController extends AbstractController
         {
             /** Продукция */
             $products[$category['id']] = $catalogProducts
+                ->search($SearchDTO)
                 ->forCategory($category['id'])
                 ->maxResult(4)
                 ->property($propertyFields)

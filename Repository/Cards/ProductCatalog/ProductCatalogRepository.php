@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Repository\Cards\ProductCatalog;
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
+use BaksDev\Core\Form\Search\SearchDTO;
 use BaksDev\Field\Pack\Integer\Form\Range\RangeIntegerFieldDTO;
 use BaksDev\Products\Category\Entity\CategoryProduct;
 use BaksDev\Products\Category\Entity\Info\CategoryProductInfo;
@@ -61,19 +62,24 @@ use BaksDev\Products\Product\Entity\ProductInvariable;
 use BaksDev\Products\Product\Entity\Property\ProductProperty;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Forms\ProductCategoryFilter\User\ProductCategoryFilterDTO;
+use BaksDev\Products\Product\Type\SearchTags\ProductSearchTag;
 use BaksDev\Products\Promotion\BaksDevProductsPromotionBundle;
 use BaksDev\Products\Promotion\Entity\Event\Invariable\ProductPromotionInvariable;
 use BaksDev\Products\Promotion\Entity\Event\Period\ProductPromotionPeriod;
 use BaksDev\Products\Promotion\Entity\Event\Price\ProductPromotionPrice;
 use BaksDev\Products\Promotion\Entity\Event\ProductPromotionEvent;
 use BaksDev\Products\Promotion\Entity\ProductPromotion;
+use BaksDev\Search\Index\SearchIndexInterface;
 use BaksDev\Users\Profile\UserProfile\Entity\Event\Discount\UserProfileDiscount;
 use BaksDev\Users\Profile\UserProfile\Entity\UserProfile;
+use Doctrine\DBAL\ArrayParameterType;
 use Generator;
 
 /** @see ProductCatalogResult */
 final class ProductCatalogRepository implements ProductCatalogInterface
 {
+    private ?SearchDTO $search = null;
+
     private CategoryProductUid|false $categoryUid = false;
 
     private int|false $maxResult = false;
@@ -84,11 +90,18 @@ final class ProductCatalogRepository implements ProductCatalogInterface
 
     public function __construct(
         private readonly DBALQueryBuilder $dbal,
+        private readonly ?SearchIndexInterface $SearchIndexHandler = null,
     ) {}
 
     public function filter(ProductCategoryFilterDTO $filter): self
     {
         $this->filter = $filter;
+        return $this;
+    }
+
+    public function search(SearchDTO $search): self
+    {
+        $this->search = $search;
         return $this;
     }
 
@@ -172,7 +185,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
         $dbal->join('product',
             ProductEvent::class,
             'product_event',
-            'product_event.id = product.event'
+            'product_event.id = product.event',
         );
 
         /** ProductInfo */
@@ -182,7 +195,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
                 'product_event',
                 ProductInfo::class,
                 'product_info',
-                'product_info.product = product.id'
+                'product_info.product = product.id',
             )
             ->addGroupBy('product_info.article')
             ->addGroupBy('product_info.sort');
@@ -197,11 +210,11 @@ final class ProductCatalogRepository implements ProductCatalogInterface
                 '
                 product_event_category.event = product.event AND 
                 product_event_category.category = :category AND 
-                product_event_category.root = true'
+                product_event_category.root = true',
             )->setParameter(
                 'category',
                 $this->categoryUid,
-                CategoryProductUid::TYPE
+                CategoryProductUid::TYPE,
             );
         }
         else
@@ -212,191 +225,191 @@ final class ProductCatalogRepository implements ProductCatalogInterface
                 'product_event_category',
                 '
                 product_event_category.event = product.event AND 
-                product_event_category.root = true'
+                product_event_category.root = true',
             );
         }
 
 
         /** ФИЛЬТР СВОЙСТВ */
-        if(false || $this->property)
-        {
-            if($expr === 'AND')
-            {
-                /** @var RangeIntegerFieldDTO $item */
-                foreach($this->property as $type => $item)
-                {
-                    if($item === true)
-                    {
-                        $item = 'true';
-                    }
-
-                    if ($item instanceof RangeIntegerFieldDTO) {
-                        $item = [
-                            'min' => $item->getMin(),
-                            'max' => $item->getMax(),
-                        ];
-                    }
-
-                    $prepareKey = uniqid('key_', false);
-                    $prepareValue = uniqid('val_', false);
-                    $alias = uniqid('alias', false);
-
-                    $ProductCategorySectionFieldUid = new CategoryProductSectionFieldUid($type);
-                    $ProductPropertyJoin = $alias.'.field = :'.$prepareKey.' AND '.$alias.'.value = :'.$prepareValue;
-
-                    $dbal->setParameter(
-                        $prepareKey,
-                        $ProductCategorySectionFieldUid,
-                        CategoryProductSectionFieldUid::TYPE
-                    );
-
-                    if(is_array($item) && (isset($item['min']) || isset($item['max'])))
-                    {
-                        $RangeProductPropertyJoin = null;
-
-                        foreach($item as $key => $value)
-                        {
-                            if(empty($value))
-                            {
-                                continue;
-                            }
-
-                            $prepareValue = uniqid('', false);
-
-                            if($key === 'min')
-                            {
-                                $RangeProductPropertyJoin[] = 'product_property_filter.value >= :'.$prepareValue;
-
-                            }
-
-                            if($key === 'max')
-                            {
-                                $RangeProductPropertyJoin[] = 'product_property_filter.value <= :'.$prepareValue;
-
-                            }
-
-                            $dbal->setParameter($prepareValue, $value);
-                        }
-                        if($RangeProductPropertyJoin)
-                        {
-
-                            $ProductCategorySectionFieldUid = new CategoryProductSectionFieldUid($type);
-
-                            $dbal->setParameter(
-                                $prepareKey,
-                                $ProductCategorySectionFieldUid,
-                                CategoryProductSectionFieldUid::TYPE
-                            );
-
-                            $ProductPropertyJoin = 'product_property_filter.field = :'.$prepareKey.' 
-                                AND ('.implode(' AND ', $RangeProductPropertyJoin).')';
-
-
-                        }
-
-                        continue;
-                    }
-
-                    else
-                    {
-                        $dbal->setParameter($prepareValue, $item);
-                    }
-
-                    $dbal->join(
-                        'product',
-                        ProductProperty::class,
-                        $alias,
-                        $alias.'.event = product.event '.$expr.' '.$ProductPropertyJoin
-                    );
-                }
-
-                $dbal->join(
-                    'product',
-                    ProductProperty::class,
-                    'product_property_filter',
-                    'product_property_filter.event = product.event AND '.$ProductPropertyJoin
-                );
-            }
-            else
-            {
-                foreach($this->property as $type => $item)
-                {
-                    if($item === true)
-                    {
-                        $item = 'true';
-                    }
-
-                    if(is_array($item) && (isset($item['min']) || isset($item['max'])))
-                    {
-                        $RangeProductPropertyJoin = null;
-
-                        foreach($item as $key => $value)
-                        {
-                            if(empty($value))
-                            {
-                                continue;
-                            }
-
-                            $prepareValue = uniqid('', false);
-
-                            if($key === 'min')
-                            {
-                                $RangeProductPropertyJoin[] = 'product_property_filter.value >= :'.$prepareValue;
-
-                            }
-
-                            if($key === 'max')
-                            {
-                                $RangeProductPropertyJoin[] = 'product_property_filter.value <= :'.$prepareValue;
-
-                            }
-
-                            $dbal->setParameter($prepareValue, $value);
-                        }
-
-                        if($RangeProductPropertyJoin)
-                        {
-                            $prepareKey = uniqid('', false);
-
-                            $ProductCategorySectionFieldUid = new CategoryProductSectionFieldUid($type);
-
-                            $dbal->setParameter(
-                                $prepareKey,
-                                $ProductCategorySectionFieldUid,
-                                CategoryProductSectionFieldUid::TYPE
-                            );
-
-                            $ProductPropertyJoin[] = 'product_property_filter.field = :'.$prepareKey.' 
-                                AND ('.implode(' AND ', $RangeProductPropertyJoin).')';
-                        }
-
-                        continue;
-                    }
-
-                    $prepareKey = uniqid('', false);
-                    $prepareValue = uniqid('', false);
-
-                    $ProductCategorySectionFieldUid = new CategoryProductSectionFieldUid($type);
-                    $ProductPropertyJoin[] = 'product_property_filter.field = :'.$prepareKey.' AND product_property_filter.value = :'.$prepareValue;
-
-                    $dbal->setParameter(
-                        $prepareKey,
-                        $ProductCategorySectionFieldUid,
-                        CategoryProductSectionFieldUid::TYPE
-                    );
-
-                    $dbal->setParameter($prepareValue, $item);
-
-                }
-
-                $dbal->join(
-                    'product',
-                    ProductProperty::class,
-                    'product_property_filter',
-                    'product_property_filter.event = product.event AND '.implode(' '.$expr.' ', $ProductPropertyJoin)
-                );
-            }
-        }
+        //        if(false || $this->property)
+        //        {
+        //            if($expr === 'AND')
+        //            {
+        //                /** @var RangeIntegerFieldDTO $item */
+        //                foreach($this->property as $type => $item)
+        //                {
+        //                    if($item === true)
+        //                    {
+        //                        $item = 'true';
+        //                    }
+        //
+        //                    if ($item instanceof RangeIntegerFieldDTO) {
+        //                        $item = [
+        //                            'min' => $item->getMin(),
+        //                            'max' => $item->getMax(),
+        //                        ];
+        //                    }
+        //
+        //                    $prepareKey = uniqid('key_', false);
+        //                    $prepareValue = uniqid('val_', false);
+        //                    $alias = uniqid('alias', false);
+        //
+        //                    $ProductCategorySectionFieldUid = new CategoryProductSectionFieldUid($type);
+        //                    $ProductPropertyJoin = $alias.'.field = :'.$prepareKey.' AND '.$alias.'.value = :'.$prepareValue;
+        //
+        //                    $dbal->setParameter(
+        //                        $prepareKey,
+        //                        $ProductCategorySectionFieldUid,
+        //                        CategoryProductSectionFieldUid::TYPE
+        //                    );
+        //
+        //                    if(is_array($item) && (isset($item['min']) || isset($item['max'])))
+        //                    {
+        //                        $RangeProductPropertyJoin = null;
+        //
+        //                        foreach($item as $key => $value)
+        //                        {
+        //                            if(empty($value))
+        //                            {
+        //                                continue;
+        //                            }
+        //
+        //                            $prepareValue = uniqid('', false);
+        //
+        //                            if($key === 'min')
+        //                            {
+        //                                $RangeProductPropertyJoin[] = 'product_property_filter.value >= :'.$prepareValue;
+        //
+        //                            }
+        //
+        //                            if($key === 'max')
+        //                            {
+        //                                $RangeProductPropertyJoin[] = 'product_property_filter.value <= :'.$prepareValue;
+        //
+        //                            }
+        //
+        //                            $dbal->setParameter($prepareValue, $value);
+        //                        }
+        //                        if($RangeProductPropertyJoin)
+        //                        {
+        //
+        //                            $ProductCategorySectionFieldUid = new CategoryProductSectionFieldUid($type);
+        //
+        //                            $dbal->setParameter(
+        //                                $prepareKey,
+        //                                $ProductCategorySectionFieldUid,
+        //                                CategoryProductSectionFieldUid::TYPE
+        //                            );
+        //
+        //                            $ProductPropertyJoin = 'product_property_filter.field = :'.$prepareKey.'
+        //                                AND ('.implode(' AND ', $RangeProductPropertyJoin).')';
+        //
+        //
+        //                        }
+        //
+        //                        continue;
+        //                    }
+        //
+        //                    else
+        //                    {
+        //                        $dbal->setParameter($prepareValue, $item);
+        //                    }
+        //
+        //                    $dbal->join(
+        //                        'product',
+        //                        ProductProperty::class,
+        //                        $alias,
+        //                        $alias.'.event = product.event '.$expr.' '.$ProductPropertyJoin
+        //                    );
+        //                }
+        //
+        //                $dbal->join(
+        //                    'product',
+        //                    ProductProperty::class,
+        //                    'product_property_filter',
+        //                    'product_property_filter.event = product.event AND '.$ProductPropertyJoin
+        //                );
+        //            }
+        //            else
+        //            {
+        //                foreach($this->property as $type => $item)
+        //                {
+        //                    if($item === true)
+        //                    {
+        //                        $item = 'true';
+        //                    }
+        //
+        //                    if(is_array($item) && (isset($item['min']) || isset($item['max'])))
+        //                    {
+        //                        $RangeProductPropertyJoin = null;
+        //
+        //                        foreach($item as $key => $value)
+        //                        {
+        //                            if(empty($value))
+        //                            {
+        //                                continue;
+        //                            }
+        //
+        //                            $prepareValue = uniqid('', false);
+        //
+        //                            if($key === 'min')
+        //                            {
+        //                                $RangeProductPropertyJoin[] = 'product_property_filter.value >= :'.$prepareValue;
+        //
+        //                            }
+        //
+        //                            if($key === 'max')
+        //                            {
+        //                                $RangeProductPropertyJoin[] = 'product_property_filter.value <= :'.$prepareValue;
+        //
+        //                            }
+        //
+        //                            $dbal->setParameter($prepareValue, $value);
+        //                        }
+        //
+        //                        if($RangeProductPropertyJoin)
+        //                        {
+        //                            $prepareKey = uniqid('', false);
+        //
+        //                            $ProductCategorySectionFieldUid = new CategoryProductSectionFieldUid($type);
+        //
+        //                            $dbal->setParameter(
+        //                                $prepareKey,
+        //                                $ProductCategorySectionFieldUid,
+        //                                CategoryProductSectionFieldUid::TYPE
+        //                            );
+        //
+        //                            $ProductPropertyJoin[] = 'product_property_filter.field = :'.$prepareKey.'
+        //                                AND ('.implode(' AND ', $RangeProductPropertyJoin).')';
+        //                        }
+        //
+        //                        continue;
+        //                    }
+        //
+        //                    $prepareKey = uniqid('', false);
+        //                    $prepareValue = uniqid('', false);
+        //
+        //                    $ProductCategorySectionFieldUid = new CategoryProductSectionFieldUid($type);
+        //                    $ProductPropertyJoin[] = 'product_property_filter.field = :'.$prepareKey.' AND product_property_filter.value = :'.$prepareValue;
+        //
+        //                    $dbal->setParameter(
+        //                        $prepareKey,
+        //                        $ProductCategorySectionFieldUid,
+        //                        CategoryProductSectionFieldUid::TYPE
+        //                    );
+        //
+        //                    $dbal->setParameter($prepareValue, $item);
+        //
+        //                }
+        //
+        //                $dbal->join(
+        //                    'product',
+        //                    ProductProperty::class,
+        //                    'product_property_filter',
+        //                    'product_property_filter.event = product.event AND '.implode(' '.$expr.' ', $ProductPropertyJoin)
+        //                );
+        //            }
+        //        }
 
         $dbal
             ->addSelect('product_trans.name AS product_name')
@@ -404,7 +417,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
                 'product_event',
                 ProductTrans::class,
                 'product_trans',
-                'product_trans.event = product_event.id AND product_trans.local = :local'
+                'product_trans.event = product_event.id AND product_trans.local = :local',
             );
 
         /** Цена товара */
@@ -413,7 +426,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
                 'product_event',
                 ProductPrice::class,
                 'product_price',
-                'product_price.event = product_event.id'
+                'product_price.event = product_event.id',
             )
             ->addGroupBy('product_price.price')
             ->addGroupBy('product_price.currency')
@@ -429,7 +442,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
                 'product',
                 ProductActive::class,
                 'product_active',
-                'product_active.event = product.event'
+                'product_active.event = product.event',
             );
 
         /** OFFERS */
@@ -449,7 +462,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
                 'product',
                 ProductOffer::class,
                 'product_offer',
-                'product_offer.event = product.event '.($this->filter?->getOffer() ? ' AND product_offer.value = :offer' : '').' '
+                'product_offer.event = product.event '.($this->filter?->getOffer() ? ' AND product_offer.value = :offer' : '').' ',
             );
 
         /** Цена торгового предложения */
@@ -457,7 +470,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
             'product_offer',
             ProductOfferPrice::class,
             'product_offer_price',
-            'product_offer_price.offer = product_offer.id'
+            'product_offer_price.offer = product_offer.id',
         )
             ->addGroupBy('product_offer_price.price')
             ->addGroupBy('product_offer_price.currency');
@@ -467,7 +480,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
             'product_offer',
             ProductOfferQuantity::class,
             'product_offer_quantity',
-            'product_offer_quantity.offer = product_offer.id'
+            'product_offer_quantity.offer = product_offer.id',
         )
             ->addGroupBy('product_offer_quantity.quantity')
             ->addGroupBy('product_offer_quantity.reserve');
@@ -479,7 +492,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
                 'product_offer',
                 CategoryProductOffers::class,
                 'category_offer',
-                'category_offer.id = product_offer.category_offer'
+                'category_offer.id = product_offer.category_offer',
             );
 
         /** VARIATIONS */
@@ -499,7 +512,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
                 'product_offer',
                 ProductVariation::class,
                 'product_offer_variation',
-                'product_offer_variation.offer = product_offer.id '.($this->filter?->getVariation() ? ' AND product_offer_variation.value = :variation' : '').' '
+                'product_offer_variation.offer = product_offer.id '.($this->filter?->getVariation() ? ' AND product_offer_variation.value = :variation' : '').' ',
             );
 
 
@@ -508,7 +521,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
             'category_offer_variation',
             ProductVariationPrice::class,
             'product_variation_price',
-            'product_variation_price.variation = product_offer_variation.id'
+            'product_variation_price.variation = product_offer_variation.id',
         )
             ->addGroupBy('product_variation_price.price')
             ->addGroupBy('product_variation_price.currency');
@@ -518,7 +531,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
             'category_offer_variation',
             ProductVariationQuantity::class,
             'product_variation_quantity',
-            'product_variation_quantity.variation = product_offer_variation.id'
+            'product_variation_quantity.variation = product_offer_variation.id',
         )
             ->addGroupBy('product_variation_quantity.quantity')
             ->addGroupBy('product_variation_quantity.reserve');
@@ -530,7 +543,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
                 'product_offer_variation',
                 CategoryProductVariation::class,
                 'category_offer_variation',
-                'category_offer_variation.id = product_offer_variation.category_variation'
+                'category_offer_variation.id = product_offer_variation.category_variation',
             );
 
         /** MODIFICATION */
@@ -550,7 +563,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
                 'category_offer_variation',
                 ProductModification::class,
                 'product_offer_modification',
-                'product_offer_modification.variation = product_offer_variation.id '.($this->filter?->getModification() ? ' AND product_offer_modification.value = :modification' : '').' '
+                'product_offer_modification.variation = product_offer_variation.id '.($this->filter?->getModification() ? ' AND product_offer_modification.value = :modification' : '').' ',
             );
 
         /** Цена множественного варианта */
@@ -558,7 +571,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
             'product_offer_modification',
             ProductModificationPrice::class,
             'product_modification_price',
-            'product_modification_price.modification = product_offer_modification.id'
+            'product_modification_price.modification = product_offer_modification.id',
         )
             ->addGroupBy('product_modification_price.price')
             ->addGroupBy('product_modification_price.currency');
@@ -568,7 +581,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
             'product_offer_modification',
             ProductModificationQuantity::class,
             'product_modification_quantity',
-            'product_modification_quantity.modification = product_offer_modification.id'
+            'product_modification_quantity.modification = product_offer_modification.id',
         )
             ->addGroupBy('product_modification_quantity.quantity')
             ->addGroupBy('product_modification_quantity.reserve');
@@ -580,7 +593,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
                 'product_offer_modification',
                 CategoryProductModification::class,
                 'category_offer_modification',
-                'category_offer_modification.id = product_offer_modification.category_modification'
+                'category_offer_modification.id = product_offer_modification.category_modification',
             );
 
         /** Артикул продукта */
@@ -600,7 +613,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
 			   
 			   ELSE NULL
 			END AS product_article
-		"
+		",
         );
 
         /** Фото продукта */
@@ -608,28 +621,28 @@ final class ProductCatalogRepository implements ProductCatalogInterface
             'product_offer_modification',
             ProductModificationImage::class,
             'product_offer_modification_image',
-            'product_offer_modification_image.modification = product_offer_modification.id AND product_offer_modification_image.root = true'
+            'product_offer_modification_image.modification = product_offer_modification.id AND product_offer_modification_image.root = true',
         );
 
         $dbal->leftJoin(
             'product_offer',
             ProductVariationImage::class,
             'product_offer_variation_image',
-            'product_offer_variation_image.variation = product_offer_variation.id AND product_offer_variation_image.root = true'
+            'product_offer_variation_image.variation = product_offer_variation.id AND product_offer_variation_image.root = true',
         );
 
         $dbal->leftJoin(
             'product_offer',
             ProductOfferImage::class,
             'product_offer_images',
-            'product_offer_variation_image.name IS NULL AND product_offer_images.offer = product_offer.id AND product_offer_images.root = true'
+            'product_offer_variation_image.name IS NULL AND product_offer_images.offer = product_offer.id AND product_offer_images.root = true',
         );
 
         $dbal->leftJoin(
             'product_offer',
             ProductPhoto::class,
             'product_photo',
-            'product_offer_images.name IS NULL AND product_photo.event = product_event.id AND product_photo.root = true'
+            'product_offer_images.name IS NULL AND product_photo.event = product_event.id AND product_photo.root = true',
         );
 
         $dbal->addSelect(
@@ -668,7 +681,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
                             'img_ext', product_photo.ext,
                             'img_cdn', product_photo.cdn
                         )
-                    END) AS product_images"
+                    END) AS product_images",
         );
 
         /** Стоимость продукта */
@@ -709,14 +722,14 @@ final class ProductCatalogRepository implements ProductCatalogInterface
 			   THEN product_price.currency
 			   
 			   ELSE NULL
-			END AS product_currency"
+			END AS product_currency",
         );
 
         $dbal->leftJoin(
             'product_event_category',
             CategoryProduct::class,
             'category',
-            'category.id = product_event_category.category'
+            'category.id = product_event_category.category',
         );
 
         $dbal
@@ -725,7 +738,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
                 'product_event_category',
                 CategoryProductInfo::class,
                 'category_info',
-                'category_info.event = category.event'
+                'category_info.event = category.event',
             );
 
         $dbal
@@ -734,14 +747,14 @@ final class ProductCatalogRepository implements ProductCatalogInterface
                 'category',
                 CategoryProductTrans::class,
                 'category_trans',
-                'category_trans.event = category.event AND category_trans.local = :local'
+                'category_trans.event = category.event AND category_trans.local = :local',
             );
 
         $dbal->leftJoin(
             'category',
             CategoryProductSection::class,
             'category_section',
-            'category_section.event = category.event'
+            'category_section.event = category.event',
         );
 
         /** Свойства, участвующие в карточке */
@@ -749,21 +762,21 @@ final class ProductCatalogRepository implements ProductCatalogInterface
             'category_section',
             CategoryProductSectionField::class,
             'category_section_field',
-            'category_section_field.section = category_section.id AND (category_section_field.card = TRUE OR category_section_field.photo = TRUE OR category_section_field.name = TRUE )'
+            'category_section_field.section = category_section.id AND (category_section_field.card = TRUE OR category_section_field.photo = TRUE OR category_section_field.name = TRUE )',
         );
 
         $dbal->leftJoin(
             'category_section_field',
             CategoryProductSectionFieldTrans::class,
             'category_section_field_trans',
-            'category_section_field_trans.field = category_section_field.id AND category_section_field_trans.local = :local'
+            'category_section_field_trans.field = category_section_field.id AND category_section_field_trans.local = :local',
         );
 
         $dbal->leftJoin(
             'category_section_field',
             ProductProperty::class,
             'product_property',
-            'product_property.event = product.event AND product_property.field = category_section_field.const'
+            'product_property.event = product.event AND product_property.field = category_section_field.const',
         );
 
         $dbal->addSelect("JSON_AGG
@@ -781,7 +794,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
 				)
 			
 		)
-			AS category_section_field"
+			AS category_section_field",
         );
 
         /**
@@ -875,7 +888,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
                     UserProfile::class,
                     'current_profile',
                     '
-                        current_profile.id = :'.$dbal::CURRENT_PROFILE_KEY
+                        current_profile.id = :'.$dbal::CURRENT_PROFILE_KEY,
                 );
 
             $dbal
@@ -886,7 +899,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
                     'current_profile_discount',
                     '
                         current_profile_discount.event = current_profile.event
-                        '
+                        ',
                 );
         }
 
@@ -900,7 +913,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
                     UserProfile::class,
                     'project_profile',
                     '
-                        project_profile.id = :'.$dbal::PROJECT_PROFILE_KEY
+                        project_profile.id = :'.$dbal::PROJECT_PROFILE_KEY,
                 );
 
             $dbal
@@ -910,9 +923,138 @@ final class ProductCatalogRepository implements ProductCatalogInterface
                     UserProfileDiscount::class,
                     'project_profile_discount',
                     '
-                        project_profile_discount.event = project_profile.event'
+                        project_profile_discount.event = project_profile.event',
                 );
         }
+
+
+        if(($this->search instanceof SearchDTO) && $this->search->getQuery())
+        {
+            /** Поиск по индексам */
+            $search = str_replace('-', ' ', $this->search->getQuery());
+
+            /** Очистить поисковую строку от всех НЕ буквенных/числовых символов */
+            $search = preg_replace('/[^ a-zа-яё\d]/ui', ' ', $search);
+            $search = preg_replace('/\br(\d+)\b/i', '$1', $search);  // Заменяем R или r в начале строки, за которым следует цифра
+
+            /** Добавляем идентификатор категории для фильтра */
+            if($this->categoryUid instanceof CategoryProductUid)
+            {
+                $search .= ' '.$this->categoryUid;
+            }
+
+
+            /** Задать префикс и суффикс для реализации варианта "содержит" */
+            $search = '*'.trim($search).'*';
+
+            /** Получим ids из индекса */
+            $resultProducts = $this->SearchIndexHandler instanceof SearchIndexInterface
+                ? $this->SearchIndexHandler->handleSearchQuery($search, ProductSearchTag::TAG)
+                : false;
+
+            if($this->SearchIndexHandler instanceof SearchIndexInterface && false === empty($resultProducts))
+            {
+                /** Фильтруем по полученным из индекса ids: */
+
+                $ids = array_column($resultProducts, 'id');
+
+                /** Товары */
+                $dbal
+                    ->andWhere('(
+                        product.id IN (:uuids) 
+                        OR product_offer.id IN (:uuids)
+                        OR product_offer_variation.id IN (:uuids) 
+                        OR product_offer_modification.id IN (:uuids)
+                    )')
+                    ->setParameter(
+                        key: 'uuids',
+                        value: $ids,
+                        type: ArrayParameterType::STRING,
+                    );
+
+                $dbal->addOrderBy('CASE WHEN product.id IN (:uuids) THEN 0 ELSE 1 END');
+                $dbal->addOrderBy('CASE WHEN product_offer.id IN (:uuids) THEN 0 ELSE 1 END');
+                $dbal->addOrderBy('CASE WHEN product_offer_variation.id IN (:uuids)  THEN 0 ELSE 1 END');
+                $dbal->addOrderBy('CASE WHEN product_offer_modification.id IN (:uuids)  THEN 0 ELSE 1 END');
+            }
+
+
+            if(empty($resultProducts) && false === empty($this->property))
+            {
+                /** ФИЛЬТР СВОЙСТВ */
+
+                /** @var RangeIntegerFieldDTO $item */
+                foreach($this->property as $item)
+                {
+                    if($item === true)
+                    {
+                        $item = 'true';
+                    }
+
+                    if($item instanceof RangeIntegerFieldDTO)
+                    {
+                        $item = [
+                            'min' => $item->getMin(),
+                            'max' => $item->getMax(),
+                        ];
+                    }
+
+                    if(is_array($item) && (isset($item['min']) || isset($item['max'])))
+                    {
+                        $RangeProductPropertyJoin = null;
+
+                        foreach($item as $key => $value)
+                        {
+                            if(empty($value))
+                            {
+                                continue;
+                            }
+
+                            $prepareValue = uniqid('', false);
+
+                            if($key === 'min')
+                            {
+                                $RangeProductPropertyJoin[] = 'product_property_filter.value >= :'.$prepareValue;
+
+                            }
+
+                            if($key === 'max')
+                            {
+                                $RangeProductPropertyJoin[] = 'product_property_filter.value <= :'.$prepareValue;
+
+                            }
+
+                            $dbal->setParameter($prepareValue, $value);
+                        }
+
+                        if($RangeProductPropertyJoin)
+                        {
+                            $ProductPropertyJoin = '('.implode(' AND ', $RangeProductPropertyJoin).')';
+                        }
+
+                        continue;
+                    }
+
+
+                    $prepareValue = uniqid('val_', false);
+                    $alias = uniqid('alias', false);
+                    $ProductPropertyJoin = $alias.'.value = :'.$prepareValue;
+
+                    $dbal->setParameter($prepareValue, $item);
+
+                    $dbal->join(
+                        'product',
+                        ProductProperty::class,
+                        $alias,
+                        $alias.'.event = product.event '.$expr.' '.$ProductPropertyJoin,
+                    );
+                }
+
+            }
+
+
+        }
+
 
         /** Только с ценой */
         $dbal->andWhere("
@@ -923,7 +1065,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
 			   WHEN product_price.price IS NOT NULL THEN product_price.price
 			   ELSE 0
 			END > 0
- 		"
+ 		",
         );
 
 
@@ -936,7 +1078,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
 			   WHEN product_price.quantity  IS NOT NULL THEN (product_price.quantity - product_price.reserve)
 			   ELSE 0
 			END > 0
-			"
+			",
         );
 
         /** Используем индекс сортировки для поднятия в топ списка */

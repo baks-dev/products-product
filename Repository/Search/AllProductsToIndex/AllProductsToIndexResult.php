@@ -48,6 +48,8 @@ final readonly class AllProductsToIndexResult implements DataToIndexResultInterf
         private string|null $product_modification_id = null,
         private string|null $product_modification_value = null,
 
+        private string|null $category = null,
+
         private string|null $property = null,
     ) {}
 
@@ -138,7 +140,9 @@ final readonly class AllProductsToIndexResult implements DataToIndexResultInterf
             .' '.$transl_variation
 
             .' '.$this->product_modification_value
-            .' '.$transl_modification,
+            .' '.$transl_modification
+
+            .' '.$this->category,
         );
 
         if(json_validate($this->property))
