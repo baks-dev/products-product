@@ -255,6 +255,16 @@ final class CurrentProductIdentifierByConstRepository implements CurrentProductI
                 ');
 
 
+        /** Штрихкод продукта */
+        $current->addSelect('
+            COALESCE(
+                current_modification.barcode, 
+                current_variation.barcode, 
+                current_offer.barcode
+            ) AS barcode
+		');
+
+
         return $current
             ->enableCache('products-product')
             ->fetchHydrate(CurrentProductIdentifierResult::class);

@@ -28,7 +28,7 @@ namespace BaksDev\Products\Product\Controller\Admin;
 use BaksDev\Core\Controller\AbstractController;
 use BaksDev\Core\Listeners\Event\Security\RoleSecurity;
 use BaksDev\Core\Type\UidType\ParamConverter;
-use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailByUidInterface;
+use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailByEventInterface;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
@@ -45,7 +45,7 @@ final class QrcodeController extends AbstractController
 {
     #[Route('/admin/product/qrcode/{product}', name: 'admin.qrcode', methods: ['GET', 'POST'])]
     public function qrcode(
-        ProductDetailByUidInterface $productInfo,
+        ProductDetailByEventInterface $productInfo,
         #[ParamConverter(ProductEventUid::class)] ProductEventUid $product,
         #[ParamConverter(ProductOfferUid::class)] $offer = null,
         #[ParamConverter(ProductVariationUid::class)] $variation = null,

@@ -32,8 +32,8 @@ use BaksDev\Core\Form\Search\SearchForm;
 use BaksDev\Core\Listeners\Event\Security\RoleSecurity;
 use BaksDev\Products\Product\Repository\CurrentProductByArticle\CurrentProductDTO;
 use BaksDev\Products\Product\Repository\CurrentProductByArticle\ProductConstByArticleInterface;
-use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailByUidInterface;
-use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailByUidResult;
+use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailByEventInterface;
+use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailByEventResult;
 use BaksDev\Reference\Money\Type\Money;
 use BaksDev\Users\Profile\UserProfile\Repository\UserProfileById\UserProfileByIdInterface;
 use BaksDev\Users\Profile\UserProfile\Repository\UserProfileById\UserProfileResult;
@@ -56,7 +56,7 @@ final class PriceController extends AbstractController
         Request $request,
         UserProfileByIdInterface $UserProfileById,
         ProductConstByArticleInterface $ProductConstByArticle,
-        ProductDetailByUidInterface $ProductDetailByUidInterface
+        ProductDetailByEventInterface $ProductDetailByUidInterface
     ): Response
     {
         $profile = $request->headers->get('Authorization');
@@ -104,7 +104,7 @@ final class PriceController extends AbstractController
             ->modification($CurrentProductDTO->getModification())
             ->findResult();
 
-        if(false === ($ProductDetailByUidResult instanceof ProductDetailByUidResult))
+        if(false === ($ProductDetailByUidResult instanceof ProductDetailByEventResult))
         {
             $logger->critical(sprintf('%s: Продукт по артикулу не найден', $content->article), [
                 var_export($CurrentProductDTO, true),

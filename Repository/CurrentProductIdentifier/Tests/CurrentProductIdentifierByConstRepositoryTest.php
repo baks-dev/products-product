@@ -32,10 +32,13 @@ use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Repository\CurrentProductEvent\CurrentProductEventInterface;
 use BaksDev\Products\Product\Repository\CurrentProductIdentifier\CurrentProductIdentifierByConstInterface;
+use BaksDev\Products\Product\Repository\CurrentProductIdentifier\CurrentProductIdentifierResult;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\ProductDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\ProductHandler;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
+use ReflectionClass;
+use ReflectionMethod;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
@@ -164,6 +167,23 @@ class CurrentProductIdentifierByConstRepositoryTest extends KernelTestCase
             ->forOfferConst(self::$result['offer_const'])
             ->find();
 
+
+        // Вызываем все геттеры
+        $reflectionClass = new ReflectionClass(CurrentProductIdentifierResult::class);
+        $methods = $reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC);
+
+        foreach($methods as $method)
+        {
+            // Методы без аргументов
+            if($method->getNumberOfParameters() === 0)
+            {
+                // Вызываем метод
+                $data = $method->invoke($CurrentProductIdentifierResult);
+                dump($data);
+            }
+        }
+
+
         self::assertTrue($CurrentProductIdentifierResult->getProduct()->equals(self::$new['id']));
         self::assertTrue($CurrentProductIdentifierResult->getEvent()->equals(self::$new['event']));
         self::assertTrue($CurrentProductIdentifierResult->getOffer()->equals(self::$new['offer']));
@@ -185,6 +205,22 @@ class CurrentProductIdentifierByConstRepositoryTest extends KernelTestCase
             ->forOfferConst(self::$result['offer_const'])
             ->forVariationConst(self::$result['variation_const'])
             ->find();
+
+
+        // Вызываем все геттеры
+        $reflectionClass = new ReflectionClass(CurrentProductIdentifierResult::class);
+        $methods = $reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC);
+
+        foreach($methods as $method)
+        {
+            // Методы без аргументов
+            if($method->getNumberOfParameters() === 0)
+            {
+                // Вызываем метод
+                $data = $method->invoke($CurrentProductIdentifierResult);
+                dump($data);
+            }
+        }
 
         self::assertTrue($CurrentProductIdentifierResult->getProduct()->equals(self::$new['id']));
         self::assertTrue($CurrentProductIdentifierResult->getEvent()->equals(self::$new['event']));
@@ -212,6 +248,21 @@ class CurrentProductIdentifierByConstRepositoryTest extends KernelTestCase
             ->forVariationConst(self::$result['variation_const'])
             ->forModificationConst(self::$result['modification_const'])
             ->find();
+
+        // Вызываем все геттеры
+        $reflectionClass = new ReflectionClass(CurrentProductIdentifierResult::class);
+        $methods = $reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC);
+
+        foreach($methods as $method)
+        {
+            // Методы без аргументов
+            if($method->getNumberOfParameters() === 0)
+            {
+                // Вызываем метод
+                $data = $method->invoke($CurrentProductIdentifierResult);
+                dump($data);
+            }
+        }
 
 
         self::assertTrue($CurrentProductIdentifierResult->getProduct()->equals(self::$new['id']));

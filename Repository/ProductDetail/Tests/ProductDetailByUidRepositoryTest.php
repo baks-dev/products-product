@@ -26,8 +26,8 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Repository\ProductDetail\Tests;
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
-use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailByUidInterface;
-use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailByUidResult;
+use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailByEventInterface;
+use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailByEventResult;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
@@ -44,8 +44,8 @@ class ProductDetailByUidRepositoryTest extends KernelTestCase
 
     public function testUseCase(): void
     {
-        /** @var ProductDetailByUidInterface $ProductDetailByUidRepository */
-        $ProductDetailByUidRepository = self::getContainer()->get(ProductDetailByUidInterface::class);
+        /** @var ProductDetailByEventInterface $ProductDetailByUidRepository */
+        $ProductDetailByUidRepository = self::getContainer()->get(ProductDetailByEventInterface::class);
 
         $ProductDetailByUidResult = $ProductDetailByUidRepository
             ->event(new ProductEventUid('019739b9-1855-7eaf-90e7-094390e8df54'))
@@ -54,7 +54,7 @@ class ProductDetailByUidRepositoryTest extends KernelTestCase
             ->modification(new ProductModificationUid('019739b9-1876-77c3-adc2-aa1d59f680bd'))
             ->findResult();
 
-        if($ProductDetailByUidResult instanceof ProductDetailByUidResult)
+        if($ProductDetailByUidResult instanceof ProductDetailByEventResult)
         {
             $ProductDetailByUidResult->getProductId(); // : ProductEventUid
             $ProductDetailByUidResult->getProductMain(); // : ProductUid

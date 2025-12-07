@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Repository\CurrentProductIdentifier;
 
+use BaksDev\Products\Product\Type\Barcode\ProductBarcode;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Product\Type\Invariable\ProductInvariableUid;
@@ -59,6 +60,7 @@ final class CurrentProductIdentifierResult
         private ?string $modification_value = null,
 
         private ?string $product_invariable = null,
+        private ?string $barcode = null,
     ) {}
 
     /**
@@ -153,5 +155,11 @@ final class CurrentProductIdentifierResult
     {
         return $this->product_invariable ? new ProductInvariableUid($this->product_invariable) : false;
     }
+
+    public function getBarcode(): ProductBarcode|false
+    {
+        return $this->barcode ? new ProductBarcode($this->barcode) : false;
+    }
+
 
 }
