@@ -122,9 +122,9 @@ final readonly class AllProductsToIndexResult implements DataToIndexResultInterf
         // Добавить "ошибочный" вариант Switcher
         $transl_article = $switcher->toRus($product_article);
         $transl_name = $switcher->toRus($this->product_name);
-        $transl_offer = $switcher->toRus($this->product_offer_value);
-        $transl_variation = $switcher->toRus($this->product_variation_value);
-        $transl_modification = $switcher->toRus($this->product_modification_value);
+        $transl_offer = $this->product_offer_value ? $switcher->toRus($this->product_offer_value) : '';
+        $transl_variation = $this->product_variation_value ? $switcher->toRus($this->product_variation_value) : '';
+        $transl_modification = $this->product_modification_value ? $switcher->toRus($this->product_modification_value) : '';
 
         $search = explode(' ',
             $product_article
@@ -145,7 +145,8 @@ final readonly class AllProductsToIndexResult implements DataToIndexResultInterf
             .' '.$this->category,
         );
 
-        if(json_validate($this->property))
+
+        if(false === empty($this->property) && json_validate($this->property))
         {
             $decode = json_decode($this->property, true, 512, JSON_THROW_ON_ERROR);
 

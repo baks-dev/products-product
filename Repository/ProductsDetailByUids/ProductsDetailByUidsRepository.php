@@ -68,13 +68,13 @@ use InvalidArgumentException;
 final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterface
 {
 
-    private array|bool $events = false;
+    private array $events = [];
 
-    private array|bool $offers = false;
+    private array $offers = [];
 
-    private array|bool $variations = false;
+    private array $variations = [];
 
-    private array|bool $modifications = false;
+    private array $modifications = [];
 
     public function __construct(private readonly DBALQueryBuilder $DBALQueryBuilder) {}
 
