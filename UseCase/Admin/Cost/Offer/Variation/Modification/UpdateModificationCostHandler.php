@@ -34,6 +34,8 @@ final class UpdateModificationCostHandler extends AbstractHandler
     /** @see ProductModificationCost */
     public function handle(UpdateModificationCostDTO $command): ProductModificationCost|string|false
     {
+        $this->setCommand($command);
+
         $ProductModificationCost = $this
             ->getRepository(ProductModificationCost::class)
             ->findOneBy(['modification' => (string) $command->getProductModification()]);

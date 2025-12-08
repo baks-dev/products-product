@@ -32,6 +32,8 @@ final class UpdateVariationQuantityHandler extends AbstractHandler
 {
     public function handle(UpdateVariationQuantityDTO $command): ProductVariationQuantity|string|false
     {
+        $this->setCommand($command);
+
         $ProductVariationQuantity = $this
             ->getRepository(ProductVariationQuantity::class)
             ->findOneBy(['variation' => (string) $command->getVariation()]);

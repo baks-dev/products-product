@@ -32,6 +32,8 @@ final class UpdateModificationQuantityHandler extends AbstractHandler
 {
     public function handle(UpdateModificationQuantityDTO $command): ProductModificationQuantity|string|false
     {
+        $this->setCommand($command);
+
         $ProductModificationQuantity = $this
             ->getRepository(ProductModificationQuantity::class)
             ->findOneBy(['modification' => (string) $command->getModification()]);

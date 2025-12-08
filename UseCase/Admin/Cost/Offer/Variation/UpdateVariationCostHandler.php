@@ -34,6 +34,8 @@ final class UpdateVariationCostHandler extends AbstractHandler
     /** @see ProductVariationCost */
     public function handle(UpdateVariationCostDTO $command): ProductVariationCost|string|false
     {
+        $this->setCommand($command);
+
         $ProductVariationCost = $this
             ->getRepository(ProductVariationCost::class)
             ->findOneBy(['variation' => (string) $command->getProductVariation()]);
