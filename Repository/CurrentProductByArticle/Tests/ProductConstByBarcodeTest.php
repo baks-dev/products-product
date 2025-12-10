@@ -29,7 +29,7 @@ use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
-use BaksDev\Products\Product\Repository\CurrentProductByArticle\CurrentProductDTO;
+use BaksDev\Products\Product\Repository\CurrentProductByArticle\CurrentProductByBarcodeResult;
 use BaksDev\Products\Product\Repository\CurrentProductByArticle\ProductConstByBarcodeInterface;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
@@ -129,7 +129,7 @@ class ProductConstByBarcodeTest extends KernelTestCase
             }
 
             self::assertNotFalse($CurrentProductDTO);
-            self::assertInstanceOf(CurrentProductDTO::class, $CurrentProductDTO);
+            self::assertInstanceOf(CurrentProductByBarcodeResult::class, $CurrentProductDTO);
 
 
             self::assertInstanceOf(ProductUid::class, $CurrentProductDTO->getProduct()); // : ProductUid

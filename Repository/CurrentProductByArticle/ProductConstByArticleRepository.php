@@ -40,7 +40,7 @@ final readonly class ProductConstByArticleRepository implements ProductConstByAr
     /**
      * Метод возвращает активные идентификаторы продукции
      */
-    public function find(string $article): CurrentProductDTO|false
+    public function find(string $article): CurrentProductByBarcodeResult|false
     {
 
         /** Поиск артикула INFO */
@@ -233,7 +233,7 @@ final readonly class ProductConstByArticleRepository implements ProductConstByAr
 
         return $dbal
             ->enableCache('products-product', 86400)
-            ->fetchHydrate(CurrentProductDTO::class);
+            ->fetchHydrate(CurrentProductByBarcodeResult::class);
 
     }
 

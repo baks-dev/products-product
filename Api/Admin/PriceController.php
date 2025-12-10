@@ -30,7 +30,7 @@ use BaksDev\Core\Controller\AbstractController;
 use BaksDev\Core\Form\Search\SearchDTO;
 use BaksDev\Core\Form\Search\SearchForm;
 use BaksDev\Core\Listeners\Event\Security\RoleSecurity;
-use BaksDev\Products\Product\Repository\CurrentProductByArticle\CurrentProductDTO;
+use BaksDev\Products\Product\Repository\CurrentProductByArticle\CurrentProductByBarcodeResult;
 use BaksDev\Products\Product\Repository\CurrentProductByArticle\ProductConstByArticleInterface;
 use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailByEventInterface;
 use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailByEventResult;
@@ -89,7 +89,7 @@ final class PriceController extends AbstractController
 
         $CurrentProductDTO = $ProductConstByArticle->find($content->article);
 
-        if(false === ($CurrentProductDTO instanceof CurrentProductDTO))
+        if(false === ($CurrentProductDTO instanceof CurrentProductByBarcodeResult))
         {
             $logger->critical('Продукт по артикулу не найден', [$content->article, self::class.':'.__LINE__]);
             return new JsonResponse(['status' => 404], status: 404);
