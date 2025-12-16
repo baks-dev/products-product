@@ -45,11 +45,11 @@ final class ExistProductBarcodeRepositoryTest extends KernelTestCase
 
         /** @var ExistProductBarcodeRepository $ExistProductBarcodeRepository */
         $result = $ExistProductBarcodeRepository
-            ->forBarcode(new ProductBarcode('2743144747169'))
-            ->forProduct(new ProductUid('0193d94c-30a5-7be3-82af-12255bb8d5a3'))
-            ->forOffer(new ProductOfferConst('0193d94c-2f8f-782c-b2d0-227a451cee01'))
-            ->forVariation(new ProductVariationConst('0193d94c-3006-76b2-a4da-5bc7595519e8'))
-            ->forModification(new ProductModificationConst('0193d94c-2ff9-7296-8348-fce652bc2bda'))
+            ->forBarcode(new ProductBarcode())
+            ->forProduct(new ProductUid())
+            ->forOffer(new ProductOfferConst())
+            ->forVariation(new ProductVariationConst())
+            ->forModification(new ProductModificationConst())
             ->exist();
 
 //        dd($result);
