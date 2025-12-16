@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Repository\ExistProductBarcode;
 
+use BaksDev\Products\Product\Type\Barcode\ProductBarcode;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
@@ -32,7 +33,7 @@ use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductM
 
 interface ExistProductBarcodeInterface
 {
-    public function forBarcode(string $barcode): self;
+    public function forBarcode(ProductBarcode $barcode): self;
 
     public function forProduct(ProductUid $product): self;
 

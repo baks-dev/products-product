@@ -40,7 +40,7 @@ use InvalidArgumentException;
 
 final class ExistProductBarcodeRepository implements ExistProductBarcodeInterface
 {
-    public string $barcode;
+    public ProductBarcode $barcode;
 
     private ProductUid $product;
 
@@ -52,7 +52,7 @@ final class ExistProductBarcodeRepository implements ExistProductBarcodeInterfac
 
     public function __construct(private readonly DBALQueryBuilder $DBALQueryBuilder) {}
 
-    public function forBarcode(string $barcode): self
+    public function forBarcode(ProductBarcode $barcode): self
     {
         $this->barcode = $barcode;
         return $this;

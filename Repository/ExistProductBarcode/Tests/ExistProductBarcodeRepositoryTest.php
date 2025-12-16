@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Repository\ExistProductBarcode;
 
+use BaksDev\Products\Product\Type\Barcode\ProductBarcode;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
@@ -44,7 +45,7 @@ final class ExistProductBarcodeRepositoryTest extends KernelTestCase
 
         /** @var ExistProductBarcodeRepository $ExistProductBarcodeRepository */
         $result = $ExistProductBarcodeRepository
-            ->forBarcode('2743144747169')
+            ->forBarcode(new ProductBarcode('2743144747169'))
             ->forProduct(new ProductUid('0193d94c-30a5-7be3-82af-12255bb8d5a3'))
             ->forOffer(new ProductOfferConst('0193d94c-2f8f-782c-b2d0-227a451cee01'))
             ->forVariation(new ProductVariationConst('0193d94c-3006-76b2-a4da-5bc7595519e8'))
