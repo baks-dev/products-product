@@ -24,6 +24,7 @@
 namespace BaksDev\Products\Product\Type\SearchTags;
 
 use BaksDev\Products\Product\Repository\Search\AllProductsToIndex\AllProductsToIndexResult;
+use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
 use BaksDev\Search\EntityDocument\EntityDocumentInterface;
 use BaksDev\Search\Repository\DataToIndexResult\DataToIndexResultInterface;
 use BaksDev\Search\SearchDocuments\PrepareDocumentInterface;
@@ -50,8 +51,13 @@ class ProductModificationSearchTag extends AbstractProductSearchTag implements S
      */
     public function prepareDocument(DataToIndexResultInterface $item): EntityDocumentInterface
     {
-        /** @var AllProductsToIndexResult  $item */
+        /** @var AllProductsToIndexResult $item */
         $documentId = $item->getProductModificationId();
+
+        if(false === ($documentId instanceof ProductModificationUid))
+        {
+            return $this->entityDocument;
+        }
 
         $this->entityDocument->setEntityId($documentId);
 

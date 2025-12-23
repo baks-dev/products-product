@@ -24,6 +24,7 @@
 namespace BaksDev\Products\Product\Type\SearchTags;
 
 use BaksDev\Products\Product\Repository\Search\AllProductsToIndex\AllProductsToIndexResult;
+use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Search\EntityDocument\EntityDocumentInterface;
 use BaksDev\Search\Repository\DataToIndexResult\DataToIndexResultInterface;
 use BaksDev\Search\SearchDocuments\PrepareDocumentInterface;
@@ -53,6 +54,11 @@ class ProductVariationSearchTag extends AbstractProductSearchTag implements Sear
     {
         /** @var AllProductsToIndexResult $item */
         $documentId = $item->getProductVariationId();
+
+        if(false === ($documentId instanceof ProductVariationUid))
+        {
+            return $this->entityDocument;
+        }
 
         /** @see AbstractProductSearchTag */
         $this->entityDocument->setEntityId($documentId);

@@ -112,7 +112,7 @@ final class AllProductsRepository implements AllProductsInterface
             'product',
             ProductEvent::class,
             'product_event',
-            'product_event.id = product.event'
+            'product_event.id = product.event',
         );
 
         $dbal
@@ -121,7 +121,7 @@ final class AllProductsRepository implements AllProductsInterface
                 'product_event',
                 ProductTrans::class,
                 'product_trans',
-                'product_trans.event = product_event.id AND product_trans.local = :local'
+                'product_trans.event = product_event.id AND product_trans.local = :local',
             );
 
 
@@ -132,7 +132,7 @@ final class AllProductsRepository implements AllProductsInterface
                 'product_event',
                 ProductDescription::class,
                 'product_desc',
-                'product_desc.event = product_event.id AND product_desc.device = :device '
+                'product_desc.event = product_event.id AND product_desc.device = :device ',
             )->setParameter('device', 'pc');
 
 
@@ -148,7 +148,7 @@ final class AllProductsRepository implements AllProductsInterface
                 'product_event',
                 ProductInfo::class,
                 'product_info',
-                'product_info.product = product.id'
+                'product_info.product = product.id',
             );
 
 
@@ -158,7 +158,7 @@ final class AllProductsRepository implements AllProductsInterface
             'product_info',
             UserProfile::class,
             'users_profile',
-            'users_profile.id = product_info.profile'
+            'users_profile.id = product_info.profile',
         );
 
         $dbal
@@ -167,7 +167,7 @@ final class AllProductsRepository implements AllProductsInterface
                 'users_profile',
                 UserProfilePersonal::class,
                 'users_profile_personal',
-                'users_profile_personal.event = users_profile.event'
+                'users_profile_personal.event = users_profile.event',
             );
 
 
@@ -182,7 +182,7 @@ final class AllProductsRepository implements AllProductsInterface
                 'product_event',
                 ProductOffer::class,
                 'product_offer',
-                'product_offer.event = product_event.id'
+                'product_offer.event = product_event.id',
             );
 
         if($this->filter->getOffer())
@@ -199,7 +199,7 @@ final class AllProductsRepository implements AllProductsInterface
                 'product_offer',
                 CategoryProductOffers::class,
                 'category_offer',
-                'category_offer.id = product_offer.category_offer'
+                'category_offer.id = product_offer.category_offer',
             );
 
 
@@ -214,7 +214,7 @@ final class AllProductsRepository implements AllProductsInterface
                 'product_offer',
                 ProductVariation::class,
                 'product_variation',
-                'product_variation.offer = product_offer.id'
+                'product_variation.offer = product_offer.id',
             );
 
 
@@ -232,7 +232,7 @@ final class AllProductsRepository implements AllProductsInterface
                 'product_variation',
                 CategoryProductVariation::class,
                 'category_variation',
-                'category_variation.id = product_variation.category_variation'
+                'category_variation.id = product_variation.category_variation',
             );
 
 
@@ -246,7 +246,7 @@ final class AllProductsRepository implements AllProductsInterface
                 'product_variation',
                 ProductModification::class,
                 'product_modification',
-                'product_modification.variation = product_variation.id '
+                'product_modification.variation = product_variation.id ',
             );
 
 
@@ -263,7 +263,7 @@ final class AllProductsRepository implements AllProductsInterface
                 'product_modification',
                 CategoryProductModification::class,
                 'category_modification',
-                'category_modification.id = product_modification.category_modification'
+                'category_modification.id = product_modification.category_modification',
             );
 
 
@@ -285,28 +285,28 @@ final class AllProductsRepository implements AllProductsInterface
             'product_event',
             ProductPhoto::class,
             'product_photo',
-            'product_photo.event = product_event.id AND product_photo.root = true'
+            'product_photo.event = product_event.id AND product_photo.root = true',
         );
 
         $dbal->leftJoin(
             'product_offer',
             ProductOfferImage::class,
             'product_offer_images',
-            'product_offer_images.offer = product_offer.id AND product_offer_images.root = true'
+            'product_offer_images.offer = product_offer.id AND product_offer_images.root = true',
         );
 
         $dbal->leftJoin(
             'product_offer',
             ProductVariationImage::class,
             'product_variation_image',
-            'product_variation_image.variation = product_variation.id AND product_variation_image.root = true'
+            'product_variation_image.variation = product_variation.id AND product_variation_image.root = true',
         );
 
         $dbal->leftJoin(
             'product_modification',
             ProductModificationImage::class,
             'product_modification_image',
-            'product_modification_image.modification = product_modification.id AND product_modification_image.root = true'
+            'product_modification_image.modification = product_modification.id AND product_modification_image.root = true',
         );
 
         $dbal->addSelect(
@@ -327,7 +327,7 @@ final class AllProductsRepository implements AllProductsInterface
 			   
 			   ELSE NULL
 			END AS product_image
-		"
+		",
         );
 
         /** Флаг загрузки файла CDN */
@@ -369,7 +369,7 @@ final class AllProductsRepository implements AllProductsInterface
             'product_event',
             ProductCategory::class,
             'product_event_category',
-            'product_event_category.event = product_event.id AND product_event_category.root = true'
+            'product_event_category.event = product_event.id AND product_event_category.root = true',
         );
 
         if($this->filter->getCategory())
@@ -382,7 +382,7 @@ final class AllProductsRepository implements AllProductsInterface
             'product_event_category',
             CategoryProduct::class,
             'category',
-            'category.id = product_event_category.category'
+            'category.id = product_event_category.category',
         );
 
         $dbal
@@ -391,7 +391,7 @@ final class AllProductsRepository implements AllProductsInterface
                 'category',
                 CategoryProductTrans::class,
                 'category_trans',
-                'category_trans.event = category.event AND category_trans.local = :local'
+                'category_trans.event = category.event AND category_trans.local = :local',
             );
 
 
@@ -400,7 +400,7 @@ final class AllProductsRepository implements AllProductsInterface
             'product',
             ProductPrice::class,
             'product_price',
-            'product_price.event = product.event'
+            'product_price.event = product.event',
         );
 
         /* Цена торгового предо жения */
@@ -408,7 +408,7 @@ final class AllProductsRepository implements AllProductsInterface
             'product_offer',
             ProductOfferPrice::class,
             'product_offer_price',
-            'product_offer_price.offer = product_offer.id'
+            'product_offer_price.offer = product_offer.id',
         );
 
         /* Цена множественного варианта */
@@ -416,7 +416,7 @@ final class AllProductsRepository implements AllProductsInterface
             'product_variation',
             ProductVariationPrice::class,
             'product_variation_price',
-            'product_variation_price.variation = product_variation.id'
+            'product_variation_price.variation = product_variation.id',
         );
 
         /* Цена модификации множественного варианта */
@@ -424,7 +424,7 @@ final class AllProductsRepository implements AllProductsInterface
             'product_modification',
             ProductModificationPrice::class,
             'product_modification_price',
-            'product_modification_price.modification = product_modification.id'
+            'product_modification_price.modification = product_modification.id',
         );
 
 
@@ -471,7 +471,7 @@ final class AllProductsRepository implements AllProductsInterface
 			   
 			   ELSE NULL
 			END AS product_currency
-		'
+		',
         );
 
 
@@ -482,7 +482,7 @@ final class AllProductsRepository implements AllProductsInterface
             'product_offer',
             ProductOfferQuantity::class,
             'product_offer_quantity',
-            'product_offer_quantity.offer = product_offer.id'
+            'product_offer_quantity.offer = product_offer.id',
         );
 
         /* Наличие и резерв множественного варианта */
@@ -490,7 +490,7 @@ final class AllProductsRepository implements AllProductsInterface
             'product_variation',
             ProductVariationQuantity::class,
             'product_variation_quantity',
-            'product_variation_quantity.variation = product_variation.id'
+            'product_variation_quantity.variation = product_variation.id',
         );
 
         $dbal
@@ -498,7 +498,7 @@ final class AllProductsRepository implements AllProductsInterface
                 'product_modification',
                 ProductModificationQuantity::class,
                 'product_modification_quantity',
-                'product_modification_quantity.modification = product_modification.id'
+                'product_modification_quantity.modification = product_modification.id',
             );
 
 
@@ -566,7 +566,7 @@ final class AllProductsRepository implements AllProductsInterface
                         'product_property_'.$property->getType(),
                         'product_property_'.$property->getType().'.event = product.event AND 
                         product_property_'.$property->getType().'.field = :'.$property->getType().'_const AND 
-                        product_property_'.$property->getType().'.value = :'.$property->getType().'_value'
+                        product_property_'.$property->getType().'.value = :'.$property->getType().'_value',
                     );
 
                     $dbal->setParameter($property->getType().'_const', $property->getConst());
@@ -618,8 +618,18 @@ final class AllProductsRepository implements AllProductsInterface
                 $dbal->addOrderBy('CASE WHEN product_offer.id IN (:uuids) THEN 0 ELSE 1 END');
                 $dbal->addOrderBy('CASE WHEN product_variation.id IN (:uuids)  THEN 0 ELSE 1 END');
                 $dbal->addOrderBy('CASE WHEN product_modification.id IN (:uuids)  THEN 0 ELSE 1 END');
-            }
 
+                $paginator = $this->paginator->fetchAllAssociative($dbal);
+
+                if(empty($paginator->getData()))
+                {
+                    $resultProducts = false;
+                }
+                else
+                {
+                    return $paginator;
+                }
+            }
 
             if(empty($resultProducts))
             {
@@ -668,7 +678,7 @@ final class AllProductsRepository implements AllProductsInterface
             'product',
             ProductEvent::class,
             'product_event',
-            'product_event.id = product.event'
+            'product_event.id = product.event',
         );
 
         $dbal
@@ -677,7 +687,7 @@ final class AllProductsRepository implements AllProductsInterface
                 'product_event',
                 ProductTrans::class,
                 'product_trans',
-                'product_trans.event = product_event.id AND product_trans.local = :local'
+                'product_trans.event = product_event.id AND product_trans.local = :local',
             );
 
 
@@ -688,7 +698,7 @@ final class AllProductsRepository implements AllProductsInterface
                 'product_event',
                 ProductDescription::class,
                 'product_desc',
-                'product_desc.event = product_event.id AND product_desc.device = :device '
+                'product_desc.event = product_event.id AND product_desc.device = :device ',
             )
             ->setParameter('device', 'pc');
 
@@ -708,7 +718,7 @@ final class AllProductsRepository implements AllProductsInterface
             ->setParameter(
                 key: 'profile',
                 value: $profile,
-                type: UserProfileUid::TYPE
+                type: UserProfileUid::TYPE,
             );
 
 
@@ -726,7 +736,7 @@ final class AllProductsRepository implements AllProductsInterface
                 'product_info',
                 UserProfile::class,
                 'users_profile',
-                'users_profile.id = product_info.profile'
+                'users_profile.id = product_info.profile',
             );
 
         $dbal
@@ -735,7 +745,7 @@ final class AllProductsRepository implements AllProductsInterface
                 'users_profile',
                 UserProfilePersonal::class,
                 'users_profile_personal',
-                'users_profile_personal.event = users_profile.event'
+                'users_profile_personal.event = users_profile.event',
             );
 
 
@@ -745,7 +755,7 @@ final class AllProductsRepository implements AllProductsInterface
             'product_event',
             ProductOffer::class,
             'product_offer',
-            'product_offer.event = product_event.id'
+            'product_offer.event = product_event.id',
         );
 
 
@@ -755,7 +765,7 @@ final class AllProductsRepository implements AllProductsInterface
             'product_offer',
             CategoryProductOffers::class,
             'category_offer',
-            'category_offer.id = product_offer.category_offer'
+            'category_offer.id = product_offer.category_offer',
         );
 
 
@@ -765,7 +775,7 @@ final class AllProductsRepository implements AllProductsInterface
             'product_offer',
             ProductVariation::class,
             'product_variation',
-            'product_variation.offer = product_offer.id'
+            'product_variation.offer = product_offer.id',
         );
 
 
@@ -774,7 +784,7 @@ final class AllProductsRepository implements AllProductsInterface
             'category_variation',
             ProductVariationPrice::class,
             'product_variation_price',
-            'product_variation_price.variation = product_variation.id'
+            'product_variation_price.variation = product_variation.id',
         );
 
 
@@ -783,7 +793,7 @@ final class AllProductsRepository implements AllProductsInterface
             'product_variation',
             CategoryProductVariation::class,
             'category_variation',
-            'category_variation.id = product_variation.category_variation'
+            'category_variation.id = product_variation.category_variation',
         );
 
 
@@ -793,14 +803,14 @@ final class AllProductsRepository implements AllProductsInterface
             'product_variation',
             ProductModification::class,
             'product_modification',
-            'product_modification.variation = product_variation.id '
+            'product_modification.variation = product_variation.id ',
         );
 
         $dbal->leftJoin(
             'product_modification',
             ProductModificationImage::class,
             'product_modification_image',
-            'product_modification_image.modification = product_modification.id AND product_modification_image.root = true'
+            'product_modification_image.modification = product_modification.id AND product_modification_image.root = true',
         );
 
 
@@ -809,7 +819,7 @@ final class AllProductsRepository implements AllProductsInterface
             'product_modification',
             CategoryProductModification::class,
             'category_modification',
-            'category_modification.id = product_modification.category_modification'
+            'category_modification.id = product_modification.category_modification',
         );
 
 
@@ -819,21 +829,21 @@ final class AllProductsRepository implements AllProductsInterface
             'product_event',
             ProductPhoto::class,
             'product_photo',
-            'product_photo.event = product_event.id AND product_photo.root = true'
+            'product_photo.event = product_event.id AND product_photo.root = true',
         );
 
         $dbal->leftJoin(
             'product_offer',
             ProductVariationImage::class,
             'product_variation_image',
-            'product_variation_image.variation = product_variation.id AND product_variation_image.root = true'
+            'product_variation_image.variation = product_variation.id AND product_variation_image.root = true',
         );
 
         $dbal->leftJoin(
             'product_offer',
             ProductOfferImage::class,
             'product_offer_images',
-            'product_offer_images.offer = product_offer.id AND product_offer_images.root = true'
+            'product_offer_images.offer = product_offer.id AND product_offer_images.root = true',
         );
 
         $dbal->addSelect(
@@ -853,7 +863,7 @@ final class AllProductsRepository implements AllProductsInterface
 					
 			   ELSE NULL
 			END AS product_image
-		"
+		",
         );
 
         /** Флаг загрузки файла CDN */
@@ -900,7 +910,7 @@ final class AllProductsRepository implements AllProductsInterface
             'product_event',
             ProductCategory::class,
             'product_event_category',
-            'product_event_category.event = product_event.id AND product_event_category.root = true'
+            'product_event_category.event = product_event.id AND product_event_category.root = true',
         );
 
 
@@ -914,7 +924,7 @@ final class AllProductsRepository implements AllProductsInterface
             'product_event_category',
             CategoryProduct::class,
             'category',
-            'category.id = product_event_category.category'
+            'category.id = product_event_category.category',
         );
 
 
@@ -924,7 +934,7 @@ final class AllProductsRepository implements AllProductsInterface
                 'category',
                 CategoryProductInfo::class,
                 'category_info',
-                'category_info.event = category.event'
+                'category_info.event = category.event',
             );
 
 
@@ -934,7 +944,7 @@ final class AllProductsRepository implements AllProductsInterface
             'category',
             CategoryProductTrans::class,
             'category_trans',
-            'category_trans.event = category.event AND category_trans.local = :local'
+            'category_trans.event = category.event AND category_trans.local = :local',
         );
 
 
@@ -1009,7 +1019,7 @@ final class AllProductsRepository implements AllProductsInterface
                         'product_property_'.$property->getType(),
                         'product_property_'.$property->getType().'.event = product.event AND 
                         product_property_'.$property->getType().'.field = :'.$property->getType().'_const AND 
-                        product_property_'.$property->getType().'.value = :'.$property->getType().'_value'
+                        product_property_'.$property->getType().'.value = :'.$property->getType().'_value',
                     );
 
                     $dbal->setParameter($property->getType().'_const', $property->getConst());
