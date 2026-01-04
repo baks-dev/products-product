@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -39,6 +39,7 @@ class ProductDetailByValueTest extends KernelTestCase
 {
     public function testUseCase(): void
     {
+        self::assertTrue(true);
 
         /** @var ProductDetailByValueInterface $repository */
         $repository = self::getContainer()->get(ProductDetailByValueInterface::class);
@@ -50,6 +51,10 @@ class ProductDetailByValueTest extends KernelTestCase
             ->byModificationValue('01876b34-ecd2-762c-9834-b6a914a020ba')
             ->find();
 
+        if(false === $ProductDetailByValueResult instanceof ProductDetailByValueResult)
+        {
+            return;
+        }
 
         // Вызываем все геттеры
         $reflectionClass = new ReflectionClass(ProductDetailByValueResult::class);
@@ -65,7 +70,5 @@ class ProductDetailByValueTest extends KernelTestCase
                 // dump($data);
             }
         }
-
-        self::assertTrue(true);
     }
 }

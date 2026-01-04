@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -114,6 +114,7 @@ final class ProductFilterForm extends AbstractType
                 $sessionJson = $sessionData ? base64_decode($sessionData) : false;
                 $sessionArray = $sessionJson !== false && json_validate($sessionJson) ? json_decode($sessionJson, true, 512, JSON_THROW_ON_ERROR) : false;
 
+
                 if($sessionArray !== false)
                 {
                     !isset($sessionArray['all']) ?: $data->setAll($sessionArray['all'] === true);
@@ -124,6 +125,7 @@ final class ProductFilterForm extends AbstractType
                     !isset($sessionArray['materials']) ?: $data->setMaterials($sessionArray['materials']);
                 }
             }
+
 
             /** Если жестко не указана категория - выводим список для выбора */
 
@@ -151,6 +153,9 @@ final class ProductFilterForm extends AbstractType
 
             $data = $event->getData();
             $builder = $event->getForm();
+
+
+            //return;
 
             $Category = $data->getCategory();
             $dataRequest = $this->request->getMainRequest()?->get($builder->getName());
@@ -182,9 +187,9 @@ final class ProductFilterForm extends AbstractType
                                 'priority' => 200,
                                 'required' => false,
                                 'translation_domain' => $inputOffer->domain(),
+                                'empty_data' => $data->getOffer(),
                             ],
                         );
-
 
                         /** Множественные варианты торгового предложения */
 
@@ -206,6 +211,7 @@ final class ProductFilterForm extends AbstractType
                                         'label' => $variationField->getOption(),
                                         'priority' => 199,
                                         'required' => false,
+                                        'empty_data' => $data->getVariation(),
                                     ],
                                 );
 
@@ -229,6 +235,7 @@ final class ProductFilterForm extends AbstractType
                                                 'label' => $modificationField->getOption(),
                                                 'priority' => 198,
                                                 'required' => false,
+                                                'empty_data' => $data->getModification(),
                                             ],
                                         );
                                     }
@@ -280,10 +287,10 @@ final class ProductFilterForm extends AbstractType
             }
             else
             {
-                $data->setOffer(null);
-                $data->setVariation(null);
-                $data->setModification(null);
-                $data->setProperty(null);
+                //$data->setOffer(null);
+                //$data->setVariation(null);
+                //$data->setModification(null);
+                //$data->setProperty(null);
             }
 
 
@@ -313,12 +320,12 @@ final class ProductFilterForm extends AbstractType
                         $sessionArray['category'] = (string) $data->getCategory();
                         $sessionArray['category_name'] = $data->getCategory()->getOptions();
 
-                        !$data->getOffer() ?: $sessionArray['offer'] = (string) $data->getOffer();
-                        !$data->getVariation() ?: $sessionArray['variation'] = (string) $data->getVariation();
-                        !$data->getModification() ?: $sessionArray['modification'] = (string) $data->getModification();
+                        empty($data->getOffer()) ?: $sessionArray['offer'] = (string) $data->getOffer();
+                        empty($data->getVariation()) ?: $sessionArray['variation'] = (string) $data->getVariation();
+                        empty($data->getModification()) ?: $sessionArray['modification'] = (string) $data->getModification();
                     }
 
-                    !$data->getMaterials() ?: $sessionArray['materials'] = true;
+                    $sessionArray['materials'] = $data->getMaterials() === true;
 
                     $properties = [];
 
@@ -370,10 +377,10 @@ final class ProductFilterForm extends AbstractType
         );
 
 
-        $builder->addEventListener(
-            FormEvents::PRE_SET_DATA,
-            function(FormEvent $event): void {},
-        );
+        //        $builder->addEventListener(
+        //            FormEvents::PRE_SET_DATA,
+        //            function(FormEvent $event): void {},
+        //        );
 
 
     }
