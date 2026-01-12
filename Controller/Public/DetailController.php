@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -28,8 +28,8 @@ namespace BaksDev\Products\Product\Controller\Public;
 use BaksDev\Core\Controller\AbstractController;
 use BaksDev\Core\Form\Search\SearchDTO;
 use BaksDev\Core\Form\Search\SearchForm;
-use BaksDev\Orders\Order\UseCase\Public\Basket\Add\OrderProductDTO;
-use BaksDev\Orders\Order\UseCase\Public\Basket\Add\OrderProductForm;
+use BaksDev\Orders\Order\UseCase\Public\Basket\Add\PublicOrderProductDTO;
+use BaksDev\Orders\Order\UseCase\Public\Basket\Add\PublicOrderProductForm;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
 use BaksDev\Products\Product\Repository\Cards\ProductAlternative\ProductAlternativeInterface;
 use BaksDev\Products\Product\Repository\ProductDetailByValue\ProductDetailByValueInterface;
@@ -149,10 +149,11 @@ final class DetailController extends AbstractController
         /** Корзина */
         $form = null;
 
-        if(class_exists(OrderProductDTO::class))
+        if(class_exists(PublicOrderProductDTO::class))
         {
-            $AddProductBasketDTO = new OrderProductDTO();
-            $form = $this->createForm(OrderProductForm::class, $AddProductBasketDTO, [
+            $AddProductBasketDTO = new PublicOrderProductDTO();
+
+            $form = $this->createForm(PublicOrderProductForm::class, $AddProductBasketDTO, [
                 'action' => $this->generateUrl(
                     'orders-order:public.add',
                     [
