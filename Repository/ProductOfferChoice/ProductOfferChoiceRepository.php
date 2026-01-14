@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -350,10 +350,8 @@ final  class ProductOfferChoiceRepository implements ProductOfferChoiceInterface
         $dbal->addSelect('category_offer_trans.name AS property');
         $dbal->addSelect('category_offer.reference AS characteristic');
 
-        $dbal->addSelect(
-            "JSON_AGG
-            (DISTINCT
-                JSONB_BUILD_OBJECT
+        $dbal->addSelect("
+           JSONB_BUILD_OBJECT
                 (
                     'product_image', CONCAT ( '/upload/".$dbal->table(ProductOfferImage::class)."' , '/', product_offer_images.name),
                     'product_image_cdn', product_offer_images.cdn,
@@ -362,8 +360,10 @@ final  class ProductOfferChoiceRepository implements ProductOfferChoiceInterface
                     'product_price', product_offer_price.price,
                     'product_currency', product_offer_price.currency,
                     'product_offer_value', product_offer.value,
-                    'product_offer_postfix', product_offer.postfix
-                )
+                    'product_offer_postfix', product_offer.postfix,
+                    'product_offer_reference', category_offer.reference
+                    
+                
             ) AS params",
         );
 
