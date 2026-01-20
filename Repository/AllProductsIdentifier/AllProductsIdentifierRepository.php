@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Repository\AllProductsIdentifier;
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
+use BaksDev\Products\Product\Entity\Info\ProductInfo;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
@@ -127,6 +128,13 @@ final class AllProductsIdentifierRepository implements AllProductsIdentifierInte
                     ProductUid::TYPE,
                 );
         }
+
+        $dbal
+            ->leftJoin('product',
+                ProductInfo::class,
+                'info',
+                'info.product = product.id',
+            );
 
 
         $dbal
@@ -249,6 +257,17 @@ final class AllProductsIdentifierRepository implements AllProductsIdentifierInte
                         (modification.const IS NULL AND product_invariable.modification IS NULL)
                    )
             ');
+
+        // Артикул сырья
+
+        $dbal->addSelect('
+            COALESCE(
+                modification.article, 
+                variation.article, 
+                offer.article, 
+                info.article
+            ) AS article
+		');
 
         $dbal->addOrderBy('product.id');
 

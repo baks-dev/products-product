@@ -145,17 +145,6 @@ final class ProductFilterForm extends AbstractType
                 ]);
             }
 
-            //
-
-            // this would be your entity, i.e. SportMeetup
-
-            /** @var ProductFilterDTO $data */
-
-            $data = $event->getData();
-            $builder = $event->getForm();
-
-
-            //return;
 
             $Category = $data->getCategory();
             $dataRequest = $this->request->getMainRequest()?->get($builder->getName());
@@ -187,7 +176,7 @@ final class ProductFilterForm extends AbstractType
                                 'priority' => 200,
                                 'required' => false,
                                 'translation_domain' => $inputOffer->domain(),
-                                'empty_data' => $data->getOffer(),
+                                //'empty_data' => $data->getOffer(),
                             ],
                         );
 
@@ -211,7 +200,7 @@ final class ProductFilterForm extends AbstractType
                                         'label' => $variationField->getOption(),
                                         'priority' => 199,
                                         'required' => false,
-                                        'empty_data' => $data->getVariation(),
+                                        //'empty_data' => $data->getVariation(),
                                     ],
                                 );
 
@@ -235,7 +224,7 @@ final class ProductFilterForm extends AbstractType
                                                 'label' => $modificationField->getOption(),
                                                 'priority' => 198,
                                                 'required' => false,
-                                                'empty_data' => $data->getModification(),
+                                                //'empty_data' => $data->getModification(),
                                             ],
                                         );
                                     }
@@ -301,6 +290,9 @@ final class ProductFilterForm extends AbstractType
             FormEvents::POST_SUBMIT,
             function(FormEvent $event): void {
 
+                /** @var ProductFilterDTO $data */
+                $data = $event->getData();
+
                 if($this->session === false)
                 {
                     $this->session = $this->request->getSession();
@@ -308,9 +300,6 @@ final class ProductFilterForm extends AbstractType
 
                 if($this->session)
                 {
-                    /** @var ProductFilterDTO $data */
-                    $data = $event->getData();
-
                     $sessionArray = [];
                     $sessionArray['all'] = $data->getAll();
 
@@ -324,6 +313,7 @@ final class ProductFilterForm extends AbstractType
                         empty($data->getVariation()) ?: $sessionArray['variation'] = (string) $data->getVariation();
                         empty($data->getModification()) ?: $sessionArray['modification'] = (string) $data->getModification();
                     }
+
 
                     $sessionArray['materials'] = $data->getMaterials() === true;
 
