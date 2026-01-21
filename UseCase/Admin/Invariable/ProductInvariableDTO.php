@@ -33,7 +33,7 @@ use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductM
 use Symfony\Component\Validator\Constraints as Assert;
 
 /** @see ProductInvariable */
-final class ProductInvariableDTO //implements ProductInvariableInterface
+final class ProductInvariableDTO
 {
     /**
      * Идентификатор сущности
@@ -65,17 +65,13 @@ final class ProductInvariableDTO //implements ProductInvariableInterface
         return $this;
     }
 
-    /**
-     * Id
-     */
+    /** Id */
     public function getMain(): ?ProductInvariableUid
     {
         return $this->id;
     }
 
-    /**
-     * Product
-     */
+    /** Product */
     public function getProduct(): ProductUid
     {
         return $this->product;
@@ -87,9 +83,7 @@ final class ProductInvariableDTO //implements ProductInvariableInterface
         return $this;
     }
 
-    /**
-     * Offer
-     */
+    /** Offer */
     public function getOffer(): ?ProductOfferConst
     {
         return $this->offer;
@@ -101,9 +95,7 @@ final class ProductInvariableDTO //implements ProductInvariableInterface
         return $this;
     }
 
-    /**
-     * Variation
-     */
+    /** Variation */
     public function getVariation(): ?ProductVariationConst
     {
         return $this->variation;
@@ -115,9 +107,7 @@ final class ProductInvariableDTO //implements ProductInvariableInterface
         return $this;
     }
 
-    /**
-     * Modification
-     */
+    /** Modification */
     public function getModification(): ?ProductModificationConst
     {
         return $this->modification;

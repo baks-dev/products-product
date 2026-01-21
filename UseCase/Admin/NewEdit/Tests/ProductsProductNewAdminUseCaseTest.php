@@ -54,7 +54,6 @@ use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Price\ProductVariationPriceDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\ProductVariationCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Photo\PhotoCollectionDTO;
-use BaksDev\Products\Product\UseCase\Admin\NewEdit\Price\Opt\ProductPriceOptDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Price\PriceDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\ProductDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\ProductHandler;
@@ -78,7 +77,17 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\File;
 
+#[Group('drom')]
+#[Group('drom-repository')]
+#[Group('drom-usecase')]
+#[Group('drom-products')]
+#[Group('drom-products-controller')]
+#[Group('drom-products-repository')]
+#[Group('drom-products-usecase')]
+#[Group('drom-board')]
+#[Group('drom-board-repository')]
 #[Group('products-product')]
+#[Group('products-product-controller')]
 #[Group('products-product-usecase')]
 #[When(env: 'test')]
 class ProductsProductNewAdminUseCaseTest extends KernelTestCase
@@ -534,7 +543,6 @@ class ProductsProductNewAdminUseCaseTest extends KernelTestCase
         $handle = $ProductHandler->handle($ProductDTO);
 
         self::assertTrue(($handle instanceof Product));
-
     }
 
 }

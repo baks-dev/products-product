@@ -53,7 +53,6 @@ final readonly class FindProductsForQuantityUpdateDispatcher
             return;
         }
 
-        /** @var ProductsByValuesResult $product */
         foreach($products as $product)
         {
             $UpdateProductQuantityMessage = new UpdateProductQuantityMessage(

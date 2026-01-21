@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\UseCase\Admin\Quantity\Offer\Variation;
 
+use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 
 final readonly class UpdateVariationQuantityDTO
@@ -33,6 +34,7 @@ final readonly class UpdateVariationQuantityDTO
         private ProductVariationUid $variation,
         private int $quantity,
         private int|false $reserve = false, // false - означает не обновлять резерв
+        private ProductEventUid|false $product = false,
     ) {}
 
     public function getVariation(): ProductVariationUid
@@ -52,5 +54,10 @@ final readonly class UpdateVariationQuantityDTO
     public function getReserve(): int|false
     {
         return $this->reserve;
+    }
+
+    public function getProduct(): ProductEventUid
+    {
+        return $this->product;
     }
 }

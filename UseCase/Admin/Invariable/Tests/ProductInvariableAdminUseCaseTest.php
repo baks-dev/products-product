@@ -56,7 +56,6 @@ class ProductInvariableAdminUseCaseTest extends KernelTestCase
             $em->remove($main);
         }
 
-
         $em->flush();
         $em->clear();
     }

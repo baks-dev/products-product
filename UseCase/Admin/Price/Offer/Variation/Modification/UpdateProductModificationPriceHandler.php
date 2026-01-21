@@ -26,7 +26,9 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\UseCase\Admin\Price\Offer\Variation\Modification;
 
 use BaksDev\Core\Entity\AbstractHandler;
+use BaksDev\Core\Messenger\MessageDelay;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Price\ProductModificationPrice;
+use BaksDev\Products\Product\Messenger\Price\UpdateMarketplacePriceMessage;
 
 final class UpdateProductModificationPriceHandler extends AbstractHandler
 {
@@ -56,9 +58,14 @@ final class UpdateProductModificationPriceHandler extends AbstractHandler
 
         $this->flush();
 
+        $message = new UpdateMarketplacePriceMessage($command->getProductEvent());
+
         $this->messageDispatch
             ->addClearCacheOther('products-product')
-            ->addClearCacheOther('avito-board');
+            ->addClearCacheOther('avito-board')
+            ->addClearCacheOther('drom-board')
+            ->addClearCacheOther('drom-products')
+            ->dispatch($message, [new MessageDelay('5 minutes')], transport: 'products-product');
 
         return $productModificationPrice;
     }

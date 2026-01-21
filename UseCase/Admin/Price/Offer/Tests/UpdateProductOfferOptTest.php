@@ -27,6 +27,7 @@ namespace BaksDev\Products\Product\UseCase\Admin\Price\Offer\Tests;
 
 use BaksDev\Products\Product\Entity\Offers\Opt\ProductOfferOpt;
 use BaksDev\Products\Product\Repository\CurrentProductEvent\CurrentProductEventInterface;
+use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Products\Product\UseCase\Admin\Invariable\Tests\ProductInvariableAdminUseCaseTest;
@@ -60,7 +61,8 @@ final class UpdateProductOfferOptTest extends KernelTestCase
 
         $updateProductOfferOptDTO = new UpdateProductOfferOptDTO()
             ->setOffer(new ProductOfferUid($offerId))
-            ->setPrice(new Money(10000));
+            ->setPrice(new Money(10000))
+            ->setProductEvent(new ProductEventUid(ProductEventUid::TEST));
 
         /** @var UpdateProductOfferOptHandler $UpdateProductOfferOptHandler */
         $UpdateProductOfferOptHandler = self::getContainer()->get(UpdateProductOfferOptHandler::class);

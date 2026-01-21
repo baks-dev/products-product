@@ -47,9 +47,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
-/**
- * Обновляет количество продукта Quantity в зависимости от вложенности торгового предложения
- */
+/** Обновляет количество продукта Quantity в зависимости от вложенности торгового предложения */
 #[AsMessageHandler(priority: 0)]
 final readonly class UpdateProductQuantityDispatcher
 {
@@ -98,6 +96,7 @@ final readonly class UpdateProductQuantityDispatcher
                 $CurrentProductIdentifierResult->getModification(),
                 $message->getQuantity(),
                 $message->getReserve(),
+                $CurrentProductIdentifierResult->getEvent()
             );
 
             $product = $this->UpdateModificationQuantityHandler->handle($updateModificationQuantityDTO);
@@ -143,6 +142,7 @@ final readonly class UpdateProductQuantityDispatcher
                 $CurrentProductIdentifierResult->getVariation(),
                 $message->getQuantity(),
                 $message->getReserve(),
+                $CurrentProductIdentifierResult->getEvent()
             );
 
             $product = $this->UpdateVariationQuantityHandler->handle($updateVariationQuantityDTO);
@@ -189,6 +189,7 @@ final readonly class UpdateProductQuantityDispatcher
                 $CurrentProductIdentifierResult->getOffer(),
                 $message->getQuantity(),
                 $message->getReserve(),
+                $CurrentProductIdentifierResult->getEvent()
             );
 
             $product = $this->UpdateOfferQuantityHandler->handle($updateOfferQuantityDTO);

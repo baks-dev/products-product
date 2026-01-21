@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\UseCase\Admin\Price\Offer\Variation\Modification;
 
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Price\ProductModificationPriceInterface;
+use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
 use BaksDev\Reference\Money\Type\Money;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -41,6 +42,8 @@ final class UpdateProductModificationPriceDTO implements ProductModificationPric
     #[Assert\Valid]
     private ?Money $price;
 
+    private ?ProductEventUid $productEvent = null;
+    
     public function getModification(): ?ProductModificationUid
     {
         return $this->modificationId;
@@ -60,6 +63,17 @@ final class UpdateProductModificationPriceDTO implements ProductModificationPric
     public function setPrice(Money $price): self
     {
         $this->price = $price;
+        return $this;
+    }
+
+    public function getProductEvent(): ?ProductEventUid
+    {
+        return $this->productEvent;
+    }
+
+    public function setProductEvent(?ProductEventUid $productEvent): self
+    {
+        $this->productEvent = $productEvent;
         return $this;
     }
 }

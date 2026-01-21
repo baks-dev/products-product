@@ -31,6 +31,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 #[Group('products-product')]
+#[Group('products-product-controller')]
 #[When(env: 'test')]
 final class AllProductsQuantityAdminTest extends WebTestCase
 {
@@ -40,7 +41,7 @@ final class AllProductsQuantityAdminTest extends WebTestCase
     /** Доступ по роли ROLE_PRODUCT */
     public function testRoleSuccessful(): void
     {
-        $client = static::createClient();
+        $client = self::createClient();
 
         $usr = TestUserAccount::getModer(self::ROLE);
 
@@ -54,7 +55,7 @@ final class AllProductsQuantityAdminTest extends WebTestCase
     /** Доступ по роли ROLE_ADMIN */
     public function testRoleAdminSuccessful(): void
     {
-        $client = static::createClient();
+        $client = self::createClient();
 
         $usr = TestUserAccount::getAdmin();
 
@@ -67,7 +68,7 @@ final class AllProductsQuantityAdminTest extends WebTestCase
     /** Доступ по роли ROLE_USER */
     public function testRoleUserFiled(): void
     {
-        $client = static::createClient();
+        $client = self::createClient();
 
         $usr = TestUserAccount::getUsr();
         $client->loginUser($usr, 'user');
@@ -80,7 +81,7 @@ final class AllProductsQuantityAdminTest extends WebTestCase
     public function testGuestFiled(): void
     {
         self::ensureKernelShutdown();
-        $client = static::createClient();
+        $client = self::createClient();
         $client->request('GET', self::URL);
 
         // Full authentication is required to access this resource

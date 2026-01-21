@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\UseCase\Admin\Price\Offer\Variation;
 
 use BaksDev\Products\Product\Entity\Offers\Variation\Opt\ProductVariationOptInterface;
+use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Reference\Money\Type\Money;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -40,6 +41,8 @@ final class UpdateProductVariationOptDTO implements ProductVariationOptInterface
     /** Оптовая цена */
     #[Assert\Valid]
     private ?Money $price = null;
+
+    private ?ProductEventUid $productEvent = null;
 
     public function getVariation(): ?ProductVariationUid
     {
@@ -61,5 +64,16 @@ final class UpdateProductVariationOptDTO implements ProductVariationOptInterface
     public function getPrice(): ?Money
     {
         return $this->price;
+    }
+
+    public function getProductEvent(): ?ProductEventUid
+    {
+        return $this->productEvent;
+    }
+
+    public function setProductEvent(?ProductEventUid $productEvent): self
+    {
+        $this->productEvent = $productEvent;
+        return $this;
     }
 }
