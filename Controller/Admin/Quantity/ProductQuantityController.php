@@ -67,7 +67,7 @@ final class ProductQuantityController extends AbstractController
         #[ParamConverter(ProductModificationUid::class)] ?ProductModificationUid $modification = null,
     ): Response
     {
-        /** @var ProductDetailByEventResult $productDetailByUid */
+        /** @var ProductDetailByEventResult|false $productDetailByUid */
         $productDetailByUid = $ProductDetailByUidRepository
             ->event($product)
             ->offer($offer)
@@ -114,6 +114,7 @@ final class ProductQuantityController extends AbstractController
                     $modification,
                     $data->getTotal(),
                     $data->getReserve(),
+                    $product
                 );
 
                 $handle = $UpdateModificationQuantityHandler->handle($updateModificationQuantityDTO);
@@ -139,6 +140,7 @@ final class ProductQuantityController extends AbstractController
                     $variation,
                     $data->getTotal(),
                     $data->getReserve(),
+                    $product
                 );
 
                 $handle = $UpdateVariationQuantityHandler->handle($updateVariationQuantityDTO);
@@ -163,6 +165,7 @@ final class ProductQuantityController extends AbstractController
                     $offer,
                     $data->getTotal(),
                     $data->getReserve(),
+                    $product
                 );
 
                 $handle = $UpdateOfferQuantityHandler->handle($updateOfferQuantityDTO);

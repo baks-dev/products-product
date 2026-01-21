@@ -25,8 +25,10 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\UseCase\Admin\Price\Offer\Tests;
 
+use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Offers\Price\ProductOfferPrice;
 use BaksDev\Products\Product\Repository\CurrentProductEvent\CurrentProductEventInterface;
+use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Tests\ProductsProductNewAdminUseCaseTest;
 use BaksDev\Products\Product\UseCase\Admin\Price\Offer\UpdateProductOfferPriceDTO;
@@ -55,9 +57,11 @@ final class UpdateProductOfferPriceTest extends KernelTestCase
             ->current()
             ->getId();
 
+        /** @var ProductEvent $productEvent */
         $updateProductOfferPriceDTO = new UpdateProductOfferPriceDTO()
             ->setOffer($offerId)
-            ->setPrice(new Money(10000));
+            ->setPrice(new Money(10000))
+            ->setProductEvent($productEvent->getId());
 
         /** @var UpdateProductOfferPriceHandler $UpdateProductOfferPriceHandler */
         $UpdateProductOfferPriceHandler = self::getContainer()->get(UpdateProductOfferPriceHandler::class);

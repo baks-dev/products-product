@@ -28,6 +28,7 @@ namespace BaksDev\Products\Product\UseCase\Admin\Quantity\Offer\Variation\Tests;
 use BaksDev\Products\Product\Entity\Offers\Variation\Quantity\ProductVariationQuantity;
 use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailByInvariableInterface;
 use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailByInvariableResult;
+use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Invariable\ProductInvariableUid;
 use BaksDev\Products\Product\UseCase\Admin\Invariable\Tests\ProductInvariableAdminUseCaseTest;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Tests\ProductsProductNewAdminUseCaseTest;
@@ -39,6 +40,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 #[Group('products-product')]
+#[Group('products-product-usecase')]
 #[When(env: 'test')]
 final class UpdateVariationQuantityTest extends KernelTestCase
 {
@@ -63,6 +65,7 @@ final class UpdateVariationQuantityTest extends KernelTestCase
             $variation,
             $quantity,
             $reserve,
+            new ProductEventUid(ProductEventUid::TEST),
         );
 
         $result = $handler->handle($dto);

@@ -21,6 +21,8 @@
  *  THE SOFTWARE.
  */
 
+declare(strict_types=1);
+
 namespace BaksDev\Products\Product\UseCase\Admin\Delete;
 
 use BaksDev\Products\Product\Entity\Event\ProductEventInterface;

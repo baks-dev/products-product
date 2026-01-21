@@ -1,5 +1,4 @@
 <?php
-
 /*
  *  Copyright 2022.  Baks.dev <admin@baks.dev>
  *
@@ -16,6 +15,8 @@
  *   limitations under the License.
  *
  */
+
+declare(strict_types=1);
 
 namespace BaksDev\Products\Product\UseCase\Admin\Delete;
 

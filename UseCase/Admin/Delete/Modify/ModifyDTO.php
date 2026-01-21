@@ -21,22 +21,22 @@
  *  THE SOFTWARE.
  */
 
+declare(strict_types=1);
+
 namespace BaksDev\Products\Product\UseCase\Admin\Delete\Modify;
 
 use BaksDev\Core\Type\Modify\Modify\ModifyActionDelete;
-use BaksDev\Core\Type\Modify\Modify\ModifyActionNew;
-use BaksDev\Core\Type\Modify\Modify\ModifyActionUpdate;
 use BaksDev\Core\Type\Modify\ModifyAction;
 use BaksDev\Products\Product\Entity\Modify\ProductModifyInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class ModifyDTO implements ProductModifyInterface
+final readonly class ModifyDTO implements ProductModifyInterface
 {
     /**
      * Модификатор
      */
     #[Assert\NotBlank]
-    private readonly ModifyAction $action;
+    private ModifyAction $action;
 
     public function __construct()
     {

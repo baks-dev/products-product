@@ -59,14 +59,10 @@ final readonly class UpdateProductOptDispatcher
         private CurrentProductIdentifierByEventInterface $CurrentProductIdentifierRepository,
     ) {}
 
-    /**
-     * Обновляет оптовую цену продукта в зависимости от вложенности торгового предложения
-     */
+    /** Обновляет оптовую цену продукта в зависимости от вложенности торгового предложения */
     public function __invoke(UpdateProductOptMessage $message): void
     {
-        /**
-         * Получаем текущие идентификаторы на случай изменения карточки
-         */
+        /** Получаем текущие идентификаторы на случай изменения карточки */
         $currentProductIdentifierResult = $this->CurrentProductIdentifierRepository
             ->forEvent($message->getEvent())
             ->forOffer($message->getOffer())
@@ -85,14 +81,13 @@ final readonly class UpdateProductOptDispatcher
         }
 
 
-        /**
-         * Если передан Modification - изменяем оптовую цену ModificationOpt
-         */
+        /** Если передан Modification - изменяем оптовую цену ModificationOpt */
         if(true === ($message->getModification() instanceof ProductModificationUid))
         {
             $updateProductModificationOptDTO = new UpdateProductModificationOptDTO()
                 ->setModification($message->getModification())
-                ->setPrice($message->getOpt());
+                ->setPrice($message->getOpt())
+                ->setProductEvent($message->getEvent());
 
             $opt = $this->UpdateProductModificationOptHandler->handle($updateProductModificationOptDTO);
 
@@ -125,9 +120,7 @@ final readonly class UpdateProductOptDispatcher
         }
 
         
-        /**
-         * Если Modification === FALSE, но передан Variation - изменяем оптовую цену VariationOpt
-         */
+        /** Если Modification === FALSE, но передан Variation - изменяем оптовую цену VariationOpt */
         if(
             false === ($message->getModification() instanceof ProductModificationUid) &&
             true === ($message->getVariation() instanceof ProductVariationUid)
@@ -135,7 +128,8 @@ final readonly class UpdateProductOptDispatcher
         {
             $updateProductVariationOptDTO = new UpdateProductVariationOptDTO()
                 ->setVariation($message->getVariation())
-                ->setPrice($message->getOpt());
+                ->setPrice($message->getOpt())
+                ->setProductEvent($message->getEvent());
 
             $opt = $this->UpdateProductVariationOptHandler->handle($updateProductVariationOptDTO);
 
@@ -168,9 +162,7 @@ final readonly class UpdateProductOptDispatcher
         }
 
 
-        /**
-         * Если Variation === FALSE, но передан Offer - изменяем оптовую цену OfferOpt
-         */
+        /** Если Variation === FALSE, но передан Offer - изменяем оптовую цену OfferOpt */
         if(
             false === ($message->getVariation() instanceof ProductVariationUid) &&
             true === ($message->getOffer() instanceof ProductOfferUid)
@@ -178,7 +170,8 @@ final readonly class UpdateProductOptDispatcher
         {
             $updateProductOfferOptDTO = new UpdateProductOfferOptDTO()
                 ->setOffer($message->getOffer())
-                ->setPrice($message->getOpt());
+                ->setPrice($message->getOpt())
+                ->setProductEvent($message->getEvent());
 
             $opt = $this->UpdateProductOfferOptHandler->handle($updateProductOfferOptDTO);
 
@@ -211,9 +204,7 @@ final readonly class UpdateProductOptDispatcher
         }
 
 
-        /**
-         * Если Offer === FALSE, но передан Event - изменяем оптовую стсть ProductPriceOpt
-         */
+        /** Если Offer === FALSE, но передан Event - изменяем оптовую стсть ProductPriceOpt */
         if(
             false === ($message->getOffer() instanceof ProductOfferUid) &&
             true === ($message->getEvent() instanceof ProductEventUid)
