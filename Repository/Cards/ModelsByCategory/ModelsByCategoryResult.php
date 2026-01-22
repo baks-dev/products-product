@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -52,7 +52,7 @@ final readonly class ModelsByCategoryResult implements ModelsOrProductsCardResul
         private bool|null $category_modification_card,
         private string|null $product_modification_reference,
 
-        private string $category_url,
+        private ?string $category_url,
         private string $category_name,
 
         private int|string|null $product_price,
@@ -174,7 +174,7 @@ final readonly class ModelsByCategoryResult implements ModelsOrProductsCardResul
         ];
     }
 
-    public function getCategoryUrl(): string
+    public function getCategoryUrl(): ?string
     {
         return $this->category_url;
     }
