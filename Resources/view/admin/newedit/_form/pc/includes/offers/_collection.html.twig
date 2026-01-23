@@ -9,9 +9,13 @@
         </div>
     </div>
 
-    <div class="card-body">
+    <div class="card-body card-body-offers">
 
-        <div id="offer_image_collection-{{ offer.vars.name }}" class="d-flex gap-5 flex-wrap">
+        <div class="h5 opacity-25 text-secondary lh-1 position-absolute top-50 start-50 translate-middle">
+            <div class="info w-100 text-center">Перетяните одно или несколько изображений в эту область</div>
+        </div>
+
+        <div id="offer_image_collection-{{ offer.vars.name }}" class="d-flex gap-5 flex-wrap" style="min-height: 220px;">
             {% for image in offer.image %}
                 {{ include(_self|replace({ "_collection.html.twig": "_image.html.twig" })) }}
             {% endfor %}
