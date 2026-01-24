@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -63,11 +63,13 @@ final class ProductHandler extends AbstractHandler
 
     public function handle(ProductDTO $command): Product|string
     {
-
-
         $this
             ->setCommand($command)
             ->preEventPersistOrUpdate(Product::class, ProductEvent::class);
+
+
+        /** @var ProductEvent $ProductEvent */
+        $ProductEvent = $this->event;
 
         /** Проверяем уникальность семантической ссылки продукта */
         $infoDTO = $command->getInfo();
@@ -75,12 +77,11 @@ final class ProductHandler extends AbstractHandler
 
         if(true === $uniqProductUrl)
         {
-            $this->event->getInfo()->updateUrlUniq(); // Обновляем URL на уникальный с префиксом
+            $ProductEvent->getInfo()->updateUrlUniq(); // Обновляем URL на уникальный с префиксом
         }
 
-
         // Загрузка базового фото галереи
-        foreach($this->event->getPhoto() as $ProductPhoto)
+        foreach($ProductEvent->getPhoto() as $ProductPhoto)
         {
             /** @var PhotoCollectionDTO $PhotoCollectionDTO */
             $PhotoCollectionDTO = $ProductPhoto->getEntityDto();
@@ -92,7 +93,7 @@ final class ProductHandler extends AbstractHandler
         }
 
         // Загрузка файлов PDF галереи
-        foreach($this->event->getFile() as $ProductFile)
+        foreach($ProductEvent->getFile() as $ProductFile)
         {
             /** @var FilesCollectionDTO $FilesCollectionDTO */
             $FilesCollectionDTO = $ProductFile->getEntityDto();
@@ -105,7 +106,7 @@ final class ProductHandler extends AbstractHandler
 
 
         // Загрузка файлов Видео галереи
-        foreach($this->event->getVideo() as $ProductVideo)
+        foreach($ProductEvent->getVideo() as $ProductVideo)
         {
             /** @var VideoCollectionDTO $VideoCollectionDTO */
             $VideoCollectionDTO = $ProductVideo->getEntityDto();
@@ -123,7 +124,7 @@ final class ProductHandler extends AbstractHandler
          * @var ProductOffer $ProductOffer
          */
 
-        foreach($this->event->getOffer() as $ProductOffer)
+        foreach($ProductEvent->getOffer() as $ProductOffer)
         {
 
             /** @var ProductOfferImage $ProductOfferImage */
