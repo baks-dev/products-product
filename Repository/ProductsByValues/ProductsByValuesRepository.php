@@ -1,17 +1,17 @@
 <?php
 /*
- * Copyright 2025.  Baks.dev <admin@baks.dev>
- *
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
+ *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *
+ *  
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *
+ *  
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -40,12 +40,13 @@ use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Product\Entity\Offers\Variation\Quantity\ProductVariationQuantity;
 use BaksDev\Products\Product\Entity\Price\ProductPrice;
 use BaksDev\Products\Product\Entity\Product;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Generator;
 use InvalidArgumentException;
 
 final class ProductsByValuesRepository implements ProductsByValuesInterface
 {
-    private CategoryProductUid|false $categoryUid = false;
+    private CategoryProductUid|false $category = false;
 
     private ?string $offerValue = null;
 
@@ -53,9 +54,20 @@ final class ProductsByValuesRepository implements ProductsByValuesInterface
 
     private ?string $modificationValue = null;
 
+    private string|UserProfileUid $profile;
+
     public function __construct(
         private readonly DBALQueryBuilder $dbal,
     ) {}
+
+
+    /** Идентификатор профиля пользователя */
+    public function forProfile(UserProfileUid $profile): self
+    {
+        $this->profile = $profile;
+
+        return $this;
+    }
 
     /** Фильтр по категории */
     public function forCategory(CategoryProduct|CategoryProductUid|string $category): self
@@ -70,7 +82,7 @@ final class ProductsByValuesRepository implements ProductsByValuesInterface
             $category = new CategoryProductUid($category);
         }
 
-        $this->categoryUid = $category;
+        $this->category = $category;
 
         return $this;
     }
@@ -101,20 +113,14 @@ final class ProductsByValuesRepository implements ProductsByValuesInterface
      */
     public function findAll(): Generator|false
     {
-        $dbal = $this->builder();
-
-        $dbal->enableCache('products-product', 86400);
-
-        $result = $dbal->fetchAllHydrate(ProductsByValuesResult::class);
-
-        return (true === $result->valid()) ? $result : false;
-    }
-
-    public function builder(): DBALQueryBuilder
-    {
-        if($this->categoryUid instanceof CategoryProductUid === false)
+        if(false === ($this->profile instanceof UserProfileUid))
         {
-            throw new InvalidArgumentException('Invalid Argument Category');
+            throw new InvalidArgumentException('Invalid Argument UserProfileUid');
+        }
+
+        if(false === ($this->category instanceof CategoryProductUid))
+        {
+            throw new InvalidArgumentException('Invalid Argument CategoryProductUid');
         }
 
         $dbal = $this->dbal
@@ -129,16 +135,16 @@ final class ProductsByValuesRepository implements ProductsByValuesInterface
         $dbal->join('product',
             ProductEvent::class,
             'product_event',
-            'product_event.id = product.event'
+            'product_event.id = product.event',
         );
 
         $dbal
             ->leftJoin(
-            'product_event',
-            ProductPrice::class,
-            'product_price',
-            'product_event.id = product_price.event'
-        );
+                'product_event',
+                ProductPrice::class,
+                'product_price',
+                'product_event.id = product_price.event',
+            );
 
         /** ProductInfo */
         $dbal
@@ -147,30 +153,40 @@ final class ProductsByValuesRepository implements ProductsByValuesInterface
                 'product_event',
                 ProductInfo::class,
                 'product_info',
-                'product_info.product = product.id'
+                '
+                    product_info.product = product.id 
+                    AND (product_info.profile IS NULl OR product_info.profile = :profile)',
+
+            )
+            ->setParameter(
+                key: 'profile',
+                value: $this->profile,
+                type: UserProfileUid::TYPE,
             );
 
         /** Категория */
-        $dbal->join(
-            'product',
-            ProductCategory::class,
-            'product_event_category',
-            '
+        $dbal
+            ->join(
+                'product',
+                ProductCategory::class,
+                'product_event_category',
+                '
                product_event_category.event = product.event AND 
                product_event_category.category = :category AND 
-               product_event_category.root = true'
-        )->setParameter(
-            'category',
-            $this->categoryUid,
-            CategoryProductUid::TYPE
-        );
+               product_event_category.root = true',
+            )
+            ->setParameter(
+                key: 'category',
+                value: $this->category,
+                type: CategoryProductUid::TYPE,
+            );
 
         /** Даты продукта */
         $dbal->join(
             'product',
             ProductActive::class,
             'product_active',
-            'product_active.event = product.event'
+            'product_active.event = product.event',
         );
 
         /** OFFERS */
@@ -190,7 +206,7 @@ final class ProductsByValuesRepository implements ProductsByValuesInterface
                 'product',
                 ProductOffer::class,
                 'product_offer',
-                'product_offer.event = product.event '.($this?->offerValue ? ' AND product_offer.value = :offer' : '').' '
+                'product_offer.event = product.event '.($this?->offerValue ? ' AND product_offer.value = :offer' : '').' ',
             );
 
         /** Наличие торгового предложения */
@@ -198,7 +214,7 @@ final class ProductsByValuesRepository implements ProductsByValuesInterface
             'product_offer',
             ProductOfferQuantity::class,
             'product_offer_quantity',
-            'product_offer_quantity.offer = product_offer.id'
+            'product_offer_quantity.offer = product_offer.id',
         );
 
         /** VARIATIONS */
@@ -218,7 +234,7 @@ final class ProductsByValuesRepository implements ProductsByValuesInterface
                 'product_offer',
                 ProductVariation::class,
                 'product_offer_variation',
-                'product_offer_variation.offer = product_offer.id '.($this?->variationValue ? ' AND product_offer_variation.value = :variation' : '').' '
+                'product_offer_variation.offer = product_offer.id '.($this?->variationValue ? ' AND product_offer_variation.value = :variation' : '').' ',
             );
 
         /** Наличие множественного варианта */
@@ -226,7 +242,7 @@ final class ProductsByValuesRepository implements ProductsByValuesInterface
             'product_offer_variation',
             ProductVariationQuantity::class,
             'product_variation_quantity',
-            'product_variation_quantity.variation = product_offer_variation.id'
+            'product_variation_quantity.variation = product_offer_variation.id',
         );
 
         /** MODIFICATION */
@@ -246,7 +262,7 @@ final class ProductsByValuesRepository implements ProductsByValuesInterface
                 'product_offer_variation',
                 ProductModification::class,
                 'product_offer_modification',
-                'product_offer_modification.variation = product_offer_variation.id '.($this?->modificationValue ? ' AND product_offer_modification.value = :modification' : '').' '
+                'product_offer_modification.variation = product_offer_variation.id '.($this?->modificationValue ? ' AND product_offer_modification.value = :modification' : '').' ',
             );
 
         /** Наличие множественного варианта */
@@ -254,7 +270,7 @@ final class ProductsByValuesRepository implements ProductsByValuesInterface
             'product_offer_modification',
             ProductModificationQuantity::class,
             'product_modification_quantity',
-            'product_modification_quantity.modification = product_offer_modification.id'
+            'product_modification_quantity.modification = product_offer_modification.id',
         );
 
         /** Наличие продукта */
@@ -287,6 +303,12 @@ final class ProductsByValuesRepository implements ProductsByValuesInterface
             ) AS product_reserve
 		');
 
-        return $dbal;
+        $dbal->enableCache('products-product', 86400);
+
+        $result = $dbal->fetchAllHydrate(ProductsByValuesResult::class);
+
+        return (true === $result->valid()) ? $result : false;
     }
+
+
 }

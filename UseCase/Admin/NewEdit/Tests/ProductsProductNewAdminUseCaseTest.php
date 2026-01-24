@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -77,15 +77,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\File;
 
-#[Group('drom')]
-#[Group('drom-repository')]
-#[Group('drom-usecase')]
-#[Group('drom-products')]
-#[Group('drom-products-controller')]
-#[Group('drom-products-repository')]
-#[Group('drom-products-usecase')]
-#[Group('drom-board')]
-#[Group('drom-board-repository')]
 #[Group('products-product')]
 #[Group('products-product-controller')]
 #[Group('products-product-usecase')]
@@ -124,7 +115,6 @@ class ProductsProductNewAdminUseCaseTest extends KernelTestCase
 
         $em->flush();
         $em->clear();
-
 
         /** Создаем тестовую категорию */
         CategoryProductNewTest::setUpBeforeClass();
@@ -197,9 +187,9 @@ class ProductsProductNewAdminUseCaseTest extends KernelTestCase
         $fileSystem->copy(
             BaksDevCoreBundle::PATH.implode(
                 DIRECTORY_SEPARATOR,
-                ['Resources', 'assets', 'img', 'empty.webp']
+                ['Resources', 'assets', 'img', 'empty.webp'],
             ),
-            $testUploadDir.DIRECTORY_SEPARATOR.'photo.webp'
+            $testUploadDir.DIRECTORY_SEPARATOR.'photo.webp',
         );
 
         $filePhoto = new File($testUploadDir.DIRECTORY_SEPARATOR.'photo.webp', false);
@@ -366,16 +356,15 @@ class ProductsProductNewAdminUseCaseTest extends KernelTestCase
         $ProductOffersCollectionDTO->setOpt($ProductOfferOptDTO);
 
 
-
         /**
          * Создаем тестовый файл загрузки ProductVariationImage
          */
         $fileSystem->copy(
             BaksDevCoreBundle::PATH.implode(
                 DIRECTORY_SEPARATOR,
-                ['Resources', 'assets', 'img', 'empty.webp']
+                ['Resources', 'assets', 'img', 'empty.webp'],
             ),
-            $testUploadDir.DIRECTORY_SEPARATOR.'offer.webp'
+            $testUploadDir.DIRECTORY_SEPARATOR.'offer.webp',
         );
 
         $ProductOfferImage = new File($testUploadDir.DIRECTORY_SEPARATOR.'offer.webp', false);
@@ -425,7 +414,7 @@ class ProductsProductNewAdminUseCaseTest extends KernelTestCase
         self::assertSame('Test New Variation Postfix', $ProductOffersVariationCollectionDTO->getPostfix());
 
         $ProductOffersVariationCollectionDTO->setCategoryVariation(
-            new CategoryProductVariationUid(CategoryProductVariationUid::TEST)
+            new CategoryProductVariationUid(CategoryProductVariationUid::TEST),
         );
 
 
@@ -438,9 +427,9 @@ class ProductsProductNewAdminUseCaseTest extends KernelTestCase
         $fileSystem->copy(
             BaksDevCoreBundle::PATH.implode(
                 DIRECTORY_SEPARATOR,
-                ['Resources', 'assets', 'img', 'empty.webp']
+                ['Resources', 'assets', 'img', 'empty.webp'],
             ),
-            $testUploadDir.DIRECTORY_SEPARATOR.'variation.webp'
+            $testUploadDir.DIRECTORY_SEPARATOR.'variation.webp',
         );
 
         $ProductVariationImage = new File($testUploadDir.DIRECTORY_SEPARATOR.'variation.webp', false);
@@ -477,38 +466,38 @@ class ProductsProductNewAdminUseCaseTest extends KernelTestCase
         $ProductOffersVariationModificationCollectionDTO->setPrice($ProductModificationPriceDTO);
         self::assertSame(
             $ProductModificationPriceDTO,
-            $ProductOffersVariationModificationCollectionDTO->getPrice()
+            $ProductOffersVariationModificationCollectionDTO->getPrice(),
         );
 
         $ProductOffersVariationModificationCollectionDTO->setConst(
-            $ProductModificationConst = new ProductModificationConst()
+            $ProductModificationConst = new ProductModificationConst(),
         );
         self::assertSame(
             $ProductModificationConst,
-            $ProductOffersVariationModificationCollectionDTO->getConst()
+            $ProductOffersVariationModificationCollectionDTO->getConst(),
         );
 
         $ProductOffersVariationModificationCollectionDTO->setArticle('Test New Modification Article');
         self::assertSame(
             'Test New Modification Article',
-            $ProductOffersVariationModificationCollectionDTO->getArticle()
+            $ProductOffersVariationModificationCollectionDTO->getArticle(),
         );
 
 
         $ProductOffersVariationModificationCollectionDTO->setValue(self::MODIFICATION_VALUE);
         self::assertSame(
             '300',
-            $ProductOffersVariationModificationCollectionDTO->getValue()
+            $ProductOffersVariationModificationCollectionDTO->getValue(),
         );
 
         $ProductOffersVariationModificationCollectionDTO->setPostfix('Test New Modification Postfix');
         self::assertSame(
             'Test New Modification Postfix',
-            $ProductOffersVariationModificationCollectionDTO->getPostfix()
+            $ProductOffersVariationModificationCollectionDTO->getPostfix(),
         );
 
         $ProductOffersVariationModificationCollectionDTO->setCategoryModification(
-            new CategoryProductModificationUid(CategoryProductModificationUid::TEST)
+            new CategoryProductModificationUid(CategoryProductModificationUid::TEST),
         );
 
         $ProductModificationImageCollectionDTO = new ProductModificationImageCollectionDTO();
@@ -520,9 +509,9 @@ class ProductsProductNewAdminUseCaseTest extends KernelTestCase
         $fileSystem->copy(
             BaksDevCoreBundle::PATH.implode(
                 DIRECTORY_SEPARATOR,
-                ['Resources', 'assets', 'img', 'empty.webp']
+                ['Resources', 'assets', 'img', 'empty.webp'],
             ),
-            $testUploadDir.DIRECTORY_SEPARATOR.'modification.webp'
+            $testUploadDir.DIRECTORY_SEPARATOR.'modification.webp',
         );
 
         $ProductModificationImage = new File($testUploadDir.DIRECTORY_SEPARATOR.'modification.webp', false);
@@ -533,7 +522,7 @@ class ProductsProductNewAdminUseCaseTest extends KernelTestCase
         $ProductOffersVariationModificationCollectionDTO->addImage($ProductModificationImageCollectionDTO);
         self::assertSame(
             $ProductModificationImageCollectionDTO,
-            $ProductOffersVariationModificationCollectionDTO->getImage()->current()
+            $ProductOffersVariationModificationCollectionDTO->getImage()->current(),
         );
 
         $ProductOffersVariationCollectionDTO->addModification($ProductOffersVariationModificationCollectionDTO);

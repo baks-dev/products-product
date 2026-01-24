@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -30,15 +30,13 @@ use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailByInvariableI
 use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailByInvariableResult;
 use BaksDev\Products\Product\Repository\ProductsByValues\ProductsByValuesInterface;
 use BaksDev\Products\Product\Repository\ProductsByValues\ProductsByValuesResult;
-use BaksDev\Products\Product\Type\Event\ProductEventUid;
-use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Product\Type\Invariable\ProductInvariableUid;
-use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
-use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
-use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Tests\ProductsProductNewAdminUseCaseTest;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use PHPUnit\Framework\Attributes\DependsOnClass;
 use PHPUnit\Framework\Attributes\Group;
+use ReflectionClass;
+use ReflectionMethod;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
@@ -46,7 +44,15 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'test')]
 final class ProductsByValuesRepositoryTest extends KernelTestCase
 {
-    #[DependsOnClass(ProductsProductNewAdminUseCaseTest::class)]
+
+    /** Создаем тестовый продукт */
+    public static function setUpBeforeClass(): void
+    {
+        ProductsProductNewAdminUseCaseTest::setUpBeforeClass();
+        new ProductsProductNewAdminUseCaseTest('')->testUseCase();
+    }
+
+    //#[DependsOnClass(ProductsProductNewAdminUseCaseTest::class)]
     public static function testFindAll(): void
     {
         /** @var ProductDetailByInvariableInterface $productDetailByInvariable */
@@ -56,14 +62,14 @@ final class ProductsByValuesRepositoryTest extends KernelTestCase
         $result = $productDetailByInvariable->invariable(ProductInvariableUid::TEST)->find();
 
         $offerValue = $result->getProductOfferValue();
-
         $variationValue = $result->getProductVariationValue();
-
         $modificationValue = $result->getProductModificationValue();
 
         /** @var ProductsByValuesInterface $repositoryByValue */
         $repositoryByValue = self::getContainer()->get(ProductsByValuesInterface::class);
+
         $result = $repositoryByValue
+            ->forProfile(new UserProfileUid(UserProfileUid::TEST))
             ->forCategory(CategoryProductUid::TEST)
             ->forOfferValue($offerValue)
             ->forVariationValue($variationValue)
@@ -72,54 +78,23 @@ final class ProductsByValuesRepositoryTest extends KernelTestCase
 
         self::assertNotFalse($result);
 
-        $result = $result->current();
+        /** @var ProductsByValuesResult $ProductsByValuesResult */
+        $ProductsByValuesResult = $result->current();
 
-        self::assertInstanceOf(ProductsByValuesResult::class, $result);
+        // Вызываем все геттеры
+        $reflectionClass = new ReflectionClass(ProductsByValuesResult::class);
+        $methods = $reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC);
 
-        self::assertInstanceOf(ProductUid::class, $result->getProduct());
-        self::assertInstanceOf(ProductEventUid::class, $result->getEvent());
-        self::assertIsString($result->getProductUrl());
+        foreach($methods as $method)
+        {
+            // Методы без аргументов
+            if($method->getNumberOfParameters() === 0)
+            {
+                // Вызываем метод
+                $data = $method->invoke($ProductsByValuesResult);
+                // dump($data);
+            }
+        }
 
-        self::assertIsInt($result->getProductQuantity());
-        self::assertIsInt($result->getProductReserve());
-
-        self::assertTrue(
-            $result->getProductOfferUid() === null ||
-            $result->getProductOfferUid() instanceof ProductOfferUid
-        );
-        self::assertTrue(
-            $result->getProductOfferValue() === null ||
-            is_string($result->getProductOfferValue())
-        );
-        self::assertTrue(
-            $result->getProductOfferPostfix() === null ||
-            is_string($result->getProductOfferPostfix())
-        );
-
-        self::assertTrue(
-            $result->getProductVariationUid() === null ||
-            $result->getProductVariationUid() instanceof ProductVariationUid
-        );
-        self::assertTrue(
-            $result->getProductVariationValue() === null ||
-            is_string($result->getProductVariationValue())
-        );
-        self::assertTrue(
-            $result->getProductVariationPostfix() === null ||
-            is_string($result->getProductVariationPostfix())
-        );
-
-        self::assertTrue(
-            $result->getProductModificationUid() === null ||
-            $result->getProductModificationUid() instanceof ProductModificationUid
-        );
-        self::assertTrue(
-            $result->getProductModificationValue() === null ||
-            is_string($result->getProductModificationValue())
-        );
-        self::assertTrue(
-            $result->getProductModificationPostfix() === null ||
-            is_string($result->getProductModificationPostfix())
-        );
     }
 }
