@@ -100,6 +100,7 @@ class CurrentProductIdentifierByConstRepositoryTest extends KernelTestCase
          * Обновляем событие
          * @var CurrentProductEventInterface $CurrentProductEvent
          */
+
         $CurrentProductEvent = self::getContainer()->get(CurrentProductEventInterface::class);
         $ProductEvent = $CurrentProductEvent->findByProduct(self::$result['id']);
 
