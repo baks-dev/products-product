@@ -10,9 +10,14 @@
     </div>
 
 
-    <div class="card-body">
+    <div class="card-body card-body-variations">
+
+        <div class="h5 opacity-25 text-secondary lh-1 position-absolute top-50 start-50 translate-middle">
+            <div class="info w-100 text-center">Перетяните одно или несколько изображений в эту область</div>
+        </div>
+
         <div id="collection_{{ form.offer.vars.prototype.variation.vars.prototype.vars.id }}"
-             class="d-flex gap-5 flex-wrap">
+             class="d-flex gap-5 flex-wrap variation-item-collection" style="min-height: 220px;">
             <div id='item_{{ form.offer.vars.prototype.variation.vars.prototype.image.vars.prototype.vars.id|replace({ '__variation_image__' : 0 }) }}'>
                 {# {{ include(_self|replace({ "prototype.collection.html.twig": "prototype.image.html.twig" }))|replace({ '__variation_image__' : 0 })|raw }} #}
                 {{ prototype_variation_image|replace({ '__variation_image__' : 0 })|raw }}
