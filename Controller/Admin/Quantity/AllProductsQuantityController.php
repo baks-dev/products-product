@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -52,7 +52,7 @@ final class AllProductsQuantityController extends AbstractController
             ->createForm(
                 type: AllProductsQuantityForm::class,
                 data: $dto,
-                options: ['action' => $this->generateUrl('products-product:admin.quantity.all')]
+                options: ['action' => $this->generateUrl('products-product:admin.quantity.all')],
             )
             ->handleRequest($request);
 
@@ -62,6 +62,7 @@ final class AllProductsQuantityController extends AbstractController
             $data = $form->getData();
 
             $message = new FindProductsForQuantityUpdateMessage(
+                $this->getProfileUid(),
                 $data->getCategory(),
                 $data->getQuantity(),
                 $data->getOffer(),
@@ -72,7 +73,7 @@ final class AllProductsQuantityController extends AbstractController
             /** Отправляем сообщение в шину */
             $messageDispatch->dispatch(
                 message: $message,
-                transport: 'products-product'
+                transport: 'products-product',
             );
 
             $this->addFlash

@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -86,7 +86,8 @@ final class ProductLiederRepository implements ProductLiederInterface
     }
 
     /**
-     * Метод возвращает ограниченный по количеству элементов список лидеров продаж продукции, суммируя количество резервов на продукт
+     * Метод возвращает ограниченный по количеству элементов список лидеров продаж продукции, суммируя количество
+     * резервов на продукт
      */
     public function find(): array|false
     {
@@ -102,7 +103,7 @@ final class ProductLiederRepository implements ProductLiederInterface
                 'product',
                 ProductTrans::class,
                 'product_trans',
-                'product_trans.event = product.event AND product_trans.local = :local'
+                'product_trans.event = product.event AND product_trans.local = :local',
             );
 
         /** Цена товара */
@@ -110,7 +111,7 @@ final class ProductLiederRepository implements ProductLiederInterface
             'product',
             ProductPrice::class,
             'product_price',
-            'product_price.event = product.event'
+            'product_price.event = product.event',
         );
 
         /** ProductInfo */
@@ -121,7 +122,7 @@ final class ProductLiederRepository implements ProductLiederInterface
                 'product',
                 ProductInfo::class,
                 'product_info',
-                'product_info.product = product.id'
+                'product_info.product = product.id',
             );
 
         /** Только активный продукт */
@@ -133,7 +134,7 @@ final class ProductLiederRepository implements ProductLiederInterface
                 '
                     product_active.event = product.event AND 
                     product_active.active IS TRUE 
-                '
+                ',
             );
 
         /** OFFER */
@@ -141,7 +142,7 @@ final class ProductLiederRepository implements ProductLiederInterface
             'product',
             ProductOffer::class,
             'product_offer',
-            'product_offer.event = product.event'
+            'product_offer.event = product.event',
         );
 
         /** Количество торгового предложения */
@@ -149,7 +150,7 @@ final class ProductLiederRepository implements ProductLiederInterface
             'product_offer',
             ProductOfferQuantity::class,
             'product_offer_quantity',
-            'product_offer_quantity.offer = product_offer.id'
+            'product_offer_quantity.offer = product_offer.id',
         );
 
         /** Цена торгового предложения */
@@ -157,7 +158,7 @@ final class ProductLiederRepository implements ProductLiederInterface
             'product_offer',
             ProductOfferPrice::class,
             'product_offer_price',
-            'product_offer_price.offer = product_offer.id'
+            'product_offer_price.offer = product_offer.id',
         );
 
         /** VARIATION */
@@ -165,7 +166,7 @@ final class ProductLiederRepository implements ProductLiederInterface
             'product_offer',
             ProductVariation::class,
             'product_offer_variation',
-            'product_offer_variation.offer = product_offer.id'
+            'product_offer_variation.offer = product_offer.id',
         );
 
         /** Количество множественного варианта */
@@ -173,7 +174,7 @@ final class ProductLiederRepository implements ProductLiederInterface
             'product_offer_variation',
             ProductVariationQuantity::class,
             'product_variation_quantity',
-            'product_variation_quantity.variation = product_offer_variation.id'
+            'product_variation_quantity.variation = product_offer_variation.id',
         );
 
         /** Цена множественного варианта */
@@ -181,7 +182,7 @@ final class ProductLiederRepository implements ProductLiederInterface
             'product_offer_variation',
             ProductVariationPrice::class,
             'product_variation_price',
-            'product_variation_price.variation = product_offer_variation.id'
+            'product_variation_price.variation = product_offer_variation.id',
         );
 
         /** MODIFICATION */
@@ -189,7 +190,7 @@ final class ProductLiederRepository implements ProductLiederInterface
             'product_offer_variation',
             ProductModification::class,
             'product_offer_modification',
-            'product_offer_modification.variation = product_offer_variation.id'
+            'product_offer_modification.variation = product_offer_variation.id',
         );
 
         /** Количество модификации множественного варианта */
@@ -197,7 +198,7 @@ final class ProductLiederRepository implements ProductLiederInterface
             'product_offer_modification',
             ProductModificationQuantity::class,
             'product_modification_quantity',
-            'product_modification_quantity.modification = product_offer_modification.id'
+            'product_modification_quantity.modification = product_offer_modification.id',
         );
 
         /** Цена модификации множественного варианта */
@@ -205,7 +206,7 @@ final class ProductLiederRepository implements ProductLiederInterface
             'product_offer_modification',
             ProductModificationPrice::class,
             'product_modification_price',
-            'product_modification_price.modification = product_offer_modification.id'
+            'product_modification_price.modification = product_offer_modification.id',
         );
 
         /** Категория */
@@ -218,11 +219,11 @@ final class ProductLiederRepository implements ProductLiederInterface
                 '
                     product_event_category.event = product.event AND 
                     product_event_category.category = :category AND 
-                    product_event_category.root = true'
+                    product_event_category.root = true',
             )->setParameter(
                 'category',
                 $this->categoryUid,
-                CategoryProductUid::TYPE
+                CategoryProductUid::TYPE,
             );
         }
         else
@@ -233,7 +234,7 @@ final class ProductLiederRepository implements ProductLiederInterface
                 'product_event_category',
                 '
                 product_event_category.event = product.event AND 
-                product_event_category.root = true'
+                product_event_category.root = true',
             );
         }
 
@@ -241,7 +242,7 @@ final class ProductLiederRepository implements ProductLiederInterface
             'product_event_category',
             CategoryProduct::class,
             'category',
-            'category.id = product_event_category.category'
+            'category.id = product_event_category.category',
         );
 
         $dbal
@@ -250,8 +251,10 @@ final class ProductLiederRepository implements ProductLiederInterface
                 'product_event_category',
                 CategoryProductInfo::class,
                 'category_info',
-                'category_info.event = category.event'
-            );
+                '
+                    category_info.event = category.event 
+                    AND category_info.active IS TRUE
+                ');
 
         /** Только с ценой */
         $dbal->andWhere("
@@ -262,7 +265,7 @@ final class ProductLiederRepository implements ProductLiederInterface
 			   WHEN product_price.price IS NOT NULL THEN product_price.price
 			   ELSE 0
 			END > 0
- 		"
+ 		",
         );
 
         /** Только при наличии */

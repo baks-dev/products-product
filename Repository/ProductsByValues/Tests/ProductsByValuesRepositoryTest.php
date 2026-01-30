@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -32,6 +32,7 @@ use BaksDev\Products\Product\Repository\ProductsByValues\ProductsByValuesInterfa
 use BaksDev\Products\Product\Repository\ProductsByValues\ProductsByValuesResult;
 use BaksDev\Products\Product\Type\Invariable\ProductInvariableUid;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Tests\ProductsProductNewAdminUseCaseTest;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use PHPUnit\Framework\Attributes\DependsOnClass;
 use PHPUnit\Framework\Attributes\Group;
 use ReflectionClass;
@@ -44,7 +45,15 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'test')]
 final class ProductsByValuesRepositoryTest extends KernelTestCase
 {
-    #[DependsOnClass(ProductsProductNewAdminUseCaseTest::class)]
+
+    /** Создаем тестовый продукт */
+    public static function setUpBeforeClass(): void
+    {
+        ProductsProductNewAdminUseCaseTest::setUpBeforeClass();
+        new ProductsProductNewAdminUseCaseTest('')->testUseCase();
+    }
+
+    //#[DependsOnClass(ProductsProductNewAdminUseCaseTest::class)]
     public static function testFindAll(): void
     {
         /** @var ProductDetailByInvariableInterface $productDetailByInvariable */
@@ -54,14 +63,14 @@ final class ProductsByValuesRepositoryTest extends KernelTestCase
         $result = $productDetailByInvariable->invariable(ProductInvariableUid::TEST)->find();
 
         $offerValue = $result->getProductOfferValue();
-
         $variationValue = $result->getProductVariationValue();
-
         $modificationValue = $result->getProductModificationValue();
 
         /** @var ProductsByValuesInterface $repositoryByValue */
         $repositoryByValue = self::getContainer()->get(ProductsByValuesInterface::class);
+
         $result = $repositoryByValue
+            ->forProfile(new UserProfileUid(UserProfileUid::TEST))
             ->forCategory(CategoryProductUid::TEST)
             ->forOfferValue($offerValue)
             ->forVariationValue($variationValue)
@@ -70,10 +79,9 @@ final class ProductsByValuesRepositoryTest extends KernelTestCase
 
         self::assertNotFalse($result);
 
-        $result = $result->current();
-
-        self::assertInstanceOf(ProductsByValuesResult::class, $result);
-
+        /** @var ProductsByValuesResult $ProductsByValuesResult */
+        $ProductsByValuesResult = $result->current();
+        
         // Вызываем все геттеры
         $reflectionClass = new ReflectionClass(ProductsByValuesResult::class);
         $methods = $reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC);

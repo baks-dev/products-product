@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -98,7 +98,6 @@ class ProductEvent extends EntityEvent
     /** Оптовая цена по курсу */
     #[ORM\OneToOne(targetEntity: ProductPriceOpt::class, mappedBy: 'event', cascade: ['all'])]
     private ?ProductPriceOpt $opt = null;
-
 
 
     /** Модификатор */
@@ -242,20 +241,25 @@ class ProductEvent extends EntityEvent
         return $filter->current()->getCategory();
     }
 
+    /**
+     * @return Collection<ProductCategory>
+     */
     public function getCategory(): Collection
     {
         return $this->category;
     }
 
+    /**
+     * @return Collection<ProductOffer>
+     */
     public function getOffer(): Collection
     {
         return $this->offer;
     }
 
 
-
     /**
-     * Photo
+     * @return Collection<ProductPhoto>
      */
     public function getPhoto(): Collection
     {
@@ -263,7 +267,7 @@ class ProductEvent extends EntityEvent
     }
 
     /**
-     * File
+     * @return Collection<ProductFiles>
      */
     public function getFile(): Collection
     {
@@ -271,7 +275,7 @@ class ProductEvent extends EntityEvent
     }
 
     /**
-     * Video
+     * @return Collection<ProductVideo>
      */
     public function getVideo(): Collection
     {

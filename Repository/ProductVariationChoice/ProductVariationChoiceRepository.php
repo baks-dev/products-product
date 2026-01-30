@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -411,19 +411,19 @@ final class ProductVariationChoiceRepository implements ProductVariationChoiceIn
         $dbal->addSelect('category_variation.reference AS characteristic');
 
         $dbal->addSelect(
-            "JSON_AGG
-            (DISTINCT
-                JSONB_BUILD_OBJECT
-                (
-                    'product_image', CONCAT ( '/upload/".$dbal->table(ProductVariationImage::class)."' , '/', product_variation_images.name),
-                    'product_image_cdn', product_variation_images.cdn,
-                    'product_image_ext', product_variation_images.ext,
-                    'product_article', product_variation.article,
-                    'product_price', product_variation_price.price,
-                    'product_currency', product_variation_price.currency,
-                    'product_variation_value', product_variation.value,
-                    'product_variation_postfix', product_variation.postfix
-                )
+            "
+            JSONB_BUILD_OBJECT
+            (
+                'product_image', CONCAT ( '/upload/".$dbal->table(ProductVariationImage::class)."' , '/', product_variation_images.name),
+                'product_image_cdn', product_variation_images.cdn,
+                'product_image_ext', product_variation_images.ext,
+                'product_article', product_variation.article,
+                'product_price', product_variation_price.price,
+                'product_currency', product_variation_price.currency,
+                'product_variation_value', product_variation.value,
+                'product_variation_postfix', product_variation.postfix,
+                'product_variation_reference', category_variation.reference
+                
             ) AS params",
         );
 

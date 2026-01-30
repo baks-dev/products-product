@@ -67,6 +67,11 @@ if($btnAddOffer)
         /* Событие на Добавить еще фото в ТП */
         (div.querySelector(".offer-image-add-collection"))?.addEventListener("click", addOfferImage);
 
+        /* Добавить функционал DragNDrop Offer для новой коллекции торгового предложения */
+        document.querySelectorAll("#item-collection-offer-" + index + ' .card-body-offers > div').forEach((element) => {
+            processOfferDragNDrop(element);
+        });
+
 
         /* Присваиваем идентификатор categoryOffer*/
         //let valueCategoryOffer = document.getElementById('product_form_data-offer').value;
@@ -1065,4 +1070,118 @@ function articleGenerate()
         result.value = generate.replace(/[^a-zA-Z0-9]/g, "-");
     }
 
+}
+
+/** DragNDrop Offer */
+
+/* Получить коллекции торгового предложения */
+document.querySelectorAll('.card-body-offers > div').forEach((element) => {
+    processOfferDragNDrop(element);
+});
+
+/* Добавить необходимые обработчики Drag и добавление изображения */
+function processOfferDragNDrop(offer_image_collection) {
+    /** Предотвратить стандартное (по умолчанию) поведение для событий: 'dragenter', 'dragover', 'dragleave', 'drop' */
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(event => {
+        offer_image_collection.addEventListener(event, function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            },
+            false
+        );
+    });
+
+    /** Подсветить offer_image_collection при перетаскивании при событиях 'dragenter', 'dragover' */
+    ['dragenter', 'dragover'].forEach(event => {
+        offer_image_collection.addEventListener(event, () => {
+            offer_image_collection.classList.add('shadow'); // TODO подобрать класс для фона подсветки
+        }, false);
+    });
+
+    /** Удалить класс подсветки при событиях 'dragleave', 'drop' */
+    ['dragleave', 'drop'].forEach(event => {
+        offer_image_collection.addEventListener(event, () => {
+            offer_image_collection.classList.remove('shadow');
+        }, false);
+    });
+
+    /** Обработать событие drop */
+    offer_image_collection.addEventListener('drop', function (e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+
+            /* Обработать файлы полученные при "перетягивании" */
+            ([...files]).forEach(previewAndAttachOfferFile);
+
+        }
+    );
+
+    /** Отобразить и загрузить в соотв-щий file input */
+    function previewAndAttachOfferFile(file) {
+
+        /* Проверить это файл является изображением */
+        if (!file.type.startsWith('image/')) {
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+
+        /* После того как файл "загрузился" в объект FileReader */
+        reader.onloadend = function() {
+
+            /* Найти родительский элемент card */
+            let parent_card = offer_image_collection.closest('.card');
+
+            /* Найти элемент - кнопку добавления */
+            let offer_image_add_collection =  parent_card.querySelector('.offer-image-add-collection')
+
+            /* Получить прототип коллекции  */
+            let newPrototype = offer_image_add_collection.dataset.prototype;
+
+            /* Создать новый элемент для загрузки фото */
+            let newForm = document.getElementById(newPrototype).dataset.prototype;
+
+            let index = offer_image_add_collection.dataset.index * 1;
+            let offer = offer_image_add_collection.dataset.offer * 1;
+
+            newForm = newForm.replace(/__offers__/g, offer);
+            newForm = newForm.replace(/__offer_image__/g, index);
+
+            let div = document.createElement("div");
+            div.innerHTML = newForm;
+            div.id = "item_product_form_offer_" + offer + "_image_" + index;
+
+            /* получить элемент - контейнер для текущего торговоо предложения */
+            $offerImageCollection = document.getElementById("offer_image_collection-" + offer);
+            $offerImageCollection.append(div);
+
+            /* Удаляем при клике фото торгового предложения */
+            div.querySelector(".del-item-offer-image").addEventListener("click", deleteOfferImage);
+
+            /** События change-root image */
+            div.querySelector(".change-root-" + offer).addEventListener("change", chanheOfferImageRoot);
+
+            offer_image_add_collection.dataset.index = (index + 1).toString();
+
+            /* Получить соотв-щий элемент загрузки файла */
+            let inputElement = div.querySelector("input[type=\"file\"]");
+
+            /* Отобразить полученный file в качестве background-image для label.image-input */
+            let image = div.querySelector(".image-input");
+            image.style.backgroundImage = `url('${reader.result}')`;
+
+
+            /** Загрузить файл в input type=file */
+
+            /* Создать объект DataTransfer и добавить в него файл */
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+
+            /* Присвоить файлы объекта DataTransfer свойству 'files' поля загрузки файла. */
+            inputElement.files = dataTransfer.files;
+
+        }
+
+    }
 }

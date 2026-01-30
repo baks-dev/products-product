@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Repository\AllProductsIdentifier;
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
+use BaksDev\Products\Product\Entity\Info\ProductInfo;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
@@ -35,6 +36,8 @@ use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
+use BaksDev\Users\Profile\UserProfile\Entity\UserProfile;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Generator;
 
 final class AllProductsIdentifierRepository implements AllProductsIdentifierInterface
@@ -47,7 +50,18 @@ final class AllProductsIdentifierRepository implements AllProductsIdentifierInte
 
     private ProductModificationConst|false $offerModification = false;
 
+    private UserProfileUid|false $profile;
+
     public function __construct(private readonly DBALQueryBuilder $DBALQueryBuilder) {}
+
+
+    public function forProfile(UserProfileUid $profile): self
+    {
+        $this->profile = $profile;
+
+        return $this;
+    }
+
 
     public function forProduct(Product|ProductUid|string $product): self
     {
@@ -128,6 +142,25 @@ final class AllProductsIdentifierRepository implements AllProductsIdentifierInte
                 );
         }
 
+        $dbal
+            ->leftJoin('product',
+                ProductInfo::class,
+                'info',
+                '
+                    info.product = product.id 
+                    
+                '.($this->profile instanceof UserProfileUid ? '' : ' AND (info.profile IS NULL OR info.profile = :profile)'),
+            );
+
+        /** Применяем фильтр по профилю */
+        if($this->profile instanceof UserProfileUid)
+        {
+            $dbal->setParameter(
+                key: 'profile',
+                value: $this->profile,
+                type: UserProfileUid::TYPE,
+            );
+        }
 
         $dbal
             ->addSelect('offer.id AS offer_id')
@@ -249,6 +282,17 @@ final class AllProductsIdentifierRepository implements AllProductsIdentifierInte
                         (modification.const IS NULL AND product_invariable.modification IS NULL)
                    )
             ');
+
+        // Артикул сырья
+
+        $dbal->addSelect('
+            COALESCE(
+                modification.article, 
+                variation.article, 
+                offer.article, 
+                info.article
+            ) AS article
+		');
 
         $dbal->addOrderBy('product.id');
 

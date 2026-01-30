@@ -1,17 +1,17 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
- *  
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
+ *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *  
+ *
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *  
+ *
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 declare(strict_types=1);
@@ -30,7 +29,6 @@ use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Reference\Money\Type\Money;
-use Deprecated;
 use Symfony\Component\DependencyInjection\Attribute\Exclude;
 
 /**
@@ -133,25 +131,6 @@ final readonly class ProductModelResult
     public function getProductOfferReference(): ?string
     {
         return $this->product_offer_reference;
-    }
-
-    /** @deprecated */
-    #[Deprecated(message: "")]
-    public function getProductOffers(): ?array
-    {
-        if(false === json_validate((string) $this->product_offers))
-        {
-            return null;
-        }
-
-        $offers = json_decode($this->product_offers, true, 512, JSON_THROW_ON_ERROR);
-
-        if(null === current($offers))
-        {
-            return null;
-        }
-
-        return $offers;
     }
 
     public function getProductImages(): array|null
@@ -397,57 +376,5 @@ final readonly class ProductModelResult
     public function getProductInvariableId(): null
     {
         return null;
-    }
-
-    /**
-     * Торговые предложения только в наличии
-     * @deprecated
-     */
-    #[Deprecated(message: "")]
-    public function getInStockOffers(): ?array
-    {
-        if(false === json_validate((string) $this->product_offers))
-        {
-            return [];
-        }
-
-        $offers = json_decode($this->product_offers, true, 512, JSON_THROW_ON_ERROR);
-
-        if(is_null(current($offers)))
-        {
-            return null;
-        }
-
-        $inStock = array_filter($offers, static function(array $offer) {
-            return $offer['quantity'] !== 0;
-        });
-
-        return $inStock;
-    }
-
-    /**
-     * Торговые предложения не в наличии
-     * @deprecated
-     */
-    #[Deprecated(message: "")]
-    public function getOutOfStockOffers(): ?array
-    {
-        if(false === json_validate((string) $this->product_offers))
-        {
-            return [];
-        }
-
-        $offers = json_decode($this->product_offers, true, 512, JSON_THROW_ON_ERROR);
-
-        if(empty(current($offers)))
-        {
-            return null;
-        }
-
-        $outOfStock = array_filter($offers, static function(array $offer) {
-            return $offer['quantity'] === 0;
-        });
-
-        return $outOfStock;
     }
 }

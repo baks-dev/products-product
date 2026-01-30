@@ -25,7 +25,6 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\UseCase\Admin\Invariable;
 
-
 use BaksDev\Core\Entity\AbstractHandler;
 use BaksDev\Products\Product\Entity\ProductInvariable;
 

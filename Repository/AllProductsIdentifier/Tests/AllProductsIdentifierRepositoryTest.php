@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -34,6 +34,7 @@ use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
 use ReflectionClass;
@@ -51,7 +52,9 @@ class AllProductsIdentifierRepositoryTest extends KernelTestCase
     {
         /** @var AllProductsIdentifierInterface $AllProductsIdentifier */
         $AllProductsIdentifier = self::getContainer()->get(AllProductsIdentifierInterface::class);
-        $result = $AllProductsIdentifier->findAll();
+        $result = $AllProductsIdentifier
+            ->forProfile(new UserProfileUid(UserProfileUid::TEST))
+            ->findAll();
 
         foreach($result as $ProductsIdentifierResult)
         {
@@ -59,7 +62,6 @@ class AllProductsIdentifierRepositoryTest extends KernelTestCase
             {
                 continue;
             }
-
 
             // Вызываем все геттеры
             $reflectionClass = new ReflectionClass(ProductsIdentifierResult::class);
@@ -89,6 +91,7 @@ class AllProductsIdentifierRepositoryTest extends KernelTestCase
         /** @var AllProductsIdentifierInterface $AllProductsIdentifier */
         $AllProductsIdentifier = self::getContainer()->get(AllProductsIdentifierInterface::class);
         $result = $AllProductsIdentifier
+            ->forProfile(new UserProfileUid(UserProfileUid::TEST))
             ->forProduct(self::$data->getProductId())
             ->findAll();
 
@@ -108,6 +111,7 @@ class AllProductsIdentifierRepositoryTest extends KernelTestCase
         /** @var AllProductsIdentifierInterface $AllProductsIdentifier */
         $AllProductsIdentifier = self::getContainer()->get(AllProductsIdentifierInterface::class);
         $result = $AllProductsIdentifier
+            ->forProfile(new UserProfileUid(UserProfileUid::TEST))
             ->forOfferConst(self::$data->getProductOfferConst())
             ->findAll();
 
@@ -134,6 +138,7 @@ class AllProductsIdentifierRepositoryTest extends KernelTestCase
         /** @var AllProductsIdentifierInterface $AllProductsIdentifier */
         $AllProductsIdentifier = self::getContainer()->get(AllProductsIdentifierInterface::class);
         $result = $AllProductsIdentifier
+            ->forProfile(new UserProfileUid(UserProfileUid::TEST))
             ->forVariationConst(self::$data->getProductVariationConst())
             ->findAll();
 
@@ -167,6 +172,7 @@ class AllProductsIdentifierRepositoryTest extends KernelTestCase
         /** @var AllProductsIdentifierInterface $AllProductsIdentifier */
         $AllProductsIdentifier = self::getContainer()->get(AllProductsIdentifierInterface::class);
         $result = $AllProductsIdentifier
+            ->forProfile(new UserProfileUid(UserProfileUid::TEST))
             ->forModificationConst(self::$data->getProductModificationConst())
             ->findAll();
 

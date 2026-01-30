@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -44,6 +44,8 @@ interface ProductDetailByConstInterface
     ): self;
 
     /**
+     * @depricate использовать findResult() вместо этого
+     *
      * Метод возвращает детальную информацию о продукте по его неизменяемым идентификаторам по иерархии
      * 1. модификаций множественного варианта торгового предложения
      * 2. множественного варианта торгового предложения
@@ -58,6 +60,7 @@ interface ProductDetailByConstInterface
      * 2. множественного варианта торгового предложения
      * 3. торгового предложения,
      * гидрируя всё на объект резалта
+     *
      * @see ProductDetailByConstResult
      */
     public function findResult(): ProductDetailByConstResult|false;

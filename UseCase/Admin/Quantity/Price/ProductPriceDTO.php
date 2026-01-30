@@ -26,8 +26,6 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\UseCase\Admin\Quantity\Price;
 
 use BaksDev\Products\Product\Entity\Price\ProductPriceInterface;
-use BaksDev\Reference\Money\Type\Money;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /** @see ProductPrice */
 final class ProductPriceDTO implements ProductPriceInterface

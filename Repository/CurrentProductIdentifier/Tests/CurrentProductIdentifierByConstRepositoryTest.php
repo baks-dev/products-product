@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -100,6 +100,7 @@ class CurrentProductIdentifierByConstRepositoryTest extends KernelTestCase
          * Обновляем событие
          * @var CurrentProductEventInterface $CurrentProductEvent
          */
+
         $CurrentProductEvent = self::getContainer()->get(CurrentProductEventInterface::class);
         $ProductEvent = $CurrentProductEvent->findByProduct(self::$result['id']);
 
@@ -179,7 +180,7 @@ class CurrentProductIdentifierByConstRepositoryTest extends KernelTestCase
             {
                 // Вызываем метод
                 $data = $method->invoke($CurrentProductIdentifierResult);
-                dump($data);
+                //dump($data);
             }
         }
 
@@ -218,7 +219,7 @@ class CurrentProductIdentifierByConstRepositoryTest extends KernelTestCase
             {
                 // Вызываем метод
                 $data = $method->invoke($CurrentProductIdentifierResult);
-                dump($data);
+                //dump($data);
             }
         }
 
@@ -260,7 +261,7 @@ class CurrentProductIdentifierByConstRepositoryTest extends KernelTestCase
             {
                 // Вызываем метод
                 $data = $method->invoke($CurrentProductIdentifierResult);
-                dump($data);
+                //dump($data);
             }
         }
 

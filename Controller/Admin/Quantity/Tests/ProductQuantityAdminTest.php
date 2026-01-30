@@ -37,6 +37,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 #[Group('products-product')]
+#[Group('products-product-controller')]
 #[When(env: 'test')]
 final class ProductQuantityAdminTest extends WebTestCase
 {
@@ -47,7 +48,7 @@ final class ProductQuantityAdminTest extends WebTestCase
     #[DependsOnClass(ProductsProductNewAdminUseCaseTest::class)]
     public function testRoleSuccessful(): void
     {
-        $client = static::createClient();
+        $client = self::createClient();
 
         $usr = TestUserAccount::getModer(self::ROLE);
 
@@ -68,7 +69,7 @@ final class ProductQuantityAdminTest extends WebTestCase
     #[DependsOnClass(ProductsProductNewAdminUseCaseTest::class)]
     public function testRoleAdminSuccessful(): void
     {
-        $client = static::createClient();
+        $client = self::createClient();
 
         $usr = TestUserAccount::getAdmin();
 
@@ -88,7 +89,7 @@ final class ProductQuantityAdminTest extends WebTestCase
     #[DependsOnClass(ProductsProductNewAdminUseCaseTest::class)]
     public function testRoleUserFiled(): void
     {
-        $client = static::createClient();
+        $client = self::createClient();
 
         $usr = TestUserAccount::getUsr();
         $client->loginUser($usr, 'user');
@@ -108,7 +109,7 @@ final class ProductQuantityAdminTest extends WebTestCase
     public function testGuestFiled(): void
     {
         self::ensureKernelShutdown();
-        $client = static::createClient();
+        $client = self::createClient();
         $client->request('GET', sprintf(
             self::URL,
             ProductEventUid::TEST,

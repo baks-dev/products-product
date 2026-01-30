@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\UseCase\Admin\Price\Offer\Variation\Tests;
 
+use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Offers\Variation\Price\ProductVariationPrice;
 use BaksDev\Products\Product\Repository\CurrentProductEvent\CurrentProductEventInterface;
 use BaksDev\Products\Product\Type\Id\ProductUid;
@@ -57,9 +58,11 @@ final class UpdateProductVariationPriceTest extends KernelTestCase
             ->current()
             ->getId();
 
+        /** @var ProductEvent $productEvent */
         $updateProductVariationPriceDTO = new UpdateProductVariationPriceDTO()
             ->setVariation($variationId)
-            ->setPrice(new Money(10000));
+            ->setPrice(new Money(10000))
+            ->setProductEvent($productEvent->getId());
 
         /** @var UpdateProductVariationPriceHandler $UpdateProductVariationPriceHandler */
         $UpdateProductVariationPriceHandler = self::getContainer()->get(UpdateProductVariationPriceHandler::class);

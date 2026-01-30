@@ -21,6 +21,8 @@
  *  THE SOFTWARE.
  */
 
+declare(strict_types=1);
+
 namespace BaksDev\Products\Product\UseCase\Admin\Delete;
 
 use BaksDev\Core\Entity\AbstractHandler;
@@ -30,13 +32,6 @@ use BaksDev\Products\Product\Messenger\ProductMessage;
 
 final class ProductDeleteHandler extends AbstractHandler
 {
-    //    public function __construct(
-    //        #[Target('productsProductLogger')] private LoggerInterface $logger,
-    //        private EntityManagerInterface $entityManager,
-    //        private ValidatorInterface $validator,
-    //        private MessageDispatchInterface $messageDispatch
-    //    ) {}
-
     public function handle(ProductDeleteDTO $command): Product|string
     {
         $this->setCommand($command);

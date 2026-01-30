@@ -67,7 +67,7 @@ final class ProductQuantityController extends AbstractController
         #[ParamConverter(ProductModificationUid::class)] ?ProductModificationUid $modification = null,
     ): Response
     {
-        /** @var ProductDetailByEventResult $productDetailByUid */
+        /** @var ProductDetailByEventResult|false $productDetailByUid */
         $productDetailByUid = $ProductDetailByUidRepository
             ->event($product)
             ->offer($offer)
@@ -92,8 +92,8 @@ final class ProductQuantityController extends AbstractController
                     'product' => $product,
                     'offer' => $offer,
                     'variation' => $variation,
-                    'modification' => $modification
-                ])]
+                    'modification' => $modification,
+                ])],
             )
             ->handleRequest($request);
 
@@ -104,49 +104,95 @@ final class ProductQuantityController extends AbstractController
             /** @var ProductQuantityDTO $data */
             $data = $quantityForm->getData();
 
-            if(false === empty($modification))
+            /**
+             * Обновляем остаток в модификации множественного варианта торгового предложения
+             */
+
+            if($modification instanceof ProductModificationUid)
             {
                 $updateModificationQuantityDTO = new UpdateModificationQuantityDTO(
                     $modification,
                     $data->getTotal(),
                     $data->getReserve(),
+                    $product
                 );
 
                 $handle = $UpdateModificationQuantityHandler->handle($updateModificationQuantityDTO);
+
+                $this->addFlash
+                (
+                    'page.quantity',
+                    is_string($handle) || is_bool($handle) ? 'danger.quantity.product' : 'success.quantity.product',
+                    'products-product.admin',
+                );
+
+                return $this->redirectToRoute('products-product:admin.index');
+
             }
 
-            if(empty($modification) && false === empty($variation))
+            /**
+             * Обновляем остаток в множественном варианте торгового предложения
+             */
+
+            if($variation instanceof ProductVariationUid)
             {
                 $updateVariationQuantityDTO = new UpdateVariationQuantityDTO(
                     $variation,
                     $data->getTotal(),
                     $data->getReserve(),
+                    $product
                 );
 
                 $handle = $UpdateVariationQuantityHandler->handle($updateVariationQuantityDTO);
+
+                $this->addFlash
+                (
+                    'page.quantity',
+                    is_string($handle) || is_bool($handle) ? 'danger.quantity.product' : 'success.quantity.product',
+                    'products-product.admin',
+                );
+
+                return $this->redirectToRoute('products-product:admin.index');
             }
 
-            if(empty($varaition) && false === empty($offer))
+            /**
+             * Обновляем остаток в торговом предложении
+             */
+
+            if($offer instanceof ProductOfferUid)
             {
                 $updateOfferQuantityDTO = new UpdateOfferQuantityDTO(
                     $offer,
                     $data->getTotal(),
                     $data->getReserve(),
+                    $product
                 );
 
                 $handle = $UpdateOfferQuantityHandler->handle($updateOfferQuantityDTO);
-            }
 
-            if(empty($offer))
-            {
-                $updateProductQuantityDTO = new UpdateProductQuantityDTO(
-                    $product,
-                    $data->getTotal(),
-                    $data->getReserve(),
+                $this->addFlash
+                (
+                    'page.quantity',
+                    is_string($handle) || is_bool($handle) ? 'danger.quantity.product' : 'success.quantity.product',
+                    'products-product.admin',
                 );
 
-                $handle = $UpdateProductQuantityHandler->handle($updateProductQuantityDTO);
+                return $this->redirectToRoute('products-product:admin.index');
             }
+
+
+            /**
+             * По умолчанию обновляем продукт
+             */
+
+
+            $updateProductQuantityDTO = new UpdateProductQuantityDTO(
+                $product,
+                $data->getTotal(),
+                $data->getReserve(),
+            );
+
+            $handle = $UpdateProductQuantityHandler->handle($updateProductQuantityDTO);
 
             $this->addFlash
             (
@@ -156,6 +202,8 @@ final class ProductQuantityController extends AbstractController
             );
 
             return $this->redirectToRoute('products-product:admin.index');
+
+
         }
 
         return $this->render(['form' => $quantityForm->createView()]);

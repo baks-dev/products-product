@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -423,23 +423,22 @@ final class ProductChoiceRepository implements ProductChoiceInterface
 
         $dbal
             ->addSelect(
-                "JSON_AGG
-                (DISTINCT
-                    JSONB_BUILD_OBJECT
-                    (
-                        'product_url', info.url,
-                        'product_image', CONCAT ( '/upload/".$dbal->table(ProductPhoto::class)."' , '/', product_photo.name),
-                        'product_image_cdn', product_photo.cdn,
-                        'product_image_ext', product_photo.ext,
-                        'product_price', product_price.price,
-                        'product_currency', product_price.currency,
-                        'category_url', CASE
-                            WHEN (:category)::UUID IS NOT NULL
-                            THEN category_info.url
-                            ELSE
-                            NULL
-                        END
-                    )
+                "
+                JSONB_BUILD_OBJECT
+                (
+                    'product_url', info.url,
+                    'product_image', CONCAT ( '/upload/".$dbal->table(ProductPhoto::class)."' , '/', product_photo.name),
+                    'product_image_cdn', product_photo.cdn,
+                    'product_image_ext', product_photo.ext,
+                    'product_price', product_price.price,
+                    'product_currency', product_price.currency,
+                    'category_url', CASE
+                        WHEN (:category)::UUID IS NOT NULL
+                        THEN category_info.url
+                        ELSE
+                        NULL
+                    END
+                    
                 ) AS params",
 
             )

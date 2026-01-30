@@ -21,14 +21,18 @@
  *  THE SOFTWARE.
  */
 
-namespace BaksDev\Products\Product\Repository\ProductsDetailByUids\Tests;
+declare(strict_types=1);
 
-use BaksDev\Products\Product\Repository\ProductsDetailByUids\ProductsDetailByUidsRepository;
-use BaksDev\Products\Product\Repository\ProductsDetailByUids\ProductsDetailByUidsResult;
+namespace BaksDev\Products\Product\Repository\ProductDetail\Tests;
+
+use BaksDev\Core\Doctrine\DBALQueryBuilder;
+use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailByEventInterface;
+use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailByEventResult;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
+use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
 use ReflectionClass;
 use ReflectionMethod;
@@ -37,37 +41,26 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 
 #[Group('products-product')]
 #[When(env: 'test')]
-class ProductsDetailByUidsRepositoryTest extends KernelTestCase
+class ProductDetailByEventRepositoryTest extends KernelTestCase
 {
-    public function testFindAll()
+    public function testUseCase(): void
     {
         self::assertTrue(true);
 
-        /** @var ProductsDetailByUidsRepository $repository */
-        $repository = self::getContainer()->get(ProductsDetailByUidsRepository::class);
+        /** @var ProductDetailByEventInterface $ProductDetailByUidRepository */
+        $ProductDetailByUidRepository = self::getContainer()->get(ProductDetailByEventInterface::class);
 
-        $events = [ProductEventUid::TEST];
-        $offers = [ProductOfferUid::TEST];
-        $variations = [ProductVariationUid::TEST];
-        $modifications = [ProductModificationUid::TEST];
+        $ProductDetailByEventResult = $ProductDetailByUidRepository
+            ->event(new ProductEventUid('019739b9-1855-7eaf-90e7-094390e8df54'))
+            ->offer(new ProductOfferUid('019739b9-1875-78bf-b834-9ddc03b464c0'))
+            ->variation(new ProductVariationUid('019739b9-1875-78bf-b834-9ddc04ad9507'))
+            ->modification(new ProductModificationUid('019739b9-1876-77c3-adc2-aa1d59f680bd'))
+            ->findResult();
 
-        $results = $repository
-            ->events($events)
-            ->offers($offers)
-            ->variations($variations)
-            ->modifications($modifications)
-            ->findAll();
-
-        if(false === $results || false === $results->valid())
-        {
-            return;
-        }
-
-        /** @var ProductsDetailByUidsResult $ProductsDetailByUidsResult */
-        foreach($results as $ProductsDetailByUidsResult)
+        if($ProductDetailByEventResult instanceof ProductDetailByEventResult)
         {
             // Вызываем все геттеры
-            $reflectionClass = new ReflectionClass(ProductsDetailByUidsResult::class);
+            $reflectionClass = new ReflectionClass(ProductDetailByEventResult::class);
             $methods = $reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC);
 
             foreach($methods as $method)
@@ -76,14 +69,10 @@ class ProductsDetailByUidsRepositoryTest extends KernelTestCase
                 if($method->getNumberOfParameters() === 0)
                 {
                     // Вызываем метод
-                    $data = $method->invoke($ProductsDetailByUidsResult);
+                    $data = $method->invoke($ProductDetailByEventResult);
                     // dump($data);
                 }
             }
-
         }
-
-
-        self::assertTrue(true);
     }
 }

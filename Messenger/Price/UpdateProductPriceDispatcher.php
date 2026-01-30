@@ -59,14 +59,10 @@ final readonly class UpdateProductPriceDispatcher
         private CurrentProductIdentifierByEventInterface $CurrentProductIdentifierRepository,
     ) {}
 
-    /**
-     * Обновляет цену продукта в зависимости от вложенности торгового предложения
-     */
+    /** Обновляет цену продукта в зависимости от вложенности торгового предложения */
     public function __invoke(UpdateProductPriceMessage $message): void
     {
-        /**
-         * Получаем текущие идентификаторы на случай изменения карточки
-         */
+        /** Получаем текущие идентификаторы на случай изменения карточки */
         $currentProductIdentifierResult = $this->CurrentProductIdentifierRepository
             ->forEvent($message->getEvent())
             ->forOffer($message->getOffer())
@@ -85,14 +81,13 @@ final readonly class UpdateProductPriceDispatcher
         }
 
 
-        /**
-         * Если передан Modification - изменяем цену ModificationPrice
-         */
+        /** Если передан Modification - изменяем цену ModificationPrice */
         if(true === ($message->getModification() instanceof ProductModificationUid))
         {
             $updateProductModificationPriceDTO = new UpdateProductModificationPriceDTO()
                 ->setModification($message->getModification())
-                ->setPrice($message->getPrice());
+                ->setPrice($message->getPrice())
+                ->setProductEvent($message->getEvent());
 
             $price = $this->UpdateProductModificationPriceHandler->handle($updateProductModificationPriceDTO);
 
@@ -125,9 +120,7 @@ final readonly class UpdateProductPriceDispatcher
         }
 
 
-        /**
-         * Если Modification === FALSE, но передан Variation - изменяем цену VariationPrice
-         */
+        /** Если Modification === FALSE, но передан Variation - изменяем цену VariationPrice */
         if(
             false === ($message->getModification() instanceof ProductModificationUid) &&
             true === ($message->getVariation() instanceof ProductVariationUid)
@@ -168,9 +161,7 @@ final readonly class UpdateProductPriceDispatcher
         }
 
 
-        /**
-         * Если Variation === FALSE, но передан Offer - изменяем цену OfferPrice
-         */
+        /** Если Variation === FALSE, но передан Offer - изменяем цену OfferPrice */
         if(
             false === ($message->getVariation() instanceof ProductVariationUid) &&
             true === ($message->getOffer() instanceof ProductOfferUid)
@@ -211,9 +202,7 @@ final readonly class UpdateProductPriceDispatcher
         }
 
 
-        /**
-         * Если Offer === FALSE, но передан Event - изменяем цену ProductPrice
-         */
+        /** Если Offer === FALSE, но передан Event - изменяем цену ProductPrice */
         if(
             false === ($message->getOffer() instanceof ProductOfferUid) &&
             true === ($message->getEvent() instanceof ProductEventUid)

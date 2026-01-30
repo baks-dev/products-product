@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,6 @@ namespace BaksDev\Products\Product\Messenger\Quantity;
 
 use BaksDev\Core\Messenger\MessageDispatch;
 use BaksDev\Products\Product\Repository\ProductsByValues\ProductsByValuesInterface;
-use BaksDev\Products\Product\Repository\ProductsByValues\ProductsByValuesResult;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler(priority: 0)]
@@ -41,6 +40,7 @@ final readonly class FindProductsForQuantityUpdateDispatcher
     public function __invoke(FindProductsForQuantityUpdateMessage $message): void
     {
         $this->ProductsByValuesRepository
+            ->forProfile($message->getProfile())
             ->forCategory($message->getCategory())
             ->forOfferValue($message->getOfferValue())
             ->forVariationValue($message->getVariationValue())
@@ -53,14 +53,13 @@ final readonly class FindProductsForQuantityUpdateDispatcher
             return;
         }
 
-        /** @var ProductsByValuesResult $product */
-        foreach($products as $product)
+        foreach($products as $ProductsByValuesResult)
         {
             $UpdateProductQuantityMessage = new UpdateProductQuantityMessage(
-                event: $product->getEvent(),
-                offer: $product->getProductOfferUid(),
-                variation: $product->getProductVariationUid(),
-                modification: $product->getProductModificationUid(),
+                event: $ProductsByValuesResult->getEvent(),
+                offer: $ProductsByValuesResult->getProductOfferUid(),
+                variation: $ProductsByValuesResult->getProductVariationUid(),
+                modification: $ProductsByValuesResult->getProductModificationUid(),
                 quantity: $message->getQuantity(),
                 reserve: false,
             );

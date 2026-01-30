@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -197,7 +197,7 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
     public function builder(): DBALQueryBuilder
     {
 
-        if(false === $this->events)
+        if(empty($this->events))
         {
             throw new InvalidArgumentException('Invalid Argument ProductEvent');
         }
@@ -237,7 +237,7 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
 
         // если есть оффер TODO
 
-        if($this->offers)
+        if(false === empty($this->offers))
         {
             $dbal
                 ->addSelect('product_offer.id as product_offer_uid')
@@ -262,7 +262,7 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
 
         /* Название продукта */
 
-        $product_offer_name = $this->offers ? 'product_offer.name, ' : '';
+        $product_offer_name = false === empty($this->offers) ? 'product_offer.name, ' : '';
 
         $dbal->addSelect('
             COALESCE(
@@ -273,7 +273,7 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
 
 
         /* Цена торгового предоложения */
-        if($this->offers)
+        if(false === empty($this->offers))
         {
             $dbal->leftJoin(
                 'product_offer',
@@ -314,7 +314,7 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
         /* Множественные варианты торгового предложения */
 
         // Если отмечены "Множественные Варианты торгового предложения"
-        if($this->variations)
+        if(false === empty($this->variations))
         {
             $dbal
                 ->addSelect('product_variation.id as product_variation_uid')
@@ -369,7 +369,7 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
 
         /* Модификация множественного варианта торгового предложения */
 
-        if($this->modifications)
+        if(false === empty($this->modifications))
         {
             $dbal
                 ->addSelect('product_modification.id as product_modification_uid')
@@ -435,9 +435,9 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
         //            ) AS product_article
         //		');
 
-        $modification_article = $this->modifications ? 'product_modification.article,' : '';
-        $variation_article = $this->variations ? 'product_variation.article,' : '';
-        $offer_article = $this->offers ? 'product_offer.article,' : '';
+        $modification_article = false === empty($this->modifications) ? 'product_modification.article,' : '';
+        $variation_article = false === empty($this->variations) ? 'product_variation.article,' : '';
+        $offer_article = false === empty($this->offers) ? 'product_offer.article,' : '';
         $dbal->addSelect('
             COALESCE('.
             $modification_article.
@@ -457,7 +457,7 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
             'product_photo.event = product_event.id AND product_photo.root = true'
         );
 
-        if($this->offers)
+        if(false === empty($this->offers))
         {
             $dbal->leftJoin(
                 'product_offer',
@@ -467,7 +467,7 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
             );
         }
 
-        if($this->variations)
+        if(false === empty($this->variations))
         {
             $dbal->leftJoin(
                 'product_variation',
@@ -477,7 +477,7 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
             );
         }
 
-        if($this->modifications)
+        if(false === empty($this->modifications))
         {
             $dbal->leftJoin(
                 'product_modification',
@@ -491,15 +491,15 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
         /* Задать условия для формирования поля 'product_image' для: */
         /* product_modification_image.name, product_variation_image.name, product_offer_images.name */
         /* в зависимости от того указано ли соотвествующее сво-во: modification, offer, variation в процессе производства (action) */
-        $modification_image_expr = $this->modifications ?
+        $modification_image_expr = false === empty($this->modifications) ?
             "WHEN product_modification_image.name IS NOT NULL THEN
                         CONCAT ( '/upload/".$dbal->table(ProductModificationImage::class)."' , '/', product_modification_image.name)" : '';
 
-        $variation_image_expr = $this->variations ?
+        $variation_image_expr = false === empty($this->variations) ?
             "WHEN product_variation_image.name IS NOT NULL THEN
                         CONCAT ( '/upload/".$dbal->table(ProductVariationImage::class)."' , '/', product_variation_image.name)" : '';
 
-        $offer_image_expr = $this->offers ?
+        $offer_image_expr = false === empty($this->offers) ?
             "WHEN product_offer_images.name IS NOT NULL THEN
                         CONCAT ( '/upload/".$dbal->table(ProductOfferImage::class)."' , '/', product_offer_images.name)" : '';
 
@@ -523,11 +523,11 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
         /* Задать условия для формирования полей 'product_image_ext' и 'product_image_cdn' для: */
         /* product_modification_image.ext, product_variation_image.ext, product_offer_images.ext */
         /* в зависимости от того указано ли соотвествующее сво-во: modification, offer,variation в процессе производства (action) */
-        $modification_image_ext = $this->modifications ? 'product_modification_image.ext,' : '';
+        $modification_image_ext = false === empty($this->modifications) ? 'product_modification_image.ext,' : '';
 
-        $variation_image_ext = $this->variations ? 'product_variation_image.ext,' : '';
+        $variation_image_ext = false === empty($this->variations) ? 'product_variation_image.ext,' : '';
 
-        $offer_image_ext = $this->offers ? 'product_offer_images.ext,' : '';
+        $offer_image_ext = false === empty($this->offers) ? 'product_offer_images.ext,' : '';
 
         $dbal->addSelect(
             '
@@ -541,11 +541,11 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
 
         /* Флаг загрузки файла CDN */
 
-        $modification_image_cdn = $this->modifications ? 'product_modification_image.cdn,' : '';
+        $modification_image_cdn = false === empty($this->modifications) ? 'product_modification_image.cdn,' : '';
 
-        $variation_image_cdn = $this->variations ? 'product_variation_image.cdn,' : '';
+        $variation_image_cdn = false === empty($this->variations) ? 'product_variation_image.cdn,' : '';
 
-        $offer_image_cdn = $this->offers ? 'product_offer_images.cdn,' : '';
+        $offer_image_cdn = false === empty($this->offers) ? 'product_offer_images.cdn,' : '';
 
         $dbal->addSelect(
             '
@@ -646,7 +646,7 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
 
 
         /* Добавление массивов офферов  */
-        if($this->events !== false)
+        if(false === empty($this->events))
         {
             /** Product Event */
             $dbal
@@ -658,7 +658,7 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
                 );
         }
 
-        if($this->offers !== false)
+        if(false === empty($this->offers))
         {
             /** Торговые предложения */
             $dbal
@@ -670,7 +670,7 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
                 );
         }
 
-        if($this->variations !== false)
+        if(false === empty($this->variations))
         {
             /** Множественные варианты торгового предложения */
             $dbal
@@ -682,7 +682,7 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
                 );
         }
 
-        if($this->modifications !== false)
+        if(false === empty($this->modifications))
         {
             /** Модификации множественного варианта */
             $dbal

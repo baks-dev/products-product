@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -67,6 +67,7 @@ class ProductDetailByEventResult
 
         private ?string $product_image,
         private ?string $product_image_ext,
+        private ?bool $product_image_cdn,
 
         private ?string $category_name,
         private ?string $category_url,
@@ -92,7 +93,7 @@ class ProductDetailByEventResult
         private ?string $product_modification_postfix = null,
 
 
-        private bool $product_image_cdn = false,
+
 
         private int $product_total = 0,
 
@@ -245,7 +246,7 @@ class ProductDetailByEventResult
 
     public function isProductImageCdn(): bool
     {
-        return $this->product_image_cdn;
+        return $this->product_image_cdn === true;
     }
 
     public function getProductTotal(): int

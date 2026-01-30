@@ -26,7 +26,9 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\UseCase\Admin\Quantity;
 
 use BaksDev\Core\Entity\AbstractHandler;
+use BaksDev\Core\Messenger\MessageDelay;
 use BaksDev\Products\Product\Entity\Price\ProductPrice;
+use BaksDev\Products\Product\Messenger\Price\UpdateMarketplacePriceMessage;
 
 final class UpdateProductQuantityHandler extends AbstractHandler
 {
@@ -60,9 +62,14 @@ final class UpdateProductQuantityHandler extends AbstractHandler
 
         $this->flush();
 
+        $message = new UpdateMarketplacePriceMessage($command->getEvent());
+
         $this->messageDispatch
             ->addClearCacheOther('products-product')
-            ->addClearCacheOther('avito-board');
+            ->addClearCacheOther('avito-board')
+            ->addClearCacheOther('drom-board')
+            ->addClearCacheOther('drom-products')
+            ->dispatch($message, [new MessageDelay('5 minutes')], transport: 'products-product');
 
         return $ProductPrice;
 

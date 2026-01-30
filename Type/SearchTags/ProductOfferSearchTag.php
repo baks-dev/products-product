@@ -24,8 +24,9 @@
 namespace BaksDev\Products\Product\Type\SearchTags;
 
 use BaksDev\Products\Product\Repository\Search\AllProductsToIndex\AllProductsToIndexResult;
-use BaksDev\Search\Repository\DataToIndexResult\DataToIndexResultInterface;
+use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Search\EntityDocument\EntityDocumentInterface;
+use BaksDev\Search\Repository\DataToIndexResult\DataToIndexResultInterface;
 use BaksDev\Search\SearchDocuments\PrepareDocumentInterface;
 use BaksDev\Search\SearchIndex\SearchIndexTagInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
@@ -53,6 +54,11 @@ class ProductOfferSearchTag extends AbstractProductSearchTag implements SearchIn
     {
         /** @var AllProductsToIndexResult $item */
         $documentId = $item->getProductOfferId();
+
+        if(false === ($documentId instanceof ProductOfferUid))
+        {
+            return $this->entityDocument;
+        }
 
         $this->entityDocument->setEntityId($documentId);
 

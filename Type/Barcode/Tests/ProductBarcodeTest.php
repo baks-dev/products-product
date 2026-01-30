@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -41,7 +41,7 @@ final class ProductBarcodeTest extends TestCase
         $customValue = '(01)04660425462256(21)3;4TfdlZg*;=1(91)EE11(92)SDqzfvyaZHeAogGO5ptNrX0lwofieadNvlr1wvffI61=';
         $barcode = new ProductBarcode($customValue);
 
-        $this->assertTrue($customValue, $barcode->equals('04660425462256'));
+        $this->assertTrue($barcode->equals('04660425462256'));
     }
 
     public function testBarcodeGeneration()
