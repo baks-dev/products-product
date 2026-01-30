@@ -92,7 +92,7 @@ final class ProductsByValuesRepositoryTest extends KernelTestCase
             if($method->getNumberOfParameters() === 0)
             {
                 // Вызываем метод
-                $data = $method->invoke($result);
+                $data = $method->invoke($ProductsByValuesResult);
             }
         }
     }
