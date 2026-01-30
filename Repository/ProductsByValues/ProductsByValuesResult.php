@@ -25,11 +25,13 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Repository\ProductsByValues;
 
-
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
+use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
+use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
+use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
 
 final readonly class ProductsByValuesResult
@@ -43,12 +45,15 @@ final readonly class ProductsByValuesResult
         private ?string $product_offer_uid,
         private ?string $product_offer_value,
         private ?string $product_offer_postfix,
+        private ?string $product_offer_const,
         private ?string $product_variation_uid,
         private ?string $product_variation_value,
         private ?string $product_variation_postfix,
+        private ?string $product_variation_const,
         private ?string $product_modification_uid,
         private ?string $product_modification_value,
         private ?string $product_modification_postfix,
+        private ?string $product_modification_const,
     ) {}
 
     public function getProduct(): ProductUid
@@ -81,6 +86,11 @@ final readonly class ProductsByValuesResult
         return $this->product_offer_postfix;
     }
 
+    public function getProductOfferConst(): ?ProductOfferConst
+    {
+        return false === empty($this->product_offer_const) ? new ProductOfferConst($this->product_offer_const) : null;
+    }
+
     public function getProductVariationUid(): ?ProductVariationUid
     {
         return $this->product_variation_uid === null ? null : new ProductVariationUid($this->product_variation_uid);
@@ -96,6 +106,11 @@ final readonly class ProductsByValuesResult
         return $this->product_variation_postfix;
     }
 
+    public function getProductVariationConst(): ?ProductVariationConst
+    {
+        return false === empty($this->product_variation_const) ? new ProductVariationConst($this->product_variation_const) : null;
+    }
+
     public function getProductModificationUid(): ?ProductModificationUid
     {
         return $this->product_modification_uid === null ? null : new ProductModificationUid($this->product_modification_uid);
@@ -109,6 +124,11 @@ final readonly class ProductsByValuesResult
     public function getProductModificationPostfix(): ?string
     {
         return $this->product_modification_postfix;
+    }
+
+    public function getProductModificationConst(): ?ProductModificationConst
+    {
+        return false === empty($this->product_modification_const) ? new ProductModificationConst($this->product_modification_const) : null;
     }
 
     public function getProductQuantity(): int
