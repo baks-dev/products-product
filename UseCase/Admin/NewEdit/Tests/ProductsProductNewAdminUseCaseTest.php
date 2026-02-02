@@ -78,6 +78,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\File;
 
 #[Group('products-product')]
+#[Group('products-product-repository')]
 #[Group('products-product-controller')]
 #[Group('products-product-usecase')]
 #[When(env: 'test')]

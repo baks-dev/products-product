@@ -23,8 +23,10 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\Repository\ExistProductBarcode;
+namespace BaksDev\Products\Product\Repository\ExistProductBarcode\Tests;
 
+use BaksDev\Products\Product\Repository\ExistProductBarcode\ExistProductBarcodeInterface;
+use BaksDev\Products\Product\Repository\ExistProductBarcode\ExistProductBarcodeRepository;
 use BaksDev\Products\Product\Type\Barcode\ProductBarcode;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;

@@ -202,6 +202,7 @@ final class ProductsByValuesRepository implements ProductsByValuesInterface
             ->addSelect('product_offer.id as product_offer_uid')
             ->addSelect('product_offer.value as product_offer_value')
             ->addSelect('product_offer.postfix as product_offer_postfix')
+            ->addSelect('product_offer.const as product_offer_const')
             ->{$method}(
                 'product',
                 ProductOffer::class,
@@ -230,6 +231,7 @@ final class ProductsByValuesRepository implements ProductsByValuesInterface
             ->addSelect('product_offer_variation.id as product_variation_uid')
             ->addSelect('product_offer_variation.value as product_variation_value')
             ->addSelect('product_offer_variation.postfix as product_variation_postfix')
+            ->addSelect('product_offer_variation.const as product_variation_const')
             ->{$method}(
                 'product_offer',
                 ProductVariation::class,
@@ -258,6 +260,7 @@ final class ProductsByValuesRepository implements ProductsByValuesInterface
             ->addSelect('product_offer_modification.id as product_modification_uid')
             ->addSelect('product_offer_modification.value as product_modification_value')
             ->addSelect('product_offer_modification.postfix as product_modification_postfix')
+            ->addSelect('product_offer_modification.const as product_modification_const')
             ->{$method}(
                 'product_offer_variation',
                 ProductModification::class,

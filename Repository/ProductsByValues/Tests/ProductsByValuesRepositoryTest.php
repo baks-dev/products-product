@@ -41,6 +41,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
 #[Group('products-product')]
+#[Group('products-product-repository')]
 #[When(env: 'test')]
 final class ProductsByValuesRepositoryTest extends KernelTestCase
 {
@@ -92,9 +93,7 @@ final class ProductsByValuesRepositoryTest extends KernelTestCase
             {
                 // Вызываем метод
                 $data = $method->invoke($ProductsByValuesResult);
-                // dump($data);
             }
         }
-
     }
 }
