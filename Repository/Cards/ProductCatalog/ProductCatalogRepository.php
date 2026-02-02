@@ -1,17 +1,17 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
- *  
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
+ *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *  
+ *
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *  
+ *
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -19,6 +19,7 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 declare(strict_types=1);
@@ -69,11 +70,17 @@ use BaksDev\Products\Promotion\Entity\Event\Period\ProductPromotionPeriod;
 use BaksDev\Products\Promotion\Entity\Event\Price\ProductPromotionPrice;
 use BaksDev\Products\Promotion\Entity\Event\ProductPromotionEvent;
 use BaksDev\Products\Promotion\Entity\ProductPromotion;
+use BaksDev\Products\Stocks\BaksDevProductsStocksBundle;
+use BaksDev\Products\Stocks\Entity\Total\ProductStockTotal;
+use BaksDev\Reference\Region\Type\Id\RegionUid;
 use BaksDev\Search\Index\SearchIndexInterface;
+use BaksDev\Users\Profile\UserProfile\Entity\Event\Delivery\UserProfileDelivery;
 use BaksDev\Users\Profile\UserProfile\Entity\Event\Discount\UserProfileDiscount;
+use BaksDev\Users\Profile\UserProfile\Entity\Event\Region\UserProfileRegion;
 use BaksDev\Users\Profile\UserProfile\Entity\UserProfile;
 use Doctrine\DBAL\ArrayParameterType;
 use Generator;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /** @see ProductCatalogResult */
 final class ProductCatalogRepository implements ProductCatalogInterface
@@ -90,6 +97,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
 
     public function __construct(
         private readonly DBALQueryBuilder $dbal,
+        #[Autowire(env: 'PROJECT_REGION')] private readonly ?string $region = null,
         private readonly ?SearchIndexInterface $SearchIndexHandler = null,
     ) {}
 
@@ -927,6 +935,121 @@ final class ProductCatalogRepository implements ProductCatalogInterface
                 );
         }
 
+        /**
+         * Наличие продукции на складе
+         * Если подключен модуль складского учета и передан идентификатор профиля
+         */
+
+        if($this->region && class_exists(BaksDevProductsStocksBundle::class))
+        {
+            /* Получаем все профили данного региона */
+
+            $dbal
+                ->leftJoin(
+                    'product',
+                    UserProfileRegion::class,
+                    'product_profile_region',
+                    'product_profile_region.value = :region',
+                )->setParameter(
+                    key: 'region',
+                    value: $this->region,
+                    type: RegionUid::TYPE,
+                );
+
+            $dbal
+                ->join(
+                    'product_profile_region',
+                    UserProfile::class,
+                    'product_region_total',
+                    'product_region_total.event = product_profile_region.event',
+                );
+
+
+            $dbal
+                ->addSelect("JSON_AGG ( 
+                        DISTINCT JSONB_BUILD_OBJECT (
+                            'value', product_region_delivery.value, 
+                            'day', product_region_delivery.day 
+                        )) FILTER (WHERE product_region_delivery.day IS NOT NULL)
+            
+                        AS product_region_delivery",
+                )
+                ->leftJoin(
+                    'product_profile_region',
+                    UserProfileDelivery::class,
+                    'product_region_delivery',
+                    'product_region_delivery.event = product_profile_region.event',
+                );
+
+
+            /** Только с остатками на складе по региону */
+            $dbal
+                ->addSelect("JSON_AGG ( 
+                        DISTINCT JSONB_BUILD_OBJECT (
+                            'total', stock.total, 
+                            'reserve', stock.reserve 
+                        )) FILTER (WHERE stock.total > stock.reserve)
+            
+                        AS product_quantity_stocks",
+                )
+                ->join(
+                    'product_region_total',
+                    ProductStockTotal::class,
+                    'stock',
+                    '
+                    stock.profile = product_region_total.id AND
+                    stock.product = product.id 
+                    
+                    AND
+                        
+                        CASE 
+                            WHEN product_offer.const IS NOT NULL 
+                            THEN stock.offer = product_offer.const
+                            ELSE stock.offer IS NULL
+                        END
+                            
+                    AND 
+                    
+                        CASE
+                            WHEN product_offer_variation.const IS NOT NULL 
+                            THEN stock.variation = product_offer_variation.const
+                            ELSE stock.variation IS NULL
+                        END
+                        
+                    AND
+                    
+                        CASE
+                            WHEN product_offer_modification.const IS NOT NULL 
+                            THEN stock.modification = product_offer_modification.const
+                            ELSE stock.modification IS NULL
+                        END
+                ');
+        }
+
+        /** Только с ценой */
+        $dbal->andWhere("
+ 			CASE
+			   WHEN product_modification_price.price  IS NOT NULL THEN product_modification_price.price
+			   WHEN product_variation_price.price  IS NOT NULL THEN product_variation_price.price
+			   WHEN product_offer_price.price IS NOT NULL THEN product_offer_price.price
+			   WHEN product_price.price IS NOT NULL THEN product_price.price
+			   ELSE 0
+			END > 0
+ 		",
+        );
+
+
+        /** Только при наличии в карточке товара */
+        $dbal->andWhere("
+ 			CASE
+			   WHEN product_modification_quantity.quantity IS NOT NULL THEN (product_modification_quantity.quantity - product_modification_quantity.reserve)
+			   WHEN product_variation_quantity.quantity IS NOT NULL THEN (product_variation_quantity.quantity - product_variation_quantity.reserve)
+			   WHEN product_offer_quantity.quantity IS NOT NULL THEN (product_offer_quantity.quantity - product_offer_quantity.reserve)
+			   WHEN product_price.quantity  IS NOT NULL THEN (product_price.quantity - product_price.reserve)
+			   ELSE 0
+			END > 0
+			",
+        );
 
         if(($this->search instanceof SearchDTO) && $this->search->getQuery())
         {
@@ -1054,32 +1177,6 @@ final class ProductCatalogRepository implements ProductCatalogInterface
 
 
         }
-
-
-        /** Только с ценой */
-        $dbal->andWhere("
- 			CASE
-			   WHEN product_modification_price.price  IS NOT NULL THEN product_modification_price.price
-			   WHEN product_variation_price.price  IS NOT NULL THEN product_variation_price.price
-			   WHEN product_offer_price.price IS NOT NULL THEN product_offer_price.price
-			   WHEN product_price.price IS NOT NULL THEN product_price.price
-			   ELSE 0
-			END > 0
- 		",
-        );
-
-
-        /** Только при наличии */
-        $dbal->andWhere("
- 			CASE
-			   WHEN product_modification_quantity.quantity IS NOT NULL THEN (product_modification_quantity.quantity - product_modification_quantity.reserve)
-			   WHEN product_variation_quantity.quantity IS NOT NULL THEN (product_variation_quantity.quantity - product_variation_quantity.reserve)
-			   WHEN product_offer_quantity.quantity IS NOT NULL THEN (product_offer_quantity.quantity - product_offer_quantity.reserve)
-			   WHEN product_price.quantity  IS NOT NULL THEN (product_price.quantity - product_price.reserve)
-			   ELSE 0
-			END > 0
-			",
-        );
 
         /** Используем индекс сортировки для поднятия в топ списка */
         $dbal->addOrderBy('product_info.sort', 'DESC');
