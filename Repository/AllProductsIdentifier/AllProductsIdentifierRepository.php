@@ -50,7 +50,7 @@ final class AllProductsIdentifierRepository implements AllProductsIdentifierInte
 
     private ProductModificationConst|false $offerModification = false;
 
-    private UserProfileUid|false $profile;
+    private UserProfileUid|false $profile = false;
 
     public function __construct(private readonly DBALQueryBuilder $DBALQueryBuilder) {}
 
@@ -149,7 +149,7 @@ final class AllProductsIdentifierRepository implements AllProductsIdentifierInte
                 '
                     info.product = product.id 
                     
-                '.($this->profile instanceof UserProfileUid ? '' : ' AND (info.profile IS NULL OR info.profile = :profile)'),
+                '.($this->profile instanceof UserProfileUid ? ' AND (info.profile IS NULL OR info.profile = :profile)' : ''),
             );
 
         /** Применяем фильтр по профилю */
