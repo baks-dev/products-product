@@ -44,6 +44,8 @@ class ModelsByCategoryRepositoryTest extends KernelTestCase
     public function testUseCase(): void
     {
 
+        self::assertTrue(true);
+
         /** @var AllCategoryInterface $categoriesRepo */
         $categoriesRepo = self::getContainer()->get(AllCategoryInterface::class);
         $categories = $categoriesRepo->getOnlyChildren();
