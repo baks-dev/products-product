@@ -251,8 +251,8 @@ class ProductsProductNewAdminUseCaseTest extends KernelTestCase
         $InfoDTO->setUrl('new_info_url');
         self::assertSame('new_info_url', $InfoDTO->getUrl());
 
-        $InfoDTO->setProfile($UserProfileUid = new UserProfileUid());
-        self::assertSame($UserProfileUid, $InfoDTO->getProfile());
+        //$InfoDTO->setProfile($UserProfileUid = new UserProfileUid());
+        //self::assertSame($UserProfileUid, $InfoDTO->getProfile());
 
         $ProductDTO->setInfo($InfoDTO);
 

@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -40,9 +40,6 @@ final class InfoDTO implements ProductInfoInterface
     /** Артикул товара */
     private ?string $article = null;
 
-    /** Профиль пользователя */
-    #[Assert\Uuid]
-    private ?UserProfileUid $profile = null;
 
     /** Сортировка */
     private int $sort = 500;
@@ -79,20 +76,6 @@ final class InfoDTO implements ProductInfoInterface
     public function setArticle(?string $article): void
     {
         $this->article = $article;
-    }
-
-
-    /** Профиль пользователя */
-
-    public function getProfile(): ?UserProfileUid
-    {
-        return $this->profile;
-    }
-
-
-    public function setProfile(?UserProfileUid $profile): void
-    {
-        $this->profile = $profile;
     }
 
     /**

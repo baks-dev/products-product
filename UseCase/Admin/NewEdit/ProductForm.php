@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -32,6 +32,7 @@ use BaksDev\Products\Category\Repository\CategoryVariationForm\CategoryVariation
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Category\CategoryCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Price\Cost\ProductPriceCostForm;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Price\Opt\ProductPriceOptForm;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Profile\CollectionProductProfileForm;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Property\PropertyCollectionDTO;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Form\AbstractType;
@@ -67,7 +68,6 @@ final class ProductForm extends AbstractType
 
         $builder->add('opt', ProductPriceOptForm::class, ['label' => false]);
 
-        /* CATEGORIES CollectionType */
         $builder->add('category', CollectionType::class, [
             'entry_type' => Category\CategoryCollectionForm::class,
             'entry_options' => ['label' => false],
@@ -76,6 +76,16 @@ final class ProductForm extends AbstractType
             'allow_delete' => true,
             'allow_add' => true,
             'prototype_name' => '__categories__',
+        ]);
+
+        $builder->add('profile', CollectionType::class, [
+            'entry_type' => CollectionProductProfileForm::class,
+            'entry_options' => ['label' => false],
+            'label' => false,
+            'by_reference' => false,
+            'allow_delete' => true,
+            'allow_add' => true,
+            'prototype_name' => '__profile__',
         ]);
 
 

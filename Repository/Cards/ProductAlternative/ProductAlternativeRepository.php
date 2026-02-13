@@ -40,6 +40,7 @@ use BaksDev\Products\Category\Entity\Section\Field\Trans\CategoryProductSectionF
 use BaksDev\Products\Category\Entity\Trans\CategoryProductTrans;
 use BaksDev\Products\Product\Entity\Active\ProductActive;
 use BaksDev\Products\Product\Entity\Category\ProductCategory;
+use BaksDev\Products\Product\Entity\Event\Profile\ProductProfile;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
 use BaksDev\Products\Product\Entity\Offers\Image\ProductOfferImage;
 use BaksDev\Products\Product\Entity\Offers\Price\ProductOfferPrice;
@@ -81,6 +82,8 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
     private string|null|false $modification = false;
 
     private array|null $property = null;
+
+    private bool $active = false;
 
     private int|false $limit = 100;
 
@@ -124,7 +127,17 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
         return $this;
     }
 
-    /** @return array<int, ProductAlternativeResult>|false */
+    public function onlyActive(): self
+    {
+        $this->active = true;
+        return $this;
+    }
+
+    /**
+     * Метод возвращает альтернативные варианты продукции по значению value торговых предложений
+     *
+     * @return array<int, ProductAlternativeResult>|false
+     */
     public function toArray(): array|false
     {
         $result = $this->findAll();
@@ -132,47 +145,14 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
         return (false !== $result) ? iterator_to_array($result) : false;
     }
 
-    /** @return Generator<int, ProductAlternativeResult>|false */
-    public function findAll(): Generator|false
-    {
-        $dbal = $this->builder();
-
-        $dbal->enableCache('products-product', 86400);
-
-        $result = $dbal->fetchAllHydrate(ProductAlternativeResult::class);
-
-        return (true === $result->valid()) ? $result : false;
-    }
-
     /**
      * Метод возвращает альтернативные варианты продукции по значению value торговых предложений
-     * @deprecated Используйте метод findAll
+     *
+     * @return Generator<int, ProductAlternativeResult>|false
      */
-    public function fetchAllAlternativeAssociative(
-        string $offer,
-        ?string $variation,
-        ?string $modification,
-        ?array $property = null
-    ): array|false
+    public function findAll(): Generator|false
     {
-        $this->forOfferValue($offer);
-        $this->forVariationValue($variation);
-        $this->forModificationValue($modification);
-        $this->byProperty($property);
 
-        $dbal = $this->builder();
-
-        $dbal->orderBy('quantity', 'DESC');
-
-        $dbal->enableCache('products-product', 86400);
-
-        $result = $dbal->fetchAllAssociative();
-
-        return empty($result) ? false : $result;
-    }
-
-    public function builder(): DBALQueryBuilder
-    {
         if(false === $this->offer)
         {
             throw new InvalidArgumentException('Не передан обязательный параметр запроса $offer');
@@ -196,7 +176,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                 'product_offer',
                 Product::class,
                 'product',
-                'product.event = product_offer.event'
+                'product.event = product_offer.event',
             );
 
         /** VARIATION */
@@ -206,7 +186,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                 'product_offer',
                 ProductVariation::class,
                 'product_variation',
-                'product_variation.offer = product_offer.id AND product_variation.value = :variation'
+                'product_variation.offer = product_offer.id AND product_variation.value = :variation',
             );
 
             $dbal->setParameter('variation', $this->variation);
@@ -217,7 +197,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                 'product_offer',
                 ProductVariation::class,
                 'product_variation',
-                'product_variation.offer = product_offer.id'
+                'product_variation.offer = product_offer.id',
             );
         }
 
@@ -253,7 +233,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                 'product_variation',
                 ProductModification::class,
                 'product_modification',
-                'product_modification.variation = product_variation.id AND product_modification.value = :modification'
+                'product_modification.variation = product_variation.id AND product_modification.value = :modification',
             );
 
             $dbal->setParameter('modification', $this->modification);
@@ -264,7 +244,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                 'product_variation',
                 ProductModification::class,
                 'product_modification',
-                'product_modification.variation = product_variation.id'
+                'product_modification.variation = product_variation.id',
             );
         }
 
@@ -294,25 +274,44 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
         //            $dbal->setParameter('modification', $modification);
         //        }
 
-        // Проверяем активность продукции
+
         $dbal
-            ->addSelect('product_active.active_from')
-            ->join(
+            ->addSelect('product_active.active as product_active')
+            ->addSelect('product_active.active_from as product_active_from')
+            ->addSelect('product_active.active_to as product_active_to');
+
+
+        /** Получаем только при условии активности карточки */
+        if($this->active)
+        {
+            $dbal->join(
                 'product',
                 ProductActive::class,
                 'product_active',
-                'product_active.event = product.event AND 
-                product_active.active = true AND 
-                product_active.active_from < NOW()
-			
-			AND (
-				CASE
-				   WHEN product_active.active_to IS NOT NULL 
-				   THEN product_active.active_to > NOW()
-				   ELSE TRUE
-				END
-			)
-		');
+                '
+                    product_active.event = product.event AND 
+                    product_active.active IS TRUE AND
+                    (product_active.active_to IS NULL OR product_active.active_to > NOW())
+                ');
+        }
+        else
+        {
+            $dbal->leftJoin(
+                'product',
+                ProductActive::class,
+                'product_active',
+                'product_active.event = product.event',
+            );
+        }
+
+        $dbal
+            ->addSelect("JSON_AGG (DISTINCT product_profile.value) AS profiles")
+            ->leftJoin(
+                'product',
+                ProductProfile::class,
+                'product_profile',
+                'product_profile.event = product.event',
+            );
 
         /** Название товара */
         $dbal
@@ -321,7 +320,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                 'product',
                 ProductTrans::class,
                 'product_trans',
-                'product_trans.event = product.event AND product_trans.local = :local'
+                'product_trans.event = product.event AND product_trans.local = :local',
             );
 
         $dbal
@@ -330,7 +329,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                 'product',
                 ProductInfo::class,
                 'product_info',
-                'product_info.product = product.id '
+                'product_info.product = product.id ',
             );
 
         /** Артикул продукта */
@@ -355,7 +354,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                 'product_offer',
                 CategoryProductOffers::class,
                 'category_offer',
-                'category_offer.id = product_offer.category_offer'
+                'category_offer.id = product_offer.category_offer',
             );
 
         // Получаем название торгового предложения
@@ -365,7 +364,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                 'category_offer',
                 CategoryProductOffersTrans::class,
                 'category_offer_trans',
-                'category_offer_trans.offer = category_offer.id AND category_offer_trans.local = :local'
+                'category_offer_trans.offer = category_offer.id AND category_offer_trans.local = :local',
             );
 
 
@@ -376,7 +375,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                 'product_variation',
                 CategoryProductVariation::class,
                 'category_offer_variation',
-                'category_offer_variation.id = product_variation.category_variation'
+                'category_offer_variation.id = product_variation.category_variation',
             );
 
         // Получаем название множественного варианта
@@ -386,7 +385,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                 'category_offer_variation',
                 CategoryProductVariationTrans::class,
                 'category_offer_variation_trans',
-                'category_offer_variation_trans.variation = category_offer_variation.id AND category_offer_variation_trans.local = :local'
+                'category_offer_variation_trans.variation = category_offer_variation.id AND category_offer_variation_trans.local = :local',
             );
 
         // Получаем тип модификации множественного варианта
@@ -396,7 +395,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                 'product_modification',
                 CategoryProductModification::class,
                 'category_offer_modification',
-                'category_offer_modification.id = product_modification.category_modification'
+                'category_offer_modification.id = product_modification.category_modification',
             );
 
         // Получаем название типа модификации
@@ -406,7 +405,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                 'category_offer_modification',
                 CategoryProductModificationTrans::class,
                 'category_offer_modification_trans',
-                'category_offer_modification_trans.modification = category_offer_modification.id AND category_offer_modification_trans.local = :local'
+                'category_offer_modification_trans.modification = category_offer_modification.id AND category_offer_modification_trans.local = :local',
             );
 
         /**
@@ -430,7 +429,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 			   
 			   ELSE NULL
 			END AS product_price
-		'
+		',
         );
 
         /* Предыдущая стоимость продукта */
@@ -463,7 +462,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 			   
 			   ELSE NULL
 			END AS product_currency
-		'
+		',
         );
 
         // Базовая Цена товара
@@ -472,7 +471,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                 'product',
                 ProductPrice::class,
                 'product_price',
-                'product_price.event = product.event'
+                'product_price.event = product.event',
             );
 
         $dbal
@@ -480,7 +479,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                 'product_offer',
                 ProductOfferPrice::class,
                 'product_offer_price',
-                'product_offer_price.offer = product_offer.id'
+                'product_offer_price.offer = product_offer.id',
             );
 
         // Цена множественного варианта
@@ -489,7 +488,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                 'product_variation',
                 ProductVariationPrice::class,
                 'product_variation_price',
-                'product_variation_price.variation = product_variation.id'
+                'product_variation_price.variation = product_variation.id',
             );
 
 
@@ -499,7 +498,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                 'product_modification',
                 ProductModificationPrice::class,
                 'product_modification_price',
-                'product_modification_price.modification = product_modification.id'
+                'product_modification_price.modification = product_modification.id',
             );
 
 
@@ -527,7 +526,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 			   ELSE 0
 			   
 			END AS quantity
-		'
+		',
         );
 
         // Наличие и резерв торгового предложения
@@ -537,7 +536,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                 'product_offer',
                 ProductOfferQuantity::class,
                 'product_offer_quantity',
-                'product_offer_quantity.offer = product_offer.id'
+                'product_offer_quantity.offer = product_offer.id',
             );
 
         // Наличие и резерв множественного варианта
@@ -546,7 +545,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                 'category_offer_variation',
                 ProductVariationQuantity::class,
                 'product_variation_quantity',
-                'product_variation_quantity.variation = product_variation.id'
+                'product_variation_quantity.variation = product_variation.id',
             );
 
         // Наличие и резерв модификации множественного варианта
@@ -555,7 +554,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                 'category_offer_modification',
                 ProductModificationQuantity::class,
                 'product_modification_quantity',
-                'product_modification_quantity.modification = product_modification.id'
+                'product_modification_quantity.modification = product_modification.id',
             );
 
 
@@ -567,7 +566,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
             'product',
             ProductCategory::class,
             'product_event_category',
-            'product_event_category.event = product.event AND product_event_category.root = true'
+            'product_event_category.event = product.event AND product_event_category.root = true',
         );
 
 
@@ -575,7 +574,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
             'product_event_category',
             CategoryProduct::class,
             'category',
-            'category.id = product_event_category.category'
+            'category.id = product_event_category.category',
         );
 
         $dbal
@@ -584,7 +583,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                 'category',
                 CategoryProductTrans::class,
                 'category_trans',
-                'category_trans.event = category.event AND category_trans.local = :local'
+                'category_trans.event = category.event AND category_trans.local = :local',
             );
 
         $dbal
@@ -601,7 +600,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
             'category',
             CategoryProductSection::class,
             'category_section',
-            'category_section.event = category.event'
+            'category_section.event = category.event',
         );
 
 
@@ -625,7 +624,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                     'product_offer',
                     ProductProperty::class,
                     'product_property_'.$alias,
-                    'product_property_'.$alias.'.event = product_offer.event AND product_property_'.$alias.'.value = :props_'.$alias
+                    'product_property_'.$alias.'.event = product_offer.event AND product_property_'.$alias.'.value = :props_'.$alias,
                 );
 
                 $dbal->setParameter('props_'.$alias, $props->field_value);
@@ -640,21 +639,21 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
             'category_section',
             CategoryProductSectionField::class,
             'category_section_field',
-            'category_section_field.section = category_section.id AND category_section_field.card = TRUE'
+            'category_section_field.section = category_section.id AND category_section_field.card = TRUE',
         );
 
         $dbal->leftJoin(
             'category_section_field',
             CategoryProductSectionFieldTrans::class,
             'category_section_field_trans',
-            'category_section_field_trans.field = category_section_field.id AND category_section_field_trans.local = :local'
+            'category_section_field_trans.field = category_section_field.id AND category_section_field_trans.local = :local',
         );
 
         $dbal->leftJoin(
             'category_section_field',
             ProductProperty::class,
             'category_product_property',
-            'category_product_property.event = product.event AND category_product_property.field = category_section_field.const'
+            'category_product_property.event = product.event AND category_product_property.field = category_section_field.const',
         );
 
         $dbal->addSelect(
@@ -671,7 +670,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 				)
 			
 		)
-			AS category_section_field"
+			AS category_section_field",
         );
 
         /** Фото продукции*/
@@ -682,7 +681,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
             'product_modification',
             ProductModificationImage::class,
             'product_offer_modification_image',
-            'product_offer_modification_image.modification = product_modification.id'
+            'product_offer_modification_image.modification = product_modification.id',
         );
 
         /**
@@ -692,7 +691,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
             'product_offer',
             ProductVariationImage::class,
             'product_variation_image',
-            'product_variation_image.variation = product_variation.id'
+            'product_variation_image.variation = product_variation.id',
         );
 
         /**
@@ -702,7 +701,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
             'product_offer',
             ProductOfferImage::class,
             'product_offer_images',
-            'product_offer_images.offer = product_offer.id'
+            'product_offer_images.offer = product_offer.id',
         );
 
         /**
@@ -712,7 +711,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
             'product',
             ProductPhoto::class,
             'product_photo',
-            'product_photo.event = product.event'
+            'product_photo.event = product.event',
         );
 
         $dbal->addSelect(
@@ -751,7 +750,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                             'img_ext', product_photo.ext,
                             'img_cdn', product_photo.cdn
                         )
-                    END) AS product_images"
+                    END) AS product_images",
         );
 
 
@@ -847,7 +846,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                     UserProfile::class,
                     'current_profile',
                     '
-                        current_profile.id = :'.$dbal::CURRENT_PROFILE_KEY
+                        current_profile.id = :'.$dbal::CURRENT_PROFILE_KEY,
                 );
 
             $dbal
@@ -858,7 +857,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                     'current_profile_discount',
                     '
                         current_profile_discount.event = current_profile.event
-                        '
+                        ',
                 );
         }
 
@@ -872,7 +871,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                     UserProfile::class,
                     'project_profile',
                     '
-                        project_profile.id = :'.$dbal::PROJECT_PROFILE_KEY
+                        project_profile.id = :'.$dbal::PROJECT_PROFILE_KEY,
                 );
 
             $dbal
@@ -882,7 +881,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                     UserProfileDiscount::class,
                     'project_profile_discount',
                     '
-                        project_profile_discount.event = project_profile.event'
+                        project_profile_discount.event = project_profile.event',
                 );
         }
 
@@ -909,11 +908,10 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 
         $dbal->setMaxResults($this->limit);
 
-        return $dbal;
-    }
+        $dbal->enableCache('products-product', '1 day');
 
-    public function analyze(): void
-    {
-        $this->builder()->analyze();
+        $result = $dbal->fetchAllHydrate(ProductAlternativeResult::class);
+
+        return (true === $result->valid()) ? $result : false;
     }
 }

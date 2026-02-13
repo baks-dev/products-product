@@ -38,6 +38,7 @@ use BaksDev\Products\Category\Entity\Trans\CategoryProductTrans;
 use BaksDev\Products\Product\Entity\Active\ProductActive;
 use BaksDev\Products\Product\Entity\Category\ProductCategory;
 use BaksDev\Products\Product\Entity\Description\ProductDescription;
+use BaksDev\Products\Product\Entity\Event\Profile\ProductProfile;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
 use BaksDev\Products\Product\Entity\Offers\Image\ProductOfferImage;
 use BaksDev\Products\Product\Entity\Offers\Price\ProductOfferPrice;
@@ -76,6 +77,8 @@ final class ModelOrProductRepository implements ModelOrProductInterface
 
     private int|false $maxResult = false;
 
+    private bool $active = false;
+
     public function __construct(
         private readonly DBALQueryBuilder $DBALQueryBuilder,
     ) {}
@@ -91,6 +94,12 @@ final class ModelOrProductRepository implements ModelOrProductInterface
     public function withProperties(): self
     {
         $this->properties = true;
+        return $this;
+    }
+
+    public function onlyActive(): self
+    {
+        $this->active = true;
         return $this;
     }
 
@@ -120,7 +129,11 @@ final class ModelOrProductRepository implements ModelOrProductInterface
                 'product',
                 ProductDescription::class,
                 'product_desc',
-                'product_desc.event = product.event AND product_desc.device = :device AND product_desc.local = :local',
+                '
+                    product_desc.event = product.event 
+                    AND product_desc.device = :device 
+                    AND product_desc.local = :local
+                ',
             )
             ->setParameter('device', 'pc');
 
@@ -136,8 +149,15 @@ final class ModelOrProductRepository implements ModelOrProductInterface
             );
 
         $dbal
+            ->addSelect('product_active.active as product_active')
             ->addSelect('product_active.active_from as product_active_from')
-            ->join(
+            ->addSelect('product_active.active_to as product_active_to');
+
+
+        /** Получаем только при условии активности карточки */
+        if($this->active)
+        {
+            $dbal->join(
                 'product',
                 ProductActive::class,
                 'product_active',
@@ -146,6 +166,26 @@ final class ModelOrProductRepository implements ModelOrProductInterface
                     product_active.active IS TRUE AND
                     (product_active.active_to IS NULL OR product_active.active_to > NOW())
                 ');
+        }
+        else
+        {
+            $dbal->leftJoin(
+                'product',
+                ProductActive::class,
+                'product_active',
+                'product_active.event = product.event',
+            );
+        }
+
+        $dbal
+            ->addSelect("JSON_AGG (DISTINCT product_profile.value) AS profiles")
+            ->leftJoin(
+                'product',
+                ProductProfile::class,
+                'product_profile',
+                'product_profile.event = product.event',
+            );
+
 
         /** Цена PRODUCT */
         $dbal->leftJoin(

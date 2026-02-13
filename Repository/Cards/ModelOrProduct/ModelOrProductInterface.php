@@ -33,6 +33,9 @@ interface ModelOrProductInterface
     /** Максимальное количество записей в результате */
     public function maxResult(int $max): self;
 
+    /** Получаем только при условии активности карточки */
+    public function onlyActive(): self;
+
     /** @return Generator<ModelOrProductResult>|false */
     public function findAll(): Generator|false;
 }

@@ -3,7 +3,8 @@
 {# ПРОТОТИПЫ ФОРМЫ #}
 {# {{ include(_self|replace({ "form.html.twig": "prototypes/prototype.category.html.twig" })|e('html_attr'))|e('html_attr') }} #}
 
-
+<div id="prototype.profile"
+     data-prototype="{{ include(_self|replace({ "form.html.twig": "prototypes/prototype.profile.html.twig" })) |e('html_attr') }}"></div>
 <div id="prototype.category"
      data-prototype="{{ include(_self|replace({ "form.html.twig": "prototypes/prototype.category.html.twig" })) |e('html_attr') }}"></div>
 <div id="prototype.gallery.photo"
@@ -79,8 +80,6 @@
     {# ПРОТОТИПЫ МНОЖЕСТВЕННЫХ ВАРИАНТОВ ТОРГОВЫХ ПРЕДЛОЖЕНИЙ #}
 
     {% if variation_first %}
-
-
 
         {% if variation_first.image is defined %}
 

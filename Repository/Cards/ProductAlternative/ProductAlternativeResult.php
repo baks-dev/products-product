@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 declare(strict_types=1);
@@ -36,6 +35,7 @@ use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
 use BaksDev\Reference\Currency\Type\Currency;
 use BaksDev\Reference\Money\Type\Money;
+use DateTimeImmutable;
 use Symfony\Component\DependencyInjection\Attribute\Exclude;
 
 /** @see ProductAlternativeRepository */
@@ -60,7 +60,11 @@ final readonly class ProductAlternativeResult implements ProductCardResultInterf
         private string|null $product_modification_value,
         private string|null $product_modification_postfix,
         private string|null $product_modification_reference,
-        private string|null $active_from,
+
+        private bool|null $product_active,
+        private ?string $product_active_from,
+        private ?string $product_active_to,
+
         private string $product_name,
         private string $product_url,
         private string|null $article,
@@ -82,6 +86,8 @@ final readonly class ProductAlternativeResult implements ProductCardResultInterf
 
         private string|null $profile_discount = null,
         private string|null $project_discount = null,
+
+        private string|null $profiles = null,
     ) {}
 
     public function getProductId(): ProductUid
@@ -186,7 +192,7 @@ final readonly class ProductAlternativeResult implements ProductCardResultInterf
 
     public function getProductActiveFrom(): string|null
     {
-        return $this->active_from;
+        return $this->product_active_from;
     }
 
     public function getProductName(): string
@@ -291,8 +297,53 @@ final readonly class ProductAlternativeResult implements ProductCardResultInterf
         return new Currency($this->product_currency);
     }
 
-    public function getProductQuantity(): int|null
+    public function getProductQuantity(?string $profile = null): int|null
     {
+        /** Если карточка не активна - нет в наличии */
+        if($this->product_active !== true)
+        {
+            return null;
+        }
+
+        /** Если дата публикации не наступила - нет в наличии */
+        if(
+            false === empty($this->product_active_from)
+            && new DateTimeImmutable($this->product_active_from) > new DateTimeImmutable()
+        )
+        {
+            return null;
+        }
+
+        if(
+            false === empty($this->product_active_to)
+            && new DateTimeImmutable($this->product_active_to) < new DateTimeImmutable()
+        )
+        {
+            return null;
+        }
+
+        if(empty($this->profiles))
+        {
+            return $this->quantity;
+        }
+
+        if(false === json_validate($this->profiles))
+        {
+            return $this->quantity;
+        }
+
+        $profiles = json_decode($this->profiles, true, 512, JSON_THROW_ON_ERROR);
+
+        if(empty($profiles))
+        {
+            return $this->quantity;
+        }
+
+        if(false === empty($profile) && false === in_array($profile, $profiles, true))
+        {
+            return null;
+        }
+
         return $this->quantity;
     }
 

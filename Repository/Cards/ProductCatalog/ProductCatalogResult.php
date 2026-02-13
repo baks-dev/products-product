@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 declare(strict_types=1);
@@ -59,7 +58,11 @@ final readonly class ProductCatalogResult implements ProductCardResultInterfaceP
         private string|null $product_modification_postfix,
         private string|null $product_modification_reference,
         private string|null $product_article,
-        private string|null $active_from,
+
+        private ?bool $product_active,
+        private ?string $product_active_from,
+        private ?string $product_active_to,
+
         private string|null $product_images,
         private int|null $product_price,
         private int|null $product_old_price,
@@ -300,7 +303,7 @@ final readonly class ProductCatalogResult implements ProductCardResultInterfaceP
 
     public function getProductActiveFrom(): string|null
     {
-        return $this->active_from;
+        return $this->product_active_from;
     }
 
     /** Методы - заглушки */

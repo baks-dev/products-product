@@ -24,33 +24,21 @@
 
 
 {% block javascript %}
-<script nonce='{{ csp_nonce() }}' async data-src="/assets/{{ version }}/plugins/ckeditor/classic.min.js?v={{ version }}"
-            class='lazy'></script>
-    <script nonce='{{ csp_nonce() }}' async data-src="/assets/{{ version }}/plugins/ckeditor/ckeditor.min.js?v={{ version }}"
-            class='lazy'></script>
 
-    <script nonce='{{ csp_nonce() }}' async data-src='/assets/{{ version }}/plugins/semantic/semantic.min.js?v={{ version }}'
-            class='lazy'></script>
-    <script nonce='{{ csp_nonce() }}' async data-src='/assets/{{ version }}/plugins/nice-select2/nice-select2.min.js?v={{ version }}'
-            class='lazy'></script>
-    <script nonce='{{ csp_nonce() }}' async data-src='/assets/{{ version }}/plugins/datepicker/datepicker.min.js?v={{ version }}'
-            class='lazy'></script>
-    <script nonce='{{ csp_nonce() }}' async data-src='/assets/{{ version }}/js/radio.input.min.js?v={{ version }}'
-            class='lazy'></script>
-    <script nonce='{{ csp_nonce() }}' async data-src='/assets/{{ version }}/js/image.input.min.js?v={{ version }}'
-            class='lazy'></script>
+<script nonce='{{ csp_nonce() }}' class='lazy' async data-src="/assets/{{ version }}/plugins/ckeditor/classic.min.js?v={{ version }}"></script>
+    <script nonce='{{ csp_nonce() }}' class='lazy' async data-src="/assets/{{ version }}/plugins/ckeditor/ckeditor.min.js?v={{ version }}"></script>
+    <script nonce='{{ csp_nonce() }}' class='lazy' async data-src='/assets/{{ version }}/plugins/semantic/semantic.min.js?v={{ version }}'></script>
+    <script nonce='{{ csp_nonce() }}' class='lazy' async data-src='/assets/{{ version }}/plugins/nice-select2/nice-select2.min.js?v={{ version }}'></script>
+    <script nonce='{{ csp_nonce() }}' class='lazy' async data-src='/assets/{{ version }}/plugins/datepicker/datepicker.min.js?v={{ version }}'></script>
+    <script nonce='{{ csp_nonce() }}' class='lazy' async data-src='/assets/{{ version }}/js/radio.input.min.js?v={{ version }}'></script>
+    <script nonce='{{ csp_nonce() }}' class='lazy' async data-src='/assets/{{ version }}/js/image.input.min.js?v={{ version }}'></script>
+    <script nonce='{{ csp_nonce() }}' class='lazy' async data-src="/assets/{{ version }}/products-product/product.main.min.js?v={{ version }}"></script>
+    <script nonce='{{ csp_nonce() }}' class='lazy' async data-src="/assets/{{ version }}/products-product/product.category.min.js?v={{ version }}"></script>
+    <script nonce='{{ csp_nonce() }}' class='lazy' async data-src="/assets/{{ version }}/products-product/product.photo.min.js?v={{ version }}"></script>
+    <script nonce='{{ csp_nonce() }}' class='lazy' async data-src="/assets/{{ version }}/products-product/product.files.min.js?v={{ version }}"></script>
 
-    <script nonce='{{ csp_nonce() }}' async data-src="/assets/{{ version }}/products-product/product.main.min.js?v={{ version }}"
-            class='lazy'></script>
-    <script nonce='{{ csp_nonce() }}' async data-src="/assets/{{ version }}/products-product/product.category.min.js?v={{ version }}"
-            class='lazy'></script>
-    <script nonce='{{ csp_nonce() }}' async data-src="/assets/{{ version }}/products-product/product.photo.min.js?v={{ version }}"
-            class='lazy'></script>
-    <script nonce='{{ csp_nonce() }}' async data-src="/assets/{{ version }}/products-product/product.files.min.js?v={{ version }}"
-            class='lazy'></script>
-    <script nonce='{{ csp_nonce() }}' async data-src="/assets/{{ version }}/products-product/product.video.min.js?v={{ version }}"
-            class='lazy'></script>
-    <script nonce='{{ csp_nonce() }}' async data-src="/assets/{{ version }}/products-product/product.offer.min.js?v={{ version }}"
-            class='lazy'></script>
+    <script nonce='{{ csp_nonce() }}' class='lazy' async data-src="/assets/{{ version }}/products-product/product.video.min.js?v={{ version }}"></script>
+    <script nonce='{{ csp_nonce() }}' class='lazy' async data-src="/assets/{{ version }}/products-product/product.offer.min.js?v={{ version }}"></script>
+    <script nonce='{{ csp_nonce() }}' class='lazy' async data-src="/assets/{{ version }}/products-product/product.profile.min.js?v={{ version }}"></script>
 
 {% endblock %}

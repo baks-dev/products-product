@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -37,20 +37,13 @@ interface ProductAlternativeInterface
 
     public function byProperty(array|null $property): self;
 
+    /** Получаем только при условии активности карточки */
+    public function onlyActive(): self;
+
     /** @return array<int, ProductAlternativeResult>|false */
     public function toArray(): array|false;
 
     /** @return Generator<int, ProductAlternativeResult>|false */
     public function findAll(): Generator|false;
 
-    /**
-     * Метод возвращает альтернативные варианты продукции по значению value торговых предложений
-     * @deprecated Используйте метод findAll
-     */
-    public function fetchAllAlternativeAssociative(
-        string $offer,
-        ?string $variation,
-        ?string $modification,
-        ?array $property = null
-    ): array|false;
 }

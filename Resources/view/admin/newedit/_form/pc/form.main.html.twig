@@ -36,6 +36,26 @@
                 {# Торговый каталог #}
                 {{ include(_self|replace({ "form.main.html.twig": "includes/main/_price.html.twig" })) }}
             </div>
+
+        </div>
+
+
+        <div class="card w-100 border-light">
+
+            <div class="card-header border-light bg-body">
+                <div class="card-title">
+                    <h4>
+                        {# Статус активности #}
+                        Область видимости
+                    </h4>
+                </div>
+            </div>
+
+            <div class="card-body pb-0">
+                {# Профили пользователя #}
+                {{ include(_self|replace({ "form.main.html.twig": "includes/main/_profile.html.twig" })) }}
+            </div>
+
         </div>
 
 
@@ -74,10 +94,6 @@
             </div>
 
             <div class="card-body pb-0">
-
-                {{ form_row(form.info.profile, {
-                    label : 'Прикрепить к профилю пользователя'|trans, placeholder : 'Выберите профиль из списка...'  } ) }}
-
                 {# Активность #}
                 {{ include(_self|replace({ "form.main.html.twig": "includes/main/_active.html.twig" })) }}
             </div>

@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -73,6 +73,8 @@ final class ModelsByCategoryRepository implements ModelsByCategoryInterface
 
     private int|false $maxResult = false;
 
+    private bool $active = false;
+
     public function __construct(
         private readonly DBALQueryBuilder $DBALQueryBuilder,
     ) {}
@@ -105,22 +107,17 @@ final class ModelsByCategoryRepository implements ModelsByCategoryInterface
         return $this;
     }
 
+
+    public function onlyActive(): self
+    {
+        $this->active = true;
+        return $this;
+    }
+
     /** @return Generator<int, ModelsByCategoryResult>|false */
     public function findAll(): Generator|false
     {
-        $dbal = $this->builder();
 
-        $dbal->setMaxResults($this->maxResult);
-
-        $dbal->enableCache('products-product');
-
-        $result = $dbal->fetchAllHydrate(ModelsByCategoryResult::class);
-
-        return (true === $result->valid()) ? $result : false;
-    }
-
-    private function builder(): DBALQueryBuilder
-    {
         if(false === $this->categories)
         {
             throw new InvalidArgumentException('Не передан обязательный параметр запроса categories');
@@ -173,8 +170,15 @@ final class ModelsByCategoryRepository implements ModelsByCategoryInterface
             );
 
         $dbal
-            ->addSelect('product_active.active_from AS product_active_from')
-            ->join(
+            ->addSelect('product_active.active as product_active')
+            ->addSelect('product_active.active_from as product_active_from')
+            ->addSelect('product_active.active_to as product_active_to');
+
+
+        /** Получаем только при условии активности карточки */
+        if($this->active)
+        {
+            $dbal->join(
                 'product',
                 ProductActive::class,
                 'product_active',
@@ -183,6 +187,17 @@ final class ModelsByCategoryRepository implements ModelsByCategoryInterface
                     product_active.active IS TRUE AND
                     (product_active.active_to IS NULL OR product_active.active_to > NOW())
                 ');
+        }
+        else
+        {
+            $dbal->leftJoin(
+                'product',
+                ProductActive::class,
+                'product_active',
+                'product_active.event = product.event',
+            );
+        }
+
 
         /** Цена PRODUCT */
         $dbal->leftJoin(
@@ -584,7 +599,7 @@ final class ModelsByCategoryRepository implements ModelsByCategoryInterface
                                     'img_ext', product_offer_images.ext,
                                     'img_cdn', product_offer_images.cdn
                                 )
-        
+
                             WHEN product_variation_image.ext IS NOT NULL
                             THEN JSONB_BUILD_OBJECT
                                 (
@@ -593,7 +608,7 @@ final class ModelsByCategoryRepository implements ModelsByCategoryInterface
                                     'img_ext', product_variation_image.ext,
                                     'img_cdn', product_variation_image.cdn
                                 )
-        
+
                             WHEN product_modification_image.ext IS NOT NULL
                             THEN JSONB_BUILD_OBJECT
                                 (
@@ -602,7 +617,7 @@ final class ModelsByCategoryRepository implements ModelsByCategoryInterface
                                     'img_ext', product_modification_image.ext,
                                     'img_cdn', product_modification_image.cdn
                                 )
-        
+
                             WHEN product_photo.ext IS NOT NULL
                             THEN JSONB_BUILD_OBJECT
                                 (
@@ -762,7 +777,7 @@ final class ModelsByCategoryRepository implements ModelsByCategoryInterface
                                 )
                         END 
                     )
-                    AS promotion_price"
+                    AS promotion_price",
             );
         }
 
@@ -816,7 +831,7 @@ final class ModelsByCategoryRepository implements ModelsByCategoryInterface
                     UserProfile::class,
                     'current_profile',
                     '
-                        current_profile.id = :'.$dbal::CURRENT_PROFILE_KEY
+                        current_profile.id = :'.$dbal::CURRENT_PROFILE_KEY,
                 );
 
             $dbal
@@ -827,7 +842,7 @@ final class ModelsByCategoryRepository implements ModelsByCategoryInterface
                     'current_profile_discount',
                     '
                         current_profile_discount.event = current_profile.event
-                        '
+                        ',
                 );
         }
 
@@ -841,7 +856,7 @@ final class ModelsByCategoryRepository implements ModelsByCategoryInterface
                     UserProfile::class,
                     'project_profile',
                     '
-                        project_profile.id = :'.$dbal::PROJECT_PROFILE_KEY
+                        project_profile.id = :'.$dbal::PROJECT_PROFILE_KEY,
                 );
 
             $dbal
@@ -851,7 +866,7 @@ final class ModelsByCategoryRepository implements ModelsByCategoryInterface
                     UserProfileDiscount::class,
                     'project_profile_discount',
                     '
-                        project_profile_discount.event = project_profile.event'
+                        project_profile_discount.event = project_profile.event',
                 );
         }
 
@@ -898,7 +913,12 @@ final class ModelsByCategoryRepository implements ModelsByCategoryInterface
 
         $dbal->allGroupByExclude();
 
-        return $dbal;
-    }
+        $dbal->setMaxResults($this->maxResult);
 
+        $dbal->enableCache('products-product');
+
+        $result = $dbal->fetchAllHydrate(ModelsByCategoryResult::class);
+
+        return (true === $result->valid()) ? $result : false;
+    }
 }

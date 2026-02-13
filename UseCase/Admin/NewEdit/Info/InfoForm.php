@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +23,6 @@
 
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Info;
 
-use BaksDev\Products\Product\Repository\ProductUserProfileChoice\ProductUserProfileChoiceInterface;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -34,35 +33,14 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class InfoForm extends AbstractType
 {
-    public function __construct(private readonly ProductUserProfileChoiceInterface $profileChoice) {}
-
-
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-
-        $builder
-            ->add('profile', ChoiceType::class, [
-                'choices' => $this->profileChoice->getProfileCollection(),
-                'choice_value' => function(?UserProfileUid $profile) {
-                    return $profile?->getValue();
-                },
-                'choice_label' => function(UserProfileUid $profile) {
-                    return $profile->getAttr();
-                },
-                'label' => false,
-                'expanded' => false,
-                'multiple' => false,
-                'required' => false,
-                'attr' => ['data-select' => 'select2',],
-            ]);
-
         /* TextType */
         $builder->add('sort', IntegerType::class);
 
         $builder->add('url', TextType::class);
 
         $builder->add('article', TextType::class, ['required' => false]);
-
     }
 
 

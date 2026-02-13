@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -37,6 +37,9 @@ interface ProductCatalogInterface
 
     /** Фильтр по категории */
     public function forCategory(CategoryProduct|CategoryProductUid|string $category): self;
+
+    /** Получаем только при условии активности карточки */
+    public function onlyActive(): self;
 
     /** @return Generator<int, ProductCatalogResult>|false */
     public function findAll(string $expr): Generator|false;

@@ -29,6 +29,7 @@ use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Entity\Active\ProductActive;
 use BaksDev\Products\Product\Entity\Category\ProductCategory;
 use BaksDev\Products\Product\Entity\Description\ProductDescription;
+use BaksDev\Products\Product\Entity\Event\Profile\ProductProfile;
 use BaksDev\Products\Product\Entity\Files\ProductFiles;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
 use BaksDev\Products\Product\Entity\Material\ProductMaterial;
@@ -74,6 +75,12 @@ class ProductEvent extends EntityEvent
     #[Assert\Valid]
     #[ORM\OneToMany(targetEntity: ProductCategory::class, mappedBy: 'event', cascade: ['all'], fetch: 'EAGER')]
     private Collection $category;
+
+    /** Прикрепить к профилю пользователя */
+    #[Assert\Valid]
+    #[ORM\OneToMany(targetEntity: ProductProfile::class, mappedBy: 'event', cascade: ['all'])]
+    private Collection $profile;
+
 
     /**
      * Информация о продукции
@@ -280,6 +287,14 @@ class ProductEvent extends EntityEvent
     public function getVideo(): Collection
     {
         return $this->video;
+    }
+
+    /**
+     * @return Collection<ProductProfile>
+     */
+    public function getProfile(): Collection
+    {
+        return $this->profile;
     }
 
     /**

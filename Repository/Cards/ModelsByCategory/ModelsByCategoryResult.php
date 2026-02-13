@@ -41,7 +41,9 @@ final readonly class ModelsByCategoryResult implements ModelsOrProductsCardResul
         private string $product_url,
         private int $product_sort,
 
-        private string $product_active_from,
+        private ?bool $product_active,
+        private ?string $product_active_from,
+        private ?string $product_active_to,
 
         private bool|null $category_offer_card,
         private string|null $product_offer_reference,
@@ -67,6 +69,7 @@ final readonly class ModelsByCategoryResult implements ModelsOrProductsCardResul
         private string|int|null $promotion_price = null,
         private string|null $profile_discount = null,
         private string|null $project_discount = null,
+        private string|null $profiles = null,
     ) {}
 
     public function getProductId(): ProductUid
@@ -94,9 +97,19 @@ final readonly class ModelsByCategoryResult implements ModelsOrProductsCardResul
         return $this->product_sort;
     }
 
-    public function getProductActiveFrom(): string
+    public function getProductActiveFrom(): ?string
     {
         return $this->product_active_from;
+    }
+
+    public function getProductActiveTo(): ?string
+    {
+        return $this->product_active_to;
+    }
+
+    public function isProductActive(): bool
+    {
+        return $this->product_active === true;
     }
 
     public function getCategoryOfferCard(): ?bool

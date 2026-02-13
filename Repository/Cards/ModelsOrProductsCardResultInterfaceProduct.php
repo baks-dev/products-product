@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 namespace BaksDev\Products\Product\Repository\Cards;
@@ -41,7 +40,7 @@ interface ModelsOrProductsCardResultInterfaceProduct extends ProductPriceResultI
 
     public function getProductSort(): int|null|bool;
 
-    public function getProductActiveFrom(): string|null|bool;
+    //  public function getProductActiveFrom(): string|null|bool;
 
     public function getCategoryOfferCard(): bool|null;
 

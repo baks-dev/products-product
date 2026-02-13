@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -37,9 +37,11 @@ use BaksDev\Products\Product\UseCase\Admin\NewEdit\Photo\PhotoCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Price\Cost\ProductPriceCostDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Price\Opt\ProductPriceOptDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Price\PriceDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Profile\CollectionProductProfileDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Property\PropertyCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Seo\SeoCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Video\VideoCollectionDTO;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -90,6 +92,9 @@ final class ProductDTO implements ProductEventInterface
     private ArrayCollection $material;
 
     #[Assert\Valid]
+    private ArrayCollection $profile;
+
+    #[Assert\Valid]
     private ProductPriceCostDTO $cost;
 
     #[Assert\Valid]
@@ -115,6 +120,7 @@ final class ProductDTO implements ProductEventInterface
         $this->video = new ArrayCollection();
         $this->description = new ArrayCollection();
         $this->material = new ArrayCollection();
+        $this->profile = new ArrayCollection();
     }
 
 
@@ -452,6 +458,38 @@ final class ProductDTO implements ProductEventInterface
     public function removeProperty(PropertyCollectionDTO $property): void
     {
         $this->property->removeElement($property);
+    }
+
+    public function getProfile(): ArrayCollection
+    {
+        if($this->profile->isEmpty())
+        {
+            $ProductProfileDTO = new CollectionProductProfileDTO();
+            $this->addProfile($ProductProfileDTO);
+        }
+
+        return $this->profile;
+    }
+
+    public function setProfile(ArrayCollection $profile): self
+    {
+        $this->profile = $profile;
+        return $this;
+    }
+
+    public function addProfile(CollectionProductProfileDTO $profile): self
+    {
+        if(!$this->profile->contains($profile))
+        {
+            $this->profile->add($profile);
+        }
+
+        return $this;
+    }
+
+    public function removeProfile(CollectionProductProfileDTO $seo): void
+    {
+        $this->seo->removeElement($seo);
     }
 
 

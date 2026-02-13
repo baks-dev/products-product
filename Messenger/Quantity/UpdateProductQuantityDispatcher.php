@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -169,7 +169,7 @@ final readonly class UpdateProductQuantityDispatcher
 
             $this->logger->critical(
                 'products-product: Множественный вариант товара не был найден для обновления остатка: ',
-                [self::class.':'.__LINE__, var_export($message, true), var_export($product, true)],
+                [self::class.':'.__LINE__, var_export($message, true)],
             );
 
             return;

@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -26,7 +26,10 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Repository\Cards\ProductCatalog\Tests;
 
 use BaksDev\Products\Product\Repository\Cards\ProductCatalog\ProductCatalogInterface;
+use BaksDev\Products\Product\Repository\Cards\ProductCatalog\ProductCatalogResult;
 use PHPUnit\Framework\Attributes\Group;
+use ReflectionClass;
+use ReflectionMethod;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
@@ -37,14 +40,36 @@ class ProductCatalogRepositoryTest extends KernelTestCase
 
     public function testUseCase(): void
     {
+        self::assertTrue(true);
+
         /** @var ProductCatalogInterface $repository */
         $repository = self::getContainer()->get(ProductCatalogInterface::class);
 
         $result = $repository
             ->maxResult(100)
-            //            ->analyze()
-            ->toArray();
+            ->findAll();
 
-        self::assertTrue(true);
+        if(false === $result || false === $result->valid())
+        {
+            return;
+        }
+
+        foreach($result as $ProductCatalogResult)
+        {
+            // Вызываем все геттеры
+            $reflectionClass = new ReflectionClass(ProductCatalogResult::class);
+            $methods = $reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC);
+
+            foreach($methods as $method)
+            {
+                // Методы без аргументов
+                if($method->getNumberOfParameters() === 0)
+                {
+                    // Вызываем метод
+                    $data = $method->invoke($ProductCatalogResult);
+                    // dump($data);
+                }
+            }
+        }
     }
 }

@@ -1,17 +1,17 @@
 <?php
 /*
  *  Copyright 2026.  Baks.dev <admin@baks.dev>
- *
+ *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *
+ *  
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *
+ *  
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 declare(strict_types=1);
@@ -95,6 +94,8 @@ final class ProductCatalogRepository implements ProductCatalogInterface
 
     private ?array $property = null;
 
+    private bool $active = false;
+
     public function __construct(
         private readonly DBALQueryBuilder $dbal,
         #[Autowire(env: 'PROJECT_REGION')] private readonly ?string $region = null,
@@ -150,6 +151,12 @@ final class ProductCatalogRepository implements ProductCatalogInterface
         return $this;
     }
 
+    public function onlyActive(): self
+    {
+        $this->active = true;
+        return $this;
+    }
+
     /**
      * Метод возвращает ограниченный по количеству элементов список продуктов из разных категорий
      *
@@ -157,29 +164,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
      */
     public function findAll(string $expr = 'AND'): Generator|false
     {
-        $dbal = $this->builder($expr);
 
-        $dbal->enableCache('products-product', 86400);
-
-        $result = $dbal->fetchAllHydrate(ProductCatalogResult::class);
-
-        return (true === $result->valid()) ? $result : false;
-    }
-
-    /**
-     * Метод возвращает список продуктов из разных категорий
-     *
-     * @return array<int, ProductCatalogResult>|false
-     */
-    public function toArray(string $expr = 'AND'): array|false
-    {
-        $result = $this->findAll();
-
-        return (false !== $result) ? iterator_to_array($result) : false;
-    }
-
-    public function builder($expr): DBALQueryBuilder
-    {
 
         $dbal = $this->dbal
             ->createQueryBuilder(self::class)
@@ -442,16 +427,43 @@ final class ProductCatalogRepository implements ProductCatalogInterface
             ->addGroupBy('product_price.reserve');
 
 
-        /** Даты продукта */
         $dbal
-            ->addSelect('product_active.active_from')
-            //            ->addSelect('product_active.active_to')
-            ->join(
+            ->addSelect('product_active.active as product_active')
+            ->addSelect('product_active.active_from as product_active_from')
+            ->addSelect('product_active.active_to as product_active_to');
+
+
+        /** Получаем только при условии активности карточки */
+        if($this->active)
+        {
+            $dbal->join(
+                'product',
+                ProductActive::class,
+                'product_active',
+                '
+                    product_active.event = product.event AND 
+                    product_active.active IS TRUE AND
+                    (product_active.active_to IS NULL OR product_active.active_to > NOW())
+                ');
+        }
+        else
+        {
+            $dbal->leftJoin(
                 'product',
                 ProductActive::class,
                 'product_active',
                 'product_active.event = product.event',
             );
+        }
+
+        /*$dbal
+            ->addSelect("JSON_AGG (DISTINCT product_profile.value) AS profiles")
+            ->leftJoin(
+                'product',
+                ProductProfile::class,
+                'product_profile',
+                'product_profile.event = product.event',
+            );*/
 
         /** OFFERS */
         $method = 'leftJoin';
@@ -1194,11 +1206,24 @@ final class ProductCatalogRepository implements ProductCatalogInterface
             $dbal->setMaxResults($this->maxResult);
         }
 
-        return $dbal;
+        $dbal->enableCache('products-product', 86400);
+
+        $result = $dbal->fetchAllHydrate(ProductCatalogResult::class);
+
+        return (true === $result->valid()) ? $result : false;
     }
 
-    public function analyze(string $expr = 'AND'): void
+    /**
+     * Метод возвращает список продуктов из разных категорий
+     *
+     * @return array<int, ProductCatalogResult>|false
+     */
+    public function toArray(string $expr = 'AND'): array|false
     {
-        $this->builder($expr)->analyze();
+        $result = $this->findAll();
+
+        return (false !== $result) ? iterator_to_array($result) : false;
     }
+
+
 }
