@@ -1,17 +1,17 @@
 <?php
 /*
  *  Copyright 2026.  Baks.dev <admin@baks.dev>
- *
+ *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *
+ *  
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *
+ *  
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -41,9 +41,11 @@ final readonly class ProductModelResult
     public function __construct(
         private string $id,
         private string $event,
+
         private bool $active,
         private string|null $active_from,
         private string|null $active_to,
+
         private string|null $seo_title,
         private string|null $seo_keywords,
         private string|null $seo_description,
@@ -65,6 +67,9 @@ final readonly class ProductModelResult
 
         private string|null $profile_discount = null,
         private string|null $project_discount = null,
+
+        private string|null $project_profile = null,
+        private string|null $profiles = null,
 
     ) {}
 
@@ -199,7 +204,7 @@ final readonly class ProductModelResult
             return null;
         }
 
-        return $sectionFields;
+        return array_filter($sectionFields, static fn($n) => $n->field_public === true);
     }
 
     public function getCategoryThreshold(): ?int
@@ -311,6 +316,7 @@ final readonly class ProductModelResult
 
     /**
      * Торговые предложения только в наличии
+     *
      * @return array<int, ProductModelOfferResult>|array<empty>|null
      */
     public function getInStockOffersResult(): ?array
@@ -331,6 +337,7 @@ final readonly class ProductModelResult
 
     /**
      * Торговые предложения не в наличии
+     *
      * @return array<int, ProductModelOfferResult>|array<empty>|null
      */
     public function getOutOfStockOffersResult(): ?array
@@ -376,5 +383,38 @@ final readonly class ProductModelResult
     public function getProductInvariableId(): null
     {
         return null;
+    }
+
+
+    public function isDeliveryRegion(): bool
+    {
+        if(empty($this->project_profile))
+        {
+            return true;
+        }
+
+        if(empty($this->profiles))
+        {
+            return true;
+        }
+
+        if(false === json_validate($this->profiles))
+        {
+            return true;
+        }
+
+        $profiles = json_decode($this->profiles, true, 512, JSON_THROW_ON_ERROR);
+
+        if(empty($profiles))
+        {
+            return true;
+        }
+
+        if(in_array($this->profiles, $profiles, true))
+        {
+            return true;
+        }
+
+        return false;
     }
 }

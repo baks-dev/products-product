@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -42,6 +42,7 @@ use BaksDev\Products\Category\Entity\Trans\CategoryProductTrans;
 use BaksDev\Products\Product\Entity\Active\ProductActive;
 use BaksDev\Products\Product\Entity\Category\ProductCategory;
 use BaksDev\Products\Product\Entity\Description\ProductDescription;
+use BaksDev\Products\Product\Entity\Event\Profile\ProductProfile;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
 use BaksDev\Products\Product\Entity\Offers\Image\ProductOfferImage;
 use BaksDev\Products\Product\Entity\Offers\Price\ProductOfferPrice;
@@ -170,6 +171,20 @@ final class ProductModelRepository implements ProductModelInterface
                 'product_active',
                 'product_active.event = product.event'
             );
+
+
+        $dbal
+            ->addSelect(':'.$dbal::PROJECT_PROFILE_KEY.' AS project_profile')
+            ->addSelect("JSON_AGG (DISTINCT product_profile.value) FILTER (WHERE product_profile.value IS NOT NULL) AS profiles")
+            ->leftJoin(
+                'product',
+                ProductProfile::class,
+                'product_profile',
+                'product_profile.event = product.event',
+            );
+
+
+
 
         $dbal
             ->addSelect('product_seo.title AS seo_title')
