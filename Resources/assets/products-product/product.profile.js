@@ -57,7 +57,7 @@ if($addButtonProfile)
 
         /* Замена '__name__' в HTML-коде прототипа на
          вместо этого будет число, основанное на том, сколько коллекций */
-        newForm = newForm.replace(/__profiles__/g, index);
+        newForm = newForm.replace(/__profile__/g, index);
 
 
         /* Вставляем новую коллекцию */
@@ -79,6 +79,8 @@ if($addButtonProfile)
             let index = $addButtonProfile.dataset.index * 1;
             $addButtonProfile.dataset.index = (index - 1).toString();
         });
+
+        new NiceSelect(document.getElementById("product_form_profile_" + index + "_value"), {searchable : true});
 
         $addButtonProfile.dataset.index = (index + 1).toString();
 

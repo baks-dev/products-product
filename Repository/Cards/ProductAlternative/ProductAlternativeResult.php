@@ -62,8 +62,8 @@ final readonly class ProductAlternativeResult implements ProductCardResultInterf
         private string|null $product_modification_reference,
 
         private bool|null $product_active,
-        private ?string $product_active_from,
-        private ?string $product_active_to,
+        private string|null $product_active_from,
+        private string|null $product_active_to,
 
         private string $product_name,
         private string $product_url,
