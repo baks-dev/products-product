@@ -42,6 +42,7 @@ use BaksDev\Products\Category\Entity\Trans\CategoryProductTrans;
 use BaksDev\Products\Product\Entity\Active\ProductActive;
 use BaksDev\Products\Product\Entity\Category\ProductCategory;
 use BaksDev\Products\Product\Entity\Description\ProductDescription;
+use BaksDev\Products\Product\Entity\Event\Profile\ProductProfile;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
 use BaksDev\Products\Product\Entity\Offers\Image\ProductOfferImage;
 use BaksDev\Products\Product\Entity\Offers\Price\ProductOfferPrice;
@@ -76,6 +77,7 @@ use BaksDev\Users\Profile\UserProfile\Entity\Event\Delivery\UserProfileDelivery;
 use BaksDev\Users\Profile\UserProfile\Entity\Event\Discount\UserProfileDiscount;
 use BaksDev\Users\Profile\UserProfile\Entity\Event\Region\UserProfileRegion;
 use BaksDev\Users\Profile\UserProfile\Entity\UserProfile;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
@@ -214,6 +216,18 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
                 'product_active',
                 'product_active.event = product.event',
             );
+
+
+        $dbal
+            ->addSelect(':'.$dbal::PROJECT_PROFILE_KEY.' AS project_profile')
+            ->addSelect("JSON_AGG (DISTINCT product_profile.value) FILTER (WHERE product_profile.value IS NOT NULL) AS profiles")
+            ->leftJoin(
+                'product',
+                ProductProfile::class,
+                'product_profile',
+                'product_profile.event = product.event',
+            );
+
 
         $dbal
             ->addSelect('product_seo.title AS seo_title')

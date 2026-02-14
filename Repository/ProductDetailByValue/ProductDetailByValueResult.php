@@ -117,6 +117,9 @@ final readonly class ProductDetailByValueResult implements ProductPriceResultInt
         private string|null $project_discount = null,
         private string|null $product_quantity_stocks = null,
         private string|null $product_region_delivery = null,
+
+        private string|null $project_profile = null,
+        private string|null $profiles = null,
     ) {}
 
     public function getProductId(): ProductUid
@@ -648,5 +651,38 @@ final readonly class ProductDetailByValueResult implements ProductPriceResultInt
         }
 
         return $delivery;
+    }
+
+
+    public function isDeliveryRegion(): bool
+    {
+        if(empty($this->project_profile))
+        {
+            return true;
+        }
+
+        if(empty($this->profiles))
+        {
+            return true;
+        }
+
+        if(false === json_validate($this->profiles))
+        {
+            return true;
+        }
+
+        $profiles = json_decode($this->profiles, true, 512, JSON_THROW_ON_ERROR);
+
+        if(empty($profiles))
+        {
+            return true;
+        }
+
+        if(in_array($this->profiles, $profiles, true))
+        {
+            return true;
+        }
+
+        return false;
     }
 }
