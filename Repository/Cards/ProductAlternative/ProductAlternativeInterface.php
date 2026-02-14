@@ -23,6 +23,7 @@
 
 namespace BaksDev\Products\Product\Repository\Cards\ProductAlternative;
 
+use BaksDev\Products\Product\Type\Invariable\ProductInvariableUid;
 use Generator;
 
 interface ProductAlternativeInterface
@@ -36,6 +37,8 @@ interface ProductAlternativeInterface
     public function forModificationValue(string|null $modification): self;
 
     public function byProperty(array|null $property): self;
+
+    public function excludeProductInvariable(ProductInvariableUid|null|false $exclude): self;
 
     /** Получаем только при условии активности карточки */
     public function onlyActive(): self;

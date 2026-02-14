@@ -345,6 +345,11 @@ final readonly class ModelOrProductResult implements ModelsOrProductsCardResultI
         return $this->product_quantity;
     }
 
+    public function getProductActiveFrom(): ?string
+    {
+        return $this->product_active_from;
+    }
+
 
     public function getCategorySectionField(): array|null
     {

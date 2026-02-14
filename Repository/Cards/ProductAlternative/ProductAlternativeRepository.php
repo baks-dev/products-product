@@ -60,6 +60,7 @@ use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Entity\ProductInvariable;
 use BaksDev\Products\Product\Entity\Property\ProductProperty;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
+use BaksDev\Products\Product\Type\Invariable\ProductInvariableUid;
 use BaksDev\Products\Promotion\BaksDevProductsPromotionBundle;
 use BaksDev\Products\Promotion\Entity\Event\Invariable\ProductPromotionInvariable;
 use BaksDev\Products\Promotion\Entity\Event\Period\ProductPromotionPeriod;
@@ -83,9 +84,12 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 
     private array|null $property = null;
 
+    private ProductInvariableUid|false $exclude = false;
+
     private bool $active = false;
 
     private int|false $limit = 100;
+
 
     public function __construct(
         private readonly DBALQueryBuilder $DBALQueryBuilder,
@@ -143,6 +147,18 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
         $result = $this->findAll();
 
         return (false !== $result) ? iterator_to_array($result) : false;
+    }
+
+    public function excludeProductInvariable(ProductInvariableUid|null|false $exclude): self
+    {
+        if(empty($exclude))
+        {
+            $this->exclude = false;
+            return $this;
+        }
+
+        $this->exclude = $exclude;
+        return $this;
     }
 
     /**
@@ -305,7 +321,8 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
         }
 
         $dbal
-            ->addSelect("JSON_AGG (DISTINCT product_profile.value) AS profiles")
+            ->addSelect(':'.$dbal::PROJECT_PROFILE_KEY.' AS project_profile')
+            ->addSelect("JSON_AGG (DISTINCT product_profile.value) FILTER (WHERE product_profile.value IS NOT NULL) AS profiles")
             ->leftJoin(
                 'product',
                 ProductProfile::class,
@@ -674,6 +691,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
         );
 
         /** Фото продукции*/
+
         /**
          * Фото модификаций
          */
@@ -759,11 +777,12 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
          */
         $dbal
             ->addSelect('product_invariable.id AS product_invariable_id')
-            ->leftJoin(
+            ->join(
                 'product_modification',
                 ProductInvariable::class,
                 'product_invariable',
-                '
+                ($this->exclude ? 'product_invariable.id != :exclude AND ' : '').'
+                    
                     product_invariable.product = product.id AND 
                     (
                         (product_offer.const IS NOT NULL AND product_invariable.offer = product_offer.const) OR 
@@ -780,6 +799,15 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                         (product_modification.const IS NULL AND product_invariable.modification IS NULL)
                    )
             ');
+
+        if($this->exclude instanceof ProductInvariableUid)
+        {
+            $dbal->setParameter(
+                key: 'exclude',
+                value: $this->exclude,
+                type: ProductInvariableUid::TYPE,
+            );
+        }
 
 
         /**

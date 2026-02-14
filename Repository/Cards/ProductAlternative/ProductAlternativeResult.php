@@ -87,6 +87,7 @@ final readonly class ProductAlternativeResult implements ProductCardResultInterf
         private string|null $profile_discount = null,
         private string|null $project_discount = null,
 
+        private string|null $project_profile = null,
         private string|null $profiles = null,
     ) {}
 
@@ -322,28 +323,6 @@ final readonly class ProductAlternativeResult implements ProductCardResultInterf
             return null;
         }
 
-        if(empty($this->profiles))
-        {
-            return $this->quantity;
-        }
-
-        if(false === json_validate($this->profiles))
-        {
-            return $this->quantity;
-        }
-
-        $profiles = json_decode($this->profiles, true, 512, JSON_THROW_ON_ERROR);
-
-        if(empty($profiles))
-        {
-            return $this->quantity;
-        }
-
-        if(false === empty($profile) && false === in_array($profile, $profiles, true))
-        {
-            return null;
-        }
-
         return $this->quantity;
     }
 
@@ -432,6 +411,38 @@ final readonly class ProductAlternativeResult implements ProductCardResultInterf
     }
 
     /** Helpers */
+
+    public function isDeliveryRegion(): bool
+    {
+        if(empty($this->project_profile))
+        {
+            return true;
+        }
+
+        if(empty($this->profiles))
+        {
+            return true;
+        }
+
+        if(false === json_validate($this->profiles))
+        {
+            return true;
+        }
+
+        $profiles = json_decode($this->profiles, true, 512, JSON_THROW_ON_ERROR);
+
+        if(empty($profiles))
+        {
+            return true;
+        }
+
+        if(in_array($this->profiles, $profiles, true))
+        {
+            return true;
+        }
+
+        return false;
+    }
 
     /** Возвращает разницу между старой и новой ценами в процентах */
     public function getDiscountPercent(): int|null
