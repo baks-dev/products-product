@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 declare(strict_types=1);
@@ -72,6 +71,9 @@ final readonly class ProductModelOfferResult implements ProductPriceResultInterf
 
         private string|null $profile_discount = null,
         private string|null $project_discount = null,
+
+        private string|null $project_profile = null,
+        private string|null $profiles = null,
 
     ) {}
 
@@ -276,5 +278,37 @@ final readonly class ProductModelOfferResult implements ProductPriceResultInterf
         }
 
         return $discountPercent;
+    }
+
+    public function isDeliveryRegion(): bool
+    {
+        if(empty($this->project_profile))
+        {
+            return true;
+        }
+
+        if(empty($this->profiles))
+        {
+            return true;
+        }
+
+        if(false === json_validate($this->profiles))
+        {
+            return true;
+        }
+
+        $profiles = json_decode($this->profiles, true, 512, JSON_THROW_ON_ERROR);
+
+        if(empty($profiles))
+        {
+            return true;
+        }
+
+        if(in_array($this->profiles, $profiles, true))
+        {
+            return true;
+        }
+
+        return false;
     }
 }

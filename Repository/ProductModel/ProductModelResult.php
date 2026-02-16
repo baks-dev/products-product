@@ -305,6 +305,9 @@ final readonly class ProductModelResult
         $offersResult = [];
         foreach($offers as $offer)
         {
+            $offer['project_profile'] = $this->project_profile;
+            $offer['profiles'] = $this->profiles;
+
             // первый ключ в массиве - ключ для сортировки при сортировке в JSON_BUILD - удаляем его
             unset($offer[0]);
 
