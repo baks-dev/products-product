@@ -197,7 +197,7 @@ final readonly class ProductModelResult
             return null;
         }
 
-        $sectionFields = json_decode($this->category_section_field, true, 512, JSON_THROW_ON_ERROR);
+        $sectionFields = json_decode($this->category_section_field, false, 512, JSON_THROW_ON_ERROR);
 
         if(null === current($sectionFields))
         {
