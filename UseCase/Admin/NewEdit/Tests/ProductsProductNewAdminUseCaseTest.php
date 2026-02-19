@@ -530,7 +530,7 @@ class ProductsProductNewAdminUseCaseTest extends KernelTestCase
 
         /** @var ProductHandler $ProductHandler */
         $ProductHandler = self::getContainer()->get(ProductHandler::class);
-        $handle = $ProductHandler->handle($ProductDTO);
+        $handle = $ProductHandler->handle($ProductDTO, false);
 
         self::assertTrue(($handle instanceof Product));
     }

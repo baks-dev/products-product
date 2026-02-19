@@ -61,7 +61,7 @@ final class ProductHandler extends AbstractHandler
         parent::__construct($entityManager, $messageDispatch, $validatorCollection, $imageUpload, $fileUpload);
     }
 
-    public function handle(ProductDTO $command): Product|string
+    public function handle(ProductDTO $command, bool $isDispatch = true): Product|string
     {
         $this
             ->setCommand($command)
@@ -183,13 +183,17 @@ final class ProductHandler extends AbstractHandler
 
         $this->flush();
 
-        /* Отправляем событие в шину  */
-        $this->messageDispatch
-            ->addClearCacheOther('avito-board')
-            ->dispatch(
-            message: new ProductMessage($this->main->getId(), $this->main->getEvent(), $command->getEvent()),
-            transport: 'products-product',
-        );
+
+        if(true === $isDispatch)
+        {
+            /* Отправляем событие в шину  */
+            $this->messageDispatch
+                ->addClearCacheOther('avito-board')
+                ->dispatch(
+                    message: new ProductMessage($this->main->getId(), $this->main->getEvent(), $command->getEvent()),
+                    transport: 'products-product',
+                );
+        }
 
         return $this->main;
 
