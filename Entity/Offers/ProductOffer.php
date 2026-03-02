@@ -19,6 +19,7 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 namespace BaksDev\Products\Product\Entity\Offers;
@@ -26,6 +27,7 @@ namespace BaksDev\Products\Product\Entity\Offers;
 use BaksDev\Core\Entity\EntityEvent;
 use BaksDev\Products\Category\Type\Offers\Id\CategoryProductOffersUid;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
+use BaksDev\Products\Product\Entity\Offers\Barcode\ProductOfferBarcode;
 use BaksDev\Products\Product\Entity\Offers\Cost\ProductOfferCost;
 use BaksDev\Products\Product\Entity\Offers\Image\ProductOfferImage;
 use BaksDev\Products\Product\Entity\Offers\Opt\ProductOfferOpt;
@@ -47,7 +49,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: 'product_offer')]
 #[ORM\Index(columns: ['const'])]
 #[ORM\Index(columns: ['article'])]
-#[ORM\Index(columns: ['barcode'])]
+#[ORM\Index(columns: ['barcode_old'])]
 class ProductOffer extends EntityEvent
 {
     /** ID */
@@ -79,10 +81,6 @@ class ProductOffer extends EntityEvent
     #[ORM\Column(type: Types::STRING, nullable: true)]
     private ?string $name = null;
 
-    /** Штрихкод товара */
-    #[ORM\Column(type: ProductBarcode::TYPE, nullable: true)]
-    private ?ProductBarcode $barcode = null;
-
     /** Заполненное значение */
     #[ORM\Column(type: Types::STRING, nullable: true)]
     private ?string $value = null;
@@ -110,7 +108,6 @@ class ProductOffer extends EntityEvent
     #[ORM\OneToOne(targetEntity: ProductOfferOpt::class, mappedBy: 'offer', cascade: ['all'])]
     private ?ProductOfferOpt $opt;
 
-
     /** Количественный учет */
     #[Assert\Valid]
     #[ORM\OneToOne(targetEntity: ProductOfferQuantity::class, mappedBy: 'offer', cascade: ['all'])]
@@ -124,9 +121,24 @@ class ProductOffer extends EntityEvent
 
     /** Коллекция вариаций в торговом предложении  */
     #[Assert\Valid]
-    #[ORM\OrderBy(['value' => 'ASC'])]
     #[ORM\OneToMany(targetEntity: ProductVariation::class, mappedBy: 'offer', cascade: ['all'])]
+    #[ORM\OrderBy(['value' => 'ASC'])]
     private Collection $variation;
+
+    /**
+     * Коллекция штрихкодов товара
+     */
+    #[Assert\Valid]
+    //    #[Assert\Count(min: 1)]
+    #[ORM\OneToMany(targetEntity: ProductOfferBarcode::class, mappedBy: 'offer', cascade: ['all'])]
+    private Collection $barcode;
+
+    /**
+     * @deprecated используется ProductOfferBarcode
+     * Штрихкод товара
+     */
+    #[ORM\Column(type: ProductBarcode::TYPE, nullable: true)]
+    private ?ProductBarcode $barcodeOld = null;
 
     public function __construct(ProductEvent $event)
     {
@@ -203,9 +215,13 @@ class ProductOffer extends EntityEvent
         return $this->variation;
     }
 
-    public function getBarcode(): ?ProductBarcode
+    /**
+     * Barcode
+     *
+     * @return Collection<int, ProductOfferBarcode>
+     */
+    public function getBarcode(): Collection
     {
         return $this->barcode;
     }
-
 }

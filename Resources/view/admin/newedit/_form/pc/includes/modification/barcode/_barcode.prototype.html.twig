@@ -1,0 +1,25 @@
+<div class="d-flex gap-1"
+     data-id="{{ modification.barcode.vars.prototype.vars.id }}" {# id элмента коллекции #}
+     data-collection="{{ modification.barcode.vars.id }}"> {# общий id для всех элментов коллекции #}
+
+    {{ form_widget(modification.barcode.vars.prototype, {
+        label : 'Штрихкод',
+        attr:  { placeholder : 'Штрихкод' }
+    }) }}
+
+    <button type="button"
+            class="btn btn-outline-danger border-0 mb-3 delete-barcode"
+            data-id-barcode="{{ modification.barcode.vars.prototype.vars.id }}" {# id элемента коллекции #}
+            data-id-collection="{{ modification.barcode.vars.id }}"> {# id коллекции #}
+
+        <span class="svg-icon svg-icon-2 text-nowrap">
+            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25" fill="none">
+                <rect opacity="0.5" x="7.05025" y="15.5356" width="12" height="2" rx="1"
+                      transform="rotate(-45 7.05025 15.5356)" fill="currentColor"></rect>
+                <rect x="8.46447" y="7.05029" width="12" height="2" rx="1"
+                      transform="rotate(45 8.46447 7.05029)"
+                      fill="currentColor"></rect>
+            </svg>
+        </span>
+    </button>
+</div>

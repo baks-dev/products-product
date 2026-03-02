@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -26,8 +26,8 @@ namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modifi
 
 use BaksDev\Products\Category\Type\Offers\Modification\CategoryProductModificationUid;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModificationInterface;
-use BaksDev\Products\Product\Type\Barcode\ProductBarcode;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification\Barcode\ProductModificationBarcodeDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification\Cost\ProductModificationCostDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification\Image\ProductModificationImageCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification\Opt\ProductModificationOptDTO;
@@ -48,8 +48,9 @@ final class ProductModificationCollectionDTO implements ProductModificationInter
     #[Assert\Uuid]
     private readonly ProductModificationConst $const;
 
-    /** Штрихкод товара */
-    private ProductBarcode $barcode;
+    /** Штрихкоды товара */
+    #[Assert\Valid]
+    private ?ArrayCollection $barcode = null;
 
     /** Заполненное значение */
     private ?string $value = null;
@@ -78,7 +79,6 @@ final class ProductModificationCollectionDTO implements ProductModificationInter
     #[Assert\Valid]
     private ArrayCollection $image;
 
-
     public function __construct()
     {
         $this->image = new ArrayCollection();
@@ -86,6 +86,8 @@ final class ProductModificationCollectionDTO implements ProductModificationInter
         $this->price = new ProductModificationPriceDTO();
         $this->cost = new ProductModificationCostDTO();
         $this->opt = new ProductModificationOptDTO();
+
+        $this->barcode = new ArrayCollection();
     }
 
 
@@ -96,11 +98,6 @@ final class ProductModificationCollectionDTO implements ProductModificationInter
         if(false === (new ReflectionProperty(self::class, 'const')->isInitialized($this)))
         {
             $this->const = new ProductModificationConst();
-
-            if(false === (new ReflectionProperty(self::class, 'barcode')->isInitialized($this)))
-            {
-                $this->barcode = new ProductBarcode(ProductBarcode::generate());
-            }
         }
 
         return $this->const;
@@ -114,29 +111,33 @@ final class ProductModificationCollectionDTO implements ProductModificationInter
         }
     }
 
+    /** Штрихкоды */
 
     /**
-     * Barcode
+     * @return ArrayCollection<int, ProductModificationBarcodeDTO>
      */
-    public function getBarcode(): ProductBarcode
+    public function getBarcode(): ArrayCollection
     {
-        if(false === (new ReflectionProperty(self::class, 'barcode')->isInitialized($this)))
-        {
-            $this->barcode = new ProductBarcode(ProductBarcode::generate());
-        }
-
         return $this->barcode;
     }
 
-    public function setBarcode(?ProductBarcode $barcode): self
+    public function addBarcode(ProductModificationBarcodeDTO $barcode): void
     {
-        if(is_null($barcode))
-        {
-            $barcode = new ProductBarcode(ProductBarcode::generate());
-        }
+        $isExist = $this->barcode->exists(
+            function(int $key, ProductModificationBarcodeDTO $ProductModificationBarcodeDTO) use ($barcode) {
 
-        $this->barcode = $barcode;
-        return $this;
+                return $ProductModificationBarcodeDTO->getValue()->equals($barcode->getValue());
+            });
+
+        if(false === $isExist)
+        {
+            $this->barcode->add($barcode);
+        }
+    }
+
+    public function removeBarcode(ProductModificationBarcodeDTO $barcode): void
+    {
+        $this->barcode->removeElement($barcode);
     }
 
     /** Заполненное значение */

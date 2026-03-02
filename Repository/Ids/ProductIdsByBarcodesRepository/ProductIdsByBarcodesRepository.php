@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +28,10 @@ namespace BaksDev\Products\Product\Repository\Ids\ProductIdsByBarcodesRepository
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
+use BaksDev\Products\Product\Entity\Offers\Barcode\ProductOfferBarcode;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
+use BaksDev\Products\Product\Entity\Offers\Variation\Barcode\ProductVariationBarcode;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Barcode\ProductModificationBarcode;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Product\Entity\Product;
@@ -115,7 +118,8 @@ final class ProductIdsByBarcodesRepository implements ProductIdsByBarcodesInterf
 
         $dbalOffer
             ->from(ProductOffer::class, 'offer')
-            ->where('offer.barcode IN (:barcodes)');
+            ->where('offer.barcode_old IN (:barcodes)')
+            ->orWhere('product_offer_barcode.value IN (:barcodes)');
 
         $dbalOffer->join(
             'offer',
@@ -136,6 +140,18 @@ final class ProductIdsByBarcodesRepository implements ProductIdsByBarcodesInterf
                 '
             );
 
+        /** OfferBarcode */
+
+        $dbalOffer
+            ->leftJoin(
+                'offer',
+                ProductOfferBarcode::class,
+                'product_offer_barcode',
+                'product_offer_barcode.offer = offer.id'
+            );
+
+
+
         /** Поиск артикула VARIATION */
 
         $dbalVariation = $this->DBALQueryBuilder->createQueryBuilder(self::class);
@@ -151,7 +167,8 @@ final class ProductIdsByBarcodesRepository implements ProductIdsByBarcodesInterf
 
         $dbalVariation
             ->from(ProductVariation::class, 'variation')
-            ->where('variation.barcode IN (:barcodes)');
+            ->where('variation.barcode_old IN (:barcodes)')
+            ->orWhere('product_variation_barcode.value IN (:barcodes)');
 
         $dbalVariation
             ->join(
@@ -180,6 +197,16 @@ final class ProductIdsByBarcodesRepository implements ProductIdsByBarcodesInterf
                 '
             );
 
+        /** Variation Barcode */
+
+        $dbalVariation
+            ->leftJoin(
+                'variation',
+                ProductVariationBarcode::class,
+                'product_variation_barcode',
+                'product_variation_barcode.variation = variation.id'
+            );
+
         /** Поиск артикула MODIFICATION */
 
         $dbalModification = $this->DBALQueryBuilder->createQueryBuilder(self::class);
@@ -196,8 +223,8 @@ final class ProductIdsByBarcodesRepository implements ProductIdsByBarcodesInterf
 
         $dbalModification
             ->from(ProductModification::class, 'modification')
-            ->where('modification.barcode IN (:barcodes)');
-
+            ->where('modification.barcode_old IN (:barcodes)')
+            ->orWhere('product_modification_barcode.value IN (:barcodes)');
 
         $dbalModification
             ->join(
@@ -231,6 +258,16 @@ final class ProductIdsByBarcodesRepository implements ProductIdsByBarcodesInterf
                     invariable.variation = variation.const AND
                     invariable.modification = modification.const
                 '
+            );
+
+        /** Modification Barcode */
+
+        $dbalModification
+            ->leftJoin(
+                'modification',
+                ProductModificationBarcode::class,
+                'product_modification_barcode',
+                'product_modification_barcode.modification = modification.id'
             );
 
         /** UNION */

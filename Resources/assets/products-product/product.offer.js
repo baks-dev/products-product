@@ -1,16 +1,16 @@
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
- *  
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
+ *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *  
+ *
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *  
+ *
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -18,6 +18,7 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 /* кнопка Добавить торговое предложение */
@@ -41,6 +42,11 @@ if($btnAddOffer)
         newForm = newForm.replace(/__offers__/g, index);
         //newForm = newForm.replace(/__offer_variation__/g, 0);
 
+        /** Индекс в рамках нового элемента */
+        newForm = newForm.replace(/__offer_barcode__/g, index - this.dataset.index);
+        newForm = newForm.replace(/__variation_barcode__/g, index - this.dataset.index);
+        newForm = newForm.replace(/__modification_barcode__/g, index - this.dataset.index);
+        newForm = newForm.replace(/value="[^"]*"/g, 'value=""');
 
         /* Вставляем новую коллекцию */
         let div = document.createElement("div");
@@ -321,7 +327,7 @@ function deleteOfferImage()
 
     if(btnRoot)
     {
-        if(btnRoot.checked == true)
+        if(btnRoot.checked === true)
         {
             /* Выделяем первый элемент в родительском блоке */
             let nextChaecked = parentElement.querySelector("[class^=\"change-root-\"]");
@@ -383,6 +389,9 @@ function addVariation()
     newForm = newForm.replace(/__offers__/g, offer);
     newForm = newForm.replace(/__offer_variation__/g, index);
 
+    newForm = newForm.replace(/__variation_barcode__/g, index - this.dataset.index);
+    newForm = newForm.replace(/__modification_barcode__/g, index - this.dataset.index);
+    newForm = newForm.replace(/value="[^"]*"/g, 'value=""');
 
     let div = document.createElement("div");
     div.innerHTML = newForm;
@@ -470,7 +479,8 @@ function addVariation()
     /** Получить элемент коллекции вида collection_product_form_offer_1_variation_1 */
     let collection_product_form_offer = document.getElementById('collection_product_form_offer_' + offer + '_variation_' + index);
 
-    if (!collection_product_form_offer) {
+    if(!collection_product_form_offer)
+    {
         return;
     }
     /* В найденом collection_product_form_offer найти элемент по modification modification-item-collection */
@@ -676,6 +686,9 @@ function addModification()
     newForm = newForm.replace(/__offers__/g, offer);
     newForm = newForm.replace(/__offer_variation__/g, variation);
     newForm = newForm.replace(/__variation_modification__/g, index);
+
+    newForm = newForm.replace(/__modification_barcode__/g, index - this.dataset.index);
+    newForm = newForm.replace(/value="[^"]*"/g, 'value=""');
 
 
     let div = document.createElement("div");
@@ -952,7 +965,7 @@ function replaceReference($replace, $id)
     /* Получаем дефолтное поле для заполнения  */
     let $reference = document.getElementById($id);
 
-    if($reference === null || $reference.tagName != "SELECT")
+    if($reference === null || $reference.tagName !== "SELECT")
     {
         return;
     }

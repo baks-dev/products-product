@@ -19,6 +19,7 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit;
@@ -80,7 +81,7 @@ final class ProductHandler extends AbstractHandler
             $ProductEvent->getInfo()->updateUrlUniq(); // Обновляем URL на уникальный с префиксом
         }
 
-        // Загрузка базового фото галереи
+        /** Загрузка базового фото галереи */
         foreach($ProductEvent->getPhoto() as $ProductPhoto)
         {
             /** @var PhotoCollectionDTO $PhotoCollectionDTO */
@@ -92,7 +93,7 @@ final class ProductHandler extends AbstractHandler
             }
         }
 
-        // Загрузка файлов PDF галереи
+        /** Загрузка файлов PDF галереи */
         foreach($ProductEvent->getFile() as $ProductFile)
         {
             /** @var FilesCollectionDTO $FilesCollectionDTO */
@@ -105,7 +106,7 @@ final class ProductHandler extends AbstractHandler
         }
 
 
-        // Загрузка файлов Видео галереи
+        /** Загрузка файлов Видео галереи */
         foreach($ProductEvent->getVideo() as $ProductVideo)
         {
             /** @var VideoCollectionDTO $VideoCollectionDTO */
@@ -174,7 +175,7 @@ final class ProductHandler extends AbstractHandler
             }
         }
 
-        /* Валидация всех объектов */
+        /** Валидация всех объектов */
         if($this->validatorCollection->isInvalid())
         {
             return $this->validatorCollection->getErrorUniqid();

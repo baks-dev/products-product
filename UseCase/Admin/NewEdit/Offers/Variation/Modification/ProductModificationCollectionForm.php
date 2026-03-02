@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -28,6 +28,8 @@ use BaksDev\Core\Services\Reference\ReferenceChoice;
 use BaksDev\Products\Category\Type\Offers\Modification\CategoryProductModificationUid;
 use BaksDev\Products\Product\Type\Barcode\ProductBarcode;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification\Barcode\ProductModificationBarcodeDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification\Barcode\ProductModificationBarcodeForm;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification\Cost\ProductModificationCostForm;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification\Image\ProductOfferVariationModificationImageCollectionForm;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification\Opt\ProductModificationOptForm;
@@ -99,20 +101,18 @@ final class ProductModificationCollectionForm extends AbstractType
         $builder->add('opt', ProductModificationOptForm::class, ['label' => false]);
 
         /**
-         * Штрихкод - для конкретной вложенности
+         * Штрихкоды - для конкретной вложенности
          */
-        $builder->add('barcode', TextType::class, ['required' => true]);
-
-        $builder->get('barcode')->addModelTransformer(
-            new CallbackTransformer(
-                function(?ProductBarcode $barcode) {
-                    return $barcode instanceof ProductBarcode ? $barcode : new ProductBarcode(ProductBarcode::generate());
-                },
-                function(?string $barcode) {
-                    return null === $barcode ? new ProductBarcode(ProductBarcode::generate()) : new ProductBarcode($barcode);
-                }
-            )
-        );
+        $builder->add('barcode', CollectionType::class, [
+            'entry_type' => ProductModificationBarcodeForm::class,
+            'entry_options' => [
+                'label' => false,
+            ],
+            'by_reference' => false,
+            'allow_delete' => true,
+            'allow_add' => true,
+            'prototype_name' => '__modification_barcode__',
+        ]);
 
         /** Торговые предложения */
         $builder->add('image', CollectionType::class, [
@@ -136,10 +136,22 @@ final class ProductModificationCollectionForm extends AbstractType
                 if($data)
                 {
 
+                    /** Генерируем штрихкод для пустой коллекции только в конкретной вложенности */
+                    if($data instanceof ProductModificationCollectionDTO)
+                    {
+                        if($data->getBarcode()->isEmpty())
+                        {
+                            $ProductBarcode = new ProductBarcode(ProductBarcode::generate());
+
+                            $ProductOfferBarcodeDTO = new ProductModificationBarcodeDTO()->setValue($ProductBarcode);
+                            $data->addBarcode($ProductOfferBarcodeDTO);
+                        }
+                    }
+
                     /* Получаем данные торговые предложения категории */
                     //$offerCat = $data->getOffer();
 
-                    /* Если ТП - справочник - перобразуем поле ChoiceType   */
+                    /* Если ТП - справочник - преобразуем поле ChoiceType   */
                     if($modification->reference)
                     {
                         $reference = $this->reference->getChoice($modification->reference);
@@ -162,7 +174,10 @@ final class ProductModificationCollectionForm extends AbstractType
 
                     if($modification->postfix)
                     {
-                        $form->add('postfix', TextType::class, ['attr' => ['placeholder' => $modification->postfixName]]);
+                        $form->add('postfix', TextType::class,
+                            [
+                                'attr' => ['placeholder' => $modification->postfixName]
+                            ]);
                     }
                     else
                     {

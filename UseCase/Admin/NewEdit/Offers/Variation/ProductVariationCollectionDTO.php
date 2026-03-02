@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -26,8 +26,8 @@ namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation;
 
 use BaksDev\Products\Category\Type\Offers\Variation\CategoryProductVariationUid;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariationInterface;
-use BaksDev\Products\Product\Type\Barcode\ProductBarcode;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Barcode\ProductVariationBarcodeDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Cost\ProductVariationCostDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Image\ProductVariationImageCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification\ProductModificationCollectionDTO;
@@ -49,8 +49,9 @@ final class ProductVariationCollectionDTO implements ProductVariationInterface
     #[Assert\Uuid]
     private readonly ProductVariationConst $const;
 
-    /** Штрихкод товара */
-    private ProductBarcode $barcode;
+    /** Штрихкоды товара */
+    #[Assert\Valid]
+    private ArrayCollection $barcode;
 
     /** Заполненное значение */
     private ?string $value = null;
@@ -83,7 +84,6 @@ final class ProductVariationCollectionDTO implements ProductVariationInterface
     #[Assert\Valid]
     private ArrayCollection $modification;
 
-
     public function __construct()
     {
         $this->image = new ArrayCollection();
@@ -92,6 +92,8 @@ final class ProductVariationCollectionDTO implements ProductVariationInterface
         $this->price = new ProductVariationPriceDTO();
         $this->cost = new ProductVariationCostDTO();
         $this->opt = new ProductVariationOptDTO();
+
+        $this->barcode = new ArrayCollection();
     }
 
 
@@ -101,11 +103,6 @@ final class ProductVariationCollectionDTO implements ProductVariationInterface
         if(false === (new ReflectionProperty(self::class, 'const')->isInitialized($this)))
         {
             $this->const = new ProductVariationConst();
-
-            if(false === (new ReflectionProperty(self::class, 'barcode')->isInitialized($this)))
-            {
-                $this->barcode = new ProductBarcode(ProductBarcode::generate());
-            }
         }
 
         return $this->const;
@@ -120,28 +117,33 @@ final class ProductVariationCollectionDTO implements ProductVariationInterface
         }
     }
 
-    /**
-     * Barcode
-     */
-    public function getBarcode(): ProductBarcode
-    {
-        if(false === (new ReflectionProperty(self::class, 'barcode')->isInitialized($this)))
-        {
-            $this->barcode = new ProductBarcode(ProductBarcode::generate());
-        }
+    /** Штрихкоды */
 
+    /**
+     * @return ArrayCollection<int, ProductVariationBarcodeDTO>
+     */
+    public function getBarcode(): ArrayCollection
+    {
         return $this->barcode;
     }
 
-    public function setBarcode(?ProductBarcode $barcode): self
+    public function addBarcode(ProductVariationBarcodeDTO $barcode): void
     {
-        if(is_null($barcode))
-        {
-            $barcode = new ProductBarcode(ProductBarcode::generate());
-        }
+        $isExist = $this->barcode->exists(
+            function(int $key, ProductVariationBarcodeDTO $ProductVariationBarcodeDTO) use ($barcode) {
 
-        $this->barcode = $barcode;
-        return $this;
+                return $ProductVariationBarcodeDTO->getValue()->equals($barcode->getValue());
+            });
+
+        if(false === $isExist)
+        {
+            $this->barcode->add($barcode);
+        }
+    }
+
+    public function removeBarcode(ProductVariationBarcodeDTO $barcode): void
+    {
+        $this->barcode->removeElement($barcode);
     }
 
 
@@ -242,8 +244,11 @@ final class ProductVariationCollectionDTO implements ProductVariationInterface
     }
 
 
-    /** Модификации множественных вариантов */
-
+    /**
+     * Модификации множественных вариантов
+     *
+     * @return ArrayCollection<int, ProductModificationCollectionDTO>
+     */
     public function getModification(): ArrayCollection
     {
         return $this->modification;

@@ -1,17 +1,17 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
- *  
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
+ *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *  
+ *
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *  
+ *
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -19,12 +19,14 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 namespace BaksDev\Products\Product\Entity\Offers\Variation\Modification;
 
 use BaksDev\Core\Entity\EntityEvent;
 use BaksDev\Products\Category\Type\Offers\Modification\CategoryProductModificationUid;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Barcode\ProductModificationBarcode;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Cost\ProductModificationCost;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Image\ProductModificationImage;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Opt\ProductModificationOpt;
@@ -40,13 +42,14 @@ use Doctrine\ORM\Mapping as ORM;
 use InvalidArgumentException;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/* Вариант в торговом предложения */
-
+/**
+ * Модификации варианта в торговом предложения
+ */
 #[ORM\Entity]
 #[ORM\Table(name: 'product_modification')]
 #[ORM\Index(columns: ['const'])]
 #[ORM\Index(columns: ['article'])]
-#[ORM\Index(columns: ['barcode'])]
+#[ORM\Index(columns: ['barcode_old'])]
 class ProductModification extends EntityEvent
 {
     /** ID модификации множественного варианта */
@@ -67,10 +70,6 @@ class ProductModification extends EntityEvent
     #[Assert\Uuid]
     #[ORM\Column(type: ProductModificationConst::TYPE)]
     private readonly ProductModificationConst $const;
-
-    /** Штрихкод товара */
-    #[ORM\Column(type: ProductBarcode::TYPE, nullable: true)]
-    private ?ProductBarcode $barcode = null;
 
     /** ID модификации категории */
     #[Assert\Uuid]
@@ -114,6 +113,22 @@ class ProductModification extends EntityEvent
     #[ORM\OneToMany(targetEntity: ProductModificationImage::class, mappedBy: 'modification', cascade: ['all'])]
     #[ORM\OrderBy(['root' => 'DESC'])]
     private Collection $image;
+
+    /**
+     * Коллекция штрихкодов товара
+     */
+    #[Assert\Valid]
+    //    #[Assert\Count(min: 1)]
+    #[ORM\OneToMany(targetEntity: ProductModificationBarcode::class, mappedBy: 'modification', cascade: ['all'])]
+    private Collection $barcode;
+
+    /**
+     * @deprecated используется ProductModificationBarcode
+     *
+     * Штрихкод товара
+     */
+    #[ORM\Column(type: ProductBarcode::TYPE, nullable: true)]
+    private ?ProductBarcode $barcodeOld = null;
 
     public function __construct(ProductVariation $variation)
     {
@@ -188,7 +203,12 @@ class ProductModification extends EntityEvent
         return $this->image;
     }
 
-    public function getBarcode(): ?ProductBarcode
+    /**
+     * Barcode
+     *
+     * @return Collection<int, ProductModificationBarcode>
+     */
+    public function getBarcode(): Collection
     {
         return $this->barcode;
     }

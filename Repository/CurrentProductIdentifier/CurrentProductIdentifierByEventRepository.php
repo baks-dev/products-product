@@ -1,17 +1,17 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
- *  
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
+ *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *  
+ *
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *  
+ *
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -19,6 +19,7 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 declare(strict_types=1);
@@ -27,7 +28,11 @@ namespace BaksDev\Products\Product\Repository\CurrentProductIdentifier;
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
+use BaksDev\Products\Product\Entity\Info\ProductInfo;
+use BaksDev\Products\Product\Entity\Offers\Barcode\ProductOfferBarcode;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
+use BaksDev\Products\Product\Entity\Offers\Variation\Barcode\ProductVariationBarcode;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Barcode\ProductModificationBarcode;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Product\Entity\Product;
@@ -166,7 +171,6 @@ final class CurrentProductIdentifierByEventRepository implements CurrentProductI
         $dbal
             ->addSelect('product.id')
             ->addSelect('product.event')
-            ->addSelect('NULL AS barcode')
             ->join(
                 'event',
                 Product::class,
@@ -174,11 +178,21 @@ final class CurrentProductIdentifierByEventRepository implements CurrentProductI
                 'product.id = event.main',
             );
 
+        $dbal
+            ->join(
+                'product',
+                ProductInfo::class,
+                'product_info',
+                'product_info.event = product.event'
+            );
+
         /** Объявляем предварительно переменные Invariable */
         $fromAlias = 'product';
         $conditionOffer = 'product_invariable.offer IS NULL';
         $conditionVariation = 'product_invariable.variation IS NULL';
         $conditionModification = 'product_invariable.modification IS NULL';
+
+        $selectCollectionBarcodes = '';
 
         if($this->offer instanceof ProductOfferUid)
         {
@@ -201,7 +215,7 @@ final class CurrentProductIdentifierByEventRepository implements CurrentProductI
                 ->addSelect('current_offer.id AS offer')
                 ->addSelect('current_offer.const AS offer_const')
                 ->addSelect('current_offer.value AS offer_value')
-                ->addSelect('current_offer.barcode AS barcode')
+                ->addSelect('current_offer.barcode_old AS barcode')
                 ->join(
                     'offer',
                     ProductOffer::class,
@@ -215,6 +229,17 @@ final class CurrentProductIdentifierByEventRepository implements CurrentProductI
             $fromAlias = 'current_offer';
             $conditionOffer = 'product_invariable.offer = offer.const';
 
+            /** Offer Barcode */
+
+            $dbal
+                ->leftJoin(
+                    'current_offer',
+                    ProductOfferBarcode::class,
+                    'product_offer_barcode',
+                    'product_offer_barcode.offer = current_offer.id'
+                );
+
+            $selectCollectionBarcodes = 'product_offer_barcode.value, ';
 
             /**
              *  ProductVariation
@@ -243,7 +268,7 @@ final class CurrentProductIdentifierByEventRepository implements CurrentProductI
                     ->addSelect('current_variation.id AS variation')
                     ->addSelect('current_variation.const AS variation_const')
                     ->addSelect('current_variation.value AS variation_value')
-                    ->addSelect('current_variation.barcode AS barcode')
+                    ->addSelect('current_variation.barcode_old AS barcode')
                     ->join(
                         'variation',
                         ProductVariation::class,
@@ -257,6 +282,17 @@ final class CurrentProductIdentifierByEventRepository implements CurrentProductI
                 $fromAlias = 'current_variation';
                 $conditionVariation = 'product_invariable.variation = variation.const';
 
+                /** Variation Barcode */
+
+                $dbal
+                    ->leftJoin(
+                        'current_variation',
+                        ProductVariationBarcode::class,
+                        'product_variation_barcode',
+                        'product_variation_barcode.variation = current_variation.id'
+                    );
+
+                $selectCollectionBarcodes = 'product_variation_barcode.value, '.$selectCollectionBarcodes;
 
                 /**
                  *  ProductModification
@@ -285,7 +321,7 @@ final class CurrentProductIdentifierByEventRepository implements CurrentProductI
                         ->addSelect('current_modification.id AS modification')
                         ->addSelect('current_modification.const AS modification_const')
                         ->addSelect('current_modification.value AS modification_value')
-                        ->addSelect('current_modification.barcode  AS barcode')
+                        ->addSelect('current_modification.barcode_old AS barcode')
                         ->join(
                             'modification',
                             ProductModification::class,
@@ -299,6 +335,19 @@ final class CurrentProductIdentifierByEventRepository implements CurrentProductI
 
                     $fromAlias = 'current_modification';
                     $conditionModification = 'product_invariable.modification = modification.const';
+
+                    /** Modification Barcode */
+
+                    $dbal
+                        ->leftJoin(
+                            'current_modification',
+                            ProductModificationBarcode::class,
+                            'product_modification_barcode',
+                            'product_modification_barcode.modification = current_modification.id'
+                        );
+
+                    $selectCollectionBarcodes = 'product_modification_barcode.value, '.$selectCollectionBarcodes;
+
                 }
             }
         }
@@ -317,6 +366,22 @@ final class CurrentProductIdentifierByEventRepository implements CurrentProductI
                     AND '.$conditionModification.'
                 ');
 
+        /** Штрихкоды продукта */
+
+        $selectCollectionBarcodes .= 'product_info.barcode';
+
+        $dbal->addSelect(
+            "
+                JSON_AGG(
+                    DISTINCT
+                        COALESCE(
+                        $selectCollectionBarcodes
+                        )
+                       ) AS barcodes
+                "
+        );
+
+        $dbal->allGroupByExclude();
 
         return $dbal->fetchHydrate(CurrentProductIdentifierResult::class);
 
