@@ -122,7 +122,6 @@ class ProductVariation extends EntityEvent
      * Коллекция штрихкодов товара
      */
     #[Assert\Valid]
-    //    #[Assert\Count(min: 1)]
     #[ORM\OneToMany(targetEntity: ProductVariationBarcode::class, mappedBy: 'variation', cascade: ['all'])]
     private Collection $barcode;
 
@@ -141,7 +140,6 @@ class ProductVariation extends EntityEvent
         $this->price = new Price\ProductVariationPrice($this);
         $this->cost = new ProductVariationCost($this);
         $this->quantity = new Quantity\ProductVariationQuantity($this);
-        //        $this->barcode = new ArrayCollection();
     }
 
     public function __clone()
