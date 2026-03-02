@@ -194,6 +194,8 @@ final class CurrentProductIdentifierByConstRepository implements CurrentProductI
             );
         }
 
+        /** Offer Barcode */
+
         $current
             ->leftJoin(
                 'current_offer',
@@ -231,6 +233,7 @@ final class CurrentProductIdentifierByConstRepository implements CurrentProductI
             $conditionVariation = 'product_invariable.variation = current_variation.const';
         }
 
+        /** Variation Barcode */
 
         $current
             ->leftJoin(
@@ -267,6 +270,8 @@ final class CurrentProductIdentifierByConstRepository implements CurrentProductI
             $fromAlias = 'current_modification';
             $conditionModification = 'product_invariable.modification = current_modification.const';
         }
+
+        /** Modification Barcode */
 
         $current
             ->leftJoin(

@@ -53,11 +53,14 @@ use BaksDev\Products\Product\Entity\Description\ProductDescription;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
 use BaksDev\Products\Product\Entity\Modify\ProductModify;
+use BaksDev\Products\Product\Entity\Offers\Barcode\ProductOfferBarcode;
 use BaksDev\Products\Product\Entity\Offers\Image\ProductOfferImage;
 use BaksDev\Products\Product\Entity\Offers\Price\ProductOfferPrice;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\Quantity\ProductOfferQuantity;
+use BaksDev\Products\Product\Entity\Offers\Variation\Barcode\ProductVariationBarcode;
 use BaksDev\Products\Product\Entity\Offers\Variation\Image\ProductVariationImage;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Barcode\ProductModificationBarcode;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Image\ProductModificationImage;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Price\ProductModificationPrice;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
@@ -266,6 +269,16 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
                 'product_offer.event = product.event',
             );
 
+        /** Offer Barcode */
+
+        $dbal
+            ->leftJoin(
+                'product_offer',
+                ProductOfferBarcode::class,
+                'product_offer_barcode',
+                'product_offer_barcode.offer = product_offer.id'
+            );
+
         /* Цена торгового предожения */
         $dbal->leftJoin(
             'product_offer',
@@ -318,6 +331,15 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
                 'product_variation.offer = product_offer.id',
             );
 
+        /** Variation Barcode */
+
+        $dbal
+            ->leftJoin(
+                'product_variation',
+                ProductVariationBarcode::class,
+                'product_variation_barcode',
+                'product_variation_barcode.variation = product_variation.id'
+            );
 
         $dbal->leftJoin(
             'product_variation',
@@ -365,6 +387,16 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
                 ProductModification::class,
                 'product_modification',
                 'product_modification.variation = product_variation.id',
+            );
+
+        /** Modification Barcode */
+
+        $dbal
+            ->leftJoin(
+                'product_modification',
+                ProductModificationBarcode::class,
+                'product_modification_barcode',
+                'product_modification_barcode.modification = product_modification.id'
             );
 
         /** Цена множественного варианта */
@@ -824,7 +856,31 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
 		');
 
 
-        /* Штрихкод */
+        /** Штрихкоды продукта */
+
+        $dbal->addSelect(
+            "
+            JSON_AGG
+                    (DISTINCT
+         			CASE
+         			    WHEN product_modification_barcode.value IS NOT NULL
+                        THEN product_modification_barcode.value
+                        
+                        WHEN product_variation_barcode.value IS NOT NULL
+                        THEN product_variation_barcode.value
+                        
+                        WHEN product_offer_barcode.value IS NOT NULL
+                        THEN product_offer_barcode.value
+                        
+                        WHEN product_info.barcode IS NOT NULL
+                        THEN product_info.barcode
+                        
+                        ELSE NULL
+                    END
+                    )
+                    AS barcodes"
+        );
+
 
         $dbal->addSelect(
             '

@@ -28,7 +28,10 @@ namespace BaksDev\Products\Product\Repository\CurrentProductByArticle;
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
+use BaksDev\Products\Product\Entity\Offers\Barcode\ProductOfferBarcode;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
+use BaksDev\Products\Product\Entity\Offers\Variation\Barcode\ProductVariationBarcode;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Barcode\ProductModificationBarcode;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Product\Entity\Product;
@@ -98,7 +101,8 @@ final readonly class ProductConstByBarcodeRepository implements ProductConstByBa
 
         $dbalOffer
             ->from(ProductOffer::class, 'offer')
-            ->where('offer.barcode_old = :barcode');
+            ->where('offer.barcode_old = :barcode')
+            ->orWhere('product_offer_barcode.value = :barcode');
 
         $dbalOffer->join(
             'offer',
@@ -119,6 +123,16 @@ final readonly class ProductConstByBarcodeRepository implements ProductConstByBa
                 '
             );
 
+        /** OfferBarcode */
+
+        $dbalOffer
+            ->leftJoin(
+                'offer',
+                ProductOfferBarcode::class,
+                'product_offer_barcode',
+                'product_offer_barcode.offer = offer.id'
+            );
+
 
         /** Поиск артикула VARIATION */
 
@@ -135,7 +149,8 @@ final readonly class ProductConstByBarcodeRepository implements ProductConstByBa
 
         $dbalVariation
             ->from(ProductVariation::class, 'variation')
-            ->where('variation.barcode_old = :barcode');
+            ->where('variation.barcode_old = :barcode')
+            ->orWhere('product_variation_barcode.value = :barcode');
 
         $dbalVariation
             ->join(
@@ -164,6 +179,16 @@ final readonly class ProductConstByBarcodeRepository implements ProductConstByBa
                 '
             );
 
+        /** Variation Barcode */
+
+        $dbalVariation
+            ->leftJoin(
+                'variation',
+                ProductVariationBarcode::class,
+                'product_variation_barcode',
+                'product_variation_barcode.variation = variation.id'
+            );
+
         /** Поиск артикула MODIFICATION */
 
         $dbalModification = $this->DBALQueryBuilder->createQueryBuilder(self::class);
@@ -180,8 +205,8 @@ final readonly class ProductConstByBarcodeRepository implements ProductConstByBa
 
         $dbalModification
             ->from(ProductModification::class, 'modification')
-            ->where('modification.barcode_old = :barcode');
-
+            ->where('modification.barcode_old = :barcode')
+            ->orWhere('product_modification_barcode.value = :barcode');
 
         $dbalModification
             ->join(
@@ -218,6 +243,16 @@ final readonly class ProductConstByBarcodeRepository implements ProductConstByBa
                 '
             );
 
+        /** Modification Barcode */
+
+        $dbalModification
+            ->leftJoin(
+                'modification',
+                ProductModificationBarcode::class,
+                'product_modification_barcode',
+                'product_modification_barcode.modification = modification.id'
+            );
+
 
         /** UNION */
 
@@ -235,7 +270,5 @@ final readonly class ProductConstByBarcodeRepository implements ProductConstByBa
         return $dbal
             ->enableCache('products-product', 86400)
             ->fetchHydrate(CurrentProductByBarcodeResult::class);
-
     }
-
 }
