@@ -64,11 +64,6 @@ function addBarcode(element)
         prototype_content = prototype_content.replace(/value="[^"]*"/g, 'value=""');
         template.innerHTML = prototype_content.trim();
 
-        //for(let div of template.content.children)
-        //{
-        //    let del = div.querySelector("." + "delete-barcode");
-        //}
-
         const fragment = template.content.cloneNode(true);
         collection_current.appendChild(fragment);
         this.dataset.indexCollection = parseInt(collection_index) + 1;

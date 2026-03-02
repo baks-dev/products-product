@@ -192,7 +192,7 @@ final class CurrentProductIdentifierByEventRepository implements CurrentProductI
         $conditionVariation = 'product_invariable.variation IS NULL';
         $conditionModification = 'product_invariable.modification IS NULL';
 
-        $selectCollectionBarcodes = '';
+        $selectCollectionBarcodes = 'product_info.barcode';
 
         if($this->offer instanceof ProductOfferUid)
         {
@@ -239,7 +239,7 @@ final class CurrentProductIdentifierByEventRepository implements CurrentProductI
                     'product_offer_barcode.offer = current_offer.id'
                 );
 
-            $selectCollectionBarcodes = 'product_offer_barcode.value, ';
+            $selectCollectionBarcodes = 'product_offer_barcode.value';
 
             /**
              *  ProductVariation
@@ -292,7 +292,7 @@ final class CurrentProductIdentifierByEventRepository implements CurrentProductI
                         'product_variation_barcode.variation = current_variation.id'
                     );
 
-                $selectCollectionBarcodes = 'product_variation_barcode.value, '.$selectCollectionBarcodes;
+                $selectCollectionBarcodes = 'product_variation_barcode.value';
 
                 /**
                  *  ProductModification
@@ -346,7 +346,7 @@ final class CurrentProductIdentifierByEventRepository implements CurrentProductI
                             'product_modification_barcode.modification = current_modification.id'
                         );
 
-                    $selectCollectionBarcodes = 'product_modification_barcode.value, '.$selectCollectionBarcodes;
+                    $selectCollectionBarcodes = 'product_modification_barcode.value';
 
                 }
             }
@@ -368,15 +368,11 @@ final class CurrentProductIdentifierByEventRepository implements CurrentProductI
 
         /** Штрихкоды продукта */
 
-        $selectCollectionBarcodes .= 'product_info.barcode';
-
         $dbal->addSelect(
             "
                 JSON_AGG(
                     DISTINCT
-                        COALESCE(
                         $selectCollectionBarcodes
-                        )
                        ) AS barcodes
                 "
         );

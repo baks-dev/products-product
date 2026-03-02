@@ -118,7 +118,6 @@ class ProductModification extends EntityEvent
      * Коллекция штрихкодов товара
      */
     #[Assert\Valid]
-    //    #[Assert\Count(min: 1)]
     #[ORM\OneToMany(targetEntity: ProductModificationBarcode::class, mappedBy: 'modification', cascade: ['all'])]
     private Collection $barcode;
 
