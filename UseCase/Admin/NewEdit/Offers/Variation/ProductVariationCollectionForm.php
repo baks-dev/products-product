@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -29,6 +29,8 @@ use BaksDev\Products\Category\Repository\CategoryVariationForm\CategoryVariation
 use BaksDev\Products\Category\Type\Offers\Variation\CategoryProductVariationUid;
 use BaksDev\Products\Product\Type\Barcode\ProductBarcode;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Barcode\ProductVariationBarcodeDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Barcode\ProductVariationBarcodeForm;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Cost\ProductVariationCostForm;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Opt\ProductVariationOptForm;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Price\ProductOfferVariationPriceForm;
@@ -101,22 +103,20 @@ final class ProductVariationCollectionForm extends AbstractType
         $builder->add('opt', ProductVariationOptForm::class, ['label' => false]);
 
         /**
-         * Штрихкод - для конкретной вложенности
+         * Штрихкоды - для конкретной вложенности
          */
         if($variation instanceof CategoryVariationFormDTO && null === $modification)
         {
-            $builder->add('barcode', TextType::class, ['required' => true]);
-
-            $builder->get('barcode')->addModelTransformer(
-                new CallbackTransformer(
-                    function(?ProductBarcode $barcode) {
-                        return $barcode instanceof ProductBarcode ? $barcode : new ProductBarcode(ProductBarcode::generate());
-                    },
-                    function(?string $barcode) {
-                        return null === $barcode ? new ProductBarcode(ProductBarcode::generate()) : new ProductBarcode($barcode);
-                    }
-                )
-            );
+            $builder->add('barcode', CollectionType::class, [
+                'entry_type' => ProductVariationBarcodeForm::class,
+                'entry_options' => [
+                    'label' => false,
+                ],
+                'by_reference' => false,
+                'allow_delete' => true,
+                'allow_add' => true,
+                'prototype_name' => '__variation_barcode__',
+            ]);
         }
 
         /** Торговые предложения */
@@ -140,6 +140,18 @@ final class ProductVariationCollectionForm extends AbstractType
 
                 if($data)
                 {
+
+                    /** Генерируем штрихкод для пустой коллекции только в конкретной вложенности */
+                    if($data instanceof ProductVariationCollectionDTO && true === $data->getModification()->isEmpty())
+                    {
+                        if($data->getBarcode()->isEmpty())
+                        {
+                            $ProductBarcode = new ProductBarcode(ProductBarcode::generate());
+
+                            $ProductOfferBarcodeDTO = new ProductVariationBarcodeDTO()->setValue($ProductBarcode);
+                            $data->addBarcode($ProductOfferBarcodeDTO);
+                        }
+                    }
 
                     /* Получаем данные торговые предложения категории */
                     //$offerCat = $data->getOffer();

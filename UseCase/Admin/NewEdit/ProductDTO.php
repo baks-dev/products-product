@@ -19,6 +19,7 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit;
@@ -33,6 +34,7 @@ use BaksDev\Products\Product\UseCase\Admin\NewEdit\Category\CategoryCollectionDT
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Files\FilesCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Info\InfoDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Materials\ProductMaterialDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\ProductOffersCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Photo\PhotoCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Price\Cost\ProductPriceCostDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Price\Opt\ProductPriceOptDTO;
@@ -301,16 +303,17 @@ final class ProductDTO implements ProductEventInterface
 
     /* OFFERS */
 
+    /** @return ArrayCollection<int, ProductOffersCollectionDTO> */
     public function getOffer(): ArrayCollection
     {
         return $this->offer;
     }
 
 
-    public function addOffer(Offers\ProductOffersCollectionDTO $offer): void
+    public function addOffer(ProductOffersCollectionDTO $offer): void
     {
 
-        $filter = $this->offer->filter(function(Offers\ProductOffersCollectionDTO $element) use ($offer) {
+        $filter = $this->offer->filter(function(ProductOffersCollectionDTO $element) use ($offer) {
             return $offer->getValue() === $element->getValue() && $offer->getBarcode() === $element->getBarcode();
         });
 
@@ -322,7 +325,7 @@ final class ProductDTO implements ProductEventInterface
     }
 
 
-    public function removeOffer(Offers\ProductOffersCollectionDTO $offer): void
+    public function removeOffer(ProductOffersCollectionDTO $offer): void
     {
         $this->offer->removeElement($offer);
     }
@@ -331,7 +334,7 @@ final class ProductDTO implements ProductEventInterface
     /* PHOTOS */
 
     /**
-     * @return ArrayCollection
+     * @return ArrayCollection<int, PhotoCollectionDTO>
      */
     public function getPhoto(): ArrayCollection
     {

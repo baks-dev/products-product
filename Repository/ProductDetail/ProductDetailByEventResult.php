@@ -19,6 +19,7 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 declare(strict_types=1);
@@ -79,7 +80,9 @@ class ProductDetailByEventResult
 
         private ?string $product_preview,
         private ?string $product_description,
+
         private ?string $product_barcode,
+        private ?string $product_barcodes,
 
         private ?int $product_price,
         private ?int $product_old_price,
@@ -91,8 +94,6 @@ class ProductDetailByEventResult
         private ?string $product_offer_postfix = null,
         private ?string $product_variation_postfix = null,
         private ?string $product_modification_postfix = null,
-
-
 
 
         private int $product_total = 0,
@@ -303,6 +304,31 @@ class ProductDetailByEventResult
     public function getProductBarcode(): ?string
     {
         return $this->product_barcode;
+    }
+
+    /**
+     * @return array<int, string>|null
+     */
+    public function getBarcodes(): array|null
+    {
+        if(is_null($this->product_barcodes))
+        {
+            return null;
+        }
+
+        if(false === json_validate($this->product_barcodes))
+        {
+            return null;
+        }
+
+        $barcodes = json_decode($this->product_barcodes, true, 512, JSON_THROW_ON_ERROR);
+
+        if(true === empty(current($barcodes)))
+        {
+            return null;
+        }
+
+        return $barcodes;
     }
 
     public function getProductPrice(): Money|false

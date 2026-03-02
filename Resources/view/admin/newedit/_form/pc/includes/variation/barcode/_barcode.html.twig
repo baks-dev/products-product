@@ -1,0 +1,63 @@
+{# Элементы коллекции #}
+{{ form_label(variation.barcode, 'Штрихкоды', {
+    attr: { class: 'mb-0' }
+}) }}
+
+<div class="d-flex gap-2"
+     data-id="{{ variation.barcode.vars.id }}"> {# id для добаления элментов в коллекцию #}
+
+    {% for barcode in variation.barcode %}
+
+        <div class="d-flex gap-1"
+             data-id="{{ barcode.vars.id }}" {# id элмента коллекции #}
+             data-collection="{{ variation.barcode.vars.id }}"> {# общий id для всех элментов коллекции #}
+
+            {{ form_widget(barcode, {
+                label : 'Штрихкод',
+                attr:  { placeholder : 'Штрихкод' }
+            }) }}
+
+            <button type="button"
+                    class="btn btn-outline-danger border-0 mb-3 delete-barcode"
+                    data-id-barcode="{{ barcode.vars.id }}" {# id элемента коллекции #}
+                    data-id-collection="{{ variation.barcode.vars.id }}"> {# id коллекции #}
+
+                <span class="svg-icon svg-icon-2 text-nowrap">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25" fill="none">
+                            <rect opacity="0.5" x="7.05025" y="15.5356" width="12" height="2" rx="1"
+                                  transform="rotate(-45 7.05025 15.5356)" fill="currentColor"></rect>
+                            <rect x="8.46447" y="7.05029" width="12" height="2" rx="1"
+                                  transform="rotate(45 8.46447 7.05029)"
+                                  fill="currentColor"></rect>
+                        </svg>
+                    </span>
+            </button>
+        </div>
+
+    {% endfor %}
+
+</div>
+
+<button type="button"
+        class="btn btn-sm btn-outline-primary border-0 add-barcode"
+        data-id-collection="{{ variation.barcode.vars.id }}" {# id коллекции #}
+        data-index-collection="{{ variation.barcode.count }}"> {# количество элементов в коллекции #}
+
+    <span class="svg-icon svg-icon-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+            	<rect opacity="0.5" x="11" y="18" width="12" height="2" rx="1" transform="rotate(-90 11 18)"
+                      fill="currentColor">
+                </rect>
+            	<rect x="6" y="11" width="12" height="2" rx="1" fill="currentColor"></rect>
+            </svg>
+        </span>
+
+    Добавить штрихкод
+</button>
+
+<div class="d-none"
+     data-prototype-name="{{ variation.barcode.vars.prototype.vars.name }}" {# имя прототипа #}
+     data-prototype-collection="{{ variation.barcode.vars.id }}"> {# id для прототипа элмента коллекции #}
+
+    {{ include('@products-product/admin/newedit/_form/pc/includes/variation/barcode/_barcode.prototype.html.twig')|e('html_attr') }}
+</div>

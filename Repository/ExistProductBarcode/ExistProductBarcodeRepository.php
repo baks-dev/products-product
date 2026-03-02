@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -19,6 +19,7 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 declare(strict_types=1);
@@ -122,7 +123,7 @@ final class ExistProductBarcodeRepository implements ExistProductBarcodeInterfac
                     'product_offer',
                     'product_offer.event = product_event.id AND
                     product_offer.const = :offer AND
-                    product_offer.barcode = :barcode'
+                    product_offer.barcode_old = :barcode'
                 )
                 ->setParameter('offer', $this->offer, ProductOfferConst::TYPE)
                 ->setParameter('barcode', $this->barcode, ProductBarcode::TYPE);
@@ -152,7 +153,7 @@ final class ExistProductBarcodeRepository implements ExistProductBarcodeInterfac
                     'product_variation',
                     'product_variation.offer = product_offer.id AND
                     product_variation.const = :variation AND
-                    product_variation.barcode = :barcode'
+                    product_variation.barcode_old = :barcode'
                 )
                 ->setParameter('variation', $this->variation, ProductVariationConst::TYPE)
                 ->setParameter('barcode', $this->barcode, ProductBarcode::TYPE);
@@ -179,7 +180,7 @@ final class ExistProductBarcodeRepository implements ExistProductBarcodeInterfac
                     'product_modification',
                     'product_modification.variation = product_variation.id AND
                     product_modification.const = :modification AND
-                    product_modification.barcode = :barcode'
+                    product_modification.barcode_old = :barcode'
                 )
                 ->setParameter('modification', $this->modification, ProductModificationConst::TYPE)
                 ->setParameter('barcode', $this->barcode, ProductBarcode::TYPE);

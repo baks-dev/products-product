@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  Copyright 2026.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -27,8 +27,8 @@ namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers;
 use BaksDev\Products\Category\Type\Offers\Id\CategoryProductOffersUid;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\ProductOffersInterface;
-use BaksDev\Products\Product\Type\Barcode\ProductBarcode;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Barcode\ProductOfferBarcodeDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Cost\ProductOfferCostDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Image\ProductOfferImageCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Opt\ProductOfferOptDTO;
@@ -50,8 +50,9 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
     #[Assert\Uuid]
     private readonly ProductOfferConst $const;
 
-    /** Штрихкод товара */
-    private ProductBarcode $barcode;
+    /** Штрихкоды товара */
+    #[Assert\Valid]
+    private ArrayCollection $barcode;
 
     /** Индивидуальное название */
     private ?string $name = null;
@@ -99,8 +100,9 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
         $this->price = new ProductOfferPriceDTO();
         $this->cost = new ProductOfferCostDTO();
         $this->opt = new ProductOfferOptDTO();
-    }
 
+        $this->barcode = new ArrayCollection();
+    }
 
     /** Постоянный уникальный идентификатор ТП */
 
@@ -109,11 +111,6 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
         if(false === (new ReflectionProperty(self::class, 'const')->isInitialized($this)))
         {
             $this->const = new ProductOfferConst();
-
-            if(false === (new ReflectionProperty(self::class, 'barcode')->isInitialized($this)))
-            {
-                $this->barcode = new ProductBarcode(ProductBarcode::generate());
-            }
         }
 
         return $this->const;
@@ -127,29 +124,33 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
         }
     }
 
-    /**
-     * Barcode
-     */
-    public function getBarcode(): ProductBarcode
-    {
-        if(false === (new ReflectionProperty(self::class, 'barcode')->isInitialized($this)))
-        {
-            $this->barcode = new ProductBarcode(ProductBarcode::generate());
-        }
+    /** Штрихкоды */
 
+    /**
+     * @return ArrayCollection<int, ProductOfferBarcodeDTO>
+     */
+    public function getBarcode(): ArrayCollection
+    {
         return $this->barcode;
     }
 
-    public function setBarcode(?ProductBarcode $barcode): self
+    public function addBarcode(ProductOfferBarcodeDTO $barcode): void
     {
-        if(is_null($barcode))
+        $isExist = $this->barcode->exists(
+            function(int $key, ProductOfferBarcodeDTO $ProductOfferBarcodeDTO) use ($barcode) {
+
+                return $ProductOfferBarcodeDTO->getValue()->equals($barcode->getValue());
+            });
+
+        if(false === $isExist)
         {
-            $barcode = new ProductBarcode(ProductBarcode::generate());
+            $this->barcode->add($barcode);
         }
+    }
 
-
-        $this->barcode = $barcode;
-        return $this;
+    public function removeBarcode(ProductOfferBarcodeDTO $barcode): void
+    {
+        $this->barcode->removeElement($barcode);
     }
 
 
@@ -235,8 +236,11 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
         $this->image->removeElement($image);
     }
 
-    /** Коллекция торговых предложений */
-
+    /**
+     * Коллекция вариантов торговых предложений
+     *
+     * @return ArrayCollection<int, ProductVariationCollectionDTO>
+     */
     public function getVariation(): ArrayCollection
     {
         return $this->variation;
