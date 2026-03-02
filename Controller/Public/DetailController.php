@@ -35,10 +35,7 @@ use BaksDev\Products\Product\Repository\Cards\ProductAlternative\ProductAlternat
 use BaksDev\Products\Product\Repository\ProductDetailByValue\ProductDetailByValueInterface;
 use BaksDev\Products\Product\Repository\ProductDetailByValue\ProductDetailByValueResult;
 use BaksDev\Products\Product\Repository\ProductDetailOffer\ProductDetailOfferInterface;
-use BaksDev\Products\Review\Form\Status\ReviewStatusDTO;
 use BaksDev\Products\Review\Repository\AllReviews\AllReviewsInterface;
-use BaksDev\Products\Review\Type\Status\ReviewStatus;
-use BaksDev\Products\Review\Type\Status\ReviewStatus\Collection\ReviewStatusActive;
 use DateTimeImmutable;
 use InvalidArgumentException;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -176,11 +173,8 @@ final class DetailController extends AbstractController
 
 
         /** Отзывы */
-        $statusDTO = new ReviewStatusDTO()->setStatus(new ReviewStatus(ReviewStatusActive::PARAM));
-
         // Получаем список
         $ProductsReviews = $AllReviewsRepository
-            ->filter($statusDTO)
             ->product($productCard->getProductId())
             ->findPaginator();
 
