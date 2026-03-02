@@ -28,6 +28,7 @@ namespace BaksDev\Products\Product\Controller\Public;
 use BaksDev\Core\Controller\AbstractController;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
 use BaksDev\Products\Product\Repository\ProductModel\ProductModelInterface;
+use BaksDev\Products\Review\BaksDevProductsReviewBundle;
 use BaksDev\Products\Review\Repository\AllReviews\AllReviewsInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
@@ -43,7 +44,7 @@ final class ModelController extends AbstractController
         Request $request,
         #[MapEntity(mapping: ['url' => 'url'])] ProductInfo $info,
         ProductModelInterface $productModel,
-        AllReviewsInterface $AllReviewsRepository,
+        ?AllReviewsInterface $AllReviewsRepository = null,
         string|null $offer = null,
         string|null $variation = null,
     ): Response
@@ -58,9 +59,11 @@ final class ModelController extends AbstractController
 
         /** Отзывы */
         // Получаем список
-        $ProductsReviews = $AllReviewsRepository
-            ->product($info->getProduct())
-            ->findPaginator();
+        $ProductsReviews = true === class_exists(BaksDevProductsReviewBundle::class) ?
+            $AllReviewsRepository
+                ->product($info->getProduct())
+                ->findPaginator() :
+            false;
 
         return $this->render([
             'card' => $card,

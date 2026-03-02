@@ -93,9 +93,11 @@
         </div>
 
         <div class="d-flex flex-column gap-3 mt-3">
-            <div class="col-9">
-                {{ include(Template('@products-review:public/_includes/pc/reviews.section.html.twig')) }}
-            </div>
+            {% if reviews %}
+                <div class="col-9">
+                    {{ include(Template('@products-review:public/_includes/pc/reviews.section.html.twig')) }}
+                </div>
+            {% endif %}
 
             <div class="col-3">
                 {# ЛИДЕР ПРОДАЖ #}

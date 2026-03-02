@@ -350,7 +350,9 @@
     </div>
 
     <div class="d-flex flex-column gap-3 mt-3">
-        {{ include(Template('@products-review:public/_includes/pc/reviews.section.html.twig')) }}
+        {% if reviews %}
+            {{ include(Template('@products-review:public/_includes/pc/reviews.section.html.twig')) }}
+        {% endif %}
     </div>
 
 </main>
