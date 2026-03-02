@@ -35,6 +35,7 @@ use BaksDev\Products\Product\Repository\Cards\ProductAlternative\ProductAlternat
 use BaksDev\Products\Product\Repository\ProductDetailByValue\ProductDetailByValueInterface;
 use BaksDev\Products\Product\Repository\ProductDetailByValue\ProductDetailByValueResult;
 use BaksDev\Products\Product\Repository\ProductDetailOffer\ProductDetailOfferInterface;
+use BaksDev\Products\Review\BaksDevProductsReviewBundle;
 use BaksDev\Products\Review\Repository\AllReviews\AllReviewsInterface;
 use DateTimeImmutable;
 use InvalidArgumentException;
@@ -56,7 +57,7 @@ final class DetailController extends AbstractController
         ProductDetailByValueInterface $productDetail,
         ProductDetailOfferInterface $productDetailOffer,
         ProductAlternativeInterface $productAlternative,
-        AllReviewsInterface $AllReviewsRepository,
+        ?AllReviewsInterface $AllReviewsRepository = null,
         ?string $offer = null,
         ?string $variation = null,
         ?string $modification = null,
@@ -174,9 +175,11 @@ final class DetailController extends AbstractController
 
         /** Отзывы */
         // Получаем список
-        $ProductsReviews = $AllReviewsRepository
-            ->product($productCard->getProductId())
-            ->findPaginator();
+        $ProductsReviews = true === class_exists(BaksDevProductsReviewBundle::class) ?
+            $AllReviewsRepository
+                ->product($productCard->getProductId())
+                ->findPaginator() :
+            false;
 
         return $this->render([
             'card' => $productCard,
