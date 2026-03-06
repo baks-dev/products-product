@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers;
@@ -116,12 +115,14 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
         return $this->const;
     }
 
-    public function setConst(ProductOfferConst $const): void
+    public function setConst(ProductOfferConst $const): self
     {
         if(false === (new ReflectionProperty(self::class, 'const')->isInitialized($this)))
         {
             $this->const = $const;
         }
+
+        return $this;
     }
 
     /** Штрихкоды */
@@ -161,9 +162,10 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
         return $this->article;
     }
 
-    public function setArticle(?string $article): void
+    public function setArticle(?string $article): self
     {
         $this->article = $article;
+        return $this;
     }
 
     /** Стоимость торгового предложения */
@@ -269,9 +271,10 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
         return $this->value;
     }
 
-    public function setValue(?string $value): void
+    public function setValue(?string $value): self
     {
         $this->value = $value;
+        return $this;
     }
 
     public function removeVariation(ProductVariationCollectionDTO $variation): void
@@ -287,9 +290,10 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
     }
 
 
-    public function setCategoryOffer(?CategoryProductOffersUid $categoryOffer): void
+    public function setCategoryOffer(?CategoryProductOffersUid $categoryOffer): self
     {
         $this->categoryOffer = $categoryOffer;
+        return $this;
     }
 
     /** Постфикс */
@@ -299,9 +303,10 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
         return $this->postfix;
     }
 
-    public function setPostfix(?string $postfix): void
+    public function setPostfix(?string $postfix): self
     {
         $this->postfix = $postfix;
+        return $this;
     }
 
     /**

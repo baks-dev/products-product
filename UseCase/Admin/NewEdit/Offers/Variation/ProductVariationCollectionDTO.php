@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation;
@@ -109,12 +108,14 @@ final class ProductVariationCollectionDTO implements ProductVariationInterface
     }
 
 
-    public function setConst(ProductVariationConst $const): void
+    public function setConst(ProductVariationConst $const): self
     {
         if(false === (new ReflectionProperty(self::class, 'const')->isInitialized($this)))
         {
             $this->const = $const;
         }
+
+        return $this;
     }
 
     /** Штрихкоды */
@@ -155,9 +156,10 @@ final class ProductVariationCollectionDTO implements ProductVariationInterface
     }
 
 
-    public function setValue(?string $value): void
+    public function setValue(?string $value): self
     {
         $this->value = $value;
+        return $this;
     }
 
 
@@ -169,9 +171,10 @@ final class ProductVariationCollectionDTO implements ProductVariationInterface
     }
 
 
-    public function setArticle(?string $article): void
+    public function setArticle(?string $article): self
     {
         $this->article = $article;
+        return $this;
     }
 
 
@@ -183,9 +186,10 @@ final class ProductVariationCollectionDTO implements ProductVariationInterface
     }
 
 
-    public function setPrice(?ProductVariationPriceDTO $price): void
+    public function setPrice(?ProductVariationPriceDTO $price): self
     {
         $this->price = $price;
+        return $this;
     }
 
     public function getCost(): ?ProductVariationCostDTO
@@ -278,9 +282,10 @@ final class ProductVariationCollectionDTO implements ProductVariationInterface
     }
 
 
-    public function setCategoryVariation(?CategoryProductVariationUid $categoryVariation): void
+    public function setCategoryVariation(?CategoryProductVariationUid $categoryVariation): self
     {
         $this->categoryVariation = $categoryVariation;
+        return $this;
     }
 
 
@@ -292,9 +297,11 @@ final class ProductVariationCollectionDTO implements ProductVariationInterface
     }
 
 
-    public function setPostfix(?string $postfix): void
+    public function setPostfix(?string $postfix): self
     {
         $this->postfix = $postfix;
+        return $this;
     }
+
 
 }

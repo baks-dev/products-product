@@ -678,7 +678,7 @@ final readonly class ProductDetailByValueResult implements ProductPriceResultInt
             return true;
         }
 
-        if(in_array($this->profiles, $profiles, true))
+        if(in_array($this->project_profile, $profiles, true))
         {
             return true;
         }

@@ -436,7 +436,7 @@ final readonly class ProductAlternativeResult implements ProductCardResultInterf
             return true;
         }
 
-        if(in_array($this->profiles, $profiles, true))
+        if(in_array($this->project_profile, $profiles, true))
         {
             return true;
         }

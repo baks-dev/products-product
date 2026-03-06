@@ -304,7 +304,7 @@ final readonly class ProductModelOfferResult implements ProductPriceResultInterf
             return true;
         }
 
-        if(in_array($this->profiles, $profiles, true))
+        if(in_array($this->project_profile, $profiles, true))
         {
             return true;
         }
