@@ -24,7 +24,10 @@
 namespace BaksDev\Products\Product\Repository\Cards\ModelOrProduct;
 
 use Generator;
+use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 
+/** Используется на главной странице сайта */
+#[Autoconfigure(public: true)]
 interface ModelOrProductInterface
 {
     /** Добавляет в результат свойства продукта */
