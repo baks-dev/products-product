@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 declare(strict_types=1);
@@ -303,6 +302,11 @@ class ProductDetailByEventResult
 
     public function getProductBarcode(): ?string
     {
+        if(empty($this->product_barcode))
+        {
+            return current($this->getBarcodes());
+        }
+
         return $this->product_barcode;
     }
 

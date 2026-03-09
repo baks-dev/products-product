@@ -1,17 +1,17 @@
 <?php
 /*
  *  Copyright 2026.  Baks.dev <admin@baks.dev>
- *
+ *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *
+ *  
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *
+ *  
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 declare(strict_types=1);
@@ -27,6 +26,7 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Repository\CurrentProductByArticle;
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
+use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
 use BaksDev\Products\Product\Entity\Offers\Barcode\ProductOfferBarcode;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
@@ -48,7 +48,9 @@ final readonly class ProductConstByBarcodeRepository implements ProductConstByBa
     public function find(string $barcode): CurrentProductByBarcodeResult|false
     {
 
-        /** Поиск артикула INFO */
+        /**
+         * Поиск артикула INFO
+         */
 
         $dbalInfo = $this->DBALQueryBuilder->createQueryBuilder(self::class);
 
@@ -67,7 +69,7 @@ final readonly class ProductConstByBarcodeRepository implements ProductConstByBa
         $dbalInfo->join(
             'info',
             Product::class, 'product',
-            'product.id = info.product'
+            'product.id = info.product',
         );
 
         $dbalInfo->where('info.barcode = :barcode');
@@ -81,12 +83,14 @@ final readonly class ProductConstByBarcodeRepository implements ProductConstByBa
                     invariable.offer IS NULL AND
                     invariable.variation IS NULL AND
                     invariable.modification IS NULL
-                '
+                ',
             )
             ->addSelect('invariable.id AS invariable');
 
 
-        /** Поиск артикула OFFER */
+        /**
+         * Поиск артикула OFFER
+         */
 
         $dbalOffer = $this->DBALQueryBuilder->createQueryBuilder(self::class);
 
@@ -104,10 +108,18 @@ final readonly class ProductConstByBarcodeRepository implements ProductConstByBa
             ->where('offer.barcode_old = :barcode')
             ->orWhere('product_offer_barcode.value = :barcode');
 
+        $dbalOffer
+            ->leftJoin(
+                'offer',
+                ProductOfferBarcode::class,
+                'product_offer_barcode',
+                'product_offer_barcode.offer = offer.id',
+            );
+
         $dbalOffer->join(
             'offer',
             Product::class, 'product',
-            'product.event = offer.event'
+            'product.event = offer.event',
         );
 
         $dbalOffer
@@ -120,21 +132,13 @@ final readonly class ProductConstByBarcodeRepository implements ProductConstByBa
                     invariable.offer = offer.const AND
                     invariable.variation IS NULL AND
                     invariable.modification IS NULL
-                '
-            );
-
-        /** OfferBarcode */
-
-        $dbalOffer
-            ->leftJoin(
-                'offer',
-                ProductOfferBarcode::class,
-                'product_offer_barcode',
-                'product_offer_barcode.offer = offer.id'
+                ',
             );
 
 
-        /** Поиск артикула VARIATION */
+        /**
+         * Поиск артикула VARIATION
+         */
 
         $dbalVariation = $this->DBALQueryBuilder->createQueryBuilder(self::class);
 
@@ -152,18 +156,36 @@ final readonly class ProductConstByBarcodeRepository implements ProductConstByBa
             ->where('variation.barcode_old = :barcode')
             ->orWhere('product_variation_barcode.value = :barcode');
 
+        $dbalVariation->orderBy('variation.id', 'DESC');
+
         $dbalVariation
             ->join(
                 'variation',
                 ProductOffer::class, 'offer',
-                'offer.id = variation.offer'
+                'offer.id = variation.offer',
             );
+
+        $dbalVariation
+            ->leftJoin(
+                'variation',
+                ProductVariationBarcode::class,
+                'product_variation_barcode',
+                'product_variation_barcode.variation = variation.id',
+            );
+
 
         $dbalVariation
             ->join(
                 'offer',
+                ProductEvent::class, 'event',
+                'event.id = offer.event',
+            );
+
+        $dbalVariation
+            ->join(
+                'event',
                 Product::class, 'product',
-                'product.event = offer.event'
+                'product.id = event.main',
             );
 
         $dbalVariation
@@ -176,18 +198,9 @@ final readonly class ProductConstByBarcodeRepository implements ProductConstByBa
                     invariable.offer = offer.const AND
                     invariable.variation = variation.const AND
                     invariable.modification IS NULL
-                '
+                ',
             );
 
-        /** Variation Barcode */
-
-        $dbalVariation
-            ->leftJoin(
-                'variation',
-                ProductVariationBarcode::class,
-                'product_variation_barcode',
-                'product_variation_barcode.variation = variation.id'
-            );
 
         /** Поиск артикула MODIFICATION */
 
@@ -209,10 +222,18 @@ final readonly class ProductConstByBarcodeRepository implements ProductConstByBa
             ->orWhere('product_modification_barcode.value = :barcode');
 
         $dbalModification
+            ->leftJoin(
+                'modification',
+                ProductModificationBarcode::class,
+                'product_modification_barcode',
+                'product_modification_barcode.modification = modification.id',
+            );
+
+        $dbalModification
             ->join(
                 'modification',
                 ProductVariation::class, 'variation',
-                'variation.id = modification.variation'
+                'variation.id = modification.variation',
             );
 
 
@@ -220,14 +241,14 @@ final readonly class ProductConstByBarcodeRepository implements ProductConstByBa
             ->join(
                 'variation',
                 ProductOffer::class, 'offer',
-                'offer.id = variation.offer'
+                'offer.id = variation.offer',
             );
 
         $dbalModification
             ->join(
                 'offer',
                 Product::class, 'product',
-                'product.event = offer.event'
+                'product.event = offer.event',
             );
 
         $dbalModification
@@ -240,17 +261,7 @@ final readonly class ProductConstByBarcodeRepository implements ProductConstByBa
                     invariable.offer = offer.const AND
                     invariable.variation = variation.const AND
                     invariable.modification = modification.const
-                '
-            );
-
-        /** Modification Barcode */
-
-        $dbalModification
-            ->leftJoin(
-                'modification',
-                ProductModificationBarcode::class,
-                'product_modification_barcode',
-                'product_modification_barcode.modification = modification.id'
+                ',
             );
 
 
@@ -260,7 +271,7 @@ final readonly class ProductConstByBarcodeRepository implements ProductConstByBa
             str_replace('SELECT', '', $dbalInfo->getSQL()),
             $dbalOffer->getSQL(),
             $dbalVariation->getSQL(),
-            $dbalModification->getSQL()
+            $dbalModification->getSQL(),
         ];
 
         $dbal = $this->DBALQueryBuilder->createQueryBuilder(self::class);
