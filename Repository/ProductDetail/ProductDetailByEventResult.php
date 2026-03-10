@@ -304,7 +304,9 @@ class ProductDetailByEventResult
     {
         if(empty($this->product_barcode))
         {
-            return current($this->getBarcodes());
+            $barcodes = $this->getBarcodes();
+
+            return empty($barcodes) ? null : current($barcodes);
         }
 
         return $this->product_barcode;

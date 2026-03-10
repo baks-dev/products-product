@@ -156,7 +156,6 @@ final readonly class ProductConstByBarcodeRepository implements ProductConstByBa
             ->where('variation.barcode_old = :barcode')
             ->orWhere('product_variation_barcode.value = :barcode');
 
-        $dbalVariation->orderBy('variation.id', 'DESC');
 
         $dbalVariation
             ->join(
