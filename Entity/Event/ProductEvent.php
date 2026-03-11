@@ -46,6 +46,7 @@ use BaksDev\Products\Product\Entity\Trans\ProductTrans;
 use BaksDev\Products\Product\Entity\Video\ProductVideo;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use InvalidArgumentException;
@@ -304,4 +305,14 @@ class ProductEvent extends EntityEvent
     {
         return $this->info;
     }
+
+    /**
+     * @return Collection<int, ProductTrans>
+     */
+    public function getTranslate(): Collection
+    {
+        return $this->translate;
+    }
+
+
 }
