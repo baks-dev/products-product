@@ -105,8 +105,7 @@ final readonly class ProductConstByBarcodeRepository implements ProductConstByBa
 
         $dbalOffer
             ->from(ProductOffer::class, 'offer')
-            ->where('offer.barcode_old = :barcode')
-            ->orWhere('product_offer_barcode.value = :barcode');
+            ->where('product_offer_barcode.value = :barcode');
 
         $dbalOffer
             ->leftJoin(
@@ -153,8 +152,7 @@ final readonly class ProductConstByBarcodeRepository implements ProductConstByBa
 
         $dbalVariation
             ->from(ProductVariation::class, 'variation')
-            ->where('variation.barcode_old = :barcode')
-            ->orWhere('product_variation_barcode.value = :barcode');
+            ->where('product_variation_barcode.value = :barcode');
 
 
         $dbalVariation
@@ -217,8 +215,7 @@ final readonly class ProductConstByBarcodeRepository implements ProductConstByBa
 
         $dbalModification
             ->from(ProductModification::class, 'modification')
-            ->where('modification.barcode_old = :barcode')
-            ->orWhere('product_modification_barcode.value = :barcode');
+            ->where('product_modification_barcode.value = :barcode');
 
         $dbalModification
             ->leftJoin(

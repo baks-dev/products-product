@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 declare(strict_types=1);
@@ -84,7 +83,7 @@ final class ProductIdsByBarcodesRepository implements ProductIdsByBarcodesInterf
         $dbalInfo->join(
             'info',
             Product::class, 'product',
-            'product.id = info.product'
+            'product.id = info.product',
         );
 
         $dbalInfo
@@ -99,7 +98,7 @@ final class ProductIdsByBarcodesRepository implements ProductIdsByBarcodesInterf
                     invariable.offer IS NULL AND
                     invariable.variation IS NULL AND
                     invariable.modification IS NULL
-                '
+                ',
             )
             ->addSelect('invariable.id AS invariable');
 
@@ -116,15 +115,24 @@ final class ProductIdsByBarcodesRepository implements ProductIdsByBarcodesInterf
         $dbalOffer->addSelect('NULL::uuid  AS modification');
         $dbalOffer->addSelect('NULL::uuid  AS modification_const');
 
+
         $dbalOffer
-            ->from(ProductOffer::class, 'offer')
-            ->where('offer.barcode_old IN (:barcodes)')
-            ->orWhere('product_offer_barcode.value IN (:barcodes)');
+            ->from(ProductOfferBarcode::class, 'product_offer_barcode')
+            ->where('product_offer_barcode.value IN (:barcodes)');
+
+        $dbalOffer
+            ->join(
+                'product_offer_barcode',
+                ProductOffer::class,
+                'offer',
+                'offer.id = product_offer_barcode.offer',
+            );
+
 
         $dbalOffer->join(
             'offer',
             Product::class, 'product',
-            'product.event = offer.event'
+            'product.event = offer.event',
         );
 
         $dbalOffer
@@ -137,19 +145,8 @@ final class ProductIdsByBarcodesRepository implements ProductIdsByBarcodesInterf
                     invariable.offer = offer.const AND
                     invariable.variation IS NULL AND
                     invariable.modification IS NULL
-                '
+                ',
             );
-
-        /** OfferBarcode */
-
-        $dbalOffer
-            ->leftJoin(
-                'offer',
-                ProductOfferBarcode::class,
-                'product_offer_barcode',
-                'product_offer_barcode.offer = offer.id'
-            );
-
 
 
         /** Поиск артикула VARIATION */
@@ -165,23 +162,31 @@ final class ProductIdsByBarcodesRepository implements ProductIdsByBarcodesInterf
         $dbalVariation->addSelect('NULL::uuid AS modification');
         $dbalVariation->addSelect('NULL::uuid AS modification_const');
 
+
         $dbalVariation
-            ->from(ProductVariation::class, 'variation')
-            ->where('variation.barcode_old IN (:barcodes)')
-            ->orWhere('product_variation_barcode.value IN (:barcodes)');
+            ->from(ProductVariationBarcode::class, 'product_variation_barcode')
+            ->where('product_variation_barcode.value IN (:barcodes)');
+
+        $dbalVariation
+            ->join(
+                'product_variation_barcode',
+                ProductVariation::class,
+                'variation',
+                'variation.id = product_variation_barcode.variation',
+            );
 
         $dbalVariation
             ->join(
                 'variation',
                 ProductOffer::class, 'offer',
-                'offer.id = variation.offer'
+                'offer.id = variation.offer',
             );
 
         $dbalVariation
             ->join(
                 'offer',
                 Product::class, 'product',
-                'product.event = offer.event'
+                'product.event = offer.event',
             );
 
         $dbalVariation
@@ -194,18 +199,9 @@ final class ProductIdsByBarcodesRepository implements ProductIdsByBarcodesInterf
                     invariable.offer = offer.const AND
                     invariable.variation = variation.const AND
                     invariable.modification IS NULL
-                '
+                ',
             );
 
-        /** Variation Barcode */
-
-        $dbalVariation
-            ->leftJoin(
-                'variation',
-                ProductVariationBarcode::class,
-                'product_variation_barcode',
-                'product_variation_barcode.variation = variation.id'
-            );
 
         /** Поиск артикула MODIFICATION */
 
@@ -222,29 +218,37 @@ final class ProductIdsByBarcodesRepository implements ProductIdsByBarcodesInterf
 
 
         $dbalModification
-            ->from(ProductModification::class, 'modification')
-            ->where('modification.barcode_old IN (:barcodes)')
-            ->orWhere('product_modification_barcode.value IN (:barcodes)');
+            ->from(ProductModificationBarcode::class, 'product_modification_barcode')
+            ->where('product_modification_barcode.value IN (:barcodes)');
+
+
+        $dbalModification
+            ->join(
+                'product_modification_barcode',
+                ProductModification::class,
+                'modification',
+                'modification.id = product_modification_barcode.modification',
+            );
 
         $dbalModification
             ->join(
                 'modification',
                 ProductVariation::class, 'variation',
-                'variation.id = modification.variation'
+                'variation.id = modification.variation',
             );
 
         $dbalModification
             ->join(
                 'variation',
                 ProductOffer::class, 'offer',
-                'offer.id = variation.offer'
+                'offer.id = variation.offer',
             );
 
         $dbalModification
             ->join(
                 'offer',
                 Product::class, 'product',
-                'product.event = offer.event'
+                'product.event = offer.event',
             );
 
         $dbalModification
@@ -257,18 +261,9 @@ final class ProductIdsByBarcodesRepository implements ProductIdsByBarcodesInterf
                     invariable.offer = offer.const AND
                     invariable.variation = variation.const AND
                     invariable.modification = modification.const
-                '
+                ',
             );
 
-        /** Modification Barcode */
-
-        $dbalModification
-            ->leftJoin(
-                'modification',
-                ProductModificationBarcode::class,
-                'product_modification_barcode',
-                'product_modification_barcode.modification = modification.id'
-            );
 
         /** UNION */
 
@@ -276,7 +271,7 @@ final class ProductIdsByBarcodesRepository implements ProductIdsByBarcodesInterf
             str_replace('SELECT', '', $dbalInfo->getSQL()),
             $dbalOffer->getSQL(),
             $dbalVariation->getSQL(),
-            $dbalModification->getSQL()
+            $dbalModification->getSQL(),
         ];
 
         $dbal = $this->DBALQueryBuilder->createQueryBuilder(self::class);

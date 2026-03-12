@@ -1,17 +1,17 @@
 <?php
 /*
  *  Copyright 2026.  Baks.dev <admin@baks.dev>
- *
+ *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *
+ *  
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *
+ *  
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 declare(strict_types=1);
@@ -27,21 +26,14 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Repository\CurrentProductByArticle\Tests;
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
-use BaksDev\Products\Product\Entity\Offers\ProductOffer;
-use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
-use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
+use BaksDev\Products\Product\Entity\Offers\Barcode\ProductOfferBarcode;
+use BaksDev\Products\Product\Entity\Offers\Variation\Barcode\ProductVariationBarcode;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Barcode\ProductModificationBarcode;
 use BaksDev\Products\Product\Repository\CurrentProductByArticle\CurrentProductByBarcodeResult;
 use BaksDev\Products\Product\Repository\CurrentProductByArticle\ProductConstByBarcodeInterface;
-use BaksDev\Products\Product\Type\Event\ProductEventUid;
-use BaksDev\Products\Product\Type\Id\ProductUid;
-use BaksDev\Products\Product\Type\Invariable\ProductInvariableUid;
-use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
-use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
-use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
-use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
-use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
-use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
 use PHPUnit\Framework\Attributes\Group;
+use ReflectionClass;
+use ReflectionMethod;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
@@ -72,10 +64,10 @@ class ProductConstByBarcodeTest extends KernelTestCase
         $dbal = $DBALQueryBuilder->createQueryBuilder(self::class);
 
         $dbal
-            ->select('offer.barcode_old')
-            ->from(ProductOffer::class, 'offer')
-            ->where('offer.barcode_old IS NOT NULL')
-            ->orderBy('offer.id', 'DESC')
+            ->select('offer.value')
+            ->from(ProductOfferBarcode::class, 'offer')
+            ->where('offer.value IS NOT NULL')
+            ->orderBy('offer.offer', 'DESC')
             ->setMaxResults(1);
 
         self::$offer = $dbal->fetchOne();
@@ -84,10 +76,10 @@ class ProductConstByBarcodeTest extends KernelTestCase
         $dbal = $DBALQueryBuilder->createQueryBuilder(self::class);
 
         $dbal
-            ->select('variation.barcode_old')
-            ->from(ProductVariation::class, 'variation')
-            ->where('variation.barcode_old IS NOT NULL')
-            ->orderBy('variation.id', 'DESC')
+            ->select('variation.value')
+            ->from(ProductVariationBarcode::class, 'variation')
+            ->where('variation.value IS NOT NULL')
+            ->orderBy('variation.variation', 'DESC')
             ->setMaxResults(1);
 
         self::$variation = $dbal->fetchOne();
@@ -96,10 +88,10 @@ class ProductConstByBarcodeTest extends KernelTestCase
         $dbal = $DBALQueryBuilder->createQueryBuilder(self::class);
 
         $dbal
-            ->select('modification.barcode_old')
-            ->from(ProductModification::class, 'modification')
-            ->where('modification.barcode_old IS NOT NULL')
-            ->orderBy('modification.id', 'DESC')
+            ->select('modification.value')
+            ->from(ProductModificationBarcode::class, 'modification')
+            ->where('modification.value IS NOT NULL')
+            ->orderBy('modification.modification', 'DESC')
             ->setMaxResults(1);
 
         self::$modification = $dbal->fetchOne();
@@ -107,10 +99,8 @@ class ProductConstByBarcodeTest extends KernelTestCase
 
     }
 
-
     public function testUseCase(): void
     {
-
         /** @var ProductConstByBarcodeInterface $ProductConstByBarcode */
         $ProductConstByBarcode = self::getContainer()->get(ProductConstByBarcodeInterface::class);
 
@@ -121,48 +111,27 @@ class ProductConstByBarcodeTest extends KernelTestCase
                 continue;
             }
 
-            $CurrentProductDTO = $ProductConstByBarcode->find($barcode);
+            $CurrentProductByBarcodeResult = $ProductConstByBarcode->find($barcode);
 
-            if(false === $CurrentProductDTO)
+            if(false === $CurrentProductByBarcodeResult)
             {
                 continue;
             }
 
-            self::assertNotFalse($CurrentProductDTO);
-            self::assertInstanceOf(CurrentProductByBarcodeResult::class, $CurrentProductDTO);
+            // Вызываем все геттеры
+            $reflectionClass = new ReflectionClass(CurrentProductByBarcodeResult::class);
+            $methods = $reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC);
 
-
-            self::assertInstanceOf(ProductUid::class, $CurrentProductDTO->getProduct()); // : ProductUid
-            self::assertInstanceOf(ProductEventUid::class, $CurrentProductDTO->getEvent()); // : ProductEventUid
-            self::assertInstanceOf(ProductInvariableUid::class, $CurrentProductDTO->getInvariable()); // : ProductInvariableUid
-
-
-            $CurrentProductDTO->getOffer() ?
-                self::assertInstanceOf(ProductOfferUid::class, $CurrentProductDTO->getOffer()) :
-                self::assertNull($CurrentProductDTO->getOffer()); // : ProductOfferUid|null
-
-            $CurrentProductDTO->getOfferConst() ?
-                self::assertInstanceOf(ProductOfferConst::class, $CurrentProductDTO->getOfferConst()) :
-                self::assertNull($CurrentProductDTO->getOfferConst()); // : ProductOfferConst|null
-
-            $CurrentProductDTO->getVariation() ?
-                self::assertInstanceOf(ProductVariationUid::class, $CurrentProductDTO->getVariation()) :
-                self::assertNull($CurrentProductDTO->getVariation()); // : ProductVariationUid|null
-
-
-            $CurrentProductDTO->getVariationConst() ?
-                self::assertInstanceOf(ProductVariationConst::class, $CurrentProductDTO->getVariationConst()) :
-                self::assertNull($CurrentProductDTO->getVariationConst()); // : ProductVariationConst|null
-
-            $CurrentProductDTO->getModification() ?
-                self::assertInstanceOf(ProductModificationUid::class, $CurrentProductDTO->getModification()) :
-                self::assertNull($CurrentProductDTO->getModification()); // : ProductModificationUid|null
-
-
-            $CurrentProductDTO->getModificationConst() ?
-                self::assertInstanceOf(ProductModificationConst::class, $CurrentProductDTO->getModificationConst()) :
-                self::assertNull($CurrentProductDTO->getModificationConst()); // : ProductModificationConst|null
-
+            foreach($methods as $method)
+            {
+                // Методы без аргументов
+                if($method->getNumberOfParameters() === 0)
+                {
+                    // Вызываем метод
+                    $data = $method->invoke($CurrentProductByBarcodeResult);
+                    // dump($data);
+                }
+            }
         }
 
         self::assertFalse(false);
