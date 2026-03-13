@@ -38,6 +38,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 #[ORM\Entity]
 #[ORM\Table(name: 'product_modification_barcode')]
+#[ORM\Index(columns: ['value'])]
 class ProductModificationBarcode extends EntityEvent
 {
     /** ID */
@@ -51,7 +52,6 @@ class ProductModificationBarcode extends EntityEvent
     /**
      * Штрихкод товара
      */
-    #[ORM\Id]
     #[ORM\Column(type: ProductBarcode::TYPE)]
     private ProductBarcode $value;
 
