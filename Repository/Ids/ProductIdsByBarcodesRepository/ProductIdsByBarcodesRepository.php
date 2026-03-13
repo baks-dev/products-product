@@ -279,6 +279,12 @@ final class ProductIdsByBarcodesRepository implements ProductIdsByBarcodesInterf
         $dbal->setParameter('barcodes', $this->barcodes, ArrayParameterType::STRING);
 
 
+        $dbal->orderBy('modification', 'DESC');
+        $dbal->addOrderBy('variation', 'DESC');
+        $dbal->addOrderBy('offer', 'DESC');
+        $dbal->addOrderBy('event', 'DESC');
+
+
         return $dbal
             ->enableCache('products-product', 86400)
             ->fetchHydrate(ProductIdsByBarcodesResult::class);

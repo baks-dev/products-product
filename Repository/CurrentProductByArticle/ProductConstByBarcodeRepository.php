@@ -66,11 +66,12 @@ final readonly class ProductConstByBarcodeRepository implements ProductConstByBa
 
         $dbalInfo->from(ProductInfo::class, 'info');
 
-        $dbalInfo->join(
-            'info',
-            Product::class, 'product',
-            'product.id = info.product',
-        );
+        $dbalInfo
+            ->join(
+                'info',
+                Product::class, 'product',
+                'product.id = info.product',
+            );
 
         $dbalInfo->where('info.barcode = :barcode');
 
@@ -103,16 +104,18 @@ final readonly class ProductConstByBarcodeRepository implements ProductConstByBa
         $dbalOffer->addSelect('NULL::uuid  AS modification');
         $dbalOffer->addSelect('NULL::uuid  AS modification_const');
 
-        $dbalOffer
-            ->from(ProductOffer::class, 'offer')
-            ->where('product_offer_barcode.value = :barcode');
 
         $dbalOffer
-            ->leftJoin(
-                'offer',
-                ProductOfferBarcode::class,
+            ->from(ProductOfferBarcode::class, 'product_offer_barcode')
+            ->where('product_offer_barcode.value = :barcode');
+
+
+        $dbalOffer
+            ->join(
                 'product_offer_barcode',
-                'product_offer_barcode.offer = offer.id',
+                ProductOffer::class,
+                'offer',
+                'offer.id = product_offer_barcode.offer',
             );
 
         $dbalOffer->join(
@@ -151,37 +154,38 @@ final readonly class ProductConstByBarcodeRepository implements ProductConstByBa
         $dbalVariation->addSelect('NULL::uuid AS modification_const');
 
         $dbalVariation
-            ->from(ProductVariation::class, 'variation')
+            ->from(ProductVariationBarcode::class, 'product_variation_barcode')
             ->where('product_variation_barcode.value = :barcode');
 
+        $dbalVariation
+            ->join(
+                'product_variation_barcode',
+                ProductVariation::class,
+                'variation',
+                'variation.id = product_variation_barcode.variation',
+            );
 
         $dbalVariation
             ->join(
                 'variation',
-                ProductOffer::class, 'offer',
+                ProductOffer::class,
+                'offer',
                 'offer.id = variation.offer',
             );
 
         $dbalVariation
-            ->leftJoin(
-                'variation',
-                ProductVariationBarcode::class,
-                'product_variation_barcode',
-                'product_variation_barcode.variation = variation.id',
-            );
-
-
-        $dbalVariation
             ->join(
                 'offer',
-                ProductEvent::class, 'event',
+                ProductEvent::class,
+                'event',
                 'event.id = offer.event',
             );
 
         $dbalVariation
             ->join(
                 'event',
-                Product::class, 'product',
+                Product::class,
+                'product',
                 'product.id = event.main',
             );
 
@@ -214,21 +218,23 @@ final readonly class ProductConstByBarcodeRepository implements ProductConstByBa
 
 
         $dbalModification
-            ->from(ProductModification::class, 'modification')
+            ->from(ProductModificationBarcode::class, 'product_modification_barcode')
             ->where('product_modification_barcode.value = :barcode');
 
         $dbalModification
-            ->leftJoin(
-                'modification',
-                ProductModificationBarcode::class,
+            ->join(
                 'product_modification_barcode',
-                'product_modification_barcode.modification = modification.id',
+                ProductModification::class,
+                'modification',
+                'modification.id = product_modification_barcode.modification',
             );
+
 
         $dbalModification
             ->join(
                 'modification',
-                ProductVariation::class, 'variation',
+                ProductVariation::class,
+                'variation',
                 'variation.id = modification.variation',
             );
 
@@ -236,14 +242,17 @@ final readonly class ProductConstByBarcodeRepository implements ProductConstByBa
         $dbalModification
             ->join(
                 'variation',
-                ProductOffer::class, 'offer',
+                ProductOffer::class,
+                'offer',
                 'offer.id = variation.offer',
             );
+
 
         $dbalModification
             ->join(
                 'offer',
-                Product::class, 'product',
+                Product::class,
+                'product',
                 'product.event = offer.event',
             );
 
@@ -270,9 +279,16 @@ final readonly class ProductConstByBarcodeRepository implements ProductConstByBa
             $dbalModification->getSQL(),
         ];
 
+
         $dbal = $this->DBALQueryBuilder->createQueryBuilder(self::class);
         $dbal->select(implode(' UNION ', $union));
         $dbal->setParameter('barcode', $barcode, ProductBarcode::TYPE);
+
+        $dbal->orderBy('modification', 'DESC');
+        $dbal->addOrderBy('variation', 'DESC');
+        $dbal->addOrderBy('offer', 'DESC');
+        $dbal->addOrderBy('event', 'DESC');
+
 
         return $dbal
             ->enableCache('products-product', 86400)
