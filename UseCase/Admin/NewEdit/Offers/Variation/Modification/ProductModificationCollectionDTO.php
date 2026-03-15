@@ -40,7 +40,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 final class ProductModificationCollectionDTO implements ProductModificationInterface
 {
     /** ID множественного варианта торгового предложения категории */
-    private CategoryProductModificationUid $categoryModification;
+    private ?CategoryProductModificationUid $categoryModification;
 
     /** Постоянный уникальный идентификатор модификации */
     #[Assert\NotBlank]
@@ -243,12 +243,12 @@ final class ProductModificationCollectionDTO implements ProductModificationInter
         $this->image->removeElement($image);
     }
 
-    public function getCategoryModification(): CategoryProductModificationUid
+    public function getCategoryModification(): ?CategoryProductModificationUid
     {
         return $this->categoryModification;
     }
 
-    public function setCategoryModification(CategoryProductModificationUid $categoryModification): self
+    public function setCategoryModification(?CategoryProductModificationUid $categoryModification): self
     {
         $this->categoryModification = $categoryModification;
         return $this;

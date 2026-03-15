@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification;
@@ -70,7 +69,7 @@ final class ProductModificationCollectionForm extends AbstractType
                     return $categoryModification instanceof CategoryProductModificationUid ? $categoryModification->getValue() : $categoryModification;
                 },
                 function($categoryModification) {
-                    return new CategoryProductModificationUid($categoryModification);
+                    return empty($categoryModification) ? null : new CategoryProductModificationUid($categoryModification);
                 }
             )
         );

@@ -146,7 +146,7 @@
                         {# Штрихкоды #}
                         {% if offer.barcode is defined %}
                             <div id="flush-{{ offer.barcode.vars.id }}"
-                                 class="accordion-collapse collapse show"
+                                 class="accordion-collapse collapse"
                                  data-bs-parent="#{{ offer.vars.id }}">
 
                                 {{ include(_self|replace({ "_offer.html.twig": "barcode/_barcode.html.twig" })) }}

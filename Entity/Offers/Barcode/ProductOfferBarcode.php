@@ -19,7 +19,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 declare(strict_types=1);
@@ -38,7 +37,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 #[ORM\Entity]
 #[ORM\Table(name: 'product_offer_barcode')]
-#[ORM\Index(columns: ['value'])]
 class ProductOfferBarcode extends EntityEvent
 {
     /** ID торгового предложения */
@@ -52,6 +50,7 @@ class ProductOfferBarcode extends EntityEvent
     /**
      * Штрихкод товара
      */
+    #[ORM\Id]
     #[ORM\Column(type: ProductBarcode::TYPE)]
     private ProductBarcode $value;
 

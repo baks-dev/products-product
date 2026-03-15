@@ -1,16 +1,16 @@
 /*
  *  Copyright 2026.  Baks.dev <admin@baks.dev>
- *
+ *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *
+ *  
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *
+ *  
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -18,7 +18,6 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
- *
  */
 
 /* кнопка Добавить торговое предложение */
@@ -46,7 +45,6 @@ if($btnAddOffer)
         newForm = newForm.replace(/__offer_barcode__/g, index - this.dataset.index);
         newForm = newForm.replace(/__variation_barcode__/g, index - this.dataset.index);
         newForm = newForm.replace(/__modification_barcode__/g, index - this.dataset.index);
-        newForm = newForm.replace(/value="[^"]*"/g, 'value=""');
 
         /* Вставляем новую коллекцию */
         let div = document.createElement("div");
@@ -391,7 +389,6 @@ function addVariation()
 
     newForm = newForm.replace(/__variation_barcode__/g, index - this.dataset.index);
     newForm = newForm.replace(/__modification_barcode__/g, index - this.dataset.index);
-    newForm = newForm.replace(/value="[^"]*"/g, 'value=""');
 
     let div = document.createElement("div");
     div.innerHTML = newForm;
@@ -688,7 +685,6 @@ function addModification()
     newForm = newForm.replace(/__variation_modification__/g, index);
 
     newForm = newForm.replace(/__modification_barcode__/g, index - this.dataset.index);
-    newForm = newForm.replace(/value="[^"]*"/g, 'value=""');
 
 
     let div = document.createElement("div");

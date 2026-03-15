@@ -129,7 +129,7 @@
         {# Штрихкоды #}
         {% if variation.barcode is defined %}
             <div id="flush-{{ variation.barcode.vars.id }}"
-                 class="accordion-collapse collapse show"
+                 class="accordion-collapse collapse"
                  data-bs-parent="#accordion{{ variation.vars.id }}">
 
                 {{ include(_self|replace({ "_variation.html.twig": "barcode/_barcode.html.twig" })) }}
