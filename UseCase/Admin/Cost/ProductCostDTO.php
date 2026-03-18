@@ -54,16 +54,21 @@ final class ProductCostDTO
         return $this->files;
     }
 
+    public function setFiles(ArrayCollection $files): self
+    {
+        $this->files = $files;
+        return $this;
+    }
+
     public function addFiles(ProductCostFileDTO $file): self
     {
         $this->files->add($file);
         return $this;
     }
 
-    public function setFiles(ArrayCollection $files): self
+    public function getPrice(): ?Money
     {
-        $this->files = $files;
-        return $this;
+        return $this->price;
     }
 
     /**
@@ -74,11 +79,6 @@ final class ProductCostDTO
     {
         $this->price = $price;
         return $this;
-    }
-
-    public function getPrice(): ?Money
-    {
-        return $this->price;
     }
 
 }

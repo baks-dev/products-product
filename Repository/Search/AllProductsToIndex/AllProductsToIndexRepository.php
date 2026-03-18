@@ -96,7 +96,6 @@ final readonly class AllProductsToIndexRepository implements DataToIndexInterfac
             );
 
 
-
         /** Торговое предложение */
         $dbal
             ->addSelect('product_offer.id as product_offer_id')

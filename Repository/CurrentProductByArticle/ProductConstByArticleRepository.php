@@ -62,7 +62,7 @@ final readonly class ProductConstByArticleRepository implements ProductConstByAr
         $dbalInfo->join(
             'info',
             Product::class, 'product',
-            'product.id = info.product'
+            'product.id = info.product',
         );
 
         $dbalInfo->where('info.article = :article');
@@ -76,7 +76,7 @@ final readonly class ProductConstByArticleRepository implements ProductConstByAr
                     invariable.offer IS NULL AND
                     invariable.variation IS NULL AND
                     invariable.modification IS NULL
-                '
+                ',
             )
             ->addSelect('invariable.id AS invariable');
 
@@ -101,7 +101,7 @@ final readonly class ProductConstByArticleRepository implements ProductConstByAr
         $dbalOffer->join(
             'offer',
             Product::class, 'product',
-            'product.event = offer.event'
+            'product.event = offer.event',
         );
 
 
@@ -115,7 +115,7 @@ final readonly class ProductConstByArticleRepository implements ProductConstByAr
                     invariable.offer = offer.const AND
                     invariable.variation IS NULL AND
                     invariable.modification IS NULL
-                '
+                ',
             );
 
         /** Поиск артикула VARIATION */
@@ -139,14 +139,14 @@ final readonly class ProductConstByArticleRepository implements ProductConstByAr
             ->join(
                 'variation',
                 ProductOffer::class, 'offer',
-                'offer.id = variation.offer'
+                'offer.id = variation.offer',
             );
 
         $dbalVariation
             ->join(
                 'offer',
                 Product::class, 'product',
-                'product.event = offer.event'
+                'product.event = offer.event',
             );
 
         $dbalVariation
@@ -159,7 +159,7 @@ final readonly class ProductConstByArticleRepository implements ProductConstByAr
                     invariable.offer = offer.const AND
                     invariable.variation = variation.const AND
                     invariable.modification IS NULL
-                '
+                ',
             );
 
 
@@ -186,7 +186,7 @@ final readonly class ProductConstByArticleRepository implements ProductConstByAr
             ->join(
                 'modification',
                 ProductVariation::class, 'variation',
-                'variation.id = modification.variation'
+                'variation.id = modification.variation',
             );
 
 
@@ -194,14 +194,14 @@ final readonly class ProductConstByArticleRepository implements ProductConstByAr
             ->join(
                 'variation',
                 ProductOffer::class, 'offer',
-                'offer.id = variation.offer'
+                'offer.id = variation.offer',
             );
 
         $dbalModification
             ->join(
                 'offer',
                 Product::class, 'product',
-                'product.event = offer.event'
+                'product.event = offer.event',
             );
 
         $dbalModification
@@ -214,7 +214,7 @@ final readonly class ProductConstByArticleRepository implements ProductConstByAr
                     invariable.offer = offer.const AND
                     invariable.variation = variation.const AND
                     invariable.modification = modification.const
-                '
+                ',
             );
 
 
@@ -224,7 +224,7 @@ final readonly class ProductConstByArticleRepository implements ProductConstByAr
             str_replace('SELECT', '', $dbalInfo->getSQL()),
             $dbalOffer->getSQL(),
             $dbalVariation->getSQL(),
-            $dbalModification->getSQL()
+            $dbalModification->getSQL(),
         ];
 
         $dbal = $this->DBALQueryBuilder->createQueryBuilder(self::class);

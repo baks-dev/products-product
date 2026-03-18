@@ -54,28 +54,28 @@ final class UnCompressProductsImagesRepository implements UnCompressProductsImag
             'product',
             ProductPhoto::class,
             'product_photo',
-            'product_photo.event = product.event AND product_photo.cdn IS FALSE'
+            'product_photo.event = product.event AND product_photo.cdn IS FALSE',
         );
 
         $dbal->leftJoin(
             'product',
             ProductOffer::class,
             'product_offer',
-            'product_offer.event = product.event'
+            'product_offer.event = product.event',
         );
 
         $dbal->leftJoin(
             'product_offer',
             ProductVariation::class,
             'product_variation',
-            'product_variation.offer = product_offer.id'
+            'product_variation.offer = product_offer.id',
         );
 
         $dbal->leftJoin(
             'product_variation',
             ProductModification::class,
             'product_modification',
-            'product_modification.variation = product_modification.id'
+            'product_modification.variation = product_modification.id',
         );
 
 
@@ -83,7 +83,7 @@ final class UnCompressProductsImagesRepository implements UnCompressProductsImag
             'product_offer',
             ProductOfferImage::class,
             'product_offer_images',
-            'product_offer_images.offer = product_offer.id AND product_offer_images.cdn IS FALSE'
+            'product_offer_images.offer = product_offer.id AND product_offer_images.cdn IS FALSE',
         );
 
 
@@ -91,14 +91,14 @@ final class UnCompressProductsImagesRepository implements UnCompressProductsImag
             'product_variation',
             ProductVariationImage::class,
             'product_variation_images',
-            'product_variation_images.variation = product_variation.id AND product_variation_images.cdn IS FALSE'
+            'product_variation_images.variation = product_variation.id AND product_variation_images.cdn IS FALSE',
         );
 
         $dbal->leftJoin(
             'product_modification',
             ProductModificationImage::class,
             'product_modification_images',
-            'product_modification_images.modification = product_modification.id AND product_modification_images.cdn IS FALSE'
+            'product_modification_images.modification = product_modification.id AND product_modification_images.cdn IS FALSE',
         );
 
 
@@ -139,7 +139,7 @@ final class UnCompressProductsImagesRepository implements UnCompressProductsImag
 			   
 			   ELSE NULL
 			END AS entity
-		"
+		",
         );
 
         $dbal->where('COALESCE(

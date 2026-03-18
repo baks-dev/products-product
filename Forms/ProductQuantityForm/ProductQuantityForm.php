@@ -42,7 +42,7 @@ final class ProductQuantityForm extends AbstractType
         $builder->add(
             'product_quantity_form_edit',
             SubmitType::class,
-            ['label' => 'Save', 'label_html' => true, 'attr' => ['class' => 'btn-primary']]
+            ['label' => 'Save', 'label_html' => true, 'attr' => ['class' => 'btn-primary']],
         );
     }
 

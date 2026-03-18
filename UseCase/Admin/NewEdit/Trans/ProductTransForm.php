@@ -44,8 +44,8 @@ final class ProductTransForm extends AbstractType
                 },
                 function($price) {
                     return new Locale($price);
-                }
-            )
+                },
+            ),
         );
 
         $builder->add('name', TextType::class);
@@ -58,7 +58,7 @@ final class ProductTransForm extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => ProductTransDTO::class,
-            ]
+            ],
         );
     }
 

@@ -163,6 +163,17 @@ final class ProductDetailByEventRepository implements ProductDetailByEventInterf
         return $this;
     }
 
+    /**
+     * Метод возвращает детальную информацию о продукте по его идентификаторам события, ТП, вариантов и модификаций.
+     */
+    public function findResult(): ProductDetailByEventResult|false
+    {
+        $dbal = $this->builder();
+
+        return $dbal
+            ->enableCache('products-product')
+            ->fetchHydrate(ProductDetailByEventResult::class);
+    }
 
     private function builder(): DBALQueryBuilder
     {
@@ -257,7 +268,7 @@ final class ProductDetailByEventRepository implements ProductDetailByEventInterf
                 'product_offer',
                 ProductOfferBarcode::class,
                 'product_offer_barcode',
-                'product_offer_barcode.offer = product_offer.id'
+                'product_offer_barcode.offer = product_offer.id',
             );
 
         $dbal
@@ -344,7 +355,7 @@ final class ProductDetailByEventRepository implements ProductDetailByEventInterf
                 'product_variation',
                 ProductVariationBarcode::class,
                 'product_variation_barcode',
-                'product_variation_barcode.variation = product_variation.id'
+                'product_variation_barcode.variation = product_variation.id',
             );
 
         /* Цена множественного варианта */
@@ -412,7 +423,7 @@ final class ProductDetailByEventRepository implements ProductDetailByEventInterf
                 'product_modification',
                 ProductModificationBarcode::class,
                 'product_modification_barcode',
-                'product_modification_barcode.modification = product_modification.id'
+                'product_modification_barcode.modification = product_modification.id',
             );
 
         /* Цена модификации множественного варианта */
@@ -490,7 +501,7 @@ final class ProductDetailByEventRepository implements ProductDetailByEventInterf
                         ELSE NULL
                     END
                     )
-                    AS product_barcodes"
+                    AS product_barcodes",
         );
 
         $dbal->addSelect('
@@ -765,20 +776,6 @@ final class ProductDetailByEventRepository implements ProductDetailByEventInterf
 
         return $dbal;
     }
-
-
-    /**
-     * Метод возвращает детальную информацию о продукте по его идентификаторам события, ТП, вариантов и модификаций.
-     */
-    public function findResult(): ProductDetailByEventResult|false
-    {
-        $dbal = $this->builder();
-
-        return $dbal
-            ->enableCache('products-product')
-            ->fetchHydrate(ProductDetailByEventResult::class);
-    }
-
 
     /**
      * Метод возвращает детальную информацию о продукте по его идентификаторам события, ТП, вариантов и модификаций.

@@ -262,14 +262,14 @@ final class ProductForm extends AbstractType
                         $sort++;
                     }
                 }
-            }
+            },
         );
 
         /* Сохранить ******************************************************/
         $builder->add(
             'product',
             SubmitType::class,
-            ['label' => 'Save', 'label_html' => true, 'attr' => ['class' => 'btn-primary']]
+            ['label' => 'Save', 'label_html' => true, 'attr' => ['class' => 'btn-primary']],
         );
 
         /*
@@ -348,7 +348,7 @@ final class ProductForm extends AbstractType
                                         'required' => false,
                                         'mapped' => false,
                                         'attr' => ['style' => 'display: none;'],
-                                    ]
+                                    ],
                                 );
 
                             }
@@ -362,7 +362,7 @@ final class ProductForm extends AbstractType
                         $form->add(
                             'dataVariation',
                             HiddenType::class,
-                            ['data' => $variationCategory->id, 'mapped' => false]
+                            ['data' => $variationCategory->id, 'mapped' => false],
                         );
 
                         if($variationCategory->reference)
@@ -382,7 +382,7 @@ final class ProductForm extends AbstractType
                                         'required' => false,
                                         'mapped' => false,
                                         'attr' => ['style' => 'display: none;'],
-                                    ]
+                                    ],
                                 );
 
 
@@ -396,7 +396,7 @@ final class ProductForm extends AbstractType
                         $form->add(
                             'dataModification',
                             HiddenType::class,
-                            ['data' => $modificationCategory->id, 'mapped' => false]
+                            ['data' => $modificationCategory->id, 'mapped' => false],
                         );
 
                         if($modificationCategory->reference)
@@ -417,7 +417,7 @@ final class ProductForm extends AbstractType
                                         'required' => false,
                                         'mapped' => false,
                                         'attr' => ['style' => 'display: none;'],
-                                    ]
+                                    ],
                                 );
 
 
@@ -451,7 +451,7 @@ final class ProductForm extends AbstractType
                                     new Offers\Variation\Image\ProductVariationImageCollectionDTO();
                                 $ProductOfferVariationImageCollectionDTO->setRoot(true);
                                 $ProductOffersVariationCollectionDTO->addImage(
-                                    $ProductOfferVariationImageCollectionDTO
+                                    $ProductOfferVariationImageCollectionDTO,
                                 );
                             }
 
@@ -482,7 +482,7 @@ final class ProductForm extends AbstractType
 
                         $data->addOffer($ProductOffersCollectionDTO);
                     }
-                }
+                },
             );
         }
 
@@ -496,7 +496,7 @@ final class ProductForm extends AbstractType
             [
                 'data_class' => ProductDTO::class,
                 'attr' => ['class' => 'w-100'],
-            ]
+            ],
         );
     }
 

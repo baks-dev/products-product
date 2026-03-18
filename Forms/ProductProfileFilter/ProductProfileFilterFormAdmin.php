@@ -49,7 +49,7 @@ final class ProductProfileFilterFormAdmin extends AbstractType
                 /** @var ProductProfileFilterDTO $data */
                 $data = $event->getData();
                 $this->request->getSession()->set(ProductProfileFilterDTO::profile, $data->getProfile());
-            }
+            },
         );
     }
 

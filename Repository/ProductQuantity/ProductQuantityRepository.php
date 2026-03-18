@@ -48,14 +48,14 @@ final class ProductQuantityRepository implements ProductQuantityInterface
             ->setParameter(
                 key: 'product',
                 value: $product,
-                type: ProductUid::TYPE
+                type: ProductUid::TYPE,
             );
 
         $qb->join(
             ProductEvent::class,
             'event',
             'WITH',
-            'event.id = product.event'
+            'event.id = product.event',
         );
 
         $qb
@@ -64,7 +64,7 @@ final class ProductQuantityRepository implements ProductQuantityInterface
                 ProductPrice::class,
                 'price',
                 'WITH',
-                'price.event = product.event'
+                'price.event = product.event',
             );
 
         return $qb->getOneOrNullResult();

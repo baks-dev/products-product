@@ -23,7 +23,6 @@
 
 namespace BaksDev\Products\Product\Repository\ProductOfferConst;
 
-use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 

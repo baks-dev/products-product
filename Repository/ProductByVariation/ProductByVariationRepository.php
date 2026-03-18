@@ -53,7 +53,7 @@ final class ProductByVariationRepository implements ProductByVariationInterface
                 ->setParameter(
                     key: 'const',
                     value: $variation,
-                    type: ProductVariationConst::TYPE
+                    type: ProductVariationConst::TYPE,
                 );
         }
 
@@ -65,7 +65,7 @@ final class ProductByVariationRepository implements ProductByVariationInterface
                 ->setParameter(
                     key: 'variation',
                     value: $variation,
-                    type: ProductVariationUid::TYPE
+                    type: ProductVariationUid::TYPE,
                 );
 
             $qb
@@ -73,7 +73,7 @@ final class ProductByVariationRepository implements ProductByVariationInterface
                     ProductVariation::class,
                     'variation',
                     'WITH',
-                    'variation.const = var.const'
+                    'variation.const = var.const',
                 );
         }
 
@@ -83,7 +83,7 @@ final class ProductByVariationRepository implements ProductByVariationInterface
                 ProductOffer::class,
                 'offer',
                 'WITH',
-                'offer.id = variation.offer'
+                'offer.id = variation.offer',
             );
 
         $qb
@@ -92,7 +92,7 @@ final class ProductByVariationRepository implements ProductByVariationInterface
                 ProductEvent::class,
                 'event',
                 'WITH',
-                'event.id = offer.event'
+                'event.id = offer.event',
             );
 
         $qb
@@ -101,7 +101,7 @@ final class ProductByVariationRepository implements ProductByVariationInterface
                 Product::class,
                 'product',
                 'WITH',
-                'product.event = event.id'
+                'product.event = event.id',
             );
 
 

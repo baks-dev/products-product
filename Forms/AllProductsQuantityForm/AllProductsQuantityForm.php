@@ -154,7 +154,7 @@ final class AllProductsQuantityForm extends AbstractType
                         'label' => $offerField->getOption(),
                         'priority' => 200,
                         'required' => true,
-                    ]
+                    ],
                 );
 
                 /** Множественные варианты торгового предложения */
@@ -175,7 +175,7 @@ final class AllProductsQuantityForm extends AbstractType
                                 'label' => $variationField->getOption(),
                                 'priority' => 199,
                                 'required' => true,
-                            ]
+                            ],
                         );
                         /** Модификации множественных вариантов торгового предложения */
                         $modificationField = $this->modificationChoice
@@ -195,7 +195,7 @@ final class AllProductsQuantityForm extends AbstractType
                                         'label' => $modificationField->getOption(),
                                         'priority' => 198,
                                         'required' => true,
-                                    ]
+                                    ],
                                 );
                             }
                         }
@@ -213,7 +213,7 @@ final class AllProductsQuantityForm extends AbstractType
                 'data_class' => AllProductsQuantityDTO::class,
                 'method' => 'POST',
                 'attr' => ['class' => 'w-100'],
-            ]
+            ],
         );
     }
 }

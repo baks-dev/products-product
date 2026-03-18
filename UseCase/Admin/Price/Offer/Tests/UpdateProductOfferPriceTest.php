@@ -28,7 +28,6 @@ namespace BaksDev\Products\Product\UseCase\Admin\Price\Offer\Tests;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Offers\Price\ProductOfferPrice;
 use BaksDev\Products\Product\Repository\CurrentProductEvent\CurrentProductEventInterface;
-use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Tests\ProductsProductNewAdminUseCaseTest;
 use BaksDev\Products\Product\UseCase\Admin\Price\Offer\UpdateProductOfferPriceDTO;

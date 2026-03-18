@@ -47,8 +47,8 @@ final class ProductDescriptionForm extends AbstractType
                 },
                 function($price) {
                     return new Locale($price);
-                }
-            )
+                },
+            ),
         );
 
 
@@ -61,8 +61,8 @@ final class ProductDescriptionForm extends AbstractType
                 },
                 function($device) {
                     return new Device($device);
-                }
-            )
+                },
+            ),
         );
 
         $builder->add('preview', TextareaType::class, ['required' => false]);
@@ -76,7 +76,7 @@ final class ProductDescriptionForm extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => ProductDescriptionDTO::class,
-            ]
+            ],
         );
     }
 

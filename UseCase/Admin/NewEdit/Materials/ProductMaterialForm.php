@@ -75,7 +75,7 @@ final class ProductMaterialForm extends AbstractType
             'DeleteMaterial', ButtonType::class,
             [
                 'label_html' => true,
-            ]
+            ],
         );
     }
 

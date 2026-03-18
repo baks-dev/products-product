@@ -54,8 +54,8 @@ final class ProductOfferVariationPriceForm extends AbstractType
                 },
                 function($price) {
                     return new Money($price);
-                }
-            )
+                },
+            ),
         );
 
         $builder->add('currency', ChoiceType::class, [

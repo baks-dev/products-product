@@ -58,14 +58,14 @@ final class ProductModificationQuantityRepository implements ProductModification
             ->setParameter(
                 key: 'product',
                 value: $product,
-                type: ProductUid::TYPE
+                type: ProductUid::TYPE,
             );
 
         $qb->join(
             ProductEvent::class,
             'event',
             'WITH',
-            'event.id = product.event'
+            'event.id = product.event',
         );
 
         // Торговое предложение
@@ -75,12 +75,12 @@ final class ProductModificationQuantityRepository implements ProductModification
                 ProductOffer::class,
                 'offer',
                 'WITH',
-                'offer.event = event.id AND offer.const = :offer_const'
+                'offer.event = event.id AND offer.const = :offer_const',
             )
             ->setParameter(
                 key: 'offer_const',
                 value: $offer,
-                type: ProductOfferConst::TYPE
+                type: ProductOfferConst::TYPE,
             );
 
         // Множественный вариант
@@ -90,12 +90,12 @@ final class ProductModificationQuantityRepository implements ProductModification
                 ProductVariation::class,
                 'variation',
                 'WITH',
-                'variation.offer = offer.id AND variation.const = :variation_const'
+                'variation.offer = offer.id AND variation.const = :variation_const',
             )
             ->setParameter(
                 key: 'variation_const',
                 value: $variation,
-                type: ProductVariationConst::TYPE
+                type: ProductVariationConst::TYPE,
             );
 
         // Модификация множественного варианта
@@ -105,12 +105,12 @@ final class ProductModificationQuantityRepository implements ProductModification
                 ProductModification::class,
                 'modification',
                 'WITH',
-                'modification.variation = variation.id AND modification.const = :modification_const'
+                'modification.variation = variation.id AND modification.const = :modification_const',
             )
             ->setParameter(
                 key: 'modification_const',
                 value: $modification,
-                type: ProductModificationConst::TYPE
+                type: ProductModificationConst::TYPE,
             );
 
         $qb
@@ -119,7 +119,7 @@ final class ProductModificationQuantityRepository implements ProductModification
                 ProductModificationQuantity::class,
                 'quantity',
                 'WITH',
-                'quantity.modification = modification.id'
+                'quantity.modification = modification.id',
             );
 
 
@@ -129,7 +129,7 @@ final class ProductModificationQuantityRepository implements ProductModification
             CategoryProductModification::class,
             'category_modification',
             'WITH',
-            'category_modification.id = modification.categoryModification AND category_modification.quantitative = true'
+            'category_modification.id = modification.categoryModification AND category_modification.quantitative = true',
         );
 
         return $qb->getOneOrNullResult();

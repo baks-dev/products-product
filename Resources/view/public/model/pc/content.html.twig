@@ -266,80 +266,78 @@
     </ul>
 
 
-
-
     <div class="d-flex justify-content-between gap-3">
         <div class="col-9">
             <div class="tab-content w-100" id="pills-tabContent">
 
-            {% if presence %}
+                {% if presence %}
 
 
-                <div class="tab-pane fade show active flex-column" id="pills-home" role="tabpanel" tabindex="0">
+                    <div class="tab-pane fade show active flex-column" id="pills-home" role="tabpanel" tabindex="0">
 
-                    <div class="d-flex justify-content-between">
+                        <div class="d-flex justify-content-between">
 
-                        <h5 class="text-uppercase fw-bolder py-3">В наличии</h5>
+                            <h5 class="text-uppercase fw-bolder py-3">В наличии</h5>
 
-                        <ul class="nav nav-pills d-flex gap-2 py-2 mt-1" id="radiusTab" role="tablist">
+                            <ul class="nav nav-pills d-flex gap-2 py-2 mt-1" id="radiusTab" role="tablist">
 
-                            <li class="nav-item" role="presentation">
-                                <button class="btn nav-link fw-bolder rounded-4 px-3 active" id="all-tab"
-                                        data-bs-toggle="tab"
-                                        data-bs-target="#all-tab-pane" type="button" role="tab"
-                                        aria-controls="all-tab-pane"
-                                        aria-selected="false">Все
-                                </button>
-                            </li>
-
-
-                            {% set radius = null %}
-
-                            {% for offers in product_offers %}
-
-                                {% if radius != offers.offer_value %}
+                                <li class="nav-item" role="presentation">
+                                    <button class="btn nav-link fw-bolder rounded-4 px-3 active" id="all-tab"
+                                            data-bs-toggle="tab"
+                                            data-bs-target="#all-tab-pane" type="button" role="tab"
+                                            aria-controls="all-tab-pane"
+                                            aria-selected="false">Все
+                                    </button>
+                                </li>
 
 
-                                    <li class="nav-item" role="presentation">
-                                        <button class="btn nav-link fw-bolder rounded-4 px-3"
-                                                id="Id{{ offers.offer_value }}-tab"
-                                                data-bs-toggle="tab"
-                                                data-bs-target="#Id{{ offers.offer_value }}-tab-pane" type="button"
-                                                role="tab" aria-controls="Id{{ offers.offer_value }}-tab-pane"
-                                                aria-selected="false">{{ offers.offer_value|call_twig_func(offers.offer_reference) }}
-                                        </button>
-                                    </li>
+                                {% set radius = null %}
 
-                                    {% set radius = offers.offer_value %}
+                                {% for offers in product_offers %}
+
+                                    {% if radius != offers.offer_value %}
 
 
-                                {% endif %}
+                                        <li class="nav-item" role="presentation">
+                                            <button class="btn nav-link fw-bolder rounded-4 px-3"
+                                                    id="Id{{ offers.offer_value }}-tab"
+                                                    data-bs-toggle="tab"
+                                                    data-bs-target="#Id{{ offers.offer_value }}-tab-pane" type="button"
+                                                    role="tab" aria-controls="Id{{ offers.offer_value }}-tab-pane"
+                                                    aria-selected="false">{{ offers.offer_value|call_twig_func(offers.offer_reference) }}
+                                            </button>
+                                        </li>
 
-                            {% endfor %}
+                                        {% set radius = offers.offer_value %}
 
-                        </ul>
 
+                                    {% endif %}
+
+                                {% endfor %}
+
+                            </ul>
+
+
+                        </div>
+
+                        {{ include(_self|replace({ "content.html.twig": "alternative.html.twig" })) }}
 
                     </div>
+                {% endif %}
 
-                    {{ include(_self|replace({ "content.html.twig": "alternative.html.twig" })) }}
 
+                <div class="tab-pane fade flex-column" id="pills-profile" role="tabpanel" tabindex="0">
+                    <h5 class="text-uppercase fw-bolder py-3">Нет в наличии</h5>
+                    {{ include(_self|replace({ "content.html.twig": "notavalible.html.twig" })) }}
                 </div>
-            {% endif %}
 
 
-            <div class="tab-pane fade flex-column" id="pills-profile" role="tabpanel" tabindex="0">
-                <h5 class="text-uppercase fw-bolder py-3">Нет в наличии</h5>
-                {{ include(_self|replace({ "content.html.twig": "notavalible.html.twig" })) }}
+                <div class="tab-pane fade" id="pills-contact" role="tabpanel" tabindex="0">
+                    <h5 class="text-uppercase fw-bolder py-3">Доставка</h5>
+                    {{ include(_self|replace({ "content.html.twig": "delivery.html.twig" })) }}
+                </div>
+
             </div>
-
-
-            <div class="tab-pane fade" id="pills-contact" role="tabpanel" tabindex="0">
-                <h5 class="text-uppercase fw-bolder py-3">Доставка</h5>
-                {{ include(_self|replace({ "content.html.twig": "delivery.html.twig" })) }}
-            </div>
-
-        </div>
         </div>
 
         <div class="col-3">

@@ -61,11 +61,11 @@ final class ProductFilterPropertyForm extends AbstractType
                         [
                             'label' => $data->getLabel(),
                             'required' => false,
-                            'block_name' => $data->getType()
-                        ]
+                            'block_name' => $data->getType(),
+                        ],
                     );
                 }
-            }
+            },
         );
     }
 
@@ -73,7 +73,7 @@ final class ProductFilterPropertyForm extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => ProductFilterPropertyDTO::class,
-            'properties' => null
+            'properties' => null,
         ]);
     }
 }

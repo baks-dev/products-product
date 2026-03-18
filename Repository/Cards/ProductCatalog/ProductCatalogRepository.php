@@ -158,6 +158,18 @@ final class ProductCatalogRepository implements ProductCatalogInterface
     }
 
     /**
+     * Метод возвращает список продуктов из разных категорий
+     *
+     * @return array<int, ProductCatalogResult>|false
+     */
+    public function toArray(string $expr = 'AND'): array|false
+    {
+        $result = $this->findAll();
+
+        return (false !== $result) ? iterator_to_array($result) : false;
+    }
+
+    /**
      * Метод возвращает ограниченный по количеству элементов список продуктов из разных категорий
      *
      * @return Generator<int, ProductCatalogResult>|false
@@ -1211,18 +1223,6 @@ final class ProductCatalogRepository implements ProductCatalogInterface
         $result = $dbal->fetchAllHydrate(ProductCatalogResult::class);
 
         return (true === $result->valid()) ? $result : false;
-    }
-
-    /**
-     * Метод возвращает список продуктов из разных категорий
-     *
-     * @return array<int, ProductCatalogResult>|false
-     */
-    public function toArray(string $expr = 'AND'): array|false
-    {
-        $result = $this->findAll();
-
-        return (false !== $result) ? iterator_to_array($result) : false;
     }
 
 

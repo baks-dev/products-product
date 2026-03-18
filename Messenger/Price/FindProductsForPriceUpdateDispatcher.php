@@ -56,7 +56,7 @@ final readonly class FindProductsForPriceUpdateDispatcher
         $products = $this->AllProductsForPriceUpdateRepository->findAll();
 
         /** @var AllProductsForPriceUpdateResult $product */
-        foreach ($products as $product)
+        foreach($products as $product)
         {
             /**
              * Находим наибольшую вложенность и для нее себестоимость продукта, а также валюту себестоимости и валюту

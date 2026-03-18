@@ -192,7 +192,7 @@ final class ProductCategoryFilterForm extends AbstractType
 
                     $this->session->remove($this->sessionKey);
                 }
-            }
+            },
         );
 
         $data = $builder->getData();
@@ -231,7 +231,7 @@ final class ProductCategoryFilterForm extends AbstractType
                             'label' => $offerField->getOption(),
                             'priority' => 200,
                             'required' => false,
-                        ]
+                        ],
                     );
 
                     /** Множественные варианты торгового предложения */
@@ -255,7 +255,7 @@ final class ProductCategoryFilterForm extends AbstractType
                                     'priority' => 199,
                                     'required' => false,
 
-                                ]
+                                ],
                             );
 
                             /** Модификации множественных вариантов торгового предложения */
@@ -278,7 +278,7 @@ final class ProductCategoryFilterForm extends AbstractType
                                             'label' => $modificationField->getOption(),
                                             'priority' => 198,
                                             'required' => false,
-                                        ]
+                                        ],
                                     );
                                 }
                             }
@@ -324,7 +324,7 @@ final class ProductCategoryFilterForm extends AbstractType
                                 'required' => false,
                                 'block_name' => $blockName,
                                 'data' => $session[$field['type']] ?? null,
-                            ]
+                            ],
                         );
                     }
 
@@ -370,7 +370,7 @@ final class ProductCategoryFilterForm extends AbstractType
         $builder->add(
             'filter',
             SubmitType::class,
-            ['label' => 'Save', 'label_html' => true, 'attr' => ['class' => 'btn-primary']]
+            ['label' => 'Save', 'label_html' => true, 'attr' => ['class' => 'btn-primary']],
         );
 
     }

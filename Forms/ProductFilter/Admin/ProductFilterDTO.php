@@ -219,6 +219,11 @@ final class ProductFilterDTO implements ProductFilterInterface
         return $this;
     }
 
+    public function getMaterials(): bool|null
+    {
+        return $this->materials;
+    }
+
     /**
      * Materials
      */
@@ -226,11 +231,6 @@ final class ProductFilterDTO implements ProductFilterInterface
     {
         $this->materials = $materials === true;
         return $this;
-    }
-
-    public function getMaterials(): bool|null
-    {
-        return $this->materials;
     }
 
     public function hiddenMaterials(): self

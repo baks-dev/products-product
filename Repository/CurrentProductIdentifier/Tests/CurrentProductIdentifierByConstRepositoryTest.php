@@ -95,9 +95,9 @@ class CurrentProductIdentifierByConstRepositoryTest extends KernelTestCase
         self::$result = $dbal->fetchAssociative();
 
 
-
         /**
          * Обновляем событие
+         *
          * @var CurrentProductEventInterface $CurrentProductEvent
          */
 

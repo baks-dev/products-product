@@ -37,7 +37,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @see ProductOfferOptEvent
  */
-
 #[ORM\Entity]
 #[ORM\Table(name: 'product_offer_opt')]
 class ProductOfferOpt extends EntityEvent

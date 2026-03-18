@@ -182,6 +182,42 @@ final readonly class ProductModelOfferResult implements ProductPriceResultInterf
         return $this->article;
     }
 
+    public function getProductCurrency(): string
+    {
+        return $this->currency;
+    }
+
+    public function getProductQuantity(): int
+    {
+        return $this->quantity ?: 0;
+    }
+
+    /** Возвращает разницу между старой и новой ценами в процентах */
+    public function getDiscountPercent(): int|null
+    {
+        if(false === $this->getProductPrice())
+        {
+            return null;
+        }
+
+        if(false === $this->getProductOldPrice())
+        {
+            return null;
+        }
+
+        $price = $this->getProductPrice()->getValue();
+
+        $oldPrice = $this->getProductOldPrice()->getValue();
+
+        $discountPercent = null;
+        if($oldPrice > $price)
+        {
+            $discountPercent = (int) (($oldPrice - $price) / $oldPrice * 100);
+        }
+
+        return $discountPercent;
+    }
+
     public function getProductPrice(): Money|false
     {
         if(empty($this->price))
@@ -212,6 +248,8 @@ final readonly class ProductModelOfferResult implements ProductPriceResultInterf
         return $price;
     }
 
+    /** Helpers */
+
     public function getProductOldPrice(): Money|false
     {
         if(empty($this->old_price))
@@ -240,44 +278,6 @@ final readonly class ProductModelOfferResult implements ProductPriceResultInterf
         }
 
         return $price;
-    }
-
-    public function getProductCurrency(): string
-    {
-        return $this->currency;
-    }
-
-    public function getProductQuantity(): int
-    {
-        return $this->quantity ?: 0;
-    }
-
-    /** Helpers */
-
-    /** Возвращает разницу между старой и новой ценами в процентах */
-    public function getDiscountPercent(): int|null
-    {
-        if(false === $this->getProductPrice())
-        {
-            return null;
-        }
-
-        if(false === $this->getProductOldPrice())
-        {
-            return null;
-        }
-
-        $price = $this->getProductPrice()->getValue();
-
-        $oldPrice = $this->getProductOldPrice()->getValue();
-
-        $discountPercent = null;
-        if($oldPrice > $price)
-        {
-            $discountPercent = (int) (($oldPrice - $price) / $oldPrice * 100);
-        }
-
-        return $discountPercent;
     }
 
     public function isDeliveryRegion(): bool

@@ -27,6 +27,7 @@ interface ProductConstByBarcodeInterface
 {
     /**
      * Метод возвращает идентификаторы продукции по штрихкоду
+     *
      * @see CurrentProductIdentifierResult
      */
     public function find(string $barcode): CurrentProductByBarcodeResult|false;

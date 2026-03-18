@@ -70,8 +70,8 @@ final class ProductModificationCollectionForm extends AbstractType
                 },
                 function($categoryModification) {
                     return empty($categoryModification) ? null : new CategoryProductModificationUid($categoryModification);
-                }
-            )
+                },
+            ),
         );
 
         $builder->add('const', HiddenType::class);
@@ -83,8 +83,8 @@ final class ProductModificationCollectionForm extends AbstractType
                 },
                 function($const) {
                     return new ProductModificationConst($const);
-                }
-            )
+                },
+            ),
         );
 
         $builder->add('article', TextType::class);
@@ -165,7 +165,7 @@ final class ProductModificationCollectionForm extends AbstractType
                                     'required' => false,
                                     //'mapped' => false,
                                     //'attr' => [ 'data-select' => 'select2' ],
-                                ]
+                                ],
                             );
                         }
                     }
@@ -175,7 +175,7 @@ final class ProductModificationCollectionForm extends AbstractType
                     {
                         $form->add('postfix', TextType::class,
                             [
-                                'attr' => ['placeholder' => $modification->postfixName]
+                                'attr' => ['placeholder' => $modification->postfixName],
                             ]);
                     }
                     else
@@ -209,7 +209,7 @@ final class ProductModificationCollectionForm extends AbstractType
                         $form->remove('opt');
                     }
                 }
-            }
+            },
         );
 
         $builder->add(
@@ -219,7 +219,7 @@ final class ProductModificationCollectionForm extends AbstractType
                 'label_html' => true,
                 'attr' =>
                     ['class' => 'btn btn-sm btn-icon btn-light-danger del-item-modification'],
-            ]
+            ],
         );
 
     }

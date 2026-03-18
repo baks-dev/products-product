@@ -63,7 +63,7 @@ final class CurrentQuantityByModificationRepository implements CurrentQuantityBy
             Product::class,
             'product',
             'WITH',
-            'product.id = event.main'
+            'product.id = event.main',
         );
 
 
@@ -73,19 +73,19 @@ final class CurrentQuantityByModificationRepository implements CurrentQuantityBy
             ProductOffer::class,
             'offer',
             'WITH',
-            'offer.id = :offer AND offer.event = event.id'
+            'offer.id = :offer AND offer.event = event.id',
         )
             ->setParameter(
                 'offer',
                 $offer,
-                ProductOfferUid::TYPE
+                ProductOfferUid::TYPE,
             );
 
         $qb->leftJoin(
             ProductOffer::class,
             'current_offer',
             'WITH',
-            'current_offer.const = offer.const AND current_offer.event = product.event'
+            'current_offer.const = offer.const AND current_offer.event = product.event',
         ); //
 
 
@@ -95,19 +95,19 @@ final class CurrentQuantityByModificationRepository implements CurrentQuantityBy
             ProductVariation::class,
             'variation',
             'WITH',
-            'variation.id = :variation AND variation.offer = offer.id'
+            'variation.id = :variation AND variation.offer = offer.id',
         )
             ->setParameter(
                 'variation',
                 $variation,
-                ProductVariationUid::TYPE
+                ProductVariationUid::TYPE,
             );
 
         $qb->leftJoin(
             ProductVariation::class,
             'current_variation',
             'WITH',
-            'current_variation.const = variation.const AND current_variation.offer = current_offer.id'
+            'current_variation.const = variation.const AND current_variation.offer = current_offer.id',
         );
 
 
@@ -117,19 +117,19 @@ final class CurrentQuantityByModificationRepository implements CurrentQuantityBy
             ProductModification::class,
             'modification',
             'WITH',
-            'modification.id = :modification AND modification.variation = variation.id'
+            'modification.id = :modification AND modification.variation = variation.id',
         )
             ->setParameter(
                 'modification',
                 $modification,
-                ProductModificationUid::TYPE
+                ProductModificationUid::TYPE,
             );
 
         $qb->leftJoin(
             ProductModification::class,
             'current_modification',
             'WITH',
-            'current_modification.const = modification.const AND current_modification.variation = current_variation.id'
+            'current_modification.const = modification.const AND current_modification.variation = current_variation.id',
         );
 
 
@@ -140,7 +140,7 @@ final class CurrentQuantityByModificationRepository implements CurrentQuantityBy
                 ProductModificationQuantity::class,
                 'quantity',
                 'WITH',
-                'quantity.modification = current_modification.id'
+                'quantity.modification = current_modification.id',
             );
 
 

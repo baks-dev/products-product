@@ -58,7 +58,7 @@ final class RenameController extends AbstractController
         $form = $this->createForm(
             RenameProductForm::class,
             $RenameProductDTO,
-            ['action' => $this->generateUrl('products-product:admin.rename', ['id' => $RenameProductDTO->getEvent()])]
+            ['action' => $this->generateUrl('products-product:admin.rename', ['id' => $RenameProductDTO->getEvent()])],
         );
         $form->handleRequest($request);
 
@@ -72,7 +72,7 @@ final class RenameController extends AbstractController
                 'page.edit',
                 $handle instanceof Product ? 'success.rename' : 'danger.rename',
                 'products-product.admin',
-                $handle
+                $handle,
             );
 
             return $this->redirectToRoute('products-product:admin.index');

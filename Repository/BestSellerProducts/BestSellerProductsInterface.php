@@ -41,12 +41,14 @@ interface BestSellerProductsInterface
 
     /**
      * Метод возвращает информацию о самых продаваемых продуктах
+     *
      * @return array<int, BestSellerProductsResult>|false
      */
     public function toArray(): array|false;
 
     /**
      * Метод возвращает информацию о самых продаваемых продуктах
+     *
      * @return Generator<int, BestSellerProductsResult>|false
      */
     public function findAll(): Generator|false;

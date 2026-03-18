@@ -48,7 +48,7 @@ final class RenameProductForm extends AbstractType
         $builder->add(
             'rename_product',
             SubmitType::class,
-            ['label' => 'Save', 'label_html' => true, 'attr' => ['class' => 'btn-primary']]
+            ['label' => 'Save', 'label_html' => true, 'attr' => ['class' => 'btn-primary']],
         );
     }
 
@@ -59,7 +59,7 @@ final class RenameProductForm extends AbstractType
                 'data_class' => RenameProductDTO::class,
                 'method' => 'POST',
                 'attr' => ['class' => 'w-100'],
-            ]
+            ],
         );
     }
 

@@ -42,11 +42,6 @@ class ProductVariationSearchTag extends AbstractProductSearchTag implements Sear
         return 3;
     }
 
-    public function getModuleName(): string
-    {
-        return self::TAG;
-    }
-
     /**
      * Подготовка сущности по множественным вариантам торгового предложения
      */
@@ -71,6 +66,11 @@ class ProductVariationSearchTag extends AbstractProductSearchTag implements Sear
 
         return $this->entityDocument;
 
+    }
+
+    public function getModuleName(): string
+    {
+        return self::TAG;
     }
 
 }

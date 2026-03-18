@@ -80,7 +80,7 @@ class ProductsRepackWebpCdnCommand extends Command
         $question = new ChoiceQuestion(
             question: 'Сжатие изображений продукции (Ctrl+C чтобы выйти)',
             choices: $questions,
-            default: '0'
+            default: '0',
         );
 
         $key = $helper->ask($input, $output, $question);
@@ -108,7 +108,7 @@ class ProductsRepackWebpCdnCommand extends Command
             {
                 $io->writeln(sprintf(
                     '<fg=red>Ошибка при сжатии изображения: класс %s не найден</>',
-                    $UnCompressProductsImagesResult->getEntity()
+                    $UnCompressProductsImagesResult->getEntity(),
                 ));
 
                 return Command::FAILURE;
@@ -118,7 +118,7 @@ class ProductsRepackWebpCdnCommand extends Command
             $CDNUploadImageMessage = new CDNUploadImageMessage(
                 $UnCompressProductsImagesResult->getIdentifier(),
                 $UnCompressProductsImagesResult->getEntity(),
-                $UnCompressProductsImagesResult->getName()
+                $UnCompressProductsImagesResult->getName(),
             );
 
             /**
@@ -134,7 +134,7 @@ class ProductsRepackWebpCdnCommand extends Command
                     $io->writeln(sprintf(
                             '<fg=red>Ошибка при сжатии изображения %s: %s</>',
                             $UnCompressProductsImagesResult->getEntity(),
-                            $UnCompressProductsImagesResult->getIdentifier())
+                            $UnCompressProductsImagesResult->getIdentifier()),
                     );
                 }
             }
@@ -147,7 +147,7 @@ class ProductsRepackWebpCdnCommand extends Command
             {
                 $this->MessageDispatch->dispatch(
                     message: $CDNUploadImageMessage,
-                    transport: 'files-res-low'
+                    transport: 'files-res-low',
                 );
             }
 

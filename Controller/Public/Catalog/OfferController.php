@@ -67,7 +67,7 @@ final class OfferController extends AbstractController
         $filterForm = $this->createForm(
             ProductCategoryFilterForm::class,
             $ProductCategoryFilterDTO,
-            ['action' => $this->generateUrl('products-product:public.catalog.category', ['category' => $category])]
+            ['action' => $this->generateUrl('products-product:public.catalog.category', ['category' => $category])],
         );
         $filterForm->handleRequest($request);
 

@@ -59,7 +59,7 @@ final class UpdateVariationQuantityTest extends KernelTestCase
 
         $variation = $result->getProductVariationId();
 
-        /** @var UpdateVariationQuantityHandler$handler */
+        /** @var UpdateVariationQuantityHandler $handler */
         $handler = self::getContainer()->get(UpdateVariationQuantityHandler::class);
         $dto = new UpdateVariationQuantityDTO(
             $variation,

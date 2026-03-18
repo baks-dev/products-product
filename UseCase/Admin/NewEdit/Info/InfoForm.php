@@ -49,7 +49,7 @@ final class InfoForm extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => InfoDTO::class,
-            ]
+            ],
         );
     }
 

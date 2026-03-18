@@ -55,14 +55,14 @@ final class ProductVariationQuantityRepository implements ProductVariationQuanti
             ->setParameter(
                 key: 'product',
                 value: $product,
-                type: ProductUid::TYPE
+                type: ProductUid::TYPE,
             );
 
         $qb->join(
             ProductEvent::class,
             'event',
             'WITH',
-            'event.id = product.event'
+            'event.id = product.event',
         );
 
         // Торговое предложение
@@ -72,12 +72,12 @@ final class ProductVariationQuantityRepository implements ProductVariationQuanti
                 ProductOffer::class,
                 'offer',
                 'WITH',
-                'offer.event = event.id AND offer.const = :offer_const'
+                'offer.event = event.id AND offer.const = :offer_const',
             )
             ->setParameter(
                 key: 'offer_const',
                 value: $offer,
-                type: ProductOfferConst::TYPE
+                type: ProductOfferConst::TYPE,
             );
 
         // Множественный вариант
@@ -87,12 +87,12 @@ final class ProductVariationQuantityRepository implements ProductVariationQuanti
                 ProductVariation::class,
                 'variation',
                 'WITH',
-                'variation.offer = offer.id AND variation.const = :variation_const'
+                'variation.offer = offer.id AND variation.const = :variation_const',
             )
             ->setParameter(
                 key: 'variation_const',
                 value: $variation,
-                type: ProductVariationConst::TYPE
+                type: ProductVariationConst::TYPE,
             );
 
 
@@ -102,7 +102,7 @@ final class ProductVariationQuantityRepository implements ProductVariationQuanti
                 ProductVariationQuantity::class,
                 'quantity',
                 'WITH',
-                'quantity.variation = variation.id'
+                'quantity.variation = variation.id',
             );
 
 
@@ -112,7 +112,7 @@ final class ProductVariationQuantityRepository implements ProductVariationQuanti
             CategoryProductVariation::class,
             'category_variation',
             'WITH',
-            'category_variation.id = variation.categoryVariation AND category_variation.quantitative = true'
+            'category_variation.id = variation.categoryVariation AND category_variation.quantitative = true',
         );
 
         return $qb->getOneOrNullResult();

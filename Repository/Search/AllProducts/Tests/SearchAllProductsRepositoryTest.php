@@ -40,7 +40,7 @@ class SearchAllProductsRepositoryTest extends KernelTestCase
 
         $search = new SearchDTO();
         //        $search->setQuery('triangle');
-//        $search->setQuery('tri');
+        //        $search->setQuery('tri');
         $search->setQuery('?;+tri');
 
         $result = $repository

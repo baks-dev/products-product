@@ -56,7 +56,7 @@ final class CurrentQuantityByOfferRepository implements CurrentQuantityByOfferIn
             Product::class,
             'product',
             'WITH',
-            'product.id = event.main'
+            'product.id = event.main',
         );
 
         /** Торговое предложение */
@@ -65,19 +65,19 @@ final class CurrentQuantityByOfferRepository implements CurrentQuantityByOfferIn
             ProductOffer::class,
             'offer',
             'WITH',
-            'offer.id = :offer AND offer.event = event.id'
+            'offer.id = :offer AND offer.event = event.id',
         )
             ->setParameter(
                 'offer',
                 $offer,
-                ProductOfferUid::TYPE
+                ProductOfferUid::TYPE,
             );
 
         $qb->leftJoin(
             ProductOffer::class,
             'current_offer',
             'WITH',
-            'current_offer.const = offer.const AND current_offer.event = product.event'
+            'current_offer.const = offer.const AND current_offer.event = product.event',
         );
 
 
@@ -86,7 +86,7 @@ final class CurrentQuantityByOfferRepository implements CurrentQuantityByOfferIn
             ProductOfferQuantity::class,
             'quantity',
             'WITH',
-            'quantity.offer = current_offer.id'
+            'quantity.offer = current_offer.id',
         );
 
 

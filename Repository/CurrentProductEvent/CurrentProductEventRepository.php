@@ -58,7 +58,7 @@ final readonly class CurrentProductEventRepository implements CurrentProductEven
             ->setParameter(
                 key: 'product',
                 value: $product,
-                type: ProductUid::TYPE
+                type: ProductUid::TYPE,
             );
         $qb
             ->select('event')
@@ -66,7 +66,7 @@ final readonly class CurrentProductEventRepository implements CurrentProductEven
                 ProductEvent::class,
                 'event',
                 'WITH',
-                'event.id = product.event AND event.main = product.id'
+                'event.id = product.event AND event.main = product.id',
             );
 
 
@@ -96,7 +96,7 @@ final readonly class CurrentProductEventRepository implements CurrentProductEven
             ->setParameter(
                 key: 'last',
                 value: $last,
-                type: ProductEventUid::TYPE
+                type: ProductEventUid::TYPE,
             );
 
         $qb
@@ -104,7 +104,7 @@ final readonly class CurrentProductEventRepository implements CurrentProductEven
                 Product::class,
                 'product',
                 'WITH',
-                'product.id = last.main'
+                'product.id = last.main',
             );
 
         $qb
@@ -113,7 +113,7 @@ final readonly class CurrentProductEventRepository implements CurrentProductEven
                 ProductEvent::class,
                 'event',
                 'WITH',
-                'event.id = product.event'
+                'event.id = product.event',
             );
 
 

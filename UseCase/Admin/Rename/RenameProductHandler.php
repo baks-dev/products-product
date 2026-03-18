@@ -77,7 +77,7 @@ final readonly class RenameProductHandler
             $this->logger->error(sprintf(
                 '%s: Событие ProductEvent не найдено (event: %s)',
                 $uniqid,
-                $command->getEvent()
+                $command->getEvent(),
             ), [self::class.':'.__LINE__]);
 
             return $uniqid;
@@ -101,7 +101,7 @@ final readonly class RenameProductHandler
             $this->logger->error(sprintf(
                 '%s: Агрегат Product не найден, либо был изменен (event: %s)',
                 $uniqid,
-                $command->getEvent()
+                $command->getEvent(),
             ), [self::class.':'.__LINE__]);
 
             return $uniqid;

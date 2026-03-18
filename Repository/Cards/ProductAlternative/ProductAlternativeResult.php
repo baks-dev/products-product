@@ -233,66 +233,6 @@ final readonly class ProductAlternativeResult implements ProductCardResultInterf
         return $images;
     }
 
-    public function getProductPrice(): Money|false
-    {
-        if(empty($this->product_price))
-        {
-            return false;
-        }
-
-        $price = new Money($this->product_price, true);
-
-        /** Кастомная цена */
-        if(false === empty($this->promotion_price) && true === $this->promotion_active)
-        {
-            $price->applyString($this->promotion_price);
-        }
-
-        /** Скидка магазина */
-        if(false === empty($this->project_discount))
-        {
-            $price->applyString($this->project_discount);
-        }
-
-        /** Скидка пользователя */
-        if(false === empty($this->profile_discount))
-        {
-            $price->applyString($this->profile_discount);
-        }
-
-        return $price;
-    }
-
-    public function getProductOldPrice(): Money|false
-    {
-        if(empty($this->product_old_price))
-        {
-            return false;
-        }
-
-        $price = new Money($this->product_old_price, true);
-
-        /** Кастомная цена */
-        if(false === empty($this->promotion_price) && true === $this->promotion_active)
-        {
-            $price->applyString($this->promotion_price);
-        }
-
-        /** Скидка магазина */
-        if(false === empty($this->project_discount))
-        {
-            $price->applyString($this->project_discount);
-        }
-
-        /** Скидка пользователя */
-        if(false === empty($this->profile_discount))
-        {
-            $price->applyString($this->profile_discount);
-        }
-
-        return $price;
-    }
-
     public function getProductCurrency(): Currency
     {
         return new Currency($this->product_currency);
@@ -467,5 +407,65 @@ final readonly class ProductAlternativeResult implements ProductCardResultInterf
         }
 
         return $discountPercent;
+    }
+
+    public function getProductPrice(): Money|false
+    {
+        if(empty($this->product_price))
+        {
+            return false;
+        }
+
+        $price = new Money($this->product_price, true);
+
+        /** Кастомная цена */
+        if(false === empty($this->promotion_price) && true === $this->promotion_active)
+        {
+            $price->applyString($this->promotion_price);
+        }
+
+        /** Скидка магазина */
+        if(false === empty($this->project_discount))
+        {
+            $price->applyString($this->project_discount);
+        }
+
+        /** Скидка пользователя */
+        if(false === empty($this->profile_discount))
+        {
+            $price->applyString($this->profile_discount);
+        }
+
+        return $price;
+    }
+
+    public function getProductOldPrice(): Money|false
+    {
+        if(empty($this->product_old_price))
+        {
+            return false;
+        }
+
+        $price = new Money($this->product_old_price, true);
+
+        /** Кастомная цена */
+        if(false === empty($this->promotion_price) && true === $this->promotion_active)
+        {
+            $price->applyString($this->promotion_price);
+        }
+
+        /** Скидка магазина */
+        if(false === empty($this->project_discount))
+        {
+            $price->applyString($this->project_discount);
+        }
+
+        /** Скидка пользователя */
+        if(false === empty($this->profile_discount))
+        {
+            $price->applyString($this->profile_discount);
+        }
+
+        return $price;
     }
 }

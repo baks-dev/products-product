@@ -43,7 +43,7 @@ final class UpdateProductModificationPriceDTO implements ProductModificationPric
     private ?Money $price;
 
     private ?ProductEventUid $productEvent = null;
-    
+
     public function getModification(): ?ProductModificationUid
     {
         return $this->modificationId;

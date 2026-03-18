@@ -67,7 +67,7 @@ final class DeleteController extends AbstractController
                 'page.delete',
                 $handle instanceof Product ? 'success.delete' : 'danger.delete',
                 'products-product.admin',
-                $handle
+                $handle,
             );
 
             return $this->redirectToRoute('products-product:admin.index');
@@ -77,7 +77,7 @@ final class DeleteController extends AbstractController
             [
                 'form' => $form->createView(),
                 'name' => $Event->getNameByLocale($this->getLocale()), // название согласно локали
-            ]
+            ],
         );
     }
 }

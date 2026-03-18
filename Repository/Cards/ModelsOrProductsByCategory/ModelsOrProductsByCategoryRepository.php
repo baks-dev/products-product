@@ -168,33 +168,6 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
         return $this->paginator->fetchAllHydrate($dbal, ModelOrProductByCategoryResult::class, 'products-product');
     }
 
-    /** @return array<int, ModelOrProductByCategoryResult>|false */
-    public function toArray(string $expr = 'AND'): array|false
-    {
-        if(false === $this->maxResult)
-        {
-            throw new InvalidArgumentException('Не передан обязательный параметр запроса $maxResult');
-        }
-
-        $result = $this->findAll($expr);
-
-        return (true === $result->valid()) ? iterator_to_array($result) : false;
-    }
-
-    /** @return Generator<int, ModelOrProductByCategoryResult>|false */
-    public function findAll(string $expr = 'AND'): Generator|false
-    {
-        $dbal = $this->builder($expr);
-
-        $dbal->setMaxResults($this->maxResult);
-
-        $dbal->enableCache('products-product');
-
-        $result = $dbal->fetchAllHydrate(ModelOrProductByCategoryResult::class);
-
-        return (true === $result->valid()) ? $result : false;
-    }
-
     private function builder(string $expr): DBALQueryBuilder
     {
         if(false === $this->categories)
@@ -1022,7 +995,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                                 )
                         END 
                     )
-                    AS promotion_price"
+                    AS promotion_price",
             );
         }
 
@@ -1100,7 +1073,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                     UserProfile::class,
                     'current_profile',
                     '
-                        current_profile.id = :'.$dbal::CURRENT_PROFILE_KEY
+                        current_profile.id = :'.$dbal::CURRENT_PROFILE_KEY,
                 );
 
             $dbal
@@ -1111,7 +1084,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                     'current_profile_discount',
                     '
                         current_profile_discount.event = current_profile.event
-                        '
+                        ',
                 );
         }
 
@@ -1125,7 +1098,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                     UserProfile::class,
                     'project_profile',
                     '
-                        project_profile.id = :'.$dbal::PROJECT_PROFILE_KEY
+                        project_profile.id = :'.$dbal::PROJECT_PROFILE_KEY,
                 );
 
             $dbal
@@ -1135,7 +1108,7 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
                     UserProfileDiscount::class,
                     'project_profile_discount',
                     '
-                        project_profile_discount.event = project_profile.event'
+                        project_profile_discount.event = project_profile.event',
                 );
         }
 
@@ -1165,6 +1138,33 @@ final class ModelsOrProductsByCategoryRepository implements ModelsOrProductsByCa
         $dbal->addOrderBy('SUM(product_price.quantity)', 'DESC');
 
         return $dbal;
+    }
+
+    /** @return array<int, ModelOrProductByCategoryResult>|false */
+    public function toArray(string $expr = 'AND'): array|false
+    {
+        if(false === $this->maxResult)
+        {
+            throw new InvalidArgumentException('Не передан обязательный параметр запроса $maxResult');
+        }
+
+        $result = $this->findAll($expr);
+
+        return (true === $result->valid()) ? iterator_to_array($result) : false;
+    }
+
+    /** @return Generator<int, ModelOrProductByCategoryResult>|false */
+    public function findAll(string $expr = 'AND'): Generator|false
+    {
+        $dbal = $this->builder($expr);
+
+        $dbal->setMaxResults($this->maxResult);
+
+        $dbal->enableCache('products-product');
+
+        $result = $dbal->fetchAllHydrate(ModelOrProductByCategoryResult::class);
+
+        return (true === $result->valid()) ? $result : false;
     }
 
     public function analyze(string $expr = 'AND'): void

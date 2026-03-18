@@ -78,7 +78,7 @@ final class ProductBestSellerExtension extends AbstractExtension
             name: $path,
             context: [
                 'bestSellers' => $bestSellers,
-            ]
+            ],
         );
     }
 
@@ -110,7 +110,7 @@ final class ProductBestSellerExtension extends AbstractExtension
             context: [
                 'bestSellers' => $bestSellers,
                 'invariable' => $invariable,
-            ]
+            ],
         );
     }
 }

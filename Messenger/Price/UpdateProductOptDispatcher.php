@@ -119,7 +119,7 @@ final readonly class UpdateProductOptDispatcher
             return;
         }
 
-        
+
         /** Если Modification === FALSE, но передан Variation - изменяем оптовую цену VariationOpt */
         if(
             false === ($message->getModification() instanceof ProductModificationUid) &&

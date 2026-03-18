@@ -46,6 +46,55 @@ class AddSubProductQuantityRepositoryTest extends KernelTestCase
 {
     private static array|false $result;
 
+    public static function testAddEventQuantity(): void
+    {
+        self::getData();
+
+        /** @var AddProductQuantityInterface $AddProductQuantityInterface */
+        $AddProductQuantityInterface = self::getContainer()->get(AddProductQuantityInterface::class);
+
+        $data = self::$result;
+
+        $int = $AddProductQuantityInterface
+            ->forEvent(self::$result['event'])
+            //->forOffer(self::$result['offer'])
+            //->forVariation(self::$result['variation'])
+            //->forModification(self::$result['modification'])
+            ->addQuantity(1)
+            //->addReserve(1)
+            ->update();
+        self::assertEquals(1, $int);
+
+        self::getData();
+
+
+        self::assertEquals($data['offer_quantity'], self::$result['offer_quantity']);
+        self::assertEquals($data['offer_reserve'], self::$result['offer_reserve']);
+        self::assertEquals($data['variation_quantity'], self::$result['variation_quantity']);
+        self::assertEquals($data['variation_reserve'], self::$result['variation_reserve']);
+        self::assertEquals($data['modification_quantity'], self::$result['modification_quantity']);
+        self::assertEquals($data['modification_reserve'], self::$result['modification_reserve']);
+
+
+        self::assertEquals(($data['quantity'] + 1), self::$result['quantity']);
+        self::assertEquals(($data['reserve']), self::$result['reserve']);
+
+    }
+
+    /*
+    "event" => "0191140d-eaa3-7f16-9218-f8b05c20266f"
+    "quantity" => 0
+    "reserve" => 0
+    "offer" => "0191140d-eaa4-77aa-97c5-873d13abeb06"
+    "offer_quantity" => 0
+    "offer_reserve" => 0
+    "variation" => "0191140d-eaa4-77aa-97c5-873d14871960"
+    "variation_quantity" => 0
+    "variation_reserve" => 0
+    "modification" => "0191140d-eaa4-77aa-97c5-873d148f68f8"
+    "modification_quantity" => 10
+    "modification_reserve" => 4*/
+
     public static function getData(): void
     {
         $DBALQueryBuilder = self::getContainer()->get(DBALQueryBuilder::class);
@@ -65,7 +114,7 @@ class AddSubProductQuantityRepositoryTest extends KernelTestCase
                 'product',
                 ProductPrice::class,
                 'quantity',
-                'quantity.event = product.event'
+                'quantity.event = product.event',
             );
 
         $dbal
@@ -102,56 +151,6 @@ class AddSubProductQuantityRepositoryTest extends KernelTestCase
         self::$result = $dbal->fetchAssociative();
 
     }
-
-    /*
-    "event" => "0191140d-eaa3-7f16-9218-f8b05c20266f"
-    "quantity" => 0
-    "reserve" => 0
-    "offer" => "0191140d-eaa4-77aa-97c5-873d13abeb06"
-    "offer_quantity" => 0
-    "offer_reserve" => 0
-    "variation" => "0191140d-eaa4-77aa-97c5-873d14871960"
-    "variation_quantity" => 0
-    "variation_reserve" => 0
-    "modification" => "0191140d-eaa4-77aa-97c5-873d148f68f8"
-    "modification_quantity" => 10
-    "modification_reserve" => 4*/
-
-    public static function testAddEventQuantity(): void
-    {
-        self::getData();
-
-        /** @var AddProductQuantityInterface $AddProductQuantityInterface */
-        $AddProductQuantityInterface = self::getContainer()->get(AddProductQuantityInterface::class);
-
-        $data = self::$result;
-
-        $int = $AddProductQuantityInterface
-            ->forEvent(self::$result['event'])
-            //->forOffer(self::$result['offer'])
-            //->forVariation(self::$result['variation'])
-            //->forModification(self::$result['modification'])
-            ->addQuantity(1)
-            //->addReserve(1)
-            ->update();
-        self::assertEquals(1, $int);
-
-        self::getData();
-
-
-        self::assertEquals($data['offer_quantity'], self::$result['offer_quantity']);
-        self::assertEquals($data['offer_reserve'], self::$result['offer_reserve']);
-        self::assertEquals($data['variation_quantity'], self::$result['variation_quantity']);
-        self::assertEquals($data['variation_reserve'], self::$result['variation_reserve']);
-        self::assertEquals($data['modification_quantity'], self::$result['modification_quantity']);
-        self::assertEquals($data['modification_reserve'], self::$result['modification_reserve']);
-
-
-        self::assertEquals(($data['quantity'] + 1), self::$result['quantity']);
-        self::assertEquals(($data['reserve']), self::$result['reserve']);
-
-    }
-
 
     public static function testAddEventReserve(): void
     {

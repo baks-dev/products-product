@@ -28,6 +28,7 @@ namespace BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Price;
 use BaksDev\Products\Product\Entity\Offers\Price\ProductOfferPriceInterface;
 use BaksDev\Reference\Currency\Type\Currency;
 use BaksDev\Reference\Money\Type\Money;
+use DateTimeImmutable;
 
 /** @see ProductOfferPrice */
 final class ProductOfferPriceDTO implements ProductOfferPriceInterface
@@ -40,6 +41,9 @@ final class ProductOfferPriceDTO implements ProductOfferPriceInterface
 
     /** Валюта */
     private ?Currency $currency;
+
+    /** Дата и время изменения цены */
+    private ?DateTimeImmutable $up;
 
 
     public function __construct()
@@ -66,6 +70,11 @@ final class ProductOfferPriceDTO implements ProductOfferPriceInterface
             {
                 // если цена снизилась - присваиваем старой цене, если повысилась - сбрасываем
                 $this->old = $this->price;
+            }
+
+            if(false === is_null($this->price) && $this->price->getValue() !== $price->getValue())
+            {
+                $this->up = new DateTimeImmutable();
             }
         }
 
@@ -98,6 +107,17 @@ final class ProductOfferPriceDTO implements ProductOfferPriceInterface
     public function setCurrency(?Currency $currency): void
     {
         $this->currency = $currency;
+    }
+
+    public function getUp(): ?DateTimeImmutable
+    {
+        return $this->up;
+    }
+
+    public function setUp(?DateTimeImmutable $up): self
+    {
+        $this->up = $up;
+        return $this;
     }
 
 }

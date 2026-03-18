@@ -102,7 +102,7 @@ final class ProductEventByArticleRepository implements ProductEventByArticleInte
                 ->setParameter(
                     key: 'profile',
                     value: $this->profile,
-                    type: UserProfileUid::TYPE
+                    type: UserProfileUid::TYPE,
                 );
         }
 
@@ -110,11 +110,11 @@ final class ProductEventByArticleRepository implements ProductEventByArticleInte
             Product::class,
             'product',
             'WITH',
-            'product.id = info.product'
+            'product.id = info.product',
         )
             ->setParameter(
                 key: 'article',
-                value: $article
+                value: $article,
             );
 
         $orm
@@ -123,7 +123,7 @@ final class ProductEventByArticleRepository implements ProductEventByArticleInte
                 ProductEvent::class,
                 'event',
                 'WITH',
-                'event.id = product.event'
+                'event.id = product.event',
             );
 
         if(true === $this->isCard)
@@ -151,7 +151,7 @@ final class ProductEventByArticleRepository implements ProductEventByArticleInte
             ->where('offer.article = :article')
             ->setParameter(
                 key: 'article',
-                value: $article
+                value: $article,
             );
 
         $orm
@@ -160,7 +160,7 @@ final class ProductEventByArticleRepository implements ProductEventByArticleInte
                 ProductEvent::class,
                 'event',
                 'WITH',
-                'event.id = offer.event'
+                'event.id = offer.event',
             );
 
         $orm->join(Product::class, 'product', 'WITH', 'product.event = event.id');
@@ -185,7 +185,7 @@ final class ProductEventByArticleRepository implements ProductEventByArticleInte
             ->where('variation.article = :article')
             ->setParameter(
                 key: 'article',
-                value: $article
+                value: $article,
             );
 
         $orm->join(ProductOffer::class, 'offer', 'WITH', 'offer.id = variation.offer');
@@ -196,7 +196,7 @@ final class ProductEventByArticleRepository implements ProductEventByArticleInte
                 ProductEvent::class,
                 'event',
                 'WITH',
-                'event.id = offer.event'
+                'event.id = offer.event',
             );
 
         $orm->join(Product::class, 'product', 'WITH', 'product.event = event.id');
@@ -221,7 +221,7 @@ final class ProductEventByArticleRepository implements ProductEventByArticleInte
             ->where('modification.article = :article')
             ->setParameter(
                 key: 'article',
-                value: $article
+                value: $article,
             );
 
         $orm->join(ProductVariation::class, 'variation', 'WITH', 'variation.id = modification.variation');
@@ -234,7 +234,7 @@ final class ProductEventByArticleRepository implements ProductEventByArticleInte
                 ProductEvent::class,
                 'event',
                 'WITH',
-                'event.id = offer.event'
+                'event.id = offer.event',
             );
 
         $orm->join(Product::class, 'product', 'WITH', 'product.event = event.id');

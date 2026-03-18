@@ -49,7 +49,7 @@ final class UpdateProductOptDispatcherTest extends KernelTestCase
             ->setEvent(new ProductEventUid('019a964c-05d0-71af-a7f7-24ad75b6e7a7'))
             ->setOffer(new ProductOfferUid('019a9651-fe78-7fd4-ab5c-7795a6e654da'))
             ->setVariation(new ProductVariationUid('019a9651-fe78-7fd4-ab5c-7795a7690788'))
-            ->setModification(new ProductModificationUid('019a9651-fe7a-740f-a4ae-c752008f3715'))
+            ->setModification(new ProductModificationUid('019a9651-fe7a-740f-a4ae-c752008f3715')),
         );
 
         self::assertTrue(true);

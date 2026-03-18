@@ -27,6 +27,8 @@ use BaksDev\Core\Entity\EntityEvent;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
 use BaksDev\Reference\Currency\Type\Currency;
 use BaksDev\Reference\Money\Type\Money;
+use DateTimeImmutable;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use InvalidArgumentException;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -57,6 +59,10 @@ class ProductModificationPrice extends EntityEvent
     /** Валюта */
     #[ORM\Column(name: 'currency', type: Currency::TYPE, length: 3, nullable: false)]
     private Currency $currency;
+
+    /** Дата обновления цены */
+    #[ORM\Column(name: 'up', type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private DateTimeImmutable $up;
 
 
     public function __construct(ProductModification $modification)

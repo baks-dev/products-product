@@ -345,6 +345,208 @@ final readonly class ProductDetailByValueResult implements ProductPriceResultInt
         return $images;
     }
 
+    public function getProductCurrency(): ?string
+    {
+        return $this->product_currency;
+    }
+
+    public function getProductQuantityStocks(): ?int
+    {
+        if(empty($this->product_quantity_stocks))
+        {
+            return 0;
+        }
+
+        if(false === json_validate($this->product_quantity_stocks))
+        {
+            return 0;
+        }
+
+        $decode = json_decode($this->product_quantity_stocks, false, 512, JSON_THROW_ON_ERROR);
+
+        $quantity = 0;
+
+        foreach($decode as $item)
+        {
+            $quantity += (empty($item->total) ? 0 : $item->total);
+            $quantity -= (empty($item->reserve) ? 0 : $item->reserve);
+        }
+
+        return max($quantity, 0);
+    }
+
+    public function isProductExistRegion()
+    {
+        if(empty($this->product_quantity_stocks))
+        {
+            return false;
+        }
+
+        if(false === json_validate($this->product_quantity_stocks))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function getProductQuantity(): ?int
+    {
+        if(empty($this->product_quantity))
+        {
+            return 0;
+        }
+
+        if(false === json_validate($this->product_quantity))
+        {
+            return 0;
+        }
+
+        $decode = json_decode($this->product_quantity, false, 512, JSON_THROW_ON_ERROR);
+
+        $quantity = 0;
+
+        foreach($decode as $item)
+        {
+            $quantity += (empty($item->total) ? 0 : $item->total);
+            $quantity -= (empty($item->reserve) ? 0 : $item->reserve);
+        }
+
+        return max($quantity, 0);
+    }
+
+    public function getCategoryId(): ?CategoryProductUid
+    {
+        if(is_null($this->category_id))
+        {
+            return null;
+        }
+
+        return new CategoryProductUid($this->category_id);
+    }
+
+    public function getCategoryName(): ?string
+    {
+        return $this->category_name;
+    }
+
+    public function getCategoryUrl(): ?string
+    {
+        return $this->category_url;
+    }
+
+    public function getCategoryMinimal(): ?int
+    {
+        return $this->category_minimal;
+    }
+
+    public function getCategoryInput(): ?int
+    {
+        return $this->category_input;
+    }
+
+    public function getCategoryThreshold(): ?int
+    {
+        return $this->category_threshold;
+    }
+
+    public function getCategoryStep(): ?int
+    {
+        return $this->category_step;
+    }
+
+    public function getCategoryCoverExt(): ?string
+    {
+        return $this->category_cover_ext;
+    }
+
+    public function getCategoryCoverCdn(): ?bool
+    {
+        return $this->category_cover_cdn;
+    }
+
+    public function getCategoryCoverPath(): ?string
+    {
+        return $this->category_cover_path;
+    }
+
+    public function getCategorySectionField(): ?array
+    {
+        $sectionFields = json_decode($this->category_section_field, false, 512, JSON_THROW_ON_ERROR);
+
+        if(null === current($sectionFields))
+        {
+            return null;
+        }
+
+        return array_filter($sectionFields, static fn($n) => $n->field_public === true);
+    }
+
+    public function getProductInvariableId(): ?ProductInvariableUid
+    {
+        if(null === $this->product_invariable_id)
+        {
+            return null;
+        }
+
+        return new ProductInvariableUid($this->product_invariable_id);
+    }
+
+    /** Изображения, отсортированные по флагу root */
+    public function getProductImagesSortByRoot(): array|null
+    {
+        if(is_null($this->product_images))
+        {
+            return null;
+        }
+
+        if(false === json_validate($this->product_images))
+        {
+            return null;
+        }
+
+        $images = json_decode($this->product_images, null, 512, JSON_THROW_ON_ERROR);
+
+        if(null === current($images))
+        {
+            return null;
+        }
+
+        // Сортировка массива элементов с изображениями по root = true
+        usort($images, function($f) {
+            return $f->product_img_root === true ? -1 : 1;
+        });
+
+        return $images;
+    }
+
+    /** Возвращает разницу между старой и новой ценами в процентах */
+    public function getDiscountPercent(): int|null
+    {
+        if(false === $this->getProductPrice())
+        {
+            return null;
+        }
+
+        if(false === $this->getProductOldPrice())
+        {
+            return null;
+        }
+
+        $price = $this->getProductPrice()->getValue();
+        $oldPrice = $this->getProductOldPrice()->getValue();
+
+        $discountPercent = null;
+        if($oldPrice > $price)
+        {
+            $discountPercent = (int) (($oldPrice - $price) / $oldPrice * 100);
+        }
+
+        return $discountPercent;
+    }
+
+    /** Helpers */
+
     public function getProductPrice(): Money|false
     {
         if(empty($this->product_price))
@@ -404,212 +606,6 @@ final readonly class ProductDetailByValueResult implements ProductPriceResultInt
         }
 
         return $price;
-    }
-
-    public function getProductCurrency(): ?string
-    {
-        return $this->product_currency;
-    }
-
-    public function getProductQuantityStocks(): ?int
-    {
-        if(empty($this->product_quantity_stocks))
-        {
-            return 0;
-        }
-
-        if(false === json_validate($this->product_quantity_stocks))
-        {
-            return 0;
-        }
-
-        $decode = json_decode($this->product_quantity_stocks, false, 512, JSON_THROW_ON_ERROR);
-
-        $quantity = 0;
-
-        foreach($decode as $item)
-        {
-            $quantity += (empty($item->total) ? 0 : $item->total);
-            $quantity -= (empty($item->reserve) ? 0 : $item->reserve);
-        }
-
-        return max($quantity, 0);
-    }
-
-
-    public function isProductExistRegion()
-    {
-        if(empty($this->product_quantity_stocks))
-        {
-            return false;
-        }
-
-        if(false === json_validate($this->product_quantity_stocks))
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-
-    public function getProductQuantity(): ?int
-    {
-        if(empty($this->product_quantity))
-        {
-            return 0;
-        }
-
-        if(false === json_validate($this->product_quantity))
-        {
-            return 0;
-        }
-
-        $decode = json_decode($this->product_quantity, false, 512, JSON_THROW_ON_ERROR);
-
-        $quantity = 0;
-
-        foreach($decode as $item)
-        {
-            $quantity += (empty($item->total) ? 0 : $item->total);
-            $quantity -= (empty($item->reserve) ? 0 : $item->reserve);
-        }
-
-        return max($quantity, 0);
-    }
-
-
-    public function getCategoryId(): ?CategoryProductUid
-    {
-        if(is_null($this->category_id))
-        {
-            return null;
-        }
-
-        return new CategoryProductUid($this->category_id);
-    }
-
-    public function getCategoryName(): ?string
-    {
-        return $this->category_name;
-    }
-
-    public function getCategoryUrl(): ?string
-    {
-        return $this->category_url;
-    }
-
-    public function getCategoryMinimal(): ?int
-    {
-        return $this->category_minimal;
-    }
-
-    public function getCategoryInput(): ?int
-    {
-        return $this->category_input;
-    }
-
-    public function getCategoryThreshold(): ?int
-    {
-        return $this->category_threshold;
-    }
-
-    public function getCategoryStep(): ?int
-    {
-        return $this->category_step;
-    }
-
-
-    public function getCategoryCoverExt(): ?string
-    {
-        return $this->category_cover_ext;
-    }
-
-    public function getCategoryCoverCdn(): ?bool
-    {
-        return $this->category_cover_cdn;
-    }
-
-    public function getCategoryCoverPath(): ?string
-    {
-        return $this->category_cover_path;
-    }
-
-    public function getCategorySectionField(): ?array
-    {
-        $sectionFields = json_decode($this->category_section_field, false, 512, JSON_THROW_ON_ERROR);
-
-        if(null === current($sectionFields))
-        {
-            return null;
-        }
-
-        return array_filter($sectionFields, static fn($n) => $n->field_public === true);
-    }
-
-    public function getProductInvariableId(): ?ProductInvariableUid
-    {
-        if(null === $this->product_invariable_id)
-        {
-            return null;
-        }
-
-        return new ProductInvariableUid($this->product_invariable_id);
-    }
-
-    /** Helpers */
-
-    /** Изображения, отсортированные по флагу root */
-    public function getProductImagesSortByRoot(): array|null
-    {
-        if(is_null($this->product_images))
-        {
-            return null;
-        }
-
-        if(false === json_validate($this->product_images))
-        {
-            return null;
-        }
-
-        $images = json_decode($this->product_images, null, 512, JSON_THROW_ON_ERROR);
-
-        if(null === current($images))
-        {
-            return null;
-        }
-
-        // Сортировка массива элементов с изображениями по root = true
-        usort($images, function($f) {
-            return $f->product_img_root === true ? -1 : 1;
-        });
-
-        return $images;
-    }
-
-    /** Возвращает разницу между старой и новой ценами в процентах */
-    public function getDiscountPercent(): int|null
-    {
-        if(false === $this->getProductPrice())
-        {
-            return null;
-        }
-
-        if(false === $this->getProductOldPrice())
-        {
-            return null;
-        }
-
-        $price = $this->getProductPrice()->getValue();
-        $oldPrice = $this->getProductOldPrice()->getValue();
-
-        $discountPercent = null;
-        if($oldPrice > $price)
-        {
-            $discountPercent = (int) (($oldPrice - $price) / $oldPrice * 100);
-        }
-
-        return $discountPercent;
     }
 
     public function getProductRegionDelivery(): DateTimeImmutable

@@ -84,7 +84,7 @@ final class ProductByModificationRepository implements ProductByModificationInte
                     'mod',
                     ProductModification::class,
                     'modification',
-                    'modification.const = mod.const'
+                    'modification.const = mod.const',
                 );
         }
 
@@ -95,7 +95,7 @@ final class ProductByModificationRepository implements ProductByModificationInte
                 'modification',
                 ProductVariation::class,
                 'variation',
-                'variation.id = modification.variation'
+                'variation.id = modification.variation',
             );
 
         $dbal
@@ -105,7 +105,7 @@ final class ProductByModificationRepository implements ProductByModificationInte
                 'variation',
                 ProductOffer::class,
                 'offer',
-                'offer.id = variation.offer'
+                'offer.id = variation.offer',
             );
 
         $dbal
@@ -113,7 +113,7 @@ final class ProductByModificationRepository implements ProductByModificationInte
                 'offer',
                 ProductEvent::class,
                 'event',
-                'event.id = offer.event'
+                'event.id = offer.event',
             );
 
         $dbal
@@ -123,7 +123,7 @@ final class ProductByModificationRepository implements ProductByModificationInte
                 'event',
                 Product::class,
                 'product',
-                'product.event = event.id'
+                'product.event = event.id',
             );
 
         $result = $dbal

@@ -77,7 +77,7 @@ final class ProductDetailOfferRepository implements ProductDetailOfferInterface
             'product',
             ProductPrice::class,
             'product_price',
-            'product_price.event = product.event'
+            'product_price.event = product.event',
         );
 
         /* Торговое предложение */
@@ -90,7 +90,7 @@ final class ProductDetailOfferRepository implements ProductDetailOfferInterface
                 'product',
                 ProductOffer::class,
                 'product_offer',
-                'product_offer.event = product.event'
+                'product_offer.event = product.event',
             );
 
         /* Цена торгового предложения */
@@ -98,7 +98,7 @@ final class ProductDetailOfferRepository implements ProductDetailOfferInterface
             'product_offer',
             ProductOfferPrice::class,
             'product_offer_price',
-            'product_offer_price.offer = product_offer.id'
+            'product_offer_price.offer = product_offer.id',
         );
 
         /* Получаем тип торгового предложения */
@@ -108,7 +108,7 @@ final class ProductDetailOfferRepository implements ProductDetailOfferInterface
                 'product_offer',
                 CategoryProductOffers::class,
                 'category_offer',
-                'category_offer.id = product_offer.category_offer'
+                'category_offer.id = product_offer.category_offer',
             );
 
         /* Получаем название торгового предложения */
@@ -119,7 +119,7 @@ final class ProductDetailOfferRepository implements ProductDetailOfferInterface
                 'category_offer',
                 CategoryProductOffersTrans::class,
                 'category_offer_trans',
-                'category_offer_trans.offer = category_offer.id AND category_offer_trans.local = :local'
+                'category_offer_trans.offer = category_offer.id AND category_offer_trans.local = :local',
             );
 
         /* Множественные варианты торгового предложения */
@@ -131,7 +131,7 @@ final class ProductDetailOfferRepository implements ProductDetailOfferInterface
                 'product_offer',
                 ProductVariation::class,
                 'product_offer_variation',
-                'product_offer_variation.offer = product_offer.id'
+                'product_offer_variation.offer = product_offer.id',
             );
 
         /* Цена множественного варианта */
@@ -139,7 +139,7 @@ final class ProductDetailOfferRepository implements ProductDetailOfferInterface
             'category_offer_variation',
             ProductVariationPrice::class,
             'product_variation_price',
-            'product_variation_price.variation = product_offer_variation.id'
+            'product_variation_price.variation = product_offer_variation.id',
         );
 
         /* Получаем тип множественного варианта */
@@ -149,7 +149,7 @@ final class ProductDetailOfferRepository implements ProductDetailOfferInterface
                 'product_offer_variation',
                 CategoryProductVariation::class,
                 'category_offer_variation',
-                'category_offer_variation.id = product_offer_variation.category_variation'
+                'category_offer_variation.id = product_offer_variation.category_variation',
             );
 
         /* Получаем название множественного варианта */
@@ -160,7 +160,7 @@ final class ProductDetailOfferRepository implements ProductDetailOfferInterface
                 'category_offer_variation',
                 CategoryProductVariationTrans::class,
                 'category_offer_variation_trans',
-                'category_offer_variation_trans.variation = category_offer_variation.id AND category_offer_variation_trans.local = :local'
+                'category_offer_variation_trans.variation = category_offer_variation.id AND category_offer_variation_trans.local = :local',
             );
 
         /* Модификация множественного варианта торгового предложения */
@@ -172,7 +172,7 @@ final class ProductDetailOfferRepository implements ProductDetailOfferInterface
                 'product_offer_variation',
                 ProductModification::class,
                 'product_offer_modification',
-                'product_offer_modification.variation = product_offer_variation.id'
+                'product_offer_modification.variation = product_offer_variation.id',
             );
 
         /* Цена Модификации множественного варианта */
@@ -180,7 +180,7 @@ final class ProductDetailOfferRepository implements ProductDetailOfferInterface
             'product_offer_modification',
             ProductModificationPrice::class,
             'product_modification_price',
-            'product_modification_price.modification = product_offer_modification.id'
+            'product_modification_price.modification = product_offer_modification.id',
         );
 
         /* Получаем тип множественного варианта */
@@ -190,7 +190,7 @@ final class ProductDetailOfferRepository implements ProductDetailOfferInterface
                 'product_offer_modification',
                 CategoryProductModification::class,
                 'category_offer_modification',
-                'category_offer_modification.id = product_offer_modification.category_modification'
+                'category_offer_modification.id = product_offer_modification.category_modification',
             );
 
         /* Получаем название типа */
@@ -201,7 +201,7 @@ final class ProductDetailOfferRepository implements ProductDetailOfferInterface
                 'category_offer_modification',
                 CategoryProductModificationTrans::class,
                 'category_offer_modification_trans',
-                'category_offer_modification_trans.modification = category_offer_modification.id AND category_offer_modification_trans.local = :local'
+                'category_offer_modification_trans.modification = category_offer_modification.id AND category_offer_modification_trans.local = :local',
             );
 
 
@@ -247,7 +247,7 @@ final class ProductDetailOfferRepository implements ProductDetailOfferInterface
 			   
 			   ELSE NULL
 			END AS product_currency
-		'
+		',
         );
 
         return $dbal->enableCache('products-product', 86400)->fetchAllAssociative();

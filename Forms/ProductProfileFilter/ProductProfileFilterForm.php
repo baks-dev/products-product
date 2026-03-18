@@ -50,7 +50,7 @@ final class ProductProfileFilterForm extends AbstractType
 
                 $this->request->getSession()->set(ProductProfileFilterDTO::profile, $data->getProfile());
 
-            }
+            },
         );
     }
 

@@ -71,8 +71,8 @@ final class ProductVariationCollectionForm extends AbstractType
                 },
                 function($categoryVariation) {
                     return empty($categoryVariation) ? null : new CategoryProductVariationUid($categoryVariation);
-                }
-            )
+                },
+            ),
         );
 
         $builder->add('const', HiddenType::class);
@@ -84,8 +84,8 @@ final class ProductVariationCollectionForm extends AbstractType
                 },
                 function($const) {
                     return new ProductVariationConst($const);
-                }
-            )
+                },
+            ),
         );
 
 
@@ -171,7 +171,7 @@ final class ProductVariationCollectionForm extends AbstractType
                                     'required' => false,
                                     //'mapped' => false,
                                     //'attr' => [ 'data-select' => 'select2' ],
-                                ]
+                                ],
                             );
 
                         }
@@ -213,7 +213,7 @@ final class ProductVariationCollectionForm extends AbstractType
                         $form->remove('opt');
                     }
                 }
-            }
+            },
         );
 
 
@@ -241,7 +241,7 @@ final class ProductVariationCollectionForm extends AbstractType
                 'label_html' => true,
                 'attr' =>
                     ['class' => 'btn btn-sm btn-icon btn-light-danger del-item-variation'],
-            ]
+            ],
         );
 
     }

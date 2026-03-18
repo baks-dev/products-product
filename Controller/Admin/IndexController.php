@@ -56,7 +56,7 @@ final class IndexController extends AbstractController
             ->createForm(
                 type: ProductFilterForm::class,
                 data: $filter,
-                options: ['action' => $this->generateUrl('products-product:admin.index'),]
+                options: ['action' => $this->generateUrl('products-product:admin.index'),],
             )
             ->handleRequest($request);
 
@@ -68,7 +68,7 @@ final class IndexController extends AbstractController
             ->createForm(
                 type: SearchForm::class,
                 data: $search,
-                options: ['action' => $this->generateUrl('products-product:admin.index'),]
+                options: ['action' => $this->generateUrl('products-product:admin.index'),],
             )
             ->handleRequest($request);
 
@@ -99,7 +99,7 @@ final class IndexController extends AbstractController
                 'filter' => $filterForm->createView(),
                 //'profile' => $profileForm->createView(),
             ],
-            file: $isFilter ? 'offers.html.twig' : 'product.html.twig'
+            file: $isFilter ? 'offers.html.twig' : 'product.html.twig',
         );
     }
 }

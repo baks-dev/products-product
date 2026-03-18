@@ -69,7 +69,7 @@ final class PropertyCollectionForm extends AbstractType
                             //'mapped' => false,
                             //'data' => (string) $propCat->sectionUid,
                             'label' => $propCat->sectionTrans,
-                        ]
+                        ],
                     );
 
                     $fieldType = $this->fieldsChoice->getChoice($propCat->fieldType);
@@ -80,11 +80,11 @@ final class PropertyCollectionForm extends AbstractType
                         [
                             'label' => $propCat->fieldTrans,
                             'required' => $propCat->fieldRequired,
-                        ]
+                        ],
                     );
 
                 }
-            }
+            },
         );
 
     }
@@ -96,7 +96,7 @@ final class PropertyCollectionForm extends AbstractType
             [
                 'data_class' => PropertyCollectionDTO::class,
                 'properties' => null,
-            ]
+            ],
         );
     }
 

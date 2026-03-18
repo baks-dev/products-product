@@ -27,6 +27,7 @@ interface ProductConstByArticleInterface
 {
     /**
      * Метод возвращает идентификаторы продукции по артикулу
+     *
      * @see CurrentProductIdentifierResult
      */
     public function find(string $article): CurrentProductByBarcodeResult|false;

@@ -262,29 +262,6 @@ final readonly class ProductModelResult
         return $minPrice;
     }
 
-    /** Валюта из торговых предложений */
-    public function getOfferCurrency(): ?string
-    {
-        if(false === json_validate((string) $this->product_offers))
-        {
-            return null;
-        }
-
-        $offers = json_decode($this->product_offers, null, 512, JSON_THROW_ON_ERROR);
-
-        if(null === current($offers))
-        {
-            return null;
-        }
-
-        // Сортировка по возрастанию цены
-        usort($offers, static function($a, $b) {
-            return $a->price <=> $b->price;
-        });
-
-        return current($offers)->currency;
-    }
-
     /**
      * @return array<int, ProductModelOfferResult>|null
      */
@@ -315,6 +292,29 @@ final readonly class ProductModelResult
         }
 
         return $offersResult;
+    }
+
+    /** Валюта из торговых предложений */
+    public function getOfferCurrency(): ?string
+    {
+        if(false === json_validate((string) $this->product_offers))
+        {
+            return null;
+        }
+
+        $offers = json_decode($this->product_offers, null, 512, JSON_THROW_ON_ERROR);
+
+        if(null === current($offers))
+        {
+            return null;
+        }
+
+        // Сортировка по возрастанию цены
+        usort($offers, static function($a, $b) {
+            return $a->price <=> $b->price;
+        });
+
+        return current($offers)->currency;
     }
 
     /**

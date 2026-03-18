@@ -36,11 +36,6 @@ class ProductModificationSearchTag extends AbstractProductSearchTag implements S
 {
     public const string TAG = 'products-product';
 
-    public function getModuleName(): string
-    {
-        return self::TAG;
-    }
-
     public static function sort(): int
     {
         return 4;
@@ -68,6 +63,11 @@ class ProductModificationSearchTag extends AbstractProductSearchTag implements S
             ->setSearchTag($this->getModuleName());
 
         return $this->entityDocument;
+    }
+
+    public function getModuleName(): string
+    {
+        return self::TAG;
     }
 
 }

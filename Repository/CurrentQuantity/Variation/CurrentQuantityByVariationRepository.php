@@ -56,7 +56,7 @@ final class CurrentQuantityByVariationRepository implements CurrentQuantityByVar
             Product::class,
             'product',
             'WITH',
-            'product.id = event.main'
+            'product.id = event.main',
         );
 
         /** Торговое предложение */
@@ -65,7 +65,7 @@ final class CurrentQuantityByVariationRepository implements CurrentQuantityByVar
             ProductOffer::class,
             'offer',
             'WITH',
-            'offer.id = :offer AND offer.event = event.id'
+            'offer.id = :offer AND offer.event = event.id',
         );
         $qb->setParameter('offer', $offer, ProductOfferUid::TYPE);
 
@@ -73,7 +73,7 @@ final class CurrentQuantityByVariationRepository implements CurrentQuantityByVar
             ProductOffer::class,
             'current_offer',
             'WITH',
-            'current_offer.const = offer.const AND current_offer.event = product.event'
+            'current_offer.const = offer.const AND current_offer.event = product.event',
         );
 
 
@@ -83,7 +83,7 @@ final class CurrentQuantityByVariationRepository implements CurrentQuantityByVar
             ProductVariation::class,
             'variation',
             'WITH',
-            'variation.id = :variation AND variation.offer = offer.id'
+            'variation.id = :variation AND variation.offer = offer.id',
         );
         $qb->setParameter('variation', $variation, ProductVariationUid::TYPE);
 
@@ -91,7 +91,7 @@ final class CurrentQuantityByVariationRepository implements CurrentQuantityByVar
             ProductVariation::class,
             'current_variation',
             'WITH',
-            'current_variation.const = variation.const AND current_variation.offer = current_offer.id'
+            'current_variation.const = variation.const AND current_variation.offer = current_offer.id',
         );
 
 
@@ -100,7 +100,7 @@ final class CurrentQuantityByVariationRepository implements CurrentQuantityByVar
             ProductVariationQuantity::class,
             'quantity',
             'WITH',
-            'quantity.variation = current_variation.id'
+            'quantity.variation = current_variation.id',
         );
 
 

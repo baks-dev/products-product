@@ -103,6 +103,19 @@ final class ModelOrProductRepository implements ModelOrProductInterface
         return $this;
     }
 
+    /** @return array<int, ModelOrProductResult>|false */
+    public function toArray(): array|false
+    {
+        $result = $this->findAll();
+
+        if(false === $result)
+        {
+            return false;
+        }
+
+        return (true === $result->valid()) ? iterator_to_array($result) : false;
+    }
+
     /** @return Generator<int, ModelOrProductResult>|false */
     public function findAll(): Generator|false
     {
@@ -880,19 +893,6 @@ final class ModelOrProductRepository implements ModelOrProductInterface
         $result = $dbal->fetchAllHydrate(ModelOrProductResult::class);
 
         return (true === $result->valid()) ? $result : false;
-    }
-
-    /** @return array<int, ModelOrProductResult>|false */
-    public function toArray(): array|false
-    {
-        $result = $this->findAll();
-
-        if(false === $result)
-        {
-            return false;
-        }
-
-        return (true === $result->valid()) ? iterator_to_array($result) : false;
     }
 }
 

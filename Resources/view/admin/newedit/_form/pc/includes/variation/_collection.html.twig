@@ -15,7 +15,8 @@
             <div class="info w-100 text-center">Перетяните одно или несколько изображений в эту область</div>
         </div>
 
-        <div id="collection_{{ variation.vars.id }}" class="d-flex gap-5 flex-wrap variation-item-collection" style="min-height: 220px;">
+        <div id="collection_{{ variation.vars.id }}" class="d-flex gap-5 flex-wrap variation-item-collection"
+             style="min-height: 220px;">
             {% for image in variation.image %}
                 {{ include(_self|replace({ "_collection.html.twig": "_image.html.twig" })) }}
             {% endfor %}

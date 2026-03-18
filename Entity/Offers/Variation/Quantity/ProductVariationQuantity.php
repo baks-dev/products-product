@@ -104,13 +104,6 @@ class ProductVariationQuantity extends EntityEvent
         return true;
     }
 
-    /** Присваиваем резерву указанное количество */
-    public function setReserve(?int $reserve): void
-    {
-        $this->reserve = $reserve ?: 0;
-    }
-
-
     /** Удаляем из наличия указанное количество */
     public function subQuantity(?int $quantity): bool
     {
@@ -133,6 +126,11 @@ class ProductVariationQuantity extends EntityEvent
         return $this;
     }
 
+    public function getQuantity(): ?int
+    {
+        return $this->quantity;
+    }
+
     /** Присваиваем наличию указанное количество */
     public function setQuantity(?int $quantity): self
     {
@@ -141,13 +139,14 @@ class ProductVariationQuantity extends EntityEvent
         return $this;
     }
 
-    public function getQuantity(): ?int
-    {
-        return $this->quantity;
-    }
-
     public function getReserve(): ?int
     {
         return $this->reserve;
+    }
+
+    /** Присваиваем резерву указанное количество */
+    public function setReserve(?int $reserve): void
+    {
+        $this->reserve = $reserve ?: 0;
     }
 }

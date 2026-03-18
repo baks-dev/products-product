@@ -42,11 +42,6 @@ class ProductOfferSearchTag extends AbstractProductSearchTag implements SearchIn
         return 2;
     }
 
-    public function getModuleName(): string
-    {
-        return self::TAG;
-    }
-
     /**
      * Подготовка сущности по торговым предложениям
      */
@@ -70,6 +65,11 @@ class ProductOfferSearchTag extends AbstractProductSearchTag implements SearchIn
 
         return $this->entityDocument;
 
+    }
+
+    public function getModuleName(): string
+    {
+        return self::TAG;
     }
 
 }

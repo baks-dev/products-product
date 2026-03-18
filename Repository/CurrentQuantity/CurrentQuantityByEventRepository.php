@@ -49,7 +49,7 @@ final class CurrentQuantityByEventRepository implements CurrentQuantityByEventIn
             Product::class,
             'product',
             'WITH',
-            'product.id = event.main'
+            'product.id = event.main',
         );
 
         /** Текущее наличие */
@@ -59,7 +59,7 @@ final class CurrentQuantityByEventRepository implements CurrentQuantityByEventIn
                 ProductPrice::class,
                 'quantity',
                 'WITH',
-                'quantity.event = product.event'
+                'quantity.event = product.event',
             );
 
         return $qb->getQuery()->getOneOrNullResult();

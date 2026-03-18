@@ -65,6 +65,7 @@ final class ProductOfferConst extends Uid
 
         /**
          * Добавляем задержка выполнения для генератора Brcode
+         *
          * @see ProductBarcode
          */
         if(is_null($value))

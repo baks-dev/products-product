@@ -174,12 +174,6 @@ final class ProductDTO implements ProductEventInterface
         }
     }
 
-    public function resetCategory(): self
-    {
-        $this->category = new ArrayCollection();
-        return $this;
-    }
-
     /**
      * @return ArrayCollection
      */
@@ -194,6 +188,12 @@ final class ProductDTO implements ProductEventInterface
         return $this->category;
     }
 
+    public function resetCategory(): self
+    {
+        $this->category = new ArrayCollection();
+        return $this;
+    }
+
     public function removeCategory(CategoryCollectionDTO $category): void
     {
         $this->category->removeElement($category);
@@ -201,12 +201,6 @@ final class ProductDTO implements ProductEventInterface
 
 
     /* MATERIAL */
-
-    public function setMaterial(ArrayCollection $material): self
-    {
-        $this->material = $material;
-        return $this;
-    }
 
     public function addMaterial(ProductMaterialDTO $material): void
     {
@@ -237,6 +231,12 @@ final class ProductDTO implements ProductEventInterface
         }
 
         return $this->material;
+    }
+
+    public function setMaterial(ArrayCollection $material): self
+    {
+        $this->material = $material;
+        return $this;
     }
 
     public function removeMaterial(ProductMaterialDTO $material): void
@@ -333,6 +333,11 @@ final class ProductDTO implements ProductEventInterface
 
     /* PHOTOS */
 
+    public function getImage(): ArrayCollection
+    {
+        return $this->getPhoto();
+    }
+
     /**
      * @return ArrayCollection<int, PhotoCollectionDTO>
      */
@@ -345,12 +350,6 @@ final class ProductDTO implements ProductEventInterface
 
         return $this->photo;
     }
-
-    public function getImage(): ArrayCollection
-    {
-        return $this->getPhoto();
-    }
-
 
     public function addPhoto(PhotoCollectionDTO $photo): void
     {

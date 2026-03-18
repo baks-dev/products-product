@@ -39,7 +39,7 @@ final class FilesCollectionForm extends AbstractType
                     'label' => false,
                     'required' => false,
                     'attr' => ['accept' => ".doc, .docx, .xls, .xlsx, .csv, .pdf, .zip, .rar"],
-                ]
+                ],
             );
 
         $builder->add(
@@ -47,7 +47,7 @@ final class FilesCollectionForm extends AbstractType
             ButtonType::class,
             [
                 'label_html' => true,
-            ]
+            ],
         );
     }
 

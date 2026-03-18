@@ -149,18 +149,6 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
         return (false !== $result) ? iterator_to_array($result) : false;
     }
 
-    public function excludeProductInvariable(ProductInvariableUid|null|false $exclude): self
-    {
-        if(empty($exclude))
-        {
-            $this->exclude = false;
-            return $this;
-        }
-
-        $this->exclude = $exclude;
-        return $this;
-    }
-
     /**
      * Метод возвращает альтернативные варианты продукции по значению value торговых предложений
      *
@@ -941,5 +929,17 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
         $result = $dbal->fetchAllHydrate(ProductAlternativeResult::class);
 
         return (true === $result->valid()) ? $result : false;
+    }
+
+    public function excludeProductInvariable(ProductInvariableUid|null|false $exclude): self
+    {
+        if(empty($exclude))
+        {
+            $this->exclude = false;
+            return $this;
+        }
+
+        $this->exclude = $exclude;
+        return $this;
     }
 }

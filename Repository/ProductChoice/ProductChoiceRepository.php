@@ -451,7 +451,7 @@ final class ProductChoiceRepository implements ProductChoiceInterface
 
         $dbal->allGroupByExclude();
 
-        
+
         return $dbal
             ->enableCache('products-product', 60)
             ->fetchAllHydrate(ProductEventUid::class);

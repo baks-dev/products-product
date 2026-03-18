@@ -276,7 +276,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
                 'product_offer',
                 ProductOfferBarcode::class,
                 'product_offer_barcode',
-                'product_offer_barcode.offer = product_offer.id'
+                'product_offer_barcode.offer = product_offer.id',
             );
 
         /* Цена торгового предожения */
@@ -338,7 +338,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
                 'product_variation',
                 ProductVariationBarcode::class,
                 'product_variation_barcode',
-                'product_variation_barcode.variation = product_variation.id'
+                'product_variation_barcode.variation = product_variation.id',
             );
 
         $dbal->leftJoin(
@@ -396,7 +396,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
                 'product_modification',
                 ProductModificationBarcode::class,
                 'product_modification_barcode',
-                'product_modification_barcode.modification = product_modification.id'
+                'product_modification_barcode.modification = product_modification.id',
             );
 
         /** Цена множественного варианта */
@@ -878,7 +878,7 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
                         ELSE NULL
                     END
                     )
-                    AS barcodes"
+                    AS barcodes",
         );
 
 

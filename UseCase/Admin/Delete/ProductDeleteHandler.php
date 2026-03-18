@@ -45,7 +45,7 @@ final class ProductDeleteHandler extends AbstractHandler
             ->addClearCacheOther('products-category')
             ->dispatch(
                 message: new ProductMessage($this->main->getId(), $this->event->getId(), $command->getEvent()),
-                transport: 'products-product'
+                transport: 'products-product',
             );
 
         return $this->main;

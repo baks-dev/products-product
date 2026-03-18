@@ -39,7 +39,7 @@ final class PhotoCollectionForm extends AbstractType
                     'label' => false,
                     'required' => false,
                     'attr' => ['accept' => ".png, .jpg, .jpeg, .webp, .gif"],
-                ]
+                ],
             );
 
         $builder

@@ -30,7 +30,8 @@ use Generator;
 interface ProductModificationChoiceInterface
 {
     /**
-     * Метод возвращает все постоянные идентификаторы CONST модификаций множественных вариантов торговых предложений продукта
+     * Метод возвращает все постоянные идентификаторы CONST модификаций множественных вариантов торговых предложений
+     * продукта
      */
     public function fetchProductModificationConstByVariationConst(ProductVariationConst $const): Generator;
 

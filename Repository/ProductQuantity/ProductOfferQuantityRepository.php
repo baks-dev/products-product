@@ -52,14 +52,14 @@ final class ProductOfferQuantityRepository implements ProductOfferQuantityInterf
             ->setParameter(
                 key: 'product',
                 value: $product,
-                type: ProductUid::TYPE
+                type: ProductUid::TYPE,
             );
 
         $qb->join(
             ProductEvent::class,
             'event',
             'WITH',
-            'event.id = product.event'
+            'event.id = product.event',
         );
 
         // Торговое предложение
@@ -68,12 +68,12 @@ final class ProductOfferQuantityRepository implements ProductOfferQuantityInterf
             ProductOffer::class,
             'offer',
             'WITH',
-            'offer.event = event.id AND offer.const = :offer_const'
+            'offer.event = event.id AND offer.const = :offer_const',
         )
             ->setParameter(
                 key: 'offer_const',
                 value: $offer,
-                type: ProductOfferConst::TYPE
+                type: ProductOfferConst::TYPE,
             );
 
 
@@ -83,7 +83,7 @@ final class ProductOfferQuantityRepository implements ProductOfferQuantityInterf
                 ProductOfferQuantity::class,
                 'quantity',
                 'WITH',
-                'quantity.offer = offer.id'
+                'quantity.offer = offer.id',
             );
 
 
@@ -93,7 +93,7 @@ final class ProductOfferQuantityRepository implements ProductOfferQuantityInterf
             CategoryProductOffers::class,
             'category_offer',
             'WITH',
-            'category_offer.id = offer.categoryOffer AND category_offer.quantitative = true'
+            'category_offer.id = offer.categoryOffer AND category_offer.quantitative = true',
         );
 
         return $qb->getOneOrNullResult();

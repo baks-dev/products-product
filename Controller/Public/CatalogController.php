@@ -105,8 +105,6 @@ final class CatalogController extends AbstractController
         $SearchDTO = new SearchDTO()->setQuery($searchText);
 
 
-
-
         /** Свойства продукции, участвующие в фильтрации */
         $propertyFields = null;
         if($productFilterForm->isSubmitted() && $productFilterForm->isValid())
@@ -159,9 +157,9 @@ final class CatalogController extends AbstractController
                 $category['id'],
                 ProductFilterForm::class, $filter, [
                 'action' => $this->generateUrl('products-product:public.catalog.category',
-                    ['category' => $category['category_url']]
+                    ['category' => $category['category_url']],
                 ),
-                'attr' => ['class' => 'product_filter_form w-100']
+                'attr' => ['class' => 'product_filter_form w-100'],
             ]);
 
             $filterForm->handleRequest($request);
@@ -174,7 +172,7 @@ final class CatalogController extends AbstractController
                 'products' => $products,
                 'bestOffers' => $bestOffers,
                 'filters' => $filters,
-            ]
+            ],
         );
     }
 }

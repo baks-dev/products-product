@@ -36,7 +36,8 @@ interface ProductLiederInterface
     public function forCategory(CategoryProduct|CategoryProductUid|string $category): self;
 
     /**
-     * Метод возвращает ограниченный по количеству элементов список лидеров продаж продукции, суммируя количество резервов на продукт
+     * Метод возвращает ограниченный по количеству элементов список лидеров продаж продукции, суммируя количество
+     * резервов на продукт
      */
     public function find(): array|false;
 }

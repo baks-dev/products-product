@@ -57,7 +57,7 @@ final class UpdateProductPriceDispatcherTest extends KernelTestCase
             ->setOffer(null)
             ->setVariation(null)
             ->setModification(null)
-            ->setEvent(new ProductEventUid(ProductEventUid::TEST))
+            ->setEvent(new ProductEventUid(ProductEventUid::TEST)),
         );
 
         self::assertTrue(true);

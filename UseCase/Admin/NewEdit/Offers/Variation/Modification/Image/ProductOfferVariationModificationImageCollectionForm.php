@@ -42,7 +42,7 @@ final class ProductOfferVariationModificationImageCollectionForm extends Abstrac
                 'label' => false,
                 'required' => false,
                 'attr' => ['accept' => ".png, .jpg, .jpeg, .webp, .gif"],
-            ]
+            ],
         );
 
         $builder->add('root', RadioType::class, ['required' => false]);
@@ -52,7 +52,7 @@ final class ProductOfferVariationModificationImageCollectionForm extends Abstrac
             ButtonType::class,
             [
                 'label_html' => true,
-            ]
+            ],
         );
     }
 

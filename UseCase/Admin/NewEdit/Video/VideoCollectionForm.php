@@ -44,7 +44,7 @@ final class VideoCollectionForm extends AbstractType
             ButtonType::class,
             [
                 'label_html' => true,
-            ]
+            ],
         );
     }
 

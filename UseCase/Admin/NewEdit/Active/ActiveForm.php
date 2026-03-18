@@ -53,7 +53,7 @@ final class ActiveForm extends AbstractType
                 'required' => false,
                 'label' => false,
                 'input' => 'datetime_immutable',
-            ]
+            ],
         );
 
         /** Окончание активности */
@@ -75,7 +75,7 @@ final class ActiveForm extends AbstractType
                 'required' => false,
                 'label' => false,
                 'input' => 'datetime_immutable',
-            ]
+            ],
         );
 
     }

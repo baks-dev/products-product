@@ -53,31 +53,16 @@ final class AllProductsQuantityDTO
         return $this->category;
     }
 
-    public function getOffer(): ?string
-    {
-        return $this->offer;
-    }
-
-    public function getVariation(): ?string
-    {
-        return $this->variation;
-    }
-
-    public function getModification(): ?string
-    {
-        return $this->modification;
-    }
-
-    public function getQuantity(): ?int
-    {
-        return $this->quantity;
-    }
-
     public function setCategory(?CategoryProductUid $category): self
     {
         $this->category = $category;
 
         return $this;
+    }
+
+    public function getOffer(): ?string
+    {
+        return $this->offer;
     }
 
     public function setOffer(?string $offer): self
@@ -86,16 +71,31 @@ final class AllProductsQuantityDTO
         return $this;
     }
 
+    public function getVariation(): ?string
+    {
+        return $this->variation;
+    }
+
     public function setVariation(?string $variation): self
     {
         $this->variation = $variation;
         return $this;
     }
 
+    public function getModification(): ?string
+    {
+        return $this->modification;
+    }
+
     public function setModification(?string $modification): self
     {
         $this->modification = $modification;
         return $this;
+    }
+
+    public function getQuantity(): ?int
+    {
+        return $this->quantity;
     }
 
     public function setQuantity(?int $quantity): self

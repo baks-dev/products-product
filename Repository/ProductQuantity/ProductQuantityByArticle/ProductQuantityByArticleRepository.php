@@ -57,7 +57,7 @@ final class ProductQuantityByArticleRepository implements ProductQuantityByArtic
                 'product',
                 ProductInfo::class,
                 'product_info',
-                'product_info.product = product.id'
+                'product_info.product = product.id',
             );
 
 
@@ -66,7 +66,7 @@ final class ProductQuantityByArticleRepository implements ProductQuantityByArtic
                 'product',
                 ProductPrice::class,
                 'product_price',
-                'product_price.event = product.event'
+                'product_price.event = product.event',
             );
 
 
@@ -77,7 +77,7 @@ final class ProductQuantityByArticleRepository implements ProductQuantityByArtic
                 'product',
                 ProductOffer::class,
                 'product_offer',
-                'product_offer.event = product.event'
+                'product_offer.event = product.event',
             );
 
 
@@ -87,7 +87,7 @@ final class ProductQuantityByArticleRepository implements ProductQuantityByArtic
                 'product_offer',
                 ProductVariation::class,
                 'product_variation',
-                'product_variation.offer = product_offer.id'
+                'product_variation.offer = product_offer.id',
             );
 
 
@@ -97,7 +97,7 @@ final class ProductQuantityByArticleRepository implements ProductQuantityByArtic
                 'product_variation',
                 ProductModification::class,
                 'product_modification',
-                'product_modification.variation = product_variation.id'
+                'product_modification.variation = product_variation.id',
             );
 
 
@@ -106,7 +106,7 @@ final class ProductQuantityByArticleRepository implements ProductQuantityByArtic
             'product_offer',
             ProductOfferQuantity::class,
             'product_offer_quantity',
-            'product_offer_quantity.offer = product_offer.id'
+            'product_offer_quantity.offer = product_offer.id',
         );
 
         /* Наличие и резерв множественного варианта */
@@ -114,7 +114,7 @@ final class ProductQuantityByArticleRepository implements ProductQuantityByArtic
             'product_variation',
             ProductVariationQuantity::class,
             'product_variation_quantity',
-            'product_variation_quantity.variation = product_variation.id'
+            'product_variation_quantity.variation = product_variation.id',
         );
 
         $dbal
@@ -122,7 +122,7 @@ final class ProductQuantityByArticleRepository implements ProductQuantityByArtic
                 'product_modification',
                 ProductModificationQuantity::class,
                 'product_modification_quantity',
-                'product_modification_quantity.modification = product_modification.id'
+                'product_modification_quantity.modification = product_modification.id',
             );
 
 

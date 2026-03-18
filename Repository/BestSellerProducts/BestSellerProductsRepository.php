@@ -117,6 +117,7 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
 
     /**
      * Метод возвращает информацию о самых продаваемых продуктах
+     *
      * @return array<int, BestSellerProductsResult>|false
      */
     public function toArray(): array|false
@@ -128,6 +129,7 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
 
     /**
      * Метод возвращает информацию о самых продаваемых продуктах
+     *
      * @return Generator<int, BestSellerProductsResult>|false
      */
     public function findAll(): Generator|false
@@ -154,7 +156,7 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
                 'product',
                 ProductTrans::class,
                 'product_trans',
-                'product_trans.event = product.event AND product_trans.local = :local'
+                'product_trans.event = product.event AND product_trans.local = :local',
             );
 
         /** Цена товара */
@@ -162,7 +164,7 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
             'product',
             ProductPrice::class,
             'product_price',
-            'product_price.event = product.event'
+            'product_price.event = product.event',
         )
             ->addGroupBy('product_price.price')
             ->addGroupBy('product_price.currency')
@@ -177,7 +179,7 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
                 'product',
                 ProductInfo::class,
                 'product_info',
-                'product_info.product = product.id'
+                'product_info.product = product.id',
             );
 
         /**
@@ -191,7 +193,7 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
                 'product',
                 ProductOffer::class,
                 'product_offer',
-                'product_offer.event = product.event'
+                'product_offer.event = product.event',
             );
 
         /** Offer - Quantity */
@@ -199,7 +201,7 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
             'product_offer',
             ProductOfferQuantity::class,
             'product_offer_quantity',
-            'product_offer_quantity.offer = product_offer.id'
+            'product_offer_quantity.offer = product_offer.id',
         )
             ->addGroupBy('product_offer_quantity.quantity')
             ->addGroupBy('product_offer_quantity.reserve');
@@ -209,7 +211,7 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
             'product_offer',
             ProductOfferPrice::class,
             'product_offer_price',
-            'product_offer_price.offer = product_offer.id'
+            'product_offer_price.offer = product_offer.id',
         )
             ->addGroupBy('product_offer_price.price')
             ->addGroupBy('product_offer_price.currency');
@@ -221,7 +223,7 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
                 'product_offer',
                 CategoryProductOffers::class,
                 'category_offer',
-                'category_offer.id = product_offer.category_offer'
+                'category_offer.id = product_offer.category_offer',
             );
 
         /**
@@ -235,7 +237,7 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
                 'product_offer',
                 ProductVariation::class,
                 'product_variation',
-                'product_variation.offer = product_offer.id'
+                'product_variation.offer = product_offer.id',
             );
 
         /** Variation - Quantity */
@@ -243,7 +245,7 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
             'product_variation',
             ProductVariationQuantity::class,
             'product_variation_quantity',
-            'product_variation_quantity.variation = product_variation.id'
+            'product_variation_quantity.variation = product_variation.id',
         )
             ->addGroupBy('product_variation_quantity.quantity')
             ->addGroupBy('product_variation_quantity.reserve');
@@ -253,7 +255,7 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
             'product_variation',
             ProductVariationPrice::class,
             'product_variation_price',
-            'product_variation_price.variation = product_variation.id'
+            'product_variation_price.variation = product_variation.id',
         )
             ->addGroupBy('product_variation_price.price')
             ->addGroupBy('product_variation_price.currency');
@@ -265,7 +267,7 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
                 'product_variation',
                 CategoryProductVariation::class,
                 'category_offer_variation',
-                'category_offer_variation.id = product_variation.category_variation'
+                'category_offer_variation.id = product_variation.category_variation',
             );
 
         /**
@@ -279,7 +281,7 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
                 'product_variation',
                 ProductModification::class,
                 'product_modification',
-                'product_modification.variation = product_variation.id'
+                'product_modification.variation = product_variation.id',
             );
 
         /** Modification - Quantity */
@@ -288,7 +290,7 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
                 'product_modification',
                 ProductModificationQuantity::class,
                 'product_modification_quantity',
-                'product_modification_quantity.modification = product_modification.id'
+                'product_modification_quantity.modification = product_modification.id',
             )
             ->addGroupBy('product_modification_quantity.quantity')
             ->addGroupBy('product_modification_quantity.reserve');
@@ -298,7 +300,7 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
             'product_modification',
             ProductModificationPrice::class,
             'product_modification_price',
-            'product_modification_price.modification = product_modification.id'
+            'product_modification_price.modification = product_modification.id',
         )
             ->addGroupBy('product_modification_price.price')
             ->addGroupBy('product_modification_price.currency');
@@ -310,7 +312,7 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
                 'product_modification',
                 CategoryProductModification::class,
                 'category_offer_modification',
-                'category_offer_modification.id = product_modification.category_modification'
+                'category_offer_modification.id = product_modification.category_modification',
             );
 
         /** Категория */
@@ -320,7 +322,7 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
             'product_event_category',
             '
                 product_event_category.event = product.event AND 
-                product_event_category.root = true'
+                product_event_category.root = true',
         );
 
         if($this->category instanceof CategoryProductUid)
@@ -356,7 +358,7 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
                 'product_event_category',
                 CategoryProductInfo::class,
                 'category_info',
-                'category_info.event = category.event'
+                'category_info.event = category.event',
             );
 
 
@@ -452,7 +454,7 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
 			   THEN product_price.currency
 			   
 			   ELSE NULL
-			END AS product_currency"
+			END AS product_currency",
         );
 
         /** Фото продукции*/
@@ -463,7 +465,7 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
             'product_modification',
             ProductModificationImage::class,
             'product_modification_image',
-            'product_modification_image.modification = product_modification.id'
+            'product_modification_image.modification = product_modification.id',
         );
 
         /**
@@ -473,7 +475,7 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
             'product_offer',
             ProductVariationImage::class,
             'product_variation_image',
-            'product_variation_image.variation = product_variation.id'
+            'product_variation_image.variation = product_variation.id',
         );
 
         /**
@@ -483,7 +485,7 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
             'product_offer',
             ProductOfferImage::class,
             'product_offer_images',
-            'product_offer_images.offer = product_offer.id'
+            'product_offer_images.offer = product_offer.id',
         );
 
         /**
@@ -493,7 +495,7 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
             'product',
             ProductPhoto::class,
             'product_photo',
-            'product_photo.event = product.event'
+            'product_photo.event = product.event',
         );
 
         $dbal->addSelect(
@@ -532,7 +534,7 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
                             'img_ext', product_photo.ext,
                             'img_cdn', product_photo.cdn
                         )
-                    END) AS product_images"
+                    END) AS product_images",
         );
 
         /**
@@ -572,7 +574,7 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
                     UserProfile::class,
                     'current_profile',
                     '
-                        current_profile.id = :'.$dbal::CURRENT_PROFILE_KEY
+                        current_profile.id = :'.$dbal::CURRENT_PROFILE_KEY,
                 );
 
             $dbal
@@ -583,7 +585,7 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
                     'current_profile_discount',
                     '
                         current_profile_discount.event = current_profile.event
-                        '
+                        ',
                 );
         }
 
@@ -597,7 +599,7 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
                     UserProfile::class,
                     'project_profile',
                     '
-                        project_profile.id = :'.$dbal::PROJECT_PROFILE_KEY
+                        project_profile.id = :'.$dbal::PROJECT_PROFILE_KEY,
                 );
 
             $dbal
@@ -607,7 +609,7 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
                     UserProfileDiscount::class,
                     'project_profile_discount',
                     '
-                        project_profile_discount.event = project_profile.event'
+                        project_profile_discount.event = project_profile.event',
                 );
         }
 
@@ -619,7 +621,7 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
 			   WHEN product_offer_price.price IS NOT NULL THEN product_offer_price.price
 			   WHEN product_price.price IS NOT NULL THEN product_price.price
 			   ELSE 0
-			END > 0"
+			END > 0",
         );
 
         /** Только при наличии */
@@ -630,7 +632,7 @@ final class BestSellerProductsRepository implements BestSellerProductsInterface
 			   WHEN product_offer_quantity.quantity IS NOT NULL THEN (product_offer_quantity.quantity - product_offer_quantity.reserve)
 			   WHEN product_price.quantity  IS NOT NULL THEN (product_price.quantity - product_price.reserve)
 			   ELSE 0
-			END > 0"
+			END > 0",
         );
 
         /** Исключить продукта по Product Invariable */

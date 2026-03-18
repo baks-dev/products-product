@@ -116,6 +116,17 @@ final class AllProductsIdentifierRepository implements AllProductsIdentifierInte
         return $this;
     }
 
+    /**
+     * Метод возвращает все идентификаторы продукции с её торговыми предложениями
+     *
+     * @return array<int, ProductsIdentifierResult>|false
+     */
+    public function toArray(): array|false
+    {
+        $data = $this->findAll();
+
+        return $data ? iterator_to_array($data) : false;
+    }
 
     /**
      * Метод возвращает все идентификаторы продукции с её торговыми предложениями
@@ -297,17 +308,5 @@ final class AllProductsIdentifierRepository implements AllProductsIdentifierInte
         $dbal->addOrderBy('product.id');
 
         return $dbal->fetchAllHydrate(ProductsIdentifierResult::class);
-    }
-
-    /**
-     * Метод возвращает все идентификаторы продукции с её торговыми предложениями
-     *
-     * @return array<int, ProductsIdentifierResult>|false
-     */
-    public function toArray(): array|false
-    {
-        $data = $this->findAll();
-
-        return $data ? iterator_to_array($data) : false;
     }
 }

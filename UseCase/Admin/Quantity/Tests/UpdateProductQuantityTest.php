@@ -57,7 +57,7 @@ final class UpdateProductQuantityTest extends KernelTestCase
 
         $event = $result->getProductEvent();
 
-        /** @var UpdateProductQuantityHandler$handler */
+        /** @var UpdateProductQuantityHandler $handler */
         $handler = self::getContainer()->get(UpdateProductQuantityHandler::class);
         $dto = new UpdateProductQuantityDTO(
             $event,

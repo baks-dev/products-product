@@ -72,19 +72,19 @@ if($btnAddOffer)
         (div.querySelector(".offer-image-add-collection"))?.addEventListener("click", addOfferImage);
 
         /* Добавить функционал DragNDrop Offer для новой коллекции торгового предложения */
-        document.querySelectorAll("#item-collection-offer-" + index + ' .card-body-offers .offer-item-collection').forEach((element) =>
+        document.querySelectorAll("#item-collection-offer-" + index + " .card-body-offers .offer-item-collection").forEach((element) =>
         {
             processOfferDragNDrop(element);
         });
 
         /* Добавить функционал DragNDrop Variation для новой коллекции вариаций торгового предложения */
-        document.querySelectorAll("#item-collection-offer-" + index + ' .card-body-variations .variation-item-collection').forEach((element) =>
+        document.querySelectorAll("#item-collection-offer-" + index + " .card-body-variations .variation-item-collection").forEach((element) =>
         {
             processVariationDragNDrop(element);
         });
 
         /* Добавить функционал DragNDrop Offer Modification для новой коллекции модификаций множественных вариантов */
-        document.querySelectorAll("#item-collection-offer-" + index + ' .card-body-modifications .modification-item-collection').forEach((element) =>
+        document.querySelectorAll("#item-collection-offer-" + index + " .card-body-modifications .modification-item-collection").forEach((element) =>
         {
             processModificationDragNDrop(element);
         });
@@ -113,7 +113,7 @@ if($btnAddOffer)
 
 
         /* Плавная прокрутка к элементу */
-        div.scrollIntoView({block: "center", inline: "center", behavior: "smooth"});
+        div.scrollIntoView({block : "center", inline : "center", behavior : "smooth"});
 
         this.dataset.index = (index + 1).toString();
 
@@ -293,7 +293,8 @@ function addOfferImage()
         if(file)
         {
             reader.readAsDataURL(file);
-        } else
+        }
+        else
         {
             image.style.setProperty("background-image", "url(/img/blank.svg)", "important");
 
@@ -474,14 +475,14 @@ function addVariation()
 
 
     /** Получить элемент коллекции вида collection_product_form_offer_1_variation_1 */
-    let collection_product_form_offer = document.getElementById('collection_product_form_offer_' + offer + '_variation_' + index);
+    let collection_product_form_offer = document.getElementById("collection_product_form_offer_" + offer + "_variation_" + index);
 
     if(!collection_product_form_offer)
     {
         return;
     }
     /* В найденом collection_product_form_offer найти элемент по modification modification-item-collection */
-    let collection_product_form_offer_modification = collection_product_form_offer.querySelector('.modification-item-collection');
+    let collection_product_form_offer_modification = collection_product_form_offer.querySelector(".modification-item-collection");
 
     /* Если такой элемент найден, то Добавить функционал DragNDrop для модификации */
     if(collection_product_form_offer_modification)
@@ -729,7 +730,7 @@ function addModification()
     this.dataset.index = (index + 1).toString();
 
     /** Получить элемент коллекции вида collection_product_form_offer_0_variation_0_modification_1 */
-    let collection_product_form_offer = document.getElementById('collection_product_form_offer_' + offer + '_variation_' + variation + '_modification_' + index);
+    let collection_product_form_offer = document.getElementById("collection_product_form_offer_" + offer + "_variation_" + variation + "_modification_" + index);
 
     /* Добавить функционал DragNDrop */
     processModificationDragNDrop(collection_product_form_offer);
@@ -935,7 +936,8 @@ function offerPreloadPhoto(div)
             if(file)
             {
                 reader.readAsDataURL(file);
-            } else
+            }
+            else
             {
                 image.style.setProperty("background-image", "url(/img/blank.svg)", "important");
 
@@ -997,7 +999,7 @@ function replaceReference($replace, $id)
 
         /* применяем select2 */
         //if (cloneNode.dataset.select === "select2") {
-        new NiceSelect(cloneNode, {searchable: true});
+        new NiceSelect(cloneNode, {searchable : true});
         //}
 
     }
@@ -1088,21 +1090,21 @@ function articleGenerate()
     /** Замена HEX на цвет */
 
     const colorMap = {
-        "000000": "BLACK",
-        "FFFFFF": "WHITE",
-        "808080": "GRAY",
-        "FF0000": "RED",
-        "800080": "VIOLET",
-        "FFA500": "ORANGE",
-        "FFFF00": "YELLOW",
-        "947862": "KHAKI",
-        "008000": "GREEN",
-        "0000FF": "BLUE",
-        "F5F5DC": "BEIGE",
-        "D2691E": "CHOCO",
-        "FFC0CB": "PINK",
-        "A52A2A": "BROWN",
-        "60020E": "BORDO",
+        "000000" : "BLACK",
+        "FFFFFF" : "WHITE",
+        "808080" : "GRAY",
+        "FF0000" : "RED",
+        "800080" : "VIOLET",
+        "FFA500" : "ORANGE",
+        "FFFF00" : "YELLOW",
+        "947862" : "KHAKI",
+        "008000" : "GREEN",
+        "0000FF" : "BLUE",
+        "F5F5DC" : "BEIGE",
+        "D2691E" : "CHOCO",
+        "FFC0CB" : "PINK",
+        "A52A2A" : "BROWN",
+        "60020E" : "BORDO",
     };
 
     generate = generate.replace(/([0-9A-F]{6})/gi, match =>
@@ -1121,7 +1123,7 @@ function articleGenerate()
 /** DragNDrop Offer */
 
 /* Получить коллекции торгового предложения */
-document.querySelectorAll('.card-body-offers .offer-item-collection').forEach((element) =>
+document.querySelectorAll(".card-body-offers .offer-item-collection").forEach((element) =>
 {
     processOfferDragNDrop(element);
 });
@@ -1130,14 +1132,14 @@ document.querySelectorAll('.card-body-offers .offer-item-collection').forEach((e
 function processOfferDragNDrop(offer_image_collection)
 {
 
-    processDragNDropEvents(offer_image_collection, previewAndAttachOfferFile)
+    processDragNDropEvents(offer_image_collection, previewAndAttachOfferFile);
 
     /** Отобразить и загрузить в соотв-щий file input */
     function previewAndAttachOfferFile(file)
     {
 
         /* Проверить это файл является изображением */
-        if(!file.type.startsWith('image/'))
+        if(!file.type.startsWith("image/"))
         {
             return;
         }
@@ -1150,10 +1152,10 @@ function processOfferDragNDrop(offer_image_collection)
         {
 
             /* Найти родительский элемент card */
-            let parent_card = offer_image_collection.closest('.card');
+            let parent_card = offer_image_collection.closest(".card");
 
             /* Найти элемент - кнопку добавления */
-            let offer_image_add_collection = parent_card.querySelector('.offer-image-add-collection')
+            let offer_image_add_collection = parent_card.querySelector(".offer-image-add-collection");
 
             /* Получить прототип коллекции  */
             let newPrototype = offer_image_add_collection.dataset.prototype;
@@ -1186,7 +1188,7 @@ function processOfferDragNDrop(offer_image_collection)
             /* Получить соотв-щий элемент загрузки файла и загрузить файл */
             processDragNDropFileInput(div, reader, file);
 
-        }
+        };
 
     }
 }
@@ -1195,7 +1197,7 @@ function processOfferDragNDrop(offer_image_collection)
 /** DragNDrop Variation */
 
 /* Получить коллекции вариаций торгового предложения */
-document.querySelectorAll('.card-body-variations .variation-item-collection').forEach((element) =>
+document.querySelectorAll(".card-body-variations .variation-item-collection").forEach((element) =>
 {
     processVariationDragNDrop(element);
 });
@@ -1204,14 +1206,14 @@ document.querySelectorAll('.card-body-variations .variation-item-collection').fo
 function processVariationDragNDrop(offer_variation_image_collection)
 {
 
-    processDragNDropEvents(offer_variation_image_collection, previewAndAttachVariationFile)
+    processDragNDropEvents(offer_variation_image_collection, previewAndAttachVariationFile);
 
     /** Отобразить и загрузить в соотв-щий file input */
     function previewAndAttachVariationFile(file)
     {
 
         /* Проверить это файл является изображением */
-        if(!file.type.startsWith('image/'))
+        if(!file.type.startsWith("image/"))
         {
             return;
         }
@@ -1224,10 +1226,10 @@ function processVariationDragNDrop(offer_variation_image_collection)
         {
 
             /* Найти родительский элемент card */
-            let parent_card = offer_variation_image_collection.closest('.card');
+            let parent_card = offer_variation_image_collection.closest(".card");
 
             /* Найти элемент - кнопку добавления */
-            let variation_image_add_collection = parent_card.querySelector('.variation-image-add-collection');
+            let variation_image_add_collection = parent_card.querySelector(".variation-image-add-collection");
 
             /* Получить прототип коллекции  */
             let newPrototype = variation_image_add_collection.dataset.prototype;
@@ -1264,14 +1266,14 @@ function processVariationDragNDrop(offer_variation_image_collection)
             /* Получить соотв-щий элемент загрузки файла и загрузить файл  */
             processDragNDropFileInput(div, reader, file);
 
-        }
+        };
     }
 }
 
 /** DragNDrop Modifications */
 
 /* Получить коллекции вариаций торгового предложения */
-document.querySelectorAll('.card-body-modifications .modification-item-collection').forEach((element) =>
+document.querySelectorAll(".card-body-modifications .modification-item-collection").forEach((element) =>
 {
     processModificationDragNDrop(element);
 });
@@ -1285,7 +1287,7 @@ function processModificationDragNDrop(offer_variation_modification_image_collect
     /** Отобразить и загрузить в соотв-щий file input */
     function previewAndAttachModificationFile(file)
     {
-        if(!file.type.startsWith('image/'))
+        if(!file.type.startsWith("image/"))
         {
             return;
         }
@@ -1298,10 +1300,10 @@ function processModificationDragNDrop(offer_variation_modification_image_collect
         {
 
             /* Найти родительский элемент card */
-            let parent_card = offer_variation_modification_image_collection.closest('.card');
+            let parent_card = offer_variation_modification_image_collection.closest(".card");
 
             /* Найти элемент - кнопку добавления */
-            let modification_image_add_collection = parent_card.querySelector('.modification-image-add-collection');
+            let modification_image_add_collection = parent_card.querySelector(".modification-image-add-collection");
 
             /* Получить прототип коллекции  */
             let newPrototype = modification_image_add_collection.dataset.prototype;
@@ -1341,7 +1343,7 @@ function processModificationDragNDrop(offer_variation_modification_image_collect
             /* Получить соотв-щий элемент загрузки файла и загрузить файл  */
             processDragNDropFileInput(div, reader, file);
 
-        }
+        };
     }
 }
 
@@ -1371,37 +1373,37 @@ function processDragNDropEvents(element, previewAndAttachCallback)
 {
 
     /** Предотвратить стандартное (по умолчанию) поведение для событий: 'dragenter', 'dragover', 'dragleave', 'drop' */
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(event =>
+    ["dragenter", "dragover", "dragleave", "drop"].forEach(event =>
     {
         element.addEventListener(event, function(e)
             {
                 e.preventDefault();
                 e.stopPropagation();
             },
-            false
+            false,
         );
     });
 
     /** Подсветить offer_image_collection при перетаскивании при событиях 'dragenter', 'dragover' */
-    ['dragenter', 'dragover'].forEach(event =>
+    ["dragenter", "dragover"].forEach(event =>
     {
         element.addEventListener(event, () =>
         {
-            element.classList.add('shadow');
+            element.classList.add("shadow");
         }, false);
     });
 
     /** Удалить класс подсветки при событиях 'dragleave', 'drop' */
-    ['dragleave', 'drop'].forEach(event =>
+    ["dragleave", "drop"].forEach(event =>
     {
         element.addEventListener(event, () =>
         {
-            element.classList.remove('shadow');
+            element.classList.remove("shadow");
         }, false);
     });
 
     /** Обработать событие drop */
-    element.addEventListener('drop', function(e)
+    element.addEventListener("drop", function(e)
         {
             const dt = e.dataTransfer;
             const files = dt.files;
@@ -1409,6 +1411,6 @@ function processDragNDropEvents(element, previewAndAttachCallback)
             /* Обработать файлы полученные при "перетягивании" */
             ([...files]).forEach(previewAndAttachCallback);
 
-        }
+        },
     );
 }

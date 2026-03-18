@@ -23,12 +23,12 @@
 
 document.querySelectorAll(".add-barcode").forEach(function(add)
 {
-    addBarcode(add)
+    addBarcode(add);
 });
 
 document.querySelectorAll(".delete-barcode").forEach(function(del)
 {
-    deleteBarcode(del)
+    deleteBarcode(del);
 });
 
 /** Добавление штрихкода */
@@ -57,11 +57,11 @@ function addBarcode(element)
         let prototype_content = prototype.innerText;
         const prototype_name = prototype.dataset.prototypeName;
 
-        const regex = new RegExp(prototype_name, 'g');
+        const regex = new RegExp(prototype_name, "g");
         prototype_content = prototype_content.replace(regex, collection_index);
 
         const template = document.createElement("template");
-        prototype_content = prototype_content.replace(/value="[^"]*"/g, 'value=""');
+        prototype_content = prototype_content.replace(/value="[^"]*"/g, "value=\"\"");
         template.innerHTML = prototype_content.trim();
 
         const fragment = template.content.cloneNode(true);
@@ -70,9 +70,9 @@ function addBarcode(element)
 
         const last_add = collection_elements[collection_elements.length - 1];
         const last_del = last_add.querySelector("." + "delete-barcode");
-        deleteBarcode(last_del)
+        deleteBarcode(last_del);
 
-    }))
+    }));
 }
 
 /** Удаление штрихкода */
@@ -103,5 +103,5 @@ function deleteBarcode(element)
 
             collection_element.remove();
         }
-    }))
+    }));
 }

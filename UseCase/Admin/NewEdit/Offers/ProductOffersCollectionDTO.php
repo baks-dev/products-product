@@ -127,14 +127,6 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
 
     /** Штрихкоды */
 
-    /**
-     * @return ArrayCollection<int, ProductOfferBarcodeDTO>
-     */
-    public function getBarcode(): ArrayCollection
-    {
-        return $this->barcode;
-    }
-
     public function addBarcode(ProductOfferBarcodeDTO $barcode): void
     {
         $isExist = $this->barcode->exists(
@@ -149,11 +141,23 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
         }
     }
 
+    /** Заполненное значение */
+
+    public function getValue(): ?string
+    {
+        return $this->value;
+    }
+
+    public function setValue(?string $value): self
+    {
+        $this->value = $value;
+        return $this;
+    }
+
     public function removeBarcode(ProductOfferBarcodeDTO $barcode): void
     {
         $this->barcode->removeElement($barcode);
     }
-
 
     /** Артикул */
 
@@ -192,7 +196,6 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
         $this->cost = $cost;
         return $this;
     }
-
 
     public function getOpt(): ?ProductOfferOptDTO
     {
@@ -233,6 +236,20 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
         }
     }
 
+    /**
+     * Name
+     */
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): self
+    {
+        $this->name = $name;
+        return $this;
+    }
+
     public function removeImage(ProductOfferImageCollectionDTO $image): void
     {
         $this->image->removeElement($image);
@@ -264,17 +281,12 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
 
     }
 
-    /** Заполненное значение */
-
-    public function getValue(): ?string
+    /**
+     * @return ArrayCollection<int, ProductOfferBarcodeDTO>
+     */
+    public function getBarcode(): ArrayCollection
     {
-        return $this->value;
-    }
-
-    public function setValue(?string $value): self
-    {
-        $this->value = $value;
-        return $this;
+        return $this->barcode;
     }
 
     public function removeVariation(ProductVariationCollectionDTO $variation): void
@@ -282,13 +294,11 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
         $this->variation->removeElement($variation);
     }
 
-
     /** ID торгового предложения категории */
     public function getCategoryOffer(): ?CategoryProductOffersUid
     {
         return $this->categoryOffer;
     }
-
 
     public function setCategoryOffer(?CategoryProductOffersUid $categoryOffer): self
     {
@@ -306,20 +316,6 @@ final class ProductOffersCollectionDTO implements ProductOffersInterface
     public function setPostfix(?string $postfix): self
     {
         $this->postfix = $postfix;
-        return $this;
-    }
-
-    /**
-     * Name
-     */
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(?string $name): self
-    {
-        $this->name = $name;
         return $this;
     }
 }

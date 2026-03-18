@@ -37,17 +37,6 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 class BestSellerProductsRepositoryTest extends KernelTestCase
 {
 
-    /** Набор ключей для сравнения алиасов в результате применения функции JSONB_BUILD_OBJECT */
-    public static function getProductImagesKeys(): array
-    {
-        return [
-            "img",
-            "img_cdn",
-            "img_ext",
-            "img_root",
-        ];
-    }
-
     /**
      * Тестирование алиасов в результате применения функции JSONB_BUILD_OBJECT
      */
@@ -85,6 +74,17 @@ class BestSellerProductsRepositoryTest extends KernelTestCase
         }
 
         self::assertTrue(true);
+    }
+
+    /** Набор ключей для сравнения алиасов в результате применения функции JSONB_BUILD_OBJECT */
+    public static function getProductImagesKeys(): array
+    {
+        return [
+            "img",
+            "img_cdn",
+            "img_ext",
+            "img_root",
+        ];
     }
 
     /** Тестирование метода maxResult */

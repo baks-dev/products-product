@@ -52,14 +52,14 @@ final class UpdateProductPriceDTO implements ProductPriceInterface
         return $this;
     }
 
+    public function getPrice(): ?Money
+    {
+        return $this->price;
+    }
+
     public function setPrice(?Money $price): self
     {
         $this->price = $price;
         return $this;
-    }
-
-    public function getPrice(): ?Money
-    {
-        return $this->price;
     }
 }

@@ -77,93 +77,6 @@ final class SubProductQuantityRepository implements SubProductQuantityInterface
         return $this;
     }
 
-    public function forEvent(ProductEvent|ProductEventUid|string $event): self
-    {
-        if($event instanceof ProductEvent)
-        {
-            $event = $event->getId();
-        }
-
-        if(is_string($event))
-        {
-            $event = new ProductEventUid($event);
-        }
-
-        $this->event = $event;
-
-        return $this;
-    }
-
-    public function forOffer(ProductOffer|ProductOfferUid|string|false|null $offer): self
-    {
-        if(empty($offer))
-        {
-            $this->offer = false;
-            return $this;
-        }
-
-        if(is_string($offer))
-        {
-            $offer = new ProductOfferUid($offer);
-        }
-
-        if($offer instanceof ProductOffer)
-        {
-            $offer = $offer->getId();
-        }
-
-        $this->offer = $offer;
-
-        return $this;
-    }
-
-    public function forVariation(ProductVariation|ProductVariationUid|string|false|null $variation): self
-    {
-        if(empty($variation))
-        {
-            $this->variation = false;
-            return $this;
-        }
-
-        if(is_string($variation))
-        {
-            $variation = new ProductVariationUid($variation);
-        }
-
-        if($variation instanceof ProductVariation)
-        {
-            $variation = $variation->getId();
-        }
-
-
-        $this->variation = $variation;
-
-        return $this;
-    }
-
-    public function forModification(ProductModification|ProductModificationUid|string|false|null $modification): self
-    {
-        if(empty($modification))
-        {
-            $this->modification = false;
-            return $this;
-        }
-
-        if(is_string($modification))
-        {
-            $modification = new ProductModificationUid($modification);
-        }
-
-        if($modification instanceof ProductModification)
-        {
-            $modification = $modification->getId();
-        }
-
-        $this->modification = $modification;
-
-        return $this;
-    }
-
     public function update(): int|false
     {
         if(false === ($this->event instanceof ProductEventUid))
@@ -204,7 +117,7 @@ final class SubProductQuantityRepository implements SubProductQuantityInterface
             ->setParameter(
                 'event',
                 $CurrentProductIdentifier->getEvent(),
-                ProductEventUid::TYPE
+                ProductEventUid::TYPE,
             );
 
 
@@ -218,7 +131,7 @@ final class SubProductQuantityRepository implements SubProductQuantityInterface
                 ->setParameter(
                     'offer',
                     $CurrentProductIdentifier->getOffer(),
-                    ProductOfferUid::TYPE
+                    ProductOfferUid::TYPE,
                 );
         }
 
@@ -233,7 +146,7 @@ final class SubProductQuantityRepository implements SubProductQuantityInterface
                 ->setParameter(
                     'variation',
                     $CurrentProductIdentifier->getVariation(),
-                    ProductVariationUid::TYPE
+                    ProductVariationUid::TYPE,
                 );
         }
 
@@ -248,7 +161,7 @@ final class SubProductQuantityRepository implements SubProductQuantityInterface
                 ->setParameter(
                     'modification',
                     $CurrentProductIdentifier->getModification(),
-                    ProductModificationUid::TYPE
+                    ProductModificationUid::TYPE,
                 );
         }
 
@@ -276,5 +189,92 @@ final class SubProductQuantityRepository implements SubProductQuantityInterface
         }
 
         return (int) $dbal->executeStatement();
+    }
+
+    public function forModification(ProductModification|ProductModificationUid|string|false|null $modification): self
+    {
+        if(empty($modification))
+        {
+            $this->modification = false;
+            return $this;
+        }
+
+        if(is_string($modification))
+        {
+            $modification = new ProductModificationUid($modification);
+        }
+
+        if($modification instanceof ProductModification)
+        {
+            $modification = $modification->getId();
+        }
+
+        $this->modification = $modification;
+
+        return $this;
+    }
+
+    public function forVariation(ProductVariation|ProductVariationUid|string|false|null $variation): self
+    {
+        if(empty($variation))
+        {
+            $this->variation = false;
+            return $this;
+        }
+
+        if(is_string($variation))
+        {
+            $variation = new ProductVariationUid($variation);
+        }
+
+        if($variation instanceof ProductVariation)
+        {
+            $variation = $variation->getId();
+        }
+
+
+        $this->variation = $variation;
+
+        return $this;
+    }
+
+    public function forOffer(ProductOffer|ProductOfferUid|string|false|null $offer): self
+    {
+        if(empty($offer))
+        {
+            $this->offer = false;
+            return $this;
+        }
+
+        if(is_string($offer))
+        {
+            $offer = new ProductOfferUid($offer);
+        }
+
+        if($offer instanceof ProductOffer)
+        {
+            $offer = $offer->getId();
+        }
+
+        $this->offer = $offer;
+
+        return $this;
+    }
+
+    public function forEvent(ProductEvent|ProductEventUid|string $event): self
+    {
+        if($event instanceof ProductEvent)
+        {
+            $event = $event->getId();
+        }
+
+        if(is_string($event))
+        {
+            $event = new ProductEventUid($event);
+        }
+
+        $this->event = $event;
+
+        return $this;
     }
 }

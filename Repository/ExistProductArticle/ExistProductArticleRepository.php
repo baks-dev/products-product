@@ -133,21 +133,21 @@ final class ExistProductArticleRepository implements ExistProductArticleInterfac
                 'exist',
                 ProductVariation::class,
                 'variation',
-                'variation.id = exist.variation'
+                'variation.id = exist.variation',
             );
 
             $dbal->join(
                 'variation',
                 ProductOffer::class,
                 'offer',
-                'offer.id = variation.offer'
+                'offer.id = variation.offer',
             );
 
             $dbal->join(
                 'offer',
                 Product::class,
                 'product',
-                'product.event = offer.event'
+                'product.event = offer.event',
             );
         }
 
@@ -159,14 +159,14 @@ final class ExistProductArticleRepository implements ExistProductArticleInterfac
                 'exist',
                 ProductOffer::class,
                 'offer',
-                'offer.id = exist.offer'
+                'offer.id = exist.offer',
             );
 
             $dbal->join(
                 'offer',
                 Product::class,
                 'product',
-                'product.event = offer.event'
+                'product.event = offer.event',
             );
 
         }
@@ -179,7 +179,7 @@ final class ExistProductArticleRepository implements ExistProductArticleInterfac
                 'exist',
                 Product::class,
                 'product',
-                'product.event = exist.event'
+                'product.event = exist.event',
             );
         }
 
@@ -191,7 +191,7 @@ final class ExistProductArticleRepository implements ExistProductArticleInterfac
                 'exist',
                 Product::class,
                 'product',
-                'product.event = exist.event'
+                'product.event = exist.event',
             );
         }
 
@@ -212,14 +212,14 @@ final class ExistProductArticleRepository implements ExistProductArticleInterfac
                     'product',
                     ProductInfo::class,
                     'info',
-                    'info.product = product.id AND info.profile = :profile'
+                    'info.product = product.id AND info.profile = :profile',
                 );
             }
 
             $dbal->setParameter(
                 key: 'profile',
                 value: $this->profile,
-                type: UserProfileUid::TYPE
+                type: UserProfileUid::TYPE,
             );
         }
 

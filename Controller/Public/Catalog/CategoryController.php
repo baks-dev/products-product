@@ -70,7 +70,7 @@ final class CategoryController extends AbstractController
                 'form-'.$CategoryUid,
                 ProductCategoryFilterForm::class,
                 $ProductCategoryFilterDTO,
-                ['action' => $this->generateUrl('products-product:public.catalog.category', ['category' => $category])]
+                ['action' => $this->generateUrl('products-product:public.catalog.category', ['category' => $category])],
             )
             ->handleRequest($request);
 

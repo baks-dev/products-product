@@ -41,7 +41,7 @@ final class ProductVariationBarcodeForm extends AbstractType
             [
                 'required' => true,
                 'label' => false,
-            ]
+            ],
         );
 
         $builder->get('value')->addModelTransformer(
@@ -51,8 +51,8 @@ final class ProductVariationBarcodeForm extends AbstractType
                 },
                 function(?string $barcode) {
                     return null === $barcode ? new ProductBarcode(ProductBarcode::generate()) : new ProductBarcode($barcode);
-                }
-            )
+                },
+            ),
         );
     }
 

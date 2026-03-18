@@ -183,7 +183,7 @@ final class CurrentProductIdentifierByEventRepository implements CurrentProductI
                 'product',
                 ProductInfo::class,
                 'product_info',
-                'product_info.event = product.event'
+                'product_info.event = product.event',
             );
 
         /** Объявляем предварительно переменные Invariable */
@@ -236,7 +236,7 @@ final class CurrentProductIdentifierByEventRepository implements CurrentProductI
                     'current_offer',
                     ProductOfferBarcode::class,
                     'product_offer_barcode',
-                    'product_offer_barcode.offer = current_offer.id'
+                    'product_offer_barcode.offer = current_offer.id',
                 );
 
             $selectCollectionBarcodes = 'product_offer_barcode.value';
@@ -289,7 +289,7 @@ final class CurrentProductIdentifierByEventRepository implements CurrentProductI
                         'current_variation',
                         ProductVariationBarcode::class,
                         'product_variation_barcode',
-                        'product_variation_barcode.variation = current_variation.id'
+                        'product_variation_barcode.variation = current_variation.id',
                     );
 
                 $selectCollectionBarcodes = 'product_variation_barcode.value';
@@ -343,7 +343,7 @@ final class CurrentProductIdentifierByEventRepository implements CurrentProductI
                             'current_modification',
                             ProductModificationBarcode::class,
                             'product_modification_barcode',
-                            'product_modification_barcode.modification = current_modification.id'
+                            'product_modification_barcode.modification = current_modification.id',
                         );
 
                     $selectCollectionBarcodes = 'product_modification_barcode.value';
@@ -374,7 +374,7 @@ final class CurrentProductIdentifierByEventRepository implements CurrentProductI
                     DISTINCT
                         $selectCollectionBarcodes
                        ) AS barcodes
-                "
+                ",
         );
 
         $dbal->allGroupByExclude();

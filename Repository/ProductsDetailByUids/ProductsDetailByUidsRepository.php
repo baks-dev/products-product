@@ -171,6 +171,12 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
         return $this;
     }
 
+    public function toArray(): array|false
+    {
+        $result = $this->findAll();
+
+        return ($result) ? iterator_to_array($result) : false;
+    }
 
     public function findAll(): Generator|false
     {
@@ -182,14 +188,6 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
 
         return (true === $result->valid()) ? $result : false;
     }
-
-    public function toArray(): array|false
-    {
-        $result = $this->findAll();
-
-        return ($result) ? iterator_to_array($result) : false;
-    }
-
 
     /**
      * Метод возвращает детальную информацию о продуктая по их идентификаторам события, ТП, вариантов и модификаций.
@@ -218,7 +216,7 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
             'product_event',
             ProductPrice::class,
             'product_price',
-            'product_price.event = product_event.id'
+            'product_price.event = product_event.id',
         );
 
         /* ProductInfo */
@@ -229,9 +227,9 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
                 'product_event',
                 ProductInfo::class,
                 'product_info',
-                'product_info.product = product_event.main '
+                'product_info.product = product_event.main ',
             );
-        
+
 
         /* Торговое предложение */
 
@@ -248,7 +246,7 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
                 'product_event',
                 ProductOffer::class,
                 'product_offer',
-                'product_offer.event = product_event.id'
+                'product_offer.event = product_event.id',
             );
         }
 
@@ -257,7 +255,7 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
                 'product_event',
                 ProductTrans::class,
                 'product_trans',
-                'product_trans.event = product_event.id AND product_trans.local = :local'
+                'product_trans.event = product_event.id AND product_trans.local = :local',
             );
 
         /* Название продукта */
@@ -279,7 +277,7 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
                 'product_offer',
                 ProductOfferPrice::class,
                 'product_offer_price',
-                'product_offer_price.offer = product_offer.id'
+                'product_offer_price.offer = product_offer.id',
             );
 
             /* Получаем тип торгового предложения */
@@ -289,7 +287,7 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
                     'product_offer',
                     CategoryProductOffers::class,
                     'category_offer',
-                    'category_offer.id = product_offer.category_offer'
+                    'category_offer.id = product_offer.category_offer',
                 );
 
             /* Получаем название торгового предложения */
@@ -299,7 +297,7 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
                     'category_offer',
                     CategoryProductOffersTrans::class,
                     'category_offer_trans',
-                    'category_offer_trans.offer = category_offer.id AND category_offer_trans.local = :local'
+                    'category_offer_trans.offer = category_offer.id AND category_offer_trans.local = :local',
                 );
 
             /* Наличие и резерв торгового предложения */
@@ -307,7 +305,7 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
                 'product_offer',
                 ProductOfferQuantity::class,
                 'product_offer_quantity',
-                'product_offer_quantity.offer = product_offer.id'
+                'product_offer_quantity.offer = product_offer.id',
             );
         }
 
@@ -325,7 +323,7 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
                 'product_offer',
                 ProductVariation::class,
                 'product_variation',
-                'product_variation.offer = product_offer.id'
+                'product_variation.offer = product_offer.id',
             );
 
 
@@ -334,7 +332,7 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
                 'product_variation',
                 ProductVariationPrice::class,
                 'product_variation_price',
-                'product_variation_price.variation = product_variation.id'
+                'product_variation_price.variation = product_variation.id',
             );
 
             /* Получаем тип множественного варианта */
@@ -344,7 +342,7 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
                     'product_variation',
                     CategoryProductVariation::class,
                     'category_offer_variation',
-                    'category_offer_variation.id = product_variation.category_variation'
+                    'category_offer_variation.id = product_variation.category_variation',
                 );
 
             /* Получаем название множественного варианта */
@@ -354,7 +352,7 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
                     'category_offer_variation',
                     CategoryProductVariationTrans::class,
                     'category_offer_variation_trans',
-                    'category_offer_variation_trans.variation = category_offer_variation.id AND category_offer_variation_trans.local = :local'
+                    'category_offer_variation_trans.variation = category_offer_variation.id AND category_offer_variation_trans.local = :local',
                 );
 
 
@@ -363,7 +361,7 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
                 'category_offer_variation',
                 ProductVariationQuantity::class,
                 'product_variation_quantity',
-                'product_variation_quantity.variation = product_variation.id'
+                'product_variation_quantity.variation = product_variation.id',
             );
         }
 
@@ -380,7 +378,7 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
                 'product_variation',
                 ProductModification::class,
                 'product_modification',
-                'product_modification.variation = product_variation.id '
+                'product_modification.variation = product_variation.id ',
             );
 
 
@@ -389,7 +387,7 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
                 'product_modification',
                 ProductModificationPrice::class,
                 'product_modification_price',
-                'product_modification_price.modification = product_modification.id'
+                'product_modification_price.modification = product_modification.id',
             );
 
             /* Получаем тип модификации множественного варианта */
@@ -399,7 +397,7 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
                     'product_modification',
                     CategoryProductModification::class,
                     'category_offer_modification',
-                    'category_offer_modification.id = product_modification.category_modification'
+                    'category_offer_modification.id = product_modification.category_modification',
                 );
 
             /* Получаем название типа модификации */
@@ -411,7 +409,7 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
                     'category_offer_modification_trans',
                     '
             category_offer_modification_trans.modification = category_offer_modification.id AND 
-            category_offer_modification_trans.local = :local'
+            category_offer_modification_trans.local = :local',
                 );
 
             /* Наличие и резерв модификации множественного варианта */
@@ -419,7 +417,7 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
                 'category_offer_modification',
                 ProductModificationQuantity::class,
                 'product_modification_quantity',
-                'product_modification_quantity.modification = product_modification.id'
+                'product_modification_quantity.modification = product_modification.id',
             );
 
         }
@@ -454,7 +452,7 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
             'product_event',
             ProductPhoto::class,
             'product_photo',
-            'product_photo.event = product_event.id AND product_photo.root = true'
+            'product_photo.event = product_event.id AND product_photo.root = true',
         );
 
         if(false === empty($this->offers))
@@ -463,7 +461,7 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
                 'product_offer',
                 ProductOfferImage::class,
                 'product_offer_images',
-                'product_offer_images.offer = product_offer.id AND product_offer_images.root = true'
+                'product_offer_images.offer = product_offer.id AND product_offer_images.root = true',
             );
         }
 
@@ -473,7 +471,7 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
                 'product_variation',
                 ProductVariationImage::class,
                 'product_variation_image',
-                'product_variation_image.variation = product_variation.id AND product_variation_image.root = true'
+                'product_variation_image.variation = product_variation.id AND product_variation_image.root = true',
             );
         }
 
@@ -483,7 +481,7 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
                 'product_modification',
                 ProductModificationImage::class,
                 'product_modification_image',
-                'product_modification_image.modification = product_modification.id AND product_modification_image.root = true'
+                'product_modification_image.modification = product_modification.id AND product_modification_image.root = true',
             );
         }
 
@@ -563,7 +561,7 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
             'product_event',
             ProductCategory::class,
             'product_event_category',
-            'product_event_category.event = product_event.id AND product_event_category.root = true'
+            'product_event_category.event = product_event.id AND product_event_category.root = true',
         );
 
 
@@ -571,7 +569,7 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
             'product_event_category',
             CategoryProduct::class,
             'category',
-            'category.id = product_event_category.category'
+            'category.id = product_event_category.category',
         );
 
         $dbal->addSelect('category_trans.name AS category_name')->addGroupBy('category_trans.name');
@@ -580,7 +578,7 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
             'category',
             CategoryProductTrans::class,
             'category_trans',
-            'category_trans.event = category.event AND category_trans.local = :local'
+            'category_trans.event = category.event AND category_trans.local = :local',
         );
 
         $dbal->addSelect('category_info.url AS category_url')->addGroupBy('category_info.url');
@@ -588,14 +586,14 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
             'category',
             CategoryProductInfo::class,
             'category_info',
-            'category_info.event = category.event'
+            'category_info.event = category.event',
         );
 
         $dbal->leftJoin(
             'category',
             CategoryProductSection::class,
             'category_section',
-            'category_section.event = category.event'
+            'category_section.event = category.event',
         );
 
         /* Свойства, участвующие в карточке */
@@ -604,21 +602,21 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
             'category_section',
             CategoryProductSectionField::class,
             'category_section_field',
-            'category_section_field.section = category_section.id AND (category_section_field.public = TRUE OR category_section_field.name = TRUE )'
+            'category_section_field.section = category_section.id AND (category_section_field.public = TRUE OR category_section_field.name = TRUE )',
         );
 
         $dbal->leftJoin(
             'category_section_field',
             CategoryProductSectionFieldTrans::class,
             'category_section_field_trans',
-            'category_section_field_trans.field = category_section_field.id AND category_section_field_trans.local = :local'
+            'category_section_field_trans.field = category_section_field.id AND category_section_field_trans.local = :local',
         );
 
         $dbal->leftJoin(
             'category_section_field',
             ProductProperty::class,
             'product_property',
-            'product_property.event = product_event.id AND product_property.field = category_section_field.const'
+            'product_property.event = product_event.id AND product_property.field = category_section_field.const',
         );
 
         $dbal->addSelect(
@@ -641,7 +639,7 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
 				)
 			
 		)
-			AS category_section_field"
+			AS category_section_field",
         );
 
 
@@ -654,7 +652,7 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
                 ->setParameter(
                     key: 'events',
                     value: $this->events,
-                    type: ArrayParameterType::STRING
+                    type: ArrayParameterType::STRING,
                 );
         }
 
@@ -666,7 +664,7 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
                 ->setParameter(
                     key: 'offers',
                     value: $this->offers,
-                    type: ArrayParameterType::STRING
+                    type: ArrayParameterType::STRING,
                 );
         }
 
@@ -678,7 +676,7 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
                 ->setParameter(
                     key: 'variations',
                     value: $this->variations,
-                    type: ArrayParameterType::STRING
+                    type: ArrayParameterType::STRING,
                 );
         }
 
@@ -690,7 +688,7 @@ final class ProductsDetailByUidsRepository implements ProductsDetailByUidsInterf
                 ->setParameter(
                     key: 'modifications',
                     value: $this->modifications,
-                    type: ArrayParameterType::STRING
+                    type: ArrayParameterType::STRING,
                 );
         }
 

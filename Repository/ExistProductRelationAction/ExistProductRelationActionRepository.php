@@ -51,7 +51,7 @@ final class ExistProductRelationActionRepository implements ExistProductRelation
             'product',
             UsersTableActions::class,
             'action',
-            'action.event = product.event'
+            'action.event = product.event',
         );
 
 

@@ -142,12 +142,6 @@ final class ProductVariationCollectionDTO implements ProductVariationInterface
         }
     }
 
-    public function removeBarcode(ProductVariationBarcodeDTO $barcode): void
-    {
-        $this->barcode->removeElement($barcode);
-    }
-
-
     /** Заполненное значение */
 
     public function getValue(): ?string
@@ -155,13 +149,16 @@ final class ProductVariationCollectionDTO implements ProductVariationInterface
         return $this->value;
     }
 
-
     public function setValue(?string $value): self
     {
         $this->value = $value;
         return $this;
     }
 
+    public function removeBarcode(ProductVariationBarcodeDTO $barcode): void
+    {
+        $this->barcode->removeElement($barcode);
+    }
 
     /** Артикул */
 

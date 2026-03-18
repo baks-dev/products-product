@@ -176,7 +176,7 @@ final class ProductPromoRepository implements ProductPromoInterface
         $dbal->join('product',
             ProductEvent::class,
             'product_event',
-            'product_event.id = product.event'
+            'product_event.id = product.event',
         );
 
         /** Категория */
@@ -189,11 +189,11 @@ final class ProductPromoRepository implements ProductPromoInterface
                 '
                 product_event_category.event = product.event AND 
                 product_event_category.category = :category AND 
-                product_event_category.root = true'
+                product_event_category.root = true',
             )->setParameter(
                 'category',
                 $this->categoryUid,
-                CategoryProductUid::TYPE
+                CategoryProductUid::TYPE,
             );
         }
         else
@@ -204,7 +204,7 @@ final class ProductPromoRepository implements ProductPromoInterface
                 'product_event_category',
                 '
                 product_event_category.event = product.event AND 
-                product_event_category.root = true'
+                product_event_category.root = true',
             );
         }
 
@@ -230,7 +230,7 @@ final class ProductPromoRepository implements ProductPromoInterface
                     $dbal->setParameter(
                         $prepareKey,
                         $ProductCategorySectionFieldUid,
-                        CategoryProductSectionFieldUid::TYPE
+                        CategoryProductSectionFieldUid::TYPE,
                     );
                     $dbal->setParameter($prepareValue, $item);
 
@@ -238,7 +238,7 @@ final class ProductPromoRepository implements ProductPromoInterface
                         'product',
                         ProductProperty::class,
                         $alias,
-                        $alias.'.event = product.event '.$expr.' '.$ProductPropertyJoin
+                        $alias.'.event = product.event '.$expr.' '.$ProductPropertyJoin,
                     );
                 }
             }
@@ -260,7 +260,7 @@ final class ProductPromoRepository implements ProductPromoInterface
                     $dbal->setParameter(
                         $prepareKey,
                         $ProductCategorySectionFieldUid,
-                        CategoryProductSectionFieldUid::TYPE
+                        CategoryProductSectionFieldUid::TYPE,
                     );
                     $dbal->setParameter($prepareValue, $item);
 
@@ -270,7 +270,7 @@ final class ProductPromoRepository implements ProductPromoInterface
                     'product',
                     ProductProperty::class,
                     'product_property_filter',
-                    'product_property_filter.event = product.event AND '.implode(' '.$expr.' ', $ProductPropertyJoin)
+                    'product_property_filter.event = product.event AND '.implode(' '.$expr.' ', $ProductPropertyJoin),
                 );
             }
         }
@@ -281,7 +281,7 @@ final class ProductPromoRepository implements ProductPromoInterface
                 'product_event',
                 ProductTrans::class,
                 'product_trans',
-                'product_trans.event = product_event.id AND product_trans.local = :local'
+                'product_trans.event = product_event.id AND product_trans.local = :local',
             );
 
         /** Цена товара */
@@ -290,7 +290,7 @@ final class ProductPromoRepository implements ProductPromoInterface
                 'product_event',
                 ProductPrice::class,
                 'product_price',
-                'product_price.event = product_event.id'
+                'product_price.event = product_event.id',
             )
             ->addGroupBy('product_price.price')
             ->addGroupBy('product_price.currency')
@@ -304,7 +304,7 @@ final class ProductPromoRepository implements ProductPromoInterface
                 'product_event',
                 ProductInfo::class,
                 'product_info',
-                'product_info.product = product.id'
+                'product_info.product = product.id',
             )
             ->addGroupBy('product_info.article')
             ->addGroupBy('product_info.sort');
@@ -317,7 +317,7 @@ final class ProductPromoRepository implements ProductPromoInterface
                 'product',
                 ProductActive::class,
                 'product_active',
-                'product_active.event = product.event'
+                'product_active.event = product.event',
             );
 
         /** OFFERS */
@@ -337,7 +337,7 @@ final class ProductPromoRepository implements ProductPromoInterface
                 'product',
                 ProductOffer::class,
                 'product_offer',
-                'product_offer.event = product.event '.($this->filter?->getOffer() ? ' AND product_offer.value = :offer' : '').' '
+                'product_offer.event = product.event '.($this->filter?->getOffer() ? ' AND product_offer.value = :offer' : '').' ',
             );
 
         /** Цена торгового предложения */
@@ -345,7 +345,7 @@ final class ProductPromoRepository implements ProductPromoInterface
             'product_offer',
             ProductOfferPrice::class,
             'product_offer_price',
-            'product_offer_price.offer = product_offer.id'
+            'product_offer_price.offer = product_offer.id',
         )
             ->addGroupBy('product_offer_price.price')
             ->addGroupBy('product_offer_price.currency');
@@ -355,7 +355,7 @@ final class ProductPromoRepository implements ProductPromoInterface
             'product_offer',
             ProductOfferQuantity::class,
             'product_offer_quantity',
-            'product_offer_quantity.offer = product_offer.id'
+            'product_offer_quantity.offer = product_offer.id',
         )
             ->addGroupBy('product_offer_quantity.quantity')
             ->addGroupBy('product_offer_quantity.reserve');
@@ -367,7 +367,7 @@ final class ProductPromoRepository implements ProductPromoInterface
                 'product_offer',
                 CategoryProductOffers::class,
                 'category_offer',
-                'category_offer.id = product_offer.category_offer'
+                'category_offer.id = product_offer.category_offer',
             );
 
         /** VARIATIONS */
@@ -387,7 +387,7 @@ final class ProductPromoRepository implements ProductPromoInterface
                 'product_offer',
                 ProductVariation::class,
                 'product_offer_variation',
-                'product_offer_variation.offer = product_offer.id '.($this->filter?->getVariation() ? ' AND product_offer_variation.value = :variation' : '').' '
+                'product_offer_variation.offer = product_offer.id '.($this->filter?->getVariation() ? ' AND product_offer_variation.value = :variation' : '').' ',
             );
 
 
@@ -396,7 +396,7 @@ final class ProductPromoRepository implements ProductPromoInterface
             'category_offer_variation',
             ProductVariationPrice::class,
             'product_variation_price',
-            'product_variation_price.variation = product_offer_variation.id'
+            'product_variation_price.variation = product_offer_variation.id',
         )
             ->addGroupBy('product_variation_price.price')
             ->addGroupBy('product_variation_price.currency');
@@ -406,7 +406,7 @@ final class ProductPromoRepository implements ProductPromoInterface
             'category_offer_variation',
             ProductVariationQuantity::class,
             'product_variation_quantity',
-            'product_variation_quantity.variation = product_offer_variation.id'
+            'product_variation_quantity.variation = product_offer_variation.id',
         )
             ->addGroupBy('product_variation_quantity.quantity')
             ->addGroupBy('product_variation_quantity.reserve');
@@ -418,7 +418,7 @@ final class ProductPromoRepository implements ProductPromoInterface
                 'product_offer_variation',
                 CategoryProductVariation::class,
                 'category_offer_variation',
-                'category_offer_variation.id = product_offer_variation.category_variation'
+                'category_offer_variation.id = product_offer_variation.category_variation',
             );
 
         /** MODIFICATION */
@@ -438,7 +438,7 @@ final class ProductPromoRepository implements ProductPromoInterface
                 'category_offer_variation',
                 ProductModification::class,
                 'product_offer_modification',
-                'product_offer_modification.variation = product_offer_variation.id '.($this->filter?->getModification() ? ' AND product_offer_modification.value = :modification' : '').' '
+                'product_offer_modification.variation = product_offer_variation.id '.($this->filter?->getModification() ? ' AND product_offer_modification.value = :modification' : '').' ',
             );
 
         /** Цена множественного варианта */
@@ -446,7 +446,7 @@ final class ProductPromoRepository implements ProductPromoInterface
             'product_offer_modification',
             ProductModificationPrice::class,
             'product_modification_price',
-            'product_modification_price.modification = product_offer_modification.id'
+            'product_modification_price.modification = product_offer_modification.id',
         )
             ->addGroupBy('product_modification_price.price')
             ->addGroupBy('product_modification_price.currency');
@@ -456,7 +456,7 @@ final class ProductPromoRepository implements ProductPromoInterface
             'product_offer_modification',
             ProductModificationQuantity::class,
             'product_modification_quantity',
-            'product_modification_quantity.modification = product_offer_modification.id'
+            'product_modification_quantity.modification = product_offer_modification.id',
         )
             ->addGroupBy('product_modification_quantity.quantity')
             ->addGroupBy('product_modification_quantity.reserve');
@@ -468,7 +468,7 @@ final class ProductPromoRepository implements ProductPromoInterface
                 'product_offer_modification',
                 CategoryProductModification::class,
                 'category_offer_modification',
-                'category_offer_modification.id = product_offer_modification.category_modification'
+                'category_offer_modification.id = product_offer_modification.category_modification',
             );
 
         /** Артикул продукта */
@@ -488,7 +488,7 @@ final class ProductPromoRepository implements ProductPromoInterface
 			   
 			   ELSE NULL
 			END AS product_article
-		"
+		",
         );
 
         /** Фото продукта */
@@ -496,28 +496,28 @@ final class ProductPromoRepository implements ProductPromoInterface
             'product_offer_modification',
             ProductModificationImage::class,
             'product_offer_modification_image',
-            'product_offer_modification_image.modification = product_offer_modification.id AND product_offer_modification_image.root = true'
+            'product_offer_modification_image.modification = product_offer_modification.id AND product_offer_modification_image.root = true',
         );
 
         $dbal->leftJoin(
             'product_offer',
             ProductVariationImage::class,
             'product_offer_variation_image',
-            'product_offer_variation_image.variation = product_offer_variation.id AND product_offer_variation_image.root = true'
+            'product_offer_variation_image.variation = product_offer_variation.id AND product_offer_variation_image.root = true',
         );
 
         $dbal->leftJoin(
             'product_offer',
             ProductOfferImage::class,
             'product_offer_images',
-            'product_offer_variation_image.name IS NULL AND product_offer_images.offer = product_offer.id AND product_offer_images.root = true'
+            'product_offer_variation_image.name IS NULL AND product_offer_images.offer = product_offer.id AND product_offer_images.root = true',
         );
 
         $dbal->leftJoin(
             'product_offer',
             ProductPhoto::class,
             'product_photo',
-            'product_offer_images.name IS NULL AND product_photo.event = product_event.id AND product_photo.root = true'
+            'product_offer_images.name IS NULL AND product_photo.event = product_event.id AND product_photo.root = true',
         );
 
         /** Агрегация фото продуктов из offer, variation, modification */
@@ -564,7 +564,7 @@ final class ProductPromoRepository implements ProductPromoInterface
                             ELSE NULL
                         END
                     )
-                    AS product_images"
+                    AS product_images",
         );
 
         /** Стоимость продукта */
@@ -605,14 +605,14 @@ final class ProductPromoRepository implements ProductPromoInterface
 			   THEN product_price.currency
 			   
 			   ELSE NULL
-			END AS product_currency"
+			END AS product_currency",
         );
 
         $dbal->leftJoin(
             'product_event_category',
             CategoryProduct::class,
             'category',
-            'category.id = product_event_category.category'
+            'category.id = product_event_category.category',
         );
 
         $dbal
@@ -621,7 +621,7 @@ final class ProductPromoRepository implements ProductPromoInterface
                 'product_event_category',
                 CategoryProductInfo::class,
                 'category_info',
-                'category_info.event = category.event'
+                'category_info.event = category.event',
             );
 
         $dbal
@@ -630,14 +630,14 @@ final class ProductPromoRepository implements ProductPromoInterface
                 'category',
                 CategoryProductTrans::class,
                 'category_trans',
-                'category_trans.event = category.event AND category_trans.local = :local'
+                'category_trans.event = category.event AND category_trans.local = :local',
             );
 
         $dbal->leftJoin(
             'category',
             CategoryProductSection::class,
             'category_section',
-            'category_section.event = category.event'
+            'category_section.event = category.event',
         );
 
         /** Свойства, участвующие в карточке */
@@ -645,21 +645,21 @@ final class ProductPromoRepository implements ProductPromoInterface
             'category_section',
             CategoryProductSectionField::class,
             'category_section_field',
-            'category_section_field.section = category_section.id AND (category_section_field.card = TRUE OR category_section_field.photo = TRUE OR category_section_field.name = TRUE )'
+            'category_section_field.section = category_section.id AND (category_section_field.card = TRUE OR category_section_field.photo = TRUE OR category_section_field.name = TRUE )',
         );
 
         $dbal->leftJoin(
             'category_section_field',
             CategoryProductSectionFieldTrans::class,
             'category_section_field_trans',
-            'category_section_field_trans.field = category_section_field.id AND category_section_field_trans.local = :local'
+            'category_section_field_trans.field = category_section_field.id AND category_section_field_trans.local = :local',
         );
 
         $dbal->leftJoin(
             'category_section_field',
             ProductProperty::class,
             'product_property',
-            'product_property.event = product.event AND product_property.field = category_section_field.const'
+            'product_property.event = product.event AND product_property.field = category_section_field.const',
         );
 
         $dbal->addSelect("JSON_AGG
@@ -676,7 +676,7 @@ final class ProductPromoRepository implements ProductPromoInterface
 					'field_value', product_property.value
 				)
 		)
-			AS category_section_field"
+			AS category_section_field",
         );
 
         /** Product Invariable */
@@ -768,7 +768,7 @@ final class ProductPromoRepository implements ProductPromoInterface
                     UserProfile::class,
                     'current_profile',
                     '
-                        current_profile.id = :'.$dbal::CURRENT_PROFILE_KEY
+                        current_profile.id = :'.$dbal::CURRENT_PROFILE_KEY,
                 );
 
             $dbal
@@ -779,7 +779,7 @@ final class ProductPromoRepository implements ProductPromoInterface
                     'current_profile_discount',
                     '
                         current_profile_discount.event = current_profile.event
-                        '
+                        ',
                 );
         }
 
@@ -793,7 +793,7 @@ final class ProductPromoRepository implements ProductPromoInterface
                     UserProfile::class,
                     'project_profile',
                     '
-                        project_profile.id = :'.$dbal::PROJECT_PROFILE_KEY
+                        project_profile.id = :'.$dbal::PROJECT_PROFILE_KEY,
                 );
 
             $dbal
@@ -803,7 +803,7 @@ final class ProductPromoRepository implements ProductPromoInterface
                     UserProfileDiscount::class,
                     'project_profile_discount',
                     '
-                        project_profile_discount.event = project_profile.event'
+                        project_profile_discount.event = project_profile.event',
                 );
         }
 
@@ -816,7 +816,7 @@ final class ProductPromoRepository implements ProductPromoInterface
                 WHEN product_price.quantity  IS NOT NULL THEN (product_price.quantity - product_price.reserve)
                 ELSE 0
             END > 0
-        "
+        ",
         );
 
         /** Только с ценой */
@@ -828,7 +828,7 @@ final class ProductPromoRepository implements ProductPromoInterface
 			   WHEN product_price.price IS NOT NULL AND (product_price.old > product_price.price) THEN product_price.price
 			   ELSE 0
 			END > 0
- 		"
+ 		",
         );
 
         /** Используем индекс сортировки для поднятия в топ списка */

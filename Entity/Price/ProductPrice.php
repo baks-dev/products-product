@@ -127,14 +127,6 @@ class ProductPrice extends EntityEvent
         return true;
     }
 
-    /** Присваиваем резерву указанное количество */
-    public function setReserve(?int $reserve): self
-    {
-        $this->reserve = $reserve ?: 0;
-        return $this;
-    }
-
-
     /** Удаляем из наличия указанное количество */
     public function subQuantity(?int $quantity): bool
     {
@@ -172,5 +164,12 @@ class ProductPrice extends EntityEvent
     public function getReserve(): ?int
     {
         return $this->reserve;
+    }
+
+    /** Присваиваем резерву указанное количество */
+    public function setReserve(?int $reserve): self
+    {
+        $this->reserve = $reserve ?: 0;
+        return $this;
     }
 }

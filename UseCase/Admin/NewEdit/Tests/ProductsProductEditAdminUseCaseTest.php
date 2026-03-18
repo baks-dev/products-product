@@ -224,12 +224,12 @@ class ProductsProductEditAdminUseCaseTest extends KernelTestCase
 
         self::assertEquals(
             $activeTestDateNew->format('Y-m-d H:i:s'),
-            $ActiveDTO->getActiveFrom()->format('Y-m-d H:i:s')
+            $ActiveDTO->getActiveFrom()->format('Y-m-d H:i:s'),
         );
         $ActiveDTO->setActiveFrom($activeTestDateEdit);
         self::assertSame(
             $activeTestDateEdit->format('Y-m-d H:i:s'),
-            $ActiveDTO->getActiveFrom()->format('Y-m-d H:i:s')
+            $ActiveDTO->getActiveFrom()->format('Y-m-d H:i:s'),
         );
 
 
@@ -238,24 +238,24 @@ class ProductsProductEditAdminUseCaseTest extends KernelTestCase
 
         self::assertEquals(
             $activeTestDateEdit->format('Y-m-d H:i:s'),
-            $ActiveDTO->getActiveFromTime()->format('Y-m-d H:i:s')
+            $ActiveDTO->getActiveFromTime()->format('Y-m-d H:i:s'),
         );
         $ActiveDTO->setActiveFromTime($activeTestDateEdit);
         self::assertSame(
             $activeTestDateEdit->format('Y-m-d H:i:s'),
-            $ActiveDTO->getActiveFromTime()->format('Y-m-d H:i:s')
+            $ActiveDTO->getActiveFromTime()->format('Y-m-d H:i:s'),
         );
 
         //  Active To Date
 
         self::assertEquals(
             $activeTestDateNew->format('Y-m-d H:i:s'),
-            $ActiveDTO->getActiveTo()->format('Y-m-d H:i:s')
+            $ActiveDTO->getActiveTo()->format('Y-m-d H:i:s'),
         );
         $ActiveDTO->setActiveTo($activeTestDateEdit);
         self::assertSame(
             $activeTestDateEdit->format('Y-m-d H:i:s'),
-            $ActiveDTO->getActiveTo()->format('Y-m-d H:i:s')
+            $ActiveDTO->getActiveTo()->format('Y-m-d H:i:s'),
         );
 
         //  Active To Time
@@ -263,12 +263,12 @@ class ProductsProductEditAdminUseCaseTest extends KernelTestCase
 
         self::assertEquals(
             $activeTestDateEdit->format('Y-m-d H:i:s'),
-            $ActiveDTO->getActiveToTime()->format('Y-m-d H:i:s')
+            $ActiveDTO->getActiveToTime()->format('Y-m-d H:i:s'),
         );
         $ActiveDTO->setActiveToTime($activeTestDateEdit);
         self::assertSame(
             $activeTestDateEdit->format('Y-m-d H:i:s'),
-            $ActiveDTO->getActiveToTime()->format('Y-m-d H:i:s')
+            $ActiveDTO->getActiveToTime()->format('Y-m-d H:i:s'),
         );
 
 
@@ -317,7 +317,7 @@ class ProductsProductEditAdminUseCaseTest extends KernelTestCase
             self::assertTrue(
                 $ProductOffersCollectionDTO
                     ->getCategoryOffer()
-                    ->equals(CategoryProductOffersUid::TEST)
+                    ->equals(CategoryProductOffersUid::TEST),
             );
 
             self::assertSame('Test New Offer Article', $ProductOffersCollectionDTO->getArticle());
@@ -350,52 +350,52 @@ class ProductsProductEditAdminUseCaseTest extends KernelTestCase
                 self::assertTrue(
                     $ProductVariationPriceDTO
                         ->getCurrency()
-                        ->equals(Currency::TEST)
+                        ->equals(Currency::TEST),
                 );
 
                 self::assertTrue(
                     $ProductOffersVariationCollectionDTO
                         ->getConst()
-                        ->equals(ProductVariationConst::TEST)
+                        ->equals(ProductVariationConst::TEST),
                 );
 
                 self::assertSame(
                     'Test New Variation Article',
-                    $ProductOffersVariationCollectionDTO->getArticle()
+                    $ProductOffersVariationCollectionDTO->getArticle(),
                 );
 
                 $ProductOffersVariationCollectionDTO->setArticle('Test Edit Variation Article');
                 self::assertSame(
                     'Test Edit Variation Article',
-                    $ProductOffersVariationCollectionDTO->getArticle()
+                    $ProductOffersVariationCollectionDTO->getArticle(),
                 );
 
                 self::assertSame(
                     '200',
-                    $ProductOffersVariationCollectionDTO->getValue()
+                    $ProductOffersVariationCollectionDTO->getValue(),
                 );
 
                 $ProductOffersVariationCollectionDTO->setValue('Test Edit Variation Value');
                 self::assertSame(
                     'Test Edit Variation Value',
-                    $ProductOffersVariationCollectionDTO->getValue()
+                    $ProductOffersVariationCollectionDTO->getValue(),
                 );
 
                 self::assertSame(
                     'Test New Variation Postfix',
-                    $ProductOffersVariationCollectionDTO->getPostfix()
+                    $ProductOffersVariationCollectionDTO->getPostfix(),
                 );
 
                 $ProductOffersVariationCollectionDTO->setPostfix('Test Edit Variation Postfix');
                 self::assertSame(
                     'Test Edit Variation Postfix',
-                    $ProductOffersVariationCollectionDTO->getPostfix()
+                    $ProductOffersVariationCollectionDTO->getPostfix(),
                 );
 
                 self::assertTrue(
                     $ProductOffersVariationCollectionDTO
                         ->getCategoryVariation()
-                        ->equals(CategoryProductVariationUid::TEST)
+                        ->equals(CategoryProductVariationUid::TEST),
                 );
 
 
@@ -415,7 +415,7 @@ class ProductsProductEditAdminUseCaseTest extends KernelTestCase
                     self::assertTrue(
                         $ProductModificationPriceDTO
                             ->getPrice()
-                            ->equals(65.0)
+                            ->equals(65.0),
                     );
 
                     $ModificationPriceMoney = new Money(50.5);
@@ -429,52 +429,52 @@ class ProductsProductEditAdminUseCaseTest extends KernelTestCase
                     $ProductOffersVariationModificationCollectionDTO->setPrice($ProductModificationPriceDTO);
                     self::assertSame(
                         $ProductModificationPriceDTO,
-                        $ProductOffersVariationModificationCollectionDTO->getPrice()
+                        $ProductOffersVariationModificationCollectionDTO->getPrice(),
                     );
 
                     self::assertTrue(
                         $ProductOffersVariationModificationCollectionDTO
                             ->getConst()
-                            ->equals(ProductModificationConst::TEST)
+                            ->equals(ProductModificationConst::TEST),
                     );
 
                     self::assertSame(
                         'Test New Modification Article',
-                        $ProductOffersVariationModificationCollectionDTO->getArticle()
+                        $ProductOffersVariationModificationCollectionDTO->getArticle(),
                     );
 
                     $ProductOffersVariationModificationCollectionDTO->setArticle('Test Edit Modification Article');
                     self::assertSame(
                         'Test Edit Modification Article',
-                        $ProductOffersVariationModificationCollectionDTO->getArticle()
+                        $ProductOffersVariationModificationCollectionDTO->getArticle(),
                     );
 
                     self::assertSame(
                         '300',
-                        $ProductOffersVariationModificationCollectionDTO->getValue()
+                        $ProductOffersVariationModificationCollectionDTO->getValue(),
                     );
 
                     $ProductOffersVariationModificationCollectionDTO->setValue('Test Edit Modification Value');
                     self::assertSame(
                         'Test Edit Modification Value',
-                        $ProductOffersVariationModificationCollectionDTO->getValue()
+                        $ProductOffersVariationModificationCollectionDTO->getValue(),
                     );
 
                     self::assertSame(
                         'Test New Modification Postfix',
-                        $ProductOffersVariationModificationCollectionDTO->getPostfix()
+                        $ProductOffersVariationModificationCollectionDTO->getPostfix(),
                     );
 
                     $ProductOffersVariationModificationCollectionDTO->setPostfix('Test Edit Modification Postfix');
                     self::assertSame(
                         'Test Edit Modification Postfix',
-                        $ProductOffersVariationModificationCollectionDTO->getPostfix()
+                        $ProductOffersVariationModificationCollectionDTO->getPostfix(),
                     );
 
                     self::assertTrue(
                         $ProductOffersVariationModificationCollectionDTO
                             ->getCategoryModification()
-                            ->equals(CategoryProductModificationUid::TEST)
+                            ->equals(CategoryProductModificationUid::TEST),
                     );
                 }
             }

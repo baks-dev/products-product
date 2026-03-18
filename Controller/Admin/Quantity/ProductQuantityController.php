@@ -114,7 +114,7 @@ final class ProductQuantityController extends AbstractController
                     $modification,
                     $data->getTotal(),
                     $data->getReserve(),
-                    $product
+                    $product,
                 );
 
                 $handle = $UpdateModificationQuantityHandler->handle($updateModificationQuantityDTO);
@@ -140,7 +140,7 @@ final class ProductQuantityController extends AbstractController
                     $variation,
                     $data->getTotal(),
                     $data->getReserve(),
-                    $product
+                    $product,
                 );
 
                 $handle = $UpdateVariationQuantityHandler->handle($updateVariationQuantityDTO);
@@ -165,7 +165,7 @@ final class ProductQuantityController extends AbstractController
                     $offer,
                     $data->getTotal(),
                     $data->getReserve(),
-                    $product
+                    $product,
                 );
 
                 $handle = $UpdateOfferQuantityHandler->handle($updateOfferQuantityDTO);

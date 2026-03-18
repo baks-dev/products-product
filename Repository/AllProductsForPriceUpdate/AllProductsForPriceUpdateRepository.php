@@ -67,7 +67,7 @@ final readonly class AllProductsForPriceUpdateRepository implements AllProductsF
                 'category_product_currency',
                 CategoryProduct::class,
                 'category_product',
-                'category_product.event = category_product_currency.event'
+                'category_product.event = category_product_currency.event',
             );
 
         $dbal
@@ -75,7 +75,7 @@ final readonly class AllProductsForPriceUpdateRepository implements AllProductsF
                 'category_product',
                 ProductCategory::class,
                 'product_category',
-                'product_category.category = category_product.id'
+                'product_category.category = category_product.id',
             );
 
         $dbal
@@ -84,7 +84,7 @@ final readonly class AllProductsForPriceUpdateRepository implements AllProductsF
                 'product_category',
                 ProductEvent::class,
                 'product_event',
-                'product_event.id = product_category.event'
+                'product_event.id = product_category.event',
             );
 
         $dbal
@@ -92,7 +92,7 @@ final readonly class AllProductsForPriceUpdateRepository implements AllProductsF
                 'product_event',
                 Product::class,
                 'product',
-                'product.event = product_event.id'
+                'product.event = product_event.id',
             );
 
         $dbal
@@ -101,7 +101,7 @@ final readonly class AllProductsForPriceUpdateRepository implements AllProductsF
                 'product_event',
                 ProductPrice::class,
                 'product_price',
-                'product_price.event = product_event.id'
+                'product_price.event = product_event.id',
             );
 
         $dbal
@@ -109,7 +109,7 @@ final readonly class AllProductsForPriceUpdateRepository implements AllProductsF
                 'product_event',
                 ProductPriceOpt::class,
                 'product_price_opt',
-                'product_price_opt.event = product_event.id'
+                'product_price_opt.event = product_event.id',
             );
 
         $dbal
@@ -119,7 +119,7 @@ final readonly class AllProductsForPriceUpdateRepository implements AllProductsF
                 'product_event',
                 ProductPriceCost::class,
                 'product_price_cost',
-                'product_price_cost.event = product_event.id'
+                'product_price_cost.event = product_event.id',
             );
 
         $dbal
@@ -128,7 +128,7 @@ final readonly class AllProductsForPriceUpdateRepository implements AllProductsF
                 'product_event',
                 ProductOffer::class,
                 'product_offer',
-                'product_offer.event = product_event.id'
+                'product_offer.event = product_event.id',
             );
 
         $dbal
@@ -137,7 +137,7 @@ final readonly class AllProductsForPriceUpdateRepository implements AllProductsF
                 'product_offer',
                 ProductOfferPrice::class,
                 'product_offer_price',
-                'product_offer_price.offer = product_offer.id'
+                'product_offer_price.offer = product_offer.id',
             );
 
         $dbal
@@ -145,7 +145,7 @@ final readonly class AllProductsForPriceUpdateRepository implements AllProductsF
                 'product_offer',
                 ProductOfferOpt::class,
                 'product_offer_opt',
-                'product_offer_opt.offer = product_offer.id'
+                'product_offer_opt.offer = product_offer.id',
             );
 
         $dbal
@@ -155,7 +155,7 @@ final readonly class AllProductsForPriceUpdateRepository implements AllProductsF
                 'product_offer',
                 ProductOfferCost::class,
                 'product_offer_cost',
-                'product_offer_cost.offer = product_offer.id'
+                'product_offer_cost.offer = product_offer.id',
             );
 
         $dbal
@@ -164,7 +164,7 @@ final readonly class AllProductsForPriceUpdateRepository implements AllProductsF
                 'product_offer',
                 ProductVariation::class,
                 'product_variation',
-                'product_variation.offer = product_offer.id'
+                'product_variation.offer = product_offer.id',
             );
 
         $dbal
@@ -173,7 +173,7 @@ final readonly class AllProductsForPriceUpdateRepository implements AllProductsF
                 'product_variation',
                 ProductVariationPrice::class,
                 'product_variation_price',
-                'product_variation_price.variation = product_variation.id'
+                'product_variation_price.variation = product_variation.id',
             );
 
         $dbal
@@ -181,7 +181,7 @@ final readonly class AllProductsForPriceUpdateRepository implements AllProductsF
                 'product_variation',
                 ProductVariationOpt::class,
                 'product_variation_opt',
-                'product_variation_opt.variation = product_variation.id'
+                'product_variation_opt.variation = product_variation.id',
             );
 
         $dbal
@@ -191,7 +191,7 @@ final readonly class AllProductsForPriceUpdateRepository implements AllProductsF
                 'product_variation',
                 ProductVariationCost::class,
                 'product_variation_cost',
-                'product_variation_cost.variation = product_variation.id'
+                'product_variation_cost.variation = product_variation.id',
             );
 
         $dbal
@@ -200,7 +200,7 @@ final readonly class AllProductsForPriceUpdateRepository implements AllProductsF
                 'product_variation',
                 ProductModification::class,
                 'product_modification',
-                'product_modification.variation = product_variation.id'
+                'product_modification.variation = product_variation.id',
             );
 
         $dbal
@@ -209,7 +209,7 @@ final readonly class AllProductsForPriceUpdateRepository implements AllProductsF
                 'product_modification',
                 ProductModificationPrice::class,
                 'product_modification_price',
-                'product_modification_price.modification = product_modification.id'
+                'product_modification_price.modification = product_modification.id',
             );
 
         $dbal
@@ -217,7 +217,7 @@ final readonly class AllProductsForPriceUpdateRepository implements AllProductsF
                 'product_modification',
                 ProductModificationOpt::class,
                 'product_modification_opt',
-                'product_modification_opt.modification = product_modification.id'
+                'product_modification_opt.modification = product_modification.id',
             );
 
         $dbal
@@ -227,7 +227,7 @@ final readonly class AllProductsForPriceUpdateRepository implements AllProductsF
                 'product_modification',
                 ProductModificationCost::class,
                 'product_modification_cost',
-                'product_modification_cost.modification = product_modification.id'
+                'product_modification_cost.modification = product_modification.id',
             );
 
         return $dbal

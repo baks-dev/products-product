@@ -59,7 +59,7 @@ final class CategoryCollectionForm extends AbstractType
             ButtonType::class,
             [
                 'label_html' => true,
-            ]
+            ],
         );
 
     }
@@ -70,7 +70,7 @@ final class CategoryCollectionForm extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => CategoryCollectionDTO::class,
-            ]
+            ],
         );
     }
 
