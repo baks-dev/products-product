@@ -67,7 +67,6 @@ class ProductOfferPrice extends EntityEvent
     #[ORM\Column(name: 'up', type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private DateTimeImmutable $up;
 
-
     public function __construct(ProductOffer $offer)
     {
         $this->offer = $offer;

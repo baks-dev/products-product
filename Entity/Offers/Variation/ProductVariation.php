@@ -224,5 +224,4 @@ class ProductVariation extends EntityEvent
         return $this->barcode;
     }
 
-
 }

@@ -117,5 +117,4 @@ final class ProductVariationPriceDTO implements ProductVariationPriceInterface
         $this->up = $up;
         return $this;
     }
-
 }

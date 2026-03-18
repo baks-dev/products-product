@@ -119,5 +119,4 @@ final class ProductOfferPriceDTO implements ProductOfferPriceInterface
         $this->up = $up;
         return $this;
     }
-
 }
