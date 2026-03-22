@@ -72,7 +72,7 @@ final class ProductOfferPriceDTO implements ProductOfferPriceInterface
                 $this->old = $this->price;
             }
 
-            if(false === is_null($this->price) && $this->price->getValue() !== $price->getValue())
+            if(false === ($this->price instanceof Money) || $this->price->getValue() !== $price->getValue())
             {
                 $this->up = new DateTimeImmutable();
             }
@@ -112,11 +112,5 @@ final class ProductOfferPriceDTO implements ProductOfferPriceInterface
     public function getUp(): ?DateTimeImmutable
     {
         return $this->up;
-    }
-
-    public function setUp(?DateTimeImmutable $up): self
-    {
-        $this->up = $up;
-        return $this;
     }
 }

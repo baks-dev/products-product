@@ -71,7 +71,7 @@ final class ProductModificationPriceDTO implements ProductModificationPriceInter
                 $this->old = $this->price;
             }
 
-            if(false === is_null($this->price) && $this->price->getValue() !== $price->getValue())
+            if(false === ($this->price instanceof Money) || $this->price->getValue() !== $price->getValue())
             {
                 $this->up = new DateTimeImmutable();
             }
