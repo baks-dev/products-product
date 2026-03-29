@@ -35,6 +35,9 @@ use BaksDev\Products\Category\UseCase\Admin\NewEdit\CategoryProductDTO;
 use BaksDev\Products\Category\UseCase\Admin\NewEdit\Tests\CategoryProductNewTest;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Product;
+use BaksDev\Products\Product\Messenger\Invariable\UpdateProductInvariableHandler;
+use BaksDev\Products\Product\Messenger\ProductMessage;
+use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
 use BaksDev\Products\Product\Type\Offers\ConstId\ProductOfferConst;
 use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst;
@@ -533,6 +536,18 @@ class ProductsProductNewAdminUseCaseTest extends KernelTestCase
         $handle = $ProductHandler->handle($ProductDTO, false);
 
         self::assertTrue(($handle instanceof Product));
+
+        /** Создаем Invariable */
+
+        $UpdateProductInvariableHandler = self::getContainer()->get(UpdateProductInvariableHandler::class);
+
+        $ProductMessage = new ProductMessage(
+            new ProductUid(ProductUid::TEST),
+            new ProductEventUid(ProductEventUid::TEST),
+        );
+
+        $UpdateProductInvariableHandler($ProductMessage);
+
     }
 
 }
