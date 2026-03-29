@@ -88,12 +88,12 @@ class CurrentProductIdentifierByEventRepositoryTest extends KernelTestCase
             ->addSelect('modification.const AS modification_const')
             ->join('variation', ProductModification::class, 'modification', 'modification.variation = variation.id');
 
+        $dbal->orderBy('product.id');
 
         $dbal->setMaxResults(1);
 
         self::$result = $dbal->fetchAssociative();
         sleep(1);
-
 
         /**
          * Обновляем событие
