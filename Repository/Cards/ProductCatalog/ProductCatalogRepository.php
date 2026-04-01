@@ -193,17 +193,6 @@ final class ProductCatalogRepository implements ProductCatalogInterface
             'product_event.id = product.event',
         );
 
-        /** ProductInfo */
-        $dbal
-            ->addSelect('product_info.url AS product_url')
-            ->leftJoin(
-                'product_event',
-                ProductInfo::class,
-                'product_info',
-                'product_info.product = product.id',
-            )
-            ->addGroupBy('product_info.article')
-            ->addGroupBy('product_info.sort');
 
         /** Категория */
         if($this->categoryUid instanceof CategoryProductUid)
@@ -233,6 +222,21 @@ final class ProductCatalogRepository implements ProductCatalogInterface
                 product_event_category.root = true',
             );
         }
+
+
+        /** ProductInfo */
+        $dbal
+            ->addSelect('product_info.url AS product_url')
+            ->leftJoin(
+                'product_event',
+                ProductInfo::class,
+                'product_info',
+                'product_info.product = product.id',
+            )
+            ->addGroupBy('product_info.article')
+            ->addGroupBy('product_info.sort');
+
+
 
 
         /** ФИЛЬТР СВОЙСТВ */
@@ -916,7 +920,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
 
             $dbal
                 ->join(
-                    'product',
+                    'product_invariable',
                     UserProfile::class,
                     'current_profile',
                     '
@@ -941,11 +945,10 @@ final class ProductCatalogRepository implements ProductCatalogInterface
 
             $dbal
                 ->join(
-                    'product',
+                    'product_invariable',
                     UserProfile::class,
                     'project_profile',
-                    '
-                        project_profile.id = :'.$dbal::PROJECT_PROFILE_KEY,
+                    'project_profile.id = :'.$dbal::PROJECT_PROFILE_KEY,
                 );
 
             $dbal
@@ -970,7 +973,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
 
             $dbal
                 ->leftJoin(
-                    'product',
+                    'product_invariable',
                     UserProfileRegion::class,
                     'product_profile_region',
                     'product_profile_region.value = :region',
