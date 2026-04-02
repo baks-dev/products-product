@@ -115,8 +115,8 @@
 
                     {# Свойства торгового предложения #}
 
-                    {% if card.stocksQuantity > card.getCategoryThreshold %}
-                        {% set stock = 'более '~card.getCategoryThreshold %}
+                    {% if card.stocksQuantity > 60 %}
+                        {% set stock = 'более 60' %}
                     {% elseif card.stocksQuantity > 0 %}
                         {% set stock = card.stocksQuantity %}
                     {% else %}

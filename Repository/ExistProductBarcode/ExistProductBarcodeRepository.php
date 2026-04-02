@@ -47,11 +47,11 @@ final class ExistProductBarcodeRepository implements ExistProductBarcodeInterfac
 
     private ProductUid $product;
 
-    private ?ProductOfferConst $offer = null;
+    private ProductOfferConst|false $offer = false;
 
-    private ?ProductVariationConst $variation = null;
+    private ProductVariationConst|false $variation = false;
 
-    private ?ProductModificationConst $modification = null;
+    private ProductModificationConst|false $modification = false;
 
     public function __construct(private readonly DBALQueryBuilder $DBALQueryBuilder) {}
 
@@ -67,20 +67,38 @@ final class ExistProductBarcodeRepository implements ExistProductBarcodeInterfac
         return $this;
     }
 
-    public function forOffer(?ProductOfferConst $offer): self
+    public function forOffer(ProductOfferConst|null|false $offer): self
     {
+        if(empty($offer))
+        {
+            $this->offer = false;
+            return $this;
+        }
+
         $this->offer = $offer;
         return $this;
     }
 
-    public function forVariation(?ProductVariationConst $variation): self
+    public function forVariation(ProductVariationConst|null|false $variation): self
     {
+        if(empty($variation))
+        {
+            $this->variation = false;
+            return $this;
+        }
+
         $this->variation = $variation;
         return $this;
     }
 
-    public function forModification(?ProductModificationConst $modification): self
+    public function forModification(ProductModificationConst|null|false $modification): self
     {
+        if(empty($modification))
+        {
+            $this->modification = false;
+            return $this;
+        }
+
         $this->modification = $modification;
         return $this;
     }
