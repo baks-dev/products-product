@@ -187,6 +187,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
             ->addSelect('product.event AS product_event')
             ->from(Product::class, 'product');
 
+
         $dbal->join('product',
             ProductEvent::class,
             'product_event',
@@ -228,7 +229,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
         $dbal
             ->addSelect('product_info.url AS product_url')
             ->leftJoin(
-                'product_event',
+                'product',
                 ProductInfo::class,
                 'product_info',
                 'product_info.product = product.id',
@@ -423,19 +424,19 @@ final class ProductCatalogRepository implements ProductCatalogInterface
         $dbal
             ->addSelect('product_trans.name AS product_name')
             ->leftJoin(
-                'product_event',
+                'product',
                 ProductTrans::class,
                 'product_trans',
-                'product_trans.event = product_event.id AND product_trans.local = :local',
+                'product_trans.event = product.event AND product_trans.local = :local',
             );
 
         /** Цена товара */
         $dbal
             ->leftJoin(
-                'product_event',
+                'product',
                 ProductPrice::class,
                 'product_price',
-                'product_price.event = product_event.id',
+                'product_price.event = product.event',
             )
             ->addGroupBy('product_price.price')
             ->addGroupBy('product_price.currency')
@@ -671,14 +672,16 @@ final class ProductCatalogRepository implements ProductCatalogInterface
             'product_offer',
             ProductOfferImage::class,
             'product_offer_images',
-            'product_offer_variation_image.name IS NULL AND product_offer_images.offer = product_offer.id AND product_offer_images.root = true',
+            'product_offer_variation_image.name IS NULL 
+            AND product_offer_images.offer = product_offer.id AND product_offer_images.root = true',
         );
 
         $dbal->leftJoin(
             'product_offer',
             ProductPhoto::class,
             'product_photo',
-            'product_offer_images.name IS NULL AND product_photo.event = product_event.id AND product_photo.root = true',
+            'product_offer_images.name IS NULL 
+            AND product_photo.event = product.event AND product_photo.root = true',
         );
 
         $dbal->addSelect(
@@ -771,7 +774,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
         $dbal
             ->addSelect('category_info.url AS category_url')
             ->leftJoin(
-                'product_event_category',
+                'category',
                 CategoryProductInfo::class,
                 'category_info',
                 'category_info.event = category.event',

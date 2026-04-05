@@ -56,10 +56,4 @@ interface AllProductsByCategoryInterface
     public function fetchAllProductByCategory(): Generator|false;
 
 
-    /** @deprecated */
-    public function fetchAllProductByCategoryAssociative(
-        CategoryProductUid|string $category,
-        string $expr = 'AND'
-    ): PaginatorInterface;
-
 }
