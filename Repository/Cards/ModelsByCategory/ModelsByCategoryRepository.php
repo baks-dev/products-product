@@ -913,7 +913,7 @@ final class ModelsByCategoryRepository implements ModelsByCategoryInterface
 
         $dbal->allGroupByExclude();
 
-        $dbal->setMaxResults($this->maxResult);
+        $dbal->setMaxResults($this->maxResult ?: 6);
 
         $dbal->enableCache('products-product');
 
