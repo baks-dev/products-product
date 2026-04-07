@@ -30,6 +30,7 @@ use BaksDev\Products\Product\Type\Offers\Id\ProductOfferUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModificationUid;
 use BaksDev\Search\Repository\DataToIndexResult\DataToIndexResultInterface;
+use JsonException;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final readonly class AllProductsToIndexResult implements DataToIndexResultInterface
@@ -41,12 +42,16 @@ final readonly class AllProductsToIndexResult implements DataToIndexResultInterf
 
         private string|null $product_offer_id = null,
         private string|null $product_offer_value = null,
+        private string|null $product_offer_barcodes = null,
 
         private string|null $product_variation_id = null,
         private string|null $product_variation_value = null,
+        private string|null $product_variation_barcodes = null,
 
         private string|null $product_modification_id = null,
         private string|null $product_modification_value = null,
+        private string|null $product_modification_barcodes = null,
+
 
         private string|null $category = null,
 
@@ -115,6 +120,9 @@ final readonly class AllProductsToIndexResult implements DataToIndexResultInterf
     }
 
 
+    /**
+     * @throws JsonException
+     */
     public function setTextSearch(Switcher $switcher, ?TranslatorInterface $translator = null): string
     {
         $product_article = str_replace('-', ' ', $this->product_article);
@@ -125,6 +133,7 @@ final readonly class AllProductsToIndexResult implements DataToIndexResultInterf
         $transl_offer = $this->product_offer_value ? $switcher->toRus($this->product_offer_value) : '';
         $transl_variation = $this->product_variation_value ? $switcher->toRus($this->product_variation_value) : '';
         $transl_modification = $this->product_modification_value ? $switcher->toRus($this->product_modification_value) : '';
+
 
         $search = explode(' ',
             $product_article
@@ -156,6 +165,25 @@ final readonly class AllProductsToIndexResult implements DataToIndexResultInterf
 
             $search = array_merge($search, $property);
         }
+
+        if(false === empty($this->product_offer_barcodes))
+        {
+            $barcode = json_decode($this->product_offer_barcodes, true, 512, JSON_THROW_ON_ERROR);
+            $search = array_merge($search, $barcode);
+        }
+
+        if(false === empty($this->product_variation_barcodes))
+        {
+            $barcode = json_decode($this->product_variation_barcodes, true, 512, JSON_THROW_ON_ERROR);
+            $search = array_merge($search, $barcode);
+        }
+
+        if(false === empty($this->product_modification_barcodes))
+        {
+            $barcode = json_decode($this->product_modification_barcodes, true, 512, JSON_THROW_ON_ERROR);
+            $search = array_merge($search, $barcode);
+        }
+
 
         return implode(' ', array_unique($search));
     }

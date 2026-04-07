@@ -29,7 +29,10 @@ use BaksDev\Products\Category\Entity\Offers\Variation\CategoryProductVariation;
 use BaksDev\Products\Category\Entity\Offers\Variation\Modification\CategoryProductModification;
 use BaksDev\Products\Product\Entity\Category\ProductCategory;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
+use BaksDev\Products\Product\Entity\Offers\Barcode\ProductOfferBarcode;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
+use BaksDev\Products\Product\Entity\Offers\Variation\Barcode\ProductVariationBarcode;
+use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Barcode\ProductModificationBarcode;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Product\Entity\Product;
@@ -84,7 +87,6 @@ final readonly class AllProductsToIndexRepository implements DataToIndexInterfac
                 'product_info.product = product.id',
             );
 
-
         /** ProductInfo */
         $dbal
             ->addSelect('product_category.category AS category')
@@ -96,7 +98,10 @@ final readonly class AllProductsToIndexRepository implements DataToIndexInterfac
             );
 
 
-        /** Торговое предложение */
+        /**
+         * Торговое предложение
+         */
+
         $dbal
             ->addSelect('product_offer.id as product_offer_id')
             ->addSelect('product_offer.value as product_offer_value')
@@ -107,17 +112,20 @@ final readonly class AllProductsToIndexRepository implements DataToIndexInterfac
                 'product_offer.event = product.event',
             );
 
-        /** Тип торгового предложения */
-        //        $dbal
-        //            ->leftJoin(
-        //                'product_offer',
-        //                CategoryProductOffers::class,
-        //                'category_offer',
-        //                'category_offer.id = product_offer.category_offer'
-        //            );
+        $dbal
+            ->addSelect('JSON_AGG( DISTINCT product_offer_barcode.value) AS product_offer_barcodes')
+            ->leftJoin(
+                'product_offer',
+                ProductOfferBarcode::class,
+                'product_offer_barcode',
+                'product_offer_barcode.offer = product_offer.id',
+            );
 
 
-        /** Множественные варианты торгового предложения */
+        /**
+         * Множественные варианты торгового предложения
+         */
+
         $dbal
             ->addSelect('product_variation.id as product_variation_id')
             ->addSelect('product_variation.value as product_variation_value')
@@ -129,16 +137,19 @@ final readonly class AllProductsToIndexRepository implements DataToIndexInterfac
             );
 
 
-        /** Тип множественного варианта торгового предложения */
-        //        $dbal
-        //            ->leftJoin(
-        //                'product_variation',
-        //                CategoryProductVariation::class,
-        //                'category_variation',
-        //                'category_variation.id = product_variation.category_variation'
-        //            );
+        $dbal
+            ->addSelect('JSON_AGG( DISTINCT product_variation_barcode.value) AS product_variation_barcodes')
+            ->leftJoin(
+                'product_variation',
+                ProductVariationBarcode::class,
+                'product_variation_barcode',
+                'product_variation_barcode.variation = product_variation.id',
+            );
 
-        /** Модификация множественного варианта */
+
+        /**
+         * Модификация множественного варианта
+         */
         $dbal
             ->addSelect('product_modification.id as product_modification_id')
             ->addSelect('product_modification.value as product_modification_value')
@@ -148,6 +159,17 @@ final readonly class AllProductsToIndexRepository implements DataToIndexInterfac
                 'product_modification',
                 'product_modification.variation = product_variation.id ',
             );
+
+
+        $dbal
+            ->addSelect('JSON_AGG( DISTINCT product_modification_barcode.value) AS product_modification_barcodes')
+            ->leftJoin(
+                'product_modification',
+                ProductModificationBarcode::class,
+                'product_modification_barcode',
+                'product_modification_barcode.modification = product_modification.id',
+            );
+
 
         /** Получаем тип модификации множественного варианта */
         //        $dbal
