@@ -40,10 +40,10 @@ use BaksDev\Products\Product\UseCase\Admin\NewEdit\Price\Cost\ProductPriceCostDT
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Price\Opt\ProductPriceOptDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Price\PriceDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Profile\CollectionProductProfileDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Project\ProductProjectDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Property\PropertyCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Seo\SeoCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Video\VideoCollectionDTO;
-use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -102,6 +102,10 @@ final class ProductDTO implements ProductEventInterface
     #[Assert\Valid]
     private ProductPriceOptDTO $opt;
 
+    /** Данные по описанию для профиля */
+    #[Assert\Valid]
+    private ProductProjectDTO $project;
+
 
     public function __construct()
     {
@@ -123,6 +127,8 @@ final class ProductDTO implements ProductEventInterface
         $this->description = new ArrayCollection();
         $this->material = new ArrayCollection();
         $this->profile = new ArrayCollection();
+
+        $this->project = new ProductProjectDTO();
     }
 
 
@@ -611,4 +617,18 @@ final class ProductDTO implements ProductEventInterface
     {
         return $this->opt;
     }
+
+
+    /** ProductProject - данные по описанию для профиля */
+    public function getProject(): ProductProjectDTO
+    {
+        return $this->project;
+    }
+
+    public function setProject(ProductProjectDTO $project): self
+    {
+        $this->project = $project;
+        return $this;
+    }
+
 }

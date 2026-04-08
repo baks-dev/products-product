@@ -171,6 +171,24 @@
         </button>
     </li>
 
+    {# Описание Project #}
+    <li class="nav-item">
+        <button class="btn fw-bolder nav-link"
+                data-bs-toggle="tab"
+                type="button"
+                role="tab"
+                aria-selected="true"
+
+                id="tab_project_description-tab"
+                data-bs-target="#tab_project_description"
+                aria-controls="nav-product">
+
+            <small class="text-uppercase px-3">
+                Описание (Project)
+            </small>
+        </button>
+    </li>
+
     {# Галерея #}
     <li class="nav-item">
         <button class="btn fw-bolder nav-link"
@@ -241,6 +259,11 @@
 
     <div class="tab-pane fade" id="tab_description" role="tabpanel">
         {{ include(_self|replace({ "form.html.twig": "form.description.html.twig" })) }}
+    </div>
+
+    {#  Project descriptions #}
+    <div class="tab-pane fade" id="tab_project_description" role="tabpanel">
+        {{ include(_self|replace({ "form.html.twig": "form.project_descriptions.html.twig" })) }}
     </div>
 
     {# ГАЛЕРЕЯ #}

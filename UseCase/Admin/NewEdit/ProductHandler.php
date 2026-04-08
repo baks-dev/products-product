@@ -37,6 +37,7 @@ use BaksDev\Products\Product\Entity\Offers\Variation\Modification\Image\ProductM
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
 use BaksDev\Products\Product\Entity\Offers\Variation\ProductVariation;
 use BaksDev\Products\Product\Entity\Product;
+use BaksDev\Products\Product\Entity\Project\ProductProject;
 use BaksDev\Products\Product\Messenger\ProductMessage;
 use BaksDev\Products\Product\Repository\UniqProductUrl\UniqProductUrlInterface;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Files\FilesCollectionDTO;
@@ -44,8 +45,11 @@ use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Image\ProductOfferImag
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Image\ProductVariationImageCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification\Image\ProductModificationImageCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Photo\PhotoCollectionDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Project\ProductProjectDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Video\VideoCollectionDTO;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 final class ProductHandler extends AbstractHandler
 {
@@ -57,6 +61,7 @@ final class ProductHandler extends AbstractHandler
         ValidatorCollectionInterface $validatorCollection,
         ImageUploadInterface $imageUpload,
         FileUploadInterface $fileUpload,
+        #[Autowire(env: 'PROJECT_PROFILE')] private readonly ?string $projectProfile = null,
     )
     {
         parent::__construct($entityManager, $messageDispatch, $validatorCollection, $imageUpload, $fileUpload);
@@ -179,6 +184,49 @@ final class ProductHandler extends AbstractHandler
         if($this->validatorCollection->isInvalid())
         {
             return $this->validatorCollection->getErrorUniqid();
+        }
+
+
+        if(true === ($this->main instanceof Product))
+        {
+
+            /* Создать или отредактировать ProductProject */
+
+            /** @var ProductProjectDTO $ProductProjectDTO */
+            $ProductProjectDTO = $command->getProject();
+            $ProductProjectDTO->setProduct($this->main->getId());
+            $ProductProjectDTO->setProfile(new UserProfileUid($this->projectProfile));
+
+
+            /* Проверить на существование ProductProject */
+
+            /** @var ProductProject $ExistingProductProject */
+            $ExistingProductProject = $this->getRepository(ProductProject::class)
+                ->findOneBy([
+                    'product' => $this->main->getId(),
+                    'profile' => $ProductProjectDTO->getProfile()
+                ]);
+
+
+            $ProductProject = (true === empty($ExistingProductProject))
+                ? new ProductProject()
+                : $ExistingProductProject;
+
+
+            /* Если есть сущность ProductProject */
+            if(false === empty($ExistingProductProject))
+            {
+                $ExistingProductProject->setEntityManager($this->getEntityManager());
+            }
+
+
+            $ProductProject->setEntity($ProductProjectDTO);
+
+            /* Если новая сущность ProductProject */
+            if(true === empty($ExistingProductProject))
+            {
+                $this->persist($ProductProject);
+            }
         }
 
 
