@@ -29,10 +29,12 @@ use BaksDev\Core\Listeners\Event\Security\RoleSecurity;
 use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Product;
+use BaksDev\Products\Product\Repository\ProductProject\ProductProjectInterface;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Category\CategoryCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\ProductDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\ProductForm;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\ProductHandler;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Project\Description\ProductProjectDescriptionDTO;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -47,7 +49,8 @@ final class EditController extends AbstractController
     public function edit(
         #[MapEntity] ProductEvent $Event,
         Request $request,
-        ProductHandler $productHandler
+        ProductHandler $productHandler,
+        ProductProjectInterface $productProject
     ): Response
     {
         $ProductDTO = new ProductDTO();
@@ -82,6 +85,36 @@ final class EditController extends AbstractController
                 $category->setCategory(new CategoryProductUid($request->get('category')));
             }
         }
+
+
+        /* Получить описания товара */
+        $existingProjectProfileDescriptions = $productProject
+            ->byProduct($Event->getMain())
+            ->findAll();
+
+        /* Задать значения для descriptions */
+        if(false !== $existingProjectProfileDescriptions)
+        {
+
+            /* Получить коллекцию */
+            $descriptionCollection = $ProductDTO->getProject()->getDescription();
+            $descriptionCollection->clear();
+
+            foreach($existingProjectProfileDescriptions as $productProjectDescription)
+            {
+
+                /* Заполнить описания */
+                $ProductProjectDescriptionDTO = new ProductProjectDescriptionDTO();
+                $ProductProjectDescriptionDTO->setLocal($productProjectDescription->getLocal());
+                $ProductProjectDescriptionDTO->setDevice($productProjectDescription->getDevice());
+                $ProductProjectDescriptionDTO->setDescription($productProjectDescription->getDescription());
+                $ProductProjectDescriptionDTO->setPreview($productProjectDescription->getPreview());
+
+                $descriptionCollection->add($ProductProjectDescriptionDTO);
+            }
+
+        }
+
 
         // Форма добавления
         $form = $this

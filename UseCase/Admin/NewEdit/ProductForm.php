@@ -33,6 +33,7 @@ use BaksDev\Products\Product\UseCase\Admin\NewEdit\Category\CategoryCollectionDT
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Price\Cost\ProductPriceCostForm;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Price\Opt\ProductPriceOptForm;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Profile\CollectionProductProfileForm;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Project\ProductProjectForm;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Property\PropertyCollectionDTO;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Form\AbstractType;
@@ -210,6 +211,9 @@ final class ProductForm extends AbstractType
         ]);
 
         $builder->add('dataOffer', HiddenType::class, ['mapped' => false]);
+
+        /* ProductProject */
+        $builder->add('project', ProductProjectForm::class, ['label' => false]);
 
         $builder->addEventListener(
             FormEvents::PRE_SET_DATA,

@@ -56,6 +56,10 @@ use BaksDev\Products\Product\Type\Offers\Variation\Modification\Image\ProductOff
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\Image\ProductOfferVariationModificationImageUid;
 use BaksDev\Products\Product\Type\Photo\ProductPhotoType;
 use BaksDev\Products\Product\Type\Photo\ProductPhotoUid;
+use BaksDev\Products\Product\Type\Project\Description\ProductProjectDescriptionType;
+use BaksDev\Products\Product\Type\Project\Description\ProductProjectDescriptionUid;
+use BaksDev\Products\Product\Type\Project\ProductProjectType;
+use BaksDev\Products\Product\Type\Project\ProductProjectUid;
 use BaksDev\Products\Product\Type\Settings\ProductSettingsIdentifier;
 use BaksDev\Products\Product\Type\Settings\ProductSettingsType;
 use BaksDev\Products\Product\Type\Video\ProductVideoType;
@@ -86,6 +90,9 @@ return static function(ContainerConfigurator $container, DoctrineConfig $doctrin
     $doctrine->dbal()->type(ProductInvariableUid::TYPE)->class(ProductInvariableType::class);
 
     $doctrine->dbal()->type(MaterialUid::TYPE)->class(MaterialType::class);
+
+    $doctrine->dbal()->type(ProductProjectUid::TYPE)->class(ProductProjectType::class);
+    $doctrine->dbal()->type(ProductProjectDescriptionUid::TYPE)->class(ProductProjectDescriptionType::class);
 
 
     $services = $container->services()
