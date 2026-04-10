@@ -1,0 +1,24 @@
+{% extends Template('/public/base.html.twig') %}
+
+{% block title %}
+    {#    Каталог продукции #}
+{% endblock %}
+
+{% block stylesheets %}
+    <link href="/assets/{{ version }}/plugins/nice-select2/nice-select2.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+    <section id="catalog_products" class="container py-3">
+
+        {{ include(_self|replace({ "template.html.twig" : baks_settings.device~"/content.html.twig" })) }}
+    </section>
+{% endblock %}
+
+{% block javascript %}
+<script nonce='{{ csp_nonce() }}'  data-src='/assets/{{ version }}/plugins/nice-select2/nice-select2.min.js?v={{ version }}' class='lazy'></script>
+<script nonce='{{ csp_nonce() }}'  data-src='/assets/{{ version }}/products-product/filters.min.js?v={{ version }}' class='lazy'></script>
+<script nonce='{{ csp_nonce() }}' async data-src='/assets/{{ version }}/js/radio.input.min.js?v={{ version }}'
+            class='lazy'></script>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% if products != false %}
+
+    <div class="row ">
+
+        <div class="col-12 pb-4">
+
+            <div class="d-flex">
+                <h2 class="fs-6 text-uppercase fw-bold ">
+                    {{ category.category_name }}
+                </h2>
+
+                {% if filter is not null %}
+                    {% include Template('@products-product/filter/'~baks_settings.device~'/filter.html.twig') %}
+                {% endif %}
+
+            </div>
+
+            <div class="row row-cols-2 gx-1 gy-2 mb-4">
+
+                {# КАРТОЧКИ ПРОДУКТОВ #}
+                {% for product in products|slice(0,4) %}
+                    <div class="col">
+                        {% include Template('@products-product/public/' ~baks_settings.device~ '/card_product.html.twig') %}
+                    </div>
+                {% endfor %}
+
+            </div>
+
+            <a href="{{ path('products-product:public.catalog.category', { category : category.category_url }) }}"
+               class="btn bg-primary fw-bold rounded-3 w-100 mb-3"
+               title="{{ category.category_name }}">
+                Все товары в категории {{ category.category_name }}
+            </a>
+
+            <hr class="row mb-3">
+
+            {{ include (_self|replace({ "content.html.twig" : "best_offers.html.twig" }), { 'bestOffers' : bestOffers }) }}
+
+            <hr class="row mb-3">
+
+        </div>
+
+    </div>
+
+{% endif %}

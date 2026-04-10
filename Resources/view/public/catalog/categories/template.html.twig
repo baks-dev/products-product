@@ -1,0 +1,81 @@
+{% extends Template('/public/base.html.twig') %}
+
+{% block title %}
+    Каталог продукции
+{% endblock %}
+
+{% block stylesheets %}
+    <link href="/assets/{{ version }}/plugins/nice-select2/nice-select2.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+    {{ include(_self|replace({ "template.html.twig" : baks_settings.device~"/content.html.twig" })) }}
+
+{% endblock %}
+
+{% block javascript %}
+
+<script nonce='{{ csp_nonce() }}' data-src='/assets/{{ version }}/plugins/nice-select2/nice-select2.min.js?v={{ version }}' class='lazy'></script>
+<script nonce='{{ csp_nonce() }}' data-src='/assets/{{ version }}/js/radio.input.min.js?v={{ version }}' class='lazy' async></script>
+<script nonce='{{ csp_nonce() }}' data-src='/assets/{{ version }}/products-product/filters.min.js?v={{ version }}' class='lazy'></script>
+
+{# Загрузка продуктов по каждой категории #}
+<script nonce='{{ csp_nonce() }}' data-src='/assets/{{ version }}/products-product/products_sync.min.js?v={{ version }}' class='lazy'></script>
+
+<script nonce='{{ csp_nonce() }}' async class='lazy'>
+
+        if(typeof executeFunc === 'function')
+        {
+
+            executeFunc(function (){
+
+                if(typeof loadSync_TfpBy2NAo1 === 'function')
+                {
+                    /** Массив данных из категорий */
+                    let items = [];
+
+                    {% for category in categories %}
+
+                        items.push({
+                            url: "{{ category.category_url }}",
+                            path: "{{ path('products-product:public.catalog.products', { category : category.id }) }}",
+                        })
+
+                    {% endfor %}
+
+                    const form = document.forms["product_category_filter_form"] ?? null;
+
+                    if(form)
+                    {
+
+                         /** отправка формы с текущей странице */
+
+                         form.addEventListener("submit", function(event)
+                        {
+                            /** блокируем отправку формы */
+                            event.preventDefault();
+
+                            loadSync_TfpBy2NAo1(items, form)
+                       });
+
+                        /** форма отправлена с другой страницы и закеширована */
+
+                        loadSync_TfpBy2NAo1(items, form)
+
+                         return true;
+                    }
+
+                    loadSync_TfpBy2NAo1(items)
+
+                    return true;
+                }
+
+                return false;
+
+            }, 100)
+        }
+
+</script>
+
+{% endblock %}

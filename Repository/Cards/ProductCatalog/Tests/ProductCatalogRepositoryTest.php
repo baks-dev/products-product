@@ -19,12 +19,18 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Repository\Cards\ProductCatalog\Tests;
 
+use BaksDev\Core\Form\Search\SearchDTO;
+use BaksDev\Field\Tire\CarType\Type\TireCarTypeEnum;
+use BaksDev\Field\Tire\CarType\Type\TireCarTypeField;
+use BaksDev\Products\Category\Type\Id\CategoryProductUid;
+use BaksDev\Products\Product\Forms\ProductCategoryFilter\User\ProductCategoryFilterDTO;
 use BaksDev\Products\Product\Repository\Cards\ProductCatalog\ProductCatalogInterface;
 use BaksDev\Products\Product\Repository\Cards\ProductCatalog\ProductCatalogResult;
 use PHPUnit\Framework\Attributes\Group;
@@ -45,12 +51,24 @@ class ProductCatalogRepositoryTest extends KernelTestCase
         /** @var ProductCatalogInterface $repository */
         $repository = self::getContainer()->get(ProductCatalogInterface::class);
 
+        $category = new CategoryProductUid(CategoryProductUid::TEST);
+        $productCategoryFilterDTO = new ProductCategoryFilterDTO($category);
+        $productCategoryFilterDTO->setOffer('16');
+        $SearchDTO = new SearchDTO()->setQuery('16');
+
+        $propertyFields = [new TireCarTypeField(TireCarTypeEnum::PASSENGER)];
+
         $result = $repository
-            ->maxResult(100)
+            ->forCategory($category)
+            ->property($propertyFields)
+            ->filter($productCategoryFilterDTO)
+            ->search($SearchDTO)
+            ->maxResult(10)
             ->findAll();
 
         if(false === $result || false === $result->valid())
         {
+            echo sprintf('%s результат репозитория не протестирован  %s %s', PHP_EOL, self::class, PHP_EOL);
             return;
         }
 

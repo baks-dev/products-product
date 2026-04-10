@@ -19,6 +19,7 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 namespace BaksDev\Products\Product\Repository\AllExistsProducts;
@@ -163,7 +164,7 @@ final class AllExistsProductsRepository implements AllExistsProductsInterface
                 'product_offer.event = product.event',
             );
 
-        if($this->filter->getOffer())
+        if($this->filter?->getOffer())
         {
             $dbal->andWhere('product_offer.value = :offer');
             $dbal->setParameter('offer', $this->filter->getOffer());
@@ -212,7 +213,7 @@ final class AllExistsProductsRepository implements AllExistsProductsInterface
         );
 
 
-        if($this->filter->getVariation())
+        if($this->filter?->getVariation())
         {
             $dbal->andWhere('product_variation.value = :variation');
             $dbal->setParameter('variation', $this->filter->getVariation());
@@ -373,7 +374,7 @@ final class AllExistsProductsRepository implements AllExistsProductsInterface
             'product_event_category.event = product.event AND product_event_category.root = true',
         );
 
-        if($this->filter->getCategory())
+        if($this->filter?->getCategory())
         {
             $dbal->andWhere('product_event_category.category = :category');
             $dbal->setParameter('category', $this->filter->getCategory(), CategoryProductUid::TYPE);
@@ -419,7 +420,7 @@ final class AllExistsProductsRepository implements AllExistsProductsInterface
         $dbal->andWhere($UANTITY.' > 0');
 
 
-        if($this->search->getQuery())
+        if($this->search?->getQuery())
         {
 
             $dbal
