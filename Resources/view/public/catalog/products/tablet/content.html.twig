@@ -1,0 +1,69 @@
+{% if products != false %}
+
+    <section class="container py-3">
+        <div class="row ">
+
+            <div class="col-12 pb-4">
+
+                <h2 class="fs-6 text-uppercase fw-bold ">
+                    {{ category.category_name }}
+                </h2>
+
+                <div class="d-flex justify-content-end align-items-center my-1">
+
+                    {% if filter is not null %}
+                        {% include Template('@products-product/filter/'~baks_settings.device~'/filter.html.twig') %}
+                    {% endif %}
+
+                    <a href="/refresh"
+                       class="btn btn-link text-muted"
+                       data-bs-toggle="tooltip"
+                       data-bs-html="true"
+                       data-bs-placement="bottom"
+                       data-bs-delay='{"show":600,"hide":100}'
+                       title="Сбросить фильтр">
+
+                        <button class="btn bg-primary fw-bold rounded-3 w-100 text-dark">
+                            <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
+                                 xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"
+                                 viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                      stroke-width="2"
+                                      d="M17.651 7.65a7.131 7.131 0 0 0-12.68 3.15M18.001 4v4h-4m-7.652 8.35a7.13 7.13 0 0 0 12.68-3.15M6 20v-4h4"></path>
+                            </svg>
+                        </button>
+
+                    </a>
+
+                </div>
+
+                <div class="row row-cols-3 gx-1 gy-2 mb-4">
+
+                    {# КАРТОЧКИ ПРОДУКТОВ #}
+                    {% for product in products|slice(0,6) %}
+                        <div class="col">
+                            {% include Template('@products-product/public/' ~baks_settings.device~ '/card_product.html.twig') %}
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+                <a href="{{ path('products-product:public.catalog.category', { category : category.category_url }) }}"
+                   class="btn bg-primary fw-bold rounded-3 w-100 mb-3"
+                   title="{{ category.category_name }}">
+                    Все товары в категории {{ category.category_name }}
+                </a>
+
+                <hr class="mb-3">
+
+                {{ include (_self|replace({ "content.html.twig" : "best_offers.html.twig" }), { 'bestOffers' : bestOffers }) }}
+
+
+                <hr class="mb-3">
+
+            </div>
+        </div>
+
+    </section>
+
+{% endif %}
