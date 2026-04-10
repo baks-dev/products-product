@@ -1,9 +1,5 @@
 {# Обложка  #}
-<section class="container py-3"
-         data-group="categories"
-         data-index="{{ categories|length }}"
-         data-count="{{ categories|length }}"
->
+<section class="container py-3">
 
     <ul class="d-flex flex-wrap p-0 "
         id="v-pills-tab"
@@ -12,12 +8,7 @@
 
         {% for category in categories %}
 
-            <li class="list-group-item bg-transparent border-0 text-truncate "
-                data-group="category_products"
-                data-link="{{ path('products-product:public.catalog.products', { category : category.id }) }}"
-                data-target="catalog_products"
-                data-sort="{{ category.sort }}"
-                data-url="{{ category.category_url }}"
+            <li class="list-group-item bg-transparent border-0 text-truncate"
                 style="min-width: 25%;">
 
                 <a href="{{ path('products-product:public.catalog.category', { category : category.category_url }) }}"

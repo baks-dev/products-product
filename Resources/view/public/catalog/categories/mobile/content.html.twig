@@ -14,19 +14,23 @@
     {% endif %}
 
     {# спиннеры загрузки #}
-    <section id="catalog_products_spinners" class="container py-3">
+    <section class="container py-3">
 
-        {% for i in 1..3 %}
-            <div class="spinner-grow text-primary ms-2 me-2" role="status">
-            </div>
-        {% endfor %}
+        <div id="catalog_products_spinners">
+            {% for i in 1..3 %}
+                <div class="spinner-grow text-primary ms-2 me-2" role="status">
+                </div>
+            {% endfor %}
+        </div>
 
     </section>
 
     {# каталог продукции #}
-    <section id="catalog_products" class="container py-3">
+    <section class="container py-3">
 
-        <div class="row ">
+        <div id="catalog_products"></div>
+
+        <div id="catalog_products_preload" class="row">
 
             <div class="col-12 pb-4">
 
