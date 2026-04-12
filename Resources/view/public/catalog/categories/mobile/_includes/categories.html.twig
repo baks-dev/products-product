@@ -1,0 +1,30 @@
+{# Обложка  #}
+<section class="container py-3">
+
+    <ul class="d-flex flex-wrap p-0 justify-content-center ">
+
+        {% for category in categories %}
+
+            <li class="list-group-item bg-transparent border-0 text-truncate"
+                style="min-width: 25%;">
+
+                <a href="{{ path('products-product:public.catalog.category', { category : category.category_url }) }}"
+                   class="d-flex align-items-center justify-content-center fw-medium text-black text-uppercase rounded-5 fs-18 text-decoration-none gap-2 p-2"
+                   aria-label="{{ category.category_name }}">
+
+                    {% set image_path = '/assets/'~version~'/img/blank.svg' %}
+
+                    {% if category.category_cover_ext is defined and category.category_cover_ext is not null %}
+                        {% set image_path = cdn_image_path(category.category_cover_image, category.category_cover_ext, category.category_cover_cdn) %}
+                    {% endif %}
+
+                    <div class="icon m-0 rounded-3 bg-contain lazy p-1 shadow-sm"
+                         style="width: 100%; "
+                         data-bg="{{ image_path }}">
+                    </div>
+                </a>
+            </li>
+
+        {% endfor %}
+    </ul>
+</section>

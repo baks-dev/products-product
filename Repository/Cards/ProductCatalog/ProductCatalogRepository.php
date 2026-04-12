@@ -19,6 +19,7 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
+ *
  */
 
 declare(strict_types=1);
@@ -195,11 +196,14 @@ final class ProductCatalogRepository implements ProductCatalogInterface
         );
 
 
-        /** Категория */
+        /**
+         * Категория
+         */
+
         if($this->categoryUid instanceof CategoryProductUid)
         {
             $dbal->join(
-                'product',
+                'product_event',
                 ProductCategory::class,
                 'product_event_category',
                 '
@@ -215,7 +219,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
         else
         {
             $dbal->leftJoin(
-                'product',
+                'product_event',
                 ProductCategory::class,
                 'product_event_category',
                 '
@@ -1136,13 +1140,20 @@ final class ProductCatalogRepository implements ProductCatalogInterface
             {
                 /** ФИЛЬТР СВОЙСТВ */
 
-                /** @var RangeIntegerFieldDTO $item */
                 foreach($this->property as $item)
                 {
+                    /**
+                     * Если свойство - флаг
+                     */
+
                     if($item === true)
                     {
                         $item = 'true';
                     }
+
+                    /**
+                     * Если свойство - диапазон значений
+                     */
 
                     if($item instanceof RangeIntegerFieldDTO)
                     {
@@ -1188,6 +1199,10 @@ final class ProductCatalogRepository implements ProductCatalogInterface
                         continue;
                     }
 
+
+                    /**
+                     * Если свойство - значение
+                     */
 
                     $prepareValue = uniqid('val_', false);
                     $alias = uniqid('alias', false);

@@ -1,0 +1,219 @@
+{# ФОРМА ДЛЯ ФИЛЬРАЦИИ ПО ПАРАМЕТРАМ МОДЕЛИ ПОКРЫШКИ #}
+
+{% set CarTireFieldType = constant('BaksDev\\Field\\Tire\\CarType\\Type\\TireCarTypeField::TYPE') %}
+{% set SeasonTireFieldType = constant('BaksDev\\Field\\Tire\\Season\\Type\\TireSeasonField::TYPE') %}
+{% set StudsTireFieldType = constant('BaksDev\\Field\\Tire\\Studs\\Type\\TireStudsField::TYPE') %}
+
+{% set productFields = filter_tire.children|filter((v, k) => k != 'filter' and k != '_token' and v.rendered == false) %}
+{% set seasonFields = productFields|filter(v => SeasonTireFieldType in  v.vars.block_prefixes or StudsTireFieldType in v.vars.block_prefixes) %}
+{% set carFields = productFields|filter(v => CarTireFieldType in  v.vars.block_prefixes) %}
+
+{% if seasonFields is empty or carFields is empty %}
+    <section class="container py-3 ">
+        <div class="col-12" style="height: 350px">
+            <div class="h-100 lazy bg-cover" data-bg="/assets/{{ version }}/blackdragon/img/AboutBg.png"></div>
+        </div>
+    </section>
+{% else %}
+
+    {{ form_start(filter_tire) }}
+
+    <div class="d-flex gap-3 mb-4">
+
+        {# ДИАМЕТР #}
+        <div class="w-100">
+            {{ form_label(filter_tire.offer, 'Диаметр:',
+                {'label_attr': {
+                    'class': 'form-label ps-2 fw-bold'}
+                }) }}
+
+            {{ form_widget(filter_tire.offer, {
+                attr: {
+                    'class': 'form-select rounded-5 fs-14 mb-1',
+                    'data-select' : 'select2',
+                    'aria-label' : "Значение диаметра",
+                },
+                placeholder : "выберите диаметр ..." }) }}
+        </div>
+
+        {# ШИРИНА #}
+        <div class="w-100">
+            {{ form_label(filter_tire.variation, 'Ширина:',
+                {'label_attr': {
+                    'class': 'form-label ps-2 fw-bold'}
+                }) }}
+
+            {{ form_widget(filter_tire.variation, {
+                attr: {
+                    'class': 'form-select rounded-5 fs-14 mb-1',
+                    'data-select' : 'select2',
+                    'aria-label' : "Значение ширины" },
+                placeholder : "выберите ширину ..." }) }}
+        </div>
+
+        {# ПРОФИЛЬ #}
+        <div class="w-100">
+            {{ form_label(filter_tire.modification, 'Профиль:',
+                {'label_attr': {
+                    'class': 'form-label ps-2 fw-bold'}
+                }) }}
+
+            {{ form_widget(filter_tire.modification, {
+                attr: {
+                    'class': 'form-select rounded-5 fs-14 mb-1',
+                    'data-select' : 'select2',
+                    'aria-label' : "Значение профиля" },
+                placeholder : "выберите профиль ..." }) }}
+        </div>
+
+    </div>
+
+    <div class="d-flex gap-3 mb-2 align-items-center">
+
+        {# БЛОК КНОПОК - Сезонность и шипы #}
+        <div class="d-flex align-items-center justify-content-between" style="width:33%">
+
+            {% for field in seasonFields %}
+
+                {# Множественный выбор #}
+                {% for button in field %}
+
+                    {% if loop.index == 1 %}
+                        {# {% set labelClass = 'btn-all text-decoration-underline m-0 px-2 fw-medium rounded-3' %} #}
+                        {% set labelClass = 'btn-all m-0 px-2 fw-medium rounded-4' %}
+                    {% else %}
+                        {% set labelClass = 'd-flex btn p-1' %}
+                    {% endif %}
+
+                    <input id="{{ button.vars.id }}"
+                           name="{{ field_name(button) }}"
+                           value="{{ field_value(button) }}"
+                            {{ field_value(button) is empty ? 'checked="checked"' : '' }}
+                           class="btn-check"
+                           type="radio">
+
+                    <label class="{{ labelClass }}"
+                           for="{{ button.vars.id }}"
+                           style="font-size: 14px;">
+
+                        {% if field_value(button) is empty %}
+
+                            {# <span class="icon icon-sm rounded-5 small text-dark"> #}
+                            {# </span> #}
+                            Все
+
+                        {% else %}
+
+                            {% set translationDomain = button.vars.translation_domain %}
+
+                            <span class="icon icon-sm rounded-5"
+{#                                  title="{{ field_value(button)|trans({}, translationDomain) }}" #}
+                                  role="tooltip"
+                                  data-bs-toggle="tooltip"
+                                  data-bs-placement="bottom"
+                                  data-bs-delay='{"show":600,"hide":100}'>
+
+                            {{ field_value(button)|call_twig_func(SeasonTireFieldType~'_render') }}
+
+                        </span>
+
+                        {% endif %}
+                    </label>
+                {% endfor %}
+
+                {# Единственный выбор #}
+                {% if StudsTireFieldType in field.vars.block_prefixes %}
+
+                    {% set translationDomain = field.vars.translation_domain %}
+
+                    <input id="{{ field.vars.id }}"
+                           name="{{ field_name(field) }}"
+                           value="{{ field_value(field) }}"
+                            {# class="form-check-input visually-hidden" #}
+                           class="btn-check"
+                           type="checkbox">
+                    <label class="d-flex btn p-1" for="{{ field.vars.id }}">
+
+                        <span class="icon icon-sm rounded-5"
+{#                              title="{{ 'label'|trans({}, translationDomain) }}" #}
+                              role="tooltip"
+                              data-bs-toggle="tooltip"
+                              data-bs-placement="bottom"
+                              data-bs-delay='{"show":600,"hide":100}'>
+
+                        <img
+                                src="/assets/{{ version }}/img/empty.png"
+                                data-src="/assets/{{ version }}/blackdragon/img/tire.svg"
+                                style="height: 20px;"
+                                class="lazy"
+                                alt="Шипы"
+                        >
+                    </span>
+
+                    </label>
+                {% endif %}
+            {% endfor %}
+
+        </div>
+
+        {# БЛОК КНОПОК - Тип автомобиля #}
+        <div class="d-flex align-items-center justify-content-between" style="width:33%">
+
+            {% for field in carFields %}
+                {# Кнопки #}
+                {% for button in field %}
+
+                    {% if loop.index == 1 %}
+                        {% set labelClass = 'btn-all m-0 px-2 fw-medium rounded-4' %}
+                    {% else %}
+                        {% set labelClass = 'd-flex btn p-1' %}
+                    {% endif %}
+
+                    <input id="{{ button.vars.id }}"
+                           name="{{ field_name(button) }}"
+                           value="{{ field_value(button) }}"
+                            {{ field_value(button) is empty ? 'checked="checked"' : '' }}
+                           class="btn-check"
+                           type="radio">
+
+                    <label class="{{ labelClass }}"
+                           for="{{ button.vars.id }}"
+                           style="font-size: 14px;">
+
+                        {% if field_value(button) is empty %}
+                            Все
+                        {% else %}
+
+                            {% set translationDomain = button.vars.translation_domain %}
+
+                            <span class="icon icon-sm rounded-5"
+{#                                  title="{{ field_value(button)|trans({}, translationDomain) }}" #}
+                                  role="tooltip"
+                                  data-bs-toggle="tooltip"
+                                  data-bs-placement="bottom"
+                                  data-bs-delay='{"show":600,"hide":100}'>
+
+                                    {{ field_value(button)|call_twig_func(CarTireFieldType~'_render') }}
+
+                                </span>
+                        {% endif %}
+
+                    </label>
+                {% endfor %}
+            {% endfor %}
+        </div>
+
+        {{ form_widget(filter_tire.filter,
+            {
+                label: 'Подобрать шины',
+                attr: {
+                'class': 'btn bg-primary fs-14 fw-bold rounded-3 py-2',
+                'style': 'width:66%',
+            }}
+        ) }}
+
+    </div>
+
+    {{ form_end(filter_tire) }}
+
+{% endif %}
