@@ -79,6 +79,11 @@ class ProductPrice extends EntityEvent
         $this->currency = new Currency();
     }
 
+    public function getPriceValue(): ?Money
+    {
+        return $this->price;
+    }
+
     public function __toString(): string
     {
         return (string) $this->event;

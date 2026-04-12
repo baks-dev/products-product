@@ -45,6 +45,11 @@ final class UpdateProductOfferPriceHandler extends AbstractHandler
             return false;
         }
 
+        if($productOfferPrice->getPriceValue()->equals($command->getPrice()))
+        {
+            return $productOfferPrice;
+        }
+
         $productOfferPrice->setEntity($command);
 
         /** Валидация всех объектов */

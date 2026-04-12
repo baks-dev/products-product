@@ -45,6 +45,11 @@ final class UpdateProductVariationPriceHandler extends AbstractHandler
             return false;
         }
 
+        if($productVariationPrice->getPriceValue()->equals($command->getPrice()))
+        {
+            return $productVariationPrice;
+        }
+
         $productVariationPrice->setEntity($command);
 
 

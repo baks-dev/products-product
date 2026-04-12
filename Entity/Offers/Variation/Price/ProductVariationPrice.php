@@ -72,6 +72,11 @@ class ProductVariationPrice extends EntityEvent
         return (string) $this->variation;
     }
 
+    public function getPriceValue(): ?Money
+    {
+        return $this->price;
+    }
+
     public function getDto($dto): mixed
     {
         $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
