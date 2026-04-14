@@ -1,11 +1,11 @@
 <main>
 
     {# категории #}
-    {{ include(_self|replace({ "content.html.twig" : "_includes/categories.html.twig" }), {'categories': categories }) }}
+    {{ include(_self|replace({ "content.html.twig" : "includes/categories.html.twig" }), {'categories': categories }) }}
 
     {# фильтр по параметрам продукции #}
     {% if filter_tire.offer is defined %}
-        {{ include(_self|replace({ "content.html.twig": "_includes/filter.html.twig" })) }}
+        {{ include(_self|replace({ "content.html.twig": "includes/filter.html.twig" })) }}
     {% endif %}
 
     {# спиннеры загрузки #}
@@ -43,7 +43,7 @@
 
                             {% for i in 1..4 %}
 
-                                {{ include(_self|replace({ "content.html.twig": "_includes/empty_product.html.twig" })) }}
+                                {{ include(_self|replace({ "content.html.twig": "includes/empty_product.html.twig" })) }}
 
                             {% endfor %}
 
@@ -111,7 +111,7 @@
 
     {# карусель логотипов брендов #}
     <section class="container py-3">
-        {% include Template('/public/'~baks_settings.device~'/_includes/brands_carousel.html.twig') %}
+        {% include Template('/public/'~baks_settings.device~'/includes/brands_carousel.html.twig') %}
     </section>
 
 </main>
