@@ -62,11 +62,14 @@ use BaksDev\Products\Promotion\BaksDevProductsPromotionBundle;
 use BaksDev\Products\Promotion\Entity\Event\Invariable\ProductPromotionInvariable;
 use BaksDev\Products\Promotion\Entity\Event\Period\ProductPromotionPeriod;
 use BaksDev\Products\Promotion\Entity\Event\Price\ProductPromotionPrice;
-use BaksDev\Products\Promotion\Entity\Event\ProductPromotionEvent;
 use BaksDev\Products\Promotion\Entity\ProductPromotion;
+use BaksDev\Products\Stocks\BaksDevProductsStocksBundle;
+use BaksDev\Products\Stocks\Entity\Total\ProductStockTotal;
+use BaksDev\Reference\Region\Type\Id\RegionUid;
 use BaksDev\Search\Index\SearchIndexInterface;
 use BaksDev\Search\Repository\SearchRepository\SearchRepositoryInterface;
 use BaksDev\Users\Profile\UserProfile\Entity\Event\Discount\UserProfileDiscount;
+use BaksDev\Users\Profile\UserProfile\Entity\Event\Region\UserProfileRegion;
 use BaksDev\Users\Profile\UserProfile\Entity\UserProfile;
 use Doctrine\DBAL\ArrayParameterType;
 use Generator;
@@ -89,6 +92,7 @@ final class SearchAllProductsRepository implements SearchRepositoryInterface
         #[Target('productsProductLogger')] private LoggerInterface $logger,
         private readonly DBALQueryBuilder $DBALQueryBuilder,
         private readonly ?SearchIndexInterface $SearchIndexHandler = null,
+        #[Autowire(env: 'PROJECT_REGION')] private readonly ?string $region = null,
     ) {}
 
     /** Максимальное количество записей в результате */
@@ -681,6 +685,82 @@ final class SearchAllProductsRepository implements SearchRepositoryInterface
                         current_profile_discount.event = current_profile.event
                         ',
                 );
+        }
+
+
+        /**
+         * Наличие продукции на складе (необходимо для отображения кнопки "в корзину")
+         * Если подключен модуль складского учета и передан идентификатор профиля
+         */
+
+        if(false === empty($this->region) && class_exists(BaksDevProductsStocksBundle::class))
+        {
+            /* Получить все профили данного региона */
+
+            $dbal
+                ->leftJoin(
+                    'product',
+                    UserProfileRegion::class,
+                    'product_profile_region',
+                    'product_profile_region.value = :region',
+                )
+                ->setParameter(
+                    key: 'region',
+                    value: $this->region,
+                    type: RegionUid::TYPE,
+                );
+
+            $dbal
+                ->join(
+                    'product_profile_region',
+                    UserProfile::class,
+                    'product_region_total',
+                    'product_region_total.event = product_profile_region.event',
+                );
+
+            $dbal
+                ->addSelect("JSON_AGG (
+                        DISTINCT JSONB_BUILD_OBJECT (
+                            'total', stock.total,
+                            'reserve', stock.reserve
+                        )) FILTER (WHERE stock.total > stock.reserve)
+
+                        AS product_quantity_stocks",
+                )
+                ->leftJoin(
+                    'product_region_total',
+                    ProductStockTotal::class,
+                    'stock',
+                    '
+                    stock.profile = product_region_total.id AND
+                    stock.product = product.id
+
+                    AND
+
+                        CASE
+                            WHEN product_offer.const IS NOT NULL
+                            THEN stock.offer = product_offer.const
+                            ELSE stock.offer IS NULL
+                        END
+
+                    AND
+
+                        CASE
+                            WHEN product_variation.const IS NOT NULL
+                            THEN stock.variation = product_variation.const
+                            ELSE stock.variation IS NULL
+                        END
+
+                    AND
+
+                        CASE
+                            WHEN product_modification.const IS NOT NULL
+                            THEN stock.modification = product_modification.const
+                            ELSE stock.modification IS NULL
+                        END
+      
+                ');
+
         }
 
         /** Общая скидка (наценка) из профиля магазина */
