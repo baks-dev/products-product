@@ -75,7 +75,22 @@ final readonly class ProductModelOfferResult implements ProductPriceResultInterf
         private string|null $project_profile = null,
         private string|null $profiles = null,
 
+        private array|null $product_quantity_stocks = null,
+
     ) {}
+
+
+    /* Есть ли в данном регионе */
+    public function isProductExistRegion()
+    {
+        if(empty($this->product_quantity_stocks))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
 
     public function getProductOfferUid(): ProductOfferUid|null
     {

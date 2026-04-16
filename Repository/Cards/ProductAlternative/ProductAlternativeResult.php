@@ -25,7 +25,6 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Repository\Cards\ProductAlternative;
 
-use BaksDev\Products\Category\Type\Event\CategoryProductEventUid;
 use BaksDev\Products\Product\Repository\Cards\ProductCardResultInterfaceProduct;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Id\ProductUid;
@@ -89,7 +88,27 @@ final readonly class ProductAlternativeResult implements ProductCardResultInterf
 
         private string|null $project_profile = null,
         private string|null $profiles = null,
+
+        private string|null $product_quantity_stocks = null,
     ) {}
+
+
+    /* Есть ли в данном регионе */
+    public function isProductExistRegion()
+    {
+        if(empty($this->product_quantity_stocks))
+        {
+            return false;
+        }
+
+        if(false === json_validate($this->product_quantity_stocks))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
 
     public function getProductId(): ProductUid
     {

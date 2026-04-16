@@ -85,7 +85,26 @@ final readonly class ModelOrProductResult implements ModelsOrProductsCardResultI
         private string|null $profile_discount = null,
         private string|null $project_discount = null,
         private string|null $profiles = null,
+
+        private string|null $product_quantity_stocks = null,
     ) {}
+
+
+    /* Есть ли в данном регионе */
+    public function isProductExistRegion()
+    {
+        if(empty($this->product_quantity_stocks))
+        {
+            return false;
+        }
+
+        if(false === json_validate($this->product_quantity_stocks))
+        {
+            return false;
+        }
+
+        return true;
+    }
 
     public function getProductId(): ProductUid
     {
