@@ -68,12 +68,13 @@ use BaksDev\Products\Promotion\BaksDevProductsPromotionBundle;
 use BaksDev\Products\Promotion\Entity\Event\Invariable\ProductPromotionInvariable;
 use BaksDev\Products\Promotion\Entity\Event\Period\ProductPromotionPeriod;
 use BaksDev\Products\Promotion\Entity\Event\Price\ProductPromotionPrice;
-use BaksDev\Products\Promotion\Entity\Event\ProductPromotionEvent;
 use BaksDev\Products\Promotion\Entity\ProductPromotion;
+use BaksDev\Products\Stocks\BaksDevProductsStocksBundle;
+use BaksDev\Products\Stocks\Entity\Total\ProductStockTotal;
+use BaksDev\Reference\Region\Type\Id\RegionUid;
 use BaksDev\Users\Profile\UserProfile\Entity\Event\Discount\UserProfileDiscount;
+use BaksDev\Users\Profile\UserProfile\Entity\Event\Region\UserProfileRegion;
 use BaksDev\Users\Profile\UserProfile\Entity\UserProfile;
-use BaksDev\Users\Profile\UserProfile\Repository\UserProfileTokenStorage\UserProfileTokenStorageInterface;
-use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
@@ -88,6 +89,7 @@ final class ProductModelRepository implements ProductModelInterface
 
     public function __construct(
         private readonly DBALQueryBuilder $DBALQueryBuilder,
+        #[Autowire(env: 'PROJECT_REGION')] private readonly ?string $region = null,
     ) {}
 
     /** Фильтрация по продукту */
@@ -537,6 +539,60 @@ final class ProductModelRepository implements ProductModelInterface
                 );
         }
 
+
+        /**
+         * Наличие продукции на складе (необходимо для отображения кнопки "в корзину")
+         * Если подключен модуль складского учета и передан идентификатор профиля
+         */
+
+        $productQuantityStocks = "'product_quantity_stocks', NULL,";
+
+        if(false === empty($this->region) && class_exists(BaksDevProductsStocksBundle::class))
+        {
+
+            /* Создать отдельный QueryBuilder для подзапроса с профилями */
+            $profilesQB = $dbal->createQueryBuilder(self::class)
+                ->select('profile_total.id')
+                ->from(UserProfileRegion::class, 'profile_region')
+                ->join(
+                    'profile_region',
+                    UserProfile::class,
+                    'profile_total',
+                    'profile_total.event = profile_region.event'
+                )
+                ->where('profile_region.value = :region');
+
+            /* Создать отдельный QueryBuilder для подзапроса с остатками */
+            $stocksQB = $dbal->createQueryBuilder(self::class)
+                ->select(
+                    "COALESCE(
+                        JSONB_AGG(
+                            DISTINCT JSONB_BUILD_OBJECT(
+                                'total', stock.total,
+                                'reserve', stock.reserve
+                            )
+                        ),
+                        NULL
+                    )"
+                )
+                ->from(ProductStockTotal::class, 'stock')
+                ->where('stock.profile IN ('.$profilesQB->getSQL().')')
+                ->andWhere('stock.product = product.id')
+                ->andWhere('stock.total > stock.reserve')
+                ->andWhere('(product_offer.const IS NULL OR stock.offer = product_offer.const)')
+                ->andWhere('(product_variation.const IS NULL OR stock.variation = product_variation.const)')
+                ->andWhere('(product_modification.const IS NULL OR stock.modification = product_modification.const)');
+
+            /* Задать параметр региона */
+            $dbal->setParameter('region', $this->region, RegionUid::TYPE);
+
+            /* Получить SQL подзапроса с остатками  */
+            $stocksSubquery = '('.$stocksQB->getSQL().')';
+
+            $productQuantityStocks = "'product_quantity_stocks', ".$stocksSubquery.",";
+        }
+
+
         /** Продукты внутри категории */
         $dbal->addSelect(
             "JSON_AGG
@@ -585,6 +641,9 @@ final class ProductModelRepository implements ProductModelInterface
         						/* Project Discount */
         						{$projectDiscountSelect}
         						
+                                /* Project Product Quantity Stocks */
+                                {$productQuantityStocks}
+
         						/* Кастомная цена */
         						{$promotionPriceSelect}
         						{$promotionActiveSelect}

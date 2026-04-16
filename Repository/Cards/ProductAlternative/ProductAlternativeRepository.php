@@ -65,13 +65,17 @@ use BaksDev\Products\Promotion\BaksDevProductsPromotionBundle;
 use BaksDev\Products\Promotion\Entity\Event\Invariable\ProductPromotionInvariable;
 use BaksDev\Products\Promotion\Entity\Event\Period\ProductPromotionPeriod;
 use BaksDev\Products\Promotion\Entity\Event\Price\ProductPromotionPrice;
-use BaksDev\Products\Promotion\Entity\Event\ProductPromotionEvent;
 use BaksDev\Products\Promotion\Entity\ProductPromotion;
+use BaksDev\Products\Stocks\BaksDevProductsStocksBundle;
+use BaksDev\Products\Stocks\Entity\Total\ProductStockTotal;
+use BaksDev\Reference\Region\Type\Id\RegionUid;
 use BaksDev\Users\Profile\UserProfile\Entity\Event\Discount\UserProfileDiscount;
+use BaksDev\Users\Profile\UserProfile\Entity\Event\Region\UserProfileRegion;
 use BaksDev\Users\Profile\UserProfile\Entity\UserProfile;
 use Generator;
 use InvalidArgumentException;
 use stdClass;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /** @see ProductAlternativeResult */
 final class ProductAlternativeRepository implements ProductAlternativeInterface
@@ -93,6 +97,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 
     public function __construct(
         private readonly DBALQueryBuilder $DBALQueryBuilder,
+        #[Autowire(env: 'PROJECT_REGION')] private readonly ?string $region = null,
     ) {}
 
     public function setMaxResult(int $limit): self
@@ -229,6 +234,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
         //        {
         //            $dbal->setParameter('variation', $variation);
         //        }
+
 
         /** MODIFICATION */
         if($this->modification)
@@ -533,6 +539,84 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
 			END AS quantity
 		',
         );
+
+
+        /**
+         * Наличие продукции на складе
+         * Если подключен модуль складского учета и передан идентификатор профиля
+         */
+
+        if(false === empty($this->region) && class_exists(BaksDevProductsStocksBundle::class))
+        {
+            /* Получаем все профили данного региона */
+
+            $dbal
+                ->leftJoin(
+                    'product_offer',
+                    UserProfileRegion::class,
+                    'product_profile_region',
+                    'product_profile_region.value = :region',
+                )
+                ->setParameter(
+                    key: 'region',
+                    value: $this->region,
+                    type: RegionUid::TYPE,
+                );
+
+            $dbal
+                ->join(
+                    'product_profile_region',
+                    UserProfile::class,
+                    'product_region_total',
+                    'product_region_total.event = product_profile_region.event',
+                );
+
+            $dbal
+                ->addSelect("JSON_AGG (
+                        DISTINCT JSONB_BUILD_OBJECT (
+                            'total', stock.total,
+                            'reserve', stock.reserve
+                        )) FILTER (WHERE stock.total > stock.reserve)
+
+                        AS product_quantity_stocks",
+                )
+
+                ->leftJoin(
+                    'product_region_total',
+                    ProductStockTotal::class,
+                    'stock',
+                    '
+                    stock.profile = product_region_total.id AND
+                    stock.product = product.id
+
+                    AND
+
+                        CASE
+                            WHEN product_offer.const IS NOT NULL
+                            THEN stock.offer = product_offer.const
+                            ELSE stock.offer IS NULL
+                        END
+
+                    AND
+
+                        CASE
+                            WHEN product_variation.const IS NOT NULL
+                            THEN stock.variation = product_variation.const
+                            ELSE stock.variation IS NULL
+                        END
+
+                    AND
+
+                        CASE
+                            WHEN product_modification.const IS NOT NULL
+                            THEN stock.modification = product_modification.const
+                            ELSE stock.modification IS NULL
+                        END
+
+                ');
+
+        }
+
 
         // Наличие и резерв торгового предложения
 
