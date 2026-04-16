@@ -99,6 +99,22 @@ final readonly class SearchAllResult implements ProductCardResultInterfaceProduc
 
     ) {}
 
+    /* Есть ли в данном регионе */
+    public function isProductExistRegion()
+    {
+        if(empty($this->product_quantity_stocks))
+        {
+            return false;
+        }
+
+        if(false === json_validate($this->product_quantity_stocks))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
     public function getProductId(): ProductUid
     {
         return new ProductUid($this->id);
