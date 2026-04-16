@@ -140,7 +140,16 @@ async function init_TfpBy2NAo1(item, form = null)
 
         if(modal_links)
         {
-            modal_links.forEach(modalLink)
+            modal_links.forEach(function(item, i, arr)
+            {
+                modalLink(item);
+
+                item.disabled = false;
+                item.removeAttribute("disabled");
+                item.classList.remove("disabled");
+
+            });
+
         }
 
         /** обрабатываем все формы с фильтрами */
