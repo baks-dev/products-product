@@ -25,8 +25,10 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Messenger\Price;
 
+use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
+#[Autoconfigure(shared: false)]
 #[AsMessageHandler(priority: -100)]
 final readonly class UpdateMarketplacePriceNullHandler
 {

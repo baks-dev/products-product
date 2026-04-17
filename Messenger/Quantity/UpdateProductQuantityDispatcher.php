@@ -44,10 +44,12 @@ use BaksDev\Products\Product\UseCase\Admin\Quantity\Offer\Variation\UpdateVariat
 use BaksDev\Products\Product\UseCase\Admin\Quantity\UpdateProductQuantityDTO;
 use BaksDev\Products\Product\UseCase\Admin\Quantity\UpdateProductQuantityHandler;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /** Обновляет количество продукта Quantity в зависимости от вложенности торгового предложения */
+#[Autoconfigure(shared: false)]
 #[AsMessageHandler(priority: 0)]
 final readonly class UpdateProductQuantityDispatcher
 {

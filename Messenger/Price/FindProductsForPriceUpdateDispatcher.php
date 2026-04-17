@@ -34,8 +34,10 @@ use BaksDev\Products\Product\Type\Offers\Variation\Modification\Id\ProductModifi
 use BaksDev\Reference\Currency\Api\CbrCurrencyRequest;
 use BaksDev\Reference\Currency\Type\Currencies\RUR;
 use BaksDev\Reference\Money\Type\Money;
+use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
+#[Autoconfigure(shared: false)]
 #[AsMessageHandler(priority: 0)]
 final readonly class FindProductsForPriceUpdateDispatcher
 {

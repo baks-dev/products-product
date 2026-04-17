@@ -27,8 +27,10 @@ namespace BaksDev\Products\Product\Messenger\Quantity;
 
 use BaksDev\Core\Messenger\MessageDispatch;
 use BaksDev\Products\Product\Repository\ProductsByValues\ProductsByValuesInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
+#[Autoconfigure(shared: false)]
 #[AsMessageHandler(priority: 0)]
 final readonly class FindProductsForQuantityUpdateDispatcher
 {

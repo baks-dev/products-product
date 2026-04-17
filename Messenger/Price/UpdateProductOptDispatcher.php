@@ -44,9 +44,11 @@ use BaksDev\Products\Product\UseCase\Admin\Price\Offer\Variation\UpdateProductVa
 use BaksDev\Products\Product\UseCase\Admin\Price\UpdateProductOptDTO;
 use BaksDev\Products\Product\UseCase\Admin\Price\UpdateProductOptHandler;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
+#[Autoconfigure(shared: false)]
 #[AsMessageHandler(priority: 0)]
 final readonly class UpdateProductOptDispatcher
 {
