@@ -75,6 +75,7 @@ use Doctrine\DBAL\ArrayParameterType;
 use Generator;
 use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\Attribute\Target;
 
 /**
