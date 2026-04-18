@@ -41,7 +41,6 @@ use BaksDev\Products\Category\Entity\Section\Field\Trans\CategoryProductSectionF
 use BaksDev\Products\Category\Entity\Trans\CategoryProductTrans;
 use BaksDev\Products\Product\Entity\Active\ProductActive;
 use BaksDev\Products\Product\Entity\Category\ProductCategory;
-use BaksDev\Products\Product\Entity\Description\ProductDescription;
 use BaksDev\Products\Product\Entity\Event\Profile\ProductProfile;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
 use BaksDev\Products\Product\Entity\Offers\Image\ProductOfferImage;
@@ -60,6 +59,8 @@ use BaksDev\Products\Product\Entity\Photo\ProductPhoto;
 use BaksDev\Products\Product\Entity\Price\ProductPrice;
 use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Entity\ProductInvariable;
+use BaksDev\Products\Product\Entity\Project\Description\ProductProjectDescription;
+use BaksDev\Products\Product\Entity\Project\ProductProject;
 use BaksDev\Products\Product\Entity\Property\ProductProperty;
 use BaksDev\Products\Product\Entity\Seo\ProductSeo;
 use BaksDev\Products\Product\Entity\Trans\ProductTrans;
@@ -250,15 +251,30 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             );
 
         $dbal
-            ->addSelect('product_desc.preview AS product_preview')
-            ->addSelect('product_desc.description AS product_description')
             ->leftJoin(
                 'product',
-                ProductDescription::class,
-                'product_desc',
-                'product_desc.event = product.event AND product_desc.device = :device ',
-            )
-            ->setParameter(
+                ProductProject::class,
+                'product_project',
+                '
+                    product_project.product = product.id 
+                    '.(true === $dbal->bindProjectProfile()
+                    ? 'AND product_project.profile = :'.$dbal::PROJECT_PROFILE_KEY
+                    : 'AND product_project.profile IS NULL'),
+            );
+
+        $dbal
+            ->addSelect('product_project_description.preview AS product_preview')
+            ->addSelect('product_project_description.description AS product_description')
+            ->leftJoin(
+                'product_project',
+                ProductProjectDescription::class,
+                'product_project_description',
+                '
+                        product_project_description.project = product_project.id 
+                        AND product_project_description.local = :local
+                        AND product_project_description.device = :device
+                    ',
+            )->setParameter(
                 key: 'device',
                 value: 'pc',
             );
