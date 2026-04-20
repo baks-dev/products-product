@@ -127,7 +127,7 @@ final class CurrentProductIdentifierByConstRepository implements CurrentProductI
      */
     public function find(): CurrentProductIdentifierResult|false
     {
-        if(!$this->product instanceof ProductUid)
+        if(false === ($this->product instanceof ProductUid))
         {
             throw new InvalidArgumentException('Необходимо вызвать метод forProduct и передать параметр $product');
         }
@@ -334,11 +334,21 @@ final class CurrentProductIdentifierByConstRepository implements CurrentProductI
             ",
         );
 
+        /* Артикул продукта */
+
+        $current->addSelect('
+            COALESCE(
+                current_modification.article, 
+                current_variation.article, 
+                current_offer.article, 
+                product_info.article
+            ) AS article
+		');
+
         $current->allGroupByExclude();
 
         return $current
-            ->enableCache('products-product')
+            //->enableCache('products-product')
             ->fetchHydrate(CurrentProductIdentifierResult::class);
-
     }
 }

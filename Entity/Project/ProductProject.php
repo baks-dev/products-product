@@ -55,7 +55,7 @@ class ProductProject extends EntityState
     private ProductUid $product;
 
     /** Описание */
-    #[ORM\OneToMany(targetEntity: ProductProjectDescription::class, mappedBy: 'project', cascade: ['all'], fetch: 'EAGER')]
+    #[ORM\OneToMany(targetEntity: ProductProjectDescription::class, mappedBy: 'project', cascade: ['all'])]
     private Collection $description;
 
     /** Профиль  */

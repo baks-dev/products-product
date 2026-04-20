@@ -107,7 +107,6 @@ class CurrentProductIdentifierByConstRepositoryTest extends KernelTestCase
         $ProductDTO = new ProductDTO();
         $ProductEvent->getDto($ProductDTO);
 
-
         /** @var ProductHandler $ProductHandler */
         $ProductHandler = self::getContainer()->get(ProductHandler::class);
         $handle = $ProductHandler->handle($ProductDTO, false);

@@ -59,6 +59,8 @@ final class CurrentProductIdentifierResult
         private ?string $modification_const = null,
         private ?string $modification_value = null,
 
+        private ?string $article = null,
+
         private ?string $product_invariable = null,
         private ?string $barcode = null,
         private ?string $barcodes = null,
@@ -194,5 +196,10 @@ final class CurrentProductIdentifierResult
         }
 
         return $barcodesObjects;
+    }
+
+    public function getArticle(): ?string
+    {
+        return $this->article;
     }
 }

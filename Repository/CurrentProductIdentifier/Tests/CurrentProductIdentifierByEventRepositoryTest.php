@@ -149,7 +149,6 @@ class CurrentProductIdentifierByEventRepositoryTest extends KernelTestCase
             ->forEvent(self::$result['event'])
             ->find();
 
-
         // Вызываем все геттеры
         $reflectionClass = new ReflectionClass(CurrentProductIdentifierResult::class);
         $methods = $reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC);

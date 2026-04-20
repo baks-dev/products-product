@@ -187,7 +187,7 @@ final class ProductHandler extends AbstractHandler
         }
 
 
-        if(true === ($this->main instanceof Product))
+        if(true === $isDispatch && true === ($this->main instanceof Product))
         {
 
             /* Создать или отредактировать ProductProject */

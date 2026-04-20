@@ -179,6 +179,7 @@ final class CurrentProductIdentifierByEventRepository implements CurrentProductI
             );
 
         $dbal
+            ->addSelect('product_info.article AS article')
             ->join(
                 'product',
                 ProductInfo::class,
@@ -215,6 +216,7 @@ final class CurrentProductIdentifierByEventRepository implements CurrentProductI
                 ->addSelect('current_offer.id AS offer')
                 ->addSelect('current_offer.const AS offer_const')
                 ->addSelect('current_offer.value AS offer_value')
+                ->addSelect('current_offer.article AS article')
                 ->addSelect('current_offer.barcode_old AS barcode')
                 ->join(
                     'offer',
@@ -268,6 +270,7 @@ final class CurrentProductIdentifierByEventRepository implements CurrentProductI
                     ->addSelect('current_variation.id AS variation')
                     ->addSelect('current_variation.const AS variation_const')
                     ->addSelect('current_variation.value AS variation_value')
+                    ->addSelect('current_variation.article AS article')
                     ->addSelect('current_variation.barcode_old AS barcode')
                     ->join(
                         'variation',
@@ -321,6 +324,7 @@ final class CurrentProductIdentifierByEventRepository implements CurrentProductI
                         ->addSelect('current_modification.id AS modification')
                         ->addSelect('current_modification.const AS modification_const')
                         ->addSelect('current_modification.value AS modification_value')
+                        ->addSelect('current_modification.article AS article')
                         ->addSelect('current_modification.barcode_old AS barcode')
                         ->join(
                             'modification',
