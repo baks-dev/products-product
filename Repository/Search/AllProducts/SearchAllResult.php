@@ -97,6 +97,8 @@ final readonly class SearchAllResult implements ProductCardResultInterfaceProduc
         private string|null $profile_discount = null,
         private string|null $project_discount = null,
 
+        private string|null $product_quantity_stocks = null,
+
     ) {}
 
     /* Есть ли в данном регионе */
