@@ -81,10 +81,7 @@ final class ModelOrProductRepository implements ModelOrProductInterface
 
     private bool $active = false;
 
-    public function __construct(
-        private readonly DBALQueryBuilder $DBALQueryBuilder,
-        #[Autowire(env: 'PROJECT_REGION')] private readonly ?string $region = null,
-    ) {}
+    public function __construct(private readonly DBALQueryBuilder $DBALQueryBuilder) {}
 
     /** Максимальное количество записей в результате */
     public function maxResult(int $max): self
@@ -119,17 +116,277 @@ final class ModelOrProductRepository implements ModelOrProductInterface
         return (true === $result->valid()) ? iterator_to_array($result) : false;
     }
 
-    /** @return Generator<int, ModelOrProductResult>|false */
     public function findAll(): Generator|false
     {
+
+        $dbalCTE = $this->DBALQueryBuilder
+            ->createQueryBuilder(self::class)
+            ->bindLocal();
+
+        $dbalCTE->from(Product::class, 'product');
+
+        /** Получаем только при условии активности карточки */
+        if($this->active)
+        {
+            $dbalCTE->join(
+                'product',
+                ProductActive::class,
+                'product_active',
+                '
+                    product_active.event = product.event AND 
+                    product_active.active IS TRUE AND
+                    (product_active.active_to IS NULL OR product_active.active_to > NOW())
+                ');
+        }
+
+        $dbalCTE->leftJoin(
+            'product',
+            ProductPrice::class,
+            'product_price',
+            'product_price.event = product.event',
+        );
+
+        $dbalCTE->leftJoin(
+            'product',
+            ProductInfo::class,
+            'product_info',
+            'product_info.product = product.id',
+        );
+
+
+        $dbalCTE
+            ->leftJoin(
+                'product',
+                ProductOffer::class,
+                'product_offer',
+                'product_offer.event = product.event',
+            );
+
+        $dbalCTE
+            ->leftJoin(
+                'product_offer',
+                ProductOfferQuantity::class,
+                'product_offer_quantity',
+                'product_offer_quantity.offer = product_offer.id',
+            );
+
+
+        /**  Тип торгового предложения */
+        $dbalCTE
+            ->addSelect('category_offer.card AS category_offer_card')
+            ->leftJoin(
+                'product_offer',
+                CategoryProductOffers::class,
+                'category_offer',
+                'category_offer.id = product_offer.category_offer',
+            );
+
+        /**
+         * Группировка в зависимости от настройки группировки торгового предложения
+         */
+        $dbalCTE
+            ->addGroupBy('
+                CASE
+                    WHEN category_offer.card IS NOT NULL AND category_offer.card IS TRUE
+                    THEN category_offer.id
+                    ELSE NULL
+                END
+            ');
+
+
+        $dbalCTE
+            ->leftJoin(
+                'product_offer',
+                ProductVariation::class,
+                'product_variation',
+                'product_variation.offer = product_offer.id',
+            );
+
+
+        $dbalCTE
+            ->leftJoin(
+                'product_variation',
+                ProductVariationQuantity::class,
+                'product_variation_quantity',
+                'product_variation_quantity.variation = product_variation.id',
+            );
+
+        /** Тип множественного варианта */
+        $dbalCTE
+            ->leftJoin(
+                'product_variation',
+                CategoryProductVariation::class,
+                'category_variation',
+                'category_variation.id = product_variation.category_variation',
+            );
+
+
+        /**
+         * Группировка в зависимости от настройки группировки множественного варианта
+         */
+        $dbalCTE
+            ->addGroupBy('
+                CASE
+                    WHEN category_variation.card IS NOT NULL AND category_variation.card IS TRUE
+                    THEN category_variation.id
+                    ELSE NULL
+                END',
+            );
+
+
+        $dbalCTE->leftJoin(
+            'product_variation',
+            ProductModification::class,
+            'product_modification',
+            'product_modification.variation = product_variation.id ',
+        );
+
+        $dbalCTE
+            ->leftJoin(
+                'product_modification',
+                ProductModificationQuantity::class,
+                'product_modification_quantity',
+                'product_modification_quantity.modification = product_modification.id',
+            );
+
+
+        $dbalCTE
+            ->leftJoin(
+                'product_modification',
+                CategoryProductModification::class,
+                'category_modification',
+                'category_modification.id = product_modification.category_modification',
+            );
+
+        $dbalCTE
+            ->addGroupBy('
+                CASE
+                    WHEN category_modification.card IS NOT NULL AND category_modification.card IS TRUE
+                    THEN category_modification.id
+                    ELSE NULL
+                END',
+            );
+
+
+        $dbalCTE
+            ->leftJoin(
+                'product',
+                ProductTrans::class,
+                'product_trans',
+                'product_trans.event = product.event AND product_trans.local = :local',
+            );
+
+
+        /** Используем индекс сортировки для поднятия в топ списка */
+        $dbalCTE->addOrderBy('product_info.sort', 'DESC');
+
+        /** Сортируем список по количеству резерва продукции, суммируем если группировка по иному свойству */
+        $dbalCTE->addOrderBy('SUM(product_modification_quantity.reserve)', 'DESC');
+        $dbalCTE->addOrderBy('SUM(product_variation_quantity.reserve)', 'DESC');
+        $dbalCTE->addOrderBy('SUM(product_offer_quantity.reserve)', 'DESC');
+        $dbalCTE->addOrderBy('SUM(product_price.reserve)', 'DESC');
+
+        $dbalCTE->addOrderBy('SUM(product_modification_quantity.quantity)', 'DESC');
+        $dbalCTE->addOrderBy('SUM(product_variation_quantity.quantity)', 'DESC');
+        $dbalCTE->addOrderBy('SUM(product_offer_quantity.quantity)', 'DESC');
+        $dbalCTE->addOrderBy('SUM(product_price.quantity)', 'DESC');
+
+
+        /** Только в наличии */
+        $dbalCTE->andWhere("
+            CASE
+                WHEN product_modification_quantity.quantity IS NOT NULL THEN product_modification_quantity.quantity > product_modification_quantity.reserve
+                WHEN product_variation_quantity.quantity IS NOT NULL THEN product_variation_quantity.quantity > product_variation_quantity.reserve
+                WHEN product_offer_quantity.quantity IS NOT NULL THEN product_offer_quantity.quantity > product_offer_quantity.reserve
+                WHEN product_price.quantity  IS NOT NULL THEN product_price.quantity > product_price.reserve
+                ELSE FALSE
+            END
+        ");
+
+        if(false !== $this->maxResult)
+        {
+            $dbalCTE->setMaxResults($this->maxResult);
+        }
+
+
         $dbal = $this->DBALQueryBuilder
             ->createQueryBuilder(self::class)
             ->bindLocal();
 
+
+        $dbalCTE->select('product.id AS product_id');
+        $dbalCTE->addSelect('product_info.sort');
+
+        $dbalCTE->addSelect('
+                CASE
+                    WHEN category_offer.card IS NOT NULL AND category_offer.card IS TRUE
+                    THEN product_offer.id
+                    ELSE NULL
+                END AS offer_id
+            ');
+        $dbalCTE->addGroupBy('CASE
+                    WHEN category_offer.card IS NOT NULL AND category_offer.card IS TRUE
+                    THEN product_offer.id
+                    ELSE NULL
+                END');
+
+
+        $dbalCTE->addSelect('
+                CASE
+                    WHEN category_variation.card IS NOT NULL AND category_variation.card IS TRUE
+                    THEN product_variation.id
+                    ELSE NULL
+                END AS variation_id
+            ');
+
+        $dbalCTE->addGroupBy('
+                CASE
+                    WHEN category_variation.card IS NOT NULL AND category_variation.card IS TRUE
+                    THEN product_variation.id
+                    ELSE NULL
+                END
+            ');
+
+        $dbalCTE->addSelect('
+                CASE
+                    WHEN category_modification.card IS NOT NULL AND category_modification.card IS TRUE
+                    THEN product_modification.id
+                    ELSE NULL
+                END AS modification_id
+            ');
+
+        $dbalCTE->addGroupBy('
+                CASE
+                    WHEN category_modification.card IS NOT NULL AND category_modification.card IS TRUE
+                    THEN product_modification.id
+                    ELSE NULL
+                END
+            ');
+
+        $dbalCTE->addSelect('product_trans.name AS product_name');
+
+        $dbalCTE->allGroupByExclude();
+
+        if(false !== $this->maxResult)
+        {
+            $dbalCTE->setMaxResults($this->maxResult);
+        }
+
+
+        $dbal
+            ->with('cte_products', $dbalCTE)
+            ->from('cte_products', 'cteSelect');
+
         $dbal
             ->select('product.id AS product_id')
             ->addSelect('product.event AS product_event')
-            ->from(Product::class, 'product');
+            ->join(
+                'cteSelect',
+                Product::class,
+                'product',
+                'product.id = cteSelect.product_id',
+            );
+
 
         $dbal
             ->addSelect('product_trans.name AS product_name')
@@ -139,6 +396,46 @@ final class ModelOrProductRepository implements ModelOrProductInterface
                 'product_trans',
                 'product_trans.event = product.event AND product_trans.local = :local',
             );
+
+
+        $dbal
+            ->leftJoin(
+                'product',
+                ProductOffer::class,
+                'product_offer',
+                'product_offer.event = product.event',
+
+            );
+
+
+        $dbal
+            ->leftJoin(
+                'product_offer',
+                ProductVariation::class,
+                'product_variation',
+                'product_variation.offer = product_offer.id',
+            );
+
+
+        $dbal->leftJoin(
+            'product_variation',
+            ProductModification::class,
+            'product_modification',
+            'product_modification.variation = product_variation.id',
+        );
+
+
+        $dbal
+            ->addSelect('product_active.active as product_active')
+            ->addSelect('product_active.active_from as product_active_from')
+            ->addSelect('product_active.active_to as product_active_to')
+            ->leftJoin(
+                'product',
+                ProductActive::class,
+                'product_active',
+                'product_active.event = product.event',
+            );
+
 
         $dbal
             ->leftJoin(
@@ -153,7 +450,7 @@ final class ModelOrProductRepository implements ModelOrProductInterface
             )
             ->setParameter('device', 'pc');
 
-        /** ProductInfo */
+
         $dbal
             ->addSelect('product_info.url AS product_url')
             ->addSelect('product_info.sort AS product_sort')
@@ -161,37 +458,9 @@ final class ModelOrProductRepository implements ModelOrProductInterface
                 'product',
                 ProductInfo::class,
                 'product_info',
-                'product_info.product = product.id',
+                'product_info.product = cteSelect.product_id',
             );
 
-        $dbal
-            ->addSelect('product_active.active as product_active')
-            ->addSelect('product_active.active_from as product_active_from')
-            ->addSelect('product_active.active_to as product_active_to');
-
-
-        /** Получаем только при условии активности карточки */
-        if($this->active)
-        {
-            $dbal->join(
-                'product',
-                ProductActive::class,
-                'product_active',
-                '
-                    product_active.event = product.event AND 
-                    product_active.active IS TRUE AND
-                    (product_active.active_to IS NULL OR product_active.active_to > NOW())
-                ');
-        }
-        else
-        {
-            $dbal->leftJoin(
-                'product',
-                ProductActive::class,
-                'product_active',
-                'product_active.event = product.event',
-            );
-        }
 
         $dbal
             ->addSelect("JSON_AGG (DISTINCT product_profile.value) AS profiles")
@@ -213,14 +482,6 @@ final class ModelOrProductRepository implements ModelOrProductInterface
             ->addGroupBy('product_price.price')
             ->addGroupBy('product_price.currency');
 
-        /** OFFER */
-        $dbal
-            ->leftJoin(
-                'product',
-                ProductOffer::class,
-                'product_offer',
-                'product_offer.event = product.event',
-            );
 
         /**  Тип торгового предложения */
         $dbal
@@ -232,6 +493,7 @@ final class ModelOrProductRepository implements ModelOrProductInterface
                 'category_offer',
                 'category_offer.id = product_offer.category_offer',
             );
+
 
         /**
          * Группировка в зависимости от настройки группировки торгового предложения
@@ -251,6 +513,7 @@ final class ModelOrProductRepository implements ModelOrProductInterface
                     THEN product_offer.value
                 END
             ');
+
 
         $dbal
             ->addSelect(
@@ -284,6 +547,7 @@ final class ModelOrProductRepository implements ModelOrProductInterface
             ) AS offer_agg",
         );
 
+
         /** Цена торгового предложения */
         $dbal
             ->leftJoin(
@@ -303,14 +567,6 @@ final class ModelOrProductRepository implements ModelOrProductInterface
                 'product_offer_quantity.offer = product_offer.id',
             );
 
-        /** VARIATION */
-        $dbal
-            ->leftJoin(
-                'product_offer',
-                ProductVariation::class,
-                'product_variation',
-                'product_variation.offer = product_offer.id',
-            );
 
         /** Тип множественного варианта */
         $dbal
@@ -341,6 +597,7 @@ final class ModelOrProductRepository implements ModelOrProductInterface
                 END',
             );
 
+
         $dbal
             ->addSelect('
                 CASE
@@ -356,6 +613,7 @@ final class ModelOrProductRepository implements ModelOrProductInterface
                     THEN product_variation.postfix
                 END',
             );
+
 
         /** Агрегация множественных вариантов */
         $dbal->addSelect(
@@ -390,13 +648,6 @@ final class ModelOrProductRepository implements ModelOrProductInterface
                 'product_variation_quantity.variation = product_variation.id',
             );
 
-        /** MODIFICATION */
-        $dbal->leftJoin(
-            'product_variation',
-            ProductModification::class,
-            'product_modification',
-            'product_modification.variation = product_variation.id ',
-        );
 
         /** Тип модификации множественного варианта */
         $dbal
@@ -486,7 +737,7 @@ final class ModelOrProductRepository implements ModelOrProductInterface
                 ProductInvariable::class,
                 'product_invariable',
                 '
-                            product_invariable.product = product.id
+                            product_invariable.product = cteSelect.product_id
                             AND
                                 CASE 
                                     WHEN product_offer.const IS NOT NULL THEN product_invariable.offer = product_offer.const
@@ -583,6 +834,7 @@ final class ModelOrProductRepository implements ModelOrProductInterface
                     AS product_root_images",
         );
 
+
         /** Категория */
         $dbal->leftJoin(
             'product',
@@ -615,6 +867,7 @@ final class ModelOrProductRepository implements ModelOrProductInterface
                 'category_trans',
                 'category_trans.event = category.event AND category_trans.local = :local',
             );
+
 
         /** Свойства, участвующие в карточке */
         if(true === $this->properties)
@@ -673,6 +926,7 @@ final class ModelOrProductRepository implements ModelOrProductInterface
         			AS category_section_field",
             );
         }
+
 
         /**
          * ProductsPromotion
@@ -744,72 +998,75 @@ final class ModelOrProductRepository implements ModelOrProductInterface
             );
         }
 
+
         /** Минимальная стоимость */
         $dbal->addSelect('
-            COALESCE(
-                MIN(product_modification_price.price),
-                MIN(product_variation_price.price),
-                MIN(product_offer_price.price),
-                MIN(product_price.price)
-            ) AS product_price
-		');
+                COALESCE(
+                    MIN(product_modification_price.price),
+                    MIN(product_variation_price.price),
+                    MIN(product_offer_price.price),
+                    MIN(product_price.price)
+                ) AS product_price
+		    ');
 
 
         /** Старая цена */
         $dbal->addSelect('
-            COALESCE(
-                MIN(product_modification_price.old),
-                MIN(product_variation_price.old),
-                MIN(product_offer_price.old),
-                MIN(product_price.old)
-            ) AS product_old_price
-		');
+                COALESCE(
+                    MIN(product_modification_price.old),
+                    MIN(product_variation_price.old),
+                    MIN(product_offer_price.old),
+                    MIN(product_price.old)
+                ) AS product_old_price
+		    ');
 
         /** Валюта */
         $dbal->addSelect(
             "
-			CASE
-
-			   WHEN MIN(product_modification_price.price) IS NOT NULL
-			   THEN product_modification_price.currency
-
-			   WHEN MIN(product_variation_price.price) IS NOT NULL
-			   THEN product_variation_price.currency
-
-			   WHEN MIN(product_offer_price.price) IS NOT NULL
-			   THEN product_offer_price.currency
-
-			   WHEN product_price.price IS NOT NULL
-			   THEN product_price.currency
-
-			   ELSE NULL
-
-			END AS product_currency
-		",
+                CASE
+    
+                   WHEN MIN(product_modification_price.price) IS NOT NULL
+                   THEN product_modification_price.currency
+    
+                   WHEN MIN(product_variation_price.price) IS NOT NULL
+                   THEN product_variation_price.currency
+    
+                   WHEN MIN(product_offer_price.price) IS NOT NULL
+                   THEN product_offer_price.currency
+    
+                   WHEN product_price.price IS NOT NULL
+                   THEN product_price.currency
+    
+                   ELSE NULL
+    
+                END AS product_currency
+            ",
         );
 
         /** Количественный учет */
         $dbal->addSelect('
-			CASE
+                CASE
+    
+                   WHEN SUM(product_modification_quantity.quantity) > SUM(product_modification_quantity.reserve)
+                   THEN SUM(product_modification_quantity.quantity) - SUM(product_modification_quantity.reserve)
+    
+                   WHEN SUM(product_variation_quantity.quantity) > SUM(product_variation_quantity.reserve)
+                   THEN SUM(product_variation_quantity.quantity) - SUM(product_variation_quantity.reserve)
+    
+                   WHEN SUM(product_offer_quantity.quantity) > SUM(product_offer_quantity.reserve)
+                   THEN SUM(product_offer_quantity.quantity) - SUM(product_offer_quantity.reserve)
+    
+                   WHEN SUM(product_price.quantity) > SUM(product_price.reserve)
+                   THEN SUM(product_price.quantity) - SUM(product_price.reserve)
+    
+                   ELSE 0
+    
+                END AS product_quantity
+            ');
 
-			   WHEN SUM(product_modification_quantity.quantity) - SUM(product_modification_quantity.reserve) > 0
-			   THEN SUM(product_modification_quantity.quantity) - SUM(product_modification_quantity.reserve)
-
-			   WHEN SUM(product_variation_quantity.quantity) - SUM(product_variation_quantity.reserve) > 0
-			   THEN SUM(product_variation_quantity.quantity) - SUM(product_variation_quantity.reserve)
-
-			   WHEN SUM(product_offer_quantity.quantity) - SUM(product_offer_quantity.reserve) > 0
-			   THEN SUM(product_offer_quantity.quantity) - SUM(product_offer_quantity.reserve)
-
-			   WHEN SUM(product_price.quantity) - SUM(product_price.reserve) > 0
-			   THEN SUM(product_price.quantity) - SUM(product_price.reserve)
-
-			   ELSE 0
-
-			END AS product_quantity
-		');
-
-        /** Персональная скидка из профиля авторизованного пользователя */
+        /**
+         * Персональная скидка (наценка) из профиля авторизованного пользователя
+         */
         if(true === $dbal->bindCurrentProfile())
         {
 
@@ -834,84 +1091,9 @@ final class ModelOrProductRepository implements ModelOrProductInterface
                 );
         }
 
-
         /**
-         * Наличие продукции на складе
-         * Если подключен модуль складского учета и передан идентификатор профиля
+         * Общая скидка (наценка) из профиля магазина
          */
-
-        if(false === empty($this->region) && class_exists(BaksDevProductsStocksBundle::class))
-        {
-            /* Получаем все профили данного региона */
-
-            $dbal
-                ->leftJoin(
-                    'product',
-                    UserProfileRegion::class,
-                    'product_profile_region',
-                    'product_profile_region.value = :region',
-                )
-                ->setParameter(
-                    key: 'region',
-                    value: $this->region,
-                    type: RegionUid::TYPE,
-                );
-
-            $dbal
-                ->join(
-                    'product_profile_region',
-                    UserProfile::class,
-                    'product_region_total',
-                    'product_region_total.event = product_profile_region.event',
-                );
-
-            $dbal
-                ->addSelect("JSON_AGG (
-                        DISTINCT JSONB_BUILD_OBJECT (
-                            'total', stock.total,
-                            'reserve', stock.reserve
-                        )) FILTER (WHERE stock.total > stock.reserve)
-
-                        AS product_quantity_stocks",
-                )
-                ->leftJoin(
-                    'product_region_total',
-                    ProductStockTotal::class,
-                    'stock',
-                    '
-                    stock.profile = product_region_total.id AND
-                    stock.product = product.id
-
-                    AND
-
-                        CASE
-                            WHEN product_offer.const IS NOT NULL
-                            THEN stock.offer = product_offer.const
-                            ELSE stock.offer IS NULL
-                        END
-
-                    AND
-
-                        CASE
-                            WHEN product_variation.const IS NOT NULL
-                            THEN stock.variation = product_variation.const
-                            ELSE stock.variation IS NULL
-                        END
-
-                    AND
-
-                        CASE
-                            WHEN product_modification.const IS NOT NULL
-                            THEN stock.modification = product_modification.const
-                            ELSE stock.modification IS NULL
-                        END
-
-                ');
-
-        }
-
-
-        /** Общая скидка (наценка) из профиля магазина */
         if(true === $dbal->bindProjectProfile())
         {
 
@@ -935,18 +1117,6 @@ final class ModelOrProductRepository implements ModelOrProductInterface
                 );
         }
 
-        /** Только в наличии */
-        $dbal->andWhere("
-            CASE
-                WHEN product_modification_quantity.quantity IS NOT NULL THEN (product_modification_quantity.quantity - product_modification_quantity.reserve)
-                WHEN product_variation_quantity.quantity IS NOT NULL THEN (product_variation_quantity.quantity - product_variation_quantity.reserve)
-                WHEN product_offer_quantity.quantity IS NOT NULL THEN (product_offer_quantity.quantity - product_offer_quantity.reserve)
-                WHEN product_price.quantity  IS NOT NULL THEN (product_price.quantity - product_price.reserve)
-                ELSE 0
-            END > 0
-        ");
-
-
         $dbal->allGroupByExclude();
 
         /** Используем индекс сортировки для поднятия в топ списка */
@@ -968,11 +1138,12 @@ final class ModelOrProductRepository implements ModelOrProductInterface
             $dbal->setMaxResults($this->maxResult);
         }
 
-        $dbal->enableCache('products-product', 86400);
-
-        $result = $dbal->fetchAllHydrate(ModelOrProductResult::class);
+        $result = $dbal
+            ->enableCache('products-product-cte', '1 day')
+            ->fetchAllHydrate(ModelOrProductResult::class);
 
         return (true === $result->valid()) ? $result : false;
+
     }
 }
 
