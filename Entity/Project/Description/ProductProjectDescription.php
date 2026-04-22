@@ -49,18 +49,15 @@ class ProductProjectDescription extends EntityState
     private ProductProjectDescriptionUid $id;
 
     /** Связь на ProductProject */
-    #[ORM\Id]
     #[ORM\ManyToOne(targetEntity: ProductProject::class, inversedBy: "description")]
     #[ORM\JoinColumn(name: 'project', referencedColumnName: 'id')]
     private readonly ProductProject $project;
 
     /** Девайс (pc, mobile, tablet) */
-    #[ORM\Id]
     #[ORM\Column(type: Device::TYPE, nullable: false, options: ['default' => 'pc'])]
     private Device $device;
 
     /** Локаль */
-    #[ORM\Id]
     #[ORM\Column(type: Locale::TYPE, length: 2, nullable: false)]
     private Locale $local;
 
