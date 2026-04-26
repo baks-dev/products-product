@@ -31,9 +31,9 @@ use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use Doctrine\ORM\EntityManagerInterface;
 
-final class CurrentQuantityByEventRepository implements CurrentQuantityByEventInterface
+final readonly class CurrentQuantityByEventRepository implements CurrentQuantityByEventInterface
 {
-    public function __construct(private readonly EntityManagerInterface $entityManager) {}
+    public function __construct(private EntityManagerInterface $entityManager) {}
 
 
     public function getQuantity(ProductEventUid $event): ?ProductPrice
