@@ -468,6 +468,7 @@ final class ProductDTO implements ProductEventInterface
         $this->property->removeElement($property);
     }
 
+    /** @return  ArrayCollection<CollectionProductProfileDTO> */
     public function getProfile(): ArrayCollection
     {
         if($this->profile->isEmpty())

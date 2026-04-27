@@ -27,6 +27,7 @@ namespace BaksDev\Products\Product\Repository\ProductByArticle;
 
 use BaksDev\Core\Doctrine\ORMQueryBuilder;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
+use BaksDev\Products\Product\Entity\Event\Profile\ProductProfile;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
 use BaksDev\Products\Product\Entity\Offers\ProductOffer;
 use BaksDev\Products\Product\Entity\Offers\Variation\Modification\ProductModification;
@@ -93,29 +94,38 @@ final class ProductEventByArticleRepository implements ProductEventByArticleInte
 
         $orm
             ->from(ProductInfo::class, 'info')
-            ->where('info.article = :article');
+            ->where('info.article = :article')
+            ->setParameter(
+                key: 'article',
+                value: $article,
+            );
+
+        $orm
+            ->join(
+                Product::class,
+                'product',
+                'WITH',
+                'product.id = info.product',
+            );
 
         if($this->profile instanceof UserProfileUid)
         {
             $orm
-                ->andWhere('info.profile = :profile')
+                ->join(
+                    ProductProfile::class,
+                    'product_profile',
+                    'WITH',
+                    '
+                        product_profile.event = product.event 
+                        AND product_profile.value = :profile
+                    ',
+                )
                 ->setParameter(
                     key: 'profile',
                     value: $this->profile,
                     type: UserProfileUid::TYPE,
                 );
         }
-
-        $orm->join(
-            Product::class,
-            'product',
-            'WITH',
-            'product.id = info.product',
-        )
-            ->setParameter(
-                key: 'article',
-                value: $article,
-            );
 
         $orm
             ->select('event')
