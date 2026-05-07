@@ -22,7 +22,8 @@ final readonly class ProductDetailByConstResult implements ProductDetailInterfac
     public function __construct(
         private string $id,
         private string $event,
-        private int $product_quantity,
+        private ?int $product_quantity,
+        private ?int $product_reserve,
         private int $product_old_price,
         private ?bool $active,
         private ?string $active_from,
@@ -61,6 +62,9 @@ final readonly class ProductDetailByConstResult implements ProductDetailInterfac
         private ?string $category_section_field,
         private ?int $product_price,
         private ?string $product_currency,
+        private ?string $product_barcodes,
+
+
     ) {}
 
     public function getProductId(): ProductUid
@@ -71,11 +75,6 @@ final readonly class ProductDetailByConstResult implements ProductDetailInterfac
     public function getProductEvent(): ProductEventUid
     {
         return new ProductEventUid($this->event);
-    }
-
-    public function getProductQuantity(): int
-    {
-        return $this->product_quantity;
     }
 
     public function getProductOldPrice(): Money|false
@@ -308,5 +307,52 @@ final readonly class ProductDetailByConstResult implements ProductDetailInterfac
     public function getProductArticle(): ?string
     {
         return $this->product_article;
+    }
+
+    public function getProductBarcode(): ?string
+    {
+        if(empty($this->product_barcode))
+        {
+            $barcodes = $this->getBarcodes();
+
+            return empty($barcodes) ? null : current($barcodes);
+        }
+
+        return $this->product_barcode;
+    }
+
+    /**
+     * @return array<int, string>|null
+     */
+    public function getBarcodes(): array|null
+    {
+        if(is_null($this->product_barcodes))
+        {
+            return null;
+        }
+
+        if(false === json_validate($this->product_barcodes))
+        {
+            return null;
+        }
+
+        $barcodes = json_decode($this->product_barcodes, true, 512, JSON_THROW_ON_ERROR);
+
+        if(true === empty(current($barcodes)))
+        {
+            return null;
+        }
+
+        return $barcodes;
+    }
+
+    public function getProductQuantity(): int
+    {
+        return $this->product_quantity ? max($this->product_quantity, 0) : 0;
+    }
+
+    public function getProductReserve(): int
+    {
+        return $this->product_reserve ? max($this->product_reserve, 0) : 0;
     }
 }

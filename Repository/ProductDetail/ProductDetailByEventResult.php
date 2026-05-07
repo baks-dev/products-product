@@ -412,12 +412,12 @@ class ProductDetailByEventResult implements ProductDetailInterface
 
     public function getProductQuantity(): int
     {
-        return $this->product_quantity ?: 0;
+        return $this->product_quantity ? max($this->product_quantity, 0) : 0;
     }
 
     public function getProductReserve(): int
     {
-        return $this->product_reserve ?: 0;
+        return $this->product_reserve ? max($this->product_reserve, 0) : 0;
     }
 
     public function getProductCardArticle(): ?string
