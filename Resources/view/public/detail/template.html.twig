@@ -37,25 +37,38 @@
             {{ card.productOfferValue|call_twig_func(card.productOfferReference~'_render') }}
 
             {{ (card.productModificationPostfix ?: card.productVariationPostfix ?: card.productOfferPostfix ?: null )|replace({ '/': '-' }) }}",
-        "description": "{{ card.productPreview|striptags|raw }}",
-        "url": "{{ absolute_url(' ') }} ",
-        "image":[
-        {% for key, photo in photos %}
+        "description": "{{ card.productPreview|striptags|e }}",
 
-            {# Обложка #}
-            {% if photo.product_img_ext is defined and photo.product_img_ext is not null %}
-                {% set image_path = cdn_image_path(photo.product_img, photo.product_img_ext, photo.product_img_cdn , 'medium') %}
-            {% endif %}
+        "url": "{{ absolute_url(path('products-product:public.detail', {
+            category : card.categoryUrl,
+            url : card.productUrl ,
+            offer: card.productOfferValue,
+            variation: card.productVariationValue,
+            modification: card.productModificationValue,
+            postfix:  (card.productModificationPostfix ?: card.productVariationPostfix ?: card.productOfferPostfix ?: null )|replace({ '/': '-' })
+        })) }}",
 
-          "{{ image_path }}"
-        {% endfor %}
-        ],
+        "sku": "{{ card.productArticle }}",
+
+        "image": {
+              "@type": "ImageObject",
+              "url": "{{ image_path_first }}",
+              "image": "{{ image_path_first }}",
+              "name": "{{ card.productName }}",
+              "width": 1024,
+              "height": 1024
+        },
+
+
         "offers": {
-            "@type": "AggregateOffer",
-            "Price": "{{ money(Price, card.productCurrency) }}",
+            "@type": "Offer",
+            "availability": "https://schema.org/InStock",
+            "price": "{{ Price }}",
             "priceCurrency": "RUB",
-            "availability": "https://schema.org/InStock"
-          }
+            "offerCount": "{{ card.productQuantity }}"
+          },
+
+
         }
     </script>
 
