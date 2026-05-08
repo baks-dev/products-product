@@ -97,13 +97,11 @@ class ProductDetailByEventResult implements ProductDetailInterface
 
         private ?int $product_quantity,
         private ?int $product_reserve,
+        private int $product_total = 0,
 
         private ?string $product_offer_postfix = null,
         private ?string $product_variation_postfix = null,
         private ?string $product_modification_postfix = null,
-
-
-        private int $product_total = 0,
 
         private string|null $profile_discount = null,
 

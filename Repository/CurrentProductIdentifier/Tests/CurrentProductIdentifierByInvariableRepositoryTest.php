@@ -65,7 +65,7 @@ class CurrentProductIdentifierByInvariableRepositoryTest extends KernelTestCase
             {
                 // Вызываем метод
                 $data = $method->invoke($CurrentProductIdentifierResult);
-                dump($data);
+                // dump($data);
             }
         }
     }

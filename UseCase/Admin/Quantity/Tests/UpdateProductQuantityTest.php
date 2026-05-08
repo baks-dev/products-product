@@ -53,9 +53,15 @@ final class UpdateProductQuantityTest extends KernelTestCase
         /** @var ProductDetailByInvariableInterface $productDetailByInvariable */
         $productDetailByInvariable = self::getContainer()->get(ProductDetailByInvariableInterface::class);
         /** @var ProductDetailByInvariableResult $result */
-        $result = $productDetailByInvariable->invariable(ProductInvariableUid::TEST)->find();
+        $ProductDetailByInvariableResult = $productDetailByInvariable->invariable(ProductInvariableUid::TEST)->find();
 
-        $event = $result->getProductEvent();
+        if(false === ($ProductDetailByInvariableResult instanceof ProductDetailByInvariableResult))
+        {
+            self::assertFalse(false);
+            return;
+        }
+
+        $event = $ProductDetailByInvariableResult->getProductEvent();
 
         /** @var UpdateProductQuantityHandler $handler */
         $handler = self::getContainer()->get(UpdateProductQuantityHandler::class);

@@ -99,7 +99,6 @@ final readonly class ProductDetailByInvariableResult implements ProductDetailInt
 
     ) {}
 
-
     public function getProductName(): string
     {
         return $this->product_name;

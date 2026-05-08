@@ -27,6 +27,7 @@ namespace BaksDev\Products\Product\UseCase\Admin\NewEdit;
 use ArrayIterator;
 use BaksDev\Core\Type\Device\Device;
 use BaksDev\Core\Type\Locale\Locale;
+use BaksDev\Materials\Catalog\UseCase\Admin\NewEdit\Category\MaterialCategoryCollectionDTO;
 use BaksDev\Products\Product\Entity\Event\ProductEventInterface;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Active\ActiveDTO;
@@ -480,6 +481,7 @@ final class ProductDTO implements ProductEventInterface
         return $this->profile;
     }
 
+
     public function setProfile(ArrayCollection $profile): self
     {
         $this->profile = $profile;
@@ -488,7 +490,11 @@ final class ProductDTO implements ProductEventInterface
 
     public function addProfile(CollectionProductProfileDTO $profile): self
     {
-        if(!$this->profile->contains($profile))
+        $filter = $this->profile->filter(function(CollectionProductProfileDTO $element) use ($profile) {
+            return $profile->getValue()->equals($element->getValue());
+        });
+
+        if($filter->isEmpty())
         {
             $this->profile->add($profile);
         }
