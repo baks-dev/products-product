@@ -1,4 +1,6 @@
 {# @var card \BaksDev\Products\Product\Repository\ProductDetailByValue\ProductDetailByValueResult #}
+{# @var review \BaksDev\Products\Review\Repository\AllReviews\AllReviewsResult #}
+
 
 {% extends Template('/user/base.html.twig') %}
 
@@ -24,6 +26,10 @@
     {{ (card.productModificationPostfix ?: card.productVariationPostfix ?: card.productOfferPostfix ?: null )|replace({ '/': '-' }) }}
 
 {% endblock %}
+
+{% set image_first = photos|first %}
+{% set image_path_first = cdn_image_path(image_first.product_img, image_first.product_img_ext, image_first.product_img_cdn , 'large') %}
+{% set review = reviews.data|first %}
 
 {% block meta %}
     <script type="application/ld+json">
@@ -65,12 +71,53 @@
             "availability": "https://schema.org/InStock",
             "price": "{{ Price }}",
             "priceCurrency": "RUB",
-            "offerCount": "{{ card.productQuantity }}"
+            "offerCount": "{{ card.productQuantity }}",
+
+            "seller": {
+              "@id": "http://example.com/lechateausnotty"
+            },
+
+            "hasMerchantReturnPolicy": {
+              "@type": "MerchantReturnPolicy",
+              "applicableCountry": "RU",
+              "returnPolicyCategory": "https://schema.org/MerchantReturnNotPermitted"
+            }
+          }
+
+        {% if reviews.counter %}
+           ,
+
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingCount": reviews.counter,
+            "ratingValue": 5,
+            "bestRating": 5,
+            "worstRating": 1
           },
 
+          "review": {
+                "@type": "Review",
+                "reviewRating": {
+                  "@type": "Rating",
+                  "ratingValue": "{{ review.reviewRatingValue }}",
+                  "bestRating": 5,
+                  "worstRating": 1
+                },
+                "reviewBody": {
+                  "@value": "{{ review.reviewText }}",
+                  "@language": "ru"
+                },
+                "author": {
+                  "@type": "Person",
+                  "name": "{{ review.reviewName }}"
+                }
+              }
+        {% endif %}
 
         }
     </script>
+
+
 
 
 
