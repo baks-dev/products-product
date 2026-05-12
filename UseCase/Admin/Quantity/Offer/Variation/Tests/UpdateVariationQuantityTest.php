@@ -30,6 +30,7 @@ use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailByInvariableI
 use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailByInvariableResult;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\Invariable\ProductInvariableUid;
+use BaksDev\Products\Product\Type\Offers\Variation\Id\ProductVariationUid;
 use BaksDev\Products\Product\UseCase\Admin\Invariable\Tests\ProductInvariableAdminUseCaseTest;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Tests\ProductsProductNewAdminUseCaseTest;
 use BaksDev\Products\Product\UseCase\Admin\Quantity\Offer\Variation\UpdateVariationQuantityDTO;
@@ -55,7 +56,9 @@ final class UpdateVariationQuantityTest extends KernelTestCase
         /** @var ProductDetailByInvariableInterface $productDetailByInvariable */
         $productDetailByInvariable = self::getContainer()->get(ProductDetailByInvariableInterface::class);
         /** @var ProductDetailByInvariableResult $result */
-        $ProductDetailByInvariableResult = $productDetailByInvariable->invariable(ProductInvariableUid::TEST)->find();
+        $ProductDetailByInvariableResult = $productDetailByInvariable
+            ->invariable(ProductInvariableUid::TEST)
+            ->find();
 
         if(false === ($ProductDetailByInvariableResult instanceof ProductDetailByInvariableResult))
         {
@@ -64,6 +67,12 @@ final class UpdateVariationQuantityTest extends KernelTestCase
         }
 
         $variation = $result->getProductVariationUid();
+
+        if(false === ($variation instanceof ProductVariationUid))
+        {
+            self::assertFalse(false);
+            return;
+        }
 
         /** @var UpdateVariationQuantityHandler $handler */
         $handler = self::getContainer()->get(UpdateVariationQuantityHandler::class);
