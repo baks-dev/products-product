@@ -27,5 +27,5 @@ namespace BaksDev\Products\Product\Entity\Project\Season;
 
 interface ProductProjectSeasonInterface
 {
-
+    public function getPercent(): ?string;
 }

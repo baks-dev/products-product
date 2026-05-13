@@ -27,5 +27,7 @@ namespace BaksDev\Products\Product\Entity\Project\Description;
 
 interface ProductProjectDescriptionInterface
 {
+    public function getPreview(): ?string;
 
+    public function getDescription(): ?string;
 }
