@@ -59,7 +59,7 @@
             {{ card.productOfferValue|call_twig_func(card.productOfferReference~'_render') }}
 
             {# Постфикс #}
-            {{ card_postfix|replace({ '/': '-' }) }}
+            {{ card_postfix|replace({ '/': '-', ' ': '~' }) }}
         </h4>
     </div>
 

@@ -14,7 +14,7 @@
                     offer: url.offerValue,
                     variation: url.variationValue,
                     modification: url.modificationValue,
-                    postfix:  (url.modificationPostfix ?: url.variationPostfix ?: url.offerPostfix ?: null )|replace({ '/': '-' })
+                    postfix:  (url.modificationPostfix ?: url.variationPostfix ?: url.offerPostfix ?: null )|replace({ '/': '-', ' ': '~' })
                 } )) }}
             </loc>
             <lastmod>{{ url.modify|date('Y-m-d\\TH:i:sP') }}</lastmod>

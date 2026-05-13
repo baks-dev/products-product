@@ -30,7 +30,7 @@
             offer: product.productOfferValue,
             variation: product.productVariationValue,
             modification: product.productModificationValue,
-            postfix: (product.productModificationPostfix ?: product.productVariationPostfix ?: product.productOfferPostfix ?: null )|replace({ '/': '-' }),
+            postfix: (product.productModificationPostfix ?: product.productVariationPostfix ?: product.productOfferPostfix ?: null )|replace({ '/': '-', ' ': '~' }),
         }) }}" aria-label="{{ product.productName }}">
         </a>
 
@@ -85,7 +85,7 @@
                        offer: product.productOfferValue,
                        variation: product.productVariationValue,
                        modification: product.productModificationValue,
-                       postfix: (product.productModificationPostfix ?: product.productVariationPostfix ?: product.productOfferPostfix ?: null )|replace({ '/': '-' }),
+                       postfix: (product.productModificationPostfix ?: product.productVariationPostfix ?: product.productOfferPostfix ?: null )|replace({ '/': '-', ' ': '~' }),
                    }) }}">
                     <h3 class="card-title fw-bold px-2 text-uppercase mb-0" style="font-size:14px!important;">
 

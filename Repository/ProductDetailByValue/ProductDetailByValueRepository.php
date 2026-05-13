@@ -172,9 +172,14 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             return $this;
         }
 
+        $postfix = str_replace(
+            ['-', '~'],
+            ['/', ' '],
+            $postfix,
+        );
+
         $postfix = mb_strtolower($postfix);
         $this->postfix = trim($postfix);
-
 
         return $this;
     }
@@ -185,11 +190,6 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
         if(false === ($this->productUid instanceof ProductUid))
         {
             throw new InvalidArgumentException('Не передан обязательный параметр запроса $productUid');
-        }
-
-        if($this->postfix)
-        {
-            $this->postfix = str_replace('-', '/', $this->postfix);
         }
 
         $dbal = $this->DBALQueryBuilder

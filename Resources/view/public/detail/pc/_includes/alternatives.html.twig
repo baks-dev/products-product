@@ -82,7 +82,7 @@
                                offer: alt.productOfferValue,
                                variation: alt.productVariationValue,
                                modification: alt.productModificationValue,
-                               postfix: (alt.productModificationPostfix ?: alt.productVariationPostfix ?: alt.productOfferPostfix ?: null )|replace({ '/': '-' }),
+                               postfix: (alt.productModificationPostfix ?: alt.productVariationPostfix ?: alt.productOfferPostfix ?: null )|replace({ '/': '-', ' ': '~' }),
                            }) }}">
                             {{ alt.productName }}
                         </a>
@@ -105,7 +105,7 @@
                     {{ alt.productVariationValue|call_twig_func(alt.productVariationReference~'_render')
                     ~ alt.productModificationValue|call_twig_func(alt.productModificationReference~'_render') }}
                     {{ alt.productOfferValue|call_twig_func(alt.productOfferReference~'_render') }}
-                    {{ (alt.productModificationPostfix ?: alt.productVariationPostfix ?: alt.productOfferPostfix ?: null )|replace({ '/': '-' }) }}
+                    {{ (alt.productModificationPostfix ?: alt.productVariationPostfix ?: alt.productOfferPostfix ?: null )|replace({ '/': '-', ' ': '~' }) }}
                 </td>
 
                 {# ХАРАКТЕРИСТИКИ #}

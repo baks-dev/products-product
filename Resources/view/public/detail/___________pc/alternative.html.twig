@@ -65,7 +65,7 @@
                                     offer : alt.productOfferValue,
                                     variation : alt.productVariationValue,
                                     modification : alt.productModificationValue,
-                                    postfix: (alt.productModificationPostfix ?: alt.productVariationPostfix ?: alt.productOfferPostfix ?: null )|replace({ '/': '-' })
+                                    postfix: (alt.productModificationPostfix ?: alt.productVariationPostfix ?: alt.productOfferPostfix ?: null )|replace({ '/': '-', ' ': '~' })
                                 }) }}">
                                     {{ alt.productName }}
                                 </a>

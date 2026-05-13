@@ -24,7 +24,7 @@
 
             {{ card.productOfferValue|call_twig_func(card.productOfferReference~'_render') }}
 
-            {{ (card.productModificationPostfix ?: card.productVariationPostfix ?: card.productOfferPostfix ?: null )|replace({ '/': '-' }) }}
+            {{ (card.productModificationPostfix ?: card.productVariationPostfix ?: card.productOfferPostfix ?: null )|replace({ '/': '-', ' ': '~' }) }}
         </h2>
 
         <div class="d-flex align-items-center gap-5 mb-5">
