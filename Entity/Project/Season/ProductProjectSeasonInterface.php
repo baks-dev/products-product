@@ -23,15 +23,9 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Products\Product\Repository\ProductProject;
+namespace BaksDev\Products\Product\Entity\Project\Season;
 
-use BaksDev\Products\Product\Type\Id\ProductUid;
-use Generator;
-
-
-interface ProductProjectInterface
+interface ProductProjectSeasonInterface
 {
-    public function findAll(): Generator|false;
 
-    public function byProduct(ProductUid $product): self;
 }

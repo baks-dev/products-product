@@ -21,41 +21,13 @@
  *  THE SOFTWARE.
  */
 
-declare(strict_types=1);
+namespace BaksDev\Products\Product\Type\Project\Season;
 
-namespace BaksDev\Products\Product\Repository\ProductProject;
+use BaksDev\Core\Type\UidType\Uid;
 
-use BaksDev\Core\Type\Device\Device;
-use BaksDev\Core\Type\Locale\Locale;
-
-final readonly class ProductProjectResult
+final class ProductProjectSeasonUid extends Uid
 {
+    public const string TEST = '019df8ba-09a0-7155-abf0-21ccf425da11';
 
-    public function __construct(
-        private string $local,
-        private string $device,
-        private ?string $description,
-        private ?string $preview,
-    ) {}
-
-    public function getLocal(): Locale
-    {
-        return new Locale($this->local);
-    }
-
-    public function getDevice(): Device
-    {
-        return new Device($this->device);
-    }
-
-    public function getDescription(): ?string
-    {
-        return $this->description;
-    }
-
-    public function getPreview(): ?string
-    {
-        return $this->preview;
-    }
-
+    public const string TYPE = 'product_project_season';
 }
