@@ -55,7 +55,7 @@ final class UpdateVariationQuantityTest extends KernelTestCase
 
         /** @var ProductDetailByInvariableInterface $productDetailByInvariable */
         $productDetailByInvariable = self::getContainer()->get(ProductDetailByInvariableInterface::class);
-        /** @var ProductDetailByInvariableResult $result */
+        /** @var ProductDetailByInvariableResult $ProductDetailByInvariableResult */
         $ProductDetailByInvariableResult = $productDetailByInvariable
             ->invariable(ProductInvariableUid::TEST)
             ->find();
@@ -66,7 +66,7 @@ final class UpdateVariationQuantityTest extends KernelTestCase
             return;
         }
 
-        $variation = $result->getProductVariationUid();
+        $variation = $ProductDetailByInvariableResult->getProductVariationUid();
 
         if(false === ($variation instanceof ProductVariationUid))
         {
@@ -86,7 +86,6 @@ final class UpdateVariationQuantityTest extends KernelTestCase
         $result = $handler->handle($dto);
 
         self::assertTrue($result instanceof ProductVariationQuantity);
-
         self::assertTrue($result->getQuantity() === $quantity);
         self::assertTrue($result->getReserve() === $reserve);
     }
