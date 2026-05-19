@@ -80,7 +80,11 @@ class ProductProjectDTO implements ProductProjectInterface
     }
 
 
-    /* Описание */
+    /**
+     * Описание
+     *
+     * @return ArrayCollection<ProductProjectDescriptionDTO>
+     */
 
     public function getDescription(): ArrayCollection
     {

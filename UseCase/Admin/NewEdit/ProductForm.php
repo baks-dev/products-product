@@ -139,16 +139,16 @@ final class ProductForm extends AbstractType
         ]);
 
 
-        /* TRANS CollectionType */
-        $builder->add('description', CollectionType::class, [
-            'entry_type' => Description\ProductDescriptionForm::class,
-            'entry_options' => ['label' => false],
-            'label' => false,
-            'by_reference' => false,
-            'allow_delete' => true,
-            'allow_add' => true,
-            'prototype_name' => '__description__',
-        ]);
+        //        /* TRANS CollectionType */
+        //        $builder->add('description', CollectionType::class, [
+        //            'entry_type' => Description\ProductDescriptionForm::class,
+        //            'entry_options' => ['label' => false],
+        //            'label' => false,
+        //            'by_reference' => false,
+        //            'allow_delete' => true,
+        //            'allow_add' => true,
+        //            'prototype_name' => '__description__',
+        //        ]);
 
         /* PHOTOS CollectionType */
         $builder->add('photo', CollectionType::class, [

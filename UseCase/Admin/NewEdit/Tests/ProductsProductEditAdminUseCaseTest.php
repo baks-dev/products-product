@@ -39,7 +39,6 @@ use BaksDev\Products\Product\Type\Offers\Variation\ConstId\ProductVariationConst
 use BaksDev\Products\Product\Type\Offers\Variation\Modification\ConstId\ProductModificationConst;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Active\ActiveDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Category\CategoryCollectionDTO;
-use BaksDev\Products\Product\UseCase\Admin\NewEdit\Description\ProductDescriptionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Info\InfoDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\ProductOffersCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Modification\ProductModificationCollectionDTO;
@@ -152,21 +151,6 @@ class ProductsProductEditAdminUseCaseTest extends KernelTestCase
         }
 
 
-        /** ProductDescriptionDTO */
-
-        $productDescription = $ProductDTO->getDescription();
-
-        /** @var ProductDescriptionDTO $productDescriptionDto */
-        foreach($productDescription as $productDescriptionDto)
-        {
-            self::assertSame('Test New Description', $productDescriptionDto->getDescription());
-            $productDescriptionDto->setDescription('Test Edit Description');
-            self::assertSame('Test Edit Description', $productDescriptionDto->getDescription());
-
-            self::assertSame('Test New Preview', $productDescriptionDto->getPreview());
-            $productDescriptionDto->setPreview('Test Edit Preview');
-            self::assertSame('Test Edit Preview', $productDescriptionDto->getPreview());
-        }
 
         /** InfoDTO */
 
