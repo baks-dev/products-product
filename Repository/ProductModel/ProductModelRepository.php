@@ -88,6 +88,8 @@ final class ProductModelRepository implements ProductModelInterface
 
     private string|false $variation = false;
 
+    private string|false $modification = false;
+
     private ProductUid|false $productUid = false;
 
     public function __construct(
@@ -136,6 +138,20 @@ final class ProductModelRepository implements ProductModelInterface
         }
 
         $this->variation = $variation;
+        return $this;
+    }
+
+
+    /** Фильтрация по Modification */
+    public function byModification(string|null $modification): self
+    {
+        if(is_null($modification))
+        {
+            $this->modification = false;
+            return $this;
+        }
+
+        $this->modification = $modification;
         return $this;
     }
 
@@ -268,12 +284,14 @@ final class ProductModelRepository implements ProductModelInterface
         }
         else
         {
-            $dbal->leftJoin(
-                'product',
-                ProductOffer::class,
-                'product_offer',
-                'product_offer.event = product.event AND product_offer.value = :product_offer_value',
-            );
+            $dbal
+                ->addSelect('product_offer.value as product_offer_value')
+                ->leftJoin(
+                    'product',
+                    ProductOffer::class,
+                    'product_offer',
+                    'product_offer.event = product.event AND product_offer.value = :product_offer_value',
+                );
 
             $dbal->setParameter('product_offer_value', $this->offer);
         }
@@ -290,6 +308,8 @@ final class ProductModelRepository implements ProductModelInterface
 
         /** Получаем название торгового предложения */
         $dbal
+            ->addSelect('category_offer_trans.name as product_offer_name')
+            ->addSelect('category_offer_trans.postfix as product_offer_name_postfix')
             ->leftJoin(
                 'category_offer',
                 CategoryProductOffersTrans::class,
@@ -331,6 +351,7 @@ final class ProductModelRepository implements ProductModelInterface
         else
         {
             $dbal
+                ->addSelect('product_variation.value as product_variation_value')
                 ->leftJoin(
                     'product_offer',
                     ProductVariation::class,
@@ -342,6 +363,7 @@ final class ProductModelRepository implements ProductModelInterface
         }
 
         $dbal
+            ->addSelect('category_variation.reference as product_variation_reference')
             ->leftJoin(
                 'product_variation',
                 CategoryProductVariation::class,
@@ -351,6 +373,8 @@ final class ProductModelRepository implements ProductModelInterface
 
 
         $dbal
+            ->addSelect('category_variation_trans.name as product_variation_name')
+            ->addSelect('category_variation_trans.postfix as product_variation_name_postfix')
             ->leftJoin(
                 'category_variation',
                 CategoryProductVariationTrans::class,
@@ -378,16 +402,37 @@ final class ProductModelRepository implements ProductModelInterface
 
 
         /** Модификация множественного варианта торгового предложения */
-        $dbal
-            ->leftJoin(
-                'product_variation',
-                ProductModification::class,
-                'product_modification',
-                'product_modification.variation = product_variation.id',
-            );
+
+        if(false === $this->modification)
+        {
+            $dbal
+                ->leftJoin(
+                    'product_variation',
+                    ProductModification::class,
+                    'product_modification',
+                    'product_modification.variation = product_variation.id',
+                );
+        }
+        else
+        {
+
+            $dbal
+                ->addSelect('product_modification.value as product_modification_value')
+                ->leftJoin(
+                    'product_variation',
+                    ProductModification::class,
+                    'product_modification',
+                    'product_modification.variation = product_variation.id AND product_modification.value = :product_modification_value',
+                );
+
+            $dbal->setParameter('product_modification_value', $this->modification);
+        }
+
 
         /** Получаем название типа */
         $dbal
+            ->addSelect('category_modification_trans.name as product_modification_name')
+            ->addSelect('category_modification_trans.postfix as product_modification_name_postfix')
             ->leftJoin(
                 'category_modification',
                 CategoryProductModificationTrans::class,
@@ -396,6 +441,7 @@ final class ProductModelRepository implements ProductModelInterface
             );
 
         $dbal
+            ->addSelect('category_modification.reference as product_modification_reference')
             ->leftJoin(
                 'product_modification',
                 CategoryProductModification::class,

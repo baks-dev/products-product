@@ -65,6 +65,20 @@ final readonly class ProductModelResult
         private string|null $category_section_field,
         private int|null $category_threshold,
 
+        private string|null $product_offer_value = null,
+        private string|null $product_offer_name = null,
+        private string|null $product_offer_name_postfix = null,
+
+        private string|null $product_variation_value = null,
+        private string|null $product_variation_reference = null,
+        private string|null $product_variation_name = null,
+        private string|null $product_variation_name_postfix = null,
+
+        private string|null $product_modification_value = null,
+        private string|null $product_modification_reference = null,
+        private string|null $product_modification_name = null,
+        private string|null $product_modification_name_postfix = null,
+
         private string|null $profile_discount = null,
         private string|null $project_discount = null,
 
@@ -427,4 +441,63 @@ final readonly class ProductModelResult
 
         return false;
     }
+
+
+    public function getProductOfferName(): ?string
+    {
+        return $this->product_offer_name;
+    }
+
+    public function getProductOfferNamePostfix(): ?string
+    {
+        return $this->product_offer_name_postfix;
+    }
+
+
+    public function getProductVariationValue(): ?string
+    {
+        return $this->product_variation_value;
+    }
+
+    public function getProductVariationReference(): ?string
+    {
+        return $this->product_variation_reference;
+    }
+
+    public function getProductVariationName(): ?string
+    {
+        return $this->product_variation_name;
+    }
+
+    public function getProductVariationNamePostfix(): ?string
+    {
+        return $this->product_variation_name_postfix;
+    }
+
+
+    public function getProductModificationValue(): ?string
+    {
+        return $this->product_modification_value;
+    }
+
+    public function getProductModificationReference(): ?string
+    {
+        return $this->product_modification_reference;
+    }
+
+    public function getProductOfferValue(): ?string
+    {
+        return $this->product_offer_value;
+    }
+
+    public function getProductModificationName(): ?string
+    {
+        return $this->product_modification_name;
+    }
+
+    public function getProductModificationNamePostfix(): ?string
+    {
+        return $this->product_modification_name_postfix;
+    }
+
 }
