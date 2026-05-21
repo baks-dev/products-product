@@ -176,4 +176,9 @@ class ProductVariationImage extends EntityEvent implements UploadEntityInterface
         return $this->ext;
     }
 
+    public function isCdn(): bool
+    {
+        return $this->cdn === true;
+    }
+
 }

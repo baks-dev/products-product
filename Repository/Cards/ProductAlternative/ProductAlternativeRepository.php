@@ -730,7 +730,10 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
             'category_section',
             CategoryProductSectionField::class,
             'category_section_field',
-            'category_section_field.section = category_section.id AND category_section_field.card = TRUE',
+            '
+                category_section_field.section = category_section.id 
+                AND category_section_field.card = TRUE
+            ',
         );
 
         $dbal->leftJoin(
@@ -995,7 +998,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
                 'product_project',
                 '
                     product_project.product = product.id
-                    '.(true === $dbal->bindProjectProfile()
+                    '.(true === $dbal->isProjectProfile()
                     ? 'AND product_project.profile = :'.$dbal::PROJECT_PROFILE_KEY
                     : 'AND product_project.profile IS NULL'),
             );

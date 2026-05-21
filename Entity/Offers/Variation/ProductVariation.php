@@ -190,6 +190,11 @@ class ProductVariation extends EntityEvent
     {
         if($dto instanceof ProductVariationInterface || $dto instanceof self)
         {
+            if(empty($dto->getValue()))
+            {
+                return false;
+            }
+
             return parent::setEntity($dto);
         }
 

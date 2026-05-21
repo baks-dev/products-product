@@ -27,13 +27,15 @@ let $name = document.querySelector("input[data-lang='product_form_trans_" + $loc
 
 if($name)
 {
-
-    setTimeout(function initCatUrl()
+    executeFunc(function initCatUrl()
     {
+        if(document.getElementById("product_form_info_url").value)
+        {
+            return true;
+        }
 
         if(typeof catUrl.debounce == "function")
         {
-
             $name.addEventListener("input", catUrl.debounce(500));
 
             document.getElementById("product_form_product").addEventListener("keydown", function(event)
@@ -44,13 +46,12 @@ if($name)
                 }
             });
 
-
-            return;
+            return true;
         }
 
-        setTimeout(initCatUrl, 100);
+        return false;
 
-    }, 100);
+    });
 
     function catUrl()
     {
@@ -87,7 +88,8 @@ if(allOffers)
                 }
 
             });
-        } else
+        }
+        else
         {
             document.querySelectorAll(".offers").forEach(function(item)
             {
@@ -132,7 +134,7 @@ if(searcOffer)
         item.addEventListener("click", function()
         {
             let inpt = document.getElementById(item.dataset.href);
-            inpt.scrollIntoView({block: "center", inline: "center", behavior: "smooth"});
+            inpt.scrollIntoView({block : "center", inline : "center", behavior : "smooth"});
             $ul.classList.remove("show");
             setTimeout(function()
             {
@@ -164,7 +166,8 @@ function searcherOffer()
         {
             item.style.display = "";
             $counter++;
-        } else
+        }
+        else
         {
             item.style.display = "none";
         }
@@ -172,7 +175,8 @@ function searcherOffer()
         if($filter.length < 2 || $counter === 0)
         {
             $ul.classList.remove("show");
-        } else
+        }
+        else
         {
             $ul.classList.add("show");
         }
@@ -224,22 +228,22 @@ if(searchBarcode)
 
                 /** Отобразить элемент */
 
-                let targetId = '#flush-' + item.dataset.accordion;
+                let targetId = "#flush-" + item.dataset.accordion;
 
                 /* Получение и клик по элементу - кнопке аккордиона */
                 let accordion_button = document.querySelector(`[data-bs-target="${targetId}"]`);
 
                 // Cделать click, только если element с содержимым скрыт
-                let elemTargetId = 'flush-' + item.dataset.accordion;
-                let elem = document.getElementById(elemTargetId)
+                let elemTargetId = "flush-" + item.dataset.accordion;
+                let elem = document.getElementById(elemTargetId);
 
-                if(elem.classList.contains('show') === false)
+                if(elem.classList.contains("show") === false)
                 {
                     accordion_button.click();
                 }
 
 
-                inpt.scrollIntoView({block: "center", inline: "center", behavior: "smooth"});
+                inpt.scrollIntoView({block : "center", inline : "center", behavior : "smooth"});
 
                 $ul.classList.remove("show");
                 setTimeout(function()
@@ -271,7 +275,8 @@ function searcherBarcode()
         {
             item.style.display = "";
             $counter++;
-        } else
+        }
+        else
         {
             item.style.display = "none";
         }
@@ -279,7 +284,8 @@ function searcherBarcode()
         if($filter.length < 2 || $counter === 0)
         {
             $ul.classList.remove("show");
-        } else
+        }
+        else
         {
             $ul.classList.add("show");
         }

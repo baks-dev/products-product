@@ -54,7 +54,7 @@
                             offer: card.offerValue ?: null,
                             variation: card.variationValue ?: null,
                             modification: card.modificationValue ?: null,
-                            postfix:  (card.modificationPostfix ?: card.variationPostfix ?: card.offerPostfix ?: null )|replace({ '/': '-' })
+                            postfix:  (card.modificationPostfix ?: card.variationPostfix ?: card.offerPostfix ?: null )|replace({ '/': '-', ' ': '~' })
                         } )) }}</url>
 
                     <price>{{ card.productPrice.roundValue ?: 'по запросу' }}</price>

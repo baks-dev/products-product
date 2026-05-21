@@ -29,7 +29,10 @@ use BaksDev\Products\Product\Entity\Description\ProductDescriptionInterface;
 use ReflectionProperty;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/** @see ProductDescription */
+/**
+ * @depricate
+ * @see ProductDescription
+ */
 final class ProductDescriptionDTO implements ProductDescriptionInterface
 {
     /** Локаль */

@@ -27,6 +27,7 @@ namespace BaksDev\Products\Product\UseCase\Admin\NewEdit;
 use ArrayIterator;
 use BaksDev\Core\Type\Device\Device;
 use BaksDev\Core\Type\Locale\Locale;
+use BaksDev\Materials\Catalog\UseCase\Admin\NewEdit\Category\MaterialCategoryCollectionDTO;
 use BaksDev\Products\Product\Entity\Event\ProductEventInterface;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Active\ActiveDTO;
@@ -88,9 +89,6 @@ final class ProductDTO implements ProductEventInterface
     private ArrayCollection $translate;
 
     #[Assert\Valid]
-    private ArrayCollection $description;
-
-    #[Assert\Valid]
     private ArrayCollection $material;
 
     #[Assert\Valid]
@@ -124,7 +122,6 @@ final class ProductDTO implements ProductEventInterface
         $this->seo = new ArrayCollection();
         $this->translate = new ArrayCollection();
         $this->video = new ArrayCollection();
-        $this->description = new ArrayCollection();
         $this->material = new ArrayCollection();
         $this->profile = new ArrayCollection();
 
@@ -480,6 +477,7 @@ final class ProductDTO implements ProductEventInterface
         return $this->profile;
     }
 
+
     public function setProfile(ArrayCollection $profile): self
     {
         $this->profile = $profile;
@@ -488,7 +486,11 @@ final class ProductDTO implements ProductEventInterface
 
     public function addProfile(CollectionProductProfileDTO $profile): self
     {
-        if(!$this->profile->contains($profile))
+        $filter = $this->profile->filter(function(CollectionProductProfileDTO $element) use ($profile) {
+            return $profile->getValue()->equals($element->getValue());
+        });
+
+        if($filter->isEmpty())
         {
             $this->profile->add($profile);
         }
@@ -566,46 +568,6 @@ final class ProductDTO implements ProductEventInterface
         if(!$this->translate->contains($trans))
         {
             $this->translate->add($trans);
-        }
-    }
-
-
-    /* DESCRIPTION */
-
-    public function getDescription(): ArrayCollection
-    {
-
-        /* Вычисляем расхождение и добавляем неопределенные локали */
-        foreach(Locale::diffLocale($this->description) as $locale)
-        {
-            /** @var Device $device */
-            foreach(Device::cases() as $device)
-            {
-                $ProductDescriptionDTO = new Description\ProductDescriptionDTO();
-                $ProductDescriptionDTO->setLocal($locale);
-                $ProductDescriptionDTO->setDevice($device);
-                $this->addDescription($ProductDescriptionDTO);
-            }
-        }
-
-        return $this->description;
-    }
-
-    public function setDescription(ArrayCollection $description): void
-    {
-        $this->description = $description;
-    }
-
-    public function addDescription(Description\ProductDescriptionDTO $description): void
-    {
-        if(empty($description->getLocal()->getLocalValue()))
-        {
-            return;
-        }
-
-        if(!$this->description->contains($description))
-        {
-            $this->description->add($description);
         }
     }
 

@@ -93,12 +93,15 @@ class ProductProjectDescription extends EntityState
         throw new InvalidArgumentException(sprintf('Class %s interface error', $dto::class));
     }
 
-
     public function setEntity($dto): mixed
     {
-
         if($dto instanceof ProductProjectDescriptionInterface || $dto instanceof self)
         {
+            if(empty($dto->getPreview()) && empty($dto->getDescription()))
+            {
+                return false;
+            }
+
             return parent::setEntity($dto);
         }
 

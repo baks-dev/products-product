@@ -87,7 +87,7 @@ final class ProductProjectDescriptionRepository implements ProductProjectDescrip
 
 
         /* Задать профиль - PROJECT_PROFILE */
-        if(true === $dbal->bindProjectProfile())
+        if(true === $dbal->isProjectProfile())
         {
             $dbal->andWhere('product_project.profile = :'.$dbal::PROJECT_PROFILE_KEY.' OR product_project.profile IS NULL');
         }

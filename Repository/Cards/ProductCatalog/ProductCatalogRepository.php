@@ -804,7 +804,12 @@ final class ProductCatalogRepository implements ProductCatalogInterface
             'category_section',
             CategoryProductSectionField::class,
             'category_section_field',
-            'category_section_field.section = category_section.id AND (category_section_field.card = TRUE OR category_section_field.photo = TRUE OR category_section_field.name = TRUE )',
+            'category_section_field.section = category_section.id 
+            AND (
+                category_section_field.card = TRUE 
+                OR category_section_field.photo = TRUE 
+                OR category_section_field.name = TRUE
+            )',
         );
 
         $dbal->leftJoin(
@@ -976,7 +981,7 @@ final class ProductCatalogRepository implements ProductCatalogInterface
                 'product_project',
                 '
                     product_project.product = product.id
-                    '.(true === $dbal->bindProjectProfile()
+                    '.(true === $dbal->isProjectProfile()
                     ? 'AND product_project.profile = :'.$dbal::PROJECT_PROFILE_KEY
                     : 'AND product_project.profile IS NULL'),
             );

@@ -58,7 +58,7 @@
             offer: product.productOfferValue,
             variation: product.productVariationValue,
             modification: product.productModificationValue,
-            postfix: (product.productModificationPostfix ?: product.productVariationPostfix ?: product.productOfferPostfix ?: null )|replace({ '/': '-' }),
+            postfix: (product.productModificationPostfix ?: product.productVariationPostfix ?: product.productOfferPostfix ?: null )|replace({ '/': '-', ' ': '~' }),
         }) }}" aria-label="{{ product.productName }}">
 
             {% if productProperties != false %}
@@ -115,7 +115,7 @@
                        offer: product.productOfferValue,
                        variation: product.productVariationValue,
                        modification: product.productModificationValue,
-                       postfix: (product.productModificationPostfix ?: product.productVariationPostfix ?: product.productOfferPostfix ?: null )|replace({ '/': '-' }),
+                       postfix: (product.productModificationPostfix ?: product.productVariationPostfix ?: product.productOfferPostfix ?: null )|replace({ '/': '-', ' ': '~' }),
                    }) }}" aria-label="{{ product.productName }}">
 
 

@@ -313,6 +313,12 @@ final class AllProductsByCategoryResult
     {
         $price = new Money($this->product_price, true);
 
+        /* Торговая наценка с учетом сезонности */
+        if(false === empty($this->season_percent))
+        {
+            $price->applyString($this->season_percent);
+        }
+
         /** Кастомная цена */
         if(false === empty($this->promotion_price) && true === $this->promotion_active)
         {
@@ -323,12 +329,6 @@ final class AllProductsByCategoryResult
         if(false === empty($this->project_discount))
         {
             $price->applyString($this->project_discount);
-        }
-
-        /* Торговая наценка с учетом сезонности */
-        if(false === empty($this->season_percent))
-        {
-            $price->applyString($this->season_percent);
         }
 
         return $price;

@@ -187,6 +187,11 @@ class ProductModification extends EntityEvent
     {
         if($dto instanceof ProductModificationInterface || $dto instanceof self)
         {
+            if(empty($dto->getValue()))
+            {
+                return false;
+            }
+
             return parent::setEntity($dto);
         }
 

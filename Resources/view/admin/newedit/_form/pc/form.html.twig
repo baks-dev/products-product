@@ -154,7 +154,7 @@
     </li>
 
     {# Описание #}
-    <li class="nav-item">
+    {# <li class="nav-item">
         <button class="btn fw-bolder nav-link"
                 data-bs-toggle="tab"
                 type="button"
@@ -169,7 +169,7 @@
                 Описание
             </small>
         </button>
-    </li>
+    </li> #}
 
     {# Описание Project #}
     <li class="nav-item">
@@ -184,7 +184,7 @@
                 aria-controls="nav-product">
 
             <small class="text-uppercase px-3">
-                Описание (Project)
+                Описание
             </small>
         </button>
     </li>
@@ -273,10 +273,6 @@
     {# ОСНОВНЫЕ НАСТРОЙКИ #}
     <div class="tab-pane fade show active" id="tab_main" role="tabpanel">
         {{ include(_self|replace({ "form.html.twig": "form.main.html.twig" })) }}
-    </div>
-
-    <div class="tab-pane fade" id="tab_description" role="tabpanel">
-        {{ include(_self|replace({ "form.html.twig": "form.description.html.twig" })) }}
     </div>
 
     {#  Project descriptions #}

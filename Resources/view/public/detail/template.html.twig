@@ -1,4 +1,6 @@
 {# @var card \BaksDev\Products\Product\Repository\ProductDetailByValue\ProductDetailByValueResult #}
+{# @var review \BaksDev\Products\Review\Repository\AllReviews\AllReviewsResult #}
+
 
 {% extends Template('/user/base.html.twig') %}
 
@@ -21,9 +23,13 @@
 
     {{ card.productOfferValue|call_twig_func(card.productOfferReference~'_render') }}
 
-    {{ (card.productModificationPostfix ?: card.productVariationPostfix ?: card.productOfferPostfix ?: null )|replace({ '/': '-' }) }}
+    {{ (card.productModificationPostfix ?: card.productVariationPostfix ?: card.productOfferPostfix ?: null ) }}
 
 {% endblock %}
+
+{% set image_first = photos|first %}
+{% set image_path_first = cdn_image_path(image_first.product_img, image_first.product_img_ext, image_first.product_img_cdn , 'large') %}
+{% set review = reviews.data|first %}
 
 {% block meta %}
     <script type="application/ld+json">
@@ -36,28 +42,82 @@
 
             {{ card.productOfferValue|call_twig_func(card.productOfferReference~'_render') }}
 
-            {{ (card.productModificationPostfix ?: card.productVariationPostfix ?: card.productOfferPostfix ?: null )|replace({ '/': '-' }) }}",
-        "description": "{{ card.productPreview|striptags|raw }}",
-        "url": "{{ absolute_url(' ') }} ",
-        "image":[
-        {% for key, photo in photos %}
+            {{ (card.productModificationPostfix ?: card.productVariationPostfix ?: card.productOfferPostfix ?: null ) }}",
+        "description": "{{ card.productPreview|striptags|e }}",
 
-            {# Обложка #}
-            {% if photo.product_img_ext is defined and photo.product_img_ext is not null %}
-                {% set image_path = cdn_image_path(photo.product_img, photo.product_img_ext, photo.product_img_cdn , 'medium') %}
-            {% endif %}
+        "url": "{{ absolute_url(path('products-product:public.detail', {
+            category : card.categoryUrl,
+            url : card.productUrl ,
+            offer: card.productOfferValue,
+            variation: card.productVariationValue,
+            modification: card.productModificationValue,
+            postfix:  (card.productModificationPostfix ?: card.productVariationPostfix ?: card.productOfferPostfix ?: null )|replace({ '/': '-', ' ': '~' })
+        })) }}",
 
-          "{{ image_path }}"
-        {% endfor %}
-        ],
+        "sku": "{{ card.productArticle }}",
+
+        "image": {
+              "@type": "ImageObject",
+              "url": "{{ image_path_first }}",
+              "image": "{{ image_path_first }}",
+              "name": "{{ card.productName }}",
+              "width": 1024,
+              "height": 1024
+        },
+
+
         "offers": {
-            "@type": "AggregateOffer",
-            "Price": "{{ money(Price, card.productCurrency) }}",
+            "@type": "Offer",
+            "availability": "https://schema.org/InStock",
+            "price": "{{ Price }}",
             "priceCurrency": "RUB",
-            "availability": "https://schema.org/InStock"
+            "offerCount": "{{ card.productQuantity }}",
+
+            "seller": {
+              "@id": "http://example.com/lechateausnotty"
+            },
+
+            "hasMerchantReturnPolicy": {
+              "@type": "MerchantReturnPolicy",
+              "applicableCountry": "RU",
+              "returnPolicyCategory": "https://schema.org/MerchantReturnNotPermitted"
+            }
           }
+
+        {% if reviews.counter %}
+           ,
+
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingCount": reviews.counter,
+            "ratingValue": 5,
+            "bestRating": 5,
+            "worstRating": 1
+          },
+
+          "review": {
+                "@type": "Review",
+                "reviewRating": {
+                  "@type": "Rating",
+                  "ratingValue": "{{ review.reviewRatingValue }}",
+                  "bestRating": 5,
+                  "worstRating": 1
+                },
+                "reviewBody": {
+                  "@value": "{{ review.reviewText }}",
+                  "@language": "ru"
+                },
+                "author": {
+                  "@type": "Person",
+                  "name": "{{ review.reviewName }}"
+                }
+              }
+        {% endif %}
+
         }
     </script>
+
+
 
 
 
@@ -68,7 +128,7 @@
 
             {{ card.productOfferValue|call_twig_func(card.productOfferReference~'_render') }}
 
-            {{ (card.productModificationPostfix ?: card.productVariationPostfix ?: card.productOfferPostfix ?: null )|replace({ '/': '-' }) }}"/>
+            {{ (card.productModificationPostfix ?: card.productVariationPostfix ?: card.productOfferPostfix ?: null ) }}"/>
     <meta property="og:description" content="{{ card.productPreview|striptags|raw }}"/>
     <meta property="og:url" content="{{ absolute_url(' ') }}"/>
 
@@ -93,7 +153,7 @@
 
             {{ card.productOfferValue|call_twig_func(card.productOfferReference~'_render') }}
 
-            {{ (card.productModificationPostfix ?: card.productVariationPostfix ?: card.productOfferPostfix ?: null )|replace({ '/': '-' }) }}"/>
+            {{ (card.productModificationPostfix ?: card.productVariationPostfix ?: card.productOfferPostfix ?: null ) }}"/>
     <meta name="twitter:description" content="{{ card.productPreview|striptags|raw }}"/>
     <meta name="twitter:url" content="{{ absolute_url(' ') }}"/>
 

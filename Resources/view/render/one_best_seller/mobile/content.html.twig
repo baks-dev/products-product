@@ -41,7 +41,7 @@
                offer: Bestseller.productOfferValue,
                variation: Bestseller.productVariationValue,
                modification: Bestseller.productModificationValue,
-               postfix: (Bestseller.productModificationPostfix ?: Bestseller.productVariationPostfix ?: Bestseller.productOfferPostfix ?: null )|replace({ '/': '-' }),
+               postfix: (Bestseller.productModificationPostfix ?: Bestseller.productVariationPostfix ?: Bestseller.productOfferPostfix ?: null )|replace({ '/': '-', ' ': '~' }),
            }) }}">
 
             {{ Bestseller.productName }}

@@ -42,7 +42,7 @@
             {% set productIdentifiers = card.productOfferValue
                 ~ '/' ~ card.productVariationValue
                 ~ '/' ~ card.productModificationValue
-                ~ '/' ~ (card.productModificationPostfix ?: card.productVariationPostfix ?: card.productOfferPostfix ?: null )|replace({ '/': '-' }) %}
+                ~ '/' ~ (card.productModificationPostfix ?: card.productVariationPostfix ?: card.productOfferPostfix ?: null )|replace({ '/': '-', ' ': '~' }) %}
 
             <li class="breadcrumb-item active" aria-current="page"
                 aria-label="{{ card.productName }}"

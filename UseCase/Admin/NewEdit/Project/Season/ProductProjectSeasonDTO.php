@@ -30,25 +30,21 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 final class ProductProjectSeasonDTO implements ProductProjectSeasonInterface
 {
-
     /** Торговая наценка */
-    #[Assert\Valid]
-    #[Assert\NotBlank]
-    private string $percent = '0';
+    private ?string $percent = null;
 
     /** Значение месяца */
-    #[Assert\Valid]
     #[Assert\NotBlank]
     private int $month = 1;
 
-    public function getPercent(): string
+    public function getPercent(): ?string
     {
         return $this->percent;
     }
 
-    public function setPercent(string $percent): self
+    public function setPercent(?string $percent): self
     {
-        $this->percent = $percent;
+        $this->percent = empty($percent) ? null : $percent;
         return $this;
     }
 

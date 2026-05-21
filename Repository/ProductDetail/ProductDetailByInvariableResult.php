@@ -99,7 +99,6 @@ final readonly class ProductDetailByInvariableResult implements ProductDetailInt
 
     ) {}
 
-
     public function getProductName(): string
     {
         return $this->product_name;
@@ -361,12 +360,12 @@ final readonly class ProductDetailByInvariableResult implements ProductDetailInt
 
     public function getProductQuantity(): int
     {
-        return $this->product_quantity ?: 0;
+        return $this->product_quantity ? max($this->product_quantity, 0) : 0;
     }
 
     public function getProductReserve(): int
     {
-        return $this->product_reserve ?: 0;
+        return $this->product_reserve ? max($this->product_reserve, 0) : 0;
     }
 
 

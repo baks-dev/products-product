@@ -176,4 +176,9 @@ class ProductModificationImage extends EntityEvent implements UploadEntityInterf
         $this->root = true;
     }
 
+    public function isCdn(): bool
+    {
+        return $this->cdn === true;
+    }
+
 }

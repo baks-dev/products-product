@@ -232,7 +232,7 @@ final class ProductModelRepository implements ProductModelInterface
                 'product_project',
                 '
                     product_project.product = product.id 
-                    '.(true === $dbal->bindProjectProfile()
+                    '.(true === $dbal->isProjectProfile()
                     ? 'AND product_project.profile = :'.$dbal::PROJECT_PROFILE_KEY
                     : 'AND product_project.profile IS NULL'),
             );
@@ -551,7 +551,7 @@ final class ProductModelRepository implements ProductModelInterface
         /* Сезонная торговая наценка */
         $projectSeasonSelect = "'season_percent', NULL,";
 
-        if(true === $dbal->bindProjectProfile())
+        if(true === $dbal->isProjectProfile())
         {
             $projectSeasonSelect = "'season_percent', product_project_season.percent,";
 

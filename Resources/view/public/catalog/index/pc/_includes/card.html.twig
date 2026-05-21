@@ -38,7 +38,7 @@
 
             <div class="scale-animation bg-cover lazy h-100" data-bg="{{ image_path }}">
                 <a class="d-block h-100"
-                   href="{{ path('products-product:public.detail', { category: product.categoryUrl, url: product.productUrl, offer: product.productOfferValue, variation: product.productVariationValue, modification: product.productModificationValue, postfix: (product.productModificationPostfix ?: product.productVariationPostfix ?: product.productOfferPostfix ?: null )|replace({ '/': '-' }), }) }}"
+                   href="{{ path('products-product:public.detail', { category: product.categoryUrl, url: product.productUrl, offer: product.productOfferValue, variation: product.productVariationValue, modification: product.productModificationValue, postfix: (product.productModificationPostfix ?: product.productVariationPostfix ?: product.productOfferPostfix ?: null )|replace({ '/': '-', ' ': '~' }), }) }}"
                    aria-label="{{ product.productName }}"></a>
             </div>
 
@@ -86,7 +86,7 @@
 
                 <div class="d-flex mb-2">
                     <a class="text-black text-decoration-none d-block h-100"
-                       href="{{ path('products-product:public.detail', { category: product.categoryUrl, url: product.productUrl, offer: product.productOfferValue, variation: product.productVariationValue, modification: product.productModificationValue, postfix: (product.productModificationPostfix ?: product.productVariationPostfix ?: product.productOfferPostfix ?: null )|replace({ '/': '-' }), }) }}">
+                       href="{{ path('products-product:public.detail', { category: product.categoryUrl, url: product.productUrl, offer: product.productOfferValue, variation: product.productVariationValue, modification: product.productModificationValue, postfix: (product.productModificationPostfix ?: product.productVariationPostfix ?: product.productOfferPostfix ?: null )|replace({ '/': '-', ' ': '~' }), }) }}">
                         <h3
                                 class="card-title fw-bold px-2 text-uppercase mb-0" style="font-size:14px!important;">
 
@@ -102,7 +102,7 @@
                             {{ product.productOfferValue|call_twig_func(product.productOfferReference~'_render') }}
 
                             {# Постфикс #}
-                            {{ (product.productModificationPostfix ?: product.productVariationPostfix ?: product.productOfferPostfix ?: null )|replace({ '/': '-' }) }}
+                            {{ (product.productModificationPostfix ?: product.productVariationPostfix ?: product.productOfferPostfix ?: null )|replace({ '/': '-', ' ': '~' }) }}
                         </h3>
                     </a>
                 </div>

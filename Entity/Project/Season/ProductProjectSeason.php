@@ -87,9 +87,13 @@ class ProductProjectSeason extends EntityState
 
     public function setEntity($dto): mixed
     {
-
         if($dto instanceof ProductProjectSeasonInterface || $dto instanceof self)
         {
+            if(empty($dto->getPercent()))
+            {
+                return false;
+            }
+
             return parent::setEntity($dto);
         }
 

@@ -262,6 +262,12 @@ final readonly class ProductModelResult
 
         $minPrice = current($offers)->getProductPrice();
 
+        /* Торговая наценка с учетом сезонности */
+        if(false === empty($this->season_percent))
+        {
+            $minPrice->applyString($this->season_percent);
+        }
+
         /** Скидка магазина */
         if(false === empty($this->project_discount))
         {
@@ -272,12 +278,6 @@ final readonly class ProductModelResult
         if(false === empty($this->profile_discount))
         {
             $minPrice->applyString($this->profile_discount);
-        }
-
-        /* Торговая наценка с учетом сезонности */
-        if(false === empty($this->season_percent))
-        {
-            $minPrice->applyString($this->season_percent);
         }
 
         return $minPrice;

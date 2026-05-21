@@ -28,6 +28,7 @@ namespace BaksDev\Products\Product\Repository\ProductDetail\Tests;
 use BaksDev\Core\Type\Field\InputField;
 use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailByInvariableInterface;
 use BaksDev\Products\Product\Repository\ProductDetail\ProductDetailByInvariableResult;
+use BaksDev\Products\Product\Type\Invariable\ProductInvariableUid;
 use PHPUnit\Framework\Attributes\DependsOnClass;
 use PHPUnit\Framework\Attributes\Group;
 use ReflectionClass;
@@ -53,7 +54,7 @@ final class ProductDetailByInvariableRepositoryTest extends KernelTestCase
             ->invariable(ProductInvariableUid::TEST)
             ->find();
 
-        if($ProductDetailByInvariableResult instanceof ProductDetailByInvariableResult)
+        if(false === ($ProductDetailByInvariableResult instanceof ProductDetailByInvariableResult))
         {
             return;
         }
