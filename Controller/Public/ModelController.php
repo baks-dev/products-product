@@ -39,7 +39,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[AsController]
 final class ModelController extends AbstractController
 {
-    #[Route('/catalog/{category}/{url}/model/{offer}/{variation}', name: 'public.model', priority: 10)]
+    #[Route('/catalog/{category}/{url}/model/{offer}/{variation}/{modification}', name: 'public.model', priority: 10)]
     public function model(
         Request $request,
         #[MapEntity(mapping: ['url' => 'url'])] ProductInfo $info,
@@ -47,6 +47,7 @@ final class ModelController extends AbstractController
         ?AllReviewsInterface $AllReviewsRepository = null,
         string|null $offer = null,
         string|null $variation = null,
+        string|null $modification = null,
     ): Response
     {
 
@@ -54,6 +55,7 @@ final class ModelController extends AbstractController
             ->byProduct($info->getProduct())
             ->byOffer($offer)
             ->byVariation($variation)
+            ->byModification($modification)
             ->find();
 
 
@@ -68,6 +70,9 @@ final class ModelController extends AbstractController
         return $this->render([
             'card' => $card,
             'reviews' => $ProductsReviews,
+            'offer' => $offer,
+            'variation' => $variation,
+            'modification' => $modification,
         ]);
 
     }

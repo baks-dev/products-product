@@ -30,6 +30,7 @@ use BaksDev\Core\Form\Search\SearchDTO;
 use BaksDev\Core\Form\Search\SearchForm;
 use BaksDev\Orders\Order\UseCase\Public\Basket\Add\PublicOrderProductDTO;
 use BaksDev\Orders\Order\UseCase\Public\Basket\Add\PublicOrderProductForm;
+use BaksDev\Products\Category\Repository\SettingsByUrl\SettingsByUrlInterface;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
 use BaksDev\Products\Product\Repository\Cards\ProductAlternative\ProductAlternativeInterface;
 use BaksDev\Products\Product\Repository\ProductDetailByValue\ProductDetailByValueInterface;
@@ -57,13 +58,16 @@ final class DetailController extends AbstractController
         ProductDetailByValueInterface $productDetail,
         ProductDetailOfferInterface $productDetailOffer,
         ProductAlternativeInterface $productAlternative,
+        SettingsByUrlInterface $settingsByUrl,
         ?AllReviewsInterface $AllReviewsRepository = null,
+        ?string $category = null,
         ?string $offer = null,
         ?string $variation = null,
         ?string $modification = null,
         ?string $postfix = null,
     ): Response
     {
+
         /** @var ProductDetailByValueResult|false $productCard */
         $productCard = $productDetail
             ->byProduct($info->getProduct())
@@ -77,6 +81,78 @@ final class DetailController extends AbstractController
         {
             throw new InvalidArgumentException('Page Not Found', code: 404);
         }
+
+
+        /* Анонимная функция для создания subrequest */
+        $createModelSubRequest = function(
+            Request $request,
+            ProductDetailByValueResult $productCard,
+            ?string $offer = null,
+            ?string $variation = null,
+            ?string $modification = null
+        ) {
+            $path = [
+                '_controller' => ModelController::class.'::model',
+                '_route' => 'products-product:public.model',
+                'category' => $productCard->getCategoryUrl(),
+                'url' => $productCard->getProductUrl(),
+                'offer' => $offer,
+                'variation' => $variation,
+                'modification' => $modification,
+            ];
+
+            return $request->duplicate([], null, $path);
+        };
+
+
+        /* Получить настройки категории */
+        $categorySettings = $settingsByUrl->find($category);
+
+        $hasOffer = $categorySettings->hasOffer();
+        $hasVariation = $categorySettings->hasVariation();
+        $hasModification = $categorySettings->hasModification();
+
+        /* 1. Категория с модификацией */
+        if(true === $hasModification)
+        {
+            if(empty($postfix))
+            {
+                $subRequest = $createModelSubRequest(
+                    $request,
+                    $productCard,
+                    $offer,
+                    $variation,
+                    $modification
+                );
+                return $httpKernel->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
+            }
+        }
+
+        /* 2. Категория с оффером и вариацией, но без модификации */
+        if(true === $hasOffer && true === $hasVariation && false === $hasModification)
+        {
+            if(empty($postfix) && empty($variation) && empty($modification))
+            {
+                $subRequest = $createModelSubRequest(
+                    $request,
+                    $productCard,
+                    $offer
+                );
+                return $httpKernel->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
+            }
+        }
+
+        /* 3. Категория только с оффером */
+        if(true === $hasOffer && false === $hasVariation && false === $hasModification)
+        {
+
+            if(empty($offer))
+            {
+                $subRequest = $createModelSubRequest($request, $productCard);
+                return $httpKernel->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
+            }
+        }
+
 
         /** Другие ТП данного продукта */
         $productOffer = $productDetailOffer->fetchProductOfferAssociative($info->getProduct());
@@ -181,6 +257,7 @@ final class DetailController extends AbstractController
                 ->findPaginator() :
             false;
 
+
         return $this->render([
             'card' => $productCard,
             'offers' => $productOffer,
@@ -191,6 +268,8 @@ final class DetailController extends AbstractController
             'basket' => $form?->createView(),
             'all_search' => $allSearchForm->createView(),
             'reviews' => $ProductsReviews,
+
+            'postfix' => $postfix, // Для отображения цепочек ссылок в breadcrumb
         ]);
     }
 }
