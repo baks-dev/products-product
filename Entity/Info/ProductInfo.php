@@ -98,6 +98,11 @@ class ProductInfo extends EntityReadonly
         return $this;
     }
 
+    public function getProductUrl(): string
+    {
+        return $this->url;
+    }
+
     public function getDto($dto): mixed
     {
         $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;

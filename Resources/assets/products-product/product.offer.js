@@ -1105,6 +1105,7 @@ function articleGenerate()
         "FFC0CB" : "PINK",
         "A52A2A" : "BROWN",
         "60020E" : "BORDO",
+        "3eb489" : "MINT",
     };
 
     generate = generate.replace(/([0-9A-F]{6})/gi, match =>

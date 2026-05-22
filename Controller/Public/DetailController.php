@@ -31,6 +31,7 @@ use BaksDev\Core\Form\Search\SearchForm;
 use BaksDev\Orders\Order\UseCase\Public\Basket\Add\PublicOrderProductDTO;
 use BaksDev\Orders\Order\UseCase\Public\Basket\Add\PublicOrderProductForm;
 use BaksDev\Products\Category\Repository\SettingsByUrl\SettingsByUrlInterface;
+use BaksDev\Products\Category\Repository\SettingsByUrl\SettingsByUrlResult;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
 use BaksDev\Products\Product\Repository\Cards\ProductAlternative\ProductAlternativeInterface;
 use BaksDev\Products\Product\Repository\ProductDetailByValue\ProductDetailByValueInterface;
@@ -39,7 +40,6 @@ use BaksDev\Products\Product\Repository\ProductDetailOffer\ProductDetailOfferInt
 use BaksDev\Products\Review\BaksDevProductsReviewBundle;
 use BaksDev\Products\Review\Repository\AllReviews\AllReviewsInterface;
 use DateTimeImmutable;
-use InvalidArgumentException;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -68,6 +68,89 @@ final class DetailController extends AbstractController
     ): Response
     {
 
+        /* Получить настройки категории */
+        $categorySettings = $settingsByUrl->find($category);
+
+        if($categorySettings instanceof SettingsByUrlResult)
+        {
+            /* Анонимная функция для создания subrequest */
+            $createModelSubRequest = static function(
+                Request $request,
+                string $category, // URL категории
+                string $product, // URL продукта
+                ?string $offer = null,
+                ?string $variation = null,
+                ?string $modification = null
+            ) {
+                $path = [
+                    '_controller' => ModelController::class.'::model',
+                    '_route' => 'products-product:public.model',
+                    'category' => $category,
+                    'url' => $product,
+                    'offer' => $offer,
+                    'variation' => $variation,
+                    'modification' => $modification,
+                ];
+
+                return $request->duplicate([], null, $path);
+            };
+
+            $hasOffer = $categorySettings->hasOffer();
+            $hasVariation = $categorySettings->hasVariation();
+            $hasModification = $categorySettings->hasModification();
+
+
+            /* 1. Категория с модификацией */
+            if(true === $hasModification)
+            {
+                if(empty($postfix))
+                {
+                    $subRequest = $createModelSubRequest(
+                        $request,
+                        $category,
+                        $info->getProductUrl(),
+                        $offer,
+                        $variation,
+                        $modification,
+                    );
+
+                    return $httpKernel->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
+                }
+            }
+
+            /* 2. Категория с оффером и вариацией, но без модификации */
+            if(true === $hasOffer && true === $hasVariation && false === $hasModification)
+            {
+                if(empty($postfix) && empty($variation) && empty($modification))
+                {
+                    $subRequest = $createModelSubRequest(
+                        $request,
+                        $category,
+                        $info->getProductUrl(),
+                        $offer,
+                    );
+
+                    return $httpKernel->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
+                }
+            }
+
+            /* 3. Категория только с оффером */
+            if(true === $hasOffer && false === $hasVariation && false === $hasModification)
+            {
+
+                if(empty($offer))
+                {
+                    $subRequest = $createModelSubRequest(
+                        $request,
+                        $category,
+                        $info->getProductUrl(),
+                    );
+
+                    return $httpKernel->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
+                }
+            }
+        }
+
         /** @var ProductDetailByValueResult|false $productCard */
         $productCard = $productDetail
             ->byProduct($info->getProduct())
@@ -79,80 +162,18 @@ final class DetailController extends AbstractController
 
         if(false === ($productCard instanceof ProductDetailByValueResult))
         {
-            throw new InvalidArgumentException('Page Not Found', code: 404);
+            $path['_controller'] = NotFoundController::class.'::notfound';
+            $path['_route'] = 'products-product:public.notfound';
+            $path['category'] = $category;
+            $path['url'] = $info->getProductUrl();
+            $path['offer'] = $offer;
+            $path['variation'] = $variation;
+            $path['modification'] = $modification;
+
+            $subRequest = $request->duplicate([], null, $path);
+
+            return $httpKernel->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
         }
-
-
-        /* Анонимная функция для создания subrequest */
-        $createModelSubRequest = function(
-            Request $request,
-            ProductDetailByValueResult $productCard,
-            ?string $offer = null,
-            ?string $variation = null,
-            ?string $modification = null
-        ) {
-            $path = [
-                '_controller' => ModelController::class.'::model',
-                '_route' => 'products-product:public.model',
-                'category' => $productCard->getCategoryUrl(),
-                'url' => $productCard->getProductUrl(),
-                'offer' => $offer,
-                'variation' => $variation,
-                'modification' => $modification,
-            ];
-
-            return $request->duplicate([], null, $path);
-        };
-
-
-        /* Получить настройки категории */
-        $categorySettings = $settingsByUrl->find($category);
-
-        $hasOffer = $categorySettings->hasOffer();
-        $hasVariation = $categorySettings->hasVariation();
-        $hasModification = $categorySettings->hasModification();
-
-        /* 1. Категория с модификацией */
-        if(true === $hasModification)
-        {
-            if(empty($postfix))
-            {
-                $subRequest = $createModelSubRequest(
-                    $request,
-                    $productCard,
-                    $offer,
-                    $variation,
-                    $modification
-                );
-                return $httpKernel->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
-            }
-        }
-
-        /* 2. Категория с оффером и вариацией, но без модификации */
-        if(true === $hasOffer && true === $hasVariation && false === $hasModification)
-        {
-            if(empty($postfix) && empty($variation) && empty($modification))
-            {
-                $subRequest = $createModelSubRequest(
-                    $request,
-                    $productCard,
-                    $offer
-                );
-                return $httpKernel->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
-            }
-        }
-
-        /* 3. Категория только с оффером */
-        if(true === $hasOffer && false === $hasVariation && false === $hasModification)
-        {
-
-            if(empty($offer))
-            {
-                $subRequest = $createModelSubRequest($request, $productCard);
-                return $httpKernel->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
-            }
-        }
-
 
         /** Другие ТП данного продукта */
         $productOffer = $productDetailOffer->fetchProductOfferAssociative($info->getProduct());
