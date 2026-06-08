@@ -1027,7 +1027,7 @@ function articleGenerate()
     {
         let article = document.getElementById(this.dataset.offer);
 
-        if(article && article.value.length)
+        if(article && article.value.length && article.value !== "null")
         {
             generate += (generate.length ? "-" : "") + article.value;
         }
@@ -1039,7 +1039,7 @@ function articleGenerate()
     {
         article = document.getElementById(this.dataset.offerpostfix);
 
-        if(article && article.value.length)
+        if(article && article.value.length && article.value !== "null")
         {
             generate += (generate.length ? "-" : "") + article.value;
         }
@@ -1049,7 +1049,7 @@ function articleGenerate()
     {
         article = document.getElementById(this.dataset.variation);
 
-        if(article && article.value.length)
+        if(article && article.value.length && article.value !== "null")
         {
             generate += (generate.length ? "-" : "") + article.value;
         }
@@ -1059,7 +1059,7 @@ function articleGenerate()
     {
         article = document.getElementById(this.dataset.variationpostfix);
 
-        if(article && article.value.length)
+        if(article && article.value.length && article.value !== "null")
         {
             generate += (generate.length ? "-" : "") + article.value;
         }
@@ -1070,7 +1070,7 @@ function articleGenerate()
     {
         article = document.getElementById(this.dataset.modification);
 
-        if(article && article.value.length)
+        if(article && article.value.length && article.value !== "null")
         {
             generate += (generate.length ? "-" : "") + article.value;
         }
@@ -1081,7 +1081,7 @@ function articleGenerate()
     {
         article = document.getElementById(this.dataset.modificationpostfix);
 
-        if(article && article.value.length)
+        if(article && article.value.length && article.value !== "null")
         {
             generate += (generate.length ? "-" : "") + article.value;
         }
@@ -1138,7 +1138,6 @@ function processOfferDragNDrop(offer_image_collection)
     /** Отобразить и загрузить в соотв-щий file input */
     function previewAndAttachOfferFile(file)
     {
-
         /* Проверить это файл является изображением */
         if(!file.type.startsWith("image/"))
         {

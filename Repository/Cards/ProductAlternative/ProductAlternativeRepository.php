@@ -549,7 +549,7 @@ final class ProductAlternativeRepository implements ProductAlternativeInterface
          * Если подключен модуль складского учета и передан идентификатор профиля
          */
 
-        if(false === empty($this->region) && class_exists(BaksDevProductsStocksBundle::class))
+        if(false && false === empty($this->region) && class_exists(BaksDevProductsStocksBundle::class))
         {
             /* Получаем все профили данного региона */
 
