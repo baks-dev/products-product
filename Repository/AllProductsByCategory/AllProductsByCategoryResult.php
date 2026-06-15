@@ -336,7 +336,9 @@ final class AllProductsByCategoryResult
 
     public function getProductOldPrice(): Money|false
     {
-        return $this->product_old_price ? new Money($this->product_old_price, true) : false;
+        return isset($this->product_old_price) && $this->product_old_price > $this->product_price
+            ? new Money($this->product_old_price, true)
+            : false;
     }
 
     public function getProductCurrency(): Currency
