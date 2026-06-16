@@ -9,7 +9,8 @@
 
         <categories>
             {% for id, cat in category %}
-                <category id='{{ id }}'>{{ cat.category_name }}</category>
+                {% set categoryArray = categoryArray|merge({ (id) : loop.index }) %}
+                <category id='{{ loop.index }}'>{{ cat.category_name }}</category>
             {% endfor %}
         </categories>
 
@@ -66,7 +67,7 @@
 
                     {# <enable_auto_discounts>true</enable_auto_discounts> #}
 
-                    <categoryId>{{ card.categoryId }}</categoryId>
+                    <categoryId>{{ categoryArray[card.categoryId] }}</categoryId>
 
                     {# Обложка  #}
                     {% set image_path = cdn_image_path(card.productImage, card.productImageExt, card.productImageCdn, 'large') %}
