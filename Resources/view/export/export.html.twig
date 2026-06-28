@@ -2,10 +2,13 @@
 
 <yml_catalog date='{{ 'now'|date('Y-m-d\\TH:00:00P') }}'>
     <shop>
-        <name>{{ settings.title is defined ? settings.title : 'Company name' }}</name>
-        <company>{{ settings.description is defined ? settings.description : 'Добро пожаловать' }}</company>
+        <name>TriangleRus</name>
+        <company>ИП Тавруев А.В.</company>
         <url>{{ absolute_url(path('core:public.homepage')) }}</url>
         <platform>Symfony</platform>
+
+
+        {% set categoryArray = {} %}
 
         <categories>
             {% for id, cat in category %}
@@ -22,15 +25,15 @@
             <option cost="200" days="1"/>
         </pickup-options> #}
 
-
         {# @var card \BaksDev\Products\Product\Repository\AllProductsByCategory\AllProductsByCategoryResult #}
+        {# @var v \BaksDev\Products\Product\Repository\AllProductsByCategory\AllProductsByCategoryResult #}
 
         <offers>
-            {% for card in products|filter(v => v.productPrice.roundValue > 0) %}
+            {% for card in products|filter(v => v.productPrice.roundValue > 0 and v.productQuantity > 0) %}
 
                 {% set arr_property = card.categorySectionField %}
 
-                <offer id='{{ card.productInvariable }}' available='{{ card.productQuantity > 0 ? 'true' : 'false' }}'>
+                <offer id='{{ card.getProductInvariable() }}'>
 
                     <name>{{ card.productName }}
                         {# Значение множественного варианта ТП #}
@@ -42,8 +45,7 @@
                         {# Постфикс множественного варианта #}
                         {{ card.variationPostfix }}
                         {# Постфикс модификации #}
-                        {{ card.modificationPostfix }}
-                    </name>
+                        {{ card.modificationPostfix }}</name>
 
                     {# Бренд #}
                     <vendor>{{ card.categoryName }}</vendor>
@@ -58,14 +60,13 @@
                             postfix:  (card.modificationPostfix ?: card.variationPostfix ?: card.offerPostfix ?: null )|replace({ '/': '-', ' ': '~' })
                         } )) }}</url>
 
+
                     <price>{{ card.productPrice.roundValue ?: 'по запросу' }}</price>
                     <currencyId>{{ card.productCurrency|upper }}</currencyId>
 
                     {% if card.productOldPrice %}
                         <oldprice>{{ card.productOldPrice }}</oldprice>
                     {% endif %}
-
-                    {# <enable_auto_discounts>true</enable_auto_discounts> #}
 
                     <categoryId>{{ categoryArray[card.categoryId] }}</categoryId>
 
@@ -102,7 +103,6 @@
                         <param name="{{ card.modificationNamePostfix }}">{{ card.modificationPostfix }}</param>
                     {% endif %}
 
-
                     {# Свойства, учавствующие в ПРЕВЬЮ #}
                     {% if arr_property %}
                         {% for name_property in arr_property | filter(preview => preview.field_card == true) %}
@@ -122,7 +122,7 @@
                         {% set stock = 'нет в наличии' %}
                     {% endif %}
 
-                    <stock>{{ stock }}</stock>
+                    {# <stock>более 20</stock> #}
 
                     <description>
                         <![CDATA[
@@ -130,14 +130,24 @@
                         ]]>
                     </description>
 
+                    {% if card.productBarcode %}
+                        <barcode>{{ card.productBarcode }}</barcode>
+                    {% endif %}
+
+                    {% if card.productQuantity > card.getCategoryThreshold %}
+                        {% set stock = 'более '~card.getCategoryThreshold %}
+                    {% elseif card.productQuantity > 0 %}
+                        {% set stock = card.productQuantity %}
+                    {% else %}
+                        {% set stock = 'нет в наличии' %}
+                    {% endif %}
+
+                    <stock>{{ stock }}</stock>
+
                     {# <sales_notes>Необходима предоплата.</sales_notes> #}
                     {# <manufacturer_warranty>true</manufacturer_warranty> #}
                     {# <barcode>4601546021298</barcode> #}
                     {# <param name='Цвет'>белый</param> #}
-
-                    {% if card.productBarcode %}
-                        <barcode>{{ card.productBarcode }}</barcode>
-                    {% endif %}
 
                     {% if card.productWeight is not empty %}
 
@@ -145,8 +155,9 @@
                         <weight>{{ card.productWeight }}</weight>
 
                         {# Длина, ширина, высота в упаковке в сантиметрах. (20.1/20.551/22.5) #}
-                        <dimensions>{{ card.productLength }}/{{ card.productWidth }}
-                            /{{ card.productHeight }}</dimensions>
+                        <dimensions>
+                            {{ card.productLength }}/{{ card.productWidth }}/{{ card.productHeight }}
+                        </dimensions>
 
                     {% endif %}
 
@@ -155,10 +166,11 @@
                 </condition> #}
                 </offer>
 
+
+
+
             {% endfor %}
 
-
         </offers>
-
     </shop>
 </yml_catalog>
