@@ -29,7 +29,7 @@
         {# @var v \BaksDev\Products\Product\Repository\AllProductsByCategory\AllProductsByCategoryResult #}
 
         <offers>
-            {% for card in products|filter(v => v.productPrice.roundValue > 0 and v.productQuantity > 0) %}
+            {% for card in products|filter(v => v.productPrice.roundValue > 0) %}
 
                 {% set arr_property = card.categorySectionField %}
 
@@ -114,16 +114,6 @@
                         {% endfor %}
                     {% endif %}
 
-                    {% if card.productQuantity > card.getCategoryThreshold %}
-                        {% set stock = 'более '~card.getCategoryThreshold %}
-                    {% elseif card.productQuantity > 0 %}
-                        {% set stock = card.productQuantity %}
-                    {% else %}
-                        {% set stock = 'нет в наличии' %}
-                    {% endif %}
-
-                    {# <stock>более 20</stock> #}
-
                     <description>
                         <![CDATA[
                         {{ card.preview|raw }}
@@ -135,11 +125,11 @@
                     {% endif %}
 
                     {% if card.productQuantity > card.getCategoryThreshold %}
-                        {% set stock = 'более '~card.getCategoryThreshold %}
+                        {% set stock = card.getCategoryThreshold %}
                     {% elseif card.productQuantity > 0 %}
                         {% set stock = card.productQuantity %}
                     {% else %}
-                        {% set stock = 'нет в наличии' %}
+                        {% set stock = 0 %}
                     {% endif %}
 
                     <stock>{{ stock }}</stock>

@@ -819,11 +819,11 @@ final class AllProductsByCategoryRepository implements AllProductsByCategoryInte
         $dbal
             ->addSelect('category_info.url AS category_url')
             ->addSelect('category_info.threshold AS category_threshold')
-            ->leftJoin(
+            ->join(
                 'category',
                 CategoryProductInfo::class,
                 'category_info',
-                'category_info.event = category.event',
+                'category_info.event = category.event AND category_info.active IS TRUE',
             );
 
         $dbal

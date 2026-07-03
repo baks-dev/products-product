@@ -87,9 +87,11 @@ final class ExportController extends AbstractController
     ): Response
     {
 
-        $response = $this->render(['urls' => $productsByCategory
-            ->forCategory($category)
-            ->fetchAllProductByCategory()]);
+        $response = $this->render([
+            'urls' => $productsByCategory
+                ->forCategory($category)
+                ->fetchAllProductByCategory(),
+        ]);
 
         $response->headers->set('Content-Type', 'text/xml');
 
