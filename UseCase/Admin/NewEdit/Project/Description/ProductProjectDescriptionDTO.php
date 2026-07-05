@@ -31,6 +31,7 @@ use BaksDev\Products\Product\Entity\Project\Description\ProductProjectDescriptio
 use ReflectionProperty;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/** @see ProductProjectDescription */
 final class ProductProjectDescriptionDTO implements ProductProjectDescriptionInterface
 {
     /** Локаль */
@@ -42,11 +43,9 @@ final class ProductProjectDescriptionDTO implements ProductProjectDescriptionInt
     private Device $device;
 
     /** Краткое описание */
-    #[Assert\Valid]
     private ?string $preview = null;
 
     /** Детальное описание */
-    #[Assert\Valid]
     private ?string $description = null;
 
 
