@@ -35,6 +35,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'product_project_season')]
+#[ORM\Index(columns: ['project', 'month'])]
 class ProductProjectSeason extends EntityState
 {
 
