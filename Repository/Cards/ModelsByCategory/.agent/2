@@ -1,0 +1,616 @@
+
+
+-- CTE для фильтрации продуктов по категории
+WITH filtered_products AS (
+    SELECT DISTINCT
+        product.id,
+        product.event
+    FROM product
+             INNER JOIN product_categories_product product_event_category
+                        ON product_event_category.event = product.event
+                            AND product_event_category.category = '019a7c9b-51fd-7692-9cd6-7bb3863fb2db'
+),
+
+-- CTE для агрегации цен с сохранением оригинальных алиасов
+     product_prices_agg AS (
+         SELECT
+             fp.id,
+             fp.event,
+             -- Минимальная цена для фильтрации
+             MIN(CASE
+                     WHEN product_modification_price.price > 0 THEN product_modification_price.price
+                     WHEN product_variation_price.price > 0 THEN product_variation_price.price
+                     WHEN product_offer_price.price > 0 THEN product_offer_price.price
+                     WHEN product_price.price > 0 THEN product_price.price
+                 END) AS min_price,
+             -- Итоговая цена с COALESCE
+             COALESCE(
+                     NULLIF(MIN(product_modification_price.price), 0),
+                     NULLIF(MIN(product_variation_price.price), 0),
+                     NULLIF(MIN(product_offer_price.price), 0),
+                     NULLIF(MIN(product_price.price), 0),
+                     0
+             ) AS product_price,
+             -- Валюта
+             COALESCE(
+                     MIN(product_modification_price.currency),
+                     MIN(product_variation_price.currency),
+                     MIN(product_offer_price.currency),
+                     MIN(product_price.currency)
+             ) AS product_currency
+         FROM filtered_products fp
+                  LEFT JOIN product_price product_price
+                            ON product_price.event = fp.event AND product_price.price > 0
+                  LEFT JOIN product_offer product_offer
+                            ON product_offer.event = fp.event
+                  LEFT JOIN product_offer_price product_offer_price
+                            ON product_offer_price.offer = product_offer.id AND product_offer_price.price > 0
+                  LEFT JOIN product_variation product_variation
+                            ON product_variation.offer = product_offer.id
+                  LEFT JOIN product_variation_price product_variation_price
+                            ON product_variation_price.variation = product_variation.id AND product_variation_price.price > 0
+                  LEFT JOIN product_modification product_modification
+                            ON product_modification.variation = product_variation.id
+                  LEFT JOIN product_modification_price product_modification_price
+                            ON product_modification_price.modification = product_modification.id AND product_modification_price.price > 0
+         GROUP BY fp.id, fp.event,
+                  product_modification_price.currency,
+                  product_variation_price.currency,
+                  product_offer_price.currency,
+                  product_price.currency
+         HAVING MIN(CASE
+                        WHEN product_modification_price.price > 0 THEN product_modification_price.price
+                        WHEN product_variation_price.price > 0 THEN product_variation_price.price
+                        WHEN product_offer_price.price > 0 THEN product_offer_price.price
+                        WHEN product_price.price > 0 THEN product_price.price
+             END) > 0
+     ),
+
+-- CTE для агрегации количества
+     product_quantity_agg AS (
+         SELECT
+             fp.id,
+             -- Доступное количество
+             COALESCE(
+                     MAX(CASE
+                             WHEN product_modification_quantity.quantity IS NOT NULL
+                                 THEN product_modification_quantity.quantity - product_modification_quantity.reserve
+                         END),
+                     MAX(CASE
+                             WHEN product_variation_quantity.quantity IS NOT NULL
+                                 THEN product_variation_quantity.quantity - product_variation_quantity.reserve
+                         END),
+                     MAX(CASE
+                             WHEN product_offer_quantity.quantity IS NOT NULL
+                                 THEN product_offer_quantity.quantity - product_offer_quantity.reserve
+                         END),
+                     MAX(CASE
+                             WHEN product_price.quantity IS NOT NULL
+                                 THEN product_price.quantity - product_price.reserve
+                         END),
+                     0
+             ) AS available_quantity,
+             -- Резервы для сортировки
+             COALESCE(
+                     SUM(product_modification_quantity.reserve),
+                     SUM(product_variation_quantity.reserve),
+                     SUM(product_offer_quantity.reserve),
+                     SUM(product_price.reserve)
+             ) AS total_reserve,
+             -- Количество для сортировки
+             COALESCE(
+                     SUM(product_modification_quantity.quantity),
+                     SUM(product_variation_quantity.quantity),
+                     SUM(product_offer_quantity.quantity),
+                     SUM(product_price.quantity)
+             ) AS total_quantity
+         FROM filtered_products fp
+                  LEFT JOIN product_price product_price
+                            ON product_price.event = fp.event
+                  LEFT JOIN product_offer product_offer
+                            ON product_offer.event = fp.event
+                  LEFT JOIN product_offer_quantity product_offer_quantity
+                            ON product_offer_quantity.offer = product_offer.id
+                  LEFT JOIN product_variation product_variation
+                            ON product_variation.offer = product_offer.id
+                  LEFT JOIN product_variation_quantity product_variation_quantity
+                            ON product_variation_quantity.variation = product_variation.id
+                  LEFT JOIN product_modification product_modification
+                            ON product_modification.variation = product_variation.id
+                  LEFT JOIN product_modification_quantity product_modification_quantity
+                            ON product_modification_quantity.modification = product_modification.id
+         GROUP BY fp.id
+         HAVING COALESCE(
+                        MAX(CASE
+                                WHEN product_modification_quantity.quantity IS NOT NULL
+                                    THEN product_modification_quantity.quantity - product_modification_quantity.reserve
+                            END),
+                        MAX(CASE
+                                WHEN product_variation_quantity.quantity IS NOT NULL
+                                    THEN product_variation_quantity.quantity - product_variation_quantity.reserve
+                            END),
+                        MAX(CASE
+                                WHEN product_offer_quantity.quantity IS NOT NULL
+                                    THEN product_offer_quantity.quantity - product_offer_quantity.reserve
+                            END),
+                        MAX(CASE
+                                WHEN product_price.quantity IS NOT NULL
+                                    THEN product_price.quantity - product_price.reserve
+                            END),
+                        0
+                ) > 0
+     ),
+
+-- CTE для основных данных продукта
+     product_details_agg AS (
+         SELECT
+             fp.id,
+             fp.event,
+             product_trans.name AS product_name,
+             product_info.url AS product_url,
+             product_info.sort AS product_sort,
+             product_active.active AS product_active,
+             product_active.active_from AS product_active_from,
+             product_active.active_to AS product_active_to,
+             category_offer.card AS category_offer_card,
+             category_offer.reference AS product_offer_reference,
+             category_variation.card AS category_variation_card,
+             category_variation.reference AS product_variation_reference,
+             category_modification.card AS category_modification_card,
+             category_modification.reference AS product_modification_reference,
+             category_info.url AS category_url,
+             category_trans.name AS category_name,
+             product_project_season.percent AS season_percent,
+             -- Изображение с сохранением CASE
+             CASE
+                 WHEN product_modification_image.name IS NOT NULL THEN
+                     CONCAT('/upload/product_modification_images', '/', product_modification_image.name)
+                 WHEN product_variation_image.name IS NOT NULL THEN
+                     CONCAT('/upload/product_variation_images', '/', product_variation_image.name)
+                 WHEN product_offer_images.name IS NOT NULL THEN
+                     CONCAT('/upload/product_offer_images', '/', product_offer_images.name)
+                 WHEN product_photo.name IS NOT NULL THEN
+                     CONCAT('/upload/product_photo', '/', product_photo.name)
+                 ELSE NULL
+                 END AS product_image,
+             COALESCE(
+                     product_modification_image.ext,
+                     product_variation_image.ext,
+                     product_offer_images.ext,
+                     product_photo.ext
+             ) AS product_image_ext,
+             COALESCE(
+                     product_modification_image.cdn,
+                     product_variation_image.cdn,
+                     product_offer_images.cdn,
+                     product_photo.cdn
+             ) AS product_image_cdn,
+             -- Инварианты с сохранением оригинальной логики
+             (SELECT JSON_AGG(DISTINCT product_invariable.id)
+              FROM product_invariable
+              WHERE product_invariable.product = fp.id
+                AND CASE
+                        WHEN product_offer.const IS NOT NULL THEN product_invariable.offer = product_offer.const
+                        ELSE product_invariable.offer IS NULL
+                  END
+                AND CASE
+                        WHEN product_variation.const IS NOT NULL THEN product_invariable.variation = product_variation.const
+                        ELSE product_invariable.variation IS NULL
+                  END
+                AND CASE
+                        WHEN product_modification.const IS NOT NULL THEN product_invariable.modification = product_modification.const
+                        ELSE product_invariable.modification IS NULL
+                  END
+             ) AS invariable
+         FROM filtered_products fp
+                  INNER JOIN product ON product.id = fp.id
+                  LEFT JOIN product_trans product_trans
+                            ON product_trans.event = product.event AND product_trans.local = 'ru'
+                  LEFT JOIN product_info product_info
+                            ON product_info.product = product.id
+                  LEFT JOIN product_active product_active
+                            ON product_active.event = product.event
+                  LEFT JOIN product_offer product_offer
+                            ON product_offer.event = product.event
+                  LEFT JOIN product_category_offers category_offer
+                            ON category_offer.id = product_offer.category_offer
+                  LEFT JOIN product_variation product_variation
+                            ON product_variation.offer = product_offer.id
+                  LEFT JOIN product_category_variation category_variation
+                            ON category_variation.id = product_variation.category_variation
+                  LEFT JOIN product_modification product_modification
+                            ON product_modification.variation = product_variation.id
+                  LEFT JOIN product_category_modification category_modification
+                            ON category_modification.id = product_modification.category_modification
+                  LEFT JOIN product_modification_images product_modification_image
+                            ON product_modification_image.modification = product_modification.id
+                                AND product_modification_image.root = true
+                  LEFT JOIN product_variation_images product_variation_image
+                            ON product_variation_image.variation = product_variation.id
+                                AND product_variation_image.root = true
+                  LEFT JOIN product_offer_images product_offer_images
+                            ON product_offer_images.offer = product_offer.id
+                                AND product_offer_images.root = true
+                  LEFT JOIN product_photo product_photo
+                            ON product_photo.event = product.event
+                                AND product_photo.root = true
+                  LEFT JOIN product_category category
+                            ON category.id = '019a7c9b-51fd-7692-9cd6-7bb3863fb2db'
+                  LEFT JOIN product_category_info category_info
+                            ON category_info.event = category.event AND category_info.active IS TRUE
+                  LEFT JOIN product_category_trans category_trans
+                            ON category_trans.event = category.event AND category_trans.local = 'ru'
+                  LEFT JOIN product_project product_project
+                            ON product_project.product = product.id
+                                AND product_project.profile = '018e9e8f-9a83-7af7-a904-f34b393d69bf'
+                  LEFT JOIN product_project_season product_project_season
+                            ON product_project_season.project = product_project.id
+                                AND product_project_season.month = 7
+         GROUP BY
+             fp.id,
+             fp.event,
+             product_trans.name,
+             product_info.url,
+             product_info.sort,
+             product_active.active,
+             product_active.active_from,
+             product_active.active_to,
+             category_offer.card,
+             category_offer.reference,
+             category_variation.card,
+             category_variation.reference,
+             category_modification.card,
+             category_modification.reference,
+             product_modification_image.name,
+             product_variation_image.name,
+             product_offer_images.name,
+             product_photo.name,
+             product_modification_image.ext,
+             product_variation_image.ext,
+             product_offer_images.ext,
+             product_photo.ext,
+             product_modification_image.cdn,
+             product_variation_image.cdn,
+             product_offer_images.cdn,
+             product_photo.cdn,
+             category_info.url,
+             category_trans.name,
+             product_project_season.percent,
+             product_offer.const,
+             product_variation.const,
+             product_modification.const
+     ),
+
+-- CTE для акций
+     product_promotions_agg AS (
+         SELECT
+             product_invariable.product,
+             JSONB_BUILD_OBJECT(
+                     'promo', product_promotion_price.value,
+                     'price', COALESCE(
+                             product_modification_price.price,
+                             product_variation_price.price,
+                             product_offer_price.price,
+                             product_price.price
+                              )
+             ) AS promotion_data
+         FROM product_invariable
+                  INNER JOIN product_promotion_invariable
+                             ON product_promotion_invariable.product = product_invariable.id
+                                 AND product_promotion_invariable.profile = '018e9e8f-9a83-7af7-a904-f34b393d69bf'
+                  INNER JOIN product_promotion
+                             ON product_promotion.id = product_promotion_invariable.main
+                  INNER JOIN product_promotion_price
+                             ON product_promotion_price.event = product_promotion.event
+                  INNER JOIN product_promotion_period
+                             ON product_promotion_period.event = product_promotion.event
+                  LEFT JOIN product_price
+                            ON product_price.event = product_invariable.product
+                  LEFT JOIN product_offer product_offer
+                            ON product_offer.event = product_invariable.product
+                  LEFT JOIN product_offer_price
+                            ON product_offer_price.offer = product_offer.id
+                  LEFT JOIN product_variation product_variation
+                            ON product_variation.offer = product_offer.id
+                  LEFT JOIN product_variation_price
+                            ON product_variation_price.variation = product_variation.id
+                  LEFT JOIN product_modification product_modification
+                            ON product_modification.variation = product_variation.id
+                  LEFT JOIN product_modification_price
+                            ON product_modification_price.modification = product_modification.id
+         WHERE CURRENT_DATE >= product_promotion_period.date_start
+           AND (product_promotion_period.date_end IS NULL
+             OR CURRENT_DATE <= product_promotion_period.date_end)
+     )
+
+-- Финальный SELECT с сохранением всех оригинальных алиасов
+SELECT
+    product_details_agg.id AS product_id,
+    product_details_agg.event AS product_event,
+    product_details_agg.product_name,
+    product_details_agg.product_url,
+    product_details_agg.product_sort,
+    product_details_agg.product_active,
+    product_details_agg.product_active_from,
+    product_details_agg.product_active_to,
+    product_details_agg.category_offer_card,
+    product_details_agg.product_offer_reference,
+    product_details_agg.category_variation_card,
+    product_details_agg.product_variation_reference,
+    product_details_agg.category_modification_card,
+    product_details_agg.product_modification_reference,
+    product_details_agg.invariable,
+    product_details_agg.product_image,
+    product_details_agg.product_image_ext,
+    product_details_agg.product_image_cdn,
+    product_details_agg.category_url,
+    product_details_agg.category_name,
+    (SELECT JSON_AGG(promotion_data)
+     FROM product_promotions_agg
+     WHERE product_promotions_agg.product = product_details_agg.id) AS promotion_price,
+    product_prices_agg.product_price,
+    product_prices_agg.product_currency,
+    product_details_agg.season_percent
+FROM product_details_agg
+         INNER JOIN product_prices_agg
+                    ON product_prices_agg.id = product_details_agg.id
+         INNER JOIN product_quantity_agg
+                    ON product_quantity_agg.id = product_details_agg.id
+ORDER BY
+    product_details_agg.product_sort DESC,
+    product_quantity_agg.total_reserve DESC,
+    product_quantity_agg.total_quantity DESC
+LIMIT 6;
+
+
+
+EXPLAIN (ANALYZE):
+
+Limit  (cost=3124.17..3236.64 rows=1 width=2067) (actual time=37.127..37.760 rows=6 loops=1)
+  CTE filtered_products
+    ->  Unique  (cost=122.02..122.05 rows=4 width=32) (actual time=0.275..0.287 rows=13 loops=1)
+          ->  Sort  (cost=122.02..122.03 rows=4 width=32) (actual time=0.274..0.279 rows=13 loops=1)
+"                Sort Key: product_1.id, product_1.event"
+                Sort Method: quicksort  Memory: 25kB
+                ->  Nested Loop  (cost=0.29..121.98 rows=4 width=32) (actual time=0.084..0.249 rows=13 loops=1)
+                      ->  Seq Scan on product product_1  (cost=0.00..3.05 rows=105 width=32) (actual time=0.030..0.044 rows=105 loops=1)
+                      ->  Index Only Scan using product_categories_product_pkey on product_categories_product product_event_category  (cost=0.29..1.13 rows=1 width=16) (actual time=0.002..0.002 rows=0 loops=105)
+                            Index Cond: ((event = product_1.event) AND (category = '019a7c9b-51fd-7692-9cd6-7bb3863fb2db'::uuid))
+                            Heap Fetches: 13
+  ->  Result  (cost=3002.12..3114.59 rows=1 width=2067) (actual time=37.125..37.755 rows=6 loops=1)
+        ->  Sort  (cost=3002.12..3002.13 rows=1 width=2035) (actual time=36.859..36.889 rows=6 loops=1)
+"              Sort Key: product_info.sort DESC, (COALESCE(sum(product_modification_quantity.reserve), sum(product_variation_quantity.reserve), sum(product_offer_quantity.reserve), sum(product_price_1.reserve))) DESC, (COALESCE(sum(product_modification_quantity.quantity), sum(product_variation_quantity.quantity), sum(product_offer_quantity.quantity), sum(product_price_1.quantity))) DESC"
+              Sort Method: top-N heapsort  Memory: 30kB
+              ->  Nested Loop  (cost=416.39..3002.11 rows=1 width=2035) (actual time=31.175..36.497 rows=273 loops=1)
+                    Join Filter: (fp_1.id = fp.id)
+                    Rows Removed by Join Filter: 1911
+                    ->  GroupAggregate  (cost=80.12..197.47 rows=21 width=96) (actual time=1.759..3.901 rows=8 loops=1)
+"                          Group Key: fp.event, fp.id, product_modification_price.currency, product_variation_price.currency, product_offer_price.currency, product_price.currency"
+                          Filter: (min(CASE WHEN (product_modification_price.price > 0) THEN product_modification_price.price WHEN (product_variation_price.price > 0) THEN product_variation_price.price WHEN (product_offer_price.price > 0) THEN product_offer_price.price WHEN (product_price.price > 0) THEN product_price.price ELSE NULL::bigint END) > 0)
+                          Rows Removed by Filter: 9
+                          ->  Incremental Sort  (cost=80.12..187.43 rows=190 width=80) (actual time=1.735..3.715 rows=278 loops=1)
+"                                Sort Key: fp.event, fp.id, product_modification_price.currency, product_variation_price.currency, product_offer_price.currency, product_price.currency"
+                                Presorted Key: fp.event
+                                Full-sort Groups: 4  Sort Method: quicksort  Average Memory: 29kB  Peak Memory: 29kB
+                                Pre-sorted Groups: 9  Sort Method: quicksort  Average Memory: 25kB  Peak Memory: 25kB
+                                ->  Nested Loop Left Join  (cost=45.17..179.69 rows=190 width=80) (actual time=1.348..3.302 rows=278 loops=1)
+                                      ->  Nested Loop Left Join  (cost=44.75..92.85 rows=190 width=84) (actual time=1.329..2.237 rows=278 loops=1)
+                                            ->  Merge Left Join  (cost=44.33..45.36 rows=86 width=84) (actual time=1.299..1.416 rows=163 loops=1)
+                                                  Merge Cond: (fp.event = product_price.event)
+                                                  ->  Sort  (cost=33.63..33.85 rows=86 width=72) (actual time=1.093..1.133 rows=163 loops=1)
+                                                        Sort Key: fp.event
+                                                        Sort Method: quicksort  Memory: 35kB
+                                                        ->  Hash Left Join  (cost=6.05..30.87 rows=86 width=72) (actual time=0.448..0.977 rows=163 loops=1)
+                                                              Hash Cond: (product_offer.id = product_offer_price.offer)
+                                                              ->  Nested Loop Left Join  (cost=3.38..27.97 rows=86 width=76) (actual time=0.391..0.880 rows=163 loops=1)
+                                                                    ->  CTE Scan on filtered_products fp  (cost=0.00..0.08 rows=4 width=32) (actual time=0.277..0.304 rows=13 loops=1)
+                                                                    ->  Hash Left Join  (cost=3.38..9.28 rows=23 width=60) (actual time=0.018..0.042 rows=13 loops=13)
+                                                                          Hash Cond: (product_variation.id = product_variation_price.variation)
+                                                                          ->  Nested Loop Left Join  (cost=0.71..6.55 rows=23 width=48) (actual time=0.012..0.032 rows=13 loops=13)
+                                                                                ->  Index Scan using idx_888afc623bae0aa7 on product_offer  (cost=0.29..2.84 rows=6 width=32) (actual time=0.005..0.006 rows=4 loops=13)
+                                                                                      Index Cond: (event = fp.event)
+                                                                                ->  Index Scan using idx_c3b856729d6873e on product_variation  (cost=0.42..0.57 rows=5 width=32) (actual time=0.004..0.005 rows=3 loops=51)
+                                                                                      Index Cond: (offer = product_offer.id)
+                                                                          ->  Hash  (cost=2.59..2.59 rows=6 width=28) (actual time=0.040..0.041 rows=6 loops=1)
+                                                                                Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                                                                                ->  Index Scan using idx_2374881cac822d9 on product_variation_price  (cost=0.29..2.59 rows=6 width=28) (actual time=0.024..0.029 rows=6 loops=1)
+                                                                                      Index Cond: (price > 0)
+                                                              ->  Hash  (cost=2.60..2.60 rows=6 width=28) (actual time=0.033..0.034 rows=6 loops=1)
+                                                                    Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                                                                    ->  Index Scan using idx_e5cac12fcac822d9 on product_offer_price  (cost=0.28..2.60 rows=6 width=28) (actual time=0.022..0.027 rows=6 loops=1)
+                                                                          Index Cond: (price > 0)
+                                                  ->  Sort  (cost=10.70..10.99 rows=118 width=28) (actual time=0.186..0.193 rows=119 loops=1)
+                                                        Sort Key: product_price.event
+                                                        Sort Method: quicksort  Memory: 30kB
+                                                        ->  Index Scan using idx_6b945985cac822d9 on product_price  (cost=0.29..6.63 rows=118 width=28) (actual time=0.023..0.130 rows=119 loops=1)
+                                                              Index Cond: (price > 0)
+                                            ->  Index Scan using idx_62c007b9629b33ea on product_modification  (cost=0.42..0.52 rows=3 width=32) (actual time=0.003..0.004 rows=2 loops=163)
+                                                  Index Cond: (variation = product_variation.id)
+                                      ->  Index Scan using product_modification_price_pkey on product_modification_price  (cost=0.42..0.46 rows=1 width=28) (actual time=0.003..0.003 rows=1 loops=278)
+                                            Index Cond: (modification = product_modification.id)
+                                            Filter: (price > 0)
+                                            Rows Removed by Filter: 0
+                    ->  Materialize  (cost=336.26..2804.12 rows=1 width=2011) (actual time=1.254..4.021 rows=273 loops=8)
+                          ->  Merge Join  (cost=336.26..2804.12 rows=1 width=2011) (actual time=10.022..31.026 rows=273 loops=1)
+                                Merge Cond: (fp_1.id = fp_2.id)
+                                ->  Group  (cost=333.71..2578.08 rows=192 width=5162) (actual time=8.510..25.333 rows=274 loops=1)
+"                                      Group Key: fp_1.id, fp_1.event, product_trans.name, product_info.url, product_info.sort, product_active.active, product_active.active_from, product_active.active_to, category_offer.card, category_offer.reference, category_variation.card, category_variation.reference, category_modification.card, category_modification.reference, product_modification_image.name, product_variation_image.name, product_offer_images.name, product_photo.name, product_modification_image.ext, product_variation_image.ext, product_offer_images.ext, product_photo.ext, product_modification_image.cdn, product_variation_image.cdn, product_offer_images.cdn, product_photo.cdn, category_info.url, category_trans.name, product_project_season.percent, product_offer_1.const, product_variation_1.const, product_modification_1.const"
+                                      ->  Incremental Sort  (cost=333.71..359.29 rows=192 width=4581) (actual time=8.338..13.366 rows=274 loops=1)
+"                                            Sort Key: fp_1.id, fp_1.event, product_trans.name, product_info.url, product_info.sort, product_active.active, product_active.active_from, product_active.active_to, category_offer.card, category_offer.reference, category_variation.card, category_variation.reference, category_modification.card, category_modification.reference, product_modification_image.name, product_variation_image.name, product_offer_images.name, product_photo.name, product_modification_image.ext, product_variation_image.ext, product_offer_images.ext, product_photo.ext, product_modification_image.cdn, product_variation_image.cdn, product_offer_images.cdn, product_photo.cdn, category_info.url, category_trans.name, product_project_season.percent, product_offer_1.const, product_variation_1.const, product_modification_1.const"
+                                            Presorted Key: fp_1.id
+                                            Full-sort Groups: 6  Sort Method: quicksort  Average Memory: 42kB  Peak Memory: 42kB
+                                            Pre-sorted Groups: 1  Sort Method: quicksort  Average Memory: 50kB  Peak Memory: 50kB
+                                            ->  Nested Loop Left Join  (cost=333.51..353.70 rows=192 width=4581) (actual time=3.502..4.241 rows=278 loops=1)
+                                                  ->  Nested Loop Left Join  (cost=333.22..343.17 rows=192 width=3847) (actual time=3.427..3.929 rows=278 loops=1)
+                                                        Join Filter: (product_project_season.project = product_project.id)
+                                                        ->  Merge Left Join  (cost=333.07..336.88 rows=192 width=3347) (actual time=3.405..3.757 rows=278 loops=1)
+                                                              Merge Cond: (product.id = product_project.product)
+                                                              ->  Sort  (cost=318.46..318.94 rows=192 width=3347) (actual time=3.244..3.285 rows=278 loops=1)
+                                                                    Sort Key: fp_1.id
+                                                                    Sort Method: quicksort  Memory: 99kB
+                                                                    ->  Hash Left Join  (cost=39.62..311.18 rows=192 width=3347) (actual time=0.607..2.823 rows=278 loops=1)
+                                                                          Hash Cond: (product_modification_1.id = product_modification_image.modification)
+                                                                          ->  Hash Left Join  (cost=28.48..299.32 rows=192 width=2330) (actual time=0.562..2.682 rows=278 loops=1)
+                                                                                Hash Cond: (product_modification_1.category_modification = category_modification.id)
+                                                                                ->  Nested Loop Left Join  (cost=27.17..297.36 rows=192 width=2326) (actual time=0.500..2.496 rows=278 loops=1)
+                                                                                      ->  Nested Loop Left Join  (cost=26.75..249.32 rows=87 width=2294) (actual time=0.479..1.815 rows=163 loops=1)
+                                                                                            ->  Hash Left Join  (cost=26.46..64.64 rows=86 width=2274) (actual time=0.448..1.093 rows=163 loops=1)
+                                                                                                  Hash Cond: (product_offer_1.id = product_offer_images.offer)
+                                                                                                  ->  Hash Left Join  (cost=15.32..53.17 rows=86 width=1257) (actual time=0.402..0.998 rows=163 loops=1)
+                                                                                                        Hash Cond: (product_variation_1.id = product_variation_image.variation)
+                                                                                                        ->  Hash Left Join  (cost=4.18..41.70 rows=86 width=224) (actual time=0.339..0.884 rows=163 loops=1)
+                                                                                                              Hash Cond: (product_variation_1.category_variation = category_variation.id)
+                                                                                                              ->  Nested Loop Left Join  (cost=2.87..40.09 rows=86 width=222) (actual time=0.269..0.749 rows=163 loops=1)
+                                                                                                                    ->  Hash Left Join  (cost=2.45..25.89 rows=23 width=174) (actual time=0.248..0.488 rows=51 loops=1)
+                                                                                                                          Hash Cond: (product_offer_1.category_offer = category_offer.id)
+                                                                                                                          ->  Nested Loop Left Join  (cost=1.13..24.50 rows=23 width=171) (actual time=0.152..0.370 rows=51 loops=1)
+                                                                                                                                ->  Nested Loop Left Join  (cost=0.84..15.32 rows=4 width=123) (actual time=0.132..0.289 rows=13 loops=1)
+                                                                                                                                      ->  Nested Loop Left Join  (cost=0.56..9.96 rows=4 width=106) (actual time=0.105..0.221 rows=13 loops=1)
+                                                                                                                                            ->  Nested Loop Left Join  (cost=0.42..9.15 rows=4 width=85) (actual time=0.087..0.166 rows=13 loops=1)
+                                                                                                                                                  ->  Hash Join  (cost=0.13..3.61 rows=4 width=64) (actual time=0.065..0.094 rows=13 loops=1)
+                                                                                                                                                        Hash Cond: (product.id = fp_1.id)
+                                                                                                                                                        ->  Seq Scan on product  (cost=0.00..3.05 rows=105 width=32) (actual time=0.023..0.036 rows=105 loops=1)
+                                                                                                                                                        ->  Hash  (cost=0.08..0.08 rows=4 width=32) (actual time=0.008..0.008 rows=13 loops=1)
+                                                                                                                                                              Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                                                                                                                                                              ->  CTE Scan on filtered_products fp_1  (cost=0.00..0.08 rows=4 width=32) (actual time=0.001..0.002 rows=13 loops=1)
+                                                                                                                                                  ->  Index Scan using idx_d17d65e13bae0aa7 on product_trans  (cost=0.29..1.38 rows=1 width=37) (actual time=0.004..0.004 rows=1 loops=13)
+                                                                                                                                                        Index Cond: (event = product.event)
+                                                                                                                                                        Filter: ((local)::text = 'ru'::text)
+                                                                                                                                            ->  Index Scan using product_info_pkey on product_info  (cost=0.14..0.20 rows=1 width=37) (actual time=0.003..0.003 rows=1 loops=13)
+                                                                                                                                                  Index Cond: (product = product.id)
+                                                                                                                                      ->  Index Scan using product_active_pkey on product_active  (cost=0.29..1.34 rows=1 width=33) (actual time=0.004..0.004 rows=1 loops=13)
+                                                                                                                                            Index Cond: (event = product.event)
+                                                                                                                                ->  Index Scan using idx_888afc623bae0aa7 on product_offer product_offer_1  (cost=0.29..2.24 rows=6 width=64) (actual time=0.003..0.004 rows=4 loops=13)
+                                                                                                                                      Index Cond: (event = product.event)
+                                                                                                                          ->  Hash  (cost=1.14..1.14 rows=14 width=35) (actual time=0.048..0.048 rows=16 loops=1)
+                                                                                                                                Buckets: 1024  Batches: 1  Memory Usage: 10kB
+                                                                                                                                ->  Seq Scan on product_category_offers category_offer  (cost=0.00..1.14 rows=14 width=35) (actual time=0.036..0.039 rows=16 loops=1)
+                                                                                                                    ->  Index Scan using idx_c3b856729d6873e on product_variation product_variation_1  (cost=0.42..0.57 rows=5 width=64) (actual time=0.003..0.004 rows=3 loops=51)
+                                                                                                                          Index Cond: (offer = product_offer_1.id)
+                                                                                                              ->  Hash  (cost=1.14..1.14 rows=14 width=34) (actual time=0.040..0.041 rows=16 loops=1)
+                                                                                                                    Buckets: 1024  Batches: 1  Memory Usage: 10kB
+                                                                                                                    ->  Seq Scan on product_category_variation category_variation  (cost=0.00..1.14 rows=14 width=34) (actual time=0.020..0.023 rows=16 loops=1)
+                                                                                                        ->  Hash  (cost=10.70..10.70 rows=35 width=1049) (actual time=0.037..0.038 rows=0 loops=1)
+                                                                                                              Buckets: 1024  Batches: 1  Memory Usage: 8kB
+                                                                                                              ->  Seq Scan on product_variation_images product_variation_image  (cost=0.00..10.70 rows=35 width=1049) (actual time=0.037..0.037 rows=0 loops=1)
+                                                                                                                    Filter: root
+                                                                                                                    Rows Removed by Filter: 6
+                                                                                                  ->  Hash  (cost=10.70..10.70 rows=35 width=1049) (actual time=0.020..0.021 rows=0 loops=1)
+                                                                                                        Buckets: 1024  Batches: 1  Memory Usage: 8kB
+                                                                                                        ->  Seq Scan on product_offer_images  (cost=0.00..10.70 rows=35 width=1049) (actual time=0.020..0.020 rows=0 loops=1)
+                                                                                                              Filter: root
+                                                                                                              Rows Removed by Filter: 6
+                                                                                            ->  Index Scan using idx_b5ebff443bae0aa7 on product_photo  (cost=0.29..2.14 rows=1 width=52) (actual time=0.002..0.004 rows=1 loops=163)
+                                                                                                  Index Cond: (event = product.event)
+                                                                                                  Filter: root
+                                                                                                  Rows Removed by Filter: 5
+                                                                                      ->  Index Scan using idx_62c007b9629b33ea on product_modification product_modification_1  (cost=0.42..0.52 rows=3 width=64) (actual time=0.003..0.003 rows=2 loops=163)
+                                                                                            Index Cond: (variation = product_variation_1.id)
+                                                                                ->  Hash  (cost=1.14..1.14 rows=14 width=36) (actual time=0.030..0.031 rows=16 loops=1)
+                                                                                      Buckets: 1024  Batches: 1  Memory Usage: 10kB
+                                                                                      ->  Seq Scan on product_category_modification category_modification  (cost=0.00..1.14 rows=14 width=36) (actual time=0.020..0.023 rows=16 loops=1)
+                                                                          ->  Hash  (cost=10.70..10.70 rows=35 width=1049) (actual time=0.023..0.024 rows=0 loops=1)
+                                                                                Buckets: 1024  Batches: 1  Memory Usage: 8kB
+                                                                                ->  Seq Scan on product_modification_images product_modification_image  (cost=0.00..10.70 rows=35 width=1049) (actual time=0.023..0.023 rows=0 loops=1)
+                                                                                      Filter: root
+                                                                                      Rows Removed by Filter: 6
+                                                              ->  Sort  (cost=14.61..14.87 rows=104 width=32) (actual time=0.147..0.198 rows=368 loops=1)
+                                                                    Sort Key: product_project.product
+                                                                    Sort Method: quicksort  Memory: 29kB
+                                                                    ->  Seq Scan on product_project  (cost=0.00..11.12 rows=104 width=32) (actual time=0.031..0.095 rows=104 loops=1)
+                                                                          Filter: (profile = '018e9e8f-9a83-7af7-a904-f34b393d69bf'::uuid)
+                                                                          Rows Removed by Filter: 386
+                                                        ->  Materialize  (cost=0.14..3.41 rows=1 width=532) (actual time=0.000..0.000 rows=0 loops=278)
+                                                              ->  Index Scan using idx_b429cecf2fb3d0ee8eb61006 on product_project_season  (cost=0.14..3.41 rows=1 width=532) (actual time=0.013..0.013 rows=0 loops=1)
+                                                                    Index Cond: (month = 7)
+                                                  ->  Materialize  (cost=0.29..8.13 rows=1 width=734) (actual time=0.000..0.001 rows=1 loops=278)
+                                                        ->  Nested Loop Left Join  (cost=0.29..8.12 rows=1 width=734) (actual time=0.069..0.072 rows=1 loops=1)
+                                                              ->  Nested Loop Left Join  (cost=0.14..3.54 rows=1 width=532) (actual time=0.042..0.044 rows=1 loops=1)
+                                                                    ->  Seq Scan on product_category category  (cost=0.00..1.11 rows=1 width=16) (actual time=0.022..0.024 rows=1 loops=1)
+                                                                          Filter: (id = '019a7c9b-51fd-7692-9cd6-7bb3863fb2db'::uuid)
+                                                                          Rows Removed by Filter: 14
+                                                                    ->  Index Scan using product_category_info_pkey on product_category_info category_info  (cost=0.14..2.36 rows=1 width=532) (actual time=0.018..0.018 rows=1 loops=1)
+                                                                          Index Cond: (event = category.event)
+                                                                          Filter: (active IS TRUE)
+                                                              ->  Index Scan using idx_cb7b2fd83bae0aa7 on product_category_trans category_trans  (cost=0.15..2.37 rows=1 width=234) (actual time=0.025..0.025 rows=1 loops=1)
+                                                                    Index Cond: (event = category.event)
+                                                                    Filter: ((local)::text = 'ru'::text)
+                                      SubPlan 3
+                                        ->  Aggregate  (cost=11.46..11.47 rows=1 width=32) (actual time=0.039..0.039 rows=1 loops=274)
+                                              ->  Sort  (cost=11.44..11.45 rows=3 width=16) (actual time=0.033..0.033 rows=1 loops=274)
+                                                    Sort Key: product_invariable_1.id
+                                                    Sort Method: quicksort  Memory: 25kB
+                                                    ->  Index Scan using idx_60d11a35d34a04ad on product_invariable product_invariable_1  (cost=0.28..11.41 rows=3 width=16) (actual time=0.017..0.028 rows=1 loops=274)
+                                                          Index Cond: (product = fp_1.id)
+                                                          Filter: (CASE WHEN (product_offer_1.const IS NOT NULL) THEN (offer = product_offer_1.const) ELSE (offer IS NULL) END AND CASE WHEN (product_variation_1.const IS NOT NULL) THEN (variation = product_variation_1.const) ELSE (variation IS NULL) END AND CASE WHEN (product_modification_1.const IS NOT NULL) THEN (modification = product_modification_1.const) ELSE (modification IS NULL) END)
+                                                          Rows Removed by Filter: 55
+                                ->  GroupAggregate  (cost=2.55..223.61 rows=1 width=36) (actual time=1.507..5.340 rows=8 loops=1)
+                                      Group Key: fp_2.id
+"                                      Filter: (COALESCE(max(CASE WHEN (product_modification_quantity.quantity IS NOT NULL) THEN (product_modification_quantity.quantity - product_modification_quantity.reserve) ELSE NULL::integer END), max(CASE WHEN (product_variation_quantity.quantity IS NOT NULL) THEN (product_variation_quantity.quantity - product_variation_quantity.reserve) ELSE NULL::integer END), max(CASE WHEN (product_offer_quantity.quantity IS NOT NULL) THEN (product_offer_quantity.quantity - product_offer_quantity.reserve) ELSE NULL::integer END), max(CASE WHEN (product_price_1.quantity IS NOT NULL) THEN (product_price_1.quantity - product_price_1.reserve) ELSE NULL::integer END), 0) > 0)"
+                                      Rows Removed by Filter: 5
+                                      ->  Nested Loop Left Join  (cost=2.55..215.49 rows=190 width=48) (actual time=0.247..5.071 rows=278 loops=1)
+                                            ->  Nested Loop Left Join  (cost=2.13..129.47 rows=190 width=56) (actual time=0.205..3.409 rows=278 loops=1)
+                                                  ->  Nested Loop Left Join  (cost=1.70..81.98 rows=86 width=56) (actual time=0.175..2.233 rows=163 loops=1)
+                                                        ->  Nested Loop Left Join  (cost=1.28..43.26 rows=86 width=48) (actual time=0.143..1.217 rows=163 loops=1)
+                                                              ->  Nested Loop Left Join  (cost=0.86..29.06 rows=23 width=48) (actual time=0.103..0.684 rows=51 loops=1)
+                                                                    ->  Nested Loop Left Join  (cost=0.57..21.70 rows=23 width=40) (actual time=0.074..0.324 rows=51 loops=1)
+                                                                          ->  Nested Loop Left Join  (cost=0.29..10.09 rows=4 width=40) (actual time=0.037..0.147 rows=13 loops=1)
+                                                                                ->  CTE Scan on filtered_products fp_2  (cost=0.00..0.08 rows=4 width=32) (actual time=0.001..0.011 rows=13 loops=1)
+                                                                                ->  Index Scan using product_price_pkey on product_price product_price_1  (cost=0.29..2.50 rows=1 width=24) (actual time=0.008..0.008 rows=1 loops=13)
+                                                                                      Index Cond: (event = fp_2.event)
+                                                                          ->  Index Scan using idx_888afc623bae0aa7 on product_offer product_offer_2  (cost=0.29..2.84 rows=6 width=32) (actual time=0.007..0.010 rows=4 loops=13)
+                                                                                Index Cond: (event = fp_2.event)
+                                                                    ->  Index Scan using product_offer_quantity_pkey on product_offer_quantity  (cost=0.29..0.32 rows=1 width=24) (actual time=0.005..0.005 rows=1 loops=51)
+                                                                          Index Cond: (offer = product_offer_2.id)
+                                                              ->  Index Scan using idx_c3b856729d6873e on product_variation product_variation_2  (cost=0.42..0.57 rows=5 width=32) (actual time=0.006..0.008 rows=3 loops=51)
+                                                                    Index Cond: (offer = product_offer_2.id)
+                                                        ->  Index Scan using product_variation_quantity_pkey on product_variation_quantity  (cost=0.42..0.45 rows=1 width=24) (actual time=0.005..0.005 rows=1 loops=163)
+                                                              Index Cond: (variation = product_variation_2.id)
+                                                  ->  Index Scan using idx_62c007b9629b33ea on product_modification product_modification_2  (cost=0.42..0.52 rows=3 width=32) (actual time=0.005..0.006 rows=2 loops=163)
+                                                        Index Cond: (variation = product_variation_2.id)
+                                            ->  Index Scan using product_modification_quantity_pkey on product_modification_quantity  (cost=0.42..0.45 rows=1 width=24) (actual time=0.005..0.005 rows=1 loops=278)
+                                                  Index Cond: (modification = product_modification_2.id)
+        SubPlan 2
+          ->  Aggregate  (cost=112.44..112.45 rows=1 width=32) (actual time=0.141..0.141 rows=1 loops=6)
+                ->  Nested Loop Left Join  (cost=14.75..112.19 rows=51 width=36) (actual time=0.139..0.140 rows=0 loops=6)
+                      ->  Nested Loop Left Join  (cost=14.33..89.00 rows=51 width=44) (actual time=0.139..0.139 rows=0 loops=6)
+                            ->  Nested Loop Left Join  (cost=13.91..76.30 rows=23 width=44) (actual time=0.139..0.139 rows=0 loops=6)
+                                  ->  Nested Loop Left Join  (cost=13.62..69.24 rows=23 width=36) (actual time=0.138..0.139 rows=0 loops=6)
+                                        ->  Nested Loop Left Join  (cost=13.20..52.25 rows=6 width=36) (actual time=0.138..0.138 rows=0 loops=6)
+                                              ->  Nested Loop Left Join  (cost=12.92..37.25 rows=6 width=28) (actual time=0.137..0.138 rows=0 loops=6)
+                                                    ->  Nested Loop Left Join  (cost=12.63..34.35 rows=1 width=28) (actual time=0.137..0.137 rows=0 loops=6)
+                                                          ->  Nested Loop  (cost=12.34..31.84 rows=1 width=20) (actual time=0.137..0.137 rows=0 loops=6)
+                                                                ->  Nested Loop  (cost=12.07..31.52 rows=1 width=52) (actual time=0.136..0.136 rows=0 loops=6)
+                                                                      ->  Nested Loop  (cost=11.79..31.20 rows=1 width=32) (actual time=0.136..0.136 rows=0 loops=6)
+                                                                            ->  Hash Join  (cost=11.51..30.14 rows=1 width=32) (actual time=0.132..0.133 rows=0 loops=6)
+                                                                                  Hash Cond: (product_promotion_invariable.product = product_invariable.id)
+                                                                                  ->  Seq Scan on product_promotion_invariable  (cost=0.00..18.59 rows=16 width=32) (actual time=0.008..0.078 rows=15 loops=6)
+                                                                                        Filter: (profile = '018e9e8f-9a83-7af7-a904-f34b393d69bf'::uuid)
+                                                                                        Rows Removed by Filter: 752
+                                                                                  ->  Hash  (cost=11.26..11.26 rows=20 width=32) (actual time=0.045..0.045 rows=94 loops=6)
+                                                                                        Buckets: 1024  Batches: 1  Memory Usage: 14kB
+                                                                                        ->  Index Scan using idx_60d11a35d34a04ad on product_invariable  (cost=0.28..11.26 rows=20 width=32) (actual time=0.007..0.028 rows=94 loops=6)
+                                                                                              Index Cond: (product = fp_1.id)
+                                                                            ->  Index Scan using product_promotion_pkey on product_promotion  (cost=0.28..1.05 rows=1 width=32) (never executed)
+                                                                                  Index Cond: (id = product_promotion_invariable.main)
+                                                                      ->  Index Scan using product_promotion_price_pkey on product_promotion_price  (cost=0.28..0.32 rows=1 width=20) (never executed)
+                                                                            Index Cond: (event = product_promotion.event)
+                                                                ->  Index Scan using product_promotion_period_pkey on product_promotion_period  (cost=0.28..0.32 rows=1 width=16) (never executed)
+                                                                      Index Cond: (event = product_promotion_price.event)
+                                                                      Filter: ((CURRENT_DATE >= date_start) AND ((date_end IS NULL) OR (CURRENT_DATE <= date_end)))
+                                                          ->  Index Scan using product_price_pkey on product_price product_price_2  (cost=0.29..2.50 rows=1 width=24) (never executed)
+                                                                Index Cond: (event = fp_1.id)
+                                                    ->  Index Scan using idx_888afc623bae0aa7 on product_offer product_offer_3  (cost=0.29..2.84 rows=6 width=32) (never executed)
+                                                          Index Cond: (event = fp_1.id)
+                                              ->  Index Scan using product_offer_price_pkey on product_offer_price product_offer_price_1  (cost=0.28..2.50 rows=1 width=24) (never executed)
+                                                    Index Cond: (offer = product_offer_3.id)
+                                        ->  Index Scan using idx_c3b856729d6873e on product_variation product_variation_3  (cost=0.42..2.78 rows=5 width=32) (never executed)
+                                              Index Cond: (offer = product_offer_3.id)
+                                  ->  Index Scan using product_variation_price_pkey on product_variation_price product_variation_price_1  (cost=0.29..0.31 rows=1 width=24) (never executed)
+                                        Index Cond: (variation = product_variation_3.id)
+                            ->  Index Scan using idx_62c007b9629b33ea on product_modification product_modification_3  (cost=0.42..0.52 rows=3 width=32) (never executed)
+                                  Index Cond: (variation = product_variation_3.id)
+                      ->  Index Scan using product_modification_price_pkey on product_modification_price product_modification_price_1  (cost=0.42..0.45 rows=1 width=24) (never executed)
+                            Index Cond: (modification = product_modification_3.id)
+Planning Time: 29.490 ms
+Execution Time: 39.441 ms

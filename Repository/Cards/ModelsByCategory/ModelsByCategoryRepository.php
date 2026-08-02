@@ -68,7 +68,7 @@ use Generator;
 use InvalidArgumentException;
 
 /** @see ModelsByCategoryResult */
-final class ModelsByCategoryRepository implements ModelsByCategoryInterface
+final class ModelsByCategoryRepository //implements ModelsByCategoryInterface
 {
     private array|false $categories = false;
 

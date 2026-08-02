@@ -30,6 +30,7 @@ use BaksDev\Products\Category\Repository\CategoryOffersForm\CategoryOffersFormIn
 use BaksDev\Products\Category\Repository\CategoryPropertyById\CategoryPropertyByIdInterface;
 use BaksDev\Products\Category\Repository\CategoryVariationForm\CategoryVariationFormInterface;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Category\CategoryCollectionDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Certificate\CertificateCollectionForm;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Price\Cost\ProductPriceCostForm;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Price\Opt\ProductPriceOptForm;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Profile\CollectionProductProfileForm;
@@ -115,6 +116,18 @@ final class ProductForm extends AbstractType
             'allow_add' => true,
             'prototype_name' => '__files__',
         ]);
+
+
+        $builder->add('certificate', CollectionType::class, [
+            'entry_type' => CertificateCollectionForm::class,
+            'entry_options' => ['label' => false],
+            'label' => false,
+            'by_reference' => false,
+            'allow_delete' => true,
+            'allow_add' => true,
+            'prototype_name' => '__certificate__',
+        ]);
+
 
         /* SEO Collection */
         $builder->add('seo', CollectionType::class, [

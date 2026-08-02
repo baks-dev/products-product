@@ -1,0 +1,67 @@
+{% trans_default_domain 'products.product' %}
+
+
+<div class="flex-grow-1 p-3 border border-light rounded-2">
+
+
+    <div class="flex-grow-1">
+
+
+        <div class="d-flex justify-content-between align-items-end gap-3 mb-3">
+            <div class="w-100">
+                {{ form_row(form.certificate.vars.prototype.type.value,
+                    { label : 'Тип документа', attr: { 'data-select' : 'select2', class: 'mb-0' } }
+                ) }}
+            </div>
+            <div class="w-100">
+                {{ form_row(form.certificate.vars.prototype.match.value,
+                    { label : 'Соответствие сертификата', attr: { 'data-select' : 'select2', class: 'mb-0' } }
+                ) }}
+            </div>
+
+        </div>
+
+
+        <div class="d-flex gap-3 justify-content-between align-items-end">
+
+            {{ form_row(form.certificate.vars.prototype.number.value,
+                { label : 'Номер документа', attr : { placeholder : 'Номер документа'} }
+            ) }}
+
+            {{ form_row(form.certificate.vars.prototype.date.issue,
+                { label : 'Дата начала действия'|trans }
+            ) }}
+
+            {{ form_row(form.certificate.vars.prototype.date.expire,
+                { label : 'Дата окончания действия'|trans }
+            ) }}
+        </div>
+
+        <div class="d-flex justify-content-between gap-3">
+            <div class="w-100">
+                {{ form_widget(form.certificate.vars.prototype.title.value,
+                    { attr: { placeholder : 'Название'} }
+                ) }}
+            </div>
+            <div class="w-100">
+                {{ form_row(form.certificate.vars.prototype.file) }}
+            </div>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+{{ form_row(form.certificate.vars.prototype.delete_cert, {
+    label: '<span class="svg-icon svg-icon-2">
+						<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25" fill="none">
+							<rect opacity="0.5" x="7.05025" y="15.5356" width="12" height="2" rx="1" transform="rotate(-45 7.05025 15.5356)" fill="currentColor"></rect>
+							<rect x="8.46447" y="7.05029" width="12" height="2" rx="1" transform="rotate(45 8.46447 7.05029)" fill="currentColor"></rect>
+						</svg>
+					</span>',
+    attr: { class: 'btn-outline-danger btn-sm del-item-section border-0 del-item-cert' }
+}) }}
+
+{{ form_widget(form.certificate.vars.prototype.name) }}

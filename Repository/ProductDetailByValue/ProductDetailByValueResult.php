@@ -381,6 +381,36 @@ final readonly class ProductDetailByValueResult implements ProductPriceResultInt
     {
         if(empty($this->product_quantity_stocks))
         {
+            if(is_null($this->product_region_delivery))
+            {
+                return 0;
+            }
+
+            if(false === json_validate($this->product_region_delivery))
+            {
+                return 0;
+            }
+
+            $delivery = json_decode($this->product_region_delivery, false, 512, JSON_THROW_ON_ERROR);
+
+            if(null === current($delivery))
+            {
+                return 0;
+            }
+
+            // Сортировка массива элементов по дате
+
+            usort($delivery, static function($a, $b) {
+                return $a->day <=> $b->day;
+            });
+
+            $delivery = current($delivery);
+
+            if(isset($delivery->quantity))
+            {
+                return true;
+            }
+
             return false;
         }
 
@@ -394,6 +424,12 @@ final readonly class ProductDetailByValueResult implements ProductPriceResultInt
 
     public function getProductQuantity(): ?int
     {
+
+
+        // product_region_delivery
+
+
+
         if(empty($this->product_quantity))
         {
             return 0;

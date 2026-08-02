@@ -36,6 +36,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'product_profile')]
+#[ORM\Index(columns: ['event', 'value'])]
 class ProductProfile extends EntityEvent
 {
     /** Связь на событие */

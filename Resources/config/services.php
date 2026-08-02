@@ -36,14 +36,18 @@ return static function(ContainerConfigurator $container) {
         ->autowire()
         ->autoconfigure(); //->public();
 
-    $services->load(BaksDevProductsProductBundle::NAMESPACE, BaksDevProductsProductBundle::PATH)
+    $NAMESPACE = BaksDevProductsProductBundle::NAMESPACE;
+    $PATH = BaksDevProductsProductBundle::PATH;
+
+    $services->load($NAMESPACE, $PATH)
         ->exclude([
-            BaksDevProductsProductBundle::PATH.'{Entity,Resources,Type}',
-            BaksDevProductsProductBundle::PATH.'**'.DIRECTORY_SEPARATOR.'*Message.php',
-            BaksDevProductsProductBundle::PATH.'**'.DIRECTORY_SEPARATOR.'*Result.php',
-            BaksDevProductsProductBundle::PATH.'**'.DIRECTORY_SEPARATOR.'*DTO.php',
-            BaksDevProductsProductBundle::PATH.'**'.DIRECTORY_SEPARATOR.'*Test.php',
+            $PATH.'{Entity,Resources,Type}',
+            $PATH.'**'.DIRECTORY_SEPARATOR.'*Message.php',
+            $PATH.'**'.DIRECTORY_SEPARATOR.'*Result.php',
+            $PATH.'**'.DIRECTORY_SEPARATOR.'*DTO.php',
+            $PATH.'**'.DIRECTORY_SEPARATOR.'*Test.php',
         ]);
+
 
     $services
         ->set(SearchRepositoryInterface::class)
@@ -53,8 +57,22 @@ return static function(ContainerConfigurator $container) {
         ->set(DataToIndexInterface::class)
         ->class(AllProductsToIndexRepository::class);
 
-    $NAMESPACE = BaksDevProductsProductBundle::NAMESPACE;
-    $PATH = BaksDevProductsProductBundle::PATH;
-    $services->load($NAMESPACE.'Type\SearchTags\\', $PATH.implode(DIRECTORY_SEPARATOR, ['Type', 'SearchTags']));
+
+    $services->load(
+        $NAMESPACE.'Type\SearchTags\\',
+        $PATH.implode(DIRECTORY_SEPARATOR, ['Type', 'SearchTags']),
+    );
+
+    /* Типы сертификатов */
+    $services->load(
+        $NAMESPACE.'Type\Certificate\Document\\',
+        $PATH.implode(DIRECTORY_SEPARATOR, ['Type', 'Certificate', 'Document']),
+    );
+
+    /* Типы сертификатов соответствия (Match) */
+    $services->load(
+        $NAMESPACE.'Type\Certificate\Match\\',
+        $PATH.implode(DIRECTORY_SEPARATOR, ['Type', 'Certificate', 'Match']),
+    );
 };
 

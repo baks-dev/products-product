@@ -29,6 +29,7 @@ use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Entity\Active\ProductActive;
 use BaksDev\Products\Product\Entity\Category\ProductCategory;
 use BaksDev\Products\Product\Entity\Description\ProductDescription;
+use BaksDev\Products\Product\Entity\Event\Certificate\ProductCertificate;
 use BaksDev\Products\Product\Entity\Event\Profile\ProductProfile;
 use BaksDev\Products\Product\Entity\Files\ProductFiles;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
@@ -134,6 +135,11 @@ class ProductEvent extends EntityEvent
     #[ORM\OneToMany(targetEntity: ProductFiles::class, mappedBy: 'event', cascade: ['all'], fetch: 'EAGER')]
     private Collection $file;
 
+    /** Сертификат продукта */
+    #[Assert\Valid]
+    #[ORM\OneToMany(targetEntity: ProductCertificate::class, mappedBy: 'event', cascade: ['all'])]
+    private Collection $certificate;
+
     /** Видео */
     #[Assert\Valid]
     #[ORM\OneToMany(targetEntity: ProductVideo::class, mappedBy: 'event', cascade: ['all'], fetch: 'EAGER')]
@@ -144,7 +150,7 @@ class ProductEvent extends EntityEvent
     #[ORM\OneToMany(targetEntity: ProductSeo::class, mappedBy: 'event', cascade: ['all'], fetch: 'EAGER')]
     private Collection $seo;
 
-    /** Тоговые предложения */
+    /** Торговые предложения */
     #[Assert\Valid]
     #[ORM\OrderBy(['value' => 'ASC'])]
     #[ORM\OneToMany(targetEntity: ProductOffer::class, mappedBy: 'event', cascade: ['all'], fetch: 'EAGER')]
@@ -288,6 +294,14 @@ class ProductEvent extends EntityEvent
     public function getVideo(): Collection
     {
         return $this->video;
+    }
+
+    /**
+     * @return Collection<ProductCertificate>
+     */
+    public function getCertificate(): Collection
+    {
+        return $this->certificate;
     }
 
     /**

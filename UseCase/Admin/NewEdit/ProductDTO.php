@@ -32,6 +32,7 @@ use BaksDev\Products\Product\Entity\Event\ProductEventInterface;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Active\ActiveDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Category\CategoryCollectionDTO;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Certificate\CertificateCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Files\FilesCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Info\InfoDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Materials\ProductMaterialDTO;
@@ -104,6 +105,10 @@ final class ProductDTO implements ProductEventInterface
     #[Assert\Valid]
     private ProductProjectDTO $project;
 
+    /** Сертификаты */
+    #[Assert\Valid]
+    private ArrayCollection $certificate;
+
 
     public function __construct()
     {
@@ -116,6 +121,7 @@ final class ProductDTO implements ProductEventInterface
 
         $this->category = new ArrayCollection();
         $this->file = new ArrayCollection();
+        $this->certificate = new ArrayCollection();
         $this->offer = new ArrayCollection();
         $this->photo = new ArrayCollection();
         $this->property = new ArrayCollection();
@@ -592,6 +598,33 @@ final class ProductDTO implements ProductEventInterface
     {
         $this->project = $project;
         return $this;
+    }
+
+    /**
+     * Сертификаты
+     */
+
+    public function getCertificate(): ArrayCollection
+    {
+        if($this->certificate->isEmpty())
+        {
+            $this->addCertificate(new CertificateCollectionDTO());
+        }
+
+        return $this->certificate;
+    }
+
+    public function addCertificate(CertificateCollectionDTO $certificate): void
+    {
+        if(!$this->certificate->contains($certificate))
+        {
+            $this->certificate->add($certificate);
+        }
+    }
+
+    public function removeCertificate(CertificateCollectionDTO $video): void
+    {
+        $this->certificate->removeElement($video);
     }
 
 }

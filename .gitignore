@@ -1,4 +1,5 @@
 /.idea
+.agent/.
 /vendor
 composer.lock
 composer.phar

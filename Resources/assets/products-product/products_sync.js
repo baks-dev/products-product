@@ -32,7 +32,7 @@ let debug_start_TfpBy2NAo1 = 0;
 async function loadSync_TfpBy2NAo1(items, form = null)
 {
     /** В начале поиска показываем прелоадер */
-    beforeLoad_TfpBy2NAo1()
+    beforeLoad_TfpBy2NAo1();
 
     const results = [];
 
@@ -43,7 +43,7 @@ async function loadSync_TfpBy2NAo1(items, form = null)
     }
 
     /** В конце убираем прелоадер */
-    afterLoad_TfpBy2NAo1()
+    afterLoad_TfpBy2NAo1();
 
 
     /** если все загрузку не успешны - показываем пустой шаблон */
@@ -54,9 +54,9 @@ async function loadSync_TfpBy2NAo1(items, form = null)
     {
         let empty = document.getElementById("catalog_products_empty");
 
-        if(empty && true === empty.classList.contains('d-none'))
+        if(empty && true === empty.classList.contains("d-none"))
         {
-            empty.classList.remove('d-none')
+            empty.classList.remove("d-none");
         }
     }
 
@@ -66,7 +66,7 @@ async function init_TfpBy2NAo1(item, form = null)
 {
     /** body и method определяются в зависимости от того, передана форма или нет */
     const body = null !== form ? new FormData(form) : null;
-    const method = null !== form ? form.method : 'GET';
+    const method = null !== form ? form.method : "GET";
 
     const path = item.path;
 
@@ -78,14 +78,14 @@ async function init_TfpBy2NAo1(item, form = null)
 
     /** Ждем ответ от сервера */
     const response = await fetch(path, {
-        method: method,
-        body: body,
-        cache: 'no-cache',
-        credentials: 'same-origin',
-        headers: {'X-Requested-With': 'XMLHttpRequest'},
-        redirect: 'follow',
-        referrerPolicy: 'no-referrer',
-    })
+        method : method,
+        body : body,
+        cache : "no-cache",
+        credentials : "same-origin",
+        headers : {"X-Requested-With" : "XMLHttpRequest"},
+        redirect : "follow",
+        referrerPolicy : "no-referrer",
+    });
 
     if(response.status !== 200)
     {
@@ -111,7 +111,7 @@ async function init_TfpBy2NAo1(item, form = null)
                 console.log(`Продукты НЕ НАЙДЕНЫ для категории ${item.url}`);
             }
 
-            return false
+            return false;
         }
 
         const range = document.createRange();
@@ -121,13 +121,13 @@ async function init_TfpBy2NAo1(item, form = null)
         const elements = Array.from(fragment.children);
 
         /** обрабатываем все кнопки "Добавить в избранное" */
-        const favorites = fragment.querySelectorAll('.favorite, .favorite-delete');
+        const favorites = fragment.querySelectorAll(".favorite, .favorite-delete");
 
         if(favorites)
         {
             favorites.forEach(favorite =>
             {
-                favorite.addEventListener('click', function(e)
+                favorite.addEventListener("click", function(e)
                 {
                     e.preventDefault();
                     addToFavorite(e);
@@ -157,10 +157,10 @@ async function init_TfpBy2NAo1(item, form = null)
 
         if(product_filter_form)
         {
-            productFilter_F4Haf8H(product_filter_form)
+            productFilter_F4Haf8H(product_filter_form);
         }
 
-        let target = document.getElementById('catalog_products');
+        let target = document.getElementById("catalog_products");
 
         /** вставляем элемент */
         target.append(fragment);
@@ -170,15 +170,17 @@ async function init_TfpBy2NAo1(item, form = null)
         {
             el.animate(
                 [
-                    {opacity: 0, transform: "translateY(10px)"},
-                    {opacity: 1, transform: "translateY(0)"}
+                    {opacity : 0, transform : "translateY(10px)"},
+                    {opacity : 1, transform : "translateY(0)"},
                 ],
                 {
-                    duration: 500,
-                    easing: "ease",
-                }
+                    duration : 500,
+                    easing : "ease",
+                },
             );
         });
+
+        reloadLazy();
 
         return true;
     }
@@ -192,25 +194,25 @@ function beforeLoad_TfpBy2NAo1()
     if(document.forms["product_category_filter_form"])
     {
         let btn = document.getElementById("product_category_filter_form_filter");
-        btn.setAttribute('disabled', 'disabled');
+        btn.setAttribute("disabled", "disabled");
     }
 
     let spinners = document.getElementById("catalog_products_spinners");
 
-    if(spinners && true === spinners.classList.contains('d-none'))
+    if(spinners && true === spinners.classList.contains("d-none"))
     {
-        spinners.classList.remove('d-none')
+        spinners.classList.remove("d-none");
     }
 
     let preload = document.getElementById("catalog_products_preload");
 
-    if(preload && true === preload.classList.contains('d-none'))
+    if(preload && true === preload.classList.contains("d-none"))
     {
-        preload.classList.remove('d-none')
+        preload.classList.remove("d-none");
     }
 
-    let target = document.getElementById('catalog_products');
-    target.innerHTML = ''
+    let target = document.getElementById("catalog_products");
+    target.innerHTML = "";
 }
 
 /** Визуализация после загрузкой */
@@ -219,27 +221,27 @@ function afterLoad_TfpBy2NAo1()
     if(document.forms["product_category_filter_form"])
     {
         let btn = document.getElementById("product_category_filter_form_filter");
-        btn.removeAttribute('disabled');
+        btn.removeAttribute("disabled");
     }
 
     let empty = document.getElementById("catalog_products_empty");
 
-    if(empty && false === empty.classList.contains('d-none'))
+    if(empty && false === empty.classList.contains("d-none"))
     {
-        empty.classList.add('d-none')
+        empty.classList.add("d-none");
     }
 
     let spinners = document.getElementById("catalog_products_spinners");
 
-    if(spinners && false === spinners.classList.contains('d-none'))
+    if(spinners && false === spinners.classList.contains("d-none"))
     {
-        spinners.classList.add('d-none')
+        spinners.classList.add("d-none");
     }
 
     let preload = document.getElementById("catalog_products_preload");
 
-    if(preload && false === preload.classList.contains('d-none'))
+    if(preload && false === preload.classList.contains("d-none"))
     {
-        preload.classList.add('d-none')
+        preload.classList.add("d-none");
     }
 }

@@ -51,6 +51,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Index(columns: ['const'])]
 #[ORM\Index(columns: ['article'])]
 #[ORM\Index(columns: ['barcode_old'])]
+#[ORM\Index(columns: ['offer', 'postfix', 'value'])]
 class ProductVariation extends EntityEvent
 {
     /** ID варианта торгового предложения */

@@ -38,7 +38,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'product_offer_price')]
-#[ORM\Index(columns: ['price'])]
+#[ORM\Index(columns: ['offer', 'price'])]
 class ProductOfferPrice extends EntityEvent
 {
     /** ID торгового предложения */

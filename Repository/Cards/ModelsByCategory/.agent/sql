@@ -1,0 +1,127 @@
+SELECT product.id AS product_id, product.event AS product_event, product_trans.name AS product_name, product_info.url AS product_url, product_info.sort AS product_sort, product_active.active as product_active, product_active.active_from as product_active_from, product_active.active_to as product_active_to, category_offer.card AS category_offer_card , category_offer.reference AS product_offer_reference, category_variation.card AS category_variation_card, category_variation.reference as product_variation_reference, category_modification.card AS category_modification_card , category_modification.reference as product_modification_reference, JSON_AGG( DISTINCT product_invariable.id) AS invariable,
+                CASE
+
+                    WHEN product_modification_image.name IS NOT NULL THEN
+                        CONCAT ( '/upload/product_modification_images' , '/', product_modification_image.name)
+                    WHEN product_variation_image.name IS NOT NULL THEN
+                        CONCAT ( '/upload/product_variation_images' , '/', product_variation_image.name)
+                    WHEN product_offer_images.name IS NOT NULL THEN
+                        CONCAT ( '/upload/product_offer_images' , '/', product_offer_images.name)
+                    WHEN product_photo.name IS NOT NULL THEN
+                        CONCAT ( '/upload/product_photo' , '/', product_photo.name)
+                    ELSE NULL
+
+                END AS product_image
+            ,
+            COALESCE(
+                product_modification_image.ext,
+                product_variation_image.ext,
+                product_offer_images.ext,
+                product_photo.ext
+            ) AS product_image_ext,
+            COALESCE(
+                product_modification_image.cdn,
+                product_variation_image.cdn,
+                product_offer_images.cdn,
+                product_photo.cdn
+            ) AS product_image_cdn, category_info.url AS category_url, category_trans.name AS category_name,
+                    JSON_AGG
+                    ( DISTINCT
+                        CASE
+                            WHEN
+                                CURRENT_DATE >= product_promotion_period.date_start
+                                AND
+                                    (
+                                        product_promotion_period.date_end IS NULL OR CURRENT_DATE <= product_promotion_period.date_end
+                                    )
+                            THEN
+                            JSONB_BUILD_OBJECT
+                                (
+                                    'promo', product_promotion_price.value,
+                                    'price', COALESCE(
+                                                    product_modification_price.price,
+                                                    product_variation_price.price,
+                                                    product_offer_price.price,
+                                                    product_price.price)
+                                )
+                        END
+                    )
+                    AS promotion_price,
+            COALESCE(
+                NULLIF(MIN(product_modification_price.price), 0),
+                NULLIF(MIN(product_variation_price.price), 0),
+                NULLIF(MIN(product_offer_price.price), 0),
+                NULLIF(MIN(product_price.price), 0),
+                0
+            ) AS product_price
+		,
+            CASE
+
+			   WHEN MIN(product_modification_price.price) IS NOT NULL
+			   THEN product_modification_price.currency
+
+			   WHEN MIN(product_variation_price.price) IS NOT NULL
+			   THEN product_variation_price.currency
+
+			   WHEN MIN(product_offer_price.price) IS NOT NULL
+			   THEN product_offer_price.currency
+
+			   WHEN MIN(product_price.price) IS NOT NULL
+			   THEN product_price.currency
+
+			   ELSE NULL
+
+			END AS product_currency
+		, product_project_season.percent as season_percent FROM product INNER JOIN product_categories_product product_event_category ON product_event_category.event = product.event AND product_event_category.category IN ('019a7c9b-51fd-7692-9cd6-7bb3863fb2db') LEFT JOIN product_trans product_trans ON product_trans.event = product.event AND product_trans.local = 'ru' LEFT JOIN product_info product_info ON product_info.product = product.id LEFT JOIN product_active product_active ON product_active.event = product.event LEFT JOIN product_price product_price ON product_price.event = product.event AND product_price.price > 0 LEFT JOIN product_offer product_offer ON product_offer.event = product.event LEFT JOIN product_project product_project ON
+                    product_project.product = product.id
+                    AND product_project.profile = '018e9e8f-9a83-7af7-a904-f34b393d69bf' LEFT JOIN product_category category ON category.id = product_event_category.category LEFT JOIN product_category_info category_info ON category_info.event = category.event AND category_info.active IS TRUE LEFT JOIN product_category_trans category_trans ON category_trans.event = category.event AND category_trans.local = 'ru' LEFT JOIN product_category_offers category_offer ON category_offer.id = product_offer.category_offer LEFT JOIN product_offer_price product_offer_price ON product_offer_price.offer = product_offer.id AND product_offer_price.price > 0 LEFT JOIN product_offer_quantity product_offer_quantity ON product_offer_quantity.offer = product_offer.id LEFT JOIN product_variation product_variation ON product_variation.offer = product_offer.id LEFT JOIN product_variation_images product_variation_image ON
+                product_variation_image.variation = product_variation.id AND
+                product_variation_image.root = true
+			 LEFT JOIN product_offer_images product_offer_images ON
+			product_variation_image.name IS NULL AND
+			product_offer_images.offer = product_offer.id AND
+			product_offer_images.root = true
+			 LEFT JOIN product_photo product_photo ON
+                product_offer_images.name IS NULL AND
+                product_photo.event = product.event AND
+                product_photo.root = true
+			 LEFT JOIN product_category_variation category_variation ON category_variation.id = product_variation.category_variation LEFT JOIN product_modification product_modification ON product_modification.variation = product_variation.id LEFT JOIN product_invariable product_invariable ON
+                                    product_invariable.product = product.id
+                                    AND
+                                        CASE
+                                            WHEN product_offer.const IS NOT NULL THEN product_invariable.offer = product_offer.const
+                                            ELSE product_invariable.offer IS NULL
+                                        END
+                                    AND
+                                        CASE
+                                            WHEN product_variation.const IS NOT NULL THEN product_invariable.variation = product_variation.const
+                                            ELSE product_invariable.variation IS NULL
+                                        END
+                                    AND
+                                        CASE
+                                            WHEN product_modification.const IS NOT NULL THEN product_invariable.modification = product_modification.const
+                                            ELSE product_invariable.modification IS NULL
+                                        END
+                                 LEFT JOIN product_variation_price product_variation_price ON product_variation_price.variation = product_variation.id AND product_variation_price.price > 0 LEFT JOIN product_variation_quantity product_variation_quantity ON product_variation_quantity.variation = product_variation.id LEFT JOIN product_category_modification category_modification ON category_modification.id = product_modification.category_modification LEFT JOIN product_modification_price product_modification_price ON product_modification_price.modification = product_modification.id AND product_modification_price.price > 0 LEFT JOIN product_modification_quantity product_modification_quantity ON product_modification_quantity.modification = product_modification.id LEFT JOIN product_modification_images product_modification_image ON
+                product_modification_image.modification = product_modification.id AND
+                product_modification_image.root = true
+			 LEFT JOIN product_promotion_invariable product_promotion_invariable ON
+                        product_promotion_invariable.product = product_invariable.id
+                        AND
+                        product_promotion_invariable.profile = '018e9e8f-9a83-7af7-a904-f34b393d69bf' LEFT JOIN product_promotion product_promotion ON product_promotion.id = product_promotion_invariable.main LEFT JOIN product_promotion_price product_promotion_price ON product_promotion_price.event = product_promotion.event LEFT JOIN product_promotion_period product_promotion_period ON
+                        product_promotion_period.event = product_promotion.event LEFT JOIN product_project_season product_project_season ON product_project_season.project = product_project.id
+                 AND product_project_season.month = 7 WHERE (COALESCE(
+                NULLIF(product_modification_price.price, 0),
+                NULLIF(product_variation_price.price, 0),
+                NULLIF(product_offer_price.price, 0),
+                NULLIF(product_price.price, 0),
+                0
+            ) > 0) AND (
+            CASE
+                WHEN product_modification_quantity.quantity IS NOT NULL THEN (product_modification_quantity.quantity - product_modification_quantity.reserve)
+                WHEN product_variation_quantity.quantity IS NOT NULL THEN (product_variation_quantity.quantity - product_variation_quantity.reserve)
+                WHEN product_offer_quantity.quantity IS NOT NULL THEN (product_offer_quantity.quantity - product_offer_quantity.reserve)
+                WHEN product_price.quantity  IS NOT NULL THEN (product_price.quantity - product_price.reserve)
+                ELSE 0
+            END > 0
+        ) GROUP BY product_price.currency, product_offer_price.currency, product_variation_price.currency, product_modification_price.currency, product.id, product.event, product_trans.name, product_info.url, product_info.sort, product_active.active, product_active.active_from, product_active.active_to, category_offer.card, category_offer.reference, category_variation.card, category_variation.reference, category_modification.card, category_modification.reference, product_modification_image.name, product_variation_image.name, product_offer_images.name, product_photo.name, product_modification_image.ext, product_variation_image.ext, product_offer_images.ext, product_photo.ext, product_modification_image.cdn, product_variation_image.cdn, product_offer_images.cdn, product_photo.cdn, category_info.url, category_trans.name, product_project_season.percent ORDER BY product_info.sort DESC, SUM(product_modification_quantity.reserve) DESC, SUM(product_variation_quantity.reserve) DESC, SUM(product_offer_quantity.reserve) DESC, SUM(product_price.reserve) DESC, SUM(product_modification_quantity.quantity) DESC, SUM(product_variation_quantity.quantity) DESC, SUM(product_offer_quantity.quantity) DESC, SUM(product_price.quantity) DESC LIMIT 6;

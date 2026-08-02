@@ -40,6 +40,7 @@ use BaksDev\Products\Product\Entity\Product;
 use BaksDev\Products\Product\Entity\Project\ProductProject;
 use BaksDev\Products\Product\Messenger\ProductMessage;
 use BaksDev\Products\Product\Repository\UniqProductUrl\UniqProductUrlInterface;
+use BaksDev\Products\Product\UseCase\Admin\NewEdit\Certificate\CertificateCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Files\FilesCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Image\ProductOfferImageCollectionDTO;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Offers\Variation\Image\ProductVariationImageCollectionDTO;
@@ -120,6 +121,18 @@ final class ProductHandler extends AbstractHandler
             if($VideoCollectionDTO->file !== null)
             {
                 $this->fileUpload->upload($VideoCollectionDTO->file, $ProductVideo);
+            }
+        }
+
+        /** Загрузка файлов Видео галереи */
+        foreach($ProductEvent->getCertificate() as $ProductCertificate)
+        {
+            /** @var CertificateCollectionDTO $CertificateCollectionDTO */
+            $CertificateCollectionDTO = $ProductCertificate->getEntityDto();
+
+            if($CertificateCollectionDTO->file !== null)
+            {
+                $this->fileUpload->upload($CertificateCollectionDTO->file, $ProductCertificate);
             }
         }
 
@@ -204,7 +217,7 @@ final class ProductHandler extends AbstractHandler
             $ExistingProductProject = $this->getRepository(ProductProject::class)
                 ->findOneBy([
                     'product' => $this->main->getId(),
-                    'profile' => $ProductProjectDTO->getProfile()
+                    'profile' => $ProductProjectDTO->getProfile(),
                 ]);
 
 

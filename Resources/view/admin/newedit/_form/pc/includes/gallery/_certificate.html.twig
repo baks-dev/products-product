@@ -1,0 +1,105 @@
+{% trans_default_domain 'products-product.admin' %}
+
+<div class="card w-100 border-light">
+    <div class="card-header border-light bg-body">
+        <div class="card-title">
+            <h4>
+                Сертификаты
+            </h4>
+        </div>
+    </div>
+
+    <div class="card-body pb-0">
+
+        <div id="cert_collection">
+            {% for certificate in form.certificate %}
+
+                <div class="d-flex justify-content-between align-items-center gap-3 item-collection-cert mb-3">
+
+                    <div class="flex-grow-1 p-3 border border-light rounded-2">
+
+                        <div class="d-flex justify-content-between align-items-end gap-3 mb-3">
+                            <div class="w-100">
+                                {{ form_row(certificate.type.value,
+                                    certificate.type.value
+                                    ? { label : 'Тип документа', attr: { 'data-select' : 'select2', class: 'mb-0' }  }
+                                    : { placeholder: 'Тип документа ...', attr: { 'data-select' : 'select2', class: 'mb-0' } }
+                                ) }}
+                            </div>
+                            <div class="w-100">
+                                {{ form_row(certificate.match.value,
+                                    certificate.match.value
+                                    ? { label : 'Соответствие сертификата', attr: { 'data-select' : 'select2', class: 'mb-0' } }
+                                    : { placeholder: 'Без соответствия', attr: { 'data-select' : 'select2', class: 'mb-0' } }
+                                ) }}
+                            </div>
+
+                        </div>
+
+                        <div class="d-flex gap-3 justify-content-between align-items-end">
+
+                            {{ form_row(certificate.number.value,
+                                { label : 'Номер документа', attr : { placeholder : 'Номер документа'}}
+                            ) }}
+
+                            {{ form_row(certificate.date.issue, {
+                                label : 'Дата начала действия'|trans
+                            } ) }}
+
+                            {{ form_row(certificate.date.expire, {
+                                label : 'Дата окончания действия'|trans } ) }}
+                        </div>
+
+                        <div class="d-flex gap-3 justify-content-between align-items-end">
+                            <div class="w-100">
+
+                                {{ form_row(certificate.title.value,
+                                    certificate.title.value.vars.data
+                                    ? { label : 'Название' }
+                                    : { label : false, attr : { placeholder : 'Название' }}
+                                ) }}
+
+                            </div>
+
+                            <div class="w-100 {{ certificate.name.vars.data ? 'd-none' }}">
+                                {{ form_row(certificate.file) }}
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+                    {{ form_row(certificate.delete_cert, {
+                        label: '<span class="svg-icon svg-icon-2">
+						<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25" fill="none">
+							<rect opacity="0.5" x="7.05025" y="15.5356" width="12" height="2" rx="1" transform="rotate(-45 7.05025 15.5356)" fill="currentColor"></rect>
+							<rect x="8.46447" y="7.05029" width="12" height="2" rx="1" transform="rotate(45 8.46447 7.05029)" fill="currentColor"></rect>
+						</svg>
+					</span>',
+                        attr: { class: 'btn-outline-danger btn-sm del-item-section border-0 del-item-cert' }
+                    }) }}
+
+                    {{ form_widget(certificate.name) }}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="card-footer border-light bg-body">
+        <button type="button" id="cert_addCollection"
+                class="btn btn-sm btn-outline-primary border-0"
+                data-prototype="prototype.gallery.cert"
+                data-index="{{ form.certificate.count }}"
+        >
+			<span class="svg-icon svg-icon-2">
+				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+					<rect opacity="0.5" x="11" y="18" width="12" height="2" rx="1" transform="rotate(-90 11 18)"
+                          fill="currentColor"></rect>
+					<rect x="6" y="11" width="12" height="2" rx="1" fill="currentColor"></rect>
+				</svg>
+			</span>
+            Добавить еще файл
+        </button>
+    </div>
+</div>
+

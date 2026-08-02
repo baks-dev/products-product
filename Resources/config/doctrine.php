@@ -26,6 +26,12 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 use BaksDev\Products\Product\BaksDevProductsProductBundle;
 use BaksDev\Products\Product\Type\Barcode\ProductBarcode;
 use BaksDev\Products\Product\Type\Barcode\ProductBarcodeType;
+use BaksDev\Products\Product\Type\Certificate\Document\CertificateDocument;
+use BaksDev\Products\Product\Type\Certificate\Document\CertificateDocumentType;
+use BaksDev\Products\Product\Type\Certificate\Match\CertificateMatch;
+use BaksDev\Products\Product\Type\Certificate\Match\CertificateMatchType;
+use BaksDev\Products\Product\Type\Certificate\ProductCertificateType;
+use BaksDev\Products\Product\Type\Certificate\ProductCertificateUid;
 use BaksDev\Products\Product\Type\Event\ProductEventType;
 use BaksDev\Products\Product\Type\Event\ProductEventUid;
 use BaksDev\Products\Product\Type\File\ProductFileType;
@@ -98,6 +104,9 @@ return static function(ContainerConfigurator $container, DoctrineConfig $doctrin
 
     $doctrine->dbal()->type(ProductProjectSeasonUid::TYPE)->class(ProductProjectSeasonType::class);
 
+    $doctrine->dbal()->type(CertificateDocument::TYPE)->class(CertificateDocumentType::class);
+    $doctrine->dbal()->type(CertificateMatch::TYPE)->class(CertificateMatchType::class);
+    $doctrine->dbal()->type(ProductCertificateUid::TYPE)->class(ProductCertificateType::class);
 
     $services = $container->services()
         ->defaults()

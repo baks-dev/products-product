@@ -34,6 +34,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity]
 #[ORM\Table(name: 'product_categories_product')]
 #[ORM\Index(columns: ['event', 'root'])]
+#[ORM\Index(columns: ['event', 'category'])]
 class ProductCategory extends EntityEvent
 {
     /** ID события */

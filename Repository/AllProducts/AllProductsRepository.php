@@ -1074,7 +1074,7 @@ final class AllProductsRepository implements AllProductsInterface
         }
         else
         {
-            $dbal->orderBy('product.event');
+            $dbal->orderBy('product.event', 'DESC');
         }
 
         if(empty($resultProducts))

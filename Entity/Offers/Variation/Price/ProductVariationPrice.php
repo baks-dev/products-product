@@ -37,7 +37,7 @@ use InvalidArgumentException;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'product_variation_price')]
-#[ORM\Index(columns: ['price'])]
+#[ORM\Index(columns: ['variation', 'price'])]
 class ProductVariationPrice extends EntityEvent
 {
     /** ID события */

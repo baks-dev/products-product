@@ -39,6 +39,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'product_project_description')]
+#[ORM\Index(columns: ['project', 'device', 'local'])]
 class ProductProjectDescription extends EntityState
 {
 
