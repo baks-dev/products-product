@@ -28,6 +28,16 @@
 
         </div>
 
+        {% if changed %}
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                Карточка товара уже изменена другим пользователем. Для обновления статуса перейдите в
+                <a href="{{ path('products-product:admin.newedit.edit', { id: changed.event }) }}"
+                   class="btn btn-link">
+                    текущее активное состояние
+                </a>
+            </div>
+        {% endif %}
+
 
         {{ form_start(form) }}
 

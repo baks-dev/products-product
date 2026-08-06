@@ -315,7 +315,7 @@ class ProductEvent extends EntityEvent
     /**
      * Info
      */
-    public function getInfo(): ProductInfo
+    public function getInfo(): ?ProductInfo
     {
         return $this->info;
     }

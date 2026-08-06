@@ -28,7 +28,9 @@ use BaksDev\Core\Controller\AbstractController;
 use BaksDev\Core\Listeners\Event\Security\RoleSecurity;
 use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
+use BaksDev\Products\Product\Entity\Info\ProductInfo;
 use BaksDev\Products\Product\Entity\Product;
+use BaksDev\Products\Product\Repository\CurrentProductIdentifier\CurrentProductIdentifierByConstInterface;
 use BaksDev\Products\Product\Repository\ProductProjectDescription\ProductProjectDescriptionInterface;
 use BaksDev\Products\Product\Repository\ProductProjectSeason\ProductProjectSeasonInterface;
 use BaksDev\Products\Product\UseCase\Admin\NewEdit\Category\CategoryCollectionDTO;
@@ -54,38 +56,49 @@ final class EditController extends AbstractController
         ProductHandler $productHandler,
         ProductProjectDescriptionInterface $productProjectDescriptions,
         ProductProjectSeasonInterface $productProjectSeasons,
+        CurrentProductIdentifierByConstInterface $CurrentProductIdentifierByConstRepository
     ): Response
     {
         $ProductDTO = new ProductDTO();
         $Event->getDto($ProductDTO);
 
-        if($request->get('copy'))
+        $CurrentProductIdentifierResult = null;
+
+        if(false === ($Event->getInfo() instanceof ProductInfo))
+        {
+            /** Получаем активные идентификаторы */
+            $CurrentProductIdentifierResult = $CurrentProductIdentifierByConstRepository
+                ->forProduct($Event->getMain())
+                ->find();
+        }
+
+        if($request->query->get('copy'))
         {
             $ProductDTO->copy();
         }
 
         // Если передана категория - присваиваем для подгрузки настроек (свойства, ТП)
-        if($request->get('category'))
+        if($request->query->get('category'))
         {
             /** @var CategoryCollectionDTO $category */
             foreach($ProductDTO->getCategory() as $category)
             {
                 if($category->getRoot())
                 {
-                    if($request->get('category') === 'null')
+                    if($request->query->get('category') === 'null')
                     {
                         $category->setCategory(null);
                         break;
                     }
 
-                    $category->setCategory(new CategoryProductUid($request->get('category')));
+                    $category->setCategory(new CategoryProductUid($request->query->get('category')));
                 }
             }
 
-            if($category->getCategory() === null && $request->get('category') !== 'null')
+            if($category->getCategory() === null && $request->query->get('category') !== 'null')
             {
                 $category->setRoot(true);
-                $category->setCategory(new CategoryProductUid($request->get('category')));
+                $category->setCategory(new CategoryProductUid($request->query->get('category')));
             }
         }
 
@@ -168,6 +181,11 @@ final class EditController extends AbstractController
             return $this->redirectToRoute('products-product:admin.index');
         }
 
-        return $this->render(['form' => $form->createView()]);
+        // $CurrentProductIdentifierResult->getEvent()
+
+        return $this->render([
+            'form' => $form->createView(),
+            'changed' => $CurrentProductIdentifierResult,
+        ]);
     }
 }

@@ -30,6 +30,11 @@ use Doctrine\Common\Collections\ArrayCollection;
 final class ProductFilterDTO implements ProductFilterInterface
 {
     /**
+     * Сортировка
+     */
+    private bool $sort = false;
+
+    /**
      * Категория
      */
     private ?CategoryProductUid $category = null;
