@@ -25,6 +25,8 @@ declare(strict_types=1);
 
 namespace BaksDev\Products\Product\Repository\CertificatesByProduct;
 
+use BaksDev\Products\Product\Type\Certificate\Document\CertificateDocument;
+use BaksDev\Products\Product\Type\Certificate\Match\CertificateMatch;
 use DateTimeImmutable;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -46,7 +48,7 @@ final class CertificatesByProductResult
 
     public function getFilePath(): string
     {
-        return $this->name.'/file'.$this->ext;
+        return $this->name.'/file.'.$this->ext;
     }
 
     public function isCdn(): bool
@@ -74,13 +76,13 @@ final class CertificatesByProductResult
         return $this->expire ? new DateTimeImmutable($this->expire) : null;
     }
 
-    public function getType(): string
+    public function getType(): CertificateDocument
     {
-        return $this->type;
+        return new CertificateDocument($this->type);
     }
 
-    public function getMatch(): string
+    public function getMatch(): ?CertificateMatch
     {
-        return $this->match;
+        return $this->match ? new CertificateMatch($this->match) : null;
     }
 }
