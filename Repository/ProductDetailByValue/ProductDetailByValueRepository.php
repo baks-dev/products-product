@@ -196,13 +196,6 @@ final class ProductDetailByValueRepository implements ProductDetailByValueInterf
             ->createQueryBuilder(self::class)
             ->bindLocal();
 
-
-        $dbal->with(
-            '',
-            '',
-            '',
-        );
-
         $dbal
             ->select('product.id')
             ->addSelect('product.event')
