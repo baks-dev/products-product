@@ -34,11 +34,9 @@ final class ProductCertificateDateDTO implements ProductCertificateDateInterface
 {
 
     /** Дата начала действия сертификата. */
-    #[Assert\NotBlank]
     private ?DateTimeImmutable $issue = null;
 
     /** Дата окончания действия сертификата. */
-    #[Assert\NotBlank]
     private ?DateTimeImmutable $expire = null;
 
     /**
