@@ -205,8 +205,7 @@ final readonly class AllProductsToIndexRepository implements DataToIndexInterfac
 
         $dbal->allGroupByExclude();
 
-        $dbal->enableCache('products-product', '1 day');
-
+        /** Не кешируем индексацию  */
         $result = $dbal->fetchAllHydrate(AllProductsToIndexResult::class);
 
         return (true === $result->valid()) ? $result : false;
