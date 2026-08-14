@@ -25,8 +25,10 @@ namespace BaksDev\Products\Product\Controller\Public;
 
 use BaksDev\Core\Controller\AbstractController;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
-use BaksDev\Products\Product\Repository\ProductDetailByValue\ProductDetailByValueInterface;
-use BaksDev\Products\Product\Repository\ProductDetailOffer\ProductDetailOfferInterface;
+use BaksDev\Products\Product\Repository\ProductModel\ProductModelInterface;
+use BaksDev\Products\Product\Repository\ProductModel\ProductModelResult;
+use BaksDev\Products\Review\BaksDevProductsReviewBundle;
+use BaksDev\Products\Review\Repository\AllReviews\AllReviewsInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
@@ -42,33 +44,73 @@ final class NotFoundController extends AbstractController
     )]
     public function notfound(
         #[MapEntity(mapping: ['url' => 'url'])] ProductInfo $info,
-        ProductDetailByValueInterface $productDetail,
-        ProductDetailOfferInterface $productDetailOffer,
+
+        ProductModelInterface $productModel,
+        ?AllReviewsInterface $AllReviewsRepository = null,
+
         ?string $offer = null,
         ?string $variation = null,
         ?string $modification = null,
-        ?string $postfix = null,
     ): Response
     {
-        $productCard = $productDetail
-            ->byProduct($info->getProduct())
-            ->byOfferValue($offer)
-            ->byVariationValue($variation)
-            ->byModificationValue($modification)
-            ->byPostfix($postfix)
-            ->find();
+        for($i = 0; $i < 2; $i++)
+        {
+            $card = $productModel
+                ->byProduct($info->getProduct())
+                ->byOffer($offer)
+                ->byVariation($variation)
+                ->byModification($modification)
+                ->find();
 
-        /** Другие ТП данного продукта */
-        $productOffer = $productDetailOffer->fetchProductOfferAssociative($info->getProduct());
+            if($card instanceof ProductModelResult)
+            {
+                break;
+            }
+
+            if($i === 0)
+            {
+                $modification = null;
+                continue;
+            }
+
+            if($i === 1)
+            {
+                $variation = null;
+                continue;
+            }
+
+            if($i === 2)
+            {
+                $offer === null;
+            }
+        }
+
+        if(false === ($card instanceof ProductModelResult))
+        {
+            return new Response('Page Not Found', status: 404);
+        }
+
+        /** Отзывы */
+        // Получаем список
+        $ProductsReviews = true === class_exists(BaksDevProductsReviewBundle::class) ?
+            $AllReviewsRepository
+                ->product($info->getProduct())
+                ->findPaginator() :
+            false;
 
         return $this->render(
-            [
-                'card' => $productCard,
-                'offers' => $productOffer,
+            parameters: [
+                'card' => $card,
+                'reviews' => $ProductsReviews,
                 'offer' => $offer,
                 'variation' => $variation,
                 'modification' => $modification,
+                'notfound' => true,
             ],
+
+            module: 'products-product',
+            dir: '/public/model',
+
             response: new Response(status: 404),
         );
     }

@@ -6,6 +6,33 @@
 
         {{ include(_self|replace({ "content.html.twig": "breadcrumb.html.twig" })) }}
 
+
+        {% if notfound is defined and notfound is true %}
+            <div class="alert alert-danger" role="alert">
+                К сожалению данного товара не существует, но возможно Вас заинтересуют другие варианты с параметрами:
+                &nbsp;
+
+                {% if card.productVariationValue is not null %}
+                    <small class="text-secondary">{{ card.productVariationName }} : </small>
+                    {{ card.productVariationValue }}
+                    &nbsp;
+                {% endif %}
+
+                {% if card.productModificationValue is not null %}
+                    <small class="text-secondary">{{ card.productModificationName }} : </small>
+                    {{ card.productModificationValue }}
+                    &nbsp;
+                {% endif %}
+
+                {% if card.productOfferValue is not null %}
+                    <small class="text-secondary">{{ card.productOfferName }} : </small>
+                    {{ card.productOfferValue|call_twig_func(card.productOfferReference~'_render') }}
+                    &nbsp;
+                {% endif %}
+
+            </div>
+        {% endif %}
+
         <h1 class="h5 text-uppercase fw-bolder">Triangle Sports TH201 195/45 R16 84W</h1>
 
         <div class="d-flex align-items-end gap-3 mb-1 small">
