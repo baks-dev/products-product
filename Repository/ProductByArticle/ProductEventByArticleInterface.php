@@ -23,6 +23,7 @@
 
 namespace BaksDev\Products\Product\Repository\ProductByArticle;
 
+use BaksDev\Products\Category\Type\Id\CategoryProductUid;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Users\Profile\UserProfile\Entity\UserProfile;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
@@ -37,6 +38,9 @@ interface ProductEventByArticleInterface
     public function allOffers(): self;
 
     public function forProfile(UserProfile|UserProfileUid|string|false $profile): self;
+
+    public function forCategory(CategoryProductUid|string|false $profile): self;
+
 
     /**
      * Метод возвращает по артикулу событие продукта

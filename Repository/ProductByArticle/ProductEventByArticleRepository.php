@@ -26,6 +26,8 @@ declare(strict_types=1);
 namespace BaksDev\Products\Product\Repository\ProductByArticle;
 
 use BaksDev\Core\Doctrine\ORMQueryBuilder;
+use BaksDev\Products\Category\Type\Id\CategoryProductUid;
+use BaksDev\Products\Product\Entity\Category\ProductCategory;
 use BaksDev\Products\Product\Entity\Event\ProductEvent;
 use BaksDev\Products\Product\Entity\Event\Profile\ProductProfile;
 use BaksDev\Products\Product\Entity\Info\ProductInfo;
@@ -41,6 +43,8 @@ final class ProductEventByArticleRepository implements ProductEventByArticleInte
     private bool $isCard = false;
 
     private UserProfileUid|false $profile = false;
+
+    private CategoryProductUid|false $category = false;
 
     public function __construct(private readonly ORMQueryBuilder $ORMQueryBuilder) {}
 
@@ -85,6 +89,25 @@ final class ProductEventByArticleRepository implements ProductEventByArticleInte
         return $this;
     }
 
+
+    public function forCategory(CategoryProductUid|string|false $category): self
+    {
+        if(empty($category))
+        {
+            $this->category = false;
+            return $this;
+        }
+
+        if(is_string($category))
+        {
+            $category = new CategoryProductUid($category);
+        }
+
+        $this->category = $category;
+
+        return $this;
+    }
+
     /**
      * Метод возвращает по артикулу событие продукта
      */
@@ -125,6 +148,26 @@ final class ProductEventByArticleRepository implements ProductEventByArticleInte
                     value: $this->profile,
                     type: UserProfileUid::TYPE,
                 );
+        }
+
+
+        if($this->category instanceof CategoryProductUid)
+        {
+            $orm
+                ->join(
+                    ProductCategory::class,
+                    'product_category',
+                    'WITH',
+                    'product_category.event = product.event 
+                    AND product_category.category = :category',
+                )
+                ->setParameter(
+                    key: 'category',
+                    value: $this->category,
+                    type: CategoryProductUid::TYPE,
+                );
+
+            $orm->setMaxResults(1);
         }
 
         $orm
@@ -248,7 +291,6 @@ final class ProductEventByArticleRepository implements ProductEventByArticleInte
             );
 
         $orm->join(Product::class, 'product', 'WITH', 'product.event = event.id');
-
 
         /** @var ProductEvent $ProductEvent */
         $ProductEvent = $orm->getOneOrNullResult();
