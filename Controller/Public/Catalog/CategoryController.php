@@ -113,9 +113,8 @@ final class CategoryController extends AbstractController
         /** Если список пуст - пробуем предложить другие варианты */
         $otherProducts = false;
 
-        if(!$Products->getData())
+        if(empty($Products->getData()))
         {
-
             /** Список аналогичных товаров */
             $Products = $modelsOrProducts
                 ->findAllWithPaginator('OR');
@@ -124,12 +123,13 @@ final class CategoryController extends AbstractController
         }
 
         // Поиск по всему сайту
-        $allSearch = new SearchDTO();
-        $allSearchForm = $this->createForm(SearchForm::class, $allSearch, [
-            'action' => $this->generateUrl('search:public.search'),
-        ]);
+        $allSearchForm = $this->createForm(
+            type: SearchForm::class,
+            data: new SearchDTO(),
+            options: ['action' => $this->generateUrl('search:public.search')],
+        );
 
-        return $this->render([
+        $Response = $this->render([
             'category' => $info,
             'products' => $Products,
             'filter' => $filterForm->createView(),
@@ -137,6 +137,13 @@ final class CategoryController extends AbstractController
             'fields' => $fields,
             'all_search' => $allSearchForm->createView(),
         ]);
+
+        if(empty($Products->getData()))
+        {
+            $Response->setStatusCode(404);
+        }
+
+        return $Response;
     }
 
 }
